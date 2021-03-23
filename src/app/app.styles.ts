@@ -1,20 +1,25 @@
 import { StyleSheet } from 'react-native';
+import { grey, primaryWhite, step } from '../config/styles';
 
 export const AppStyles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: primaryWhite
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  scrollView: {
+    alignItems: 'center'
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  logo: {
+    marginTop: 2 * step
   },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    fontSize: 4 * step,
+    color: grey,
+    fontWeight: 'bold'
   },
+  description: {
+    fontSize: 2 * step,
+    color: grey,
+    marginTop: 2 * step
+  }
 });

@@ -1,84 +1,55 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   SafeAreaView,
   ScrollView,
   StatusBar,
   Text,
-  useColorScheme,
-  View,
+  useColorScheme
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
+import TempleLogo from '../assets/temple-logo.svg';
+import { step } from '../config/styles';
 import { AppStyles } from './app.styles';
 
-const Section: React.FC<{
-  title: string;
-}> = ({ children, title }) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={AppStyles.sectionContainer}>
-      <Text
-        style={[
-          AppStyles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          AppStyles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+const ANIMATION_MIN_VALUE = 0;
+const ANIMATION_MAX_VALUE = 1;
 
 export const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const animatedValue = useRef(new Animated.Value(ANIMATION_MIN_VALUE)).current;
+  const [toggle, setToggle] = useState(false);
+
+  useEffect(
+    () =>
+      Animated.timing(animatedValue, {
+        toValue: toggle ? ANIMATION_MAX_VALUE : ANIMATION_MIN_VALUE,
+        useNativeDriver: true
+      }).start(() => setToggle(!toggle)),
+    [toggle, animatedValue]
+  );
+
+  const scale = animatedValue.interpolate({
+    inputRange: [ANIMATION_MIN_VALUE, ANIMATION_MAX_VALUE],
+    outputRange: [1, 1.1]
+  });
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={AppStyles.safeAreaView}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={AppStyles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
+        contentContainerStyle={AppStyles.scrollView}>
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <TempleLogo
+            width={32 * step}
+            height={44 * step}
+            style={AppStyles.logo}
+          />
+        </Animated.View>
+        <Text style={AppStyles.title}>Temple Wallet</Text>
+        <Text style={AppStyles.description}>coming soon</Text>
       </ScrollView>
     </SafeAreaView>
   );
