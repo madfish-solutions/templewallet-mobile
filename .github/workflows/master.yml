@@ -8,7 +8,7 @@ on:
 jobs:
   code-quality:
     name: Checks if ts, lint & unit tests works
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment: develop-environment
     steps:
       - name: Clone repository
