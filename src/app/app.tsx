@@ -7,6 +7,7 @@ import {
   Text,
   useColorScheme
 } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 import TempleLogo from '../assets/temple-logo.svg';
 import { step } from '../config/styles';
@@ -20,6 +21,8 @@ export const App = () => {
 
   const animatedValue = useRef(new Animated.Value(ANIMATION_MIN_VALUE)).current;
   const [toggle, setToggle] = useState(false);
+
+  useEffect(() => void RNBootSplash.hide(), []);
 
   useEffect(
     () =>
