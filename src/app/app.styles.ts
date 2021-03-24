@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native';
-import { grey, primaryWhite, step } from '../config/styles';
+import { grey, step } from '../config/styles';
 
 export const AppStyles = StyleSheet.create({
   safeAreaView: {
-    flex: 1,
-    backgroundColor: primaryWhite
+    flex: 1
   },
   scrollView: {
     alignItems: 'center'
