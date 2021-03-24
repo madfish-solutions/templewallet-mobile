@@ -10,12 +10,13 @@ export const AppStyles = StyleSheet.create({
     alignItems: 'center'
   },
   logo: {
-    marginTop: 2 * step
+    marginTop: 10 * step
   },
   title: {
     fontSize: 4 * step,
     color: grey,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 2 * step
   },
   description: {
     fontSize: 2 * step,
