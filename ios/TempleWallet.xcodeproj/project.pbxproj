@@ -114,7 +114,6 @@
 				105DBA022C2DCE48ABC03E44 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */,
 				15063DC76160EF7BB6DAD79D /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
