@@ -7,12 +7,14 @@
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew assembleRelease",
     "ios": "react-native run-ios",
+    "ios:pods": "cd ios && pod install",
+    "ios:test-flight": "cd ios && fastlane beta",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "ts": "tsc --pretty",
-    "pod:install": "cd ios && pod install",
-    "clear:android": "cd android && ./gradlew clean"
+    "clear:android": "cd android && ./gradlew clean",
+    "clear:ios": "rm -rf ios/Pods"
   },
   "dependencies": {
     "react": "17.0.1",
