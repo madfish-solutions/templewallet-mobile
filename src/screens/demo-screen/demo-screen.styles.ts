@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
-import { grey, step } from '../config/styles';
 
-export const AppStyles = StyleSheet.create({
+import { step, grey } from '../../config/styles';
+
+export const DemoScreenStyles = StyleSheet.create({
   safeAreaView: {
     flex: 1
   },
