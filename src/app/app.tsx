@@ -10,8 +10,8 @@ import RNBootSplash from 'react-native-bootsplash';
 enableScreens();
 
 export const isAuthorized = true;
-export const isLocked = true;
-export const isConfirmation = true;
+export const isLocked = false;
+export const isConfirmation = false;
 
 export const App = () => {
   useEffect(() => void RNBootSplash.hide(), []);

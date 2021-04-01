@@ -1,4 +1,10 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
-export const EnterPassword = () => <Text>Enter Password</Text>;
+import { EnterPasswordStyles } from './enter-password.styles';
+
+export const EnterPassword = () => (
+  <View style={EnterPasswordStyles.root}>
+    <Text>Enter Password</Text>
+  </View>
+);

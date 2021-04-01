@@ -1,4 +1,10 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
-export const ConfirmationWindow = () => <Text>Confirmation Window</Text>;
+import { ConfirmationWindowStyles } from './confirmation-window.styles';
+
+export const ConfirmationWindow = () => (
+  <View style={ConfirmationWindowStyles.root}>
+    <Text>Confirmation Window</Text>
+  </View>
+);
