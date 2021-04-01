@@ -11,12 +11,7 @@ export const ScreenContainer: FC = ({ children }) => {
         <InsetSubstitute />
         <Button title="Back" onPress={() => void 0} />
       </View>
-      <ScrollView
-        contentContainerStyle={
-          ScreenContainerStyles.scrollViewContentContainer
-        }>
-        {children}
-      </ScrollView>
+      <ScrollView contentContainerStyle={ScreenContainerStyles.scrollViewContentContainer}>{children}</ScrollView>
     </View>
   );
 };

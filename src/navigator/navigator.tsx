@@ -35,5 +35,4 @@ export const Navigator = () => {
       )}
     </>
   );
-}
-;
+};
