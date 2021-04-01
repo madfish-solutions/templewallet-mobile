@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler';
 
 import React, { useEffect } from 'react';
+import RNBootSplash from 'react-native-bootsplash';
 import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { Navigator } from '../navigator/navigator';
-import RNBootSplash from 'react-native-bootsplash';
 
 enableScreens();
 
