@@ -8,6 +8,7 @@ import { ScreensEnum } from './screens.enum';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { WalletTabs } from './wallet-tabs';
+import { Welcome } from '../screens/welcome/welcome';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,10 @@ export const Navigator = () => {
       <Stack.Navigator headerMode="none">
         {!isAuthorized ? (
           <>
+            <Stack.Screen
+              name={ScreensEnum.Welcome}
+              component={Welcome}
+            />
             <Stack.Screen
               name={ScreensEnum.ImportAccount}
               component={ImportAccount}

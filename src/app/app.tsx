@@ -9,7 +9,7 @@ import { Navigator } from '../navigator/navigator';
 
 enableScreens();
 
-export const isAuthorized = true;
+export const isAuthorized = false;
 export const isLocked = false;
 export const isConfirmation = false;
 
