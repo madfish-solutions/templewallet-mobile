@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { useField } from 'formik';
 
 import { StyledTextInput } from '../components/styled-text-input/styled-text-input';
-import { FormControlRender } from './form-control-render.type';
+import { ErrorMessage } from './error-message/error-message';
 
-export const FormTextInput: FormControlRender<string> = ({ onChange, onBlur, value }) => (
-  <StyledTextInput value={value} onBlur={onBlur} onChangeText={newValue => onChange(newValue)} />
-);
+interface Props {
+  name: string;
+  multiline?: boolean;
+}
+
+export const FormTextInput: FC<Props> = ({ name, multiline = false }) => {
+  const [field, meta] = useField<string>(name);
+
+  return (
+    <>
+      <StyledTextInput
+        multiline={multiline}
+        value={field.value}
+        onBlur={field.onBlur(name)}
+        onChangeText={field.onChange(name)}
+      />
+      <ErrorMessage meta={meta} />
+    </>
+  );
+};
