@@ -7,9 +7,10 @@ import { useTypedController } from '@hookform/strictly-typed';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { yupResolver } from '@hookform/resolvers/yup';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import { StyledTextInput } from '../../components/styled-text-input/styled-text-input';
 import { ImportAccountStyles } from './import-account.styles';
 import { ErrorMessage } from '../../components/error-message/error-message';
+import { FormMultilineTextInput } from '../../form/form-multiline-text-input';
+import { FormTextInput } from '../../form/form-text-input';
 
 type FormValues = {
   seedPhrase: string;
@@ -51,35 +52,15 @@ export const ImportAccount = () => {
     <ScreenContainer>
       <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
 
-      <TypedController
-        name="seedPhrase"
-        render={({ onChange, onBlur, value }) => (
-          <StyledTextInput
-            value={value}
-            multiline={true}
-            onBlur={onBlur}
-            onChangeText={newValue => onChange(newValue)}
-          />
-        )}
-      />
+      <TypedController name="seedPhrase" render={FormMultilineTextInput} />
       <ErrorMessage fieldError={errors.seedPhrase} />
 
       <Text style={ImportAccountStyles.labelText}>Password</Text>
-      <TypedController
-        name="password"
-        render={({ onChange, onBlur, value }) => (
-          <StyledTextInput value={value} onBlur={onBlur} onChangeText={newValue => onChange(newValue)} />
-        )}
-      />
+      <TypedController name="password" render={FormTextInput} />
       <ErrorMessage fieldError={errors.password} />
 
       <Text style={ImportAccountStyles.labelText}>Password confirmation</Text>
-      <TypedController
-        name="passwordConfirmation"
-        render={({ onChange, onBlur, value }) => (
-          <StyledTextInput value={value} onBlur={onBlur} onChangeText={newValue => onChange(newValue)} />
-        )}
-      />
+      <TypedController name="passwordConfirmation" render={FormTextInput} />
       <ErrorMessage fieldError={errors.passwordConfirmation} />
 
       <TypedController
