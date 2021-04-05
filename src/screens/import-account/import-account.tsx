@@ -51,7 +51,8 @@ export const ImportAccount = () => {
             <Text style={ImportAccountStyles.labelText}>Password confirmation</Text>
             <FormTextInput name="passwordConfirmation" />
 
-            <FormCheckbox name="acceptTerms" text="Accept Terms" />
+            <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
+            <FormCheckbox name="acceptTerms" />
 
             <View>
               <Button title="Import" onPress={handleSubmit} />

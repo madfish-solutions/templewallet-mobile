@@ -1257,6 +1257,11 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@react-native-community/checkbox@^0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@react-native-community/checkbox/-/checkbox-0.5.7.tgz#ac818de88736acc1a4539188f2d435cf5e845ae1"
+  integrity sha512-CiHBAMWy5fsFIHLd1pf8frlWrLT8DnCXUSxdlGKazHm7srQSReKH4R5absShjmYOHRo9raWEnKZO/cm7MUDHZg==
+
 "@react-native-community/cli-debugger-ui@^5.0.1-alpha.1":
   version "5.0.1-alpha.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-5.0.1-alpha.1.tgz#09a856ccd2954cf16eea59b14dd26ae66720e4e6"
@@ -6343,11 +6348,6 @@ react-native-bootsplash@^3.2.0:
     chalk "^4.1.0"
     fs-extra "^9.1.0"
     jimp "^0.16.1"
-
-react-native-bouncy-checkbox@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-bouncy-checkbox/-/react-native-bouncy-checkbox-2.0.0.tgz#00a518e6a31613a48c462b00a6afc42823c37126"
-  integrity sha512-T6i4g7TQUGJeoqU2AN70amcrgtzF+0pREju3UpFb43tAGUij+POkIX25g67eXongzLWDz8JrOsppz+q2m6AO7g==
 
 react-native-codegen@^0.0.6:
   version "0.0.6"
