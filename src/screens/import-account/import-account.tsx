@@ -7,6 +7,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ImportAccountStyles } from './import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { importWallet } from '../../utils/wallet.util';
 
 type FormValues = {
   seedPhrase: string;
@@ -33,7 +34,7 @@ const initialValues: FormValues = {
 
 export const ImportAccount = () => {
   const onSubmit = (data: FormValues) => {
-    console.log('submitted', data);
+    importWallet(data.seedPhrase, data.password);
   };
 
   return (

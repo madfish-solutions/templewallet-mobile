@@ -5,5 +5,8 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'never'],
     'no-void': 'off'
+  },
+  globals: {
+    localStorage: true
   }
 };
