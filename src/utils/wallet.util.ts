@@ -33,8 +33,12 @@ export const importWallet = () => (payload$: Observable<ImportAccountPayload>): 
     })
   );
 
-export const createWallet = async (password: string) => {
-  const seedPhrase = generateSeed();
+export const createWallet = () => (password$: Observable<string>) =>
+  password$.pipe(
+    map(password => {
+      const seedPhrase = generateSeed();
 
-  return importWallet(seedPhrase, password);
-};
+      return { seedPhrase, password };
+    }),
+    importWallet()
+  );

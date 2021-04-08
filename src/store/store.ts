@@ -1,4 +1,4 @@
 import { createStore } from './create-store';
-import { importWalletEpic } from './wallet/wallet-epics';
+import { walletEpics } from './wallet/wallet-epics';
 
-export const store = createStore(importWalletEpic);
+export const store = createStore(walletEpics);

@@ -1,9 +1,15 @@
 import { Observable } from 'rxjs';
 import { Action } from 'ts-action';
-import { importWalletActions } from './wallet-actions';
+import { createWalletActions, importWalletActions } from './wallet-actions';
 import { ofType, toPayload } from 'ts-action-operators';
 import { map } from 'rxjs/operators';
-import { importWallet } from '../../utils/wallet.util';
+import { createWallet, importWallet } from '../../utils/wallet.util';
+import { combineEpics } from 'redux-observable';
 
-export const importWalletEpic = (action$: Observable<Action>) =>
+const importWalletEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(importWalletActions.create), toPayload(), importWallet(), map(importWalletActions.success));
+
+const createWalletEpic = (action$: Observable<Action>) =>
+  action$.pipe(ofType(createWalletActions.create), toPayload(), createWallet(), map(createWalletActions.success));
+
+export const walletEpics = combineEpics(importWalletEpic, createWalletEpic);
