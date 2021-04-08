@@ -7,6 +7,7 @@ module.exports = {
     'no-void': 'off'
   },
   globals: {
-    localStorage: true
+    localStorage: true,
+    crypto: true
   }
 };
