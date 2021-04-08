@@ -13,9 +13,11 @@ interface EncryptedDataSalt {
 export const generateSalt = (byteCount = 32): string => {
   const view = new Uint8Array(byteCount);
 
-  global.crypto.getRandomValues(view);
+  crypto.getRandomValues(view);
 
-  return global.btoa(String.fromCharCode.apply(null, view));
+  // TODO: fix ts (getRandomValues mutates array)
+  // @ts-ignore
+  return btoa(String.fromCharCode.apply(null, view));
 };
 
 export const generateKey = (password: BinaryLike, salt: BinaryLike): Promise<string> =>

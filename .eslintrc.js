@@ -8,6 +8,7 @@ module.exports = {
   },
   globals: {
     localStorage: true,
-    crypto: true
+    crypto: true,
+    btoa: true
   }
 };
