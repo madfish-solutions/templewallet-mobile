@@ -1,8 +1,8 @@
 import { mnemonicToSeedSync } from 'bip39';
 
-import { seedToHDPrivateKey, getPublicKeyAndHash } from './seed-phrase.util';
+import { getPublicKeyAndHash, seedToHDPrivateKey } from './keys.util';
+import { decryptObject, encryptObject } from './crypto.util';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const importWallet = async (seedPhrase: string, password: string) => {
   const seed = mnemonicToSeedSync(seedPhrase);
   const hdAccountIndex = 0;
@@ -10,5 +10,15 @@ export const importWallet = async (seedPhrase: string, password: string) => {
   const privateKey = seedToHDPrivateKey(seed, hdAccountIndex);
   const [publicKey, publicKeyHash] = await getPublicKeyAndHash(privateKey);
 
-  console.log({ publicKey, publicKeyHash });
+  const encryptedData = await encryptObject(
+    {
+      seedPhrase,
+      [publicKeyHash]: privateKey
+    },
+    password
+  );
+
+  const decryptedData = await decryptObject(encryptedData, password);
+
+  console.log(publicKey, encryptedData, decryptedData);
 };

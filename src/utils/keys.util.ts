@@ -6,7 +6,7 @@ const TEZOS_BIP44_COINTYPE = 1729;
 
 export const trimSeed = (seed: string) => seed.replace(/\n/g, ' ').trim();
 
-export const seedToPrivateKey = (seed: Buffer) => b58cencode(seed.slice(0, 32), prefix.edsk2);
+const seedToPrivateKey = (seed: Buffer) => b58cencode(seed.slice(0, 32), prefix.edsk2);
 
 const deriveSeed = (seed: Buffer, derivationPath: string) => {
   try {
