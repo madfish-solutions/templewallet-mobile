@@ -11,7 +11,6 @@ import { store } from '../store/store';
 
 enableScreens();
 
-export const isAuthorized = false;
 export const isLocked = false;
 export const isConfirmation = false;
 
