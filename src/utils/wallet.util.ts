@@ -13,7 +13,6 @@ export const importWallet = async (seedPhrase: string, password: string) => {
   const encryptedData = await encryptObject(
     {
       seedPhrase,
-      [publicKey]: privateKey,
       [publicKeyHash]: privateKey
     },
     password
@@ -21,5 +20,5 @@ export const importWallet = async (seedPhrase: string, password: string) => {
 
   const decryptedData = await decryptObject(encryptedData, password);
 
-  console.log(encryptedData, decryptedData);
+  console.log(publicKey, encryptedData, decryptedData);
 };

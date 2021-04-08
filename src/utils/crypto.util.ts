@@ -37,8 +37,8 @@ export const encryptString = async (str: string, password: string): Promise<Encr
 };
 
 export const encryptObject = async (obj: Record<string, string>, password: string) =>
-  Promise.all(Object.keys(obj).map(async key => ({ [key]: await encryptString(obj[key], password) }))).then(arr =>
-    arr.reduce<Record<string, EncryptedData & EncryptedDataSalt>>((prev, curr) => ({ ...prev, ...curr }), {})
+  Promise.all(Object.entries(obj).map(async ([key, value]) => [key, await encryptString(value, password)])).then(
+    Object.fromEntries
   );
 
 export const decryptString = async (data: EncryptedData & EncryptedDataSalt, password: string): Promise<string> => {
