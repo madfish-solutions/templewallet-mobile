@@ -7,9 +7,9 @@ import { createWallet, importWallet } from '../../utils/wallet.util';
 import { combineEpics } from 'redux-observable';
 
 const importWalletEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(importWalletActions.create), toPayload(), importWallet(), map(importWalletActions.success));
+  action$.pipe(ofType(importWalletActions.submit), toPayload(), importWallet(), map(importWalletActions.success));
 
 const createWalletEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(createWalletActions.create), toPayload(), createWallet(), map(createWalletActions.success));
+  action$.pipe(ofType(createWalletActions.submit), toPayload(), createWallet(), map(createWalletActions.success));
 
 export const walletEpics = combineEpics(importWalletEpic, createWalletEpic);

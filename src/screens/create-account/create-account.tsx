@@ -37,7 +37,7 @@ export const CreateAccount = () => {
   useEffect(() => console.log(walletState), [walletState]);
 
   const onSubmit = (data: FormValues) => {
-    dispatch(createWalletActions.create(data.password));
+    dispatch(createWalletActions.submit(data.password));
   };
 
   return (

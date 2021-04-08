@@ -7,7 +7,6 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ImportAccountStyles } from './import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { importWalet } from '../../utils/wallet.util';
 import { useDispatch } from 'react-redux';
 import { importWalletActions } from '../../store/wallet/wallet-actions';
 
@@ -38,7 +37,7 @@ export const ImportAccount = () => {
   const dispatch = useDispatch();
 
   const onSubmit = ({ seedPhrase, password }: FormValues) => {
-    dispatch(importWalletActions.create({ seedPhrase, password }));
+    dispatch(importWalletActions.submit({ seedPhrase, password }));
   };
 
   return (
