@@ -1,10 +1,10 @@
-import { createAction } from '@reduxjs/toolkit';
 import { AccountInterface } from '../../interfaces/account.interface';
+import { createActions } from '../create-actions';
 
-const createActions = <CreatePayload = void, SuccessPayload = void, FailPayload = void>(type: string) => ({
-  create: createAction<CreatePayload>(type),
-  success: createAction<SuccessPayload>(`${type}/success`),
-  fail: createAction<FailPayload>(`${type}/fail`)
-});
+export interface ImportAccountPayload {
+  seedPhrase: string;
+  password: string;
+}
 
-export const createWalletActions = createActions<string, AccountInterface>('@wallet/create');
+export const importWalletActions = createActions<ImportAccountPayload, AccountInterface, string>('@wallet/import');
+export const createWalletActions = createActions<string, AccountInterface, string>('@wallet/create');

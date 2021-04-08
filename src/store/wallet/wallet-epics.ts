@@ -1,17 +1,9 @@
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Action } from 'ts-action';
-import { createWalletActions } from './wallet-actions';
+import { importWalletActions } from './wallet-actions';
 import { ofType, toPayload } from 'ts-action-operators';
-import { mapTo, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { importWallet } from '../../utils/wallet.util';
 
-export const createWalletEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(createWalletActions.create),
-    toPayload(),
-    switchMap(password => {
-      console.log(password);
-
-      return of(1);
-    }),
-    mapTo(createWalletActions.success({}))
-  );
+export const importWalletEpic = (action$: Observable<Action>) =>
+  action$.pipe(ofType(importWalletActions.create), toPayload(), importWallet(), map(importWalletActions.success));
