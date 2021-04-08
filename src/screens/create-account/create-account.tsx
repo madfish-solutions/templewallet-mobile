@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Text, View } from 'react-native';
 import { boolean, object, SchemaOf, string } from 'yup';
-import { createWallet } from '../../utils/wallet.util';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { Formik } from 'formik';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { useWalletSelector } from '../../store/wallet/wallet-selectors';
+import { useDispatch } from 'react-redux';
+import { createWalletActions } from '../../store/wallet/wallet-actions';
 
 type FormValues = {
   password: string;
@@ -29,8 +31,13 @@ const initialValues: FormValues = {
 };
 
 export const CreateAccount = () => {
+  const dispatch = useDispatch();
+  const walletState = useWalletSelector();
+
+  useEffect(() => console.log(walletState), [walletState]);
+
   const onSubmit = (data: FormValues) => {
-    createWallet(data.password);
+    dispatch(createWalletActions.create(data.password));
   };
 
   return (
