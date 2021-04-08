@@ -10,17 +10,21 @@ interface EncryptedDataSalt {
   salt: string;
 }
 
-export const generateSalt = (byteCount = 32): string => {
+export const generateRandomValues = (byteCount = 16) => {
   const view = new Uint8Array(byteCount);
 
   crypto.getRandomValues(view);
 
-  // TODO: fix ts (getRandomValues mutates array)
-  // @ts-ignore
-  return btoa(String.fromCharCode.apply(null, view));
+  return view;
 };
 
-export const generateKey = (password: BinaryLike, salt: BinaryLike): Promise<string> =>
+const generateSalt = (): string => {
+  const view = generateRandomValues(32);
+
+  return btoa(String.fromCharCode.apply(null, Array.from(view)));
+};
+
+const generateKey = (password: BinaryLike, salt: BinaryLike): Promise<string> =>
   NativeModules.Aes.pbkdf2(password, salt, 5000, 256);
 
 export const encryptString = async (str: string, password: string): Promise<EncryptedData & EncryptedDataSalt> => {

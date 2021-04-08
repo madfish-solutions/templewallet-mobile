@@ -1,6 +1,6 @@
 import { mnemonicToSeedSync } from 'bip39';
 
-import { getPublicKeyAndHash, seedToHDPrivateKey } from './keys.util';
+import { generateSeed, getPublicKeyAndHash, seedToHDPrivateKey } from './keys.util';
 import { decryptObject, encryptObject } from './crypto.util';
 
 export const importWallet = async (seedPhrase: string, password: string) => {
@@ -22,4 +22,10 @@ export const importWallet = async (seedPhrase: string, password: string) => {
   const decryptedData = await decryptObject(encryptedData, password);
 
   console.log(encryptedData, decryptedData);
+};
+
+export const createWallet = async (password: string) => {
+  const seedPhrase = generateSeed();
+
+  return importWallet(seedPhrase, password);
 };
