@@ -48,7 +48,7 @@ export const CreateAccount = () => {
             <FormCheckbox name="acceptTerms" />
 
             <View>
-              <Button title="Import" onPress={handleSubmit} />
+              <Button title="Create" onPress={handleSubmit} />
             </View>
           </>
         )}
