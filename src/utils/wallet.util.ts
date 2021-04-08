@@ -10,17 +10,16 @@ export const importWallet = async (seedPhrase: string, password: string) => {
   const privateKey = seedToHDPrivateKey(seed, hdAccountIndex);
   const [publicKey, publicKeyHash] = await getPublicKeyAndHash(privateKey);
 
-  const data = await encryptObject(
+  const encryptedData = await encryptObject(
     {
       seedPhrase,
-      publicKey,
-      publicKeyHash,
-      privateKey
+      [publicKey]: privateKey,
+      [publicKeyHash]: privateKey
     },
     password
   );
 
-  const decrypted = await decryptObject(data, password);
+  const decryptedData = await decryptObject(encryptedData, password);
 
-  console.log(data, decrypted);
+  console.log(encryptedData, decryptedData);
 };
