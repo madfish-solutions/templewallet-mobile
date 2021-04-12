@@ -8,6 +8,10 @@ if (!global.atob) {
   global.atob = decode;
 }
 
+if (!global.document) {
+  global.document = {};
+}
+
 if (typeof __dirname === 'undefined') {
   global.__dirname = '/';
 }
