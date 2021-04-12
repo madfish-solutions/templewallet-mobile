@@ -1,3 +1,3 @@
-import { action } from 'ts-action';
+import { createAction } from '@reduxjs/toolkit';
 
-export const rootStateResetAction = action('root/RESET');
+export const rootStateResetAction = createAction('root/RESET');
