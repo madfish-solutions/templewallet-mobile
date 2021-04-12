@@ -43,7 +43,7 @@ export const ImportAccount = () => {
   return (
     <ScreenContainer>
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-        {({ handleSubmit }) => (
+        {({ submitForm }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
 
@@ -59,7 +59,7 @@ export const ImportAccount = () => {
             <FormCheckbox name="acceptTerms" />
 
             <View>
-              <Button title="Import" onPress={handleSubmit} />
+              <Button title="Import" onPress={submitForm} />
             </View>
           </>
         )}
