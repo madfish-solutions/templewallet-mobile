@@ -18,6 +18,7 @@
     "clear:ios": "rm -rf ios/Pods"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.2",
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.8",
@@ -52,6 +53,7 @@
     "react-redux": "^7.2.3",
     "readable-stream": "^1.0.33",
     "redux-observable": "^1.2.0",
+    "redux-persist": "^6.0.0",
     "rxjs": "^6.6.7",
     "stream-browserify": "^1.0.0",
     "ts-action": "^11.0.0",
