@@ -1,5 +1,4 @@
 import React from 'react';
-import { boolean, object, SchemaOf, string } from 'yup';
 import { Button, Text, View } from 'react-native';
 import { Formik } from 'formik';
 
@@ -9,40 +8,25 @@ import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useDispatch } from 'react-redux';
 import { importWalletActions } from '../../store/wallet/wallet-actions';
-
-type FormValues = {
-  seedPhrase: string;
-  password: string;
-  passwordConfirmation: string;
-  acceptTerms: boolean;
-};
-
-const validationSchema: SchemaOf<FormValues> = object().shape({
-  seedPhrase: string().required(),
-  password: string().required(),
-  passwordConfirmation: string().required(),
-  acceptTerms: boolean()
-    .required('The terms and conditions must be accepted.')
-    .oneOf([true], 'The terms and conditions must be accepted.')
-});
-
-const initialValues: FormValues = {
-  seedPhrase: '',
-  password: '',
-  passwordConfirmation: '',
-  acceptTerms: false
-};
+import {
+  ImportAccountFormValues,
+  importAccountInitialValues,
+  importAccountValidationSchema
+} from './import-account.form';
 
 export const ImportAccount = () => {
   const dispatch = useDispatch();
 
-  const onSubmit = ({ seedPhrase, password }: FormValues) => {
+  const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => {
     dispatch(importWalletActions.submit({ seedPhrase, password }));
   };
 
   return (
     <ScreenContainer>
-      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+      <Formik
+        initialValues={importAccountInitialValues}
+        validationSchema={importAccountValidationSchema}
+        onSubmit={onSubmit}>
         {({ handleSubmit }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
