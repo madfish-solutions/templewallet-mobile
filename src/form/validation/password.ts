@@ -1,18 +1,20 @@
 import { string } from 'yup';
 import { requiredErrorMessage } from './shared';
 
-const passwordError =
-  'At least 8 characters\n' + 'At least 1 number\n' + 'At least 1 lowercase letter\n' + 'At least 1 uppercase letter';
-const PASSWORD_PATTERN = new RegExp(
-  [
-    '^',
-    '(?=.*[a-z])', // Must contain at least 1 lowercase alphabetical character
-    '(?=.*[A-Z])', // Must contain at least 1 uppercase alphabetical character
-    '(?=.*[0-9])', // Must contain at least 1 numeric character
-    '(?=.{8,})' // Must be eight characters or longer
-  ].join('')
-);
+const atLeastOneLowerCaseLetterError = 'At least 1 lowercase letter';
+const atLeastOneUpperCaseLetterError = 'At least 1 uppercase letter';
+const atLeastOneNumberError = 'At least 1 number';
+const minError = 'At least 8 characters';
 
-const passwordValidation = string().required(requiredErrorMessage).matches(PASSWORD_PATTERN, passwordError);
+const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
+const PASSWORD_PATTERN_ONE_UPPER_CASE = new RegExp('(?=.*[A-Z])');
+const PASSWORD_PATTERN_ONE_NUMERIC = new RegExp('(?=.*[0-9])');
+
+const passwordValidation = string()
+  .required(requiredErrorMessage)
+  .matches(PASSWORD_PATTERN_ONE_LOWER_CASE, atLeastOneLowerCaseLetterError)
+  .matches(PASSWORD_PATTERN_ONE_UPPER_CASE, atLeastOneUpperCaseLetterError)
+  .matches(PASSWORD_PATTERN_ONE_NUMERIC, atLeastOneNumberError)
+  .min(8, minError);
 
 export default passwordValidation;
