@@ -54,6 +54,7 @@ builds/*
 *.mobileprovision
 *.dSYM.zip
 api-*.json
+**/key.json
 
 # Bundle artifact
 *.jsbundle
