@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Button, Text, View } from 'react-native';
-import { boolean, object, SchemaOf, string } from 'yup';
 import { Formik } from 'formik';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
@@ -9,26 +8,11 @@ import { FormCheckbox } from '../../form/form-checkbox';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
 import { useDispatch } from 'react-redux';
 import { createWalletActions } from '../../store/wallet/wallet-actions';
-
-type FormValues = {
-  password: string;
-  passwordConfirmation: string;
-  acceptTerms: boolean;
-};
-
-const validationSchema: SchemaOf<FormValues> = object().shape({
-  password: string().required(),
-  passwordConfirmation: string().required(),
-  acceptTerms: boolean()
-    .required('The terms and conditions must be accepted.')
-    .oneOf([true], 'The terms and conditions must be accepted.')
-});
-
-const initialValues: FormValues = {
-  password: '',
-  passwordConfirmation: '',
-  acceptTerms: false
-};
+import {
+  CreateAccountFormValues,
+  createAccountInitialValues,
+  createAccountValidationSchema
+} from './create-account.form';
 
 export const CreateAccount = () => {
   const dispatch = useDispatch();
@@ -36,13 +20,16 @@ export const CreateAccount = () => {
 
   useEffect(() => console.log(walletState), [walletState]);
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: CreateAccountFormValues) => {
     dispatch(createWalletActions.submit(data.password));
   };
 
   return (
     <ScreenContainer>
-      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+      <Formik
+        initialValues={createAccountInitialValues}
+        validationSchema={createAccountValidationSchema}
+        onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Password</Text>

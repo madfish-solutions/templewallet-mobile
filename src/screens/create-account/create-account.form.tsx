@@ -1,25 +1,21 @@
 import { object, SchemaOf } from 'yup';
-import { seedPhraseValidation } from '../../form/validation/seed-phrase';
 import { passwordValidation } from '../../form/validation/password';
 import { passwordConfirmationValidation } from '../../form/validation/password-confirmation';
 import { acceptTermsValidation } from '../../form/validation/accept-terms';
 
-export type ImportAccountFormValues = {
-  seedPhrase: string;
+export type CreateAccountFormValues = {
   password: string;
   passwordConfirmation: string;
   acceptTerms: boolean;
 };
 
-export const importAccountValidationSchema: SchemaOf<ImportAccountFormValues> = object().shape({
-  seedPhrase: seedPhraseValidation,
+export const createAccountValidationSchema: SchemaOf<CreateAccountFormValues> = object().shape({
   password: passwordValidation,
   passwordConfirmation: passwordConfirmationValidation,
   acceptTerms: acceptTermsValidation
 });
 
-export const importAccountInitialValues: ImportAccountFormValues = {
-  seedPhrase: '',
+export const createAccountInitialValues: CreateAccountFormValues = {
   password: '',
   passwordConfirmation: '',
   acceptTerms: false
