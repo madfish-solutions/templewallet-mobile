@@ -1,4 +1,4 @@
-import { string } from 'yup';
+import { ref, string } from 'yup';
 import { requiredErrorMessage } from './shared';
 
 const atLeastOneLowerCaseLetterError = 'At least 1 lowercase letter';
@@ -16,3 +16,9 @@ export const passwordValidation = string()
   .matches(PASSWORD_PATTERN_ONE_UPPER_CASE, atLeastOneUpperCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_NUMERIC, atLeastOneNumberError)
   .min(8, minError);
+
+const repeatPasswordError = 'Must be equal to password above';
+
+export const passwordConfirmationValidation = string()
+  .required(requiredErrorMessage)
+  .oneOf([ref('password')], repeatPasswordError);
