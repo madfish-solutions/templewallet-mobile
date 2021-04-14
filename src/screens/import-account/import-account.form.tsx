@@ -1,7 +1,7 @@
 import { boolean, object, ref, SchemaOf, string } from 'yup';
-import seedPhraseValidation from '../../form/validation/seed-phrase';
-import passwordValidation from '../../form/validation/password';
 import { requiredErrorMessage } from '../../form/validation/shared';
+import { seedPhraseValidation } from '../../form/validation/seed-phrase';
+import { passwordValidation } from '../../form/validation/password';
 
 export type ImportAccountFormValues = {
   seedPhrase: string;

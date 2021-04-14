@@ -10,11 +10,9 @@ const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
 const PASSWORD_PATTERN_ONE_UPPER_CASE = new RegExp('(?=.*[A-Z])');
 const PASSWORD_PATTERN_ONE_NUMERIC = new RegExp('(?=.*[0-9])');
 
-const passwordValidation = string()
+export const passwordValidation = string()
   .required(requiredErrorMessage)
   .matches(PASSWORD_PATTERN_ONE_LOWER_CASE, atLeastOneLowerCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_UPPER_CASE, atLeastOneUpperCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_NUMERIC, atLeastOneNumberError)
   .min(8, minError);
-
-export default passwordValidation;

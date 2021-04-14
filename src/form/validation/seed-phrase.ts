@@ -6,7 +6,7 @@ const eachWordSeparatedError = 'Each word separated with a single space';
 const wordsCountError = '12, 15, 18, 21 or 24 words';
 const validError = 'Just valid pre-generated mnemonic in English';
 
-const seedPhraseValidation = string()
+export const seedPhraseValidation = string()
   .required(requiredErrorMessage)
   .test('each-word-separated', eachWordSeparatedError, value => {
     if (value) {
@@ -16,8 +16,6 @@ const seedPhraseValidation = string()
   })
   .test('words-count', wordsCountError, value => {
     const length = (value as string).split(' ').length;
-    return length % 3 === 0;
+    return [12, 15, 18, 21, 24].includes(length);
   })
   .test('is-mnemonic', validError, value => validateMnemonic(value as string));
-
-export default seedPhraseValidation;
