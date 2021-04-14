@@ -20,9 +20,12 @@ export const Settings = () => {
       }
     ]);
 
+  const handleLockAppButtonPress = () => console.log('handleLockAppButtonPress');
+
   return (
-    <ScreenContainer>
+    <ScreenContainer hasBackButton={false}>
       <Button title="Reset data" onPress={handleResetDataButtonPress} />
+      <Button title="Lock app" onPress={handleLockAppButtonPress} />
     </ScreenContainer>
   );
 };
