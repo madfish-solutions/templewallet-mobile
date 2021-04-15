@@ -28,7 +28,7 @@ export const EnterPassword = () => {
           {({ submitForm }) => (
             <>
               <Text>Your wallet have been locked</Text>
-              <Text>{`Enter a password to unlock it\n\n`}</Text>
+              <Text>{'Enter a password to unlock it\n\n'}</Text>
 
               <Text>Password</Text>
               <FormTextInput name="password" />

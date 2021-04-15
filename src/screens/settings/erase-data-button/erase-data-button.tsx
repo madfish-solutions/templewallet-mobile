@@ -19,5 +19,5 @@ export const EraseDataButton = () => {
       }
     ]);
 
-  return <Button title="Erase Data" color={red} onPress={handleResetDataButtonPress} />
+  return <Button title="Erase Data" color={red} onPress={handleResetDataButtonPress} />;
 };
