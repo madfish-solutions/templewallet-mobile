@@ -6,13 +6,14 @@ import { filter, map, switchMap } from 'rxjs/operators';
 
 export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
 const PASSWORD_CHECK_KEY = 'app-password';
+const EMPTY_PASSWORD = '';
 
 const getKeychainOptions = (key: string): Keychain.Options => ({
   service: `${APP_IDENTIFIER}/${key}`
 });
 
 export class Shelter {
-  private static _password$ = new BehaviorSubject('');
+  private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
 
   private static decryptValue$ = (key: string, password: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
@@ -21,20 +22,20 @@ export class Shelter {
       switchMap(keychainData => decryptString$(keychainData, password))
     );
 
-  static _isLocked$ = Shelter._password$.pipe(map(password => password === ''));
+  static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
-  static lockApp = () => Shelter._password$.next('');
+  static lockApp = () => Shelter._password$.next(EMPTY_PASSWORD);
 
   static unlockApp$ = (password: string) =>
     Shelter.decryptValue$(PASSWORD_CHECK_KEY, password).pipe(
       map(value => {
-        if (value === undefined || value !== APP_IDENTIFIER) {
-          return false;
-        } else {
+        if (value !== undefined && value !== APP_IDENTIFIER) {
           Shelter._password$.next(password);
 
           return true;
         }
+
+        return false;
       })
     );
 

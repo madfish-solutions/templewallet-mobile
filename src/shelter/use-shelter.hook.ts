@@ -17,17 +17,14 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
-      revealValue$.pipe(switchMap(key => Shelter.revealValue$(key))).subscribe(value => {
-        value !== undefined && Alert.alert(value, '', [{ text: 'OK' }]);
-      }),
       importWallet$
         .pipe(switchMap(({ seedPhrase, password }) => importWalletOperator$(seedPhrase, password)))
         .subscribe(publicData => dispatch(importWalletActions.success(publicData))),
 
-      createWallet$.subscribe(password => {
-        const seedPhrase = generateSeed();
+      createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
 
-        importWallet$.next({ seedPhrase, password });
+      revealValue$.pipe(switchMap(key => Shelter.revealValue$(key))).subscribe(value => {
+        value !== undefined && Alert.alert(value, '', [{ text: 'OK' }]);
       })
     ];
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());

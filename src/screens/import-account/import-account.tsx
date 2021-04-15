@@ -16,9 +16,7 @@ import { useShelter } from '../../shelter/use-shelter.hook';
 export const ImportAccount = () => {
   const { importWallet } = useShelter();
 
-  const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => {
-    importWallet(seedPhrase, password);
-  };
+  const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
 
   return (
     <ScreenContainer>

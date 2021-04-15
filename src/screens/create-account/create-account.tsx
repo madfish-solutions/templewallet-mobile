@@ -15,9 +15,7 @@ import { useShelter } from '../../shelter/use-shelter.hook';
 export const CreateAccount = () => {
   const { createWallet } = useShelter();
 
-  const onSubmit = (data: CreateAccountFormValues) => {
-    createWallet(data.password);
-  };
+  const onSubmit = (data: CreateAccountFormValues) => createWallet(data.password);
 
   return (
     <ScreenContainer>

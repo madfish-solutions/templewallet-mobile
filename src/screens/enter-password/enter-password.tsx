@@ -15,9 +15,7 @@ import { useAppLock } from '../../shelter/use-app-lock.hook';
 export const EnterPassword = () => {
   const { unlock } = useAppLock();
 
-  const onSubmit = ({ password }: EnterPasswordFormValues) => {
-    unlock(password);
-  };
+  const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
     <View style={EnterPasswordStyles.root}>
