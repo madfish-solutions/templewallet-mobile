@@ -6,22 +6,21 @@ import { ImportAccountStyles } from '../import-account/import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
-import { useDispatch } from 'react-redux';
-import { createWalletActions } from '../../store/wallet/wallet-actions';
 import {
   CreateAccountFormValues,
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
+import { useShelter } from '../../shelter/shelter';
 
 export const CreateAccount = () => {
-  const dispatch = useDispatch();
+  const { createWallet } = useShelter();
   const walletState = useWalletSelector();
 
   useEffect(() => console.log(walletState), [walletState]);
 
   const onSubmit = (data: CreateAccountFormValues) => {
-    dispatch(createWalletActions.submit(data.password));
+    createWallet(data.password);
   };
 
   return (

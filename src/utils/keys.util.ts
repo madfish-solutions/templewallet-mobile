@@ -27,7 +27,7 @@ const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYP
 export const seedToHDPrivateKey = (seed: Buffer, hdAccountIndex: number) =>
   seedToPrivateKey(deriveSeed(seed, getDerivationPath(hdAccountIndex)));
 
-export const getPublicKeyAndHash = (privateKey: string) =>
+export const getPublicKeyAndHash$ = (privateKey: string) =>
   from(InMemorySigner.fromSecretKey(privateKey)).pipe(
     switchMap(signer => forkJoin([signer.publicKey(), signer.publicKeyHash()]))
   );
