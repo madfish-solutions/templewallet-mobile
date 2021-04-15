@@ -29,7 +29,7 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.decryptValue$(PASSWORD_CHECK_KEY, password).pipe(
       map(value => {
-        if (value !== undefined && value !== APP_IDENTIFIER) {
+        if (value !== undefined && value === APP_IDENTIFIER) {
           Shelter._password$.next(password);
 
           return true;
