@@ -11,6 +11,7 @@ import {
   enterPasswordValidationSchema
 } from './enter-password.form';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
 
 export const EnterPassword = () => {
   const { unlock } = useAppLock();
@@ -26,12 +27,14 @@ export const EnterPassword = () => {
           onSubmit={onSubmit}>
           {({ submitForm }) => (
             <>
+              <Text>Your wallet have been locked</Text>
+              <Text>{`Enter a password to unlock it\n\n`}</Text>
+
               <Text>Password</Text>
               <FormTextInput name="password" />
 
-              <View>
-                <Button title="Unlock" onPress={submitForm} />
-              </View>
+              <Button title="Unlock" onPress={submitForm} />
+              <EraseDataButton />
             </>
           )}
         </Formik>
