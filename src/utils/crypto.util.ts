@@ -1,7 +1,7 @@
 import { NativeModules } from 'react-native';
 import { BinaryLike } from 'crypto';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 export interface EncryptedData {
   cipher: string;

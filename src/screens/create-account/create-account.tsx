@@ -10,7 +10,7 @@ import {
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
-import { useShelter } from '../../shelter/shelter';
+import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const CreateAccount = () => {
   const { createWallet } = useShelter();

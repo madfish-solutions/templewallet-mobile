@@ -10,10 +10,10 @@ import {
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
-import { useShelter } from '../../shelter/shelter';
+import { useAppLock } from '../../shelter/use-app-lock.hook';
 
 export const EnterPassword = () => {
-  const { unlock } = useShelter();
+  const { unlock } = useAppLock();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => {
     unlock(password);
@@ -40,4 +40,4 @@ export const EnterPassword = () => {
       </ScreenContainer>
     </View>
   );
-}
+};

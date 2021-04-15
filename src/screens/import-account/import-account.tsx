@@ -11,7 +11,7 @@ import {
   importAccountInitialValues,
   importAccountValidationSchema
 } from './import-account.form';
-import { useShelter } from '../../shelter/shelter';
+import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const ImportAccount = () => {
   const { importWallet } = useShelter();

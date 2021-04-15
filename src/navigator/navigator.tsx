@@ -9,7 +9,7 @@ import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-
 import { WalletTabs } from './wallet-tabs';
 import { Welcome } from '../screens/welcome/welcome';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
-import { useShelter } from '../shelter/shelter';
+import { useAppLock } from '../shelter/use-app-lock.hook';
 
 const Stack = createStackNavigator<ScreensParamList>();
 
@@ -17,7 +17,7 @@ const isConfirmation = false;
 
 export const Navigator = () => {
   const isAuthorised = useIsAuthorisedSelector();
-  const { isLocked } = useShelter();
+  const { isLocked } = useAppLock();
 
   return (
     <>
