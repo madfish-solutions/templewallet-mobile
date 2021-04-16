@@ -1,28 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button, Text, View } from 'react-native';
 import { Formik } from 'formik';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { useWalletSelector } from '../../store/wallet/wallet-selectors';
-import { useDispatch } from 'react-redux';
-import { createWalletActions } from '../../store/wallet/wallet-actions';
 import {
   CreateAccountFormValues,
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
+import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const CreateAccount = () => {
-  const dispatch = useDispatch();
-  const walletState = useWalletSelector();
+  const { createWallet } = useShelter();
 
-  useEffect(() => console.log(walletState), [walletState]);
-
-  const onSubmit = (data: CreateAccountFormValues) => {
-    dispatch(createWalletActions.submit(data.password));
-  };
+  const onSubmit = (data: CreateAccountFormValues) => createWallet(data.password);
 
   return (
     <ScreenContainer>

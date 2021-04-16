@@ -1,12 +1,14 @@
 import { NativeModules } from 'react-native';
 import { BinaryLike } from 'crypto';
+import { forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
-interface EncryptedData {
+export interface EncryptedData {
   cipher: string;
   iv: string;
 }
 
-interface EncryptedDataSalt {
+export interface EncryptedDataSalt {
   salt: string;
 }
 
@@ -24,34 +26,35 @@ const generateSalt = (): string => {
   return btoa(String.fromCharCode.apply(null, Array.from(view)));
 };
 
-const generateKey = (password: BinaryLike, salt: BinaryLike): Promise<string> =>
-  NativeModules.Aes.pbkdf2(password, salt, 5000, 256);
+const pbkdf2$ = (password: BinaryLike, salt: BinaryLike) =>
+  from<string>(NativeModules.Aes.pbkdf2(password, salt, 5000, 256));
 
-export const encryptString = async (str: string, password: string): Promise<EncryptedData & EncryptedDataSalt> => {
+const randomKey$ = () => from<string>(NativeModules.Aes.randomKey(16));
+
+const encrypt$ = (value: string, key: string, iv: string) => from<string>(NativeModules.Aes.encrypt(value, key, iv));
+
+export const encryptString$ = (value: string, password: string): Observable<EncryptedData & EncryptedDataSalt> => {
   const salt = generateSalt();
-  const key = await generateKey(password, salt);
 
-  const iv: string = await NativeModules.Aes.randomKey(16);
-  const result: EncryptedData = await NativeModules.Aes.encrypt(str, key, iv).then((cipher: string) => ({
-    cipher,
-    iv
-  }));
-
-  return { ...result, salt };
-};
-
-export const encryptObject = async (obj: Record<string, string>, password: string) =>
-  Promise.all(Object.entries(obj).map(async ([key, value]) => [key, await encryptString(value, password)])).then(
-    Object.fromEntries
+  return forkJoin([pbkdf2$(password, salt), randomKey$()]).pipe(
+    switchMap(([key, iv]) =>
+      encrypt$(value, key, iv).pipe(
+        map(cipher => ({
+          cipher,
+          iv,
+          salt
+        }))
+      )
+    )
   );
-
-export const decryptString = async (data: EncryptedData & EncryptedDataSalt, password: string): Promise<string> => {
-  const key = await generateKey(password, data.salt);
-
-  return NativeModules.Aes.decrypt(data.cipher, key, data.iv);
 };
 
-export const decryptObject = async (obj: Record<string, EncryptedData & EncryptedDataSalt>, password: string) =>
-  Promise.all(Object.entries(obj).map(async ([key, value]) => [key, await decryptString(value, password)])).then(
-    Object.fromEntries
+export const decryptString$ = (
+  data: EncryptedData & EncryptedDataSalt,
+  password: string
+): Observable<string | undefined> =>
+  pbkdf2$(password, data.salt).pipe(
+    switchMap(key =>
+      from<string>(NativeModules.Aes.decrypt(data.cipher, key, data.iv)).pipe(catchError(() => of(undefined)))
+    )
   );

@@ -1,20 +1,20 @@
 import React, { FC } from 'react';
-import { Button, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
 import { ScreenContainerStyles } from './screen-container.styles';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { GoBackButton } from './go-back-button/go-back-button';
 
-export const ScreenContainer: FC = ({ children }) => {
-  const { goBack } = useNavigation();
+interface Props {
+  hasBackButton?: boolean;
+}
 
-  return (
-    <View style={ScreenContainerStyles.root}>
-      <View style={ScreenContainerStyles.header}>
-        <InsetSubstitute />
-        <Button title="Back" onPress={goBack} />
-      </View>
-      <ScrollView contentContainerStyle={ScreenContainerStyles.scrollViewContentContainer}>{children}</ScrollView>
+export const ScreenContainer: FC<Props> = ({ hasBackButton = true, children }) => (
+  <View style={ScreenContainerStyles.root}>
+    <View style={ScreenContainerStyles.header}>
+      <InsetSubstitute />
+      {hasBackButton && <GoBackButton />}
     </View>
-  );
-};
+    <ScrollView contentContainerStyle={ScreenContainerStyles.scrollViewContentContainer}>{children}</ScrollView>
+  </View>
+);

@@ -7,4 +7,3 @@ export interface ImportAccountPayload {
 }
 
 export const importWalletActions = createActions<ImportAccountPayload, AccountInterface, string>('wallet/IMPORT');
-export const createWalletActions = createActions<string, AccountInterface, string>('wallet/CREATE');

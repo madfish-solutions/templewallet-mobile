@@ -6,20 +6,17 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ImportAccountStyles } from './import-account.styles';
 import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { useDispatch } from 'react-redux';
-import { importWalletActions } from '../../store/wallet/wallet-actions';
 import {
   ImportAccountFormValues,
   importAccountInitialValues,
   importAccountValidationSchema
 } from './import-account.form';
+import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const ImportAccount = () => {
-  const dispatch = useDispatch();
+  const { importWallet } = useShelter();
 
-  const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => {
-    dispatch(importWalletActions.submit({ seedPhrase, password }));
-  };
+  const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
 
   return (
     <ScreenContainer>
@@ -30,7 +27,6 @@ export const ImportAccount = () => {
         {({ submitForm }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
-
             <FormTextInput name="seedPhrase" multiline={true} />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
