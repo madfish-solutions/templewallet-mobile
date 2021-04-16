@@ -1,6 +1,7 @@
 import { mnemonicToSeedSync } from 'bip39';
-import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 import { mapTo, switchMap } from 'rxjs/operators';
+
+import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 import { Shelter } from './shelter';
 
 export const importWalletOperator$ = (seedPhrase: string, password: string) => {

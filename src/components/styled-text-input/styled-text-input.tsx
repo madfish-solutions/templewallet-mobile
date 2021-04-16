@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react';
 import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, TextInputProps } from 'react-native';
-import { StyledTextInputStyles } from './styled-text-input.styles';
+
 import { emptyFn } from '../../config/general';
+import { StyledTextInputStyles } from './styled-text-input.styles';
 
 export const StyledTextInput: FC<Omit<TextInputProps, 'style'>> = ({
   multiline,

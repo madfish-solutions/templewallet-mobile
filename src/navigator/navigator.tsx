@@ -1,15 +1,15 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
 
-import { ImportAccount } from '../screens/import-account/import-account';
-import { CreateAccount } from '../screens/create-account/create-account';
-import { ScreensEnum, ScreensParamList } from './screens.enum';
-import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
-import { WalletTabs } from './wallet-tabs';
+import { CreateAccount } from '../screens/create-account/create-account';
+import { EnterPassword } from '../screens/enter-password/enter-password';
+import { ImportAccount } from '../screens/import-account/import-account';
 import { Welcome } from '../screens/welcome/welcome';
-import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { ScreensEnum, ScreensParamList } from './screens.enum';
+import { WalletTabs } from './wallet-tabs';
 
 const Stack = createStackNavigator<ScreensParamList>();
 

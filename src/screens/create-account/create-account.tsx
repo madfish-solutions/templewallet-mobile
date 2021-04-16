@@ -1,16 +1,17 @@
+import { Formik } from 'formik';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { Formik } from 'formik';
+
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { ImportAccountStyles } from '../import-account/import-account.styles';
-import { FormTextInput } from '../../form/form-text-input';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { FormTextInput } from '../../form/form-text-input';
+import { useShelter } from '../../shelter/use-shelter.hook';
+import { ImportAccountStyles } from '../import-account/import-account.styles';
 import {
   CreateAccountFormValues,
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
-import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const CreateAccount = () => {
   const { createWallet } = useShelter();

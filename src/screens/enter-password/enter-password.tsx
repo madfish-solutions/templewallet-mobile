@@ -1,17 +1,17 @@
+import { Formik } from 'formik';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { Formik } from 'formik';
 
-import { EnterPasswordStyles } from './enter-password.styles';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
+import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
-import { useAppLock } from '../../shelter/use-app-lock.hook';
-import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
+import { EnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
   const { unlock } = useAppLock();

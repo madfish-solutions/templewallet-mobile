@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import { useField } from 'formik';
+import React, { FC } from 'react';
 
 import { ErrorMessage } from './error-message/error-message';
 

@@ -1,8 +1,8 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
 
-import { Wallet } from '../screens/wallet/wallet';
 import { Settings } from '../screens/settings/settings';
+import { Wallet } from '../screens/wallet/wallet';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
 
 const Tab = createBottomTabNavigator<ScreensParamList>();
