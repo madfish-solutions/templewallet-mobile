@@ -1,8 +1,8 @@
-import { Text } from 'react-native';
+import { FieldMetaProps } from 'formik';
 import React from 'react';
+import { Text } from 'react-native';
 
 import { ErrorMessageStyles } from './error-message.styles';
-import { FieldMetaProps } from 'formik';
 
 interface Props<T> {
   meta: FieldMetaProps<T>;

@@ -1,13 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { Middleware } from 'redux';
 import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { catchError } from 'rxjs/operators';
 
+import { rootStateReducer } from './root-state.reducers';
 import { walletsReducer } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
-import { catchError } from 'rxjs/operators';
-import { rootStateReducer } from './root-state.reducers';
 
 type RootState = WalletRootState;
 

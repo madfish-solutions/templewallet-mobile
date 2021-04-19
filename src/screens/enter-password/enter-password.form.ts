@@ -1,4 +1,5 @@
 import { object, SchemaOf, string } from 'yup';
+
 import { requiredErrorMessage } from '../../form/validation/shared';
 
 export type EnterPasswordFormValues = {

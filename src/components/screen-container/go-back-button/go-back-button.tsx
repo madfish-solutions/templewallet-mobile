@@ -1,5 +1,5 @@
-import { Button } from 'react-native';
 import React from 'react';
+import { Button } from 'react-native';
 
 import { useNavigation } from '../../../navigator/use-navigation.hook';
 

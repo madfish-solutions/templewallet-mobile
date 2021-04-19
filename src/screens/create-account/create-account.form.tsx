@@ -1,6 +1,7 @@
 import { object, SchemaOf } from 'yup';
-import { passwordConfirmationValidation, passwordValidation } from '../../form/validation/password';
+
 import { acceptTermsValidation } from '../../form/validation/accept-terms';
+import { passwordConfirmationValidation, passwordValidation } from '../../form/validation/password';
 
 export type CreateAccountFormValues = {
   password: string;

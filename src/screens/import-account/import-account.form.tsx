@@ -1,7 +1,8 @@
 import { object, SchemaOf } from 'yup';
-import { seedPhraseValidation } from '../../form/validation/seed-phrase';
-import { passwordConfirmationValidation, passwordValidation } from '../../form/validation/password';
+
 import { acceptTermsValidation } from '../../form/validation/accept-terms';
+import { passwordConfirmationValidation, passwordValidation } from '../../form/validation/password';
+import { seedPhraseValidation } from '../../form/validation/seed-phrase';
 
 export type ImportAccountFormValues = {
   seedPhrase: string;

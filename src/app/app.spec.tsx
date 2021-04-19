@@ -1,10 +1,11 @@
 import 'react-native';
 import React from 'react';
+// Note: react-test-renderer must be required after react-native.
+import { create } from 'react-test-renderer';
+
 import { App } from './app';
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
-
+// eslint-disable-next-line jest/expect-expect
 it('renders correctly', async () => {
-  renderer.create(<App />);
+  create(<App />);
 });

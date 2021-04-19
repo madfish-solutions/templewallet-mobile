@@ -1,9 +1,10 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
+
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { useShelter } from '../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
 import { WalletStyles } from './wallet.styles';
-import { useShelter } from '../../shelter/use-shelter.hook';
 
 export const Wallet = () => {
   const hdAccounts = useWalletSelector().hdAccounts;

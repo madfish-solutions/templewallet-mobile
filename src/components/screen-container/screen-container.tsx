@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
-import { ScreenContainerStyles } from './screen-container.styles';
 import { GoBackButton } from './go-back-button/go-back-button';
+import { ScreenContainerStyles } from './screen-container.styles';
 
 interface Props {
   hasBackButton?: boolean;

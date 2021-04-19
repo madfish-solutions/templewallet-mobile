@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { grey, step } from '../../config/styles';
 
 export const ScreenContainerStyles = StyleSheet.create({

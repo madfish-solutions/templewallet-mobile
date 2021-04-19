@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { step, white } from '../../config/styles';
 
 export const WalletStyles = StyleSheet.create({

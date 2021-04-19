@@ -1,12 +1,13 @@
-import { useDispatch } from 'react-redux';
 import { useEffect, useMemo } from 'react';
-import { Subject } from 'rxjs';
-import { ImportAccountPayload, importWalletActions } from '../store/wallet/wallet-actions';
-import { switchMap } from 'rxjs/operators';
 import { Alert } from 'react-native';
-import { importWalletOperator$ } from './wallet.util';
+import { useDispatch } from 'react-redux';
+import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
+import { ImportAccountPayload, importWalletActions } from '../store/wallet/wallet-actions';
 import { generateSeed } from '../utils/keys.util';
 import { Shelter } from './shelter';
+import { importWalletOperator$ } from './wallet.util';
 
 export const useShelter = () => {
   const dispatch = useDispatch();

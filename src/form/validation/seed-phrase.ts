@@ -1,5 +1,6 @@
-import { string } from 'yup';
 import { validateMnemonic } from 'bip39';
+import { string } from 'yup';
+
 import { requiredErrorMessage } from './shared';
 
 const eachWordSeparatedError = 'Each word separated with a single space';
