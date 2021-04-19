@@ -1,8 +1,9 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Alert, Button } from 'react-native';
-import { rootStateResetAction } from '../../../store/root-state.actions';
+import { useDispatch } from 'react-redux';
+
 import { red } from '../../../config/styles';
+import { rootStateResetAction } from '../../../store/root-state.actions';
 
 export const EraseDataButton = () => {
   const dispatch = useDispatch();

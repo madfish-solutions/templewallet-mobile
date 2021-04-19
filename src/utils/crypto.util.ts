@@ -1,5 +1,5 @@
-import { NativeModules } from 'react-native';
 import { BinaryLike } from 'crypto';
+import { NativeModules } from 'react-native';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 

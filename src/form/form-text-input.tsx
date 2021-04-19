@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
 import { useField } from 'formik';
+import React, { FC } from 'react';
 
 import { StyledTextInput } from '../components/styled-text-input/styled-text-input';
 import { ErrorMessage } from './error-message/error-message';

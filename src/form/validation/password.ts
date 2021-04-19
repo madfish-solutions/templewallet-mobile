@@ -1,4 +1,5 @@
 import { ref, string } from 'yup';
+
 import { requiredErrorMessage } from './shared';
 
 const atLeastOneLowerCaseLetterError = 'At least 1 lowercase letter';

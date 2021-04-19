@@ -1,11 +1,12 @@
+import Keychain from 'react-native-keychain';
+import { combineEpics } from 'redux-observable';
 import { from, Observable } from 'rxjs';
+import { map, mapTo, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
-import { combineEpics } from 'redux-observable';
-import { keychainResetSuccessAction, rootStateResetAction } from './root-state.actions';
-import { map, mapTo, switchMap } from 'rxjs/operators';
-import Keychain from 'react-native-keychain';
+
 import { APP_IDENTIFIER } from '../shelter/shelter';
+import { keychainResetSuccessAction, rootStateResetAction } from './root-state.actions';
 
 const rootStateResetEpic = (action$: Observable<Action>) =>
   action$.pipe(

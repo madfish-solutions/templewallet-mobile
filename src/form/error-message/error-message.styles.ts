@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { step, red, transparent } from '../../config/styles';
 
 export const ErrorMessageStyles = StyleSheet.create({

@@ -1,8 +1,9 @@
-import { BehaviorSubject, forkJoin, from, of } from 'rxjs';
 import * as Keychain from 'react-native-keychain';
 import { UserCredentials } from 'react-native-keychain';
-import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
+import { BehaviorSubject, forkJoin, from, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
+
+import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 
 export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
 const PASSWORD_CHECK_KEY = 'app-password';
