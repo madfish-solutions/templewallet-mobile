@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
+
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
+import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
 import { WalletStyles } from './wallet.styles';
-import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 
 export const Wallet = () => {
   const hdAccounts = useWalletSelector().hdAccounts;

@@ -9,4 +9,4 @@ export const useBottomSheet = () => {
   const onDismiss = () => setIsOpen(false);
 
   return { isOpen, open, close, onDismiss };
-}
+};

@@ -14,7 +14,7 @@ type RootState = WalletRootState;
 const epicMiddleware = createEpicMiddleware();
 const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
 
-if (__DEV__) {
+if (__DEV__ && !process.env.JEST_WORKER_ID) {
   const createDebugger = require('redux-flipper').default;
   middlewares.push(createDebugger());
 }
