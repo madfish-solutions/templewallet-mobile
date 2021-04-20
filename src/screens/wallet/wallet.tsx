@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
-
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
 import { WalletStyles } from './wallet.styles';
+import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 
 export const Wallet = () => {
   const hdAccounts = useWalletSelector().hdAccounts;
   const { revealValue } = useShelter();
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleOpenButtonPress = () => setIsOpen(true);
-  const handleCloseButtonPress = () => setIsOpen(false);
+  const { isOpen, open, close, onDismiss } = useBottomSheet();
 
   return (
     <ScreenContainer hasBackButton={false}>
-      <Button title="Open" onPress={handleOpenButtonPress} />
-      <Button title="Close" onPress={handleCloseButtonPress} />
-      <BottomSheet isOpen={isOpen} />
+      <Button title="Open Bottom Sheet" onPress={open} />
+      <Button title="Close Bottom Sheet" onPress={close} />
+
+      <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
+        <Text>Awesome 🎉</Text>
+      </BottomSheet>
 
       <Text>List of your wallets:</Text>
       <Text style={WalletStyles.description}>(press to reveal your private key)</Text>

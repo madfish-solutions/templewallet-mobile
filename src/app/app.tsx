@@ -1,9 +1,7 @@
-import 'react-native-gesture-handler';
-
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
-import { PortalProvider } from 'react-native-portal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
@@ -19,15 +17,15 @@ export const App = () => {
 
   return (
     <SafeAreaProvider>
-      <PortalProvider>
-        <Provider store={store}>
-          <PersistGate persistor={persistor} loading={null}>
+      <Provider store={store}>
+        <PersistGate persistor={persistor} loading={null}>
+          <BottomSheetModalProvider>
             <NavigationContainer>
               <Navigator />
             </NavigationContainer>
-          </PersistGate>
-        </Provider>
-      </PortalProvider>
+          </BottomSheetModalProvider>
+        </PersistGate>
+      </Provider>
     </SafeAreaProvider>
   );
 };

@@ -1,39 +1,33 @@
+import { BottomSheetModal, } from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useRef } from 'react';
-import { Text, useWindowDimensions, View } from 'react-native';
-import { BlackPortal } from 'react-native-portal';
-import ReanimatedBottomSheet from 'reanimated-bottom-sheet';
+import { useWindowDimensions, View } from 'react-native';
 
-import { white } from '../../config/styles';
+import { EmptyFn } from '../../config/general';
+import { step } from '../../config/styles';
 import { isDefined } from '../../utils/is-defined';
-
-export const BOTTOM_SHEET_PORTAL_NAME = 'bottom-sheet';
+import { BottomSheetStyles } from './bottom-sheet.styles';
 
 interface Props {
   isOpen: boolean;
+  onDismiss: EmptyFn;
 }
 
-export const BottomSheet: FC<Props> = ({ isOpen }) => {
-  const sheetRef = useRef<ReanimatedBottomSheet>(null);
-  const height = useWindowDimensions().height - 80;
+export const BottomSheet: FC<Props> = ({ isOpen, onDismiss, children }) => {
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const height = useWindowDimensions().height - 10 * step;
 
-  useEffect(() => void (isDefined(sheetRef.current) && sheetRef.current.snapTo(isOpen ? 0 : 1)), [isOpen]);
-
-  const renderContent = () => (
-    <View style={{ height: '100%', backgroundColor: white }}>
-      <Text>Hello</Text>
-    </View>
+  useEffect(
+    () =>
+      void (
+        isDefined(bottomSheetModalRef.current) &&
+        (isOpen ? bottomSheetModalRef.current.present() : bottomSheetModalRef.current.dismiss())
+      ),
+    [isOpen]
   );
 
   return (
-    <BlackPortal name={BOTTOM_SHEET_PORTAL_NAME}>
-      <ReanimatedBottomSheet
-        ref={sheetRef}
-        initialSnap={0}
-        snapPoints={[height, 0]}
-        callbackThreshold={0.4}
-        enabledContentTapInteraction={false}
-        renderContent={renderContent}
-      />
-    </BlackPortal>
+    <BottomSheetModal ref={bottomSheetModalRef} index={1} snapPoints={[0, height]} onDismiss={onDismiss}>
+      <View style={BottomSheetStyles.contentContainer}>{children}</View>
+    </BottomSheetModal>
   );
 };
