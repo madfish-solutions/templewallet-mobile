@@ -39,8 +39,6 @@ export const Navigator = () => {
           {isConfirmation && <ConfirmationWindow />}
         </>
       )}
-
-      {/*<WhitePortal name={BOTTOM_SHEET_PORTAL_NAME} />*/}
     </>
   );
 };
