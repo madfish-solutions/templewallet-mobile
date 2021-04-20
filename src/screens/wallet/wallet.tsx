@@ -1,5 +1,6 @@
-import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Button, Text, TouchableOpacity } from 'react-native';
+import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useShelter } from '../../shelter/use-shelter.hook';
@@ -10,8 +11,17 @@ export const Wallet = () => {
   const hdAccounts = useWalletSelector().hdAccounts;
   const { revealValue } = useShelter();
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenButtonPress = () => setIsOpen(true);
+  const handleCloseButtonPress = () => setIsOpen(false);
+
   return (
     <ScreenContainer hasBackButton={false}>
+      <Button title="Open" onPress={handleOpenButtonPress} />
+      <Button title="Close" onPress={handleCloseButtonPress} />
+      <BottomSheet isOpen={isOpen} />
+
       <Text>List of your wallets:</Text>
       <Text style={WalletStyles.description}>(press to reveal your private key)</Text>
 
