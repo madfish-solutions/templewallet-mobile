@@ -3,6 +3,7 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
+import { PortalProvider } from 'react-native-portal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
@@ -18,13 +19,15 @@ export const App = () => {
 
   return (
     <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={null}>
-          <NavigationContainer>
-            <Navigator />
-          </NavigationContainer>
-        </PersistGate>
-      </Provider>
+      <PortalProvider>
+        <Provider store={store}>
+          <PersistGate persistor={persistor} loading={null}>
+            <NavigationContainer>
+              <Navigator />
+            </NavigationContainer>
+          </PersistGate>
+        </Provider>
+      </PortalProvider>
     </SafeAreaProvider>
   );
 };

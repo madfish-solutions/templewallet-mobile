@@ -1,6 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { WhitePortal } from 'react-native-portal';
 
+import { BOTTOM_SHEET_PORTAL_NAME } from '../components/bottom-sheet/bottom-sheet';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { EnterPassword } from '../screens/enter-password/enter-password';
@@ -39,6 +41,8 @@ export const Navigator = () => {
           {isConfirmation && <ConfirmationWindow />}
         </>
       )}
+
+      <WhitePortal name={BOTTOM_SHEET_PORTAL_NAME} />
     </>
   );
 };
