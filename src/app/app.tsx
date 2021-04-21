@@ -1,5 +1,4 @@
-import 'react-native-gesture-handler';
-
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
@@ -20,9 +19,11 @@ export const App = () => {
     <SafeAreaProvider>
       <Provider store={store}>
         <PersistGate persistor={persistor} loading={null}>
-          <NavigationContainer>
-            <Navigator />
-          </NavigationContainer>
+          <BottomSheetModalProvider>
+            <NavigationContainer>
+              <Navigator />
+            </NavigationContainer>
+          </BottomSheetModalProvider>
         </PersistGate>
       </Provider>
     </SafeAreaProvider>

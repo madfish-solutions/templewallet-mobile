@@ -1,6 +1,8 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Button, Text, TouchableOpacity } from 'react-native';
 
+import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
+import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../store/wallet/wallet-selectors';
@@ -10,8 +12,17 @@ export const Wallet = () => {
   const hdAccounts = useWalletSelector().hdAccounts;
   const { revealValue } = useShelter();
 
+  const { isOpen, open, close, onDismiss } = useBottomSheet();
+
   return (
     <ScreenContainer hasBackButton={false}>
+      <Button title="Open Bottom Sheet" onPress={open} />
+      <Button title="Close Bottom Sheet" onPress={close} />
+
+      <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
+        <Text>Awesome 🎉</Text>
+      </BottomSheet>
+
       <Text>List of your wallets:</Text>
       <Text style={WalletStyles.description}>(press to reveal your private key)</Text>
 
