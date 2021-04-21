@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { step, white } from '../../config/styles';
 
-export const WalletStyles = StyleSheet.create({
+export const SettingsStyles = StyleSheet.create({
   description: {
     fontSize: step,
     marginBottom: 2 * step

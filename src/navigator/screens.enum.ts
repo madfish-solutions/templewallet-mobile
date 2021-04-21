@@ -5,7 +5,6 @@ export enum ScreensEnum {
   EnterPassword = 'EnterPassword',
   ConfirmationWindow = 'ConfirmationWindow',
   Wallet = 'Wallet',
-  Home = 'Home',
   Settings = 'Settings'
 }
 
@@ -16,6 +15,5 @@ export type ScreensParamList = {
   [ScreensEnum.EnterPassword]: undefined;
   [ScreensEnum.ConfirmationWindow]: undefined;
   [ScreensEnum.Wallet]: undefined;
-  [ScreensEnum.Home]: undefined;
   [ScreensEnum.Settings]: { userId: string };
 };
