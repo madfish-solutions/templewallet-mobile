@@ -31,6 +31,7 @@
     "@taquito/utils": "^8.1.0",
     "@tradle/react-native-http": "^2.0.1",
     "asyncstorage-down": "^4.2.0",
+    "axios": "^0.21.1",
     "base-64": "^1.0.0",
     "bip39": "^3.0.3",
     "buffer": "^4.9.2",

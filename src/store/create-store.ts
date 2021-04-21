@@ -5,11 +5,13 @@ import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObser
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import { catchError } from 'rxjs/operators';
 
+import { assetsReducer } from './assets/assets-reducers';
+import { AssetsRootState } from './assets/assets-state';
 import { rootStateReducer } from './root-state.reducers';
 import { walletsReducer } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState;
+type RootState = WalletRootState & AssetsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
@@ -26,7 +28,8 @@ const persistConfig = {
 };
 
 const rootReducer = rootStateReducer({
-  wallet: walletsReducer
+  wallet: walletsReducer,
+  assets: assetsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
