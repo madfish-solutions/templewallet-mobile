@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { black, blue, darkOrange, greyLight, orangeLight, step, white } from '../../config/styles';
 
-export const HomeStyles = StyleSheet.create({
+export const WalletStyles = StyleSheet.create({
   accountInfo: {
     marginBottom: step * 5
   },

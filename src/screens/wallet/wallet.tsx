@@ -8,9 +8,9 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { loadAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
-import { HomeStyles } from './home.styles';
+import { WalletStyles } from './wallet.styles';
 
-export const Home = () => {
+export const Wallet = () => {
   const firstAccount = useFirstAccountSelector();
   const assets = useAssetsSelector();
 
@@ -27,22 +27,22 @@ export const Home = () => {
     <>
       <ScreenContainer hasBackButton={false}>
         <Button onPress={getAcc} title={'send'} />
-        <TouchableOpacity style={HomeStyles.accountInfo} onPress={() => null}>
-          <Text style={HomeStyles.accountName}>{firstAccount.name}</Text>
-          <Text style={HomeStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
+        <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
+          <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
+          <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
         </TouchableOpacity>
-        <Text style={HomeStyles.amount}>1 000.00 XTZ</Text>
-        <Text style={HomeStyles.formatted}>= 88 000.00 $</Text>
-        <View style={HomeStyles.buttonRow}>
+        <Text style={WalletStyles.amount}>1 000.00 XTZ</Text>
+        <Text style={WalletStyles.formatted}>= 88 000.00 $</Text>
+        <View style={WalletStyles.buttonRow}>
           <TouchableOpacity onPress={open}>
-            <Text style={HomeStyles.button}>Receive</Text>
+            <Text style={WalletStyles.button}>Receive</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => null}>
-            <Text style={HomeStyles.button}>Send</Text>
+            <Text style={WalletStyles.button}>Send</Text>
           </TouchableOpacity>
         </View>
         {assets.map(({ token_id, name, balance }) => (
-          <TouchableOpacity key={token_id} style={HomeStyles.accountItem} onPress={() => null}>
+          <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={() => null}>
             <Text>{name}</Text>
             <Text>{balance}</Text>
           </TouchableOpacity>
