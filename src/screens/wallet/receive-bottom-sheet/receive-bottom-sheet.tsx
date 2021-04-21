@@ -1,5 +1,6 @@
+import { useClipboard } from '@react-native-clipboard/clipboard';
 import React, { FC } from 'react';
-import { Button, Text, Clipboard, View } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
@@ -13,9 +14,10 @@ interface Props extends BottomSheetProps {
 }
 
 export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) => {
+  const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
-  const handleCopyToClipboard = () => Clipboard.setString(publicKeyHash);
+  const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
     <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
