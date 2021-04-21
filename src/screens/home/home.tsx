@@ -3,7 +3,6 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { network } from '../../config/general';
 import { loadAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -15,9 +14,7 @@ export const Home = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(loadAssetsActions.submit({ network, address: firstAccount.publicKeyHash, size: 10, offset: 0 }));
-  }, []);
+  useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
     <ScreenContainer hasBackButton={false}>

@@ -1,13 +1,3 @@
-export type BcdNetwork = 'mainnet' | 'edo2net' | 'florencenet' | 'delphinet';
-
-export interface GetAssetsParams {
-  network: BcdNetwork;
-  address: string;
-  offset?: number;
-  size?: number;
-  contract?: string;
-}
-
 export interface AssetsInterface {
   network: string;
   balance: string;

@@ -1,13 +1,17 @@
 import { AssetsInterface } from '../../interfaces/assets.interface';
 import { LoadableEntityState } from '../types';
 
-export interface AssetsState extends LoadableEntityState<AssetsInterface[]> {}
+export interface AssetsState {
+  tokens: LoadableEntityState<AssetsInterface[]>;
+}
 
 export const AssetsInitialState: AssetsState = {
-  data: [],
-  isLoading: false
+  tokens: {
+    data: [],
+    isLoading: false
+  }
 };
 
 export interface AssetsRootState {
-  assets: LoadableEntityState<AssetsInterface[]>;
+  assets: AssetsState;
 }

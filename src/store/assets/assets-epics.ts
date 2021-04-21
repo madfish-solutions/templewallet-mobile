@@ -3,14 +3,14 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { requestGetAssets } from '../../api.service';
+import { getAssetsRequest$ } from '../../api.service';
 import { loadAssetsActions } from './assets-actions';
 
 export const loadAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadAssetsActions.submit),
     toPayload(),
-    switchMap(payload => requestGetAssets(payload)),
-    map(data => loadAssetsActions.success(data.balances)),
+    switchMap(getAssetsRequest$),
+    map(response => loadAssetsActions.success(response.data.balances)),
     catchError(err => of(loadAssetsActions.fail(err)))
   );

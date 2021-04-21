@@ -1,14 +1,18 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { from, Observable } from 'rxjs';
 
-import { AssetsResponse, GetAssetsParams } from './interfaces/assets.interface';
+import { network } from './config/general';
+import { AssetsResponse } from './interfaces/assets.interface';
 
-export const BASE_URL = 'https://api.better-call.dev/v1';
-export const api = axios.create({ baseURL: BASE_URL });
+const BASE_URL = 'https://api.better-call.dev/v1';
+const api = axios.create({ baseURL: BASE_URL });
 
-export async function requestGetAssets(params: GetAssetsParams): Promise<AssetsResponse> {
-  const { network, address, ...queryParams } = params;
-  const r = await api.get(`/account/${network}/${address}/token_balances`, {
-    params: queryParams
-  });
-  return r.data;
-}
+export const getAssetsRequest$ = (address: string): Observable<AxiosResponse<AssetsResponse>> =>
+  from(
+    api.get(`/account/${network}/${address}/token_balances`, {
+      params: {
+        size: 10,
+        offset: 0
+      }
+    })
+  );
