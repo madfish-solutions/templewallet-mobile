@@ -10,7 +10,10 @@ export const loadAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadAssetsActions.submit),
     toPayload(),
-    switchMap(getAssetsRequest$),
-    map(response => loadAssetsActions.success(response.data.balances)),
-    catchError(err => of(loadAssetsActions.fail(err)))
+    switchMap(payload =>
+      getAssetsRequest$(payload).pipe(
+        map(response => loadAssetsActions.success(response.data.balances)),
+        catchError(err => of(loadAssetsActions.fail(err.response.data.message)))
+      )
+    )
   );

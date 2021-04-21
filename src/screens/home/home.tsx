@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { Button, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -14,10 +14,15 @@ export const Home = () => {
 
   const dispatch = useDispatch();
 
+  const getAcc = useCallback(() => {
+    dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash));
+  }, []);
+
   useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
     <ScreenContainer hasBackButton={false}>
+      <Button onPress={getAcc} title={'send'} />
       <TouchableOpacity style={HomeStyles.accountInfo} onPress={() => null}>
         <Text style={HomeStyles.accountName}>{firstAccount.name}</Text>
         <Text style={HomeStyles.accountKey}>{firstAccount.publicKeyHash}</Text>

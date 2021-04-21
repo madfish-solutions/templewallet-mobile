@@ -4,4 +4,4 @@ import { AssetsInterface } from '../../interfaces/assets.interface';
 import { AssetsRootState } from './assets-state';
 
 export const useAssetsSelector = () =>
-  useSelector<AssetsRootState, AssetsInterface[]>(rootState => rootState.assets.data);
+  useSelector<AssetsRootState, AssetsInterface[]>(rootState => rootState.assets.tokens.data);
