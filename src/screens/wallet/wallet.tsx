@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import { Button, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
@@ -17,22 +17,17 @@ export const Wallet = () => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose, onDismiss } = useBottomSheet();
 
-  const getAcc = useCallback(() => {
-    dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash));
-  }, []);
-
   useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
     <>
       <ScreenContainer hasBackButton={false}>
-        <Button onPress={getAcc} title={'send'} />
         <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
           <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
           <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
         </TouchableOpacity>
-        <Text style={WalletStyles.amount}>1 000.00 XTZ</Text>
-        <Text style={WalletStyles.formatted}>= 88 000.00 $</Text>
+        <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
+        <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
         <View style={WalletStyles.buttonRow}>
           <TouchableOpacity onPress={onOpen}>
             <Text style={WalletStyles.button}>Receive</Text>
