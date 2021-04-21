@@ -24,7 +24,7 @@ if (__DEV__) {
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage: AsyncStorage,
+  storage: AsyncStorage
 };
 
 const rootReducer = rootStateReducer({

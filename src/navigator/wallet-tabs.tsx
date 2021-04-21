@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 
+import { Home } from '../screens/home/home';
 import { Settings } from '../screens/settings/settings';
 import { Wallet } from '../screens/wallet/wallet';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
-import { Home } from '../screens/home/home';
 
 const Tab = createBottomTabNavigator<ScreensParamList>();
 

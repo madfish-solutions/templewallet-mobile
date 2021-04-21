@@ -16,6 +16,7 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'never'],
     'no-void': 'off',
+    'react-hooks/exhaustive-deps': 'off',
     'import/order': [
       'error',
       {
