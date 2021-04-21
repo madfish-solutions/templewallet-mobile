@@ -9,13 +9,14 @@ import { loadAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
 import { WalletStyles } from './wallet.styles';
+import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 
 export const Wallet = () => {
   const firstAccount = useFirstAccountSelector();
   const assets = useAssetsSelector();
 
   const dispatch = useDispatch();
-  const { isOpen, open, onDismiss } = useBottomSheet();
+  const { isOpen, onOpen, onClose, onDismiss } = useBottomSheet();
 
   const getAcc = useCallback(() => {
     dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash));
@@ -34,7 +35,7 @@ export const Wallet = () => {
         <Text style={WalletStyles.amount}>1 000.00 XTZ</Text>
         <Text style={WalletStyles.formatted}>= 88 000.00 $</Text>
         <View style={WalletStyles.buttonRow}>
-          <TouchableOpacity onPress={open}>
+          <TouchableOpacity onPress={onOpen}>
             <Text style={WalletStyles.button}>Receive</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => null}>
@@ -49,9 +50,7 @@ export const Wallet = () => {
         ))}
       </ScreenContainer>
 
-      <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
-        <Text>Awesome 🎉</Text>
-      </BottomSheet>
+      <ReceiveBottomSheet isOpen={isOpen} onClose={onClose} onDismiss={onDismiss} />
     </>
   );
 };
