@@ -2,14 +2,13 @@ import React, { useCallback, useEffect } from 'react';
 import { Button, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
-import { WalletStyles } from './wallet.styles';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
+import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const firstAccount = useFirstAccountSelector();
