@@ -1,9 +1,5 @@
+import { createAction } from '@reduxjs/toolkit';
+
 import { AccountInterface } from '../../interfaces/account.interface';
-import { createActions } from '../create-actions';
 
-export interface ImportAccountPayload {
-  seedPhrase: string;
-  password: string;
-}
-
-export const importWalletActions = createActions<ImportAccountPayload, AccountInterface, string>('wallet/IMPORT');
+export const addHdAccount = createAction<AccountInterface>('wallet/ADD-HD-ACCOUNT');

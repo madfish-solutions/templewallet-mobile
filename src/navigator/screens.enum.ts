@@ -14,7 +14,7 @@ export type WalletStackScreensParamList = {
 };
 
 export type SettingsStackScreensParamList = {
-  [ScreensEnum.Settings]: { userId: string };
+  [ScreensEnum.Settings]: undefined;
   [ScreensEnum.CreateHdAccount]: undefined;
 };
 

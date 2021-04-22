@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Text } from 'react-native';
 
 import { FormTextInput } from '../../form/form-text-input';
+import { useShelter } from '../../shelter/use-shelter.hook';
 import {
   CreateHdAccountFormValues,
   createHdAccountInitialValues,
@@ -10,7 +11,9 @@ import {
 } from './create-hd-account.form';
 
 export const CreateHdAccount = () => {
-  const onSubmit = ({ name }: CreateHdAccountFormValues) => console.log(name);
+  const { createHdAccount } = useShelter();
+
+  const onSubmit = ({ name }: CreateHdAccountFormValues) => createHdAccount(name);
 
   return (
     <Formik
