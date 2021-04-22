@@ -5,8 +5,20 @@ export enum ScreensEnum {
   EnterPassword = 'EnterPassword',
   ConfirmationWindow = 'ConfirmationWindow',
   Wallet = 'Wallet',
-  Settings = 'Settings'
+  Settings = 'Settings',
+  CreateHdAccount = 'CreateHdAccount'
 }
+
+export type WalletStackScreensParamList = {
+  [ScreensEnum.Wallet]: undefined;
+};
+
+export type SettingsStackScreensParamList = {
+  [ScreensEnum.Settings]: { userId: string };
+  [ScreensEnum.CreateHdAccount]: undefined;
+};
+
+export type TabScreensParamList = WalletStackScreensParamList & SettingsStackScreensParamList;
 
 export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
@@ -14,6 +26,4 @@ export type ScreensParamList = {
   [ScreensEnum.CreateAccount]: undefined;
   [ScreensEnum.EnterPassword]: undefined;
   [ScreensEnum.ConfirmationWindow]: undefined;
-  [ScreensEnum.Wallet]: undefined;
-  [ScreensEnum.Settings]: { userId: string };
-};
+} & TabScreensParamList;
