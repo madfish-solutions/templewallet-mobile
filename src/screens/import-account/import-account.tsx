@@ -38,9 +38,7 @@ export const ImportAccount = () => {
             <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
             <FormCheckbox name="acceptTerms" />
 
-            <View>
-              <Button title="Import" onPress={submitForm} />
-            </View>
+            <Button title="Import" onPress={submitForm} />
           </>
         )}
       </Formik>
