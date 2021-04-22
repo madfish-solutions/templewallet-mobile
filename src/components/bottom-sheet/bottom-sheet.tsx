@@ -7,12 +7,12 @@ import { step } from '../../config/styles';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheetStyles } from './bottom-sheet.styles';
 
-interface Props {
+export interface BottomSheetProps {
   isOpen: boolean;
   onDismiss: EmptyFn;
 }
 
-export const BottomSheet: FC<Props> = ({ isOpen, onDismiss, children }) => {
+export const BottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, children }) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const height = useWindowDimensions().height - 10 * step;
 

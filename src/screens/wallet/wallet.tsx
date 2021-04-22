@@ -1,44 +1,50 @@
-import React from 'react';
-import { Button, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
-import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { useShelter } from '../../shelter/use-shelter.hook';
-import { useWalletSelector } from '../../store/wallet/wallet-selectors';
+import { loadAssetsActions } from '../../store/assets/assets-actions';
+import { useAssetsSelector } from '../../store/assets/assets-selectors';
+import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
+import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
-  const hdAccounts = useWalletSelector().hdAccounts;
-  const { revealValue } = useShelter();
+  const firstAccount = useFirstAccountSelector();
+  const assets = useAssetsSelector();
 
-  const { isOpen, open, close, onDismiss } = useBottomSheet();
+  const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose, onDismiss } = useBottomSheet();
+
+  useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
-    <ScreenContainer hasBackButton={false}>
-      <Button title="Open Bottom Sheet" onPress={open} />
-      <Button title="Close Bottom Sheet" onPress={close} />
-
-      <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
-        <Text>Awesome 🎉</Text>
-      </BottomSheet>
-
-      <Text>List of your wallets:</Text>
-      <Text style={WalletStyles.description}>(press to reveal your private key)</Text>
-
-      <TouchableOpacity style={WalletStyles.accountItem} onPress={() => revealValue('seedPhrase')}>
-        <Text>Seed phrase</Text>
-      </TouchableOpacity>
-
-      {hdAccounts.map(({ name, publicKeyHash }) => (
-        <TouchableOpacity
-          key={publicKeyHash}
-          style={WalletStyles.accountItem}
-          onPress={() => revealValue(publicKeyHash)}>
-          <Text>{name}</Text>
-          <Text>{publicKeyHash}</Text>
+    <>
+      <ScreenContainer hasBackButton={false}>
+        <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
+          <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
+          <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
         </TouchableOpacity>
-      ))}
-    </ScreenContainer>
+        <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
+        <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
+        <View style={WalletStyles.buttonRow}>
+          <TouchableOpacity onPress={onOpen}>
+            <Text style={WalletStyles.button}>Receive</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => null}>
+            <Text style={WalletStyles.button}>Send</Text>
+          </TouchableOpacity>
+        </View>
+        {assets.map(({ token_id, name, balance }) => (
+          <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={() => null}>
+            <Text>{name}</Text>
+            <Text>{balance}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScreenContainer>
+
+      <ReceiveBottomSheet isOpen={isOpen} onClose={onClose} onDismiss={onDismiss} />
+    </>
   );
 };

@@ -21,6 +21,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^2.3.0",
     "@react-native-async-storage/async-storage": "^1.15.2",
+    "@react-native-clipboard/clipboard": "^1.7.0",
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.8",
@@ -49,6 +50,7 @@
     "react-native-keychain": "^7.0.0",
     "react-native-level-fs": "^3.0.1",
     "react-native-os": "^1.2.6",
+    "react-native-qrcode-svg": "^6.1.1",
     "react-native-randombytes": "^3.6.0",
     "react-native-reanimated": "^1.13.3",
     "react-native-safe-area-context": "^3.2.0",
