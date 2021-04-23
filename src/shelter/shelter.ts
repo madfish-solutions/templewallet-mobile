@@ -1,9 +1,8 @@
 import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
 import * as Keychain from 'react-native-keychain';
-import { UserCredentials } from 'react-native-keychain';
-import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
-import { filter, map, mapTo, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
@@ -30,17 +29,20 @@ export class Shelter {
                 Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
               )
             )
-          )
+          ),
+          switchMap(result => (result === false ? throwError('Failed to save sensitive data') : of(result)))
         )
       )
     );
 
   private static decryptSensitiveData$ = (key: string, password: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
-      filter((rawKeychainData): rawKeychainData is UserCredentials => rawKeychainData !== false),
+      switchMap(rawKeychainData =>
+        rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
+      ),
       map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData => decryptString$(keychainData, password)),
-      filter((decryptedString): decryptedString is string => decryptedString !== undefined)
+      switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
   static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
@@ -60,7 +62,7 @@ export class Shelter {
       })
     );
 
-  static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface> => {
+  static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface | undefined> => {
     Shelter._password$.next(password);
 
     const seed = mnemonicToSeedSync(seedPhrase);
@@ -79,11 +81,12 @@ export class Shelter {
             publicKeyHash
           })
         )
-      )
+      ),
+      catchError(() => of(undefined))
     );
   };
 
-  static createHdAccount$ = (name: string, accountIndex: number): Observable<AccountInterface> =>
+  static createHdAccount$ = (name: string, accountIndex: number): Observable<AccountInterface | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
@@ -98,7 +101,8 @@ export class Shelter {
                 publicKeyHash
               })
             )
-          )
+          ),
+          catchError(() => of(undefined))
         );
       })
     );
@@ -106,7 +110,8 @@ export class Shelter {
   static revealSecretKey$ = (publicKeyHash: string) =>
     Shelter.decryptSensitiveData$(publicKeyHash, Shelter._password$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
-      switchMap(signer => signer.secretKey())
+      switchMap(signer => signer.secretKey()),
+      catchError(() => of(undefined))
     );
 
   static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._password$.getValue());

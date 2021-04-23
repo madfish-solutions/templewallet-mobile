@@ -26,19 +26,25 @@ export const useShelter = () => {
     const subscriptions = [
       importWallet$
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
-        .subscribe(publicData => dispatch(addHdAccount(publicData))),
+        .subscribe(publicData => {
+          if (publicData !== undefined) {
+            dispatch(addHdAccount(publicData));
+          }
+        }),
       createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
       createHdAccount$
         .pipe(switchMap(name => Shelter.createHdAccount$(name, wallet.hdAccounts.length)))
         .subscribe(publicData => {
-          dispatch(addHdAccount(publicData));
-          navigate(ScreensEnum.Settings);
+          if (publicData !== undefined) {
+            dispatch(addHdAccount(publicData));
+            navigate(ScreensEnum.Settings);
+          }
         }),
 
       merge(
         revealSecretKey$.pipe(switchMap(publicKeyHash => Shelter.revealSecretKey$(publicKeyHash))),
         revealSeedPhrase$.pipe(switchMap(() => Shelter.revealSeedPhrase$()))
-      ).subscribe(value => Alert.alert(value, '', [{ text: 'OK' }]))
+      ).subscribe(value => Alert.alert(value ?? 'Empty', '', [{ text: 'OK' }]))
     ];
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
