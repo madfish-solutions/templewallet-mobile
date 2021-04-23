@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { decode, encode } from 'base-64';
 
 if (!global.btoa) {
