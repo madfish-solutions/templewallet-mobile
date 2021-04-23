@@ -1,3 +1,4 @@
+import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
 import * as Keychain from 'react-native-keychain';
 import { UserCredentials } from 'react-native-keychain';
@@ -38,7 +39,8 @@ export class Shelter {
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
       filter((rawKeychainData): rawKeychainData is UserCredentials => rawKeychainData !== false),
       map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
-      switchMap(keychainData => decryptString$(keychainData, password))
+      switchMap(keychainData => decryptString$(keychainData, password)),
+      filter((decryptedString): decryptedString is string => decryptedString !== undefined)
     );
 
   static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
@@ -101,8 +103,11 @@ export class Shelter {
       })
     );
 
-  static revealValue$ = (key: string) => Shelter.decryptSensitiveData$(key, Shelter._password$.getValue());
+  static revealSecretKey$ = (publicKeyHash: string) =>
+    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._password$.getValue()).pipe(
+      switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
+      switchMap(signer => signer.secretKey())
+    );
 
-  static revealSeedPhrase$ = () =>
-    Shelter.revealValue$('seedPhrase').pipe(filter((seedPhrase): seedPhrase is string => seedPhrase !== undefined));
+  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._password$.getValue());
 }

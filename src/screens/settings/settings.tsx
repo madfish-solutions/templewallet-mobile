@@ -12,7 +12,7 @@ import { SettingsStyles } from './settings.styles';
 export const Settings = () => {
   const { navigate } = useNavigation();
   const { lock } = useAppLock();
-  const { revealValue } = useShelter();
+  const { revealSecretKey, revealSeedPhrase } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
   return (
@@ -22,7 +22,7 @@ export const Settings = () => {
       <Text>List of your HD accounts:</Text>
       <Text style={SettingsStyles.description}>(press to reveal your private key)</Text>
 
-      <TouchableOpacity style={SettingsStyles.accountItem} onPress={() => revealValue('seedPhrase')}>
+      <TouchableOpacity style={SettingsStyles.accountItem} onPress={() => revealSeedPhrase()}>
         <Text>Seed phrase</Text>
       </TouchableOpacity>
 
@@ -30,7 +30,7 @@ export const Settings = () => {
         <TouchableOpacity
           key={publicKeyHash}
           style={SettingsStyles.accountItem}
-          onPress={() => revealValue(publicKeyHash)}>
+          onPress={() => revealSecretKey(publicKeyHash)}>
           <Text>{name}</Text>
           <Text>{publicKeyHash}</Text>
         </TouchableOpacity>
