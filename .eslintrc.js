@@ -1,13 +1,15 @@
 module.exports = {
   root: true,
+  parser: '@typescript-eslint/parser',
   extends: [
     '@react-native-community',
-    'plugin:jest/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:import/typescript'
+    'plugin:import/typescript',
+    'plugin:jest/recommended'
   ],
-  plugins: ['jest', 'import'],
+  plugins: ['@typescript-eslint', 'import', 'jest'],
   settings: {
     'import/resolver': {
       typescript: {}
@@ -16,6 +18,7 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'never'],
     'no-void': 'off',
+    'no-shadow': 'off',
     'react-hooks/exhaustive-deps': 'off',
     'import/order': [
       'error',
@@ -34,7 +37,8 @@ module.exports = {
         },
         'newlines-between': 'always'
       }
-    ]
+    ],
+    '@typescript-eslint/explicit-module-boundary-types': 'off'
   },
   globals: {
     localStorage: true,

@@ -1,4 +1,4 @@
-const { getDefaultConfig } = require('metro-config');
+import { getDefaultConfig } from 'metro-config';
 
 module.exports = (async () => {
   const {
