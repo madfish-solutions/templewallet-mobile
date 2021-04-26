@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
 
+import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
@@ -20,7 +21,9 @@ export const EnterPassword = () => {
 
   return (
     <View style={EnterPasswordStyles.root}>
-      <ScreenContainer hasBackButton={false}>
+      <InsetSubstitute />
+
+      <ScreenContainer>
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}

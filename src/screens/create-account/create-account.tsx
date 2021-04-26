@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Button, Text } from 'react-native';
 
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
@@ -18,7 +19,7 @@ export const CreateAccount = () => {
   const onSubmit = (data: CreateAccountFormValues) => createWallet(data.password);
 
   return (
-    <>
+    <ScreenContainer>
       <Formik
         initialValues={createAccountInitialValues}
         validationSchema={createAccountValidationSchema}
@@ -38,6 +39,6 @@ export const CreateAccount = () => {
           </>
         )}
       </Formik>
-    </>
+    </ScreenContainer>
   );
 };
