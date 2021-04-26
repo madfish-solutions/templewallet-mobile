@@ -1,4 +1,4 @@
-export interface AssetsInterface {
+export interface AssetInterface {
   network: string;
   balance: string;
   contract: string;
@@ -23,6 +23,6 @@ export interface AssetsInterface {
 }
 
 export interface AssetsResponse {
-  balances: AssetsInterface[];
+  balances: AssetInterface[];
   total: number;
 }

@@ -4,20 +4,29 @@ import { useDispatch } from 'react-redux';
 
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { loadAssetsActions } from '../../store/assets/assets-actions';
-import { useAssetsSelector } from '../../store/assets/assets-selectors';
+import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
+import { useAssetsSelector, useTezosSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
+import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const firstAccount = useFirstAccountSelector();
   const assets = useAssetsSelector();
+  const tezos = useTezosSelector();
 
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose, onDismiss } = useBottomSheet();
+  const {
+    isOpen: isOpenReceive,
+    onOpen: onOpenReceive,
+    onClose: onCloseReceive,
+    onDismiss: onDismissReceive
+  } = useBottomSheet();
+  const { isOpen: isOpenSend, onOpen: onOpenSend, onClose: onCloseSend, onDismiss: onDismissSend } = useBottomSheet();
 
-  useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
+  useEffect(() => void dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash)), []);
+  useEffect(() => void dispatch(loadTezosAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
     <>
@@ -29,10 +38,10 @@ export const Wallet = () => {
         <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
         <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
         <View style={WalletStyles.buttonRow}>
-          <TouchableOpacity onPress={onOpen}>
+          <TouchableOpacity onPress={onOpenReceive}>
             <Text style={WalletStyles.button}>Receive</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => null}>
+          <TouchableOpacity onPress={onOpenSend}>
             <Text style={WalletStyles.button}>Send</Text>
           </TouchableOpacity>
         </View>
@@ -42,9 +51,16 @@ export const Wallet = () => {
             <Text>{balance}</Text>
           </TouchableOpacity>
         ))}
+        {tezos && tezos.balance && (
+          <TouchableOpacity key={'tezos'} style={WalletStyles.accountItem} onPress={() => null}>
+            <Text>Tezos</Text>
+            <Text>{tezos.balance}</Text>
+          </TouchableOpacity>
+        )}
       </ScreenContainer>
 
-      <ReceiveBottomSheet isOpen={isOpen} onClose={onClose} onDismiss={onDismiss} />
+      <SendBottomSheet assets={assets} isOpen={isOpenSend} onClose={onCloseSend} onDismiss={onDismissSend} />
+      <ReceiveBottomSheet isOpen={isOpenReceive} onClose={onCloseReceive} onDismiss={onDismissReceive} />
     </>
   );
 };

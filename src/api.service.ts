@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
+import BigNumber from 'bignumber.js';
 import { from, Observable } from 'rxjs';
 
 import { network } from './config/general';
-import { AssetsResponse } from './interfaces/assets.interface';
+import { AssetsResponse } from './interfaces/asset.interface';
+import { Tezos } from './utils/tezos.util';
 
 const BASE_URL = 'https://api.better-call.dev/v1';
 const api = axios.create({ baseURL: BASE_URL });
@@ -16,3 +18,5 @@ export const getAssetsRequest$ = (address: string): Observable<AxiosResponse<Ass
       }
     })
   );
+
+export const getTezosBalanceRequest$ = (address: string): Observable<BigNumber> => from(Tezos.tz.getBalance(address));
