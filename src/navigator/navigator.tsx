@@ -9,7 +9,7 @@ import { Welcome } from '../screens/welcome/welcome';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
-import { WalletTabs } from './wallet-tabs';
+import { TabNavigator } from './tab-navigator/tab-navigator';
 
 const Stack = createStackNavigator<ScreensParamList>();
 
@@ -29,7 +29,7 @@ export const Navigator = () => {
             <Stack.Screen name={ScreensEnum.CreateAccount} component={CreateAccount} />
           </>
         ) : (
-          <Stack.Screen name={ScreensEnum.Wallet} component={WalletTabs} />
+          <Stack.Screen name={ScreensEnum.Wallet} component={TabNavigator} />
         )}
       </Stack.Navigator>
 

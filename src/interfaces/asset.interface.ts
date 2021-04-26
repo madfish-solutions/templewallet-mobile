@@ -8,6 +8,7 @@ export interface AssetInterface {
   description?: string;
   display_uri?: string;
   external_uri?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formats?: any[];
   is_boolean_amount?: boolean;
   is_transferable?: boolean;
@@ -18,6 +19,7 @@ export interface AssetInterface {
   tags?: string[];
   thumbnail_uri?: string;
   artifact_uri?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   token_info?: any;
   volume_24_hours?: number;
 }

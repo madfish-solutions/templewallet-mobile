@@ -3,6 +3,8 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
+import { loadAssetsActions } from '../../store/assets/assets-actions';
+import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useTezosSelector } from '../../store/assets/assets-selectors';
@@ -30,7 +32,6 @@ export const Wallet = () => {
 
   return (
     <>
-      <ScreenContainer hasBackButton={false}>
         <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
           <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
           <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
@@ -57,7 +58,6 @@ export const Wallet = () => {
             <Text>{tezos.balance}</Text>
           </TouchableOpacity>
         )}
-      </ScreenContainer>
 
       <SendBottomSheet assets={assets} isOpen={isOpenSend} onClose={onCloseSend} onDismiss={onDismissSend} />
       <ReceiveBottomSheet isOpen={isOpenReceive} onClose={onCloseReceive} onDismiss={onDismissReceive} />

@@ -3,3 +3,9 @@ export interface AccountInterface {
   publicKey: string;
   publicKeyHash: string;
 }
+
+export const emptyAccount: AccountInterface = {
+  name: '',
+  publicKey: '',
+  publicKeyHash: ''
+};

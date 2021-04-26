@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { Middleware } from 'redux';
+import createDebugger from 'redux-flipper';
 import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { catchError } from 'rxjs/operators';
 
 import { assetsReducer } from './assets/assets-reducers';
@@ -14,10 +15,10 @@ import { WalletRootState } from './wallet/wallet-state';
 type RootState = WalletRootState & AssetsRootState;
 
 const epicMiddleware = createEpicMiddleware();
+// eslint-disable-next-line @typescript-eslint/ban-types
 const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
 
 if (__DEV__ && !process.env.JEST_WORKER_ID) {
-  const createDebugger = require('redux-flipper').default;
   middlewares.push(createDebugger());
 }
 
@@ -35,6 +36,7 @@ const rootReducer = rootStateReducer({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const createStore = (...epics: Epic[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rootEpic = (action$: ActionsObservable<any>, store$: StateObservable<any>, dependencies: any) =>
     combineEpics(...epics)(action$, store$, dependencies).pipe(
       catchError((error, source) => {
