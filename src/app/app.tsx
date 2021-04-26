@@ -9,6 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { Navigator } from '../navigator/navigator';
 import { persistor, store } from '../store/store';
+import { ToastProvider } from '../toast/toast-provider';
 
 enableScreens();
 
@@ -16,16 +17,18 @@ export const App = () => {
   useEffect(() => void hide(), []);
 
   return (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={null}>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <SafeAreaProvider>
+          <ToastProvider />
+
           <BottomSheetModalProvider>
             <NavigationContainer>
               <Navigator />
             </NavigationContainer>
           </BottomSheetModalProvider>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 };
