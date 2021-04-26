@@ -52,14 +52,15 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, password).pipe(
       map(value => {
-        if (value !== undefined && value === APP_IDENTIFIER) {
+        if (value === APP_IDENTIFIER) {
           Shelter._password$.next(password);
 
           return true;
         }
 
         return false;
-      })
+      }),
+      catchError(() => of(false))
     );
 
   static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface | undefined> => {
