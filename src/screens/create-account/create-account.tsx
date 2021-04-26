@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, Text } from 'react-native';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
@@ -35,9 +35,7 @@ export const CreateAccount = () => {
             <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
             <FormCheckbox name="acceptTerms" />
 
-            <View>
-              <Button title="Create" onPress={submitForm} />
-            </View>
+            <Button title="Create" onPress={submitForm} />
           </>
         )}
       </Formik>

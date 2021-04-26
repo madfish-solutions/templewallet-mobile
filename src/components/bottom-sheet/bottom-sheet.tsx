@@ -14,7 +14,7 @@ export interface BottomSheetProps {
 
 export const BottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, children }) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const height = useWindowDimensions().height - 10 * step;
+  const height = useWindowDimensions().height - 20 * step;
 
   useEffect(
     () =>
