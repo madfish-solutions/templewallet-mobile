@@ -1,33 +1,38 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useRef } from 'react';
-import { useWindowDimensions, View } from 'react-native';
+import ReanimatedBottomSheet from 'reanimated-bottom-sheet';
+import React, { FC, ReactNode, useEffect, useRef } from 'react';
 
 import { EmptyFn } from '../../config/general';
-import { step } from '../../config/styles';
 import { isDefined } from '../../utils/is-defined';
-import { BottomSheetStyles } from './bottom-sheet.styles';
 
 export interface BottomSheetProps {
   isOpen: boolean;
   onDismiss: EmptyFn;
 }
 
-export const BottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, children }) => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const height = useWindowDimensions().height - 20 * step;
+interface Props extends BottomSheetProps {
+  height: number;
+  renderContent: () => ReactNode;
+}
+
+export const BottomSheet: FC<Props> = ({ isOpen, onDismiss, height, renderContent }) => {
+  const bottomSheetModalRef = useRef<ReanimatedBottomSheet>(null);
 
   useEffect(
     () =>
       void (
         isDefined(bottomSheetModalRef.current) &&
-        (isOpen ? bottomSheetModalRef.current.present() : bottomSheetModalRef.current.dismiss())
+        (isOpen ? bottomSheetModalRef.current.snapTo(0) : bottomSheetModalRef.current.snapTo(1))
       ),
     [isOpen]
   );
 
   return (
-    <BottomSheetModal ref={bottomSheetModalRef} index={1} snapPoints={[0, height]} onDismiss={onDismiss}>
-      <View style={BottomSheetStyles.contentContainer}>{children}</View>
-    </BottomSheetModal>
+    <ReanimatedBottomSheet
+      ref={bottomSheetModalRef}
+      snapPoints={[height, 0]}
+      initialSnap={1}
+      onCloseEnd={onDismiss}
+      renderContent={renderContent}
+    />
   );
 };

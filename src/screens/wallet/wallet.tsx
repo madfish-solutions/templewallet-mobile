@@ -54,17 +54,17 @@ export const Wallet = () => {
         </TouchableOpacity>
       )}
 
+      <ReceiveBottomSheet
+        isOpen={receiveBottomSheet.isOpen}
+        onClose={receiveBottomSheet.onClose}
+        onDismiss={receiveBottomSheet.onDismiss}
+      />
       <SendBottomSheet
         from={firstAccount.publicKeyHash}
         balance={balance}
         isOpen={sendBottomSheet.isOpen}
         onClose={sendBottomSheet.onClose}
         onDismiss={sendBottomSheet.onDismiss}
-      />
-      <ReceiveBottomSheet
-        isOpen={receiveBottomSheet.isOpen}
-        onClose={receiveBottomSheet.onClose}
-        onDismiss={receiveBottomSheet.onDismiss}
       />
     </ScreenContainer>
   );

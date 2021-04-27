@@ -3,7 +3,8 @@ import React, { FC } from 'react';
 import { Button, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
+import { BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
+import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
 import { EmptyFn } from '../../../config/general';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
@@ -20,7 +21,7 @@ export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) =>
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
+    <ModalBottomSheet isOpen={isOpen} onDismiss={onDismiss}>
       <Text style={ReceiveBottomSheetStyles.title}>Receive</Text>
 
       <Text>Address:</Text>
@@ -32,6 +33,6 @@ export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) =>
       </View>
 
       <Button title="Close" onPress={onClose} />
-    </BottomSheet>
+    </ModalBottomSheet>
   );
 };

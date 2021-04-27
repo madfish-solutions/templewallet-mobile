@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { step } from '../../config/styles';
+import { step, white } from '../../config/styles';
 
 export const BottomSheetStyles = StyleSheet.create({
   contentContainer: {

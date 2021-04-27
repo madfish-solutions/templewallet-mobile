@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
-import { AccountDropdown } from '../../components/account-dropdown/account-dropdown';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { AccountInterface } from '../../interfaces/account.interface';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
@@ -18,13 +16,8 @@ export const Settings = () => {
   const { revealSecretKey, revealSeedPhrase } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
-  const [selectedAccount, setSelectedAccount] = useState<AccountInterface>(hdAccounts[0]);
-  const handleDropdownValueChange = (item?: AccountInterface) => setSelectedAccount(item);
-
   return (
     <ScreenContainer>
-      <AccountDropdown value={selectedAccount} list={hdAccounts} onValueChange={handleDropdownValueChange} />
-
       <Button title="Lock app" onPress={lock} />
       <EraseDataButton />
       <Text>List of your HD accounts:</Text>
