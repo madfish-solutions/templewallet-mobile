@@ -7,9 +7,5 @@ export const SendBottomSheetStyles = StyleSheet.create({
     fontSize: 4 * step,
     textAlign: 'center',
     marginBottom: 2 * step
-  },
-  qrCodeContainer: {
-    alignSelf: 'center',
-    marginVertical: 6 * step
   }
 });
