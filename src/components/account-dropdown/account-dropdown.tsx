@@ -29,6 +29,7 @@ const renderListItem: DropdownListItemComponent<AccountInterface> = ({ item, ind
 export const AccountDropdown: FC<DropdownProps<AccountInterface>> = ({ value, list, onValueChange }) => {
   return (
     <Dropdown
+      title="Accounts"
       value={value}
       list={list}
       onValueChange={onValueChange}

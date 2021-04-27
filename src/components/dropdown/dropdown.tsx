@@ -12,6 +12,7 @@ export interface DropdownProps<T> {
 }
 
 interface DropdownRenderProps<T> {
+  title: string;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
 }
@@ -29,6 +30,7 @@ export const Dropdown = <T extends unknown>({
   value,
   list,
   onValueChange,
+  title,
   renderValue,
   renderListItem
 }: DropdownProps<T> & DropdownRenderProps<T>) => {
@@ -43,7 +45,7 @@ export const Dropdown = <T extends unknown>({
         {renderValue({ value })}
       </TouchableOpacity>
 
-      <DropdownBottomSheet isOpen={isOpen} onClose={handleDropdownBottomSheetClose}>
+      <DropdownBottomSheet title={title} isOpen={isOpen} onClose={handleDropdownBottomSheetClose}>
         {list.map((item, index) => renderListItem({ item, index }))}
       </DropdownBottomSheet>
     </>
