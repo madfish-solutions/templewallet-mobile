@@ -1,11 +1,17 @@
-import React, { FC, useState } from 'react';
+import { Formik } from 'formik';
+import React, { FC } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
-import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
 import { EmptyFn } from '../../../config/general';
+import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { WalletStyles } from '../wallet.styles';
+import {
+  SendBottomSheetFormValues,
+  SendBottomSheetInitialValues,
+  sendBottomSheetValidationSchema
+} from './send-bottom-sheet.form';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 interface Props extends BottomSheetProps {
@@ -16,27 +22,36 @@ interface Props extends BottomSheetProps {
 
 export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, balance }) => {
   // TODO: replace with NumberInput
-  const [amount, setAmount] = useState('0');
-  const [recipient, setRecipient] = useState('tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne');
   const { send } = useShelter();
+
+  const onSubmit = (data: SendBottomSheetFormValues) => send(from, data.amount, data.recipient);
 
   return (
     <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
-      <Text style={SendBottomSheetStyles.title}>Send</Text>
+      <Formik
+        initialValues={SendBottomSheetInitialValues}
+        validationSchema={sendBottomSheetValidationSchema}
+        onSubmit={onSubmit}>
+        {({ submitForm }) => (
+          <>
+            <Text style={SendBottomSheetStyles.title}>Send</Text>
 
-      <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
-        <Text>Tezos</Text>
-        <Text>{balance}</Text>
-      </TouchableOpacity>
+            <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
+              <Text>Tezos</Text>
+              <Text>{balance}</Text>
+            </TouchableOpacity>
 
-      <Text>Amount Tezos</Text>
-      <StyledTextInput value={amount} onChangeText={setAmount} />
+            <Text>Amount Tezos</Text>
+            <FormTextInput name="amount" />
 
-      <Text>Recipient</Text>
-      <StyledTextInput value={recipient} onChangeText={setRecipient} />
+            <Text>Recipient</Text>
+            <FormTextInput name="recipient" />
 
-      <Button title="Cancel" onPress={onClose} />
-      <Button title="Send" onPress={() => send(from, amount, recipient)} />
+            <Button title="Cancel" onPress={onClose} />
+            <Button title="Send" onPress={submitForm} />
+          </>
+        )}
+      </Formik>
     </BottomSheet>
   );
 };
