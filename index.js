@@ -1,4 +1,5 @@
 import './shim.js';
+import './handle-js-exception';
 
 import 'react-native-gesture-handler';
 

@@ -2,8 +2,8 @@ import { InMemorySigner } from '@taquito/signer';
 import { useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { merge, Subject } from 'rxjs';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { merge, of, Subject } from 'rxjs';
+import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
@@ -66,8 +66,11 @@ export const useShelter = () => {
 
       merge(
         revealSecretKey$.pipe(switchMap(publicKeyHash => Shelter.revealSecretKey$(publicKeyHash))),
-        revealSeedPhrase$.pipe(switchMap(() => Shelter.revealSeedPhrase$()))
-      ).subscribe(value => Alert.alert(value ?? 'Empty', '', [{ text: 'OK' }]))
+        revealSeedPhrase$.pipe(
+          switchMap(() => Shelter.revealSeedPhrase$()),
+          catchError(() => of(undefined))
+        )
+      ).subscribe(value => value !== undefined && Alert.alert(value, '', [{ text: 'OK' }]))
     ];
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
