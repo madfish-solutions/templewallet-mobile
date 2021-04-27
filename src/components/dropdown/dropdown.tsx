@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import { EventFn } from '../../config/general';
-import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet';
+import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
 import { DropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {

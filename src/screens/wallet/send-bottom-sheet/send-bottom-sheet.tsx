@@ -4,7 +4,7 @@ import { Button, Text } from 'react-native';
 
 import { AccountDropdown } from '../../../components/account-dropdown/account-dropdown';
 import { BottomSheetStateProps } from '../../../components/bottom-sheet/bottom-sheet-state.props';
-import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet';
+import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { FormTextInput } from '../../../form/form-text-input';
 import { AccountInterface } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -14,7 +14,6 @@ import {
   SendBottomSheetInitialValues,
   sendBottomSheetValidationSchema
 } from './send-bottom-sheet.form';
-import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 interface Props extends BottomSheetStateProps {
   from: string;
@@ -31,15 +30,13 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, balance }) =
   const handleDropdownValueChange = (item?: AccountInterface) => setSelectedAccount(item);
 
   return (
-    <ModalBottomSheet isOpen={isOpen} onClose={onClose}>
+    <ModalBottomSheet title="Send" isOpen={isOpen} onClose={onClose}>
       <Formik
         initialValues={SendBottomSheetInitialValues}
         validationSchema={sendBottomSheetValidationSchema}
         onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
-            <Text style={SendBottomSheetStyles.title}>Send</Text>
-
             <AccountDropdown value={selectedAccount} list={hdAccounts} onValueChange={handleDropdownValueChange} />
 
             <Text>Amount Tezos</Text>
