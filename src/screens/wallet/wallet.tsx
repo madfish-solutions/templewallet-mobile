@@ -20,8 +20,10 @@ export const Wallet = () => {
   const receiveBottomSheet = useBottomSheet();
   const sendBottomSheet = useBottomSheet();
 
-  useEffect(() => void dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash)), []);
-  useEffect(() => void dispatch(loadTezosAssetsActions.submit(firstAccount.publicKeyHash)), []);
+  useEffect(() => {
+    dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash));
+    dispatch(loadTezosAssetsActions.submit(firstAccount.publicKeyHash));
+  }, []);
 
   return (
     <ScreenContainer>
