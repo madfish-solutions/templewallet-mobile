@@ -2,8 +2,8 @@ import { InMemorySigner } from '@taquito/signer';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { from, merge, Observable, of, Subject, zip } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, from, merge, Observable, of, Subject, zip } from 'rxjs';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { sendTezosRequest$ } from '../api.service';
 import { ScreensEnum } from '../navigator/screens.enum';
@@ -12,7 +12,7 @@ import { SendInterface } from '../store/types';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
-import { Tezos } from '../utils/tezos.util';
+import { Tezos, tezos$ } from '../utils/tezos.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
@@ -59,19 +59,19 @@ export const useShelter = () => {
 
       send$
         .pipe(
-          switchMap<any, Observable<SendInterface & { privateKey: string }>>(data => {
-            return Shelter.revealSecretKey$(data.from).pipe(
-              map(privateKey => ({
-                ...data,
-                privateKey
-              }))
-            );
-          }),
-          map(({ privateKey, ...props }) => {
-            signTaquitoTezos(privateKey);
-            return props;
-          }),
-          switchMap(data => sendTezosRequest$(data).pipe(map(data => data)))
+          switchMap(data =>
+            Shelter.revealSecretKey$(data.from).pipe(
+              map((privateKey): [string | undefined, SendInterface] => [privateKey, data])
+            )
+          ),
+          withLatestFrom(tezos$),
+          switchMap(([[privateKey, data], tezos]) => {
+            tezos.setProvider({
+              signer: new InMemorySigner(privateKey)
+            });
+
+            return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount) });
+          })
         )
         .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
 

@@ -1,6 +1,15 @@
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 export type EmptyFn = () => void;
 export const emptyFn = () => void 0;
-const networks = [
+
+interface NetworkInterface {
+  id: string;
+  rpcBaseURL: string;
+}
+
+const networks: NetworkInterface[] = [
   {
     id: 'florencenet',
     name: 'Florence Testnet',
@@ -24,6 +33,6 @@ const networks = [
   }
 ];
 
-const currentNetwork = networks[0];
-export const network = currentNetwork.id;
-export const rpc = currentNetwork.rpcBaseURL;
+const currentNetwork$ = new BehaviorSubject(networks[0]);
+export const currentNetworkId$ = currentNetwork$.pipe(map(({ id }) => id));
+export const currentNetworkRpc$ = currentNetwork$.pipe(map(({ rpcBaseURL }) => rpcBaseURL));
