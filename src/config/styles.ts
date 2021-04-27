@@ -12,12 +12,6 @@ export const red = 'red';
 export const transparent = 'transparent';
 export const borderColor = '#E4E4E4';
 
-export enum zIndexesEnum {
-  Toast = 1100,
-  Modal = 1000,
-  Overlay = 900
-}
-
 // Use https://ethercreative.github.io/react-native-shadow-generator/
 export const generateShadow = (shadowColor: string) => ({
   shadowColor,

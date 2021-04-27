@@ -7,6 +7,7 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { PortalNameEnum } from '../enums/portal-name.enum';
 import { Navigator } from '../navigator/navigator';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
@@ -27,8 +28,8 @@ export const App = () => {
 
             <ToastProvider />
 
-            <PortalHost name="Modal" />
-            <PortalHost name="Dropdown" />
+            <PortalHost name={PortalNameEnum.Modal} />
+            <PortalHost name={PortalNameEnum.Dropdown} />
           </PortalProvider>
         </SafeAreaProvider>
       </PersistGate>
