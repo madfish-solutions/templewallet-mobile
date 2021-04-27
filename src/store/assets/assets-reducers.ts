@@ -1,20 +1,32 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadAssetsActions } from './assets-actions';
+import { loadTezosAssetsActions, loadTokenAssetsActions } from './assets-actions';
 import { AssetsInitialState, AssetsState } from './assets-state';
 
 export const assetsReducer = createReducer<AssetsState>(AssetsInitialState, builder => {
-  builder.addCase(loadAssetsActions.submit, state => ({
+  builder.addCase(loadTokenAssetsActions.submit, state => ({
     ...state,
     tokens: createEntity([], true)
   }));
-  builder.addCase(loadAssetsActions.success, (state, { payload }) => ({
+  builder.addCase(loadTokenAssetsActions.success, (state, { payload }) => ({
     ...state,
     tokens: createEntity(payload)
   }));
-  builder.addCase(loadAssetsActions.fail, (state, { payload }) => ({
+  builder.addCase(loadTokenAssetsActions.fail, (state, { payload }) => ({
     ...state,
     tokens: createEntity([], false, payload)
+  }));
+  builder.addCase(loadTezosAssetsActions.submit, state => ({
+    ...state,
+    tezos: createEntity(undefined, true)
+  }));
+  builder.addCase(loadTezosAssetsActions.success, (state, { payload }) => ({
+    ...state,
+    tezos: createEntity(payload, false)
+  }));
+  builder.addCase(loadTezosAssetsActions.fail, (state, { payload }) => ({
+    ...state,
+    tezos: createEntity(undefined, false, payload)
   }));
 });

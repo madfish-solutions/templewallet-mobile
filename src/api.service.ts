@@ -1,18 +1,27 @@
-import axios, { AxiosResponse } from 'axios';
-import { from, Observable } from 'rxjs';
+import axios from 'axios';
+import { Observable } from 'rxjs';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { network } from './config/general';
-import { AssetsResponse } from './interfaces/assets.interface';
+import { currentNetworkId$, tezos$ } from './utils/network/network.util';
 
 const BASE_URL = 'https://api.better-call.dev/v1';
 const api = axios.create({ baseURL: BASE_URL });
 
-export const getAssetsRequest$ = (address: string): Observable<AxiosResponse<AssetsResponse>> =>
-  from(
-    api.get(`/account/${network}/${address}/token_balances`, {
-      params: {
-        size: 10,
-        offset: 0
-      }
-    })
+export const getAssetsRequest$ = () => (address$: Observable<string>) =>
+  address$.pipe(
+    withLatestFrom(currentNetworkId$),
+    switchMap(([address, currentNetworkId]) =>
+      api.get(`/account/${currentNetworkId}/${address}/token_balances`, {
+        params: {
+          size: 10,
+          offset: 0
+        }
+      })
+    )
+  );
+
+export const getTezosBalanceRequest$ = () => (address$: Observable<string>) =>
+  address$.pipe(
+    withLatestFrom(tezos$),
+    switchMap(([address, tezos]) => tezos.tz.getBalance(address))
   );

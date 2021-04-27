@@ -1,4 +1,4 @@
-export interface AssetsInterface {
+export interface BalanceInterface {
   network: string;
   balance: string;
   contract: string;
@@ -22,9 +22,4 @@ export interface AssetsInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   token_info?: any;
   volume_24_hours?: number;
-}
-
-export interface AssetsResponse {
-  balances: AssetsInterface[];
-  total: number;
 }

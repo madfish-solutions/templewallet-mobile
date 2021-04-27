@@ -1,5 +1,5 @@
-import { loadAssetsEpic } from './assets/assets-epics';
+import { assetsEpics } from './assets/assets-epics';
 import { createStore } from './create-store';
 import { rootStateEpics } from './root-state.epics';
 
-export const { store, persistor } = createStore(rootStateEpics, loadAssetsEpic);
+export const { store, persistor } = createStore(rootStateEpics, assetsEpics);
