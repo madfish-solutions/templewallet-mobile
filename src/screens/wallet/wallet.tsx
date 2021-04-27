@@ -4,8 +4,6 @@ import { useDispatch } from 'react-redux';
 
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { loadAssetsActions } from '../../store/assets/assets-actions';
-import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useTezosSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
