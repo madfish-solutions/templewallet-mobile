@@ -23,8 +23,3 @@ export interface BalanceInterface {
   token_info?: any;
   volume_24_hours?: number;
 }
-
-export interface BalanceResponse {
-  balances: BalanceInterface[];
-  total: number;
-}

@@ -1,6 +1,6 @@
 import { combineEpics } from 'redux-observable';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -11,12 +11,9 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenAssetsActions.submit),
     toPayload(),
-    switchMap(payload =>
-      getAssetsRequest$(payload).pipe(
-        map(response => loadTokenAssetsActions.success(response.data.balances)),
-        catchError(err => of(loadTokenAssetsActions.fail(err.response.data.message)))
-      )
-    )
+    getAssetsRequest$(),
+    map(response => loadTokenAssetsActions.success(response.data.balances)),
+    catchError(err => of(loadTokenAssetsActions.fail(err.response.data.message)))
   );
 
 const loadTezosAssetsEpic = (action$: Observable<Action>) =>
