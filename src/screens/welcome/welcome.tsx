@@ -9,7 +9,7 @@ export const Welcome = () => {
   const { navigate } = useNavigation();
 
   return (
-    <ScreenContainer hasBackButton={false}>
+    <ScreenContainer>
       <Text>Welcome</Text>
       <Button title="Import Account" onPress={() => navigate(ScreensEnum.ImportAccount)} />
       <Button title="Create Account" onPress={() => navigate(ScreensEnum.CreateAccount)} />

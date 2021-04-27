@@ -57,6 +57,7 @@
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.0.0",
     "react-native-svg": "^12.1.0",
+    "react-native-toast-message": "^1.4.9",
     "react-redux": "^7.2.3",
     "readable-stream": "^1.0.33",
     "redux-observable": "^1.2.0",

@@ -12,6 +12,7 @@ export const red = 'red';
 export const transparent = 'transparent';
 
 export enum zIndexesEnum {
+  Toast = 1100,
   Modal = 1000,
   Overlay = 900
 }

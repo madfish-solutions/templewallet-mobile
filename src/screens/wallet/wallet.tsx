@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -19,7 +20,7 @@ export const Wallet = () => {
   useEffect(() => void dispatch(loadAssetsActions.submit(firstAccount.publicKeyHash)), []);
 
   return (
-    <>
+    <ScreenContainer>
       <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
         <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
         <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
@@ -42,6 +43,6 @@ export const Wallet = () => {
       ))}
 
       <ReceiveBottomSheet isOpen={isOpen} onClose={onClose} onDismiss={onDismiss} />
-    </>
+    </ScreenContainer>
   );
 };

@@ -21,7 +21,7 @@ export const Navigator = () => {
 
   return (
     <>
-      <Stack.Navigator headerMode="none">
+      <Stack.Navigator {...(isAuthorised && { headerMode: 'none' })}>
         {!isAuthorised ? (
           <>
             <Stack.Screen name={ScreensEnum.Welcome} component={Welcome} />
