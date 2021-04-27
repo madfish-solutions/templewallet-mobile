@@ -23,12 +23,9 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTezosAssetsActions.submit),
     toPayload(),
-    switchMap(payload =>
-      getTezosBalanceRequest$(payload).pipe(
-        map(response => loadTezosAssetsActions.success(response.toString())),
-        catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
-      )
-    )
+    getTezosBalanceRequest$(),
+    map(response => loadTezosAssetsActions.success(response.toString())),
+    catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
   );
 
 export const assetsEpics = combineEpics(loadTezosAssetsEpic, loadTokenAssetsEpic);
