@@ -1,10 +1,8 @@
-import BigNumber from 'bignumber.js';
-
 import { AssetInterface } from '../../interfaces/asset.interface';
 import { LoadableEntityState } from '../types';
 
 export interface TezosState {
-  balance?: BigNumber;
+  balance?: string;
   error?: string;
 }
 

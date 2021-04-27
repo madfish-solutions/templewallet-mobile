@@ -1,41 +1,45 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
 import { EmptyFn } from '../../../config/general';
-import { AssetInterface } from '../../../interfaces/asset.interface';
+import { useShelter } from '../../../shelter/use-shelter.hook';
 import { WalletStyles } from '../wallet.styles';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 interface Props extends BottomSheetProps {
+  from: string;
   onClose: EmptyFn;
-  assets: AssetInterface[];
+  balance?: string;
 }
 
-export const SendBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss, assets }) => {
+export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, balance }) => {
   const [amount, setAmount] = useState('0');
-  const [selectedAsset] = useState(assets[0]);
-  const [recipient, setRecipient] = useState('');
+  const [recipient, setRecipient] = useState('tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne');
+  const { send: send$ } = useShelter();
+
+  const send = useCallback(() => {
+    send$(from, amount, recipient);
+  }, [send$, from, amount, recipient]);
+
   return (
     <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
       <Text style={SendBottomSheetStyles.title}>Send</Text>
 
-      {assets.map(({ token_id, name, balance }) => (
-        <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={() => null}>
-          <Text>{name}</Text>
-          <Text>{balance}</Text>
-        </TouchableOpacity>
-      ))}
+      <TouchableOpacity key={'Tezos'} style={WalletStyles.accountItem} onPress={() => null}>
+        <Text>Tezos</Text>
+        <Text>{balance}</Text>
+      </TouchableOpacity>
 
-      <Text>{`Amount ${selectedAsset.name}`}</Text>
+      <Text>{'Amount Tezos'}</Text>
       <StyledTextInput value={amount} onChangeText={setAmount} />
 
       <Text>Recipient</Text>
       <StyledTextInput value={recipient} onChangeText={setRecipient} />
 
       <Button title="Cancel" onPress={onClose} />
-      <Button title="Send" onPress={onClose} />
+      <Button title="Send" onPress={send} />
     </BottomSheet>
   );
 };
