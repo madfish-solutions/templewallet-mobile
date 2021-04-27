@@ -11,7 +11,7 @@ import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
-import { tezos$ } from '../utils/tezos.util';
+import { tezos$ } from '../utils/network/network.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {

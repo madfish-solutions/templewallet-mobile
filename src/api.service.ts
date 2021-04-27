@@ -3,8 +3,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { BalanceResponse } from './interfaces/balance.interface';
-import { currentNetworkId$ } from './utils/network/network.util';
-import { tezos$ } from './utils/tezos.util';
+import { currentNetworkId$, tezos$ } from './utils/network/network.util';
 
 const BASE_URL = 'https://api.better-call.dev/v1';
 const api = axios.create({ baseURL: BASE_URL });
