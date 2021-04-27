@@ -3,25 +3,20 @@ import React, { FC } from 'react';
 import { Button, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-import { BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
+import { BottomSheetStateProps } from '../../../components/bottom-sheet/bottom-sheet-state.props';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
-import { EmptyFn } from '../../../config/general';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 
-interface Props extends BottomSheetProps {
-  onClose: EmptyFn;
-}
-
-export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) => {
+export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onClose }) => {
   const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <ModalBottomSheet isOpen={isOpen} onDismiss={onDismiss}>
+    <ModalBottomSheet isOpen={isOpen} onClose={onClose}>
       <Text style={ReceiveBottomSheetStyles.title}>Receive</Text>
 
       <Text>Address:</Text>

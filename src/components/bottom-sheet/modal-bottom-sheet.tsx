@@ -3,17 +3,18 @@ import React, { FC } from 'react';
 import { useWindowDimensions, View } from 'react-native';
 
 import { step } from '../../config/styles';
-import { BottomSheet, BottomSheetProps } from './bottom-sheet';
+import { BottomSheet } from './bottom-sheet';
+import { BottomSheetStateProps } from './bottom-sheet-state.props';
 import { BottomSheetStyles } from './bottom-sheet.styles';
 
-export const ModalBottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, children }) => {
+export const ModalBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onClose, children }) => {
   const height = useWindowDimensions().height - 20 * step;
 
   const renderContent = () => <View style={BottomSheetStyles.contentContainer}>{children}</View>;
 
   return (
     <Portal name="Modal">
-      <BottomSheet isOpen={isOpen} onDismiss={onDismiss} height={height} renderContent={renderContent} />
+      {isOpen && <BottomSheet height={height} renderContent={renderContent} onCloseEnd={onClose} />}
     </Portal>
   );
 };

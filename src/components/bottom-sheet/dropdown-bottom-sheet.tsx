@@ -3,10 +3,11 @@ import React, { FC } from 'react';
 import { useWindowDimensions, View } from 'react-native';
 
 import { step } from '../../config/styles';
-import { BottomSheet, BottomSheetProps } from './bottom-sheet';
+import { BottomSheet } from './bottom-sheet';
+import { BottomSheetStateProps } from './bottom-sheet-state.props';
 import { BottomSheetStyles } from './bottom-sheet.styles';
 
-export const DropdownBottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, children }) => {
+export const DropdownBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onClose, children }) => {
   const height = useWindowDimensions().height - 40 * step;
 
   const renderContent = () => (
@@ -15,7 +16,7 @@ export const DropdownBottomSheet: FC<BottomSheetProps> = ({ isOpen, onDismiss, c
 
   return (
     <Portal name="Dropdown">
-      <BottomSheet isOpen={isOpen} onDismiss={onDismiss} height={height} renderContent={renderContent} />
+      {isOpen && <BottomSheet height={height} renderContent={renderContent} onCloseEnd={onClose} />}
     </Portal>
   );
 };

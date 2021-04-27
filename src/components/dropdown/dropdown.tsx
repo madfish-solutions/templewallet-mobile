@@ -2,9 +2,8 @@ import React, { FC, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import { EventFn } from '../../config/general';
-import { DropdownStyles } from './dropdown.styles';
-import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet';
+import { DropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
   value?: T;
@@ -36,6 +35,7 @@ export const Dropdown = <T extends unknown>({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelectedItemPress = () => setIsOpen(value => !value);
+  const handleDropdownBottomSheetClose = () => setIsOpen(false);
 
   return (
     <>
@@ -43,7 +43,7 @@ export const Dropdown = <T extends unknown>({
         {renderValue({ value })}
       </TouchableOpacity>
 
-      <DropdownBottomSheet isOpen={isOpen} onDismiss={() => setIsOpen(false)}>
+      <DropdownBottomSheet isOpen={isOpen} onClose={handleDropdownBottomSheetClose}>
         {list.map((item, index) => renderListItem({ item, index }))}
       </DropdownBottomSheet>
     </>

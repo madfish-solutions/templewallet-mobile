@@ -1,37 +1,26 @@
-import ReanimatedBottomSheet from 'reanimated-bottom-sheet';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
+import ReanimatedBottomSheet from 'reanimated-bottom-sheet';
 
 import { EmptyFn } from '../../config/general';
 import { isDefined } from '../../utils/is-defined';
 
-export interface BottomSheetProps {
-  isOpen: boolean;
-  onDismiss: EmptyFn;
-}
-
-interface Props extends BottomSheetProps {
+interface Props {
   height: number;
   renderContent: () => ReactNode;
+  onCloseEnd: EmptyFn;
 }
 
-export const BottomSheet: FC<Props> = ({ isOpen, onDismiss, height, renderContent }) => {
+export const BottomSheet: FC<Props> = ({ height, renderContent, onCloseEnd }) => {
   const bottomSheetModalRef = useRef<ReanimatedBottomSheet>(null);
 
-  useEffect(
-    () =>
-      void (
-        isDefined(bottomSheetModalRef.current) &&
-        (isOpen ? bottomSheetModalRef.current.snapTo(0) : bottomSheetModalRef.current.snapTo(1))
-      ),
-    [isOpen]
-  );
+  useEffect(() => void (isDefined(bottomSheetModalRef.current) && bottomSheetModalRef.current.snapTo(0)), []);
 
   return (
     <ReanimatedBottomSheet
       ref={bottomSheetModalRef}
       snapPoints={[height, 0]}
       initialSnap={1}
-      onCloseEnd={onDismiss}
+      onCloseEnd={onCloseEnd}
       renderContent={renderContent}
     />
   );
