@@ -2,7 +2,7 @@ import { InMemorySigner } from '@taquito/signer';
 import { useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { merge, of, Subject } from 'rxjs';
+import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { SendInterface } from '../interfaces/send.interface';
@@ -49,16 +49,15 @@ export const useShelter = () => {
         .pipe(
           switchMap(data =>
             Shelter.revealSecretKey$(data.from).pipe(
-              map((privateKey): [string | undefined, SendInterface] => [privateKey, data])
+              switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+              map((privateKey): [string, SendInterface] => [privateKey, data])
             )
           ),
           withLatestFrom(tezos$),
           switchMap(([[privateKey, data], tezos]) => {
-            if (privateKey) {
-              tezos.setProvider({
-                signer: new InMemorySigner(privateKey)
-              });
-            }
+            tezos.setProvider({
+              signer: new InMemorySigner(privateKey)
+            });
             return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount, 2) });
           })
         )
