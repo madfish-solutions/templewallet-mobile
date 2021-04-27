@@ -1,18 +1,17 @@
 import { InMemorySigner } from '@taquito/signer';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { BehaviorSubject, from, merge, Observable, of, Subject, zip } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { merge, Subject } from 'rxjs';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { sendTezosRequest$ } from '../api.service';
+import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { SendInterface } from '../store/types';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
-import { Tezos, tezos$ } from '../utils/tezos.util';
+import { tezos$ } from '../utils/tezos.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
@@ -26,17 +25,6 @@ export const useShelter = () => {
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
   const revealSecretKey$ = useMemo(() => new Subject<string>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject(), []);
-
-  const signTaquitoTezos = useCallback(
-    (privateKey: string | undefined) => {
-      if (privateKey) {
-        Tezos.setProvider({
-          signer: new InMemorySigner(privateKey)
-        });
-      }
-    },
-    [Tezos]
-  );
 
   useEffect(() => {
     const subscriptions = [
@@ -66,11 +54,12 @@ export const useShelter = () => {
           ),
           withLatestFrom(tezos$),
           switchMap(([[privateKey, data], tezos]) => {
-            tezos.setProvider({
-              signer: new InMemorySigner(privateKey)
-            });
-
-            return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount) });
+            if (privateKey) {
+              tezos.setProvider({
+                signer: new InMemorySigner(privateKey)
+              });
+            }
+            return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount, 2) });
           })
         )
         .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),

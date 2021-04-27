@@ -1,4 +1,4 @@
-export interface AssetInterface {
+export interface BalanceInterface {
   network: string;
   balance: string;
   contract: string;
@@ -24,7 +24,7 @@ export interface AssetInterface {
   volume_24_hours?: number;
 }
 
-export interface AssetsResponse {
-  balances: AssetInterface[];
+export interface BalanceResponse {
+  balances: BalanceInterface[];
   total: number;
 }

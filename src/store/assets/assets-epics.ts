@@ -25,7 +25,6 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     switchMap(payload =>
       getTezosBalanceRequest$(payload).pipe(
-        // @ts-ignore
         map(response => loadTezosAssetsActions.success(response.toString())),
         catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
       )

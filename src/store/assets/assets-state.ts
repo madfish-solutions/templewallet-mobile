@@ -1,4 +1,4 @@
-import { AssetInterface } from '../../interfaces/asset.interface';
+import { BalanceInterface } from '../../interfaces/balance.interface';
 import { LoadableEntityState } from '../types';
 
 export interface TezosState {
@@ -7,7 +7,7 @@ export interface TezosState {
 }
 
 export interface AssetsState {
-  tokens: LoadableEntityState<AssetInterface[]>;
+  tokens: LoadableEntityState<BalanceInterface[]>;
   tezos?: TezosState;
 }
 

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
@@ -15,31 +15,28 @@ interface Props extends BottomSheetProps {
 }
 
 export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, balance }) => {
+  // TODO: replace with NumberInput
   const [amount, setAmount] = useState('0');
   const [recipient, setRecipient] = useState('tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne');
-  const { send: send$ } = useShelter();
-
-  const send = useCallback(() => {
-    send$(from, amount, recipient);
-  }, [send$, from, amount, recipient]);
+  const { send } = useShelter();
 
   return (
     <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
       <Text style={SendBottomSheetStyles.title}>Send</Text>
 
-      <TouchableOpacity key={'Tezos'} style={WalletStyles.accountItem} onPress={() => null}>
+      <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
         <Text>Tezos</Text>
         <Text>{balance}</Text>
       </TouchableOpacity>
 
-      <Text>{'Amount Tezos'}</Text>
+      <Text>Amount Tezos</Text>
       <StyledTextInput value={amount} onChangeText={setAmount} />
 
       <Text>Recipient</Text>
       <StyledTextInput value={recipient} onChangeText={setRecipient} />
 
       <Button title="Cancel" onPress={onClose} />
-      <Button title="Send" onPress={send} />
+      <Button title="Send" onPress={() => send(from, amount, recipient)} />
     </BottomSheet>
   );
 };

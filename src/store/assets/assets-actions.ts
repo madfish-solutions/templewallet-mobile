@@ -1,7 +1,5 @@
-import BigNumber from 'bignumber.js';
-
-import { AssetInterface } from '../../interfaces/asset.interface';
+import { BalanceInterface } from '../../interfaces/balance.interface';
 import { createActions } from '../create-actions';
 
-export const loadTokenAssetsActions = createActions<string, AssetInterface[], string>('assets/LOAD_TOKENS');
-export const loadTezosAssetsActions = createActions<string, BigNumber, string>('assets/LOAD_TEZOS');
+export const loadTokenAssetsActions = createActions<string, BalanceInterface[], string>('assets/LOAD_TOKENS');
+export const loadTezosAssetsActions = createActions<string, string, string>('assets/LOAD_TEZOS');

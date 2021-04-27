@@ -16,13 +16,8 @@ export const Wallet = () => {
   const tezos = useTezosSelector();
 
   const dispatch = useDispatch();
-  const {
-    isOpen: isOpenReceive,
-    onOpen: onOpenReceive,
-    onClose: onCloseReceive,
-    onDismiss: onDismissReceive
-  } = useBottomSheet();
-  const { isOpen: isOpenSend, onOpen: onOpenSend, onClose: onCloseSend, onDismiss: onDismissSend } = useBottomSheet();
+  const receiveBottomSheet = useBottomSheet();
+  const sendBottomSheet = useBottomSheet();
 
   useEffect(() => void dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash)), []);
   useEffect(() => void dispatch(loadTezosAssetsActions.submit(firstAccount.publicKeyHash)), []);
@@ -36,10 +31,10 @@ export const Wallet = () => {
       <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
       <View style={WalletStyles.buttonRow}>
-        <TouchableOpacity onPress={onOpenReceive}>
+        <TouchableOpacity onPress={receiveBottomSheet.onOpen}>
           <Text style={WalletStyles.button}>Receive</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onOpenSend}>
+        <TouchableOpacity onPress={sendBottomSheet.onOpen}>
           <Text style={WalletStyles.button}>Send</Text>
         </TouchableOpacity>
       </View>
@@ -50,7 +45,7 @@ export const Wallet = () => {
         </TouchableOpacity>
       ))}
       {tezos?.balance && (
-        <TouchableOpacity key={'tezos123123'} style={WalletStyles.accountItem} onPress={() => null}>
+        <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
           <Text>Tezos</Text>
           <Text>{tezos?.balance}</Text>
         </TouchableOpacity>
@@ -59,11 +54,15 @@ export const Wallet = () => {
       <SendBottomSheet
         from={firstAccount.publicKeyHash}
         balance={tezos?.balance}
-        isOpen={isOpenSend}
-        onClose={onCloseSend}
-        onDismiss={onDismissSend}
+        isOpen={sendBottomSheet.isOpen}
+        onClose={sendBottomSheet.onClose}
+        onDismiss={sendBottomSheet.onDismiss}
       />
-      <ReceiveBottomSheet isOpen={isOpenReceive} onClose={onCloseReceive} onDismiss={onDismissReceive} />
+      <ReceiveBottomSheet
+        isOpen={receiveBottomSheet.isOpen}
+        onClose={receiveBottomSheet.onClose}
+        onDismiss={receiveBottomSheet.onDismiss}
+      />
     </>
   );
 };
