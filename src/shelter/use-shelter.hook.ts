@@ -1,14 +1,17 @@
+import { InMemorySigner } from '@taquito/signer';
 import { useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { merge, of, Subject } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { merge, of, Subject, throwError } from 'rxjs';
+import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
+import { tezos$ } from '../utils/network/network.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
@@ -17,6 +20,7 @@ export const useShelter = () => {
   const { navigate } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
+  const send$ = useMemo(() => new Subject<SendInterface>(), []);
   const createWallet$ = useMemo(() => new Subject<string>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
   const revealSecretKey$ = useMemo(() => new Subject<string>(), []);
@@ -41,6 +45,24 @@ export const useShelter = () => {
           }
         }),
 
+      send$
+        .pipe(
+          switchMap(data =>
+            Shelter.revealSecretKey$(data.from).pipe(
+              switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+              map((privateKey): [string, SendInterface] => [privateKey, data])
+            )
+          ),
+          withLatestFrom(tezos$),
+          switchMap(([[privateKey, data], tezos]) => {
+            tezos.setProvider({
+              signer: new InMemorySigner(privateKey)
+            });
+            return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount, 2) });
+          })
+        )
+        .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
+
       merge(
         revealSecretKey$.pipe(switchMap(publicKeyHash => Shelter.revealSecretKey$(publicKeyHash))),
         revealSeedPhrase$.pipe(
@@ -53,11 +75,12 @@ export const useShelter = () => {
   }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
+  const send = (from: string, amount: string, to: string) => send$.next({ from, amount, to });
   const createWallet = (password: string) => createWallet$.next(password);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (key: string) => revealSecretKey$.next(key);
   const revealSeedPhrase = () => revealSeedPhrase$.next();
 
-  return { importWallet, createWallet, createHdAccount, revealSecretKey, revealSeedPhrase };
+  return { importWallet, createWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

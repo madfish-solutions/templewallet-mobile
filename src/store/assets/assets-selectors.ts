@@ -1,7 +1,10 @@
 import { useSelector } from 'react-redux';
 
-import { AssetsInterface } from '../../interfaces/assets.interface';
+import { BalanceInterface } from '../../interfaces/balance.interface';
 import { AssetsRootState } from './assets-state';
 
 export const useAssetsSelector = () =>
-  useSelector<AssetsRootState, AssetsInterface[]>(rootState => rootState.assets.tokens.data);
+  useSelector<AssetsRootState, BalanceInterface[]>(rootState => rootState.assets.tokens.data);
+
+export const useBalanceSelector = () =>
+  useSelector<AssetsRootState, string | undefined>(rootState => rootState.assets.tezos?.data);
