@@ -1,14 +1,9 @@
 import { BalanceInterface } from '../../interfaces/balance.interface';
 import { LoadableEntityState } from '../types';
 
-export interface TezosState {
-  balance?: string;
-  error?: string;
-}
-
 export interface AssetsState {
   tokens: LoadableEntityState<BalanceInterface[]>;
-  tezos?: TezosState;
+  tezos?: LoadableEntityState<string | undefined>;
 }
 
 export const AssetsInitialState: AssetsState = {

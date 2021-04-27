@@ -19,18 +19,14 @@ export const assetsReducer = createReducer<AssetsState>(AssetsInitialState, buil
   }));
   builder.addCase(loadTezosAssetsActions.submit, state => ({
     ...state,
-    tezos: undefined
+    tezos: createEntity(undefined, true)
   }));
   builder.addCase(loadTezosAssetsActions.success, (state, { payload }) => ({
     ...state,
-    tezos: {
-      balance: payload
-    }
+    tezos: createEntity(payload, false)
   }));
   builder.addCase(loadTezosAssetsActions.fail, (state, { payload }) => ({
     ...state,
-    tezos: {
-      error: payload
-    }
+    tezos: createEntity(undefined, false, payload)
   }));
 });

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
-import { useAssetsSelector, useTezosSelector } from '../../store/assets/assets-selectors';
+import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
@@ -14,7 +14,7 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = () => {
   const firstAccount = useFirstAccountSelector();
   const assets = useAssetsSelector();
-  const tezos = useTezosSelector();
+  const balance = useBalanceSelector();
 
   const dispatch = useDispatch();
   const receiveBottomSheet = useBottomSheet();
@@ -47,16 +47,16 @@ export const Wallet = () => {
           <Text>{balance}</Text>
         </TouchableOpacity>
       ))}
-      {tezos?.balance && (
+      {balance && (
         <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
           <Text>Tezos</Text>
-          <Text>{tezos?.balance}</Text>
+          <Text>{balance}</Text>
         </TouchableOpacity>
       )}
 
       <SendBottomSheet
         from={firstAccount.publicKeyHash}
-        balance={tezos?.balance}
+        balance={balance}
         isOpen={sendBottomSheet.isOpen}
         onClose={sendBottomSheet.onClose}
         onDismiss={sendBottomSheet.onDismiss}
