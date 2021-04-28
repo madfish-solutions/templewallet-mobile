@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
+import { FeeSlider } from '../../../components/fee-slider/fee-slider';
 import { EmptyFn } from '../../../config/general';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -46,6 +47,8 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, b
 
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
+
+            <FeeSlider />
 
             <Button title="Cancel" onPress={onClose} />
             <Button title="Send" onPress={submitForm} />
