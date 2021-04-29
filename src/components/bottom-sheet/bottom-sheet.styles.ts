@@ -8,6 +8,6 @@ export const BottomSheetStyles = StyleSheet.create({
     backgroundColor: black
   },
   overlayTouchable: {
-    flex: 1
+    height: '100%'
   }
 });

@@ -1,7 +1,7 @@
+import 'react-native-gesture-handler';
+
 import './shim.js';
 import './handle-js-exception';
-
-import 'react-native-gesture-handler';
 
 import { AppRegistry } from 'react-native';
 

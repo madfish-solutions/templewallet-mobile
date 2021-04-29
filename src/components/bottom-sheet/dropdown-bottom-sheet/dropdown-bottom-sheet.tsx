@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
-import { Button, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { orange } from '../../../config/styles';
 import { zIndexEnum } from '../../../enums/z-index.enum';
+import { Button } from '../../button/button';
 import { BottomSheet } from '../bottom-sheet';
 import { BottomSheetControllerProps } from '../use-bottom-sheet-controller';
 import { DropdownBottomSheetStyles } from './dropdown-bottom-sheet.styles';

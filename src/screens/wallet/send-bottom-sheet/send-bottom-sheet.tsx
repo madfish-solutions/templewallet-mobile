@@ -1,10 +1,11 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Button, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { Button } from '../../../components/button/button';
 import { FormTextInput } from '../../../form/form-text-input';
 import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
