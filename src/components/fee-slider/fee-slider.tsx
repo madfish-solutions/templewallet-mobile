@@ -11,16 +11,7 @@ export const FeeSlider = () => {
     <>
       <Text>Gas Fee</Text>
       <StyledTextInput onChangeText={v => setValue(parseInt(v, 2) || 0)} value={value.toString()} />
-      <Slider
-        value={value || 0}
-        onValueChange={setValue}
-        step={50}
-        minimumValue={0}
-        maximumValue={100}
-        leftElementRender={<Text>Low</Text>}
-        middleElementRender={<Text>Mid</Text>}
-        rightElementRender={<Text>High</Text>}
-      />
+      <Slider value={value || 0} onValueChange={setValue} step={50} minimumValue={0} maximumValue={100} />
     </>
   );
 };
