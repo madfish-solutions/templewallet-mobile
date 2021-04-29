@@ -12,4 +12,4 @@ export const useBottomSheetRef = (isOpen: boolean) => {
   useEffect(() => void (isOpen ? openBottomSheet() : closeBottomSheet()), [isOpen]);
 
   return { ref, closeBottomSheet };
-}
+};

@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import { View } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';

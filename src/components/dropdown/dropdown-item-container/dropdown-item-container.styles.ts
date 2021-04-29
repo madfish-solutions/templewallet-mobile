@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { black, generateShadow, orange, step, white } from '../../../config/styles';
 
 export const DropdownItemContainerStyles = StyleSheet.create({
