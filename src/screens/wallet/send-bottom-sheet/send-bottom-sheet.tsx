@@ -20,7 +20,7 @@ interface Props extends BottomSheetStateProps {
   balance?: string;
 }
 
-export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, balance }) => {
+export const SendBottomSheet: FC<Props> = ({ from, isOpen, onCloseEnd, balance }) => {
   const { send } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
@@ -30,7 +30,7 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, balance }) =
   const handleDropdownValueChange = (item?: AccountInterface) => setSelectedAccount(item);
 
   return (
-    <ModalBottomSheet title="Send" isOpen={isOpen} onClose={onClose}>
+    <ModalBottomSheet title="Send" isOpen={isOpen} onCloseEnd={onCloseEnd}>
       <Formik
         initialValues={SendBottomSheetInitialValues}
         validationSchema={sendBottomSheetValidationSchema}
@@ -46,7 +46,6 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, balance }) =
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
 
-            <Button title="Cancel" onPress={onClose} />
             <Button title="Send" onPress={submitForm} />
           </>
         )}

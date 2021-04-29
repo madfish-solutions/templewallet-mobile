@@ -9,14 +9,14 @@ import { StyledTextInput } from '../../../components/styled-text-input/styled-te
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 
-export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onClose }) => {
+export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onCloseEnd }) => {
   const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <ModalBottomSheet title="Receive" isOpen={isOpen} onClose={onClose}>
+    <ModalBottomSheet title="Receive" isOpen={isOpen} onCloseEnd={onCloseEnd}>
       <Text>Address:</Text>
       <StyledTextInput value={publicKeyHash} editable={false} />
       <Button title="Copy to clipboard" onPress={handleCopyToClipboard} />
@@ -24,8 +24,6 @@ export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onClose 
       <View style={ReceiveBottomSheetStyles.qrCodeContainer}>
         <QRCode value={publicKeyHash} ecl="Q" />
       </View>
-
-      <Button title="Close" onPress={onClose} />
     </ModalBottomSheet>
   );
 };

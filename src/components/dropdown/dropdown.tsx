@@ -45,7 +45,7 @@ export const Dropdown = <T extends unknown>({
         {renderValue({ value })}
       </TouchableOpacity>
 
-      <DropdownBottomSheet title={title} isOpen={isOpen} onClose={handleDropdownBottomSheetClose}>
+      <DropdownBottomSheet title={title} isOpen={isOpen} onCloseEnd={handleDropdownBottomSheetClose}>
         {list.map((item, index) => renderListItem({ item, index }))}
       </DropdownBottomSheet>
     </>
