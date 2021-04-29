@@ -8,6 +8,7 @@ import { SliderStyles } from './slider.styles';
 export const Slider: FC<SliderProps> = ({
   minimumTrackTintColor = orangeLight200,
   maximumTrackTintColor = greyLight200,
+  style,
   // TODO: investigate how to fix type error
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ref,
@@ -17,7 +18,7 @@ export const Slider: FC<SliderProps> = ({
     <View>
       <RNSlider
         {...props}
-        style={SliderStyles.slider}
+        style={[SliderStyles.slider, style]}
         minimumTrackTintColor={minimumTrackTintColor}
         maximumTrackTintColor={maximumTrackTintColor}
       />
