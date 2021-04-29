@@ -7,15 +7,15 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 import { DropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
-  value?: T;
+  title: string;
   list: T[];
-  onValueChange: EventFn<T | undefined>;
+  renderValue: DropdownValueComponent<T>;
+  renderListItem: DropdownListItemComponent<T>;
 }
 
 interface DropdownRenderProps<T> {
-  title: string;
-  renderValue: DropdownValueComponent<T>;
-  renderListItem: DropdownListItemComponent<T>;
+  value?: T;
+  onValueChange: EventFn<T | undefined>;
 }
 
 export type DropdownValueComponent<T> = FC<{
@@ -39,7 +39,6 @@ export const Dropdown = <T extends unknown>({
 
   const handleSelectedItemPress = () => setIsOpen(value => !value);
   const handleDropdownBottomSheetClose = () => setIsOpen(false);
-
 
   return (
     <>

@@ -1,43 +1,43 @@
 import { Formik } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { Button, Text } from 'react-native';
 
-import { AccountDropdown } from '../../../components/account-dropdown/account-dropdown';
+import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
 import { BottomSheetStateProps } from '../../../components/bottom-sheet/bottom-sheet-state.props';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { FormTextInput } from '../../../form/form-text-input';
-import { AccountInterface } from '../../../interfaces/account.interface';
+import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
-import {
-  SendBottomSheetFormValues,
-  SendBottomSheetInitialValues,
-  sendBottomSheetValidationSchema
-} from './send-bottom-sheet.form';
+import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 
 interface Props extends BottomSheetStateProps {
-  from: string;
   balance?: string;
 }
 
-export const SendBottomSheet: FC<Props> = ({ from, isOpen, onCloseEnd, balance }) => {
+export const SendBottomSheet: FC<Props> = ({ isOpen, onCloseEnd, balance }) => {
   const { send } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
-  const onSubmit = (data: SendBottomSheetFormValues) => send(from, data.amount, data.recipient);
+  const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
+    account: hdAccounts[0] ?? emptyAccount,
+    amount: '0',
+    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
+  };
 
-  const [selectedAccount, setSelectedAccount] = useState<AccountInterface | undefined>(hdAccounts[0]);
-  const handleDropdownValueChange = (item?: AccountInterface) => setSelectedAccount(item);
+  const onSubmit = (data: SendBottomSheetFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);
 
   return (
     <ModalBottomSheet title="Send" isOpen={isOpen} onCloseEnd={onCloseEnd}>
       <Formik
+        enableReinitialize={true}
         initialValues={SendBottomSheetInitialValues}
         validationSchema={sendBottomSheetValidationSchema}
         onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
-            <AccountDropdown value={selectedAccount} list={hdAccounts} onValueChange={handleDropdownValueChange} />
+            <Text>from</Text>
+            <AccountFormDropdown name="account" list={hdAccounts} />
 
             <Text>Amount Tezos</Text>
             {/*TODO: replace with NumberInput*/}

@@ -57,7 +57,6 @@ export const Wallet = () => {
 
       <ReceiveBottomSheet isOpen={receiveBottomSheetState.isOpen} onCloseEnd={receiveBottomSheetState.onCloseEnd} />
       <SendBottomSheet
-        from={firstAccount.publicKeyHash}
         balance={balance}
         isOpen={sendBottomSheetState.isOpen}
         onCloseEnd={sendBottomSheetState.onCloseEnd}

@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
+import { FormDropdown } from '../../form/form-dropdown';
 import { AccountInterface } from '../../interfaces/account.interface';
-import { Dropdown, DropdownListItemComponent, DropdownProps, DropdownValueComponent } from '../dropdown/dropdown';
+import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { AccountDropdownItem } from './account-dropdown-item/account-dropdown-item';
 
 const renderValue: DropdownValueComponent<AccountInterface> = ({ value }) =>
@@ -12,13 +13,13 @@ const renderListItem: DropdownListItemComponent<AccountInterface> = ({ item }) =
   <AccountDropdownItem account={item} />
 );
 
-export const AccountDropdown: FC<DropdownProps<AccountInterface>> = ({ value, list, onValueChange }) => (
-  <Dropdown
-    title="Accounts"
-    value={value}
-    list={list}
-    onValueChange={onValueChange}
-    renderValue={renderValue}
-    renderListItem={renderListItem}
-  />
-);
+interface Props {
+  name: string;
+  list: AccountInterface[];
+}
+
+export const AccountFormDropdown: FC<Props> = ({ name, list }) => {
+  return (
+    <FormDropdown name={name} title="Accounts" list={list} renderValue={renderValue} renderListItem={renderListItem} />
+  );
+};
