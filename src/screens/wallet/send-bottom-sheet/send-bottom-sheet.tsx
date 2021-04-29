@@ -3,8 +3,8 @@ import React, { FC } from 'react';
 import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
-import { FeeSlider } from '../../../components/fee-slider/fee-slider';
 import { EmptyFn } from '../../../config/general';
+import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { WalletStyles } from '../wallet.styles';
@@ -25,7 +25,11 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, b
   // TODO: replace with NumberInput
   const { send } = useShelter();
 
-  const onSubmit = (data: SendBottomSheetFormValues) => send(from, data.amount, data.recipient);
+  // TODO: integrate gasFee with send request
+  const onSubmit = (data: SendBottomSheetFormValues) => {
+    console.log(data);
+    return send(from, data.amount, data.recipient);
+  };
 
   return (
     <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
@@ -48,7 +52,8 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, b
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
 
-            <FeeSlider />
+            <Text>Gas Fee</Text>
+            <FormInputSlider name="gasFee" />
 
             <Button title="Cancel" onPress={onClose} />
             <Button title="Send" onPress={submitForm} />
