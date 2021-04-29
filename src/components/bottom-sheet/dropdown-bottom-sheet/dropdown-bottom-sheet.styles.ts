@@ -20,10 +20,12 @@ export const DropdownBottomSheetStyles = StyleSheet.create({
   title: {
     fontSize: 1.625 * step
   },
+  scrollView: {
+    backgroundColor: pageBgColor
+  },
   contentContainer: {
     flex: 1,
-    padding: step,
-    backgroundColor: pageBgColor
+    padding: step
   },
   footerContainer: {
     marginBottom: 4.375 * step,

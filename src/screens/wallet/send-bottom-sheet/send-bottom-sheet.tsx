@@ -36,7 +36,7 @@ export const SendBottomSheet: FC<Props> = ({ isOpen, onCloseEnd, balance }) => {
         onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
-            <Text>from</Text>
+            <Text>From</Text>
             <AccountFormDropdown name="account" list={hdAccounts} />
 
             <Text>Amount Tezos</Text>

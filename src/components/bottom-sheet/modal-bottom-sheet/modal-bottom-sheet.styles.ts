@@ -32,7 +32,7 @@ export const ModalBottomSheetStyles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 2 * step,
+    padding: step,
     backgroundColor: pageBgColor
   }
 });

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, Text, useWindowDimensions, View } from 'react-native';
+import { Button, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
 import { orange } from '../../../config/styles';
 import { zIndexEnum } from '../../../enums/z-index.enum';
@@ -21,7 +21,9 @@ export const DropdownBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, chil
       <View style={DropdownBottomSheetStyles.headerContainer}>
         <Text style={DropdownBottomSheetStyles.title}>{title}</Text>
       </View>
-      <View style={DropdownBottomSheetStyles.contentContainer}>{children}</View>
+      <ScrollView style={DropdownBottomSheetStyles.scrollView}>
+        <View style={DropdownBottomSheetStyles.contentContainer}>{children}</View>
+      </ScrollView>
       <View style={DropdownBottomSheetStyles.footerContainer}>
         <Button title="Cancel" color={orange} onPress={closeBottomSheet} />
       </View>

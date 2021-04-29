@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
-import { DropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
   title: string;
@@ -45,17 +44,15 @@ export const Dropdown = <T extends unknown>({
       <DropdownItemContainer onPress={handleSelectedItemPress}>{renderValue({ value })}</DropdownItemContainer>
 
       <DropdownBottomSheet title={title} isOpen={isOpen} onCloseEnd={handleDropdownBottomSheetClose}>
-        <View style={DropdownStyles.listContainer}>
-          {list.map((item, index) => (
-            <DropdownItemContainer
-              key={index}
-              hasMargin={true}
-              isSelected={item === value}
-              onPress={() => onValueChange(item)}>
-              {renderListItem({ item, index })}
-            </DropdownItemContainer>
-          ))}
-        </View>
+        {list.map((item, index) => (
+          <DropdownItemContainer
+            key={index}
+            hasMargin={true}
+            isSelected={item === value}
+            onPress={() => onValueChange(item)}>
+            {renderListItem({ item, index })}
+          </DropdownItemContainer>
+        ))}
       </DropdownBottomSheet>
     </>
   );
