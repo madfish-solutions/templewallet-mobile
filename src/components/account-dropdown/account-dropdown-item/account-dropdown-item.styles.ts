@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-import { blue, borderColor, orange, step } from '../../config/styles';
-import { hexa } from '../../utils/style.util';
+import { blue, borderColor, orange, step } from '../../../config/styles';
+import { hexa } from '../../../utils/style.util';
 
-export const AccountDropdownValueStyles = StyleSheet.create({
+export const AccountDropdownItemStyles = StyleSheet.create({
   root: {
     flexDirection: 'row'
   },

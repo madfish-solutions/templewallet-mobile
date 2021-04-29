@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
@@ -46,7 +46,16 @@ export const Dropdown = <T extends unknown>({
       </TouchableOpacity>
 
       <DropdownBottomSheet title={title} isOpen={isOpen} onCloseEnd={handleDropdownBottomSheetClose}>
-        {list.map((item, index) => renderListItem({ item, index }))}
+        <View style={DropdownStyles.listContainer}>
+          {list.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[DropdownStyles.valueContainer, DropdownStyles.listItemContainer]}
+              onPress={() => onValueChange(item)}>
+              {renderListItem({ item, index })}
+            </TouchableOpacity>
+          ))}
+        </View>
       </DropdownBottomSheet>
     </>
   );

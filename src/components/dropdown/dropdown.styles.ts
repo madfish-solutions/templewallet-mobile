@@ -1,13 +1,19 @@
 import { StyleSheet } from 'react-native';
 
-import { borderColor, step, white } from '../../config/styles';
+import { black, borderColor, generateShadow, step, white } from '../../config/styles';
 
 export const DropdownStyles = StyleSheet.create({
   valueContainer: {
     padding: step,
     borderColor,
     borderRadius: step,
-    borderWidth: 0.125 * step,
-    backgroundColor: white
+    backgroundColor: white,
+    ...generateShadow(black)
+  },
+  listContainer: {
+    marginVertical: 0.5 * step
+  },
+  listItemContainer: {
+    marginVertical: 0.5 * step
   }
 });
