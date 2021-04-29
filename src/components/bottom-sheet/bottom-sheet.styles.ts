@@ -1,9 +1,13 @@
 import { StyleSheet } from 'react-native';
 
-import { step, white } from '../../config/styles';
+import { black } from '../../config/styles';
 
 export const BottomSheetStyles = StyleSheet.create({
-  contentContainer: {
-    margin: step
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: black
+  },
+  overlayTouchable: {
+    flex: 1
   }
 });

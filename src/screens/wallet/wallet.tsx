@@ -55,11 +55,12 @@ export const Wallet = () => {
         </TouchableOpacity>
       )}
 
-      <ReceiveBottomSheet isOpen={receiveBottomSheetState.isOpen} onClose={receiveBottomSheetState.onClose} />
+      <ReceiveBottomSheet title="" isOpen={receiveBottomSheetState.isOpen} onClose={receiveBottomSheetState.onClose} />
       <SendBottomSheet
+        title=""
+        isOpen={sendBottomSheetState.isOpen}
         from={firstAccount.publicKeyHash}
         balance={balance}
-        isOpen={sendBottomSheetState.isOpen}
         onClose={sendBottomSheetState.onClose}
       />
     </ScreenContainer>

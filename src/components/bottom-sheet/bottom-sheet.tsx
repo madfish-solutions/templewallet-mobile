@@ -1,27 +1,42 @@
-import React, { FC, ReactNode, useEffect, useRef } from 'react';
+import { Portal } from '@gorhom/portal';
+import React, { forwardRef, ReactNode, useRef } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ReanimatedBottomSheet from 'reanimated-bottom-sheet';
 
 import { EmptyFn } from '../../config/general';
-import { isDefined } from '../../utils/is-defined';
+import { BottomSheetStyles } from './bottom-sheet.styles';
 
 interface Props {
+  isOpen: boolean;
+  overlayZIndex: number;
   height: number;
   renderContent: () => ReactNode;
   onCloseEnd: EmptyFn;
+  onOverlayPress: EmptyFn;
 }
 
-export const BottomSheet: FC<Props> = ({ height, renderContent, onCloseEnd }) => {
-  const bottomSheetModalRef = useRef<ReanimatedBottomSheet>(null);
+export const BottomSheet = forwardRef<ReanimatedBottomSheet, Props>(
+  ({ isOpen, overlayZIndex, height, renderContent, onCloseEnd, onOverlayPress }, ref) => {
+    return (
+      <Portal>
+        {isOpen && (
+          <Animated.View style={[BottomSheetStyles.overlay, { opacity, zIndex: overlayZIndex }]}>
+            <TouchableOpacity style={BottomSheetStyles.overlayTouchable} onPress={onOverlayPress} />
+          </Animated.View>
+        )}
 
-  useEffect(() => void (isDefined(bottomSheetModalRef.current) && bottomSheetModalRef.current.snapTo(0)), []);
-
-  return (
-    <ReanimatedBottomSheet
-      ref={bottomSheetModalRef}
-      snapPoints={[height, 0]}
-      initialSnap={1}
-      onCloseEnd={onCloseEnd}
-      renderContent={renderContent}
-    />
-  );
-};
+        <View style={StyleSheet.absoluteFillObject}>
+          <ReanimatedBottomSheet
+            ref={ref}
+            snapPoints={[height, 0]}
+            initialSnap={1}
+            renderContent={renderContent}
+            onOpenStart={handleOpenStart}
+            onCloseStart={handleCloseStart}
+            onCloseEnd={onCloseEnd}
+          />
+        </View>
+      </Portal>
+    );
+  }
+);

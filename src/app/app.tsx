@@ -1,4 +1,4 @@
-import { PortalHost, PortalProvider } from '@gorhom/portal';
+import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
@@ -7,7 +7,6 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { PortalNameEnum } from '../enums/portal-name.enum';
 import { Navigator } from '../navigator/navigator';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
@@ -27,9 +26,6 @@ export const App = () => {
             </NavigationContainer>
 
             <ToastProvider />
-
-            <PortalHost name={PortalNameEnum.Modal} />
-            <PortalHost name={PortalNameEnum.Dropdown} />
           </PortalProvider>
         </SafeAreaProvider>
       </PersistGate>

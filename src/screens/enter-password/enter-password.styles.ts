@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import { white} from '../../config/styles';
+import { white } from '../../config/styles';
 import { zIndexEnum } from '../../enums/z-index.enum';
 
 export const EnterPasswordStyles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: zIndexEnum.Modal,
+    zIndex: zIndexEnum.PasswordLockScreen,
     backgroundColor: white
   }
 });
