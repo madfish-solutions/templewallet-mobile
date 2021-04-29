@@ -9,13 +9,7 @@ export type SendBottomSheetFormValues = {
 };
 
 export const sendBottomSheetValidationSchema: SchemaOf<SendBottomSheetFormValues> = object().shape({
-  account: object()
-    .shape({
-      name: string().required(),
-      publicKey: string().required(),
-      publicKeyHash: string().required()
-    })
-    .required(),
+  account: object().shape({}).required(),
   amount: string().required(),
   recipient: string().required()
 });
