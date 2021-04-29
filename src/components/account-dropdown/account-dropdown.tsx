@@ -8,7 +8,7 @@ import { AccountDropdownItem } from './account-dropdown-item/account-dropdown-it
 const renderValue: DropdownValueComponent<AccountInterface> = ({ value }) =>
   value === undefined ? <Text>Kekos</Text> : <AccountDropdownItem account={value} />;
 
-const renderListItem: DropdownListItemComponent<AccountInterface> = ({ item, index }) => (
+const renderListItem: DropdownListItemComponent<AccountInterface> = ({ item }) => (
   <AccountDropdownItem account={item} />
 );
 

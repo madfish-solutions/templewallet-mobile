@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
+import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
@@ -39,21 +40,21 @@ export const Dropdown = <T extends unknown>({
   const handleSelectedItemPress = () => setIsOpen(value => !value);
   const handleDropdownBottomSheetClose = () => setIsOpen(false);
 
+
   return (
     <>
-      <TouchableOpacity style={DropdownStyles.valueContainer} onPress={handleSelectedItemPress}>
-        {renderValue({ value })}
-      </TouchableOpacity>
+      <DropdownItemContainer onPress={handleSelectedItemPress}>{renderValue({ value })}</DropdownItemContainer>
 
       <DropdownBottomSheet title={title} isOpen={isOpen} onCloseEnd={handleDropdownBottomSheetClose}>
         <View style={DropdownStyles.listContainer}>
           {list.map((item, index) => (
-            <TouchableOpacity
+            <DropdownItemContainer
               key={index}
-              style={[DropdownStyles.valueContainer, DropdownStyles.listItemContainer]}
+              hasMargin={true}
+              isSelected={item === value}
               onPress={() => onValueChange(item)}>
               {renderListItem({ item, index })}
-            </TouchableOpacity>
+            </DropdownItemContainer>
           ))}
         </View>
       </DropdownBottomSheet>
