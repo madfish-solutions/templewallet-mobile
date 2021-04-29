@@ -1,7 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
 import { EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
+import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 
 export interface DropdownProps<T> {
@@ -33,22 +34,26 @@ export const Dropdown = <T extends unknown>({
   renderValue,
   renderListItem
 }: DropdownProps<T> & DropdownRenderProps<T>) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const dropdownBottomSheetController = useBottomSheetController();
 
-  const handleSelectedItemPress = () => setIsOpen(value => !value);
-  const handleDropdownBottomSheetClose = () => setIsOpen(false);
+  const createDropdownItemPressHandler = (item: T) => () => {
+    onValueChange(item);
+    dropdownBottomSheetController.close();
+  };
 
   return (
     <>
-      <DropdownItemContainer onPress={handleSelectedItemPress}>{renderValue({ value })}</DropdownItemContainer>
+      <DropdownItemContainer onPress={dropdownBottomSheetController.open}>
+        {renderValue({ value })}
+      </DropdownItemContainer>
 
-      <DropdownBottomSheet title={title} isOpen={isOpen} onCloseEnd={handleDropdownBottomSheetClose}>
+      <DropdownBottomSheet title={title} controller={dropdownBottomSheetController}>
         {list.map((item, index) => (
           <DropdownItemContainer
             key={index}
             hasMargin={true}
             isSelected={item === value}
-            onPress={() => onValueChange(item)}>
+            onPress={createDropdownItemPressHandler(item)}>
             {renderListItem({ item, index })}
           </DropdownItemContainer>
         ))}

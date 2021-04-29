@@ -4,16 +4,14 @@ import { Button, ScrollView, Text, useWindowDimensions, View } from 'react-nativ
 import { orange } from '../../../config/styles';
 import { zIndexEnum } from '../../../enums/z-index.enum';
 import { BottomSheet } from '../bottom-sheet';
-import { BottomSheetStateProps } from '../bottom-sheet-state.props';
-import { useBottomSheetRef } from '../use-bottom-sheet-ref.hook';
+import { BottomSheetControllerProps } from '../use-bottom-sheet-controller';
 import { DropdownBottomSheetStyles } from './dropdown-bottom-sheet.styles';
 
-interface Props extends BottomSheetStateProps {
+interface Props extends BottomSheetControllerProps {
   title: string;
 }
 
-export const DropdownBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, children }) => {
-  const { ref, closeBottomSheet } = useBottomSheetRef(isOpen);
+export const DropdownBottomSheet: FC<Props> = ({ title, controller, children }) => {
   const contentHeight = 0.5 * useWindowDimensions().height;
 
   const renderContent = () => (
@@ -25,21 +23,18 @@ export const DropdownBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, chil
         <View style={DropdownBottomSheetStyles.contentContainer}>{children}</View>
       </ScrollView>
       <View style={DropdownBottomSheetStyles.footerContainer}>
-        <Button title="Cancel" color={orange} onPress={closeBottomSheet} />
+        <Button title="Cancel" color={orange} onPress={controller.close} />
       </View>
     </View>
   );
 
   return (
     <BottomSheet
-      ref={ref}
-      isOpen={isOpen}
+      controller={controller}
       contentHeight={contentHeight}
       overlayZIndex={zIndexEnum.DropdownBottomSheetOverlay}
       contentZIndex={zIndexEnum.DropdownBottomSheetContent}
       renderContent={renderContent}
-      onOverlayPress={closeBottomSheet}
-      onCloseEnd={onCloseEnd}
     />
   );
 };

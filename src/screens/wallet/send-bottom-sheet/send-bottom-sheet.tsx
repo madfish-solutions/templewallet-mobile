@@ -3,19 +3,19 @@ import React, { FC } from 'react';
 import { Button, Text } from 'react-native';
 
 import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
-import { BottomSheetStateProps } from '../../../components/bottom-sheet/bottom-sheet-state.props';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
+import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { FormTextInput } from '../../../form/form-text-input';
 import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 
-interface Props extends BottomSheetStateProps {
+interface Props extends BottomSheetControllerProps {
   balance?: string;
 }
 
-export const SendBottomSheet: FC<Props> = ({ isOpen, onCloseEnd, balance }) => {
+export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
   const { send } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
@@ -28,7 +28,7 @@ export const SendBottomSheet: FC<Props> = ({ isOpen, onCloseEnd, balance }) => {
   const onSubmit = (data: SendBottomSheetFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);
 
   return (
-    <ModalBottomSheet title="Send" isOpen={isOpen} onCloseEnd={onCloseEnd}>
+    <ModalBottomSheet title="Send" controller={controller}>
       <Formik
         enableReinitialize={true}
         initialValues={SendBottomSheetInitialValues}

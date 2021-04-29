@@ -3,20 +3,20 @@ import React, { FC } from 'react';
 import { Button, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-import { BottomSheetStateProps } from '../../../components/bottom-sheet/bottom-sheet-state.props';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
+import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 
-export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onCloseEnd }) => {
+export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <ModalBottomSheet title="Receive" isOpen={isOpen} onCloseEnd={onCloseEnd}>
+    <ModalBottomSheet title="Receive" controller={controller}>
       <Text>Address:</Text>
       <StyledTextInput value={publicKeyHash} editable={false} />
       <Button title="Copy to clipboard" onPress={handleCopyToClipboard} />
@@ -24,6 +24,8 @@ export const ReceiveBottomSheet: FC<BottomSheetStateProps> = ({ isOpen, onCloseE
       <View style={ReceiveBottomSheetStyles.qrCodeContainer}>
         <QRCode value={publicKeyHash} ecl="Q" />
       </View>
+
+      <Button title="Close" onPress={controller.close} />
     </ModalBottomSheet>
   );
 };

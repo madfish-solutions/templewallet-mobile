@@ -4,17 +4,15 @@ import { Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import { step } from '../../../config/styles';
 import { zIndexEnum } from '../../../enums/z-index.enum';
 import { BottomSheet } from '../bottom-sheet';
-import { BottomSheetStateProps } from '../bottom-sheet-state.props';
-import { useBottomSheetRef } from '../use-bottom-sheet-ref.hook';
+import { BottomSheetControllerProps } from '../use-bottom-sheet-controller';
 import ModalBottomSheetCloseIcon from './modal-bottom-sheet-close-icon.svg';
 import { closeIconSize, ModalBottomSheetStyles } from './modal-bottom-sheet.styles';
 
-interface Props extends BottomSheetStateProps {
+interface Props extends BottomSheetControllerProps {
   title: string;
 }
 
-export const ModalBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, children }) => {
-  const { ref, closeBottomSheet } = useBottomSheetRef(isOpen);
+export const ModalBottomSheet: FC<Props> = ({ title, controller, children }) => {
   const contentHeight = useWindowDimensions().height - 20 * step;
 
   const renderContent = () => (
@@ -22,7 +20,7 @@ export const ModalBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, childre
       <View style={ModalBottomSheetStyles.headerContainer}>
         <View style={ModalBottomSheetStyles.iconSubstitute} />
         <Text style={ModalBottomSheetStyles.title}>{title}</Text>
-        <TouchableOpacity onPress={closeBottomSheet}>
+        <TouchableOpacity onPress={controller.close}>
           <ModalBottomSheetCloseIcon width={closeIconSize} height={closeIconSize} />
         </TouchableOpacity>
       </View>
@@ -32,14 +30,11 @@ export const ModalBottomSheet: FC<Props> = ({ title, isOpen, onCloseEnd, childre
 
   return (
     <BottomSheet
-      ref={ref}
-      isOpen={isOpen}
+      controller={controller}
       contentHeight={contentHeight}
       overlayZIndex={zIndexEnum.ModalBottomSheetOverlay}
       contentZIndex={zIndexEnum.ModalBottomSheetContent}
       renderContent={renderContent}
-      onOverlayPress={closeBottomSheet}
-      onCloseEnd={onCloseEnd}
     />
   );
 };

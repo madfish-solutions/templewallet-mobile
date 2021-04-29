@@ -5,20 +5,23 @@ import { Button, Text } from 'react-native';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import {
-  CreateHdAccountFormValues,
-  createHdAccountInitialValues,
-  createHdAccountValidationSchema
-} from './create-hd-account.form';
+import { useWalletSelector } from '../../store/wallet/wallet-selectors';
+import { CreateHdAccountFormValues, createHdAccountValidationSchema } from './create-hd-account.form';
 
 export const CreateHdAccount = () => {
   const { createHdAccount } = useShelter();
+  const accountIndex = useWalletSelector().hdAccounts.length + 1;
+
+  const createHdAccountInitialValues: CreateHdAccountFormValues = {
+    name: `Account ${accountIndex}`
+  };
 
   const onSubmit = ({ name }: CreateHdAccountFormValues) => createHdAccount(name);
 
   return (
     <ScreenContainer>
       <Formik
+        enableReinitialize={true}
         initialValues={createHdAccountInitialValues}
         validationSchema={createHdAccountValidationSchema}
         onSubmit={onSubmit}>

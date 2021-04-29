@@ -18,8 +18,6 @@ interface Props {
   list: AccountInterface[];
 }
 
-export const AccountFormDropdown: FC<Props> = ({ name, list }) => {
-  return (
-    <FormDropdown name={name} title="Accounts" list={list} renderValue={renderValue} renderListItem={renderListItem} />
-  );
-};
+export const AccountFormDropdown: FC<Props> = ({ name, list }) => (
+  <FormDropdown name={name} title="Accounts" list={list} renderValue={renderValue} renderListItem={renderListItem} />
+);
