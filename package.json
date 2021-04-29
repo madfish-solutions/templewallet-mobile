@@ -40,6 +40,7 @@
     "events": "^1.1.1",
     "formik": "^2.2.6",
     "https-browserify": "^0.0.1",
+    "lodash-es": "^4.17.21",
     "path-browserify": "^0.0.0",
     "react": "17.0.1",
     "react-native": "0.64.0",
