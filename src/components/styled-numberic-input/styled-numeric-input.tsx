@@ -25,7 +25,7 @@ export const StyledNumericInput = ({
   const handleChange = useCallback(
     (changedValue: string) => {
       const numberValue = changedValue.substring(0);
-      const parsedInt = parseInt(numberValue, 10);
+      const parsedInt = parseFloat(numberValue);
       const intValue = isNaN(parsedInt) ? min : parsedInt;
       // TODO: refactor onChange && onBlur types
       inRange(intValue, min, max) &&

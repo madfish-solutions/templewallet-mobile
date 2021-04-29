@@ -4,6 +4,7 @@ import { Button, Text, TouchableOpacity } from 'react-native';
 
 import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
 import { EmptyFn } from '../../../config/general';
+import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { WalletStyles } from '../wallet.styles';
@@ -21,7 +22,6 @@ interface Props extends BottomSheetProps {
 }
 
 export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, balance }) => {
-  // TODO: replace with NumberInput
   const { send } = useShelter();
 
   const onSubmit = (data: SendBottomSheetFormValues) => send(from, data.amount, data.recipient);
@@ -42,7 +42,7 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, b
             </TouchableOpacity>
 
             <Text>Amount Tezos</Text>
-            <FormTextInput name="amount" />
+            <FormNumericInput name="amount" />
 
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
