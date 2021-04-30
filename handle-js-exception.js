@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 
-const allowInDevMode = true;
+const allowInDevMode = false;
 
 setJSExceptionHandler((error, isFatal) => {
   // TODO: add Sentry error capturing

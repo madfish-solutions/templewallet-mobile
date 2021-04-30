@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { useBottomSheet } from '../../components/bottom-sheet/use-bottom-sheet.hook';
+import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
@@ -12,13 +12,14 @@ import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
+  const dispatch = useDispatch();
+
   const firstAccount = useFirstAccountSelector();
   const assets = useAssetsSelector();
   const balance = useBalanceSelector();
 
-  const dispatch = useDispatch();
-  const receiveBottomSheet = useBottomSheet();
-  const sendBottomSheet = useBottomSheet();
+  const receiveBottomSheetController = useBottomSheetController();
+  const sendBottomSheetController = useBottomSheetController();
 
   useEffect(() => {
     dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash));
@@ -34,10 +35,10 @@ export const Wallet = () => {
       <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
       <View style={WalletStyles.buttonRow}>
-        <TouchableOpacity onPress={receiveBottomSheet.onOpen}>
+        <TouchableOpacity onPress={receiveBottomSheetController.open}>
           <Text style={WalletStyles.button}>Receive</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={sendBottomSheet.onOpen}>
+        <TouchableOpacity onPress={sendBottomSheetController.open}>
           <Text style={WalletStyles.button}>Send</Text>
         </TouchableOpacity>
       </View>
@@ -54,18 +55,8 @@ export const Wallet = () => {
         </TouchableOpacity>
       )}
 
-      <SendBottomSheet
-        from={firstAccount.publicKeyHash}
-        balance={balance}
-        isOpen={sendBottomSheet.isOpen}
-        onClose={sendBottomSheet.onClose}
-        onDismiss={sendBottomSheet.onDismiss}
-      />
-      <ReceiveBottomSheet
-        isOpen={receiveBottomSheet.isOpen}
-        onClose={receiveBottomSheet.onClose}
-        onDismiss={receiveBottomSheet.onDismiss}
-      />
+      <ReceiveBottomSheet controller={receiveBottomSheetController} />
+      <SendBottomSheet controller={sendBottomSheetController} balance={balance} />
     </ScreenContainer>
   );
 };
