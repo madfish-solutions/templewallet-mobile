@@ -1,26 +1,27 @@
-import { default as RNSlider, SliderProps } from '@react-native-community/slider';
+import RNSlider, { SliderProps } from '@react-native-community/slider';
+import { debounce } from 'lodash-es';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { greyLight200, orangeLight200 } from '../../config/styles';
 import { SliderStyles } from './slider.styles';
 
-export const Slider: FC<SliderProps> = ({
-  minimumTrackTintColor = orangeLight200,
-  maximumTrackTintColor = greyLight200,
-  style,
-  // TODO: investigate how to fix type error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ref,
-  ...props
-}) => {
+type Props = Required<Pick<SliderProps, 'value' | 'onValueChange'>>;
+
+export const Slider: FC<Props> = ({ value, onValueChange }) => {
+  const debouncedValueChange = debounce(onValueChange);
+
   return (
     <View>
       <RNSlider
-        {...props}
-        style={[SliderStyles.slider, style]}
-        minimumTrackTintColor={minimumTrackTintColor}
-        maximumTrackTintColor={maximumTrackTintColor}
+        value={value}
+        style={SliderStyles.slider}
+        step={1}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor={orangeLight200}
+        maximumTrackTintColor={greyLight200}
+        onValueChange={debouncedValueChange}
       />
       <View style={SliderStyles.bottomContainer}>
         <Text>Low</Text>
@@ -29,4 +30,4 @@ export const Slider: FC<SliderProps> = ({
       </View>
     </View>
   );
-};
+}

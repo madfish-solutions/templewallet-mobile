@@ -53,7 +53,7 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
             <Text>Gas Fee</Text>
             <FormInputSlider name="gasFee" />
 
-            <Button title="Cancel" onPress={onClose} />
+            <Button title="Cancel" onPress={controller.close} />
             <Button title="Send" onPress={submitForm} />
           </>
         )}
