@@ -1,4 +1,4 @@
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
@@ -20,13 +20,13 @@ export const App = () => {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <SafeAreaProvider>
-          <ToastProvider />
-
-          <BottomSheetModalProvider>
+          <PortalProvider>
             <NavigationContainer>
               <Navigator />
             </NavigationContainer>
-          </BottomSheetModalProvider>
+
+            <ToastProvider />
+          </PortalProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>
