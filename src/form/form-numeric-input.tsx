@@ -10,17 +10,11 @@ interface Props {
 }
 
 export const FormNumericInput: FC<Props> = ({ name, multiline = false }) => {
-  const [field, meta] = useField<number>(name);
+  const [field, meta, helpers] = useField<number>(name);
 
   return (
     <>
-      <StyledNumericInput
-        multiline={multiline}
-        value={field.value}
-        onBlur={field.onBlur(name)}
-        onChange={field.onChange(name)}
-        isFormik
-      />
+      <StyledNumericInput multiline={multiline} value={field.value} onChange={helpers.setValue} />
       <ErrorMessage meta={meta} />
     </>
   );
