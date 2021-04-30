@@ -1,9 +1,13 @@
 import { StyleSheet } from 'react-native';
 
-import { step } from '../../config/styles';
+import { black } from '../../config/styles';
 
 export const BottomSheetStyles = StyleSheet.create({
-  contentContainer: {
-    margin: step
+  overlayOpen: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: black
+  },
+  overlayTouchable: {
+    height: '100%'
   }
 });

@@ -1,57 +1,56 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Button, Text, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native';
 
-import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
-import { EmptyFn } from '../../../config/general';
+import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
+import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
+import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { Button } from '../../../components/button/button';
 import { FormTextInput } from '../../../form/form-text-input';
+import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { WalletStyles } from '../wallet.styles';
-import {
-  SendBottomSheetFormValues,
-  SendBottomSheetInitialValues,
-  sendBottomSheetValidationSchema
-} from './send-bottom-sheet.form';
-import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
+import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
+import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 
-interface Props extends BottomSheetProps {
-  from: string;
-  onClose: EmptyFn;
+interface Props extends BottomSheetControllerProps {
   balance?: string;
 }
 
-export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, balance }) => {
-  // TODO: replace with NumberInput
+export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
   const { send } = useShelter();
+  const hdAccounts = useWalletSelector().hdAccounts;
 
-  const onSubmit = (data: SendBottomSheetFormValues) => send(from, data.amount, data.recipient);
+  const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
+    account: hdAccounts[0] ?? emptyAccount,
+    amount: '0',
+    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
+  };
+
+  const onSubmit = (data: SendBottomSheetFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);
 
   return (
-    <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
+    <ModalBottomSheet title="Send" controller={controller}>
       <Formik
+        enableReinitialize={true}
         initialValues={SendBottomSheetInitialValues}
         validationSchema={sendBottomSheetValidationSchema}
         onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
-            <Text style={SendBottomSheetStyles.title}>Send</Text>
-
-            <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
-              <Text>Tezos</Text>
-              <Text>{balance}</Text>
-            </TouchableOpacity>
+            <Text>From</Text>
+            <AccountFormDropdown name="account" list={hdAccounts} />
 
             <Text>Amount Tezos</Text>
+            {/*TODO: replace with NumberInput*/}
             <FormTextInput name="amount" />
 
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
 
-            <Button title="Cancel" onPress={onClose} />
             <Button title="Send" onPress={submitForm} />
           </>
         )}
       </Formik>
-    </BottomSheet>
+    </ModalBottomSheet>
   );
 };

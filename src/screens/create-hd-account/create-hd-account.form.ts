@@ -7,7 +7,3 @@ export type CreateHdAccountFormValues = {
 export const createHdAccountValidationSchema: SchemaOf<CreateHdAccountFormValues> = object().shape({
   name: string().required()
 });
-
-export const createHdAccountInitialValues: CreateHdAccountFormValues = {
-  name: ''
-};

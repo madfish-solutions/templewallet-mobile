@@ -1,28 +1,23 @@
 import { useClipboard } from '@react-native-clipboard/clipboard';
 import React, { FC } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-import { BottomSheet, BottomSheetProps } from '../../../components/bottom-sheet/bottom-sheet';
+import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
+import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { Button } from '../../../components/button/button';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
-import { EmptyFn } from '../../../config/general';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 
-interface Props extends BottomSheetProps {
-  onClose: EmptyFn;
-}
-
-export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) => {
+export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <BottomSheet isOpen={isOpen} onDismiss={onDismiss}>
-      <Text style={ReceiveBottomSheetStyles.title}>Receive</Text>
-
+    <ModalBottomSheet title="Receive" controller={controller}>
       <Text>Address:</Text>
       <StyledTextInput value={publicKeyHash} editable={false} />
       <Button title="Copy to clipboard" onPress={handleCopyToClipboard} />
@@ -31,7 +26,7 @@ export const ReceiveBottomSheet: FC<Props> = ({ isOpen, onClose, onDismiss }) =>
         <QRCode value={publicKeyHash} ecl="Q" />
       </View>
 
-      <Button title="Close" onPress={onClose} />
-    </BottomSheet>
+      <Button title="Close" onPress={controller.close} />
+    </ModalBottomSheet>
   );
 };
