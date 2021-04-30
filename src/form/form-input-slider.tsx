@@ -6,20 +6,14 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
   name: string;
-  multiline?: boolean;
 }
 
-export const FormInputSlider: FC<Props> = ({ name, multiline = false }) => {
-  const [field, meta] = useField<string>(name);
+export const FormInputSlider: FC<Props> = ({ name }) => {
+  const [field, meta, helpers] = useField<number>(name);
 
   return (
     <>
-      <StyledInputSlider
-        multiline={multiline}
-        value={field.value}
-        onBlur={field.onBlur(name)}
-        onChangeText={field.onChange(name)}
-      />
+      <StyledInputSlider value={field.value} onChange={helpers.setValue} />
       <ErrorMessage meta={meta} />
     </>
   );

@@ -27,7 +27,6 @@ export const SendBottomSheet: FC<Props> = ({ from, isOpen, onClose, onDismiss, b
 
   // TODO: integrate gasFee with send request
   const onSubmit = (data: SendBottomSheetFormValues) => {
-    console.log(data);
     return send(from, data.amount, data.recipient);
   };
 
