@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { step } from '../../../config/styles';
 import { zIndexEnum } from '../../../enums/z-index.enum';
@@ -25,7 +26,7 @@ export const ModalBottomSheet: FC<Props> = ({ title, controller, children }) => 
           <ModalBottomSheetCloseIcon width={closeIconSize} height={closeIconSize} />
         </Touchable>
       </View>
-      <View style={ModalBottomSheetStyles.contentContainer}>{children}</View>
+      <ScrollView style={ModalBottomSheetStyles.contentContainer}>{children}</ScrollView>
     </View>
   );
 
