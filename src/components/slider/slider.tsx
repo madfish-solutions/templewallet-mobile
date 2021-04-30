@@ -12,7 +12,7 @@ export const Slider: FC<Props> = ({ value, onValueChange }) => {
   const debouncedValueChange = debounce(onValueChange);
 
   return (
-    <View>
+    <>
       <RNSlider
         value={value}
         style={SliderStyles.slider}
@@ -28,6 +28,6 @@ export const Slider: FC<Props> = ({ value, onValueChange }) => {
         <Text>Mid</Text>
         <Text>High</Text>
       </View>
-    </View>
+    </>
   );
-}
+};
