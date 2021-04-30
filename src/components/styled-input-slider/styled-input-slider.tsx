@@ -15,6 +15,7 @@ export const StyledInputSlider = ({ value, onChange }: Props) => {
 
   return (
     <>
+      {/* TODO: Change to NumericInput */}
       <StyledTextInput onChangeText={onTextChange} value={value.toString()} />
       <Slider value={value} onValueChange={onChange} step={1} minimumValue={0} maximumValue={100} />
     </>
