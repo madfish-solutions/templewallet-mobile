@@ -7,6 +7,7 @@ import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { Button } from '../../../components/button/button';
 import { FormNumericInput } from '../../../form/form-numeric-input';
+import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormTextInput } from '../../../form/form-text-input';
 import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -24,9 +25,11 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
   const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
     account: hdAccounts[0] ?? emptyAccount,
     amount: 0,
-    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
+    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
+    gasFee: 0
   };
 
+  // TODO: integrate gasFee with send request
   const onSubmit = (data: SendBottomSheetFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);
 
   return (
@@ -47,6 +50,10 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
             <Text>Recipient</Text>
             <FormTextInput name="recipient" />
 
+            <Text>Gas Fee</Text>
+            <FormInputSlider name="gasFee" />
+
+            <Button title="Cancel" onPress={controller.close} />
             <Button title="Send" onPress={submitForm} />
           </>
         )}
