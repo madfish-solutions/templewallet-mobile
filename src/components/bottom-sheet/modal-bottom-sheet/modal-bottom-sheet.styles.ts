@@ -6,7 +6,7 @@ export const closeIconSize = 3.5 * step;
 
 export const ModalBottomSheetStyles = StyleSheet.create({
   root: {
-    height: '100%',
+    height: '100%'
   },
   headerContainer: {
     flexDirection: 'row',

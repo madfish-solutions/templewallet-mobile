@@ -1,4 +1,6 @@
 export enum IconGlyphEnum {
   ArrowUp = 'ArrowUp',
-  ArrowDown = 'ArrowDown'
+  ArrowDown = 'ArrowDown',
+  Download = 'Download',
+  PlusSquare = 'PlusSquare'
 }
