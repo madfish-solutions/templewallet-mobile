@@ -10,29 +10,51 @@ import { ButtonStyles } from './button.styles';
 
 interface Props {
   title?: string;
+
   iconGlyph?: IconGlyphEnum;
   iconSize?: number;
   iconColor?: string;
   iconMarginRight?: number;
+
   disabled?: boolean;
+
   containerStyle: ViewStyle;
   titleStyle: TextStyle;
+
+  marginBottom?: number;
+  marginRight?: number;
+
   onPress: EmptyFn;
 }
 
 export const Button: FC<Props> = ({
   title,
+
   iconGlyph,
   iconSize,
   iconColor,
   iconMarginRight,
+
   disabled,
+
   containerStyle,
   titleStyle,
+
+  marginBottom,
+  marginRight,
+
   onPress
 }) => {
   return (
-    <TouchableOpacity disabled={disabled} style={[ButtonStyles.containerStyle, containerStyle]} onPress={onPress}>
+    <TouchableOpacity
+      disabled={disabled}
+      style={[
+        ButtonStyles.containerStyle,
+        containerStyle,
+        isDefined(marginBottom) ? { marginBottom } : {},
+        isDefined(marginRight) ? { marginRight } : {}
+      ]}
+      onPress={onPress}>
       {isDefined(iconGlyph) && (
         <Icon
           glyph={iconGlyph}

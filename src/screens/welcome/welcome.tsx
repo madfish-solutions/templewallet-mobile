@@ -5,6 +5,7 @@ import { ButtonLargePrimary } from '../../components/button/button-large-primary
 import { ButtonLargeSecondary } from '../../components/button/button-large-secondary';
 import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { step } from '../../config/styles';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 
@@ -17,6 +18,7 @@ export const Welcome = () => {
       <ButtonLargePrimary
         title="Create a new Wallet"
         iconGlyph={IconGlyphEnum.PlusSquare}
+        marginBottom={step}
         onPress={() => navigate(ScreensEnum.CreateAccount)}
       />
       <ButtonLargeSecondary

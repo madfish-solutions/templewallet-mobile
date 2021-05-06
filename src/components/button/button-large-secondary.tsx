@@ -9,10 +9,12 @@ import { ButtonLargeSecondaryStyles } from './button-large-secondary.styles';
 interface Props {
   title: string;
   iconGlyph?: IconGlyphEnum;
+  marginBottom?: number;
+  marginRight?: number;
   onPress: EmptyFn;
 }
 
-export const ButtonLargeSecondary: FC<Props> = ({ title, iconGlyph, onPress }) => {
+export const ButtonLargeSecondary: FC<Props> = ({ title, iconGlyph, marginBottom, marginRight, onPress }) => {
   return (
     <Button
       title={title}
@@ -22,6 +24,8 @@ export const ButtonLargeSecondary: FC<Props> = ({ title, iconGlyph, onPress }) =
       iconMarginRight={step}
       containerStyle={ButtonLargeSecondaryStyles.containerStyle}
       titleStyle={ButtonLargeSecondaryStyles.titleStyle}
+      marginBottom={marginBottom}
+      marginRight={marginRight}
       onPress={onPress}
     />
   );
