@@ -1,8 +1,8 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 
 import { EmptyFn } from '../../../config/general';
 import { conditionalStyle } from '../../../utils/conditional-style';
-import { Touchable } from '../../touchable/touchable';
 import { DropdownItemContainerStyles } from './dropdown-item-container.styles';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const DropdownItemContainer: FC<Props> = ({ hasMargin = false, isSelected = false, onPress, children }) => (
-  <Touchable
+  <TouchableOpacity
     style={[
       DropdownItemContainerStyles.root,
       conditionalStyle(hasMargin, DropdownItemContainerStyles.rootMargin),
@@ -20,5 +20,5 @@ export const DropdownItemContainer: FC<Props> = ({ hasMargin = false, isSelected
     ]}
     onPress={onPress}>
     {children}
-  </Touchable>
+  </TouchableOpacity>
 );
