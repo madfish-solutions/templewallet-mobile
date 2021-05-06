@@ -3,6 +3,8 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
+import { Icon } from '../../components/icon/icon';
+import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
@@ -36,9 +38,11 @@ export const Wallet = () => {
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
       <View style={WalletStyles.buttonRow}>
         <TouchableOpacity onPress={receiveBottomSheetController.open}>
+          <Icon glyph={IconGlyphEnum.ArrowDown} />
           <Text style={WalletStyles.button}>Receive</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={sendBottomSheetController.open}>
+          <Icon glyph={IconGlyphEnum.ArrowUp} />
           <Text style={WalletStyles.button}>Send</Text>
         </TouchableOpacity>
       </View>
