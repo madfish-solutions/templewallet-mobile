@@ -339,7 +339,7 @@ PODS:
     - React-perflogger (= 0.64.0)
   - ReactNativeExceptionHandler (2.10.10):
     - React-Core
-  - RNBootSplash (3.2.2):
+  - RNBootSplash (3.2.3):
     - React-Core
   - RNCAsyncStorage (1.15.4):
     - React-Core
@@ -585,7 +585,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: cad74a1eaa53ee6e7a3620231939d8fe2c6afcf0
   ReactCommon: cfe2b7fd20e0dbd2d1185cd7d8f99633fbc5ff05
   ReactNativeExceptionHandler: b11ff67c78802b2f62eed0e10e75cb1ef7947c60
-  RNBootSplash: 9e99559e892b1cb621321f04969149a25a44c5a5
+  RNBootSplash: 8ef5ffa03dadd35f66510b42960ce40f397c98bf
   RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
   RNCCheckbox: d1749e6a92178ce5dbc31e63becd1f34f0c76bbd
   RNCClipboard: 245417a78ab585e0d4d83926c28907e7b2bc24bd
