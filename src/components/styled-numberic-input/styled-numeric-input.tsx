@@ -1,61 +1,39 @@
 import { inRange } from 'lodash';
-import React, { useCallback } from 'react';
-import { TextProps } from 'react-native';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 
+import { EventFn } from '../../config/general';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 
-type Props = TextProps & {
+interface Props {
   min?: number;
   max?: number;
-  value: number | string;
-  multiline?: boolean;
-  onChange: (v: number | string) => void;
-};
+  value: number;
+  onChange: EventFn<number>;
+}
 
-export const StyledNumericInput = ({
-  min = 0,
-  max = Number.MAX_SAFE_INTEGER,
-  value,
-  onChange,
-  ...inputProps
-}: Props) => {
-  /*
-    handleChange description
-    * if more then two comma: return prev number value
-    * if value ends with comma: return string value
-    * if value ends with zero: return string value
-    * return number value
-   */
+export const StyledNumericInput: FC<Props> = ({ min = 0, max = Number.MAX_SAFE_INTEGER, value, onChange }) => {
+  const [displayedValue, setDisplayedValue] = useState<string>(value.toString());
+
   const handleChange = useCallback(
     (changedValue: string) => {
-      const isTwoComma = [...changedValue].filter(v => v === ',').length > 1;
-      if (isTwoComma) {
-        const prevVal = changedValue.substring(0, changedValue.length - 1);
-        return parseFloat(prevVal.replace(',', '.'));
+      const parsedNumber = +changedValue;
+
+      if (!isNaN(parsedNumber) && inRange(parsedNumber, min, max)) {
+        const isFloat = changedValue.includes('.');
+
+        setDisplayedValue(isFloat ? changedValue : parsedNumber.toString());
+        onChange(parsedNumber);
       }
-      if (changedValue.endsWith(',')) {
-        return onChange(changedValue);
-      }
-      const stringValue = changedValue.substring(0);
-      const parsedValue = stringValue.replace(',', '.');
-      if (changedValue.endsWith('0')) {
-        return onChange(parsedValue);
-      }
-      const parsedInt = parseFloat(parsedValue);
-      const intValue = isNaN(parsedInt) ? min : parsedInt;
-      inRange(intValue, min, max) && onChange(intValue);
     },
     [min, max, onChange]
   );
-  // Format dot to comma decimal
-  const inputValue = `${value}`.replace('.', ',');
 
-  return (
-    <StyledTextInput
-      {...inputProps}
-      {...{ type: 'number', keyboardType: 'numeric' }}
-      value={inputValue}
-      onChangeText={handleChange}
-    />
-  );
+  useEffect(() => {
+    if (value !== parseFloat(displayedValue)) {
+      setDisplayedValue(value.toString());
+      console.log('displayed value updated');
+    }
+  }, [value]);
+
+  return <StyledTextInput keyboardType="numeric" value={displayedValue} onChangeText={handleChange} />;
 };

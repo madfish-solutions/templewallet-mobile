@@ -6,15 +6,14 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
   name: string;
-  multiline?: boolean;
 }
 
-export const FormNumericInput: FC<Props> = ({ name, multiline = false }) => {
-  const [field, meta, helpers] = useField<number | string>(name);
+export const FormNumericInput: FC<Props> = ({ name }) => {
+  const [field, meta, helpers] = useField<number>(name);
 
   return (
     <>
-      <StyledNumericInput multiline={multiline} value={field.value} onChange={helpers.setValue} />
+      <StyledNumericInput value={field.value} onChange={helpers.setValue} />
       <ErrorMessage meta={meta} />
     </>
   );
