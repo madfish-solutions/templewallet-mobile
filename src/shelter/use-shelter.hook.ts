@@ -58,7 +58,7 @@ export const useShelter = () => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
-            return tezos.contract.transfer({ to: data.to, amount: parseInt(data.amount, 2) });
+            return tezos.contract.transfer({ to: data.to, amount: data.amount });
           })
         )
         .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
@@ -75,7 +75,7 @@ export const useShelter = () => {
   }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
-  const send = (from: string, amount: string, to: string) => send$.next({ from, amount, to });
+  const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
   const createWallet = (password: string) => createWallet$.next(password);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 

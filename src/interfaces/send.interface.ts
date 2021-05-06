@@ -1,5 +1,5 @@
 export interface SendInterface {
   from: string;
-  amount: string;
+  amount: number;
   to: string;
 }
