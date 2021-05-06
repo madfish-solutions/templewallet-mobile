@@ -1,14 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 import { borderColor, pageBgColor, step, white } from '../../../config/styles';
-import { zIndexEnum } from '../../../enums/z-index.enum';
 
 export const closeIconSize = 3.5 * step;
 
 export const ModalBottomSheetStyles = StyleSheet.create({
   root: {
     height: '100%',
-    zIndex: zIndexEnum.ModalBottomSheetContent
   },
   headerContainer: {
     flexDirection: 'row',

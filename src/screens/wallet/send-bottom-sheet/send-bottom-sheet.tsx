@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { Button } from '../../../components/button/button';
+import { DeprecatedButton } from '../../../components/button/deprecated-button/deprecated-button';
 import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormTextInput } from '../../../form/form-text-input';
 import { emptyAccount } from '../../../interfaces/account.interface';
@@ -53,8 +53,8 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
             <Text>Gas Fee</Text>
             <FormInputSlider name="gasFee" />
 
-            <Button title="Cancel" onPress={controller.close} />
-            <Button title="Send" onPress={submitForm} />
+            <DeprecatedButton title="Cancel" onPress={controller.close} />
+            <DeprecatedButton title="Send" onPress={submitForm} />
           </>
         )}
       </Formik>

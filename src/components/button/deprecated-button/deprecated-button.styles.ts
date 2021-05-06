@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-import { step } from '../../config/styles';
+import { step } from '../../../config/styles';
 
-export const ButtonStyles = StyleSheet.create({
+export const DeprecatedButtonStyles = StyleSheet.create({
   title: {
     fontSize: 2.125 * step,
     fontWeight: 'bold',
