@@ -16,7 +16,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "ts": "tsc --pretty",
     "clear:android": "cd android && ./gradlew clean",
-    "clear:ios": "rm -rf ios/Pods"
+    "clear:ios": "rm -rf ios/Pods",
+    "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^2.3.0",
