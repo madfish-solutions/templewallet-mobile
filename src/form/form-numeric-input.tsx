@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const FormNumericInput: FC<Props> = ({ name, multiline = false }) => {
-  const [field, meta, helpers] = useField<number>(name);
+  const [field, meta, helpers] = useField<number | string>(name);
 
   return (
     <>
