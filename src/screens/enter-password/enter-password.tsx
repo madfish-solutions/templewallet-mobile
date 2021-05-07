@@ -18,7 +18,7 @@ export const EnterPassword = () => {
   const { unlock } = useAppLock();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
-  const EnterPasswordStyles = useEnterPasswordStyles()();
+  const EnterPasswordStyles = useEnterPasswordStyles();
 
   return (
     <View style={EnterPasswordStyles.root}>
@@ -31,7 +31,7 @@ export const EnterPassword = () => {
           onSubmit={onSubmit}>
           {({ submitForm }) => (
             <>
-              <Text>Your wallet have been locked</Text>
+              <Text style={EnterPasswordStyles.ccon}>Your wallet have been locked</Text>
               <Text>{'Enter a password to unlock it\n\n'}</Text>
 
               <Text>Password</Text>

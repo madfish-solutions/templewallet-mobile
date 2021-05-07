@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 import { useThemeSelector } from '../store/display-settings/display-settings-selectors';
@@ -22,5 +21,5 @@ export const useCreateStyles = (callback: (props: CreateStylesProps) => Styles) 
 
   const getStyles = callback(styles);
 
-  return useCallback((): Styles => StyleSheet.create<Styles>(getStyles), [getStyles]);
+  return StyleSheet.create<Styles>(getStyles);
 };
