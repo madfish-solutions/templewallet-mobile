@@ -1,11 +1,13 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { DeprecatedButton } from '../../../components/button/deprecated-button/deprecated-button';
+import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { step } from '../../../config/styles';
 import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
@@ -13,6 +15,7 @@ import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
+import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 interface Props extends BottomSheetControllerProps {
   balance?: string;
@@ -53,8 +56,11 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
             <Text>Gas Fee</Text>
             <FormInputSlider name="gasFee" />
 
-            <DeprecatedButton title="Cancel" onPress={controller.close} />
-            <DeprecatedButton title="Send" onPress={submitForm} />
+            <View style={SendBottomSheetStyles.buttonsContainer}>
+              <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={controller.close} />
+              <ButtonLargePrimary title="Send" onPress={submitForm} />
+            </View>
+
           </>
         )}
       </Formik>
