@@ -60,7 +60,6 @@ export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
               <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={controller.close} />
               <ButtonLargePrimary title="Send" onPress={submitForm} />
             </View>
-
           </>
         )}
       </Formik>
