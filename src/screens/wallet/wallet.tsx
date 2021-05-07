@@ -3,9 +3,11 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
-import { Icon } from '../../components/icon/icon';
+import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { emptyFn } from '../../config/general';
+import { step } from '../../config/styles';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
 import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -30,30 +32,35 @@ export const Wallet = () => {
 
   return (
     <ScreenContainer>
-      <TouchableOpacity style={WalletStyles.accountInfo} onPress={() => null}>
+      <TouchableOpacity style={WalletStyles.accountInfo} onPress={emptyFn}>
         <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
         <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
       </TouchableOpacity>
       <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
       <View style={WalletStyles.buttonRow}>
-        <TouchableOpacity onPress={receiveBottomSheetController.open}>
-          <Icon glyph={IconGlyphEnum.ArrowDown} />
-          <Text style={WalletStyles.button}>Receive</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={sendBottomSheetController.open}>
-          <Icon glyph={IconGlyphEnum.ArrowUp} />
-          <Text style={WalletStyles.button}>Send</Text>
-        </TouchableOpacity>
+        <ButtonMedium
+          title="RECEIVE"
+          iconGlyph={IconGlyphEnum.ArrowDown}
+          marginRight={step}
+          onPress={receiveBottomSheetController.open}
+        />
+        <ButtonMedium
+          title="SEND"
+          iconGlyph={IconGlyphEnum.ArrowUp}
+          marginRight={step}
+          onPress={sendBottomSheetController.open}
+        />
+        <ButtonMedium title="BUY" iconGlyph={IconGlyphEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
       </View>
       {assets.map(({ token_id, name, balance }) => (
-        <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={() => null}>
+        <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={emptyFn}>
           <Text>{name}</Text>
           <Text>{balance}</Text>
         </TouchableOpacity>
       ))}
       {balance && (
-        <TouchableOpacity style={WalletStyles.accountItem} onPress={() => null}>
+        <TouchableOpacity style={WalletStyles.accountItem} onPress={emptyFn}>
           <Text>Tezos</Text>
           <Text>{balance}</Text>
         </TouchableOpacity>

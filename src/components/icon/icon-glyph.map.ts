@@ -5,11 +5,13 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import DownloadIcon from './assets/download.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
+import ShoppingCardIcon from './assets/shopping-card.svg';
 import { IconGlyphEnum } from './icon-glyph.enum';
 
 export const iconGlyphMap: Record<IconGlyphEnum, FunctionComponent<SvgProps>> = {
   [IconGlyphEnum.ArrowUp]: ArrowUpIcon,
   [IconGlyphEnum.ArrowDown]: ArrowDownIcon,
   [IconGlyphEnum.Download]: DownloadIcon,
-  [IconGlyphEnum.PlusSquare]: PlusSquareIcon
+  [IconGlyphEnum.PlusSquare]: PlusSquareIcon,
+  [IconGlyphEnum.ShoppingCard]: ShoppingCardIcon
 };

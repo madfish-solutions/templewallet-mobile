@@ -1,6 +1,6 @@
 import { TextStyle, ViewStyle } from 'react-native';
 
-type ButtonContainerStyle = Required<Pick<ViewStyle, 'height' | 'borderRadius' | 'borderWidth'>>;
+type ButtonContainerStyle = Required<Pick<ViewStyle, 'height' | 'borderRadius'>> & Pick<ViewStyle, 'borderWidth'>;
 type ButtonTitleStyle = Required<Pick<TextStyle, 'fontSize' | 'fontWeight'>>;
 
 type ButtonIconStyle = {

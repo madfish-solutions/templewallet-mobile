@@ -1,5 +1,5 @@
 import { lightDisabledColor, step, white } from '../../../config/styles';
-import { ButtonStyleConfig } from '../button';
+import { ButtonStyleConfig } from '../button-style.config';
 
 export const buttonLargeSharedStyleConfig: Omit<ButtonStyleConfig, 'activeColorConfig'> = {
   containerStyle: {
