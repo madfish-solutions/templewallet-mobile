@@ -31,7 +31,7 @@ export const EnterPassword = () => {
           onSubmit={onSubmit}>
           {({ submitForm }) => (
             <>
-              <Text style={EnterPasswordStyles.ccon}>Your wallet have been locked</Text>
+              <Text>Your wallet have been locked</Text>
               <Text>{'Enter a password to unlock it\n\n'}</Text>
 
               <Text>Password</Text>

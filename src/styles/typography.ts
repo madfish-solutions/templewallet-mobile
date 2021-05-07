@@ -1,16 +1,7 @@
 import { step } from '../config/styles';
 import { fonts } from './fonts';
 
-export type Typography = {
-  [key in keyof typeof typography]: Base;
-};
-
-interface Base {
-  fontFamily: string;
-  fontSize: number;
-}
-
-export const typography: { [key: string]: Base } = {
+export const typography = {
   numbersRegular22: {
     fontFamily: fonts.rubikRegular,
     fontSize: step * 5.5
@@ -132,3 +123,12 @@ export const typography: { [key: string]: Base } = {
     fontSize: step * 2.75
   }
 };
+
+export type Typography = {
+  [key in keyof typeof typography]: Base;
+};
+
+interface Base {
+  fontFamily: string;
+  fontSize: number;
+}

@@ -1,4 +1,4 @@
-import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useThemeSelector } from '../store/display-settings/display-settings-selectors';
 import { Colors, getColors } from './colors';
@@ -9,11 +9,7 @@ interface CreateStylesProps {
   typography: Typography;
 }
 
-interface Styles {
-  [key: string]: ViewStyle | TextStyle | ImageStyle;
-}
-
-export const useCreateStyles = (callback: (props: CreateStylesProps) => Styles) => {
+export function useCreateStyles<T>(callback: (props: CreateStylesProps) => T) {
   const theme = useThemeSelector();
   const colors = getColors(theme);
 
@@ -21,5 +17,5 @@ export const useCreateStyles = (callback: (props: CreateStylesProps) => Styles) 
 
   const getStyles = callback(styles);
 
-  return StyleSheet.create<Styles>(getStyles);
-};
+  return StyleSheet.create<T>(getStyles);
+}
