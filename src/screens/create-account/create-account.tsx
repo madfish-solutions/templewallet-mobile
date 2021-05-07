@@ -1,7 +1,8 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, Text } from 'react-native';
+import { Text } from 'react-native';
 
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormTextInput } from '../../form/form-text-input';
@@ -24,7 +25,7 @@ export const CreateAccount = () => {
         initialValues={createAccountInitialValues}
         validationSchema={createAccountValidationSchema}
         onSubmit={onSubmit}>
-        {({ submitForm }) => (
+        {({ submitForm, isValid }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormTextInput name="password" />
@@ -35,7 +36,7 @@ export const CreateAccount = () => {
             <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
             <FormCheckbox name="acceptTerms" />
 
-            <Button title="Create" onPress={submitForm} />
+            <ButtonLargePrimary title="Create" disabled={!isValid} onPress={submitForm} />
           </>
         )}
       </Formik>
