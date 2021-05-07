@@ -18,11 +18,10 @@ export const EnterPassword = () => {
   const { unlock } = useAppLock();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
-  const getStyles = useEnterPasswordStyles();
-  const styles = getStyles();
+  const EnterPasswordStyles = useEnterPasswordStyles()();
 
   return (
-    <View style={styles.root}>
+    <View style={EnterPasswordStyles.root}>
       <InsetSubstitute />
 
       <ScreenContainer>

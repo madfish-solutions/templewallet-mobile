@@ -1,23 +1,32 @@
 import { ThemesEnum } from '../interfaces/theme.enum';
+import { hexa } from '../utils/style.util';
 
 export const getColors = (theme: ThemesEnum): Colors => ({
   ...baseColors,
-  ...(theme === ThemesEnum.light && darkGray)
+  ...(theme === ThemesEnum.light && darkColors)
 });
 
 export type Colors = {
   [key in keyof typeof baseColors]: string;
 };
 
-const baseColors = {
+const accentAndBasicsColors = {
   blue: '#007AFF',
-  blue10: 'rgba(0, 122, 255, 0.1)',
   orange: '#FF5B00',
-  orange10: 'rgba(255, 122, 0, 0.1)',
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#000000',
-  white: '#ffffff',
+  white: '#ffffff'
+};
+
+const extendedColors = {
+  blue10: hexa(accentAndBasicsColors.blue, 0.1),
+  orange10: hexa(accentAndBasicsColors.orange, 0.1)
+};
+
+const baseColors = {
+  ...accentAndBasicsColors,
+  ...extendedColors,
   lightNavigation: '#ffffff',
   lightPageBG: '#FBFBFB',
   lightCardBG: '#ffffff',
@@ -36,7 +45,7 @@ const baseColors = {
   gray4: '#F4F4F4'
 };
 
-const darkGray = {
+const darkColors = {
   gray1: '#9C9C9C',
   gray2: '#848484',
   gray3: '#606060',
