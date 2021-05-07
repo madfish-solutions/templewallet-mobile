@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 
 import { assetsReducer } from './assets/assets-reducers';
 import { AssetsRootState } from './assets/assets-state';
+import { displaySettingsReducer } from './display-settings/display-settings-reducer';
 import { rootStateReducer } from './root-state.reducers';
 import { walletsReducer } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
@@ -30,7 +31,8 @@ const persistConfig = {
 
 const rootReducer = rootStateReducer({
   wallet: walletsReducer,
-  assets: assetsReducer
+  assets: assetsReducer,
+  displaySettings: displaySettingsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
