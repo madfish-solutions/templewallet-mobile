@@ -12,7 +12,7 @@ import {
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
-import { useEnterPasswordStyles } from './use-enter-password.styles';
+import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
   const { unlock } = useAppLock();
