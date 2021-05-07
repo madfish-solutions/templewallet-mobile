@@ -7,184 +7,128 @@ export type Typography = {
 
 interface Base {
   fontFamily: string;
-  fontWeight: string;
   fontSize: number;
-  letterSpacing: number;
 }
 
-export const typography = {
-  numbersMedium34: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 8.5,
-    letterSpacing: step * 0.1025
-  },
-  numbersMedium28: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 7,
-    letterSpacing: 0.085
-  },
+export const typography: { [key: string]: Base } = {
   numbersRegular22: {
-    fontFamily: fonts.rubik,
-    fontWeight: '400',
-    fontSize: step * 5.5,
-    letterSpacing: step * 0.0875
+    fontFamily: fonts.rubikRegular,
+    fontSize: step * 5.5
   },
   numbersRegular20: {
-    fontFamily: fonts.rubik,
-    fontWeight: '400',
-    fontSize: step * 5,
-    letterSpacing: step * 0.095
+    fontFamily: fonts.rubikRegular,
+    fontSize: step * 5
   },
   numbersRegular17: {
-    fontFamily: fonts.rubik,
-    fontWeight: '400',
-    fontSize: step * 4.25,
-    letterSpacing: step * -0.1025
+    fontFamily: fonts.rubikRegular,
+    fontSize: step * 4.25
   },
   numbersRegular15: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 3.75,
-    letterSpacing: step * -0.06
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 3.75
   },
   numbersRegular13: {
-    fontFamily: fonts.rubik,
-    fontWeight: '400',
-    fontSize: step * 3.25,
-    letterSpacing: step * -0.02
+    fontFamily: fonts.rubikRegular,
+    fontSize: step * 3.25
   },
   numbersRegular11: {
-    fontFamily: fonts.rubik,
-    fontWeight: '400',
-    fontSize: step * 2.75,
-    letterSpacing: step * 0.0175
+    fontFamily: fonts.rubikRegular,
+    fontSize: step * 2.75
+  },
+  numbersMedium34: {
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 8.5
+  },
+  numbersMedium28: {
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 7
   },
   numbersMedium22: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 5.5,
-    letterSpacing: step * 0.0875
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 5.5
   },
   numbersMedium20: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 5,
-    letterSpacing: step * 0.095
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 5
   },
   numbersMedium17: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 4.25,
-    letterSpacing: step * -0.1025
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 4.25
   },
   numbersMedium15: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 3.75,
-    letterSpacing: step * -0.06
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 3.75
   },
   numbersMedium13: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 3.25,
-    letterSpacing: step * -0.02
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 3.25
   },
   numbersMedium11: {
-    fontFamily: fonts.rubik,
-    fontWeight: '500',
-    fontSize: step * 4.25,
-    letterSpacing: step * -0.1025
+    fontFamily: fonts.rubikMedium,
+    fontSize: step * 4.25
+  },
+  numberStatus8: {
+    fontFamily: fonts.rubikSemiBold,
+    fontSize: step * 2
   },
   headline1Bold40: {
-    fontFamily: fonts.inter,
-    fontWeight: '700',
-    fontSize: step * 10,
-    letterSpacing: step * 0.1025
+    fontFamily: fonts.interBold,
+    fontSize: step * 10
   },
   headline2Bold34: {
-    fontFamily: fonts.inter,
-    fontWeight: '700',
-    fontSize: step * 8.5,
-    letterSpacing: step * 0.1025
+    fontFamily: fonts.interBold,
+    fontSize: step * 8.5
   },
   headline3Bold28: {
-    fontFamily: fonts.inter,
-    fontWeight: '700',
-    fontSize: step * 28,
-    letterSpacing: step * 0.085
+    fontFamily: fonts.interBold,
+    fontSize: step * 28
   },
   headline4Bold22: {
-    fontFamily: fonts.inter,
-    fontWeight: '700',
-    fontSize: step * 5.5,
-    letterSpacing: step * 0.0875
+    fontFamily: fonts.interBold,
+    fontSize: step * 5.5
   },
   headline4Regular22: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 5.5,
-    letterSpacing: step * 0.0875
+    fontFamily: fonts.interRegular,
+    fontSize: step * 5.5
   },
   body20Bold: {
-    fontFamily: fonts.inter,
-    fontWeight: '700',
-    fontSize: step * 5,
-    letterSpacing: step * 0.095
+    fontFamily: fonts.interBold,
+    fontSize: step * 5
   },
   body20Regular: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 5,
-    letterSpacing: step * 0.095
+    fontFamily: fonts.interRegular,
+    fontSize: step * 5
   },
   body17Semibold: {
-    fontFamily: fonts.inter,
-    fontWeight: '600',
-    fontSize: step * 4.25,
-    letterSpacing: step * -0.1025
+    fontFamily: fonts.interSemiBold,
+    fontSize: step * 4.25
   },
   body17Regular: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 4.25,
-    letterSpacing: step * -0.1025
+    fontFamily: fonts.interRegular,
+    fontSize: step * 4.25
   },
   body15Semibold: {
-    fontFamily: fonts.inter,
-    fontWeight: '600',
-    fontSize: step * 3,
-    letterSpacing: step * -0.06
+    fontFamily: fonts.interSemiBold,
+    fontSize: step * 3
   },
   body15Regular: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 3,
-    letterSpacing: step * -0.06
+    fontFamily: fonts.interRegular,
+    fontSize: step * 3
   },
   caption13Regular: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 3.25,
-    letterSpacing: step * -0.02
+    fontFamily: fonts.interRegular,
+    fontSize: step * 3.25
   },
   tagline13Tag: {
-    fontFamily: fonts.inter,
-    fontWeight: '600',
-    fontSize: step * 3.25,
-    letterSpacing: step * -0.02
+    fontFamily: fonts.interSemiBold,
+    fontSize: step * 3.25
   },
   caption11Regular: {
-    fontFamily: fonts.inter,
-    fontWeight: '400',
-    fontSize: step * 2.75,
-    letterSpacing: step * 0.0175
+    fontFamily: fonts.interRegular,
+    fontSize: step * 2.75
   },
   tagline11Tag: {
-    fontFamily: fonts.inter,
-    fontWeight: '600',
-    fontSize: step * 2.75,
-    letterSpacing: step * 0.0175
+    fontFamily: fonts.interSemiBold,
+    fontSize: step * 2.75
   }
 };

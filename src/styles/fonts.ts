@@ -1,4 +1,8 @@
 export const fonts = {
-  rubik: 'Rubik',
-  inter: 'Inter'
+  interRegular: 'Inter-Regular',
+  interBold: 'Inter-Bold',
+  interSemiBold: 'Inter-SemiBold',
+  rubikRegular: 'Inter-Regular',
+  rubikMedium: 'Inter-Medium',
+  rubikSemiBold: 'Inter-SemiBold'
 };
