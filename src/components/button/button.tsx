@@ -1,58 +1,50 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text, TextStyle, ViewStyle } from 'react-native';
+import { Text } from 'react-native';
 
-import { EmptyFn } from '../../config/general';
 import { isDefined } from '../../utils/is-defined';
 import { Icon } from '../icon/icon';
-import { IconGlyphEnum } from '../icon/icon-glyph.enum';
+import { ButtonSharedProps } from './button-shared.props';
+import { ButtonStyleConfig } from './button-style.config';
 import { ButtonStyles } from './button.styles';
 
-interface Props {
-  title?: string;
-
-  iconGlyph?: IconGlyphEnum;
-  iconSize?: number;
-  iconColor?: string;
-  iconMarginRight?: number;
-
-  disabled?: boolean;
-
-  containerStyle: ViewStyle;
-  titleStyle: TextStyle;
-
-  marginBottom?: number;
-  marginRight?: number;
-
-  onPress: EmptyFn;
+interface Props extends ButtonSharedProps {
+  styleConfig: ButtonStyleConfig;
 }
 
 export const Button: FC<Props> = ({
   title,
-
   iconGlyph,
-  iconSize,
-  iconColor,
-  iconMarginRight,
-
   disabled,
+  styleConfig,
 
-  containerStyle,
-  titleStyle,
-
-  marginBottom,
+  marginTop,
   marginRight,
+  marginBottom,
+  marginLeft,
 
   onPress
 }) => {
+  const {
+    containerStyle,
+    titleStyle,
+    iconStyle,
+    activeColorConfig,
+    disabledColorConfig = activeColorConfig
+  } = styleConfig;
+  const { iconSize, iconMarginRight } = iconStyle;
+  const { titleColor, iconColor = titleColor, backgroundColor, borderColor = backgroundColor } = disabled
+    ? disabledColorConfig
+    : activeColorConfig;
+
   return (
     <TouchableOpacity
       disabled={disabled}
       style={[
         ButtonStyles.containerStyle,
         containerStyle,
-        isDefined(marginBottom) ? { marginBottom } : {},
-        isDefined(marginRight) ? { marginRight } : {}
+        { backgroundColor, borderColor },
+        { marginTop, marginRight, marginBottom, marginLeft }
       ]}
       onPress={onPress}>
       {isDefined(iconGlyph) && (
@@ -63,7 +55,8 @@ export const Button: FC<Props> = ({
           {...(isDefined(title) && { style: { marginRight: iconMarginRight } })}
         />
       )}
-      <Text style={titleStyle}>{title}</Text>
+
+      <Text style={[titleStyle, { color: titleColor }]}>{title}</Text>
     </TouchableOpacity>
   );
 };

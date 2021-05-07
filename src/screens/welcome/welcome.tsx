@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import { ButtonLargePrimary } from '../../components/button/button-large-primary';
-import { ButtonLargeSecondary } from '../../components/button/button-large-secondary';
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { step } from '../../config/styles';

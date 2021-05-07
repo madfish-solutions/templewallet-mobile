@@ -14,6 +14,7 @@ export const red = 'red';
 export const transparent = 'transparent';
 export const borderColor = '#E4E4E4';
 export const pageBgColor = '#FBFBFB';
+export const lightDisabledColor = '#CBCBCB';
 
 // Use https://ethercreative.github.io/react-native-shadow-generator/
 export const generateShadow = (shadowColor: string) => ({
