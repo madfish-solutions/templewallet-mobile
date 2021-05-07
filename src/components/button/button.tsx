@@ -14,7 +14,7 @@ interface Props extends ButtonSharedProps {
 
 export const Button: FC<Props> = ({
   title,
-  iconGlyph,
+  iconName,
   disabled,
   styleConfig,
 
@@ -47,9 +47,9 @@ export const Button: FC<Props> = ({
         { marginTop, marginRight, marginBottom, marginLeft }
       ]}
       onPress={onPress}>
-      {isDefined(iconGlyph) && (
+      {isDefined(iconName) && (
         <Icon
-          glyph={iconGlyph}
+          name={iconName}
           size={iconSize}
           color={iconColor}
           {...(isDefined(title) && { style: { marginRight: iconMarginRight } })}

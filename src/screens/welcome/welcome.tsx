@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { step } from '../../config/styles';
 import { ScreensEnum } from '../../navigator/screens.enum';
@@ -17,13 +17,13 @@ export const Welcome = () => {
       <Text>Welcome</Text>
       <ButtonLargePrimary
         title="Create a new Wallet"
-        iconGlyph={IconGlyphEnum.PlusSquare}
+        iconName={IconNameEnum.PlusSquare}
         marginBottom={step}
         onPress={() => navigate(ScreensEnum.CreateAccount)}
       />
       <ButtonLargeSecondary
         title="Import existing Wallet"
-        iconGlyph={IconGlyphEnum.Download}
+        iconName={IconNameEnum.Download}
         onPress={() => navigate(ScreensEnum.ImportAccount)}
       />
     </ScreenContainer>

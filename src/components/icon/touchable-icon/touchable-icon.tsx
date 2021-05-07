@@ -11,8 +11,8 @@ interface Props extends IconProps {
   onPress: EmptyFn;
 }
 
-export const TouchableIcon: FC<Props> = ({ size = 3 * step, glyph, iconSize, color, onPress }) => (
+export const TouchableIcon: FC<Props> = ({ size = 3 * step, name, iconSize, color, onPress }) => (
   <TouchableOpacity style={[TouchableIconStyles.container, { width: size, height: size }]} onPress={onPress}>
-    <Icon glyph={glyph} size={iconSize} color={color} />
+    <Icon name={name} size={iconSize} color={color} />
   </TouchableOpacity>
 );

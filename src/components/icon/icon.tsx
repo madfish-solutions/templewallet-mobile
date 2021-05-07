@@ -2,18 +2,18 @@ import React, { FC, useMemo } from 'react';
 import { ViewStyle } from 'react-native';
 
 import { step } from '../../config/styles';
-import { IconGlyphEnum } from './icon-glyph.enum';
-import { iconGlyphMap } from './icon-glyph.map';
+import { IconNameEnum } from './icon-name.enum';
+import { iconNameMap } from './icon-name.map';
 
 export interface IconProps {
-  glyph: IconGlyphEnum;
+  name: IconNameEnum;
   size?: number;
   color?: string;
   style?: ViewStyle;
 }
 
-export const Icon: FC<IconProps> = ({ glyph, size = 2 * step, color, style }) => {
-  const Svg = useMemo(() => iconGlyphMap[glyph], [glyph]);
+export const Icon: FC<IconProps> = ({ name, size = 2 * step, color, style }) => {
+  const Svg = useMemo(() => iconNameMap[name], [name]);
 
   return <Svg width={size} height={size} color={color} style={style} />;
 };

@@ -6,12 +6,12 @@ import ArrowUpIcon from './assets/arrow-up.svg';
 import DownloadIcon from './assets/download.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
-import { IconGlyphEnum } from './icon-glyph.enum';
+import { IconNameEnum } from './icon-name.enum';
 
-export const iconGlyphMap: Record<IconGlyphEnum, FunctionComponent<SvgProps>> = {
-  [IconGlyphEnum.ArrowUp]: ArrowUpIcon,
-  [IconGlyphEnum.ArrowDown]: ArrowDownIcon,
-  [IconGlyphEnum.Download]: DownloadIcon,
-  [IconGlyphEnum.PlusSquare]: PlusSquareIcon,
-  [IconGlyphEnum.ShoppingCard]: ShoppingCardIcon
+export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
+  [IconNameEnum.ArrowUp]: ArrowUpIcon,
+  [IconNameEnum.ArrowDown]: ArrowDownIcon,
+  [IconNameEnum.Download]: DownloadIcon,
+  [IconNameEnum.PlusSquare]: PlusSquareIcon,
+  [IconNameEnum.ShoppingCard]: ShoppingCardIcon
 };

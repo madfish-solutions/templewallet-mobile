@@ -1,4 +1,4 @@
-export enum IconGlyphEnum {
+export enum IconNameEnum {
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
   Download = 'Download',

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
-import { IconGlyphEnum } from '../../components/icon/icon-glyph.enum';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
@@ -41,17 +41,17 @@ export const Wallet = () => {
       <View style={WalletStyles.buttonRow}>
         <ButtonMedium
           title="RECEIVE"
-          iconGlyph={IconGlyphEnum.ArrowDown}
+          iconName={IconNameEnum.ArrowDown}
           marginRight={step}
           onPress={receiveBottomSheetController.open}
         />
         <ButtonMedium
           title="SEND"
-          iconGlyph={IconGlyphEnum.ArrowUp}
+          iconName={IconNameEnum.ArrowUp}
           marginRight={step}
           onPress={sendBottomSheetController.open}
         />
-        <ButtonMedium title="BUY" iconGlyph={IconGlyphEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
+        <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
       </View>
       {assets.map(({ token_id, name, balance }) => (
         <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={emptyFn}>
