@@ -1,10 +1,18 @@
-import { StyleSheet } from 'react-native';
-
 import { step, white } from '../../config/styles';
+import { createUseStyles } from '../../styles/create-use-styles';
 
-export const SettingsStyles = StyleSheet.create({
+export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
+  darkAppearanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  testContainer: {
+    height: step,
+    backgroundColor: colors.navigation
+  },
   description: {
-    fontSize: step,
+    ...typography.numbersRegular13,
     marginBottom: 2 * step
   },
   accountItem: {
@@ -13,4 +21,4 @@ export const SettingsStyles = StyleSheet.create({
     marginBottom: step,
     borderRadius: step
   }
-});
+}));

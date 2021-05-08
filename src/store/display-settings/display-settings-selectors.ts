@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 
-import { DisplaySettingsRootState, DisplaySettingsState } from './display-settings-state';
+import { ThemesEnum } from '../../interfaces/theme.enum';
+import { DisplaySettingsRootState } from './display-settings-state';
 
-export const useDisplaySettingsSelector = () =>
-  useSelector<DisplaySettingsRootState, DisplaySettingsState>(({ displaySettings }) => displaySettings);
-
-export const useThemeSelector = () => useDisplaySettingsSelector().theme;
+export const useThemeSelector = () =>
+  useSelector<DisplaySettingsRootState, ThemesEnum>(({ displaySettings }) => displaySettings.theme);
