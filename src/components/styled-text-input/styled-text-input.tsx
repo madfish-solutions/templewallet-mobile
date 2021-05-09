@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { ImageBackground, TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useColors } from '../../styles/use-colors';
@@ -25,22 +25,25 @@ export const StyledTextInput: FC<Props> = ({
 
   return (
     <View style={styles.view}>
-      <TextInput
-        style={[multiline ? styles.multiline : styles.regular, isError && styles.error]}
-        multiline={multiline}
-        placeholderTextColor={colors.gray3}
-        selectionColor={colors.orange}
-        value={value}
-        onChangeText={onChangeText}
-        {...props}
-      />
-      {isShowCleanButton && !!value && (
-        <TouchableIcon
-          name={IconNameEnum.XCircle}
-          style={styles.cleanButton}
-          onPress={() => onChangeText && onChangeText('')}
+      <ImageBackground
+        source={{ uri: require('/mnemonic-bg.gif') }}
+        style={{
+          flex: 1,
+          justifyContent: 'center'
+        }}>
+        <TextInput
+          style={[multiline ? styles.multiline : styles.regular, isError && styles.error]}
+          multiline={multiline}
+          placeholderTextColor={colors.gray3}
+          selectionColor={colors.orange}
+          value={value}
+          onChangeText={onChangeText}
+          {...props}
         />
-      )}
+        {isShowCleanButton && !!value && (
+          <TouchableIcon name={IconNameEnum.XCircle} style={styles.cleanButton} onPress={() => onChangeText('')} />
+        )}
+      </ImageBackground>
     </View>
   );
 };

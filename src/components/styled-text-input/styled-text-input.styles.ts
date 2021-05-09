@@ -13,12 +13,13 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     paddingHorizontal: formatSize(12),
     paddingRight: formatSize(42),
     borderRadius: step,
-    backgroundColor: colors.input,
+    backgroundColor: transparent,
     color: colors.black,
     borderWidth: formatSize(1),
     borderColor: transparent,
     ...typography.body17Regular
   };
+
   return {
     regular: {
       ...commonStyles
