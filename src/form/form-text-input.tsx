@@ -22,7 +22,7 @@ export const FormTextInput: FC<Props> = ({ name, multiline = false, isAllowClean
         isError={hasError}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
-        isAllowCleanButton={isAllowCleanButton}
+        isShowCleanButton={isAllowCleanButton}
       />
       <ErrorMessage meta={meta} />
     </>

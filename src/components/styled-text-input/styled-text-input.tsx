@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { useColors } from '../../styles/use-colors';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -8,14 +9,14 @@ import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 interface Props extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
-  isAllowCleanButton?: boolean;
+  isShowCleanButton?: boolean;
 }
 
 export const StyledTextInput: FC<Props> = ({
-  onChangeText,
-  isAllowCleanButton,
+  onChangeText = emptyFn,
+  isShowCleanButton = false,
+  isError = false,
   value,
-  isError,
   multiline,
   ...props
 }) => {
@@ -33,7 +34,7 @@ export const StyledTextInput: FC<Props> = ({
         onChangeText={onChangeText}
         {...props}
       />
-      {isAllowCleanButton && !!value && (
+      {isShowCleanButton && !!value && (
         <TouchableIcon
           name={IconNameEnum.XCircle}
           onPress={() => onChangeText && onChangeText('')}
