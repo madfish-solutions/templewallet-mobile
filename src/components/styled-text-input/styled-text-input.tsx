@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import { TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { TextInput, TextInputProps, View } from 'react-native';
 
 import { useColors } from '../../styles/use-colors';
-import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 interface Props extends Omit<TextInputProps, 'style'> {
@@ -34,9 +34,11 @@ export const StyledTextInput: FC<Props> = ({
         {...props}
       />
       {isAllowCleanButton && !!value && (
-        <TouchableOpacity onPress={() => onChangeText && onChangeText('')} style={styles.cleanButton}>
-          <Icon name={IconNameEnum.XCircle} />
-        </TouchableOpacity>
+        <TouchableIcon
+          name={IconNameEnum.XCircle}
+          onPress={() => onChangeText && onChangeText('')}
+          style={styles.cleanButton}
+        />
       )}
     </View>
   );

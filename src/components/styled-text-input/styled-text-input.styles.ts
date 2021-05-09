@@ -37,8 +37,8 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     },
     cleanButton: {
       position: 'absolute',
-      top: formatSize(16),
-      right: formatSize(14)
+      top: formatSize(13),
+      right: formatSize(12)
     }
   };
 });
