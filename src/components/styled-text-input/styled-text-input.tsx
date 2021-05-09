@@ -37,8 +37,8 @@ export const StyledTextInput: FC<Props> = ({
       {isShowCleanButton && !!value && (
         <TouchableIcon
           name={IconNameEnum.XCircle}
-          onPress={() => onChangeText && onChangeText('')}
           style={styles.cleanButton}
+          onPress={() => onChangeText && onChangeText('')}
         />
       )}
     </View>
