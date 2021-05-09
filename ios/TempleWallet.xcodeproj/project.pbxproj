@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* TempleWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TempleWalletTests.m */; };
+		01AD54FB843648E3AEEC746C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837E4C106B944958BF934709 /* Rubik-Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		141C9588260B4A3F00216256 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 141C9587260B4A3F00216256 /* BootSplash.storyboard */; };
-		5EFFBF78BFC0CD7A9EBFAFBB /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */; };
-		B0613B222ACF573DCE9A9534 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */; };
-		2747330AC01F4018879FF2FD /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */; };
-		AF2A1A77EB0444ACBEA2CCAF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */; };
 		23AB5168B4324CCFBDB0EEF6 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */; };
-		B143BA925CF840C88D2FA38A /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */; };
-		01AD54FB843648E3AEEC746C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837E4C106B944958BF934709 /* Rubik-Regular.ttf */; };
+		2747330AC01F4018879FF2FD /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */; };
 		59BC05C256BF41F5B06FF55A /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */; };
+		5EFFBF78BFC0CD7A9EBFAFBB /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */; };
+		AF2A1A77EB0444ACBEA2CCAF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */; };
+		B0613B222ACF573DCE9A9534 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */; };
+		B143BA925CF840C88D2FA38A /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,17 +45,17 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TempleWallet/main.m; sourceTree = "<group>"; };
 		141C9587260B4A3F00216256 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
 		15063DC76160EF7BB6DAD79D /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
+		48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-SemiBold.ttf"; path = "../src/assets/fonts/Rubik-SemiBold.ttf"; sourceTree = "<group>"; };
+		6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		74C9F42DB989030B1FBB875F /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
 		7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet-TempleWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		837E4C106B944958BF934709 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		B3D4B6750B96C2C94A5024FD /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */ = {isa = PBXFileReference; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */ = {isa = PBXFileReference; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		837E4C106B944958BF934709 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */ = {isa = PBXFileReference; name = "Rubik-SemiBold.ttf"; path = "../src/assets/fonts/Rubik-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,7 +162,7 @@
 			sourceTree = "<group>";
 		};
 		8FD0E227F7BC4044B28EA471 /* Resources */ = {
-			isa = "PBXGroup";
+			isa = PBXGroup;
 			children = (
 				6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */,
 				FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */,
@@ -172,8 +172,8 @@
 				5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
 			path = "";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 

@@ -16,6 +16,7 @@ module.exports = {
     }
   },
   rules: {
+    'newline-before-return': ['error'],
     'comma-dangle': ['error', 'never'],
     'no-void': 'off',
     'no-shadow': 'off',
