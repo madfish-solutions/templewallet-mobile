@@ -1,8 +1,8 @@
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
-import { useThemeSelector } from '../store/display-settings/display-settings-selectors';
-import { Colors, getColors } from './colors';
+import { Colors } from './colors';
 import { Typography, typography } from './typography';
+import { useColors } from './use-colors';
 
 type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
 
@@ -14,8 +14,7 @@ interface CStylesFnProps {
 export const createUseStyles = <T extends NamedStyles<T>>(
   stylesFn: (props: CStylesFnProps) => T | NamedStyles<T>
 ) => () => {
-  const theme = useThemeSelector();
-  const colors = getColors(theme);
+  const colors = useColors();
 
   return StyleSheet.create<T>(stylesFn({ colors, typography }));
 };

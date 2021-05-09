@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
 
-import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
-import { getColors } from '../../styles/colors';
+import { useColors } from '../../styles/use-colors';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 interface Props extends Omit<TextInputProps, 'style'> {
@@ -11,8 +10,7 @@ interface Props extends Omit<TextInputProps, 'style'> {
 
 export const StyledTextInput: FC<Props> = ({ isError, multiline, ...props }) => {
   const styles = useStyledTextInputStyles();
-  const theme = useThemeSelector();
-  const colors = getColors(theme);
+  const colors = useColors();
 
   return (
     <TextInput
