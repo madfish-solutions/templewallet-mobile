@@ -12,15 +12,16 @@ import {
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
-import { EnterPasswordStyles } from './enter-password.styles';
+import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
+  const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
-    <View style={EnterPasswordStyles.root}>
+    <View style={styles.root}>
       <InsetSubstitute />
 
       <ScreenContainer>
