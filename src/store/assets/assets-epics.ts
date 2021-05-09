@@ -4,15 +4,15 @@ import { catchError, map } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { getAssetsRequest$, getTezosBalanceRequest$ } from '../../api.service';
+import { getAccountTokenBalancesRequest$, getTezosBalanceRequest$ } from '../../api.service';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from './assets-actions';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenAssetsActions.submit),
     toPayload(),
-    getAssetsRequest$(),
-    map(response => loadTokenAssetsActions.success(response.data.balances)),
+    getAccountTokenBalancesRequest$(),
+    map(({ data }) => loadTokenAssetsActions.success(data.balances)),
     catchError(err => of(loadTokenAssetsActions.fail(err.response.data.message)))
   );
 
@@ -21,7 +21,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTezosAssetsActions.submit),
     toPayload(),
     getTezosBalanceRequest$(),
-    map(response => loadTezosAssetsActions.success(response.toString())),
+    map(response => loadTezosAssetsActions.success(response)),
     catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
   );
 

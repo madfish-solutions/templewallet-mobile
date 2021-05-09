@@ -53,21 +53,20 @@ export const Wallet = () => {
         />
         <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
       </View>
+
+      <TouchableOpacity style={WalletStyles.accountItem} onPress={emptyFn}>
+        <Text>Tezos</Text>
+        <Text>{balance.toString()}</Text>
+      </TouchableOpacity>
       {assets.map(({ token_id, name, balance }) => (
         <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={emptyFn}>
           <Text>{name}</Text>
           <Text>{balance}</Text>
         </TouchableOpacity>
       ))}
-      {balance && (
-        <TouchableOpacity style={WalletStyles.accountItem} onPress={emptyFn}>
-          <Text>Tezos</Text>
-          <Text>{balance}</Text>
-        </TouchableOpacity>
-      )}
 
       <ReceiveBottomSheet controller={receiveBottomSheetController} />
-      <SendBottomSheet controller={sendBottomSheetController} balance={balance} />
+      <SendBottomSheet controller={sendBottomSheetController} />
     </ScreenContainer>
   );
 };

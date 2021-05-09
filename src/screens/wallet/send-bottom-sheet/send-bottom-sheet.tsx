@@ -17,11 +17,7 @@ import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
-interface Props extends BottomSheetControllerProps {
-  balance?: string;
-}
-
-export const SendBottomSheet: FC<Props> = ({ controller, balance }) => {
+export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const { send } = useShelter();
   const hdAccounts = useWalletSelector().hdAccounts;
 
