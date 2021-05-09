@@ -11,7 +11,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
   const commonStyles: TextStyle = {
     paddingVertical: formatSize(13),
     paddingHorizontal: formatSize(12),
-    paddingRight: formatSize(42),
+    paddingRight: formatSize(78),
     borderRadius: step,
     backgroundColor: colors.input,
     color: colors.black,
@@ -39,6 +39,15 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       position: 'absolute',
       top: formatSize(13),
       right: formatSize(12)
+    },
+    eyeButton: {
+      position: 'absolute',
+      top: formatSize(13),
+      right: formatSize(48)
+    },
+    // Password dots should be small
+    passwordFontSize: {
+      fontSize: formatSize(10)
     }
   };
 });

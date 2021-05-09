@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -29,24 +30,39 @@ export const StyledTextInput: FC<Props> = ({
   return (
     <View style={styles.view}>
       <TextInput
-        style={[multiline ? styles.multiline : styles.regular, isError && styles.error]}
+        style={[
+          multiline ? styles.multiline : styles.regular,
+          isError && styles.error,
+          isSecureText && styles.passwordFontSize
+        ]}
         multiline={multiline}
         placeholderTextColor={colors.gray3}
         selectionColor={colors.orange}
         value={value}
         onChangeText={onChangeText}
+        secureTextEntry={isSecureText}
         {...props}
       />
       <>
         {isShowCleanButton && !!value && (
           <TouchableIcon name={IconNameEnum.XCircle} style={styles.cleanButton} onPress={() => onChangeText('')} />
         )}
-        {secureTextEntry && (
+        {secureTextEntry && !!value && (
           <>
             {isSecureText ? (
-              <TouchableIcon onPress={() => setIsSecureText(false)} name={IconNameEnum.EyeOpenBold} />
+              <TouchableIcon
+                iconSize={formatSize(24)}
+                style={styles.eyeButton}
+                name={IconNameEnum.EyeOpenBold}
+                onPress={() => setIsSecureText(false)}
+              />
             ) : (
-              <TouchableIcon onPress={() => setIsSecureText(true)} name={IconNameEnum.EyeClosedBold} />
+              <TouchableIcon
+                iconSize={formatSize(24)}
+                style={styles.eyeButton}
+                name={IconNameEnum.EyeClosedBold}
+                onPress={() => setIsSecureText(true)}
+              />
             )}
           </>
         )}
