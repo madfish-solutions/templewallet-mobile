@@ -17,6 +17,7 @@ const seedToPrivateKey = (seed: Buffer) => b58cencode(seed.slice(0, 32), prefix.
 const deriveSeed = (seed: Buffer, derivationPath: string) => {
   try {
     const { key } = derivePath(derivationPath, seed.toString('hex'));
+
     return key;
   } catch (_err) {
     throw new Error('Invalid derivation path');
