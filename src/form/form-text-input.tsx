@@ -12,13 +12,14 @@ interface Props {
 
 export const FormTextInput: FC<Props> = ({ name, multiline = false, isAllowCleanButton }) => {
   const [field, meta] = useField<string>(name);
+  const hasError = meta.touched && meta.error !== undefined;
 
   return (
     <>
       <StyledTextInput
         multiline={multiline}
         value={field.value}
-        isError={!!meta.error}
+        isError={hasError}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
         isAllowCleanButton={isAllowCleanButton}
