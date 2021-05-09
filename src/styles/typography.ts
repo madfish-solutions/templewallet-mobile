@@ -1,5 +1,6 @@
 import { step } from '../config/styles';
 import { FontsEnum } from './fonts-enum';
+import { formatSize } from './format-size';
 
 export const typography = {
   numbersRegular22: {
@@ -96,7 +97,7 @@ export const typography = {
   },
   body17Regular: {
     fontFamily: FontsEnum.interRegular,
-    fontSize: step * 4.25
+    fontSize: formatSize(17)
   },
   body15Semibold: {
     fontFamily: FontsEnum.interSemiBold,
