@@ -2,18 +2,19 @@ import { TextStyle } from 'react-native';
 
 import { step, transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-const lineHeight = 20;
+const lineHeight = formatSize(20);
 const numberOfLines = 4;
 
 export const useStyledTextInputStyles = createUseStyles(({ colors, typography }) => {
   const commonStyles: TextStyle = {
-    paddingVertical: 1.625 * step,
-    paddingHorizontal: 1.5 * step,
+    paddingVertical: formatSize(13),
+    paddingHorizontal: formatSize(12),
     borderRadius: step,
     backgroundColor: colors.input,
     color: colors.black,
-    borderWidth: step * 0.125,
+    borderWidth: formatSize(1),
     borderColor: transparent,
     ...typography.body17Regular
   };
