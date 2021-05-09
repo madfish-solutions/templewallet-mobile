@@ -8,11 +8,11 @@ import { InputType } from './interfaces/input-type';
 interface Props {
   name: string;
   multiline?: boolean;
-  isAllowCleanButton?: boolean;
+  isShowCleanButton?: boolean;
   type?: InputType;
 }
 
-export const FormTextInput: FC<Props> = ({ type = 'text', name, multiline = false, isAllowCleanButton }) => {
+export const FormTextInput: FC<Props> = ({ type = 'text', name, multiline = false, isShowCleanButton }) => {
   const [field, meta] = useField<string>(name);
   const hasError = meta.touched && meta.error !== undefined;
 
@@ -23,7 +23,7 @@ export const FormTextInput: FC<Props> = ({ type = 'text', name, multiline = fals
         multiline={multiline}
         value={field.value}
         isError={hasError}
-        isShowCleanButton={isAllowCleanButton}
+        isShowCleanButton={isShowCleanButton}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />
