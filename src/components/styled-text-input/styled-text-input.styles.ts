@@ -11,6 +11,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
   const commonStyles: TextStyle = {
     paddingVertical: formatSize(13),
     paddingHorizontal: formatSize(12),
+    paddingRight: formatSize(42),
     borderRadius: step,
     backgroundColor: colors.input,
     color: colors.black,
@@ -30,6 +31,14 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     },
     error: {
       borderColor: colors.destructive
+    },
+    view: {
+      position: 'relative'
+    },
+    cleanButton: {
+      position: 'absolute',
+      top: formatSize(16),
+      right: formatSize(14)
     }
   };
 });
