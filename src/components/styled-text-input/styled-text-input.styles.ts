@@ -1,32 +1,34 @@
-import { StyleSheet, TextStyle } from 'react-native';
+import { TextStyle } from 'react-native';
 
-import { generateShadow, orange, step, white } from '../../config/styles';
+import { step, transparent } from '../../config/styles';
+import { createUseStyles } from '../../styles/create-use-styles';
 
 const lineHeight = 20;
 const numberOfLines = 4;
 
-const commonStyles: TextStyle = {
-  paddingVertical: 1.5 * step,
-  paddingHorizontal: 2 * step,
-  borderColor: '#E2E8F0',
-  borderWidth: 0.25 * step,
-  borderRadius: 0.75 * step,
-  backgroundColor: '#F7FAFC'
-};
-
-export const StyledTextInputStyles = StyleSheet.create({
-  regular: {
-    ...commonStyles
-  },
-  multiline: {
-    ...commonStyles,
-    textAlignVertical: 'top',
-    minHeight: lineHeight * numberOfLines,
-    maxHeight: lineHeight * numberOfLines
-  },
-  focus: {
-    ...generateShadow(orange),
-    borderColor: orange,
-    backgroundColor: white
-  }
+export const useStyledTextInputStyles = createUseStyles(({ colors, typography }) => {
+  const commonStyles: TextStyle = {
+    paddingVertical: 1.625 * step,
+    paddingHorizontal: 1.5 * step,
+    borderRadius: step,
+    backgroundColor: colors.input,
+    color: colors.black,
+    borderWidth: step * 0.125,
+    borderColor: transparent,
+    ...typography.body17Regular
+  };
+  return {
+    regular: {
+      ...commonStyles
+    },
+    multiline: {
+      ...commonStyles,
+      textAlignVertical: 'top',
+      minHeight: lineHeight * numberOfLines,
+      maxHeight: lineHeight * numberOfLines
+    },
+    error: {
+      borderColor: colors.destructive
+    }
+  };
 });

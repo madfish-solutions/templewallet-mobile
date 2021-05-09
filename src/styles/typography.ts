@@ -96,7 +96,7 @@ export const typography = {
   },
   body17Regular: {
     fontFamily: FontsEnum.interRegular,
-    fontSize: step * 4.25
+    fontSize: step * 2.125
   },
   body15Semibold: {
     fontFamily: FontsEnum.interSemiBold,

@@ -17,6 +17,7 @@ export const FormTextInput: FC<Props> = ({ name, multiline = false }) => {
       <StyledTextInput
         multiline={multiline}
         value={field.value}
+        isError={!!meta.error}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />

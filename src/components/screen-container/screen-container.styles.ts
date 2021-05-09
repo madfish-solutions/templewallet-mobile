@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native';
-
 import { step } from '../../config/styles';
+import { createUseStyles } from '../../styles/create-use-styles';
 
-export const ScreenContainerStyles = StyleSheet.create({
+export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   scrollViewContentContainer: {
-    margin: step
+    margin: step,
+    backgroundColor: colors.white
   }
-});
+}));

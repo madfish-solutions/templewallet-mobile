@@ -1,36 +1,25 @@
-import React, { FC, useState } from 'react';
-import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, TextInputProps } from 'react-native';
+import React, { FC } from 'react';
+import { TextInput, TextInputProps } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { StyledTextInputStyles } from './styled-text-input.styles';
+import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
+import { getColors } from '../../styles/colors';
+import { useStyledTextInputStyles } from './styled-text-input.styles';
 
-export const StyledTextInput: FC<Omit<TextInputProps, 'style'>> = ({
-  multiline,
-  onBlur = emptyFn,
-  onFocus = emptyFn,
-  ...props
-}) => {
-  const [isFocused, setIsFocused] = useState(false);
+interface Props extends Omit<TextInputProps, 'style'> {
+  isError?: boolean;
+}
 
-  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    setIsFocused(false);
-    onBlur(e);
-  };
-
-  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    setIsFocused(true);
-    onFocus(e);
-  };
+export const StyledTextInput: FC<Props> = ({ isError, multiline, ...props }) => {
+  const styles = useStyledTextInputStyles();
+  const theme = useThemeSelector();
+  const colors = getColors(theme);
 
   return (
     <TextInput
-      style={[
-        multiline ? StyledTextInputStyles.multiline : StyledTextInputStyles.regular,
-        isFocused && StyledTextInputStyles.focus
-      ]}
+      style={[multiline ? styles.multiline : styles.regular, isError && styles.error]}
       multiline={multiline}
-      onBlur={handleBlur}
-      onFocus={handleFocus}
+      placeholderTextColor={colors.gray3}
+      selectionColor={colors.orange}
       {...props}
     />
   );
