@@ -28,7 +28,7 @@ export const CreateAccount = () => {
         {({ submitForm, isValid }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Password</Text>
-            <FormTextInput name="password" />
+            <FormTextInput name="password" isAllowCleanButton />
 
             <Text style={ImportAccountStyles.labelText}>Password confirmation</Text>
             <FormTextInput name="passwordConfirmation" />
