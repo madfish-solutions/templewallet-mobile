@@ -8,6 +8,7 @@ import PlusSquareIcon from './assets/plus-square.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
+import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -17,7 +18,8 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
+  [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.XtzWallet]: XtzWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
-  [IconNameEnum.SoonBadge]: SoonBadgeIcon,
+  [IconNameEnum.SoonBadge]: SoonBadgeIcon
 };

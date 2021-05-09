@@ -4,6 +4,7 @@ export enum IconNameEnum {
   Download = 'Download',
   PlusSquare = 'PlusSquare',
   ShoppingCard = 'ShoppingCard',
+  XCircle = 'XCircle',
   XtzWallet = 'XtzWallet',
   Settings = 'Settings',
   SoonBadge = 'SoonBadge'
