@@ -22,7 +22,7 @@ export const StyledPasswordInput: FC<Props> = ({ value, ...props }) => {
       <StyledTextInput secureTextEntry={isSecureTextEntry} value={value} isPasswordInput {...props} />
       {!!value && (
         <TouchableIcon
-          iconSize={formatSize(24)}
+          size={formatSize(24)}
           style={styles.eyeButton}
           name={isSecureTextEntry ? IconNameEnum.EyeOpenBold : IconNameEnum.EyeClosedBold}
           onPress={() => setIsSecureTextEntry(!isSecureTextEntry)}

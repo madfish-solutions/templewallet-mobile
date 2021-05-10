@@ -23,11 +23,7 @@ export const Navigator = () => {
 
   return (
     <>
-      <Stack.Navigator screenOptions={{
-        ...styleScreenOptions,
-        headerShown: !isAuthorised,
-        // headerStyle: { borderBottomColor: 'red' }
-      }}>
+      <Stack.Navigator screenOptions={{ ...styleScreenOptions, headerShown: !isAuthorised }}>
         {!isAuthorised ? (
           <>
             <Stack.Screen name={ScreensEnum.Welcome} component={Welcome} />

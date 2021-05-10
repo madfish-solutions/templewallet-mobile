@@ -1,4 +1,4 @@
-import GorhomBottomSheet, { BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
+import GorhomBottomSheet from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import React, { FC } from 'react';
 
