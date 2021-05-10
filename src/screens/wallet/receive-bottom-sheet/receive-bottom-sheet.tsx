@@ -12,8 +12,8 @@ import { emptyFn } from '../../../config/general';
 import { step } from '../../../config/styles';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { useReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 import { useColors } from '../../../styles/use-colors';
+import { useReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
 
 export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const styles = useReceiveBottomSheetStyles();
