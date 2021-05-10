@@ -10,12 +10,14 @@ import { useStyledTextInputStyles } from './styled-text-input.styles';
 interface Props extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
   isShowCleanButton?: boolean;
+  isPasswordInput?: boolean;
 }
 
 export const StyledTextInput: FC<Props> = ({
   onChangeText = emptyFn,
   isShowCleanButton = false,
   isError = false,
+  isPasswordInput = false,
   value,
   multiline,
   secureTextEntry,
@@ -30,7 +32,8 @@ export const StyledTextInput: FC<Props> = ({
         style={[
           multiline ? styles.multiline : styles.regular,
           isError && styles.error,
-          secureTextEntry && styles.passwordFontSize
+          secureTextEntry && styles.passwordFontSize,
+          isPasswordInput && styles.passwordPadding
         ]}
         secureTextEntry={secureTextEntry}
         multiline={multiline}

@@ -19,7 +19,7 @@ export const StyledPasswordInput: FC<Props> = ({ value, ...props }) => {
 
   return (
     <View style={styles.view}>
-      <StyledTextInput secureTextEntry={isSecureTextEntry} value={value} {...props} />
+      <StyledTextInput secureTextEntry={isSecureTextEntry} value={value} isPasswordInput {...props} />
       {!!value && (
         <TouchableIcon
           iconSize={formatSize(24)}
