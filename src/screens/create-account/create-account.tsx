@@ -4,8 +4,8 @@ import { Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { FormPasswordInput } from '../../form/components/form-password-input/form-password-input';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
 import {
@@ -28,10 +28,10 @@ export const CreateAccount = () => {
         {({ submitForm, isValid }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Password</Text>
-            <FormTextInput type="password" name="password" isShowCleanButton />
+            <FormPasswordInput name="password" />
 
             <Text style={ImportAccountStyles.labelText}>Password confirmation</Text>
-            <FormTextInput type="password" name="passwordConfirmation" />
+            <FormPasswordInput name="passwordConfirmation" />
 
             <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
             <FormCheckbox name="acceptTerms" />

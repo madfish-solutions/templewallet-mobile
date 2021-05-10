@@ -17,6 +17,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     color: colors.black,
     borderWidth: formatSize(1),
     borderColor: transparent,
+    minHeight: formatSize(50),
     ...typography.body17Regular
   };
   return {
@@ -39,11 +40,6 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       position: 'absolute',
       top: formatSize(13),
       right: formatSize(12)
-    },
-    eyeButton: {
-      position: 'absolute',
-      top: formatSize(13),
-      right: formatSize(48)
     },
     // Password dots should be small
     passwordFontSize: {
