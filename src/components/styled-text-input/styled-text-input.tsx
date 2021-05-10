@@ -10,14 +10,17 @@ import { useStyledTextInputStyles } from './styled-text-input.styles';
 interface Props extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
   isShowCleanButton?: boolean;
+  isPasswordInput?: boolean;
 }
 
 export const StyledTextInput: FC<Props> = ({
   onChangeText = emptyFn,
   isShowCleanButton = false,
   isError = false,
+  isPasswordInput = false,
   value,
   multiline,
+  secureTextEntry,
   ...props
 }) => {
   const styles = useStyledTextInputStyles();
@@ -26,7 +29,13 @@ export const StyledTextInput: FC<Props> = ({
   return (
     <View style={styles.view}>
       <TextInput
-        style={[multiline ? styles.multiline : styles.regular, isError && styles.error]}
+        style={[
+          multiline ? styles.multiline : styles.regular,
+          isError && styles.error,
+          secureTextEntry && styles.passwordFontSize,
+          isPasswordInput && styles.passwordPadding
+        ]}
+        secureTextEntry={secureTextEntry}
         multiline={multiline}
         placeholderTextColor={colors.gray3}
         selectionColor={colors.orange}
@@ -35,11 +44,7 @@ export const StyledTextInput: FC<Props> = ({
         {...props}
       />
       {isShowCleanButton && !!value && (
-        <TouchableIcon
-          name={IconNameEnum.XCircle}
-          style={styles.cleanButton}
-          onPress={() => onChangeText && onChangeText('')}
-        />
+        <TouchableIcon name={IconNameEnum.XCircle} style={styles.cleanButton} onPress={() => onChangeText('')} />
       )}
     </View>
   );
