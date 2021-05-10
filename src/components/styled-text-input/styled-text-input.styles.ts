@@ -42,9 +42,8 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       top: formatSize(13),
       right: formatSize(12)
     },
-    // Password dots should be small
     passwordFontSize: {
-      fontSize: formatSize(10)
+      ...typography.caption11Regular
     }
   };
 });
