@@ -21,7 +21,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTezosAssetsActions.submit),
     toPayload(),
     getTezosBalanceRequest$(),
-    map(response => loadTezosAssetsActions.success(response)),
+    map(balance => loadTezosAssetsActions.success(balance.toString())),
     catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
   );
 
