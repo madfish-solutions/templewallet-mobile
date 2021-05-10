@@ -15,7 +15,8 @@ export const useReceiveBottomSheetStyles = createUseStyles(({ colors, typography
     justifyContent: 'center'
   },
   tokenSymbol: {
-    ...typography.numbersRegular15
+    ...typography.numbersRegular15,
+    color: colors.black
   },
   tokenName: {
     ...typography.numbersRegular11,
@@ -23,6 +24,7 @@ export const useReceiveBottomSheetStyles = createUseStyles(({ colors, typography
   },
   addressTitle: {
     ...typography.body15Semibold,
+    color: colors.black,
     marginTop: formatSize(24),
     marginBottom: formatSize(8)
   },

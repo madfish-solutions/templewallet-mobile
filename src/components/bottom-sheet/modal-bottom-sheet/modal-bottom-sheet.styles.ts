@@ -1,4 +1,4 @@
-import { pageBgColor, step } from '../../../config/styles';
+import { step } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
@@ -26,12 +26,13 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
     height: closeIconSize
   },
   title: {
-    ...typography.body17Semibold
+    ...typography.body17Semibold,
+    color: colors.black
   },
   contentContainer: {
     flex: 1,
     paddingVertical: step,
     paddingHorizontal: 2 * step,
-    backgroundColor: pageBgColor
+    backgroundColor: colors.pageBG
   }
 }));

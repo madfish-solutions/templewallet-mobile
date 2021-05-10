@@ -1,10 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { step } from '../../../config/styles';
+import { createUseStyles } from '../../../styles/create-use-styles';
 
-import { pageBgColor, step } from '../../../config/styles';
-
-export const BottomSheetBackgroundStyles = StyleSheet.create({
+export const useBottomSheetBackgroundStyles = createUseStyles(({ colors }) => ({
   root: {
-    backgroundColor: pageBgColor,
+    backgroundColor: colors.pageBG,
     marginTop: 2 * step
   }
-});
+}));

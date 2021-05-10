@@ -2,8 +2,10 @@ import { BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { View } from 'react-native';
 
-import { BottomSheetBackgroundStyles } from './bottom-sheet-background.styles';
+import { useBottomSheetBackgroundStyles } from './bottom-sheet-background.styles';
 
 export const BottomSheetBackground = ({ style }: BottomSheetBackgroundProps) => {
-  return <View style={[style, BottomSheetBackgroundStyles.root]} />;
+  const styles = useBottomSheetBackgroundStyles();
+
+  return <View style={[style, styles.root]} />;
 };

@@ -13,9 +13,11 @@ import { step } from '../../../config/styles';
 import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
+import { useColors } from '../../../styles/use-colors';
 
 export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const styles = useReceiveBottomSheetStyles();
+  const colors = useColors();
   const [, setString] = useClipboard();
   const publicKeyHash = useFirstAccountSelector().publicKeyHash;
 
@@ -32,7 +34,13 @@ export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller 
           </View>
         </View>
 
-        <QRCode value={publicKeyHash} ecl="Q" size={formatSize(180)} />
+        <QRCode
+          value={publicKeyHash}
+          ecl="Q"
+          size={formatSize(180)}
+          color={colors.black}
+          backgroundColor={colors.pageBG}
+        />
 
         <Text style={styles.addressTitle}>Address</Text>
         <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
