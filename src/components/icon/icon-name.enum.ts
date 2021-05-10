@@ -3,8 +3,10 @@ export enum IconNameEnum {
   ArrowDown = 'ArrowDown',
   Download = 'Download',
   PlusSquare = 'PlusSquare',
-  ShoppingCard = 'ShoppingCard',
   XCircle = 'XCircle',
+  ShoppingCard = 'ShoppingCard',
+  EyeClosedBold = 'EyeClosedBold',
+  EyeOpenBold = 'EyeOpenBold',
   XtzWallet = 'XtzWallet',
   Settings = 'Settings',
   SoonBadge = 'SoonBadge'

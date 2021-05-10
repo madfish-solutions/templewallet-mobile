@@ -4,6 +4,7 @@ import { Button, Text } from 'react-native';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { FormPasswordInput } from '../../form/form-password-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import {
@@ -30,10 +31,10 @@ export const ImportAccount = () => {
             <FormTextInput name="seedPhrase" multiline={true} />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
-            <FormTextInput name="password" />
+            <FormPasswordInput name="password" />
 
             <Text style={ImportAccountStyles.labelText}>Password confirmation</Text>
-            <FormTextInput name="passwordConfirmation" />
+            <FormPasswordInput name="passwordConfirmation" />
 
             <Text style={ImportAccountStyles.labelText}>Accept Terms</Text>
             <FormCheckbox name="acceptTerms" />

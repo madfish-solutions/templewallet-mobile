@@ -7,10 +7,10 @@ import { ErrorMessage } from './error-message/error-message';
 interface Props {
   name: string;
   multiline?: boolean;
-  isAllowCleanButton?: boolean;
+  isShowCleanButton?: boolean;
 }
 
-export const FormTextInput: FC<Props> = ({ name, multiline = false, isAllowCleanButton }) => {
+export const FormTextInput: FC<Props> = ({ name, multiline = false, isShowCleanButton }) => {
   const [field, meta] = useField<string>(name);
   const hasError = meta.touched && meta.error !== undefined;
 
@@ -20,7 +20,7 @@ export const FormTextInput: FC<Props> = ({ name, multiline = false, isAllowClean
         multiline={multiline}
         value={field.value}
         isError={hasError}
-        isShowCleanButton={isAllowCleanButton}
+        isShowCleanButton={isShowCleanButton}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />
