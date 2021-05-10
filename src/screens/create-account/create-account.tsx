@@ -4,8 +4,8 @@ import { Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { FormPasswordInput } from '../../form/components/form-password-input/form-password-input';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
 import {
