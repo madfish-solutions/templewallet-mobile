@@ -18,7 +18,6 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
-  [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon
 };
