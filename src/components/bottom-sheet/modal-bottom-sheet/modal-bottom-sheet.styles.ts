@@ -1,36 +1,37 @@
-import { StyleSheet } from 'react-native';
-
-import { borderColor, pageBgColor, step, white } from '../../../config/styles';
+import { pageBgColor, step } from '../../../config/styles';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
 export const closeIconSize = 3.5 * step;
 
-export const ModalBottomSheetStyles = StyleSheet.create({
+export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     height: '100%'
   },
   headerContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    paddingTop: 2.75 * step,
+    paddingBottom: step,
     paddingHorizontal: 2 * step,
-    paddingVertical: step,
-    backgroundColor: white,
+    backgroundColor: colors.cardBG,
     borderTopLeftRadius: 1.25 * step,
     borderTopRightRadius: 1.25 * step,
-    borderBottomColor: borderColor,
-    borderBottomWidth: 0.5
+    borderBottomColor: colors.lines,
+    borderBottomWidth: formatSize(0.5)
   },
   iconSubstitute: {
     width: closeIconSize,
     height: closeIconSize
   },
   title: {
-    fontSize: 2.125 * step,
-    fontWeight: 'bold'
+    ...typography.body17Semibold
   },
   contentContainer: {
     flex: 1,
-    padding: step,
+    paddingVertical: step,
+    paddingHorizontal: 2 * step,
     backgroundColor: pageBgColor
   }
-});
+}));

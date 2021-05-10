@@ -16,8 +16,8 @@ export const typography = {
     fontSize: step * 4.25
   },
   numbersRegular15: {
-    fontFamily: FontsEnum.rubikMedium,
-    fontSize: step * 3.75
+    fontFamily: FontsEnum.rubikRegular,
+    fontSize: formatSize(15)
   },
   numbersRegular13: {
     fontFamily: FontsEnum.rubikRegular,
@@ -25,7 +25,7 @@ export const typography = {
   },
   numbersRegular11: {
     fontFamily: FontsEnum.rubikRegular,
-    fontSize: step * 2.75
+    fontSize: formatSize(11)
   },
   numbersMedium34: {
     fontFamily: FontsEnum.rubikMedium,
@@ -49,7 +49,7 @@ export const typography = {
   },
   numbersMedium15: {
     fontFamily: FontsEnum.rubikMedium,
-    fontSize: step * 3.75
+    fontSize: formatSize(15)
   },
   numbersMedium13: {
     fontFamily: FontsEnum.rubikMedium,
@@ -93,7 +93,7 @@ export const typography = {
   },
   body17Semibold: {
     fontFamily: FontsEnum.interSemiBold,
-    fontSize: step * 4.25
+    fontSize: formatSize(17)
   },
   body17Regular: {
     fontFamily: FontsEnum.interRegular,
@@ -101,7 +101,7 @@ export const typography = {
   },
   body15Semibold: {
     fontFamily: FontsEnum.interSemiBold,
-    fontSize: step * 3
+    fontSize: formatSize(15)
   },
   body15Regular: {
     fontFamily: FontsEnum.interRegular,
@@ -113,7 +113,7 @@ export const typography = {
   },
   tagline13Tag: {
     fontFamily: FontsEnum.interSemiBold,
-    fontSize: step * 3.25
+    fontSize: formatSize(13)
   },
   caption11Regular: {
     fontFamily: FontsEnum.interRegular,

@@ -3,8 +3,8 @@ import React, { FC, useMemo, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import Animated, { call, Extrapolate, interpolate } from 'react-native-reanimated';
 
-import { ANIMATION_MAX_VALUE, ANIMATION_MIN_VALUE } from '../../config/animation';
-import { EmptyFn } from '../../config/general';
+import { ANIMATION_MAX_VALUE, ANIMATION_MIN_VALUE } from '../../../config/animation';
+import { EmptyFn } from '../../../config/general';
 import { BottomSheetBackdropStyles } from './bottom-sheet-backdrop.styles';
 
 interface Props extends BottomSheetBackdropProps {

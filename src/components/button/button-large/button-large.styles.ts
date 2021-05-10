@@ -1,22 +1,24 @@
-import { lightDisabledColor, step, white } from '../../../config/styles';
+import { step } from '../../../config/styles';
+import { createUseStylesConfig } from '../../../styles/create-use-styles';
 import { ButtonStyleConfig } from '../button-style.config';
 
-export const buttonLargeSharedStyleConfig: Omit<ButtonStyleConfig, 'activeColorConfig'> = {
-  containerStyle: {
-    height: 6.25 * step,
-    borderRadius: 1.25 * step,
-    borderWidth: 0.25 * step
-  },
-  titleStyle: {
-    fontSize: 2.125 * step,
-    fontWeight: '600'
-  },
-  iconStyle: {
-    iconSize: 3 * step,
-    iconMarginRight: step
-  },
-  disabledColorConfig: {
-    titleColor: white,
-    backgroundColor: lightDisabledColor
-  }
-};
+export const useButtonLargeSharedStyleConfig = createUseStylesConfig<Omit<ButtonStyleConfig, 'activeColorConfig'>>(
+  ({ colors, typography }) => ({
+    containerStyle: {
+      height: 6.25 * step,
+      borderRadius: 1.25 * step,
+      borderWidth: 0.25 * step
+    },
+    titleStyle: {
+      ...typography.body17Semibold
+    },
+    iconStyle: {
+      size: 3 * step,
+      marginRight: step
+    },
+    disabledColorConfig: {
+      titleColor: colors.white,
+      backgroundColor: colors.disabled
+    }
+  })
+);

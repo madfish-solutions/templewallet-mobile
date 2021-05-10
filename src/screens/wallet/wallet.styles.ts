@@ -15,7 +15,7 @@ export const WalletStyles = StyleSheet.create({
     color: blue,
     fontSize: 2 * step
   },
-  buttonRow: {
+  buttonsContainer: {
     flexDirection: 'row',
     marginBottom: step * 5
   },

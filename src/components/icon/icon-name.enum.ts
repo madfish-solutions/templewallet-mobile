@@ -7,5 +7,10 @@ export enum IconNameEnum {
   XCircle = 'XCircle',
   XtzWallet = 'XtzWallet',
   Settings = 'Settings',
-  SoonBadge = 'SoonBadge'
+  SoonBadge = 'SoonBadge',
+  Close = 'Close',
+  XtzToken = 'XtzToken',
+  Share = 'Share',
+  Copy = 'Copy',
+  Tag = 'Tag'
 }
