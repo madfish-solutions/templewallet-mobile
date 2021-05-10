@@ -1,18 +1,17 @@
-import { step } from '../../../config/styles';
 import { createUseStylesConfig } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 import { ButtonStyleConfig } from '../button-style.config';
 
 export const useButtonMediumStyleConfig = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
   containerStyle: {
-    height: 5 * step,
-    borderRadius: step
+    height: formatSize(40),
+    borderRadius: formatSize(8)
   },
   titleStyle: {
     ...typography.tagline13Tag
   },
   iconStyle: {
-    size: 2 * step,
+    size: formatSize(16),
     marginRight: formatSize(2)
   },
   activeColorConfig: {

@@ -1,11 +1,10 @@
-import { step } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
 export const useReceiveBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   rootContainer: {
     alignItems: 'center',
-    paddingVertical: 4 * step
+    paddingVertical: formatSize(32)
   },
   tokenContainer: {
     flexDirection: 'row',
@@ -33,7 +32,7 @@ export const useReceiveBottomSheetStyles = createUseStyles(({ colors, typography
     color: colors.blue,
     padding: formatSize(12),
     backgroundColor: colors.blue10,
-    borderRadius: step,
+    borderRadius: formatSize(8),
     marginBottom: formatSize(24)
   },
   buttonsContainer: {

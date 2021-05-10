@@ -1,8 +1,7 @@
-import { step } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const closeIconSize = 3.5 * step;
+export const closeIconSize = formatSize(28);
 
 export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {
@@ -12,10 +11,10 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 2 * step,
+    padding: formatSize(16),
     backgroundColor: colors.cardBG,
-    borderTopLeftRadius: 1.25 * step,
-    borderTopRightRadius: 1.25 * step,
+    borderTopLeftRadius: formatSize(10),
+    borderTopRightRadius: formatSize(10),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },
@@ -29,7 +28,7 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
   },
   contentContainer: {
     flex: 1,
-    paddingVertical: step,
-    paddingHorizontal: 2 * step
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16)
   }
 }));
