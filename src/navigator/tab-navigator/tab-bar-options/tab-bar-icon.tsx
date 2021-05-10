@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { step } from '../../../config/styles';
+import { formatSize } from '../../../styles/format-size';
 import { useTabBarColor } from './use-tab-bar-color.hook';
 
 const createTabBarIconComponent = (
@@ -12,7 +12,7 @@ const createTabBarIconComponent = (
 ): BottomTabNavigationOptions['tabBarIcon'] => ({ focused }) => {
   const color = useTabBarColor(focused, disabled);
 
-  return <Icon name={iconName} color={color} size={3.5 * step} />;
+  return <Icon name={iconName} color={color} size={formatSize(28)} />;
 };
 
 export const WalletTabBarIcon = createTabBarIconComponent(IconNameEnum.XtzWallet);
