@@ -1,12 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../../styles/create-use-styles';
 
-import { black } from '../../../config/styles';
-
-export const BottomSheetBackdropStyles = StyleSheet.create({
+export const useBottomSheetBackdropStyles = createUseStyles(({colors}) => ({
   container: {
-    backgroundColor: black
+    backgroundColor: colors.black
   },
   touchable: {
     flex: 1
   }
-});
+}));

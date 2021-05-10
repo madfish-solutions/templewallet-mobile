@@ -12,9 +12,7 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 2.75 * step,
-    paddingBottom: step,
-    paddingHorizontal: 2 * step,
+    padding: 2 * step,
     backgroundColor: colors.cardBG,
     borderTopLeftRadius: 1.25 * step,
     borderTopRightRadius: 1.25 * step,
@@ -32,7 +30,6 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
   contentContainer: {
     flex: 1,
     paddingVertical: step,
-    paddingHorizontal: 2 * step,
-    backgroundColor: colors.pageBG
+    paddingHorizontal: 2 * step
   }
 }));
