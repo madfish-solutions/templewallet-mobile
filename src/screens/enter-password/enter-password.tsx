@@ -4,7 +4,7 @@ import { Button, Text, View } from 'react-native';
 
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { FormTextInput } from '../../form/form-text-input';
+import { FormPasswordInput } from '../../form/form-password-input';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
 import {
@@ -35,7 +35,7 @@ export const EnterPassword = () => {
               <Text>{'Enter a password to unlock it\n\n'}</Text>
 
               <Text>Password</Text>
-              <FormTextInput name="password" />
+              <FormPasswordInput name="password" />
 
               <Button title="Unlock" onPress={submitForm} />
               <EraseDataButton />

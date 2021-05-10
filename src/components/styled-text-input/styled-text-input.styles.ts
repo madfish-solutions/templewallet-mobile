@@ -11,12 +11,13 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
   const commonStyles: TextStyle = {
     paddingVertical: formatSize(13),
     paddingHorizontal: formatSize(12),
-    paddingRight: formatSize(42),
+    paddingRight: formatSize(40),
     borderRadius: step,
     backgroundColor: transparent,
     color: colors.black,
     borderWidth: formatSize(1),
     borderColor: transparent,
+    minHeight: formatSize(50),
     ...typography.body17Regular
   };
 
@@ -40,6 +41,12 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       position: 'absolute',
       top: formatSize(13),
       right: formatSize(12)
+    },
+    passwordFontSize: {
+      ...typography.caption11Regular
+    },
+    passwordPadding: {
+      paddingRight: formatSize(78)
     }
   };
 });

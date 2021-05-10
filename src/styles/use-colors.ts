@@ -3,5 +3,6 @@ import { getColors } from './colors';
 
 export const useColors = () => {
   const theme = useThemeSelector();
+
   return getColors(theme);
 };
