@@ -37,6 +37,7 @@
     "asyncstorage-down": "^4.2.0",
     "axios": "^0.21.1",
     "base-64": "^1.0.0",
+    "bignumber.js": "^9.0.1",
     "bip39": "^3.0.3",
     "buffer": "^4.9.2",
     "ed25519-hd-key": "^1.2.0",

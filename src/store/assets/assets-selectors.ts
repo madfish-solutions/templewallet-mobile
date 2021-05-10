@@ -1,10 +1,11 @@
+import { BigNumber } from 'bignumber.js';
 import { useSelector } from 'react-redux';
 
-import { BalanceInterface } from '../../interfaces/balance.interface';
+import { TokenBalanceInterface } from '../../interfaces/token-balance.interface';
 import { AssetsRootState } from './assets-state';
 
 export const useAssetsSelector = () =>
-  useSelector<AssetsRootState, BalanceInterface[]>(rootState => rootState.assets.tokens.data);
+  useSelector<AssetsRootState, TokenBalanceInterface[]>(rootState => rootState.assets.tokens.data);
 
 export const useBalanceSelector = () =>
-  useSelector<AssetsRootState, string | undefined>(rootState => rootState.assets.tezos?.data);
+  useSelector<AssetsRootState, BigNumber>(rootState => rootState.assets.tezos.data);

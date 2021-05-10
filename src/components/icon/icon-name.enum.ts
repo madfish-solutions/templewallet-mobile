@@ -6,5 +6,8 @@ export enum IconNameEnum {
   XCircle = 'XCircle',
   ShoppingCard = 'ShoppingCard',
   EyeClosedBold = 'EyeClosedBold',
-  EyeOpenBold = 'EyeOpenBold'
+  EyeOpenBold = 'EyeOpenBold',
+  XtzWallet = 'XtzWallet',
+  Settings = 'Settings',
+  SoonBadge = 'SoonBadge'
 }
