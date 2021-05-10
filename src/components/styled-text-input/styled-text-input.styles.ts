@@ -20,6 +20,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     minHeight: formatSize(50),
     ...typography.body17Regular
   };
+
   return {
     regular: {
       ...commonStyles
