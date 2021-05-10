@@ -35,7 +35,6 @@ export const Settings = () => {
         <Text>Dark Appearance</Text>
         <Switch onValueChange={handleSwitchValueChange} value={isDarkTheme} />
       </View>
-      <View style={styles.testContainer} />
       <Button title="Lock app" onPress={lock} />
       <EraseDataButton />
       <Text>List of your HD accounts:</Text>
