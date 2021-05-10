@@ -19,6 +19,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     borderColor: transparent,
     ...typography.body17Regular
   };
+
   return {
     regular: {
       ...commonStyles

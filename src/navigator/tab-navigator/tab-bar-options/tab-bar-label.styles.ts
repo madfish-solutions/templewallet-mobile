@@ -5,5 +5,5 @@ export const useTabBarLabelStyles = createUseStyles(({ typography }) => ({
     ...typography.caption11Regular,
     // TODO: replace this with correct typography name
     fontSize: 10
-  },
+  }
 }));
