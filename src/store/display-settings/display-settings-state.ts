@@ -5,7 +5,7 @@ export interface DisplaySettingsState {
 }
 
 export const displaySettingsInitialState: DisplaySettingsState = {
-  theme: ThemesEnum.light
+  theme: ThemesEnum.dark
 };
 
 export interface DisplaySettingsRootState {
