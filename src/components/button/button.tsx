@@ -32,7 +32,6 @@ export const Button: FC<Props> = ({
     activeColorConfig,
     disabledColorConfig = activeColorConfig
   } = styleConfig;
-  const { iconSize, iconMarginRight } = iconStyle;
   const { titleColor, iconColor = titleColor, backgroundColor, borderColor = backgroundColor } = disabled
     ? disabledColorConfig
     : activeColorConfig;
@@ -50,9 +49,9 @@ export const Button: FC<Props> = ({
       {isDefined(iconName) && (
         <Icon
           name={iconName}
-          size={iconSize}
+          size={iconStyle.size}
           color={iconColor}
-          {...(isDefined(title) && { style: { marginRight: iconMarginRight } })}
+          {...(isDefined(title) && { style: { marginRight: iconStyle.marginRight } })}
         />
       )}
 

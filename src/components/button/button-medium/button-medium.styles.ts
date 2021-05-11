@@ -1,25 +1,25 @@
-import { borderColor, grey4, orange, orange01, step } from '../../../config/styles';
+import { createUseStylesConfig } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 import { ButtonStyleConfig } from '../button-style.config';
 
-export const buttonMediumStyleConfig: ButtonStyleConfig = {
+export const useButtonMediumStyleConfig = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
   containerStyle: {
-    height: 5 * step,
-    borderRadius: step
+    height: formatSize(40),
+    borderRadius: formatSize(8)
   },
   titleStyle: {
-    fontSize: 1.625 * step,
-    fontWeight: '600'
+    ...typography.tagline13Tag
   },
   iconStyle: {
-    iconSize: 2 * step,
-    iconMarginRight: 0.25 * step
+    size: formatSize(16),
+    marginRight: formatSize(2)
   },
   activeColorConfig: {
-    titleColor: orange,
-    backgroundColor: orange01
+    titleColor: colors.orange,
+    backgroundColor: colors.orange10
   },
   disabledColorConfig: {
-    titleColor: borderColor,
-    backgroundColor: grey4
+    titleColor: colors.disabled,
+    backgroundColor: colors.gray4
   }
-};
+}));

@@ -1,15 +1,11 @@
 import { step, white } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 
-export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
+export const useSettingsStyles = createUseStyles(({ typography }) => ({
   darkAppearanceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
-  },
-  testContainer: {
-    height: step,
-    backgroundColor: colors.navigation
   },
   description: {
     ...typography.numbersRegular13,

@@ -1,37 +1,43 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
-import { borderColor, pageBgColor, step, white } from '../../../config/styles';
-
-export const DropdownBottomSheetStyles = StyleSheet.create({
+export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     height: '100%',
-    marginHorizontal: step
+    marginHorizontal: formatSize(8)
   },
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 1.5 * step,
-    backgroundColor: white,
-    borderTopLeftRadius: 1.25 * step,
-    borderTopRightRadius: 1.25 * step,
-    borderBottomColor: borderColor,
-    borderBottomWidth: 0.5
+    padding: formatSize(12),
+    backgroundColor: colors.navigation,
+    borderTopLeftRadius: formatSize(14),
+    borderTopRightRadius: formatSize(14),
+    borderBottomColor: colors.lines,
+    borderBottomWidth: formatSize(0.5)
   },
   title: {
-    fontSize: 1.625 * step
+    ...typography.caption13Regular,
+    color: colors.gray1
   },
   scrollView: {
-    backgroundColor: pageBgColor
+    backgroundColor: colors.pageBG
   },
   contentContainer: {
-    flex: 1,
-    padding: step
+    padding: formatSize(8)
   },
   footerContainer: {
-    marginBottom: 4.375 * step,
-    padding: 1.5 * step,
-    backgroundColor: white,
-    borderBottomLeftRadius: 1.25 * step,
-    borderBottomRightRadius: 1.25 * step
+    marginBottom: formatSize(34),
+    paddingHorizontal: formatSize(12),
+    paddingTop: formatSize(15),
+    paddingBottom: formatSize(19),
+    backgroundColor: colors.navigation,
+    borderBottomLeftRadius: formatSize(14),
+    borderBottomRightRadius: formatSize(14)
+  },
+  cancelButtonText: {
+    ...typography.body17Semibold,
+    color: colors.orange,
+    alignSelf: 'center'
   }
-});
+}));

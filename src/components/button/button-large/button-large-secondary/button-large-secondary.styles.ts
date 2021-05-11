@@ -1,12 +1,12 @@
-import { orange, white } from '../../../../config/styles';
+import { createUseStylesConfig } from '../../../../styles/create-use-styles';
 import { ButtonStyleConfig } from '../../button-style.config';
-import { buttonLargeSharedStyleConfig } from '../button-large.styles';
+import { useButtonLargeSharedStyleConfig } from '../button-large.styles';
 
-export const buttonLargeSecondaryStyleConfig: ButtonStyleConfig = {
-  ...buttonLargeSharedStyleConfig,
+export const useButtonLargeSecondaryStyleConfig = createUseStylesConfig<ButtonStyleConfig>(({ colors }) => ({
+  ...useButtonLargeSharedStyleConfig(),
   activeColorConfig: {
-    titleColor: orange,
-    backgroundColor: white,
-    borderColor: orange
+    titleColor: colors.orange,
+    backgroundColor: colors.white,
+    borderColor: colors.orange
   }
-};
+}));

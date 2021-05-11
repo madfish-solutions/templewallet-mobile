@@ -7,12 +7,11 @@ import { Icon, IconProps } from '../icon';
 import { TouchableIconStyles } from './touchable-icon.styles';
 
 interface Props extends IconProps {
-  iconSize?: number;
   onPress: EmptyFn;
 }
 
-export const TouchableIcon: FC<Props> = ({ size = 3 * step, name, iconSize, color, onPress, style }) => (
+export const TouchableIcon: FC<Props> = ({ size = 3 * step, name, color, onPress, style }) => (
   <TouchableOpacity style={[TouchableIconStyles.container, { width: size, height: size }, style]} onPress={onPress}>
-    <Icon name={name} size={iconSize} color={color} />
+    <Icon name={name} size={size} color={color} />
   </TouchableOpacity>
 );

@@ -1,36 +1,34 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
-import { borderColor, pageBgColor, step, white } from '../../../config/styles';
+export const closeIconSize = formatSize(28);
 
-export const closeIconSize = 3.5 * step;
-
-export const ModalBottomSheetStyles = StyleSheet.create({
+export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     height: '100%'
   },
   headerContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 2 * step,
-    paddingVertical: step,
-    backgroundColor: white,
-    borderTopLeftRadius: 1.25 * step,
-    borderTopRightRadius: 1.25 * step,
-    borderBottomColor: borderColor,
-    borderBottomWidth: 0.5
+    padding: formatSize(16),
+    backgroundColor: colors.cardBG,
+    borderTopLeftRadius: formatSize(10),
+    borderTopRightRadius: formatSize(10),
+    borderBottomColor: colors.lines,
+    borderBottomWidth: formatSize(0.5)
   },
   iconSubstitute: {
     width: closeIconSize,
     height: closeIconSize
   },
   title: {
-    fontSize: 2.125 * step,
-    fontWeight: 'bold'
+    ...typography.body17Semibold,
+    color: colors.black
   },
   contentContainer: {
     flex: 1,
-    padding: step,
-    backgroundColor: pageBgColor
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16)
   }
-});
+}));

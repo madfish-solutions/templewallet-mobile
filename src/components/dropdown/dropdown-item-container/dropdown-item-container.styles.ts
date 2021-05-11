@@ -1,20 +1,19 @@
-import { StyleSheet } from 'react-native';
+import { generateShadow, step } from '../../../config/styles';
+import { createUseStyles } from '../../../styles/create-use-styles';
 
-import { black, generateShadow, orange, step, white } from '../../../config/styles';
-
-export const DropdownItemContainerStyles = StyleSheet.create({
+export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
   root: {
     padding: step,
-    backgroundColor: white,
-    borderColor: white,
+    backgroundColor: colors.white,
+    borderColor: colors.white,
     borderWidth: 0.25 * step,
     borderRadius: step,
-    ...generateShadow(black)
+    ...generateShadow(colors.black)
   },
   rootMargin: {
     marginVertical: 0.5 * step
   },
   rootSelected: {
-    borderColor: orange
+    borderColor: colors.orange
   }
-});
+}));
