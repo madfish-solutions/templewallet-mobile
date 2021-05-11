@@ -1,22 +1,17 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
-import { Text, ViewStyle } from 'react-native';
 
+import { IconNameEnum } from '../../icon/icon-name.enum';
+import { Button } from '../button';
+import { ButtonSharedProps } from '../button-shared.props';
 import { useButtonSmallStyles } from './button-small.styles';
 
-interface Props {
-  disabled?: boolean;
-  onPress: () => void;
+interface Props extends ButtonSharedProps {
   title: string;
-  containerStyle?: ViewStyle;
+  iconName?: IconNameEnum;
 }
 
-export function ButtonSmall({ disabled, onPress, title, containerStyle }: Props) {
-  const styles = useButtonSmallStyles();
+export function ButtonSmall(props: Props) {
+  const styleConfig = useButtonSmallStyles();
 
-  return (
-    <TouchableOpacity style={[styles.container, containerStyle]} disabled={disabled} onPress={onPress}>
-      <Text style={styles.title}>{title}</Text>
-    </TouchableOpacity>
-  );
+  return <Button {...props} styleConfig={styleConfig} />;
 }

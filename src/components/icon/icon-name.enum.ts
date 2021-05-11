@@ -14,5 +14,6 @@ export enum IconNameEnum {
   XtzToken = 'XtzToken',
   Share = 'Share',
   Copy = 'Copy',
-  Tag = 'Tag'
+  Tag = 'Tag',
+  Lock = 'Lock'
 }

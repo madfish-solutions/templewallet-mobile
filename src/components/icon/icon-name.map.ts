@@ -8,6 +8,7 @@ import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
+import LockIcon from './assets/lock.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -35,5 +36,6 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.XtzToken]: XtzTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
-  [IconNameEnum.Tag]: TagIcon
+  [IconNameEnum.Tag]: TagIcon,
+  [IconNameEnum.Lock]: LockIcon
 };

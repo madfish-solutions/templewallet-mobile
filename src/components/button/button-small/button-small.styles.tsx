@@ -1,15 +1,19 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
+import { createUseStylesConfig } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
+import { ButtonStyleConfig } from '../button-style.config';
 
-export const useButtonSmallStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
-    width: 'auto',
-    padding: formatSize(8),
-    backgroundColor: colors.cardBG,
+export const useButtonSmallStyles = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
+  containerStyle: {
+    flex: 0,
+    paddingHorizontal: formatSize(8),
+    height: formatSize(26),
     borderRadius: formatSize(17)
   },
-  title: {
-    ...typography.tagline13Tag,
-    color: colors.orange
+  titleStyle: {
+    ...typography.tagline13Tag
+  },
+  activeColorConfig: {
+    titleColor: colors.orange,
+    backgroundColor: colors.cardBG
   }
 }));

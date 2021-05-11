@@ -7494,6 +7494,15 @@ react-native-aes-crypto@^1.3.10:
   resolved "https://registry.yarnpkg.com/react-native-aes-crypto/-/react-native-aes-crypto-1.3.10.tgz#8e7d536a19481dd087e8c40083008a843f961495"
   integrity sha512-aQsbXCmsQEaXqjpKo8S0ot5CnK6KGN/Jx0qN1B3I8Au8Egl66BKryxD9wmorHYdjx+omctdug/mNWHKDRmDlow==
 
+react-native-bip39@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-bip39/-/react-native-bip39-2.3.0.tgz#30c58d93a22b41f4937727fd456ab6b03f452671"
+  integrity sha1-MMWNk6IrQfSTdyf9RWq2sD9FJnE=
+  dependencies:
+    react-native-crypto "^2.0.1"
+    react-native-randombytes "^2.2.0"
+    unorm "^1.3.3"
+
 react-native-bootsplash@^3.2.0:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/react-native-bootsplash/-/react-native-bootsplash-3.2.3.tgz#5f985a492696e14c73dc3b8475be5385b7436593"
@@ -7512,7 +7521,7 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-crypto@^2.2.0:
+react-native-crypto@^2.0.1, react-native-crypto@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-crypto/-/react-native-crypto-2.2.0.tgz#c999ed7c96064f830e1f958687f53d0c44025770"
   integrity sha512-eZu9Y8pa8BN9FU2pIex7MLRAi+Cd1Y6bsxfiufKh7sfraAACJvjQTeW7/zcQAT93WMfM+D0OVk+bubvkrbrUkw==
@@ -7579,6 +7588,14 @@ react-native-qrcode-svg@^6.1.1:
   dependencies:
     prop-types "^15.7.2"
     qrcode "^1.4.4"
+
+react-native-randombytes@^2.2.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-randombytes/-/react-native-randombytes-2.3.0.tgz#3ed6f8a4a803c453d787961047f6b2650d7c7335"
+  integrity sha1-Ptb4pKgDxFPXh5YQR/ayZQ18czU=
+  dependencies:
+    buffer "^4.9.1"
+    sjcl "^1.0.3"
 
 react-native-randombytes@^3.6.0:
   version "3.6.1"
@@ -9122,6 +9139,11 @@ universalify@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
+
+unorm@^1.3.3:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/unorm/-/unorm-1.6.0.tgz#029b289661fba714f1a9af439eb51d9b16c205af"
+  integrity sha512-b2/KCUlYZUeA7JFUuRJZPUtr4gZvBh7tavtv4fvk4+KV9pfGiR6CQAQAWl49ZpR3ts2dk4FYkP7EIgDJoiOLDA==
 
 unpipe@~1.0.0:
   version "1.0.0"
