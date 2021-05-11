@@ -10,7 +10,7 @@ import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
 import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
-import { useFirstAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { WalletStyles } from './wallet.styles';
@@ -18,7 +18,7 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = () => {
   const dispatch = useDispatch();
 
-  const firstAccount = useFirstAccountSelector();
+  const selectedAccount = useSelectedAccountSelector();
   const assets = useAssetsSelector();
   const balance = useBalanceSelector();
 
@@ -26,15 +26,15 @@ export const Wallet = () => {
   const sendBottomSheetController = useBottomSheetController();
 
   useEffect(() => {
-    dispatch(loadTokenAssetsActions.submit(firstAccount.publicKeyHash));
-    dispatch(loadTezosAssetsActions.submit(firstAccount.publicKeyHash));
+    dispatch(loadTokenAssetsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosAssetsActions.submit(selectedAccount.publicKeyHash));
   }, []);
 
   return (
     <ScreenContainer>
       <TouchableOpacity style={WalletStyles.accountInfo} onPress={emptyFn}>
-        <Text style={WalletStyles.accountName}>{firstAccount.name}</Text>
-        <Text style={WalletStyles.accountKey}>{firstAccount.publicKeyHash}</Text>
+        <Text style={WalletStyles.accountName}>{selectedAccount.name}</Text>
+        <Text style={WalletStyles.accountKey}>{selectedAccount.publicKeyHash}</Text>
       </TouchableOpacity>
       <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>

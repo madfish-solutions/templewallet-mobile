@@ -13,7 +13,7 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     getAccountTokenBalancesRequest$(),
     map(({ data }) => loadTokenAssetsActions.success(data.balances)),
-    catchError(err => of(loadTokenAssetsActions.fail(err.response.data.message)))
+    catchError(err => of(loadTokenAssetsActions.fail(err.message)))
   );
 
 const loadTezosAssetsEpic = (action$: Observable<Action>) =>
@@ -22,7 +22,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     getTezosBalanceRequest$(),
     map(balance => loadTezosAssetsActions.success(balance.toString())),
-    catchError(err => of(loadTezosAssetsActions.fail(err.response.data.message)))
+    catchError(err => of(loadTezosAssetsActions.fail(err.message)))
   );
 
 export const assetsEpics = combineEpics(loadTezosAssetsEpic, loadTokenAssetsEpic);

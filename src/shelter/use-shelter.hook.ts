@@ -8,7 +8,7 @@ import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { addHdAccount } from '../store/wallet/wallet-actions';
+import { addHdAccount, setSelectedAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
 import { tezos$ } from '../utils/network/network.util';
@@ -33,6 +33,7 @@ export const useShelter = () => {
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(addHdAccount(publicData));
+            dispatch(setSelectedAccount(publicData));
           }
         }),
       createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
