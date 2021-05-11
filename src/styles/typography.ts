@@ -111,6 +111,7 @@ export const typography = {
     fontSize: formatSize(13)
   },
   tagline13Tag: {
+    textTransform: 'uppercase',
     fontFamily: FontsEnum.interSemiBold,
     fontSize: formatSize(13)
   },

@@ -4,8 +4,8 @@ import { Button, Text } from 'react-native';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { FormMnemonicInput } from '../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import {
   ImportAccountFormValues,
@@ -28,7 +28,7 @@ export const ImportAccount = () => {
         {({ submitForm }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
-            <FormTextInput name="seedPhrase" multiline={true} />
+            <FormMnemonicInput name="seedPhrase" />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormPasswordInput name="password" />

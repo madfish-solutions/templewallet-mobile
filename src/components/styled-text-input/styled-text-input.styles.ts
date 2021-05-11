@@ -1,35 +1,35 @@
 import { TextStyle } from 'react-native';
 
-import { step, transparent } from '../../config/styles';
+import { transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-const lineHeight = formatSize(20);
-const numberOfLines = 4;
-
 export const useStyledTextInputStyles = createUseStyles(({ colors, typography }) => {
   const commonStyles: TextStyle = {
-    paddingVertical: formatSize(13),
-    paddingHorizontal: formatSize(12),
-    paddingRight: formatSize(40),
-    borderRadius: step,
-    backgroundColor: transparent,
+    borderRadius: formatSize(8),
+    backgroundColor: colors.input,
     color: colors.black,
     borderWidth: formatSize(1),
     borderColor: transparent,
-    minHeight: formatSize(50),
     ...typography.body17Regular
   };
 
   return {
     regular: {
-      ...commonStyles
+      ...commonStyles,
+      paddingVertical: formatSize(13),
+      paddingHorizontal: formatSize(12),
+      paddingRight: formatSize(40),
+      minHeight: formatSize(50)
     },
     multiline: {
       ...commonStyles,
       textAlignVertical: 'top',
-      minHeight: lineHeight * numberOfLines,
-      maxHeight: lineHeight * numberOfLines
+      paddingHorizontal: formatSize(12),
+      paddingTop: formatSize(12),
+      paddingBottom: formatSize(60),
+      minHeight: formatSize(200),
+      maxHeight: formatSize(200)
     },
     error: {
       borderColor: colors.destructive
