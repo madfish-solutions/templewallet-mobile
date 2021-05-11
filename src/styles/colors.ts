@@ -10,11 +10,18 @@ const accentAlphaColors = {
   blue10: hexa(accentColors.blue, 0.1)
 };
 
-const basicColors = {
+const basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#000000',
   white: '#ffffff'
+};
+
+const basicDarkColors: typeof basicLightColors = {
+  adding: '#34CC4E',
+  destructive: '#FF3B30',
+  black: '#ffffff',
+  white: '#000000'
 };
 
 const graybaseLightColors = {
@@ -50,7 +57,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
 const lightTheme = {
   ...accentColors,
   ...accentAlphaColors,
-  ...basicColors,
+  ...basicLightColors,
   ...graybaseLightColors,
   ...backgroundLightColors
 };
@@ -59,9 +66,8 @@ export type Colors = Record<keyof typeof lightTheme, string>;
 
 export const getColors = (theme: ThemesEnum): Colors => ({
   ...lightTheme,
-  ...accentAlphaColors,
-  ...basicColors,
   ...(theme === ThemesEnum.dark && {
+    ...basicDarkColors,
     ...graybaseDarkColors,
     ...backgroundDarkColors
   })

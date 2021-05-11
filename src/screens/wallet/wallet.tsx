@@ -38,7 +38,7 @@ export const Wallet = () => {
       </TouchableOpacity>
       <Text style={WalletStyles.amount}>X XXX.XX XTZ</Text>
       <Text style={WalletStyles.formatted}>= XX XXX.XX $</Text>
-      <View style={WalletStyles.buttonRow}>
+      <View style={WalletStyles.buttonsContainer}>
         <ButtonMedium
           title="RECEIVE"
           iconName={IconNameEnum.ArrowDown}

@@ -1,32 +1,32 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
-import { blue, borderColor, orange, step } from '../../../config/styles';
-import { hexa } from '../../../utils/style.util';
-
-export const AccountDropdownItemStyles = StyleSheet.create({
+export const useAccountDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     flexDirection: 'row'
   },
   icon: {
-    width: 5.5 * step,
-    height: 5.5 * step,
-    backgroundColor: orange,
-    borderColor,
-    borderRadius: step,
-    borderWidth: 0.125 * step
+    width: formatSize(44),
+    height: formatSize(44),
+    backgroundColor: colors.orange,
+    borderColor: colors.lines,
+    borderRadius: formatSize(8),
+    borderWidth: formatSize(1)
   },
   infoContainer: {
-    marginLeft: step,
-    justifyContent: 'space-between'
+    flex: 1,
+    justifyContent: 'space-between',
+    marginLeft: formatSize(10)
   },
   name: {
-    fontWeight: 'bold'
+    ...typography.tagline13Tag,
+    color: colors.black
   },
   publicKeyHash: {
-    color: blue,
-    paddingHorizontal: step,
-    paddingVertical: 0.25 * step,
-    backgroundColor: hexa(blue, 0.1),
-    borderRadius: 0.5 * step
+    color: colors.blue,
+    paddingHorizontal: formatSize(4),
+    paddingVertical: formatSize(2),
+    backgroundColor: colors.blue10,
+    borderRadius: formatSize(4)
   }
-});
+}));

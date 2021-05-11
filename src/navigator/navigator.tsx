@@ -10,6 +10,7 @@ import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
 import { TabNavigator } from './tab-navigator/tab-navigator';
+import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
 
 const Stack = createStackNavigator<ScreensParamList>();
 
@@ -18,10 +19,11 @@ const isConfirmation = false;
 export const Navigator = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { isLocked } = useAppLock();
+  const styleScreenOptions = useStackNavigatorStyleOptions();
 
   return (
     <>
-      <Stack.Navigator {...(isAuthorised && { headerMode: 'none' })}>
+      <Stack.Navigator screenOptions={{ ...styleScreenOptions, headerShown: !isAuthorised }}>
         {!isAuthorised ? (
           <>
             <Stack.Screen name={ScreensEnum.Welcome} component={Welcome} />

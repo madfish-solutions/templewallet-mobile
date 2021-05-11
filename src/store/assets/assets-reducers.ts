@@ -1,5 +1,4 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { BigNumber } from 'bignumber.js';
 
 import { createEntity } from '../create-entity';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from './assets-actions';
@@ -20,7 +19,7 @@ export const assetsReducer = createReducer<AssetsState>(AssetsInitialState, buil
   }));
   builder.addCase(loadTezosAssetsActions.submit, state => ({
     ...state,
-    tezos: createEntity(new BigNumber(0), true)
+    tezos: createEntity('0', true)
   }));
   builder.addCase(loadTezosAssetsActions.success, (state, { payload }) => ({
     ...state,
@@ -28,6 +27,6 @@ export const assetsReducer = createReducer<AssetsState>(AssetsInitialState, buil
   }));
   builder.addCase(loadTezosAssetsActions.fail, (state, { payload }) => ({
     ...state,
-    tezos: createEntity(new BigNumber(0), false, payload)
+    tezos: createEntity('0', false, payload)
   }));
 });

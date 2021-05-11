@@ -15,7 +15,7 @@ export const typography = {
     fontSize: formatSize(17)
   },
   numbersRegular15: {
-    fontFamily: FontsEnum.rubikMedium,
+    fontFamily: FontsEnum.rubikRegular,
     fontSize: formatSize(15)
   },
   numbersRegular13: {

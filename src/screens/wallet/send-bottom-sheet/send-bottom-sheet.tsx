@@ -1,12 +1,14 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { Divider } from '../../../components/divider/divider';
+import { Label } from '../../../components/label/label';
 import { step } from '../../../config/styles';
 import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormNumericInput } from '../../../form/form-numeric-input';
@@ -40,17 +42,21 @@ export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) 
         onSubmit={onSubmit}>
         {({ submitForm }) => (
           <>
-            <Text>From</Text>
+            <Label label="From" description="Select account to send from." />
             <AccountFormDropdown name="account" list={hdAccounts} />
+            <Divider />
 
-            <Text>Amount Tezos</Text>
-            <FormNumericInput name="amount" />
-
-            <Text>Recipient</Text>
+            <Label label="To" description="Address or Tezos domain to send tez funds to." />
             <FormTextInput name="recipient" />
+            <Divider />
 
-            <Text>Gas Fee</Text>
+            <Label label="Amount" description="Set XTZ amount to send." />
+            <FormNumericInput name="amount" />
+            <Divider />
+
+            <Label label="Fee" />
             <FormInputSlider name="gasFee" />
+            <Divider />
 
             <View style={SendBottomSheetStyles.buttonsContainer}>
               <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={controller.close} />

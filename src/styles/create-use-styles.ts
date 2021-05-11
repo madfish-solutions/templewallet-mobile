@@ -13,8 +13,10 @@ interface CStylesFnProps {
 
 export const createUseStyles = <T extends NamedStyles<T>>(
   stylesFn: (props: CStylesFnProps) => T | NamedStyles<T>
-) => () => {
+) => () => StyleSheet.create<T>(createUseStylesConfig(stylesFn)());
+
+export const createUseStylesConfig = <T extends NamedStyles<T>>(stylesFn: (props: CStylesFnProps) => T) => () => {
   const colors = useColors();
 
-  return StyleSheet.create<T>(stylesFn({ colors, typography }));
+  return stylesFn({ colors, typography });
 };
