@@ -39,8 +39,8 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     },
     cleanButton: {
       position: 'absolute',
-      top: formatSize(13),
-      right: formatSize(12)
+      top: formatSize(17),
+      right: formatSize(14)
     },
     passwordFontSize: {
       ...typography.caption11Regular
