@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
+import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';

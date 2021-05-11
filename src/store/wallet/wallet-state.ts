@@ -1,13 +1,12 @@
-import { AccountInterface, emptyAccount } from '../../interfaces/account.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 
 export interface WalletState {
   hdAccounts: AccountInterface[];
-  selectedAccount: AccountInterface;
+  selectedAccount?: AccountInterface;
 }
 
 export const walletInitialState: WalletState = {
-  hdAccounts: [],
-  selectedAccount: emptyAccount
+  hdAccounts: []
 };
 
 export interface WalletRootState {
