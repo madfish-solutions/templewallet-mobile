@@ -1,6 +1,6 @@
 import { NetworkInterface } from '../../interfaces/network.interface';
 
-export const Mainnet: NetworkInterface = {
+export const MAINNET_NETWORK: NetworkInterface = {
   id: 'mainnet',
   name: 'tezosMainnet',
   nameI18nKey: 'tezosMainnet',

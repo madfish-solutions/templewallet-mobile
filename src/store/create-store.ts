@@ -6,7 +6,6 @@ import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObser
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { catchError } from 'rxjs/operators';
 
-// import { assetsReducer } from './assets/assets-reducers';
 import { displaySettingsReducer } from './display-settings/display-settings-reducer';
 import { rootStateReducer } from './root-state.reducers';
 import { walletsReducer } from './wallet/wallet-reducers';
@@ -30,7 +29,6 @@ const persistConfig = {
 
 const rootReducer = rootStateReducer({
   wallet: walletsReducer,
-  // assets: assetsReducer,
   displaySettings: displaySettingsReducer
 });
 

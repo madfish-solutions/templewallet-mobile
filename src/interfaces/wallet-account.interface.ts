@@ -1,9 +1,12 @@
-import { AccountSettingsInterface, emptyAccountSettings } from './account-settings.interface';
-import { AccountInterface, emptyAccount } from './account.interface';
+import { AccountSettingsInterface } from './account-settings.interface';
+import { AccountInterface } from './account.interface';
 
 export type WalletAccountInterface = AccountInterface & AccountSettingsInterface;
 
 export const emptyWalletAccount: WalletAccountInterface = {
-  ...emptyAccount,
-  ...emptyAccountSettings
+  name: '',
+  publicKey: '',
+  publicKeyHash: '',
+  tezosBalance: { isLoading: false, data: '0' },
+  tokensList: []
 };

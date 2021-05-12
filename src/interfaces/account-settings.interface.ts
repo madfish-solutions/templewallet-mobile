@@ -1,5 +1,5 @@
 import { LoadableEntityState } from '../store/types';
-import { MainnetTokensMetadata } from '../token/data/tokens-metadata';
+import { MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { tokenMetadataSlug } from '../token/utils/token.utils';
 
@@ -8,12 +8,7 @@ export interface AccountSettingsInterface {
   tokensList: AccountTokenInterface[];
 }
 
-export const emptyAccountSettings: AccountSettingsInterface = {
-  tezosBalance: { isLoading: false, data: '0' },
-  tokensList: []
-};
-
 export const initialAccountSettings: AccountSettingsInterface = {
   tezosBalance: { isLoading: false, data: '0' },
-  tokensList: MainnetTokensMetadata.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isShown: true }))
+  tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isShown: true }))
 };

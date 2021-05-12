@@ -1,5 +1,5 @@
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { MainnetTokensMetadata } from '../../token/data/tokens-metadata';
+import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
 
@@ -12,7 +12,7 @@ export interface WalletState {
 export const walletInitialState: WalletState = {
   hdAccounts: [],
   selectedAccountPublicKeyHash: '',
-  tokensMetadata: MainnetTokensMetadata.reduce(
+  tokensMetadata: MAINNET_TOKENS_METADATA.reduce(
     (obj, tokenMetadata) => ({
       ...obj,
       [tokenMetadataSlug(tokenMetadata)]: tokenMetadata

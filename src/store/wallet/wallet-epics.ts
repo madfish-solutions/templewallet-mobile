@@ -6,7 +6,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { api } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
-import { TezTokenMetadata } from '../../token/data/tokens-metadata';
+import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { loadTezosBalanceActions, loadTokenBalancesActions } from './wallet-actions';
@@ -35,7 +35,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([address, tezos]) =>
       from(tezos.tz.getBalance(address)).pipe(
-        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TezTokenMetadata.decimals).toString())),
+        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, XTZ_TOKEN_METADATA.decimals).toString())),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     ),

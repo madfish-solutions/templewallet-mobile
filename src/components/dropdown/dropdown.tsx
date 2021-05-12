@@ -7,13 +7,13 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 
 export interface DropdownProps<T> {
   title: string;
-  list: T[];
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
 }
 
 export interface DropdownValueProps<T> {
   value?: T;
+  list: T[];
   onValueChange: EventFn<T | undefined>;
 }
 

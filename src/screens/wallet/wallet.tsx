@@ -15,7 +15,7 @@ import {
   useTezosBalanceSelector,
   useTokensListSelector
 } from '../../store/wallet/wallet-selectors';
-import { TezTokenMetadata } from '../../token/data/tokens-metadata';
+import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -61,11 +61,11 @@ export const Wallet = () => {
       </View>
 
       <TokenListItem
-        symbol={TezTokenMetadata.symbol}
-        name={TezTokenMetadata.name}
+        symbol={XTZ_TOKEN_METADATA.symbol}
+        name={XTZ_TOKEN_METADATA.name}
         balance={tezosBalance}
         apy={8}
-        iconName={TezTokenMetadata.iconName}
+        iconName={XTZ_TOKEN_METADATA.iconName}
       />
 
       {tokensList.map(({ address, symbol, name, balance, iconName }) => (
