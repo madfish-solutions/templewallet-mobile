@@ -14,8 +14,10 @@ import {
   useTezosBalanceSelector,
   useTokensListSelector
 } from '../../store/wallet/wallet-selectors';
+import { TezTokenMetadata } from '../../token/data/tokens-metadata';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
+import { TokenListItem } from './token-list-item/token-list-item';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
@@ -57,15 +59,16 @@ export const Wallet = () => {
         <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
       </View>
 
-      <TouchableOpacity style={WalletStyles.accountItem} onPress={emptyFn}>
-        <Text>Tezos</Text>
-        <Text>{tezosBalance.toString()}</Text>
-      </TouchableOpacity>
-      {tokensList.map(({ address, name, balance }) => (
-        <TouchableOpacity key={address} style={WalletStyles.accountItem} onPress={emptyFn}>
-          <Text>{name}</Text>
-          <Text>{balance}</Text>
-        </TouchableOpacity>
+      <TokenListItem
+        symbol={TezTokenMetadata.symbol}
+        name={TezTokenMetadata.name}
+        balance={tezosBalance}
+        apy={8}
+        iconName={TezTokenMetadata.iconName}
+      />
+
+      {tokensList.map(({ address, symbol, name, balance, iconName }) => (
+        <TokenListItem key={address} symbol={symbol} name={name} balance={balance} iconName={iconName} />
       ))}
 
       <ReceiveBottomSheet controller={receiveBottomSheetController} />

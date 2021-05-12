@@ -18,6 +18,7 @@ export enum IconNameEnum {
   KUsdToken = 'KUsdToken',
   BlndToken = 'BlndToken',
   StkrToken = 'StkrToken',
+  NoNameToken = 'NoNameToken',
   Share = 'Share',
   Copy = 'Copy',
   Tag = 'Tag'

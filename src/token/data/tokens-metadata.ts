@@ -1,6 +1,14 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TokenMetadataInterface } from '../interfaces/token-metadata.interface';
 
+export const TezTokenMetadata: Omit<TokenMetadataInterface, 'address'> = {
+  name: 'Tezos',
+  symbol: 'XTZ',
+  decimals: 6,
+  fungible: true,
+  iconName: IconNameEnum.XtzToken
+};
+
 export const MainnetTokensMetadata: TokenMetadataInterface[] = [
   {
     address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
