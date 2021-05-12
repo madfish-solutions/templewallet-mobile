@@ -4,8 +4,8 @@ import { Text, View } from 'react-native';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../styles/format-size';
-import { useTokenListItemStyles } from './token-list-item.styles';
 import { isDefined } from '../../../utils/is-defined';
+import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props {
   symbol: string;

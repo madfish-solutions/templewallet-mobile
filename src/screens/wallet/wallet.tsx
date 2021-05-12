@@ -8,7 +8,7 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
-import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
+import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/wallet/assets-actions';
 import {
   useSelectedAccountSelector,
   useTezosBalanceSelector,
@@ -33,7 +33,7 @@ export const Wallet = () => {
   useEffect(() => {
     dispatch(loadTokenAssetsActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadTezosAssetsActions.submit(selectedAccount.publicKeyHash));
-  }, []);
+  }, [selectedAccount.publicKeyHash]);
 
   return (
     <ScreenContainer>

@@ -8,6 +8,11 @@ export interface AccountSettingsInterface {
   tokensList: AccountTokenInterface[];
 }
 
+export const emptyAccountSettings: AccountSettingsInterface = {
+  tezosBalance: { isLoading: false, data: '0' },
+  tokensList: []
+};
+
 export const initialAccountSettings: AccountSettingsInterface = {
   tezosBalance: { isLoading: false, data: '0' },
   tokensList: MainnetTokensMetadata.map(token => ({ slug: tokenToTokenSlug(token), balance: '0', isShown: true }))

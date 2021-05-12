@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { GetAccountTokenBalancesResponseInterface } from './interfaces/get-account-token-balances-response.interface';
+import { TezTokenMetadata } from './token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from './utils/network/network.util';
 import { mutezToTz } from './utils/tezos.util';
 
@@ -23,5 +24,5 @@ export const getTezosBalanceRequest$ = () => (address$: Observable<string>) =>
   address$.pipe(
     withLatestFrom(tezos$),
     switchMap(([address, tezos]) => tezos.tz.getBalance(address)),
-    map(mutezToTz)
+    map(balance => mutezToTz(balance, TezTokenMetadata.decimals))
   );

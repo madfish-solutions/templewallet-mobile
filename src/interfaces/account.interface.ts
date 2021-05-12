@@ -7,5 +7,5 @@ export interface AccountInterface {
 export const emptyAccount: AccountInterface = {
   name: '',
   publicKey: '',
-  publicKeyHash: 'empty_public_key_hash',
+  publicKeyHash: 'empty_public_key_hash'
 };

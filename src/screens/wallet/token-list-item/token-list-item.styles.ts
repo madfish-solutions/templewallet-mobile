@@ -33,7 +33,7 @@ export const useTokenListItemStyles = createUseStyles(({ colors, typography }) =
   },
   apyText: {
     ...typography.tagline11Tag,
-    color: colors.white,
+    color: colors.white
   },
   nameText: {
     ...typography.numbersRegular11,

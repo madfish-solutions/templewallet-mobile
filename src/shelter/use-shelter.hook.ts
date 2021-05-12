@@ -32,8 +32,8 @@ export const useShelter = () => {
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
-            dispatch(addHdAccount(publicData));
             dispatch(setSelectedAccount(publicData.publicKeyHash));
+            dispatch(addHdAccount(publicData));
           }
         }),
       createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),

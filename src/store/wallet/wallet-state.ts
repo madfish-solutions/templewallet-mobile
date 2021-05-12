@@ -1,18 +1,18 @@
-import { AccountSettingsInterface } from '../../interfaces/account-settings.interface';
-import { AccountInterface } from '../../interfaces/account.interface';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { MainnetTokensMetadata } from '../../token/data/tokens-metadata';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { tokenToTokenSlug } from '../../token/utils/token.utils';
 
 export interface WalletState {
-  hdAccounts: (AccountInterface & AccountSettingsInterface)[];
+  hdAccounts: WalletAccountInterface[];
   selectedAccountPublicKeyHash: string;
-  tokensMetadataList: TokenMetadataInterface[];
+  tokensMetadata: Record<string, TokenMetadataInterface>;
 }
 
 export const walletInitialState: WalletState = {
   hdAccounts: [],
   selectedAccountPublicKeyHash: '',
-  tokensMetadataList: MainnetTokensMetadata
+  tokensMetadata: MainnetTokensMetadata.reduce((prev, curr) => ({ ...prev, [tokenToTokenSlug(curr)]: curr }), {})
 };
 
 export interface WalletRootState {
