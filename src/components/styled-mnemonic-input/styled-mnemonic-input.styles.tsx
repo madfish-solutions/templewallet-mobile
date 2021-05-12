@@ -24,10 +24,14 @@ export const useStyledMnemonicInputStyles = createUseStyles(({ colors, typograph
     marginRight: formatSize(8)
   },
   protectedImage: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%'
   },
   protectedView: {
     ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
     zIndex: 0,
     justifyContent: 'center',
     alignItems: 'center'

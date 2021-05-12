@@ -11,7 +11,7 @@ interface Props {
   isHideGetNew?: boolean;
 }
 
-export const FormMnemonicInput: FC<Props> = ({ name, isEditable }) => {
+export const FormMnemonicInput: FC<Props> = ({ name, isEditable, isHideGetNew }) => {
   const [field, meta] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -21,6 +21,7 @@ export const FormMnemonicInput: FC<Props> = ({ name, isEditable }) => {
         value={field.value}
         isError={isError}
         isEditable={isEditable}
+        isHideGetNew={isHideGetNew}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />
