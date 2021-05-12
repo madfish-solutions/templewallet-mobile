@@ -6,7 +6,7 @@ export type WalletAccountInterface = AccountInterface & AccountSettingsInterface
 export const emptyWalletAccount: WalletAccountInterface = {
   name: '',
   publicKey: '',
-  publicKeyHash: '',
+  publicKeyHash: 'empty_public_key_hash',
   tezosBalance: { isLoading: false, data: '0' },
   tokensList: []
 };

@@ -44,7 +44,10 @@ export const walletsReducer = createReducer<WalletState>(walletInitialState, bui
         ...prevState,
         tokensMetadata: {
           ...prevState.tokensMetadata,
-          [slug]: tokenMetadata
+          [slug]: {
+            ...prevState.tokensMetadata[slug],
+            ...tokenMetadata
+          }
         }
       };
 
