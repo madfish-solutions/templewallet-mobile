@@ -4,11 +4,12 @@ import { useDispatch } from 'react-redux';
 
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
+import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
-import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/wallet/assets-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
   useTezosBalanceSelector,
@@ -31,8 +32,8 @@ export const Wallet = () => {
   const sendBottomSheetController = useBottomSheetController();
 
   useEffect(() => {
-    dispatch(loadTokenAssetsActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadTezosAssetsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
   }, [selectedAccount.publicKeyHash]);
 
   return (
@@ -70,6 +71,8 @@ export const Wallet = () => {
       {tokensList.map(({ address, symbol, name, balance, iconName }) => (
         <TokenListItem key={address} symbol={symbol} name={name} balance={balance} iconName={iconName} />
       ))}
+
+      <Divider />
 
       <ReceiveBottomSheet controller={receiveBottomSheetController} />
       <SendBottomSheet controller={sendBottomSheetController} />

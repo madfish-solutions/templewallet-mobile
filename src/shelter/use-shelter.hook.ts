@@ -8,7 +8,7 @@ import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { addHdAccount, setSelectedAccount } from '../store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
 import { tezos$ } from '../utils/network/network.util';
@@ -32,8 +32,8 @@ export const useShelter = () => {
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
-            dispatch(setSelectedAccount(publicData.publicKeyHash));
-            dispatch(addHdAccount(publicData));
+            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
+            dispatch(addHdAccountAction(publicData));
           }
         }),
       createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
@@ -41,7 +41,7 @@ export const useShelter = () => {
         .pipe(switchMap(name => Shelter.createHdAccount$(name, hdAccounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
-            dispatch(addHdAccount(publicData));
+            dispatch(addHdAccountAction(publicData));
             navigate(ScreensEnum.Settings);
           }
         }),

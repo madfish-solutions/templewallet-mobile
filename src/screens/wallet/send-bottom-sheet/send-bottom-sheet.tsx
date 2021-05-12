@@ -13,18 +13,18 @@ import { step } from '../../../config/styles';
 import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const { send } = useShelter();
   const hdAccounts = useHdAccountsListSelector();
+  const selectedAccount = useSelectedAccountSelector();
 
   const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
-    account: hdAccounts[0] ?? emptyAccount,
+    account: selectedAccount,
     amount: 0,
     recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
     gasFee: 0

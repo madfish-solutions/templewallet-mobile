@@ -16,6 +16,8 @@ export enum IconNameEnum {
   UsdTzToken = 'UsdTzToken',
   EthTzToken = 'EthTzToken',
   KUsdToken = 'KUsdToken',
+  WXtzToken = 'WXtzToken',
+  UsdSToken = 'UsdSToken',
   BlndToken = 'BlndToken',
   StkrToken = 'StkrToken',
   NoNameToken = 'NoNameToken',

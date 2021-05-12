@@ -2,9 +2,9 @@ import { TezosToolkit } from '@taquito/taquito';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { networks } from './networks';
+import { Mainnet } from './networks';
 
-const currentNetwork$ = new BehaviorSubject(networks[0]);
+const currentNetwork$ = new BehaviorSubject(Mainnet);
 export const currentNetworkId$ = currentNetwork$.pipe(map(({ id }) => id));
 export const currentNetworkRpc$ = currentNetwork$.pipe(map(({ rpcBaseURL }) => rpcBaseURL));
 export const tezos$ = currentNetworkRpc$.pipe(map(currentNetworkRpc => new TezosToolkit(currentNetworkRpc)));

@@ -37,14 +37,16 @@ export const MainnetTokensMetadata: TokenMetadataInterface[] = [
     address: 'KT1VYsVfmobT7rsMVivvZ4J8i3bPiqz12NaH',
     name: 'Wrapped Tezos',
     symbol: 'wXTZ',
-    decimals: 6
+    decimals: 6,
+    iconName: IconNameEnum.WXtzToken
   },
   {
     id: 0,
     address: 'KT1REEb5VxWRjcHm5GzDMwErMmNFftsE5Gpf',
     name: 'Stably USD',
     symbol: 'USDS',
-    decimals: 6
+    decimals: 6,
+    iconName: IconNameEnum.UsdSToken
   },
   {
     id: 0,

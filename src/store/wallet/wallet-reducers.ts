@@ -2,59 +2,43 @@ import { createReducer } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 
 import { initialAccountSettings } from '../../interfaces/account-settings.interface';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
-import { emptyTokenMetadataInterface, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { tokenToTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
+import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
-import { loadTezosAssetsActions, loadTokenAssetsActions } from './assets-actions';
-import { addHdAccount, setSelectedAccount } from './wallet-actions';
+import {
+  addHdAccountAction,
+  loadTezosBalanceActions,
+  loadTokenBalancesActions,
+  setSelectedAccountAction
+} from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
-
-const updateCurrentAccountState = (
-  state: WalletState,
-  updateFn: (currentAccount: WalletAccountInterface) => Partial<WalletAccountInterface>
-): WalletState => ({
-  ...state,
-  hdAccounts: state.hdAccounts.map(account =>
-    account.publicKeyHash === state.selectedAccountPublicKeyHash ? { ...account, ...updateFn(account) } : account
-  )
-});
+import { pushOrUpdateAccountTokensList, tokenBalanceMetadata, updateCurrentAccountState } from './wallet-state.utils';
 
 export const walletsReducer = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(addHdAccount, (state, { payload }) => ({
+  builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    hdAccounts: [...state.hdAccounts, { ...payload, ...initialAccountSettings }]
+    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountSettings }]
   }));
-  builder.addCase(setSelectedAccount, (state, { payload }) => ({
+  builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
-    selectedAccountPublicKeyHash: payload ?? ''
+    selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosAssetsActions.submit, state =>
+  builder.addCase(loadTezosBalanceActions.submit, state =>
     updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', true) }))
   );
-  builder.addCase(loadTezosAssetsActions.success, (state, { payload }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(payload, false) }))
+  builder.addCase(loadTezosBalanceActions.success, (state, { payload: balance }) =>
+    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(balance, false) }))
   );
-  builder.addCase(loadTezosAssetsActions.fail, (state, { payload }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', false, payload) }))
+  builder.addCase(loadTezosBalanceActions.fail, (state, { payload: error }) =>
+    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', false, error) }))
   );
 
-  builder.addCase(loadTokenAssetsActions.success, (state, { payload }) =>
-    payload.reduce((prevState, { token_id, contract, name, symbol, decimals, balance }) => {
-      const tokenMetadata: TokenMetadataInterface = {
-        ...emptyTokenMetadataInterface,
-        id: token_id,
-        address: contract,
-        ...(isDefined(name) && { name }),
-        ...(isDefined(symbol) && { symbol }),
-        ...(isDefined(decimals) && { decimals })
-      };
-
-      const slug = tokenToTokenSlug(tokenMetadata);
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
+    tokenBalancesList.reduce((prevState, tokenBalance) => {
+      const tokenMetadata = tokenBalanceMetadata(tokenBalance);
+      const slug = tokenMetadataSlug(tokenMetadata);
 
       const newState: WalletState = {
         ...prevState,
@@ -66,29 +50,13 @@ export const walletsReducer = createReducer<WalletState>(walletInitialState, bui
 
       const accountToken: AccountTokenInterface = {
         slug,
-        balance: mutezToTz(new BigNumber(balance), tokenMetadata.decimals).toString(),
+        balance: mutezToTz(new BigNumber(tokenBalance.balance), tokenMetadata.decimals).toString(),
         isShown: true
       };
 
-      return updateCurrentAccountState(newState, (currentAccount) => {
-        let didUpdate = false;
-
-        const tokensList = currentAccount.tokensList.map(token => {
-          if (token.slug === slug) {
-            didUpdate = true;
-
-            return accountToken;
-          }
-
-          return token;
-        });
-
-        if (!didUpdate) {
-          tokensList.push(accountToken);
-        }
-
-        return { tokensList };
-      });
+      return updateCurrentAccountState(newState, currentAccount => ({
+        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, accountToken)
+      }));
     }, state)
   );
 });
