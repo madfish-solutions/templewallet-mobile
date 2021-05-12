@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { forwardRef, LegacyRef } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -14,44 +14,50 @@ interface Props extends Omit<TextInputProps, 'style'> {
   isPasswordInput?: boolean;
 }
 
-export const StyledTextInput: FC<Props> = ({
-  onChangeText = emptyFn,
-  isShowCleanButton = false,
-  isError = false,
-  isPasswordInput = false,
-  value,
-  multiline,
-  secureTextEntry,
-  ...props
-}) => {
-  const styles = useStyledTextInputStyles();
-  const colors = useColors();
+export const StyledTextInput = forwardRef(
+  (
+    {
+      onChangeText = emptyFn,
+      isShowCleanButton = false,
+      isError = false,
+      isPasswordInput = false,
+      value,
+      multiline,
+      secureTextEntry,
+      ...props
+    }: Props,
+    ref: LegacyRef<TextInput> | undefined
+  ) => {
+    const styles = useStyledTextInputStyles();
+    const colors = useColors();
 
-  return (
-    <View style={styles.view}>
-      <TextInput
-        style={[
-          multiline ? styles.multiline : styles.regular,
-          isError && styles.error,
-          secureTextEntry && styles.passwordFontSize,
-          isPasswordInput && styles.passwordPadding
-        ]}
-        secureTextEntry={secureTextEntry}
-        multiline={multiline}
-        placeholderTextColor={colors.gray3}
-        selectionColor={colors.orange}
-        value={value}
-        onChangeText={onChangeText}
-        {...props}
-      />
-      {isShowCleanButton && !!value && (
-        <TouchableIcon
-          size={formatSize(16)}
-          name={IconNameEnum.XCircle}
-          style={styles.cleanButton}
-          onPress={() => onChangeText('')}
+    return (
+      <View style={styles.view}>
+        <TextInput
+          ref={ref}
+          style={[
+            multiline ? styles.multiline : styles.regular,
+            isError && styles.error,
+            secureTextEntry && styles.passwordFontSize,
+            isPasswordInput && styles.passwordPadding
+          ]}
+          secureTextEntry={secureTextEntry}
+          multiline={multiline}
+          placeholderTextColor={colors.gray3}
+          selectionColor={colors.orange}
+          value={value}
+          onChangeText={onChangeText}
+          {...props}
         />
-      )}
-    </View>
-  );
-};
+        {isShowCleanButton && !!value && (
+          <TouchableIcon
+            size={formatSize(16)}
+            name={IconNameEnum.XCircle}
+            style={styles.cleanButton}
+            onPress={() => onChangeText('')}
+          />
+        )}
+      </View>
+    );
+  }
+);

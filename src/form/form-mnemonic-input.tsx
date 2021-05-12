@@ -7,10 +7,11 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
   name: string;
-  isProtected?: boolean;
+  isEditable?: boolean;
+  isHideGetNew?: boolean;
 }
 
-export const FormMnemonicInput: FC<Props> = ({ name, isProtected }) => {
+export const FormMnemonicInput: FC<Props> = ({ name, isEditable }) => {
   const [field, meta] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -19,7 +20,7 @@ export const FormMnemonicInput: FC<Props> = ({ name, isProtected }) => {
       <StyledMnemonicInput
         value={field.value}
         isError={isError}
-        isProtected={isProtected}
+        isEditable={isEditable}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />
