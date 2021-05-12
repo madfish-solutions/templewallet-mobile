@@ -9,14 +9,14 @@ import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccount, setSelectedAccount } from '../store/wallet/wallet-actions';
-import { useWalletSelector } from '../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { generateSeed } from '../utils/keys.util';
 import { tezos$ } from '../utils/network/network.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
-  const wallet = useWalletSelector();
+  const hdAccounts = useHdAccountsListSelector();
   const { navigate } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
@@ -33,12 +33,12 @@ export const useShelter = () => {
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(addHdAccount(publicData));
-            dispatch(setSelectedAccount(publicData));
+            dispatch(setSelectedAccount(publicData.publicKeyHash));
           }
         }),
       createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
       createHdAccount$
-        .pipe(switchMap(name => Shelter.createHdAccount$(name, wallet.hdAccounts.length)))
+        .pipe(switchMap(name => Shelter.createHdAccount$(name, hdAccounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(addHdAccount(publicData));
@@ -75,7 +75,7 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
+  }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });

@@ -14,6 +14,12 @@ import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import TagIcon from './assets/tag.svg';
+import BlndTokenIcon from './assets/tokens/blnd.svg';
+import EthTzTokenIcon from './assets/tokens/ethTz.svg';
+import KUsdTokenIcon from './assets/tokens/kUsd.svg';
+import StkrTokenIcon from './assets/tokens/stkr.svg';
+import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
+import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import XtzTokenIcon from './assets/tokens/xtz.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
@@ -33,6 +39,12 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.XtzToken]: XtzTokenIcon,
+  [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,
+  [IconNameEnum.EthTzToken]: EthTzTokenIcon,
+  [IconNameEnum.KUsdToken]: KUsdTokenIcon,
+  [IconNameEnum.BlndToken]: BlndTokenIcon,
+  [IconNameEnum.StkrToken]: StkrTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
   [IconNameEnum.Tag]: TagIcon

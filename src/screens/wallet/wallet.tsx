@@ -9,8 +9,11 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
 import { loadTezosAssetsActions, loadTokenAssetsActions } from '../../store/assets/assets-actions';
-import { useAssetsSelector, useBalanceSelector } from '../../store/assets/assets-selectors';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import {
+  useSelectedAccountSelector,
+  useTezosBalanceSelector,
+  useTokensListSelector
+} from '../../store/wallet/wallet-selectors';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { WalletStyles } from './wallet.styles';
@@ -19,8 +22,8 @@ export const Wallet = () => {
   const dispatch = useDispatch();
 
   const selectedAccount = useSelectedAccountSelector();
-  const assets = useAssetsSelector();
-  const balance = useBalanceSelector();
+  const tokensList = useTokensListSelector();
+  const tezosBalance = useTezosBalanceSelector();
 
   const receiveBottomSheetController = useBottomSheetController();
   const sendBottomSheetController = useBottomSheetController();
@@ -56,10 +59,10 @@ export const Wallet = () => {
 
       <TouchableOpacity style={WalletStyles.accountItem} onPress={emptyFn}>
         <Text>Tezos</Text>
-        <Text>{balance.toString()}</Text>
+        <Text>{tezosBalance.toString()}</Text>
       </TouchableOpacity>
-      {assets.map(({ token_id, name, balance }) => (
-        <TouchableOpacity key={token_id} style={WalletStyles.accountItem} onPress={emptyFn}>
+      {tokensList.map(({ address, name, balance }) => (
+        <TouchableOpacity key={address} style={WalletStyles.accountItem} onPress={emptyFn}>
           <Text>{name}</Text>
           <Text>{balance}</Text>
         </TouchableOpacity>

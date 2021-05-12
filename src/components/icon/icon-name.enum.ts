@@ -12,6 +12,12 @@ export enum IconNameEnum {
   SoonBadge = 'SoonBadge',
   Close = 'Close',
   XtzToken = 'XtzToken',
+  TzBtcToken = 'TzBtcToken',
+  UsdTzToken = 'UsdTzToken',
+  EthTzToken = 'EthTzToken',
+  KUsdToken = 'KUsdToken',
+  BlndToken = 'BlndToken',
+  StkrToken = 'StkrToken',
   Share = 'Share',
   Copy = 'Copy',
   Tag = 'Tag'

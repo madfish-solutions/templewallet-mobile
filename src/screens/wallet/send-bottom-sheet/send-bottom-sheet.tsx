@@ -15,13 +15,13 @@ import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const { send } = useShelter();
-  const hdAccounts = useWalletSelector().hdAccounts;
+  const hdAccounts = useHdAccountsListSelector();
 
   const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
     account: hdAccounts[0] ?? emptyAccount,

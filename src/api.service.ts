@@ -7,7 +7,7 @@ import { currentNetworkId$, tezos$ } from './utils/network/network.util';
 import { mutezToTz } from './utils/tezos.util';
 
 const BASE_URL = 'https://api.better-call.dev/v1';
-const api = axios.create({ baseURL: BASE_URL });
+export const api = axios.create({ baseURL: BASE_URL });
 
 export const getAccountTokenBalancesRequest$ = () => (address$: Observable<string>) =>
   address$.pipe(

@@ -1,9 +1,37 @@
 import { useSelector } from 'react-redux';
 
+import { initialAccountSettings } from '../../interfaces/account-settings.interface';
+import { emptyAccount } from '../../interfaces/account.interface';
+import { emptyTokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
+import { tokenToTokenSlug } from '../../token/utils/token.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-export const useWalletSelector = () => useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
+const useWalletSelector = () => useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
 
-export const useIsAuthorisedSelector = () => useWalletSelector().hdAccounts.length > 0;
+export const useHdAccountsListSelector = () => useWalletSelector().hdAccounts;
 
-export const useSelectedAccountSelector = () => useWalletSelector().selectedAccount;
+export const useIsAuthorisedSelector = () => useHdAccountsListSelector().length > 0;
+
+export const useSelectedAccountSelector = () => {
+  const { hdAccounts, selectedAccountPublicKeyHash } = useWalletSelector();
+
+  return (
+    hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? {
+      ...emptyAccount,
+      ...initialAccountSettings
+    }
+  );
+};
+
+export const useTokensListSelector = (): TokenInterface[] => {
+  const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
+  const tokensMetadataList = useWalletSelector().tokensMetadataList;
+
+  return selectedAccountTokensList.map(({ slug, balance, isShown }) => ({
+    balance,
+    isShown,
+    ...(tokensMetadataList.find(token => tokenToTokenSlug(token) === slug) ?? emptyTokenMetadataInterface)
+  }));
+};
+export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;

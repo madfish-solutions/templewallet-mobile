@@ -1,4 +1,4 @@
-import { TokenBalanceInterface } from './token-balance.interface';
+import { TokenBalanceInterface } from '../token/interfaces/token-balance.interface';
 
 export interface GetAccountTokenBalancesResponseInterface {
   balances: TokenBalanceInterface[];

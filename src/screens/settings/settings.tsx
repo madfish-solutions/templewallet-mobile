@@ -14,7 +14,7 @@ import { useShelter } from '../../shelter/use-shelter.hook';
 import { changeTheme } from '../../store/display-settings/display-settings-actions';
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { setSelectedAccount } from '../../store/wallet/wallet-actions';
-import { useWalletSelector } from '../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { EraseDataButton } from './erase-data-button/erase-data-button';
 import { useSettingsStyles } from './settings.styles';
 
@@ -26,7 +26,8 @@ export const Settings = () => {
   const { revealSecretKey, revealSeedPhrase } = useShelter();
 
   const theme = useThemeSelector();
-  const { selectedAccount, hdAccounts } = useWalletSelector();
+  const hdAccounts = useHdAccountsListSelector();
+  const selectedAccount = useSelectedAccountSelector();
 
   const isDarkTheme = theme === ThemesEnum.dark;
 
@@ -45,7 +46,7 @@ export const Settings = () => {
       <AccountDropdown
         value={selectedAccount}
         list={hdAccounts}
-        onValueChange={value => dispatch(setSelectedAccount(value))}
+        onValueChange={value => dispatch(setSelectedAccount(value?.publicKeyHash))}
       />
       <Divider />
 

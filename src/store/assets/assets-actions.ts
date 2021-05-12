@@ -1,4 +1,4 @@
-import { TokenBalanceInterface } from '../../interfaces/token-balance.interface';
+import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
 import { createActions } from '../create-actions';
 
 export const loadTokenAssetsActions = createActions<string, TokenBalanceInterface[], string>('assets/LOAD_TOKENS');
