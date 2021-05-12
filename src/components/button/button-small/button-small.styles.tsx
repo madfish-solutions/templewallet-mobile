@@ -1,8 +1,7 @@
 import { createUseStylesConfig } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
-import { ButtonStyleConfig } from '../button-style.config';
 
-export const useButtonSmallStyles = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
+export const useButtonSmallStyles = createUseStylesConfig(({ colors, typography }) => ({
   containerStyle: {
     flex: 0,
     paddingHorizontal: formatSize(8),

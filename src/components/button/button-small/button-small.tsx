@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { IconNameEnum } from '../../icon/icon-name.enum';
 import { Button } from '../button';
 import { ButtonSharedProps } from '../button-shared.props';
 import { useButtonSmallStyles } from './button-small.styles';
 
-interface Props extends ButtonSharedProps {
+interface Props extends Omit<ButtonSharedProps, 'iconName'> {
   title: string;
-  iconName?: IconNameEnum;
 }
 
 export function ButtonSmall(props: Props) {

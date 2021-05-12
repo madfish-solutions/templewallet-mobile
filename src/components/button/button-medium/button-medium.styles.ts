@@ -1,8 +1,7 @@
 import { createUseStylesConfig } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
-import { ButtonStyleConfig } from '../button-style.config';
 
-export const useButtonMediumStyleConfig = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
+export const useButtonMediumStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
   containerStyle: {
     height: formatSize(40),
     borderRadius: formatSize(8)
