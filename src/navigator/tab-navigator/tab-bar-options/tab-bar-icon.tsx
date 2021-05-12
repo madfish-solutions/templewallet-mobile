@@ -6,14 +6,13 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../styles/format-size';
 import { useTabBarColor } from './use-tab-bar-color.hook';
 
-const createTabBarIconComponent = (
-  iconName: IconNameEnum,
-  disabled = false
-): BottomTabNavigationOptions['tabBarIcon'] => ({ focused }) => {
-  const color = useTabBarColor(focused, disabled);
+const createTabBarIconComponent =
+  (iconName: IconNameEnum, disabled = false): BottomTabNavigationOptions['tabBarIcon'] =>
+  ({ focused }) => {
+    const color = useTabBarColor(focused, disabled);
 
-  return <Icon name={iconName} color={color} size={formatSize(28)} />;
-};
+    return <Icon name={iconName} color={color} size={formatSize(28)} />;
+  };
 
 export const WalletTabBarIcon = createTabBarIconComponent(IconNameEnum.XtzWallet);
 export const DAppsTabBarIcon = createTabBarIconComponent(IconNameEnum.SoonBadge, true);
