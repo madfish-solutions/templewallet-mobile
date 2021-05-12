@@ -38,7 +38,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
         map(balance => loadTezosBalanceActions.success(mutezToTz(balance, XTZ_TOKEN_METADATA.decimals).toString())),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
-    ),
+    )
   );
 
 export const walletEpics = combineEpics(loadTezosAssetsEpic, loadTokenAssetsEpic);
