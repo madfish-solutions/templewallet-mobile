@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -22,19 +24,11 @@ export const useStyledMnemonicInputStyles = createUseStyles(({ colors, typograph
     marginRight: formatSize(8)
   },
   protectedImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%'
+    ...StyleSheet.absoluteFillObject
   },
   protectedView: {
+    ...StyleSheet.absoluteFillObject,
     zIndex: 0,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
     justifyContent: 'center',
     alignItems: 'center'
   },
