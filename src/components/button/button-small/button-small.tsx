@@ -8,8 +8,8 @@ interface Props extends Omit<ButtonSharedProps, 'iconName'> {
   title: string;
 }
 
-export function ButtonSmall(props: Props) {
+export const ButtonSmall: React.FC<Props> = props => {
   const styleConfig = useButtonSmallStyles();
 
   return <Button {...props} styleConfig={styleConfig} />;
-}
+};
