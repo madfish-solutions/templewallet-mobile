@@ -182,12 +182,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TempleWalletTests" */;
 			buildPhases = (
-				6172A16722C743A7FC9F6991 /* [CP] Check Pods Manifest.lock */,
+				5F8B9145A1922FBD196F2268 /* [CP] Check Pods Manifest.lock */,
+				6172A16722C743A7FC9F6991 /* [CP] Embed Pods Frameworks */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				A96E2539EBD0607893B75349 /* [CP] Embed Pods Frameworks */,
 				D9CA867F6EC88DC043720F79 /* [CP] Copy Pods Resources */,
-				4887917292A83E23376242F5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -209,8 +210,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				835E2F3B8BF5B517AC9BB532 /* [CP] Embed Pods Frameworks */,
 				850E2DA9E421785576AF4276 /* [CP] Copy Pods Resources */,
-				49FBB7AC6BC6342FA7EF8734 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -297,41 +298,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		4887917292A83E23376242F5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		49FBB7AC6BC6342FA7EF8734 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6172A16722C743A7FC9F6991 /* [CP] Check Pods Manifest.lock */ = {
+		5F8B9145A1922FBD196F2268 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -351,6 +318,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6172A16722C743A7FC9F6991 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		822BB9DCAEBC0179E2394C09 /* [CP] Check Pods Manifest.lock */ = {
@@ -375,6 +359,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		835E2F3B8BF5B517AC9BB532 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		850E2DA9E421785576AF4276 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -390,6 +391,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A96E2539EBD0607893B75349 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D9CA867F6EC88DC043720F79 /* [CP] Copy Pods Resources */ = {
