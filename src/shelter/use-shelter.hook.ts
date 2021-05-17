@@ -8,6 +8,9 @@ import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { SendInterface } from '../interfaces/send.interface';
 import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
+import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
+import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { generateSeed } from '../utils/keys.util';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
 import { tezos$ } from '../utils/network/network.util';
@@ -15,7 +18,7 @@ import { Shelter } from './shelter';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
-  const wallet = useWalletSelector();
+  const hdAccounts = useHdAccountsListSelector();
   const { navigate } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
@@ -31,15 +34,16 @@ export const useShelter = () => {
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
-            dispatch(addHdAccount(publicData));
+            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
+            dispatch(addHdAccountAction(publicData));
           }
         }),
       createWallet$.subscribe(data => importWallet$.next(data)),
       createHdAccount$
-        .pipe(switchMap(name => Shelter.createHdAccount$(name, wallet.hdAccounts.length)))
+        .pipe(switchMap(name => Shelter.createHdAccount$(name, hdAccounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
-            dispatch(addHdAccount(publicData));
+            dispatch(addHdAccountAction(publicData));
             navigate(ScreensEnum.Settings);
           }
         }),
@@ -73,7 +77,7 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, wallet.hdAccounts.length]);
+  }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
