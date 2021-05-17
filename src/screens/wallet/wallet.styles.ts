@@ -1,12 +1,12 @@
-import { generateShadow } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
+import { generateShadow } from '../../styles/generate-shadow';
 
 export const useWalletStyles = createUseStyles(({ colors, typography }) => ({
   headerCard: {
     padding: formatSize(16),
     backgroundColor: colors.navigation,
-    ...generateShadow(colors.black10)
+    ...generateShadow(23, colors.black10)
   },
   accountContainer: {
     flexDirection: 'row',
