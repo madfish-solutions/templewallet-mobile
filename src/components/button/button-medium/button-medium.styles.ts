@@ -4,6 +4,7 @@ import { ButtonStyleConfig } from '../button-style.config';
 
 export const useButtonMediumStyleConfig = createUseStylesConfig<ButtonStyleConfig>(({ colors, typography }) => ({
   containerStyle: {
+    flex: 1,
     height: formatSize(40),
     borderRadius: formatSize(8)
   },
