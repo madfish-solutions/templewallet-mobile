@@ -1,8 +1,8 @@
 import { useClipboard } from '@react-native-clipboard/clipboard';
-import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useRef, useState } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
-import { emptyFn, mnemonicInputTimerToShow } from '../../config/general';
+import { emptyFn } from '../../config/general';
 import { generateSeed } from '../../utils/keys.util';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { Buttons } from './components/buttons';
@@ -16,6 +16,8 @@ interface Props extends Omit<TextInputProps, 'style'> {
   isHideGetNew?: boolean;
 }
 
+export const mnemonicInputTimerToShow = 12000;
+
 export const StyledMnemonicInput: FC<Props> = ({
   isHideGetNew,
   isEditable,
@@ -26,14 +28,7 @@ export const StyledMnemonicInput: FC<Props> = ({
   const styles = useStyledMnemonicInputStyles();
 
   const [isProtected, setIsProtected] = useState(!isEditable);
-  const inputRef = useRef<TextInput | undefined>();
-
-  useEffect(() => {
-    if (isEditable) {
-      return;
-    }
-    setIsProtected(true);
-  }, []);
+  const inputRef = useRef<TextInput>(null);
 
   const [data, setString] = useClipboard();
 
@@ -53,7 +48,7 @@ export const StyledMnemonicInput: FC<Props> = ({
     <View style={styles.view}>
       <StyledTextInput
         {...props}
-        ref={inputRef as MutableRefObject<TextInput>}
+        ref={inputRef}
         editable={!!isEditable}
         value={value}
         onChangeText={onChangeText}
