@@ -120,7 +120,8 @@ export const typography = {
   },
   tagline11Tag: {
     fontFamily: FontsEnum.interSemiBold,
-    fontSize: formatSize(11)
+    fontSize: formatSize(11),
+    textTransform: 'capitalize'
   }
 };
 
