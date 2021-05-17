@@ -32,12 +32,9 @@ export const Button: FC<Props> = ({
     activeColorConfig,
     disabledColorConfig = activeColorConfig
   } = styleConfig;
-  const {
-    titleColor,
-    iconColor = titleColor,
-    backgroundColor,
-    borderColor = backgroundColor
-  } = disabled ? disabledColorConfig : activeColorConfig;
+  const { titleColor, iconColor = titleColor, backgroundColor, borderColor = backgroundColor } = disabled
+    ? disabledColorConfig
+    : activeColorConfig;
 
   return (
     <TouchableOpacity
