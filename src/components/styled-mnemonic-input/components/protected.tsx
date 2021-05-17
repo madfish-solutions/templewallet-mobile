@@ -1,13 +1,14 @@
 import React from 'react';
 import { Image, Text, TouchableOpacity } from 'react-native';
 
+import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { useStyledMnemonicInputStyles } from '../styled-mnemonic-input.styles';
 
 interface Props {
-  onReveal: () => void;
+  onReveal: EmptyFn;
 }
 
 export const Protected = ({ onReveal }: Props) => {

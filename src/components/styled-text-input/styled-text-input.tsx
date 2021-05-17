@@ -1,4 +1,4 @@
-import React, { forwardRef, LegacyRef } from 'react';
+import React, { forwardRef } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -14,7 +14,7 @@ interface Props extends Omit<TextInputProps, 'style'> {
   isPasswordInput?: boolean;
 }
 
-export const StyledTextInput = forwardRef(
+export const StyledTextInput = forwardRef<TextInput, Props>(
   (
     {
       onChangeText = emptyFn,
@@ -25,8 +25,8 @@ export const StyledTextInput = forwardRef(
       multiline,
       secureTextEntry,
       ...props
-    }: Props,
-    ref: LegacyRef<TextInput> | undefined
+    },
+    ref
   ) => {
     const styles = useStyledTextInputStyles();
     const colors = useColors();
