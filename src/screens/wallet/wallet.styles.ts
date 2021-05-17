@@ -10,7 +10,8 @@ export const useWalletStyles = createUseStyles(({ colors, typography }) => ({
   },
   accountContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   equityContainer: {
     marginVertical: formatSize(16)
@@ -21,7 +22,8 @@ export const useWalletStyles = createUseStyles(({ colors, typography }) => ({
   },
   equityDateText: {
     ...typography.tagline11Tag,
-    color: colors.gray3
+    color: colors.gray3,
+    marginLeft: formatSize(2)
   },
   equityXtzText: {
     ...typography.numbersMedium20,

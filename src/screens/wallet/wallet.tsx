@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AccountDropdown } from '../../components/account-dropdown/account-dropdown';
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
+import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -22,16 +23,19 @@ import {
   useTezosBalanceSelector,
   useTokensListSelector
 } from '../../store/wallet/wallet-selectors';
+import { formatSize } from '../../styles/format-size';
+import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useWalletStyles } from './wallet.styles';
-import { Icon } from '../../components/icon/icon';
-import { formatSize } from '../../styles/format-size';
+
+const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 export const Wallet = () => {
   const styles = useWalletStyles();
+  const colors = useColors();
   const dispatch = useDispatch();
 
   const selectedAccount = useSelectedAccountSelector();
@@ -59,13 +63,13 @@ export const Wallet = () => {
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 
-          <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} />
+          <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} color={colors.disabled} />
         </View>
 
         <View style={styles.equityContainer}>
           <View style={styles.equityHeader}>
             <Icon name={IconNameEnum.EyeOpenBold} size={formatSize(24)} />
-            <Text style={styles.equityDateText}>Equity Value (XTZ) 12 May 2021</Text>
+            <Text style={styles.equityDateText}>Equity Value (XTZ) {currentDate}</Text>
           </View>
           <Text style={styles.equityXtzText}>X XXX.XX XTZ</Text>
           <Text style={styles.equityUsdText}>≈ XX XXX.XX $</Text>

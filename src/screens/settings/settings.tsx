@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountDropdown } from '../../components/account-dropdown/account-dropdown';
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -13,8 +12,7 @@ import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { changeTheme } from '../../store/display-settings/display-settings-actions';
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
-import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
-import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { EraseDataButton } from './erase-data-button/erase-data-button';
 import { useSettingsStyles } from './settings.styles';
 
