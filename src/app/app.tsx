@@ -7,7 +7,6 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { globalNavigationRef } from '../navigator/global-navigation';
 import { Navigator } from '../navigator/navigator';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
@@ -22,7 +21,7 @@ export const App = () => {
       <PersistGate persistor={persistor} loading={null}>
         <SafeAreaProvider>
           <PortalProvider>
-            <NavigationContainer ref={globalNavigationRef}>
+            <NavigationContainer>
               <Navigator />
             </NavigationContainer>
 
