@@ -2,13 +2,15 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountInterface } from '../../../interfaces/account.interface';
+import { isDefined } from '../../../utils/is-defined';
+import { DropdownListItemComponent, DropdownValueComponent } from '../../dropdown/dropdown';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
   account: AccountInterface;
 }
 
-export const AccountDropdownItem: FC<Props> = ({ account }) => {
+const AccountDropdownItem: FC<Props> = ({ account }) => {
   const styles = useAccountDropdownItemStyles();
 
   return (
@@ -23,3 +25,10 @@ export const AccountDropdownItem: FC<Props> = ({ account }) => {
     </View>
   );
 };
+
+export const renderAccountValue: DropdownValueComponent<AccountInterface> = ({ value }) =>
+  isDefined(value) ? <AccountDropdownItem account={value} /> : <Text>Account not selected</Text>;
+
+export const renderAccountListItem: DropdownListItemComponent<AccountInterface> = ({ item }) => (
+  <AccountDropdownItem account={item} />
+);

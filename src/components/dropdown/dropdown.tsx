@@ -12,8 +12,9 @@ export interface DropdownProps<T> {
   renderListItem: DropdownListItemComponent<T>;
 }
 
-interface DropdownRenderProps<T> {
+export interface DropdownValueProps<T> {
   value?: T;
+  list: T[];
   onValueChange: EventFn<T | undefined>;
 }
 
@@ -33,7 +34,7 @@ export const Dropdown = <T extends unknown>({
   title,
   renderValue,
   renderListItem
-}: DropdownProps<T> & DropdownRenderProps<T>) => {
+}: DropdownProps<T> & DropdownValueProps<T>) => {
   const dropdownBottomSheetController = useBottomSheetController();
 
   const createDropdownItemPressHandler = (item: T) => () => {

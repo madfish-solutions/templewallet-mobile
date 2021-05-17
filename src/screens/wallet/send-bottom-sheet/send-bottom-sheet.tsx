@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { AccountFormDropdown } from '../../../components/account-form-dropdown/account-form-dropdown';
+import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,18 +13,18 @@ import { step } from '../../../config/styles';
 import { FormInputSlider } from '../../../form/form-input-slider';
 import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { emptyAccount } from '../../../interfaces/account.interface';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useWalletSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
 import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const { send } = useShelter();
-  const hdAccounts = useWalletSelector().hdAccounts;
+  const hdAccounts = useHdAccountsListSelector();
+  const selectedAccount = useSelectedAccountSelector();
 
   const SendBottomSheetInitialValues: SendBottomSheetFormValues = {
-    account: hdAccounts[0] ?? emptyAccount,
+    account: selectedAccount,
     amount: 0,
     recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
     gasFee: 0
