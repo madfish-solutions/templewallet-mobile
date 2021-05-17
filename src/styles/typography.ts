@@ -110,6 +110,10 @@ export const typography = {
     fontFamily: FontsEnum.interRegular,
     fontSize: formatSize(13)
   },
+  caption13Semibold: {
+    fontFamily: FontsEnum.interSemiBold,
+    fontSize: formatSize(13)
+  },
   tagline13Tag: {
     fontFamily: FontsEnum.interSemiBold,
     fontSize: formatSize(13)
