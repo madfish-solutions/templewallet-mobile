@@ -10,7 +10,6 @@ import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccount } from '../store/wallet/wallet-actions';
 import { useWalletSelector } from '../store/wallet/wallet-selectors';
-import { generateSeed } from '../utils/keys.util';
 import { tezos$ } from '../utils/network/network.util';
 import { Shelter } from './shelter';
 
@@ -21,7 +20,7 @@ export const useShelter = () => {
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
   const send$ = useMemo(() => new Subject<SendInterface>(), []);
-  const createWallet$ = useMemo(() => new Subject<string>(), []);
+  const createWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
   const revealSecretKey$ = useMemo(() => new Subject<string>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject(), []);
@@ -35,7 +34,7 @@ export const useShelter = () => {
             dispatch(addHdAccount(publicData));
           }
         }),
-      createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
+      createWallet$.subscribe(data => importWallet$.next(data)),
       createHdAccount$
         .pipe(switchMap(name => Shelter.createHdAccount$(name, wallet.hdAccounts.length)))
         .subscribe(publicData => {
@@ -78,7 +77,7 @@ export const useShelter = () => {
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
-  const createWallet = (password: string) => createWallet$.next(password);
+  const createWallet = (seedPhrase: string, password: string) => createWallet$.next({ seedPhrase, password });
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (key: string) => revealSecretKey$.next(key);

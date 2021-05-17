@@ -5,6 +5,7 @@ import { Text } from 'react-native';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
+import { FormMnemonicInput } from '../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { ImportAccountStyles } from '../import-account/import-account.styles';
@@ -17,7 +18,7 @@ import {
 export const CreateAccount = () => {
   const { createWallet } = useShelter();
 
-  const onSubmit = (data: CreateAccountFormValues) => createWallet(data.password);
+  const onSubmit = (data: CreateAccountFormValues) => createWallet(data.seedPhrase, data.password);
 
   return (
     <ScreenContainer>
@@ -27,6 +28,9 @@ export const CreateAccount = () => {
         onSubmit={onSubmit}>
         {({ submitForm, isValid }) => (
           <>
+            <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
+            <FormMnemonicInput name="seedPhrase" isEditable />
+
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormPasswordInput name="password" />
 
