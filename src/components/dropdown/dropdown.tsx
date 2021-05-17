@@ -10,6 +10,7 @@ import { DropdownStyles } from './dropdown.styles';
 export interface DropdownProps<T> {
   title: string;
   list: T[];
+  equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
 }
@@ -19,6 +20,8 @@ export interface DropdownValueProps<T> {
   list: T[];
   onValueChange: EventFn<T | undefined>;
 }
+
+export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
 export type DropdownValueComponent<T> = FC<{
   value?: T;
@@ -33,10 +36,11 @@ export type DropdownListItemComponent<T> = FC<{
 export const Dropdown = <T extends unknown>({
   value,
   list,
-  onValueChange,
   title,
+  equalityFn,
   renderValue,
-  renderListItem
+  renderListItem,
+  onValueChange
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const dropdownBottomSheetController = useBottomSheetController();
 
@@ -53,7 +57,7 @@ export const Dropdown = <T extends unknown>({
 
       <DropdownBottomSheet title={title} controller={dropdownBottomSheetController}>
         {list.map((item, index) => {
-          const isSelected = item === value;
+          const isSelected = equalityFn(item, value);
 
           return (
             <TouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>

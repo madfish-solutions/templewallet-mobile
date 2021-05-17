@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountDropdown } from '../../components/account-dropdown/account-dropdown';
+import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
@@ -57,7 +57,7 @@ export const Wallet = () => {
         <InsetSubstitute />
 
         <View style={styles.accountContainer}>
-          <AccountDropdown
+          <CurrentAccountDropdown
             value={selectedAccount}
             list={hdAccounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}

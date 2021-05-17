@@ -8,7 +8,14 @@ interface Props<T> extends DropdownProps<T> {
   name: string;
 }
 
-export const FormDropdown = <T extends unknown>({ name, title, list, renderValue, renderListItem }: Props<T>) => {
+export const FormDropdown = <T extends unknown>({
+  name,
+  title,
+  list,
+  equalityFn,
+  renderValue,
+  renderListItem
+}: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
   return (
@@ -17,6 +24,7 @@ export const FormDropdown = <T extends unknown>({ name, title, list, renderValue
         title={title}
         value={field.value}
         list={list}
+        equalityFn={equalityFn}
         renderValue={renderValue}
         renderListItem={renderListItem}
         onValueChange={helpers.setValue}
