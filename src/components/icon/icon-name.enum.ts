@@ -23,5 +23,6 @@ export enum IconNameEnum {
   NoNameToken = 'NoNameToken',
   Share = 'Share',
   Copy = 'Copy',
-  Tag = 'Tag'
+  Tag = 'Tag',
+  QrScanner = 'QrScanner'
 }

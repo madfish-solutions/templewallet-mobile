@@ -9,6 +9,7 @@ import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
+import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
@@ -53,5 +54,6 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
-  [IconNameEnum.Tag]: TagIcon
+  [IconNameEnum.Tag]: TagIcon,
+  [IconNameEnum.QrScanner]: QrScannerIcon,
 };

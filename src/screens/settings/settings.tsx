@@ -27,7 +27,6 @@ export const Settings = () => {
 
   const theme = useThemeSelector();
   const hdAccounts = useHdAccountsListSelector();
-  const selectedAccount = useSelectedAccountSelector();
 
   const isDarkTheme = theme === ThemesEnum.dark;
 
@@ -43,11 +42,7 @@ export const Settings = () => {
       <Divider />
 
       <Label label="Selected Account" description="You could switch between yours accounts" />
-      <AccountDropdown
-        value={selectedAccount}
-        list={hdAccounts}
-        onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
-      />
+
       <Divider />
 
       <Label label="List of your HD accounts:" description="(press to reveal your private key)" />
