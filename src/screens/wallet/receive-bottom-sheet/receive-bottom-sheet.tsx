@@ -10,7 +10,7 @@ import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { emptyFn } from '../../../config/general';
 import { step } from '../../../config/styles';
-import { useFirstAccountSelector } from '../../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { useReceiveBottomSheetStyles } from './receive-bottom-sheet.styles';
@@ -19,7 +19,7 @@ export const ReceiveBottomSheet: FC<BottomSheetControllerProps> = ({ controller 
   const styles = useReceiveBottomSheetStyles();
   const colors = useColors();
   const [, setString] = useClipboard();
-  const publicKeyHash = useFirstAccountSelector().publicKeyHash;
+  const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 

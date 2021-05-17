@@ -5,12 +5,12 @@ import { Button, Text } from 'react-native';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { useWalletSelector } from '../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { CreateHdAccountFormValues, createHdAccountValidationSchema } from './create-hd-account.form';
 
 export const CreateHdAccount = () => {
   const { createHdAccount } = useShelter();
-  const accountIndex = useWalletSelector().hdAccounts.length + 1;
+  const accountIndex = useHdAccountsListSelector().length + 1;
 
   const createHdAccountInitialValues: CreateHdAccountFormValues = {
     name: `Account ${accountIndex}`
