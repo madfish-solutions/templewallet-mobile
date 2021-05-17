@@ -25,7 +25,7 @@ export const StyledMnemonicInput: FC<Props> = ({
 }) => {
   const styles = useStyledMnemonicInputStyles();
 
-  const [isProtected, setIsProtected] = useState(false);
+  const [isProtected, setIsProtected] = useState(!isEditable);
   const inputRef = useRef<TextInput | undefined>();
 
   useEffect(() => {
