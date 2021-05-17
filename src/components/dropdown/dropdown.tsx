@@ -1,11 +1,13 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
+import { View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import { EventFn } from '../../config/general';
+import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
 import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
-import { DropdownStyles } from './dropdown.styles';
+import { useDropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
   title: string;
@@ -13,6 +15,7 @@ export interface DropdownProps<T> {
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
+  renderActionButtons?: DropdownActionButtonsComponent;
 }
 
 export interface DropdownValueProps<T> {
@@ -33,6 +36,10 @@ export type DropdownListItemComponent<T> = FC<{
   isSelected: boolean;
 }>;
 
+export type DropdownActionButtonsComponent = FC<{
+  onPress: EmptyFn;
+}>;
+
 export const Dropdown = <T extends unknown>({
   value,
   list,
@@ -40,8 +47,10 @@ export const Dropdown = <T extends unknown>({
   equalityFn,
   renderValue,
   renderListItem,
+  renderActionButtons = emptyComponent,
   onValueChange
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
 
   const createDropdownItemPressHandler = (item: T) => () => {
@@ -51,22 +60,28 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={DropdownStyles.valueContainer} onPress={dropdownBottomSheetController.open}>
+      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
         {renderValue({ value })}
       </TouchableOpacity>
 
       <DropdownBottomSheet title={title} controller={dropdownBottomSheetController}>
-        {list.map((item, index) => {
-          const isSelected = equalityFn(item, value);
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.contentContainer}>
+            {list.map((item, index) => {
+              const isSelected = equalityFn(item, value);
 
-          return (
-            <TouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
-              <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
-                {renderListItem({ item, index, isSelected })}
-              </DropdownItemContainer>
-            </TouchableOpacity>
-          );
-        })}
+              return (
+                <TouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
+                  <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+                    {renderListItem({ item, index, isSelected })}
+                  </DropdownItemContainer>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        {renderActionButtons({ onPress: () => dropdownBottomSheetController.close() })}
       </DropdownBottomSheet>
     </>
   );

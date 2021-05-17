@@ -14,7 +14,8 @@ export const FormDropdown = <T extends unknown>({
   list,
   equalityFn,
   renderValue,
-  renderListItem
+  renderListItem,
+  renderActionButtons
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
@@ -27,6 +28,7 @@ export const FormDropdown = <T extends unknown>({
         equalityFn={equalityFn}
         renderValue={renderValue}
         renderListItem={renderListItem}
+        renderActionButtons={renderActionButtons}
         onValueChange={helpers.setValue}
       />
       <ErrorMessage meta={meta} />

@@ -6,7 +6,6 @@ import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { SendInterface } from '../interfaces/send.interface';
-import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
@@ -17,7 +16,7 @@ import { Shelter } from './shelter';
 export const useShelter = () => {
   const dispatch = useDispatch();
   const hdAccounts = useHdAccountsListSelector();
-  const { navigate } = useNavigation();
+  const { goBack } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
   const send$ = useMemo(() => new Subject<SendInterface>(), []);
@@ -42,7 +41,7 @@ export const useShelter = () => {
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(addHdAccountAction(publicData));
-            navigate(ScreensEnum.Settings);
+            goBack();
           }
         }),
 
