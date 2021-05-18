@@ -9,6 +9,7 @@ import { isDefined } from '../../../utils/is-defined';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
+import { RobotIcon } from '../../robot-icon/robot-icon';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
@@ -26,7 +27,7 @@ export const AccountDropdownItem: FC<Props> = ({
 
   return (
     <View style={styles.root}>
-      <View style={styles.icon} />
+      <RobotIcon seed={account.publicKeyHash} />
       <View style={styles.infoContainer}>
         <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
           <Text style={styles.name}>{account.name}</Text>

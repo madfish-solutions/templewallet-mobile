@@ -20,6 +20,8 @@
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true"
   },
   "dependencies": {
+    "@dicebear/avatars": "4.2.5",
+    "@dicebear/avatars-bottts-sprites": "4.2.5",
     "@gorhom/bottom-sheet": "^2.3.0",
     "@gorhom/portal": "^1.0.4",
     "@react-native-async-storage/async-storage": "^1.15.2",
