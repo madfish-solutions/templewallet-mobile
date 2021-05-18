@@ -3,12 +3,14 @@ import { SvgProps } from 'react-native-svg';
 
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import CheckIcon from './assets/check.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
+import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
@@ -24,6 +26,7 @@ import UsdSTokenIcon from './assets/tokens/usds.svg';
 import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import XtzTokenIcon from './assets/tokens/xtz.svg';
+import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
@@ -53,5 +56,8 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
-  [IconNameEnum.Tag]: TagIcon
+  [IconNameEnum.Tag]: TagIcon,
+  [IconNameEnum.QrScanner]: QrScannerIcon,
+  [IconNameEnum.TriangleDown]: TriangleDownIcon,
+  [IconNameEnum.Check]: CheckIcon
 };
