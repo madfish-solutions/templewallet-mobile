@@ -32,9 +32,12 @@ export const Button: FC<Props> = ({
     activeColorConfig,
     disabledColorConfig = activeColorConfig
   } = styleConfig;
-  const { titleColor, iconColor = titleColor, backgroundColor, borderColor = backgroundColor } = disabled
-    ? disabledColorConfig
-    : activeColorConfig;
+  const {
+    titleColor,
+    iconColor = titleColor,
+    backgroundColor,
+    borderColor = backgroundColor
+  } = disabled ? disabledColorConfig : activeColorConfig;
 
   return (
     <TouchableOpacity
@@ -49,9 +52,9 @@ export const Button: FC<Props> = ({
       {isDefined(iconName) && (
         <Icon
           name={iconName}
-          size={iconStyle.size}
+          size={iconStyle?.size}
           color={iconColor}
-          {...(isDefined(title) && { style: { marginRight: iconStyle.marginRight } })}
+          {...(isDefined(title) && { style: { marginRight: iconStyle?.marginRight } })}
         />
       )}
 

@@ -8,6 +8,6 @@ export const useStyledPasswordInputStyles = createUseStyles(() => ({
   eyeButton: {
     position: 'absolute',
     top: formatSize(13),
-    right: formatSize(48)
+    right: formatSize(42)
   }
 }));

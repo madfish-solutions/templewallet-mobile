@@ -12,6 +12,7 @@ import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import InfoIcon from './assets/info.svg';
+import LockIcon from './assets/lock.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
@@ -64,6 +65,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.QrScanner]: QrScannerIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
   [IconNameEnum.Check]: CheckIcon,
+  [IconNameEnum.Lock]: LockIcon,
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,

@@ -18,7 +18,7 @@ type ButtonColorConfig = {
 export type ButtonStyleConfig = {
   containerStyle: ButtonContainerStyle;
   titleStyle?: ButtonTitleStyle;
-  iconStyle: ButtonIconStyle;
+  iconStyle?: ButtonIconStyle;
   activeColorConfig: ButtonColorConfig;
   disabledColorConfig?: ButtonColorConfig;
 };
