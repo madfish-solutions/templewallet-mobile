@@ -9,6 +9,7 @@ import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
+import LockIcon from './assets/lock.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
@@ -59,5 +60,6 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.Tag]: TagIcon,
   [IconNameEnum.QrScanner]: QrScannerIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
-  [IconNameEnum.Check]: CheckIcon
+  [IconNameEnum.Check]: CheckIcon,
+  [IconNameEnum.Lock]: LockIcon
 };

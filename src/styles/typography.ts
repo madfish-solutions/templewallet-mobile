@@ -84,7 +84,8 @@ export const typography = {
   },
   body20Bold: {
     fontFamily: FontsEnum.interBold,
-    fontSize: formatSize(20)
+    fontSize: formatSize(20),
+    textTransform: 'uppercase'
   },
   body20Regular: {
     fontFamily: FontsEnum.interRegular,
@@ -115,6 +116,7 @@ export const typography = {
     fontSize: formatSize(13)
   },
   tagline13Tag: {
+    textTransform: 'uppercase',
     fontFamily: FontsEnum.interSemiBold,
     fontSize: formatSize(13)
   },
