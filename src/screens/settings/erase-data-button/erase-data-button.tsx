@@ -1,8 +1,8 @@
 import React from 'react';
-import { Alert, Button } from 'react-native';
+import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { red } from '../../../config/styles';
+import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { rootStateResetAction } from '../../../store/root-state.actions';
 
 export const EraseDataButton = () => {
@@ -20,5 +20,5 @@ export const EraseDataButton = () => {
       }
     ]);
 
-  return <Button title="Erase Data" color={red} onPress={handleResetDataButtonPress} />;
+  return <ButtonLargePrimary title="Erase Data" onPress={handleResetDataButtonPress} />;
 };

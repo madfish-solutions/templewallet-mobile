@@ -1,11 +1,15 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { Label } from '../../components/label/label';
+import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
+import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { formatSize } from '../../styles/format-size';
 import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
 import {
   EnterPasswordFormValues,
@@ -21,28 +25,27 @@ export const EnterPassword = () => {
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
-    <View style={styles.root}>
-      <InsetSubstitute />
-
-      <ScreenContainer>
-        <Formik
-          initialValues={enterPasswordInitialValues}
-          validationSchema={enterPasswordValidationSchema}
-          onSubmit={onSubmit}>
-          {({ submitForm }) => (
-            <>
-              <Text>Your wallet have been locked</Text>
-              <Text>{'Enter a password to unlock it\n\n'}</Text>
-
-              <Text>Password</Text>
+    <View style={styles.view}>
+      <WelcomeHeader />
+      <WelcomeLogo />
+      <Formik
+        initialValues={enterPasswordInitialValues}
+        validationSchema={enterPasswordValidationSchema}
+        onSubmit={onSubmit}>
+        {({ submitForm }) => (
+          <>
+            <View>
+              <Label label="Password" description="A password is used to protect the wallet." />
               <FormPasswordInput name="password" />
-
-              <Button title="Unlock" onPress={submitForm} />
+            </View>
+            <View>
+              <ButtonLargePrimary title="Unlock" marginBottom={formatSize(8)} onPress={() => submitForm()} />
               <EraseDataButton />
-            </>
-          )}
-        </Formik>
-      </ScreenContainer>
+              <InsetSubstitute type="bottom" />
+            </View>
+          </>
+        )}
+      </Formik>
     </View>
   );
 };
