@@ -1,7 +1,6 @@
 import { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
-import React, { FC, useMemo, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
-import Animated, { call, Extrapolate, interpolate } from 'react-native-reanimated';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC, useMemo, useState } from 'react';import Animated, { call, Extrapolate, interpolate } from 'react-native-reanimated';
 
 import { ANIMATION_MAX_VALUE, ANIMATION_MIN_VALUE } from '../../../config/animation';
 import { EmptyFn } from '../../../config/general';

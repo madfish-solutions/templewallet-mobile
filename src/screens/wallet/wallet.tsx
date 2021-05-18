@@ -12,6 +12,8 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
+import { ScreensEnum } from '../../navigator/screens.enum';
+import { useNavigation } from '../../navigator/use-navigation.hook';
 import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -26,6 +28,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
 import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -37,6 +40,7 @@ export const Wallet = () => {
   const styles = useWalletStyles();
   const colors = useColors();
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
@@ -98,10 +102,18 @@ export const Wallet = () => {
           balance={tezosBalance}
           apy={8}
           iconName={XTZ_TOKEN_METADATA.iconName}
+          onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
         />
 
-        {tokensList.map(({ address, symbol, name, balance, iconName }) => (
-          <TokenListItem key={address} symbol={symbol} name={name} balance={balance} iconName={iconName} />
+        {tokensList.map(token => (
+          <TokenListItem
+            key={token.address}
+            symbol={token.symbol}
+            name={token.name}
+            balance={token.balance}
+            iconName={token.iconName}
+            onPress={() => navigate(ScreensEnum.TokenScreen, { slug: tokenMetadataSlug(token) })}
+          />
         ))}
 
         <Divider />
