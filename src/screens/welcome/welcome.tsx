@@ -45,8 +45,7 @@ export const Welcome = () => {
           marginBottom={formatSize(8)}
           onPress={() => navigate(ScreensEnum.ImportAccount)}
         />
-        <Label
-          description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
+        <Label description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

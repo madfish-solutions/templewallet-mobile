@@ -7,11 +7,10 @@ export const usePublicKeyHashTextStyles = createUseStyles(({ colors, typography 
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4),
-
+    borderRadius: formatSize(4)
   },
   publicKeyHashText: {
     ...typography.numbersRegular15,
-    color: colors.blue,
+    color: colors.blue
   }
 }));
