@@ -3,11 +3,10 @@ import { Button, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { SegmentedControl } from '../../components/segmented-control/segmented-control';
+import { IconSegmentControl } from '../../components/segmented-control/icon-segment-control/icon-segment-control';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
@@ -20,7 +19,6 @@ import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { EraseDataButton } from './erase-data-button/erase-data-button';
 import { useSettingsStyles } from './settings.styles';
-import { IconSegmentControl } from '../../components/segmented-control/icon-segment-control/icon-segment-control';
 
 export const Settings = () => {
   const styles = useSettingsStyles();

@@ -1,7 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import { BottomSheet } from '../bottom-sheet';
 import { BottomSheetControllerProps } from '../use-bottom-sheet-controller';
