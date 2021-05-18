@@ -6,6 +6,7 @@ import { ButtonLargeSecondary } from '../../components/button/button-large/butto
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -16,7 +17,7 @@ export const Welcome = () => {
   const styles = useWelcomeStyles();
 
   return (
-    <View style={styles.view}>
+    <ScreenContainer isFullScreenMode={true}>
       <View>
         <InsetSubstitute />
         <Text style={styles.headerTitle}>
@@ -44,9 +45,10 @@ export const Welcome = () => {
           marginBottom={formatSize(8)}
           onPress={() => navigate(ScreensEnum.ImportAccount)}
         />
-        <Label description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
+        <Label
+          description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
         <InsetSubstitute type="bottom" />
       </View>
-    </View>
+    </ScreenContainer>
   );
 };
