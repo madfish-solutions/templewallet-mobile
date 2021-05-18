@@ -7,11 +7,11 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
   name: string;
-  isEditable?: boolean;
-  isShowGetNew?: boolean;
+  isInputMode?: boolean;
+  isShowGenerateNew?: boolean;
 }
 
-export const FormMnemonicInput: FC<Props> = ({ name, isEditable = true, isShowGetNew = false }) => {
+export const FormMnemonicInput: FC<Props> = ({ name, isInputMode = false, isShowGenerateNew = false }) => {
   const [field, meta] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -20,8 +20,8 @@ export const FormMnemonicInput: FC<Props> = ({ name, isEditable = true, isShowGe
       <StyledMnemonicInput
         value={field.value}
         isError={isError}
-        isEditable={isEditable}
-        isShowGetNew={isShowGetNew}
+        isInputMode={isInputMode}
+        isShowGenerateNew={isShowGenerateNew}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />

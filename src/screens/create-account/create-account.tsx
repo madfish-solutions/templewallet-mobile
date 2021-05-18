@@ -29,7 +29,7 @@ export const CreateAccount = () => {
         {({ submitForm, isValid }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
-            <FormMnemonicInput name="seedPhrase" />
+            <FormMnemonicInput name="seedPhrase" isShowGenerateNew />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormPasswordInput name="password" />

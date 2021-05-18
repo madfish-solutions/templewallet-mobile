@@ -5,14 +5,14 @@ import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
-import { useStyledMnemonicInputStyles } from '../styled-mnemonic-input.styles';
+import { useProtectedStyles } from './protected.styles';
 
 interface Props {
   onReveal: EmptyFn;
 }
 
 export const Protected: FC<Props> = ({ onReveal }) => {
-  const styles = useStyledMnemonicInputStyles();
+  const styles = useProtectedStyles();
 
   return (
     <>

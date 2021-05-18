@@ -28,7 +28,7 @@ export const ImportAccount = () => {
         {({ submitForm }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
-            <FormMnemonicInput name="seedPhrase" isShowGetNew />
+            <FormMnemonicInput name="seedPhrase" isInputMode />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormPasswordInput name="password" />
