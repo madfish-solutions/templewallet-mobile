@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
 import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
+import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
 import { ScreensEnum } from '../../navigator/screens.enum';
@@ -34,8 +35,6 @@ import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useWalletStyles } from './wallet.styles';
 
-const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-
 export const Wallet = () => {
   const styles = useWalletStyles();
   const colors = useColors();
@@ -57,9 +56,7 @@ export const Wallet = () => {
 
   return (
     <>
-      <View style={styles.headerCard}>
-        <InsetSubstitute />
-
+      <HeaderCard hasInsetTop={true}>
         <View style={styles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
@@ -70,14 +67,7 @@ export const Wallet = () => {
           <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} color={colors.disabled} />
         </View>
 
-        <View style={styles.equityContainer}>
-          <View style={styles.equityHeader}>
-            <Icon name={IconNameEnum.EyeOpenBold} size={formatSize(24)} />
-            <Text style={styles.equityDateText}>Equity Value (XTZ) {currentDate}</Text>
-          </View>
-          <Text style={styles.equityXtzText}>X XXX.XX XTZ</Text>
-          <Text style={styles.equityUsdText}>≈ XX XXX.XX $</Text>
-        </View>
+        <TokenEquityValue balance={tezosBalance} symbol={XTZ_TOKEN_METADATA.symbol} />
 
         <View style={styles.buttonsContainer}>
           <ButtonMedium
@@ -94,7 +84,8 @@ export const Wallet = () => {
           />
           <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
         </View>
-      </View>
+      </HeaderCard>
+
       <ScreenContainer>
         <TokenListItem
           symbol={XTZ_TOKEN_METADATA.symbol}
