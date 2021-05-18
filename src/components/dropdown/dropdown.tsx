@@ -32,7 +32,6 @@ export type DropdownValueComponent<T> = FC<{
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
-  index: number;
   isSelected: boolean;
 }>;
 
@@ -73,7 +72,7 @@ export const Dropdown = <T extends unknown>({
               return (
                 <TouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
                   <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
-                    {renderListItem({ item, index, isSelected })}
+                    {renderListItem({ item, isSelected })}
                   </DropdownItemContainer>
                 </TouchableOpacity>
               );
