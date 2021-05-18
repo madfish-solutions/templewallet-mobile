@@ -16,9 +16,9 @@ import {
 } from './create-account.form';
 
 export const CreateAccount = () => {
-  const { createWallet } = useShelter();
+  const { importWallet } = useShelter();
 
-  const onSubmit = (data: CreateAccountFormValues) => createWallet(data.seedPhrase, data.password);
+  const onSubmit = (data: CreateAccountFormValues) => importWallet(data.seedPhrase, data.password);
 
   return (
     <ScreenContainer>
@@ -29,7 +29,7 @@ export const CreateAccount = () => {
         {({ submitForm, isValid }) => (
           <>
             <Text style={ImportAccountStyles.labelText}>Seed Phrase</Text>
-            <FormMnemonicInput name="seedPhrase" isEditable />
+            <FormMnemonicInput name="seedPhrase" />
 
             <Text style={ImportAccountStyles.labelText}>Password</Text>
             <FormPasswordInput name="password" />

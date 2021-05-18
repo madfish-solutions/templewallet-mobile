@@ -1,25 +1,23 @@
 import { useClipboard } from '@react-native-clipboard/clipboard';
 import React, { FC, useCallback, useRef, useState } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { generateSeed } from '../../utils/keys.util';
-import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
 import { Buttons } from './components/buttons';
 import { Protected } from './components/protected';
 import { useStyledMnemonicInputStyles } from './styled-mnemonic-input.styles';
 
-interface Props extends Omit<TextInputProps, 'style'> {
-  isError?: boolean;
-  isShowCleanButton?: boolean;
-  isEditable?: boolean;
-  isHideGetNew?: boolean;
+interface Props extends StyledTextInputProps {
+  isEditable: boolean;
+  isShowGetNew: boolean;
 }
 
-export const mnemonicInputTimerToShow = 12000;
+const mnemonicInputTimerToShow = 12000;
 
 export const StyledMnemonicInput: FC<Props> = ({
-  isHideGetNew,
+  isShowGetNew,
   isEditable,
   onChangeText = emptyFn,
   value,
@@ -34,22 +32,23 @@ export const StyledMnemonicInput: FC<Props> = ({
 
   const onReveal = useCallback(() => {
     setIsProtected(false);
-    inputRef?.current?.focus();
-    if (!isEditable) {
+    if (isEditable) {
+      inputRef?.current?.focus();
+    } else {
       setTimeout(() => setIsProtected(true), mnemonicInputTimerToShow);
     }
   }, [isEditable, setIsProtected]);
 
-  const onCopy = useCallback(() => setString(value || ''), [setString, value]);
-  const onPaste = useCallback(() => onChangeText(data), [onChangeText, data]);
-  const onGetNew = useCallback(() => onChangeText(generateSeed()), [onChangeText, generateSeed]);
+  const onCopy = () => setString(value || '');
+  const onPaste = () => onChangeText(data);
+  const onGetNew = () => onChangeText(generateSeed());
 
   return (
     <View style={styles.view}>
       <StyledTextInput
         {...props}
         ref={inputRef}
-        editable={!!isEditable}
+        editable={isEditable}
         value={value}
         onChangeText={onChangeText}
         onEndEditing={() => setIsProtected(true)}
@@ -58,7 +57,7 @@ export const StyledMnemonicInput: FC<Props> = ({
       <Buttons
         isEditable={isEditable}
         isProtected={isProtected}
-        isHideGetNew={isHideGetNew}
+        isShowGetNew={isShowGetNew}
         onCopy={onCopy}
         onPaste={onPaste}
         onGetNew={onGetNew}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Image, Text, TouchableOpacity } from 'react-native';
 
 import { EmptyFn } from '../../../config/general';
@@ -11,7 +11,7 @@ interface Props {
   onReveal: EmptyFn;
 }
 
-export const Protected = ({ onReveal }: Props) => {
+export const Protected: FC<Props> = ({ onReveal }) => {
   const styles = useStyledMnemonicInputStyles();
 
   return (

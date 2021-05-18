@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { EmptyFn } from '../../../config/general';
@@ -7,25 +7,25 @@ import { ButtonSmall } from '../../button/button-small/button-small';
 import { useStyledMnemonicInputStyles } from '../styled-mnemonic-input.styles';
 
 interface Props {
-  isProtected?: boolean;
-  isEditable?: boolean;
-  isHideGetNew?: boolean;
+  isProtected: boolean;
+  isEditable: boolean;
+  isShowGetNew: boolean;
   onGetNew: EmptyFn;
   onPaste: EmptyFn;
   onCopy: EmptyFn;
 }
 
-export const Buttons = ({ isHideGetNew, isEditable, isProtected, onCopy, onPaste, onGetNew }: Props) => {
+export const Buttons: FC<Props> = ({ isShowGetNew, isEditable, isProtected, onCopy, onPaste, onGetNew }) => {
   const styles = useStyledMnemonicInputStyles();
 
   return (
     <View style={styles.buttonsContainer}>
       {isProtected || !isEditable ? (
-        <ButtonSmall onPress={onCopy} title={'Copy'} />
+        <ButtonSmall onPress={onCopy} title="Copy" />
       ) : (
         <>
-          {!isHideGetNew && <ButtonSmall marginRight={formatSize(8)} title={'Get New'} onPress={onGetNew} />}
-          <ButtonSmall title={'Paste'} onPress={onPaste} />
+          {isShowGetNew && <ButtonSmall marginRight={formatSize(8)} title="Get New" onPress={onGetNew} />}
+          <ButtonSmall title="Paste" onPress={onPaste} />
         </>
       )}
     </View>

@@ -8,13 +8,13 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
 
-interface Props extends Omit<TextInputProps, 'style'> {
+export interface StyledTextInputProps extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
   isShowCleanButton?: boolean;
   isPasswordInput?: boolean;
 }
 
-export const StyledTextInput = forwardRef<TextInput, Props>(
+export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
     {
       onChangeText = emptyFn,
