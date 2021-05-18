@@ -34,9 +34,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - run: yarn lint:version
-      - run: yarn prettier:version
-
       - name: Check TypeScript
         run: yarn ts
 
