@@ -34,7 +34,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - run: eslint --version
+      - run: yarn lint:version
+      - run: yarn prettier:version
 
       - name: Check TypeScript
         run: yarn ts
