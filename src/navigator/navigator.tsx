@@ -26,7 +26,7 @@ export const Navigator = () => {
       <Stack.Navigator screenOptions={{ ...styleScreenOptions, headerShown: !isAuthorised }}>
         {!isAuthorised ? (
           <>
-            <Stack.Screen name={ScreensEnum.Welcome} component={Welcome} />
+            <Stack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
             <Stack.Screen name={ScreensEnum.ImportAccount} component={ImportAccount} />
             <Stack.Screen name={ScreensEnum.CreateAccount} component={CreateAccount} />
           </>

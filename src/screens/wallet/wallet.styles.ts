@@ -1,49 +1,39 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
+import { generateShadow } from '../../styles/generate-shadow';
 
-import { black, blue, darkOrange, greyLight, orangeLight, step, white } from '../../config/styles';
-
-export const WalletStyles = StyleSheet.create({
-  accountInfo: {
-    marginBottom: step * 5
+export const useWalletStyles = createUseStyles(({ colors, typography }) => ({
+  headerCard: {
+    padding: formatSize(16),
+    backgroundColor: colors.navigation,
+    ...generateShadow(23, colors.black10)
   },
-  accountName: {
-    color: black,
-    fontSize: 2 * step,
-    marginBottom: step * 0.5
-  },
-  accountKey: {
-    color: blue,
-    fontSize: 2 * step
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    marginBottom: step * 5
-  },
-  amount: {
-    color: black,
-    fontSize: step * 3,
-    marginBottom: step
-  },
-  formatted: {
-    color: greyLight,
-    fontSize: step * 1.5,
-    marginBottom: step * 2
-  },
-  button: {
-    marginRight: step,
-    backgroundColor: darkOrange,
-    color: orangeLight,
-    textTransform: 'uppercase',
-    fontSize: step * 1.8,
-    paddingVertical: step,
-    paddingHorizontal: step * 2
-  },
-  accountItem: {
+  accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: white,
-    padding: step,
-    marginBottom: step,
-    borderRadius: step
+    alignItems: 'center'
+  },
+  equityContainer: {
+    marginVertical: formatSize(16)
+  },
+  equityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  equityDateText: {
+    ...typography.tagline11Tag,
+    color: colors.gray3,
+    marginLeft: formatSize(2)
+  },
+  equityXtzText: {
+    ...typography.numbersMedium20,
+    color: colors.black
+  },
+  equityUsdText: {
+    ...typography.numbersRegular15,
+    color: colors.gray1
+  },
+  buttonsContainer: {
+    flexDirection: 'row'
   }
-});
+}));

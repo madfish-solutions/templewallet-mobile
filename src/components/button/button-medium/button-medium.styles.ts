@@ -3,6 +3,7 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useButtonMediumStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
   containerStyle: {
+    flex: 1,
     height: formatSize(40),
     borderRadius: formatSize(8)
   },
