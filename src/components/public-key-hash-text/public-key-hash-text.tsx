@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { MarginProps } from '../../interfaces/margin.props';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
@@ -12,11 +12,10 @@ export const PublicKeyHashText: FC<Props> = ({ publicKeyHash, marginTop, marginR
   const styles = usePublicKeyHashTextStyles();
 
   return (
-    <Text
-      style={[styles.publicKeyHashText, { marginTop, marginRight, marginBottom, marginLeft }]}
-      numberOfLines={1}
-      ellipsizeMode="middle">
-      {publicKeyHash}
-    </Text>
+    <View style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}>
+      <Text style={styles.publicKeyHashText} numberOfLines={1} ellipsizeMode="middle">
+        {publicKeyHash}
+      </Text>
+    </View>
   );
 };
