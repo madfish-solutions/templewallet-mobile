@@ -34,14 +34,6 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  publicKeyHash: {
-    color: colors.blue,
-    paddingHorizontal: formatSize(4),
-    paddingVertical: formatSize(2),
-    backgroundColor: colors.blue10,
-    borderRadius: formatSize(4),
-    maxWidth: '40%'
-  },
   balanceText: {
     ...typography.numbersRegular13,
     color: colors.black

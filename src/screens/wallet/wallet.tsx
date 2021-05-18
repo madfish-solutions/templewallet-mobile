@@ -3,16 +3,13 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
-import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
-import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
+import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
-import { emptyFn } from '../../config/general';
-import { step } from '../../config/styles';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import {
@@ -30,13 +27,10 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
-import { ReceiveBottomSheet } from './receive-bottom-sheet/receive-bottom-sheet';
-import { SendBottomSheet } from './send-bottom-sheet/send-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
-import { useWalletStyles } from './wallet.styles';
+import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
-  const styles = useWalletStyles();
   const colors = useColors();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
@@ -46,9 +40,6 @@ export const Wallet = () => {
   const tokensList = useTokensListSelector();
   const tezosBalance = useTezosBalanceSelector();
 
-  const receiveBottomSheetController = useBottomSheetController();
-  const sendBottomSheetController = useBottomSheetController();
-
   useEffect(() => {
     dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -57,7 +48,7 @@ export const Wallet = () => {
   return (
     <>
       <HeaderCard hasInsetTop={true}>
-        <View style={styles.accountContainer}>
+        <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
             list={hdAccounts}
@@ -69,21 +60,7 @@ export const Wallet = () => {
 
         <TokenEquityValue balance={tezosBalance} symbol={XTZ_TOKEN_METADATA.symbol} />
 
-        <View style={styles.buttonsContainer}>
-          <ButtonMedium
-            title="RECEIVE"
-            iconName={IconNameEnum.ArrowDown}
-            marginRight={step}
-            onPress={receiveBottomSheetController.open}
-          />
-          <ButtonMedium
-            title="SEND"
-            iconName={IconNameEnum.ArrowUp}
-            marginRight={step}
-            onPress={sendBottomSheetController.open}
-          />
-          <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
-        </View>
+        <HeaderCardActionButtons />
       </HeaderCard>
 
       <ScreenContainer>
@@ -108,9 +85,6 @@ export const Wallet = () => {
         ))}
 
         <Divider />
-
-        <ReceiveBottomSheet controller={receiveBottomSheetController} />
-        <SendBottomSheet controller={sendBottomSheetController} />
       </ScreenContainer>
     </>
   );
