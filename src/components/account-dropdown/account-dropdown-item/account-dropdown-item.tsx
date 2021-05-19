@@ -9,6 +9,7 @@ import { isDefined } from '../../../utils/is-defined';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
+import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
@@ -34,9 +35,7 @@ export const AccountDropdownItem: FC<Props> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <Text style={styles.publicKeyHash} numberOfLines={1} ellipsizeMode="middle">
-            {account.publicKeyHash}
-          </Text>
+          <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
 
           {showFullData && <Text style={styles.balanceText}>XX XXX.XX XTZ</Text>}
         </View>

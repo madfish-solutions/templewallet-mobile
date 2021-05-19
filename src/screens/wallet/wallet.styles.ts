@@ -1,39 +1,9 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
+import { StyleSheet } from 'react-native';
 
-export const useWalletStyles = createUseStyles(({ colors, typography }) => ({
-  headerCard: {
-    padding: formatSize(16),
-    backgroundColor: colors.navigation,
-    ...generateShadow(23, colors.black10)
-  },
+export const WalletStyles = StyleSheet.create({
   accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
-  },
-  equityContainer: {
-    marginVertical: formatSize(16)
-  },
-  equityHeader: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  equityDateText: {
-    ...typography.tagline11Tag,
-    color: colors.gray3,
-    marginLeft: formatSize(2)
-  },
-  equityXtzText: {
-    ...typography.numbersMedium20,
-    color: colors.black
-  },
-  equityUsdText: {
-    ...typography.numbersRegular15,
-    color: colors.gray1
-  },
-  buttonsContainer: {
-    flexDirection: 'row'
   }
-}));
+});

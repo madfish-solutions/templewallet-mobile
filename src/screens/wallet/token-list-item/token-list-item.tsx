@@ -1,8 +1,10 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { isDefined } from '../../../utils/is-defined';
 import { useTokenListItemStyles } from './token-list-item.styles';
@@ -13,13 +15,21 @@ interface Props {
   balance: string;
   apy?: number;
   iconName?: IconNameEnum;
+  onPress: EmptyFn;
 }
 
-export const TokenListItem: FC<Props> = ({ symbol, name, balance, apy, iconName = IconNameEnum.NoNameToken }) => {
+export const TokenListItem: FC<Props> = ({
+  symbol,
+  name,
+  balance,
+  apy,
+  iconName = IconNameEnum.NoNameToken,
+  onPress
+}) => {
   const styles = useTokenListItemStyles();
 
   return (
-    <View style={styles.rootContainer}>
+    <TouchableOpacity style={styles.rootContainer} onPress={onPress}>
       <View style={styles.leftContainer}>
         <Icon name={iconName} size={formatSize(40)} />
         <View style={styles.infoContainer}>
@@ -39,6 +49,6 @@ export const TokenListItem: FC<Props> = ({ symbol, name, balance, apy, iconName 
         <Text style={styles.balanceText}>{balance}</Text>
         <Text style={styles.valueText}>X XXX.XX $</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };

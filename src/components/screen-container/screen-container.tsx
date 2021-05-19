@@ -1,10 +1,23 @@
 import React, { FC } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, useWindowDimensions } from 'react-native';
 
-import { useScreenContainerStyles } from './screen-container.styles';
+import { conditionalStyle } from '../../utils/conditional-style';
+import { ScreenContainerStyles } from './screen-container.styles';
 
-export const ScreenContainer: FC = ({ children }) => {
-  const styles = useScreenContainerStyles();
+interface Props {
+  isFullScreenMode?: boolean;
+}
 
-  return <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>{children}</ScrollView>;
+export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, children }) => {
+  const height = useWindowDimensions().height;
+
+  return (
+    <ScrollView
+      contentContainerStyle={[
+        ScreenContainerStyles.scrollViewContentContainer,
+        conditionalStyle(isFullScreenMode, { ...ScreenContainerStyles.fullScreenMode, height })
+      ]}>
+      {children}
+    </ScrollView>
+  );
 };

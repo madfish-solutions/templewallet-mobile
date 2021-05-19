@@ -1,3 +1,1 @@
-import { TokenMetadataInterface } from '../interfaces/token-metadata.interface';
-
-export const tokenMetadataSlug = ({ address, id }: TokenMetadataInterface) => `${address}_${id}`;
+export const tokenMetadataSlug = <T extends { address: string; id: number }>({ address, id }: T) => `${address}_${id}`;
