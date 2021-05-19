@@ -3,6 +3,7 @@ import { formatSize } from '../../styles/format-size';
 
 export const useWelcomeLogoStyles = createUseStyles(() => ({
   imageView: {
+    marginTop: 'auto',
     alignItems: 'center',
     marginBottom: '30%'
   },

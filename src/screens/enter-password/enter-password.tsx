@@ -1,10 +1,11 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
 import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { FormPasswordInput } from '../../form/form-password-input';
@@ -21,31 +22,31 @@ import { useEnterPasswordStyles } from './enter-password.styles';
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
-
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
-    <View style={styles.view}>
+    <ScreenContainer isFullScreenMode={true}>
       <WelcomeHeader />
-      <WelcomeLogo />
+      <View style={styles.imageView}>
+        <WelcomeLogo />
+      </View>
       <Formik
         initialValues={enterPasswordInitialValues}
         validationSchema={enterPasswordValidationSchema}
         onSubmit={onSubmit}>
         {({ submitForm }) => (
-          <>
-            <View>
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput name="password" />
-            </View>
-            <View>
-              <ButtonLargePrimary title="Unlock" marginBottom={formatSize(8)} onPress={() => submitForm()} />
-              <EraseDataButton />
-              <InsetSubstitute type="bottom" />
-            </View>
-          </>
+          <KeyboardAvoidingView style={styles.formikView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <Label label="Password" description="A password is used to protect the wallet." />
+            <FormPasswordInput name="password" />
+            <ButtonLargePrimary title="Unlock" marginBottom={formatSize(23)} onPress={() => submitForm()} />
+          </KeyboardAvoidingView>
         )}
       </Formik>
-    </View>
+      <View style={styles.bottomView}>
+        <Label description="Having troubles?" />
+        <EraseDataButton />
+        <InsetSubstitute type="bottom" />
+      </View>
+    </ScreenContainer>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLink } from '../../../components/button/button-link/button-link';
 import { rootStateResetAction } from '../../../store/root-state.actions';
 
 export const EraseDataButton = () => {
@@ -20,5 +20,5 @@ export const EraseDataButton = () => {
       }
     ]);
 
-  return <ButtonLargePrimary title="Erase Data" onPress={handleResetDataButtonPress} />;
+  return <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />;
 };
