@@ -1,8 +1,12 @@
-import { step } from '../../config/styles';
-import { createUseStyles } from '../../styles/create-use-styles';
+import { StyleSheet } from 'react-native';
 
-export const useScreenContainerStyles = createUseStyles(() => ({
+import { formatSize } from '../../styles/format-size';
+
+export const ScreenContainerStyles = StyleSheet.create({
   scrollViewContentContainer: {
-    margin: step
+    padding: formatSize(8)
+  },
+  fullScreenMode: {
+    justifyContent: 'space-between'
   }
-}));
+});
