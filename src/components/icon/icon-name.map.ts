@@ -1,15 +1,19 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CheckIcon from './assets/check.svg';
+import ChevronRightIcon from './assets/chevron-right.svg';
+import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
+import InfoIcon from './assets/info.svg';
 import LockIcon from './assets/lock.svg';
+import NoResultIcon from './assets/no-result.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
@@ -32,7 +36,7 @@ import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
 
-export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
+export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.Download]: DownloadIcon,
@@ -61,5 +65,9 @@ export const iconNameMap: Record<IconNameEnum, FunctionComponent<SvgProps>> = {
   [IconNameEnum.QrScanner]: QrScannerIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
   [IconNameEnum.Check]: CheckIcon,
-  [IconNameEnum.Lock]: LockIcon
+  [IconNameEnum.Lock]: LockIcon,
+  [IconNameEnum.Clock]: ClockIcon,
+  [IconNameEnum.Info]: InfoIcon,
+  [IconNameEnum.ChevronRight]: ChevronRightIcon,
+  [IconNameEnum.NoResult]: NoResultIcon
 };

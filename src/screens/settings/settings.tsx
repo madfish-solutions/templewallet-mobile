@@ -1,5 +1,6 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { useState } from 'react';
-import { Button, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Switch, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
