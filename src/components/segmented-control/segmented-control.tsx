@@ -5,7 +5,7 @@ import { Animated, View } from 'react-native';
 import { EventFn } from '../../config/general';
 import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
 import { useLayoutWidth } from '../../hooks/use-layout-width.hook';
-import { useSegmentedControlStyles } from './segmented-control.styles';
+import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> {
   selectedIndex: number;
@@ -34,7 +34,7 @@ export const SegmentedControl = <T extends unknown>({
   const translateX = useAnimationRef();
   const { layoutWidth, handleLayout } = useLayoutWidth();
 
-  const tileWidth = (layoutWidth - 4) / (values.length || 1);
+  const tileWidth = (layoutWidth - 2 * tileMargin) / (values.length || 1);
 
   useEffect(
     () =>

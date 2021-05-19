@@ -4,6 +4,8 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';
 
+export const tileMargin = formatSize(2);
+
 export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
   container: {
     position: 'relative',
@@ -15,7 +17,7 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
   tile: {
     ...StyleSheet.absoluteFillObject,
     ...generateShadow(1, colors.black),
-    margin: formatSize(2),
+    margin: tileMargin,
     borderRadius: formatSize(8),
     backgroundColor: colors.cardBG
   },
