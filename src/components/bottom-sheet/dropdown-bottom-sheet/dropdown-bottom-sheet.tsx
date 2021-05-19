@@ -21,9 +21,9 @@ export const DropdownBottomSheet: FC<Props> = ({ title, controller, children }) 
         <View style={styles.headerContainer}>
           <Text style={styles.title}>{title}</Text>
         </View>
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.contentContainer}>{children}</View>
-        </ScrollView>
+
+        {children}
+
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={controller.close}>
             <Text style={styles.cancelButtonText}>Cancel</Text>

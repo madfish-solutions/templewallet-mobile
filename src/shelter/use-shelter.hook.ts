@@ -6,22 +6,19 @@ import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { SendInterface } from '../interfaces/send.interface';
-import { ScreensEnum } from '../navigator/screens.enum';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { generateSeed } from '../utils/keys.util';
 import { tezos$ } from '../utils/network/network.util';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
   const hdAccounts = useHdAccountsListSelector();
-  const { navigate } = useNavigation();
+  const { goBack } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
   const send$ = useMemo(() => new Subject<SendInterface>(), []);
-  const createWallet$ = useMemo(() => new Subject<string>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
   const revealSecretKey$ = useMemo(() => new Subject<string>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject(), []);
@@ -36,13 +33,12 @@ export const useShelter = () => {
             dispatch(addHdAccountAction(publicData));
           }
         }),
-      createWallet$.subscribe(password => importWallet$.next({ seedPhrase: generateSeed(), password })),
       createHdAccount$
         .pipe(switchMap(name => Shelter.createHdAccount$(name, hdAccounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(addHdAccountAction(publicData));
-            navigate(ScreensEnum.Settings);
+            goBack();
           }
         }),
 
@@ -75,15 +71,14 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [createWallet$, dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
+  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
-  const createWallet = (password: string) => createWallet$.next(password);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (key: string) => revealSecretKey$.next(key);
   const revealSeedPhrase = () => revealSeedPhrase$.next();
 
-  return { importWallet, createWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
+  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

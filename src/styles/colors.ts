@@ -24,6 +24,14 @@ const basicDarkColors: typeof basicLightColors = {
   white: '#000000'
 };
 
+const basicLightAlphaColors = {
+  black10: hexa(basicLightColors.black, 0.1)
+};
+
+const basicDarkAlphaColors: typeof basicLightAlphaColors = {
+  black10: hexa(basicDarkColors.black, 0.1)
+};
+
 const graybaseLightColors = {
   gray1: '#707070',
   gray2: '#AEAEB2',
@@ -58,6 +66,7 @@ const lightTheme = {
   ...accentColors,
   ...accentAlphaColors,
   ...basicLightColors,
+  ...basicLightAlphaColors,
   ...graybaseLightColors,
   ...backgroundLightColors
 };
@@ -68,6 +77,7 @@ export const getColors = (theme: ThemesEnum): Colors => ({
   ...lightTheme,
   ...(theme === ThemesEnum.dark && {
     ...basicDarkColors,
+    ...basicDarkAlphaColors,
     ...graybaseDarkColors,
     ...backgroundDarkColors
   })

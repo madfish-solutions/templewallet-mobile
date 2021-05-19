@@ -18,16 +18,3 @@ export const darkOrange = 'rgba(255, 122, 0, 0.1)';
 export const white = '#FFFFFF';
 export const red = 'red';
 export const transparent = 'transparent';
-
-// Use https://ethercreative.github.io/react-native-shadow-generator/
-export const generateShadow = (shadowColor: string) => ({
-  shadowColor,
-  shadowOffset: {
-    width: 0,
-    height: 1
-  },
-  shadowOpacity: 0.2,
-  shadowRadius: 1.41,
-
-  elevation: 2
-});

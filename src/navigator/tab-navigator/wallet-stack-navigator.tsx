@@ -12,7 +12,7 @@ export const WalletStackNavigator = () => {
 
   return (
     <WalletStack.Navigator screenOptions={styleScreenOptions}>
-      <WalletStack.Screen name={ScreensEnum.Wallet} component={Wallet} />
+      <WalletStack.Screen name={ScreensEnum.Wallet} component={Wallet} options={{ headerShown: false }} />
     </WalletStack.Navigator>
   );
 };
