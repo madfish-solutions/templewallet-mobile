@@ -12,14 +12,12 @@ import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
-import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
-  const styles = useWelcomeStyles();
 
   return (
-      <ScreenContainer isFullScreenMode={true}>
+    <ScreenContainer isFullScreenMode={true}>
       <WelcomeHeader />
       <WelcomeLogo />
       <View>
