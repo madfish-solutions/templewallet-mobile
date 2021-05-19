@@ -5,6 +5,8 @@ export enum ScreensEnum {
   EnterPassword = 'EnterPassword',
   ConfirmationWindow = 'ConfirmationWindow',
   Wallet = 'Wallet',
+  TezosTokenScreen = 'TezosTokenScreen',
+  TokenScreen = 'TokenScreen',
   DApps = 'DApps',
   Swap = 'Swap',
   Settings = 'Settings',
@@ -13,6 +15,8 @@ export enum ScreensEnum {
 
 export type WalletStackScreensParamList = {
   [ScreensEnum.Wallet]: undefined;
+  [ScreensEnum.TezosTokenScreen]: undefined;
+  [ScreensEnum.TokenScreen]: { slug: string };
 };
 
 export type DAppsStackScreensParamList = {

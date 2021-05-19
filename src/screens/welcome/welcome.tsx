@@ -6,6 +6,7 @@ import { ButtonLargeSecondary } from '../../components/button/button-large/butto
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
 import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { ScreensEnum } from '../../navigator/screens.enum';
@@ -18,7 +19,7 @@ export const Welcome = () => {
   const styles = useWelcomeStyles();
 
   return (
-    <View style={styles.view}>
+      <ScreenContainer isFullScreenMode={true}>
       <WelcomeHeader />
       <WelcomeLogo />
       <View>
@@ -39,6 +40,6 @@ export const Welcome = () => {
         <Label description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
         <InsetSubstitute type="bottom" />
       </View>
-    </View>
+    </ScreenContainer>
   );
 };
