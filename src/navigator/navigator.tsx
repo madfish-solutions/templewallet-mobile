@@ -1,3 +1,4 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
@@ -17,12 +18,12 @@ const Stack = createStackNavigator<ScreensParamList>();
 const isConfirmation = false;
 
 export const Navigator = () => {
-  const isAuthorised = useIsAuthorisedSelector();
   const { isLocked } = useAppLock();
+  const isAuthorised = useIsAuthorisedSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   return (
-    <>
+    <NavigationContainer>
       <Stack.Navigator screenOptions={{ ...styleScreenOptions, headerShown: !isAuthorised }}>
         {!isAuthorised ? (
           <>
@@ -41,6 +42,6 @@ export const Navigator = () => {
           {isConfirmation && <ConfirmationWindow />}
         </>
       )}
-    </>
+    </NavigationContainer>
   );
 };
