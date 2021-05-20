@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/stack';
 import React, { FC } from 'react';
 import { ScrollView, useWindowDimensions } from 'react-native';
 
@@ -9,8 +10,9 @@ interface Props {
 }
 
 export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, children }) => {
-  const height = useWindowDimensions().height;
   const styles = useScreenContainerStyles();
+  const headerHeight = useHeaderHeight();
+  const height = useWindowDimensions().height - headerHeight;
 
   return (
     <ScrollView
