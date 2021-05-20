@@ -1,11 +1,16 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
+import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { formatSize } from '../../styles/format-size';
 import { EraseDataButton } from '../settings/erase-data-button/erase-data-button';
 import {
   EnterPasswordFormValues,
@@ -17,32 +22,31 @@ import { useEnterPasswordStyles } from './enter-password.styles';
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
-
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
-    <View style={styles.root}>
-      <InsetSubstitute />
-
-      <ScreenContainer>
-        <Formik
-          initialValues={enterPasswordInitialValues}
-          validationSchema={enterPasswordValidationSchema}
-          onSubmit={onSubmit}>
-          {({ submitForm }) => (
-            <>
-              <Text>Your wallet have been locked</Text>
-              <Text>{'Enter a password to unlock it\n\n'}</Text>
-
-              <Text>Password</Text>
-              <FormPasswordInput name="password" />
-
-              <Button title="Unlock" onPress={submitForm} />
-              <EraseDataButton />
-            </>
-          )}
-        </Formik>
-      </ScreenContainer>
-    </View>
+    <ScreenContainer isFullScreenMode={true}>
+      <WelcomeHeader />
+      <View style={styles.imageView}>
+        <WelcomeLogo />
+      </View>
+      <Formik
+        initialValues={enterPasswordInitialValues}
+        validationSchema={enterPasswordValidationSchema}
+        onSubmit={onSubmit}>
+        {({ submitForm }) => (
+          <KeyboardAvoidingView style={styles.formikView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <Label label="Password" description="A password is used to protect the wallet." />
+            <FormPasswordInput name="password" />
+            <ButtonLargePrimary title="Unlock" marginBottom={formatSize(23)} onPress={() => submitForm()} />
+          </KeyboardAvoidingView>
+        )}
+      </Formik>
+      <View style={styles.bottomView}>
+        <Label description="Having troubles?" />
+        <EraseDataButton />
+        <InsetSubstitute type="bottom" />
+      </View>
+    </ScreenContainer>
   );
 };

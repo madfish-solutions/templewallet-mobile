@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -7,6 +7,8 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
+import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -19,16 +21,10 @@ export const Welcome = () => {
   return (
     <ScreenContainer isFullScreenMode={true}>
       <View>
-        <InsetSubstitute />
-        <Text style={styles.headerTitle}>
-          <Text style={styles.headerTitleQuotes}>“</Text>The only function of economic forecasting is to make astrology
-          look more respectable.
-          <Text style={styles.headerTitleQuotes}>”</Text>
-        </Text>
-        <Text style={styles.headerSecondTitle}>John Kenneth Galbraith</Text>
+        <WelcomeHeader />
       </View>
       <View style={styles.imageView}>
-        <Image style={styles.image} source={require('../../assets/temple-logo-with-text.png')} />
+        <WelcomeLogo />
       </View>
       <View>
         <ButtonLargePrimary

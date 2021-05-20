@@ -1,8 +1,8 @@
 import React from 'react';
-import { Alert, Button } from 'react-native';
+import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { red } from '../../../config/styles';
+import { ButtonLink } from '../../../components/button/button-link/button-link';
 import { rootStateResetAction } from '../../../store/root-state.actions';
 
 export const EraseDataButton = () => {
@@ -20,5 +20,5 @@ export const EraseDataButton = () => {
       }
     ]);
 
-  return <Button title="Erase Data" color={red} onPress={handleResetDataButtonPress} />;
+  return <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />;
 };
