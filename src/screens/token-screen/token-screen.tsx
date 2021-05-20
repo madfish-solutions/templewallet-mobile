@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useNavigationParams } from '../../navigator/use-navigation-params.hook';
 import { useSelectedAccountSelector, useTokenSelector } from '../../store/wallet/wallet-selectors';
@@ -27,10 +27,7 @@ export const TokenScreen = () => {
         <HeaderCardActionButtons />
       </HeaderCard>
 
-      <TokenScreenContentContainer
-        historyComponent={<DataPlaceholder />}
-        infoComponent={<TokenInfo token={token} />}
-      />
+      <TokenScreenContentContainer historyComponent={<DataPlaceholder />} infoComponent={<TokenInfo token={token} />} />
     </>
   );
 };

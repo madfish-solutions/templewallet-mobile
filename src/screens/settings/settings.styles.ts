@@ -8,7 +8,7 @@ export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
     ...generateShadow(1, colors.black),
     padding: formatSize(8),
     borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG,
+    backgroundColor: colors.cardBG
   },
   actionRowContainer: {
     flexDirection: 'row',
