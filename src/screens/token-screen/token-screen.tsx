@@ -4,7 +4,7 @@ import { HeaderCardActionButtons } from '../../components/header-card-action-but
 import { HeaderCard } from '../../components/header-card/header-card';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
-import { TokenHistoryPlaceholder } from '../../components/token-history-placeholder/token-history-placeholder';
+import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useNavigationParams } from '../../navigator/use-navigation-params.hook';
 import { useSelectedAccountSelector, useTokenSelector } from '../../store/wallet/wallet-selectors';
@@ -28,7 +28,7 @@ export const TokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer
-        historyComponent={<TokenHistoryPlaceholder />}
+        historyComponent={<DataPlaceholder />}
         infoComponent={<TokenInfo token={token} />}
       />
     </>

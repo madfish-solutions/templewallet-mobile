@@ -21,12 +21,22 @@ const renderAccountValue: DropdownValueComponent<AccountInterface> = ({ value })
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
 
-  const handleButtonPress = () => {
+  const handleCreateNewAccountButtonPress = () => {
     navigate(ScreensEnum.Settings, { screen: ScreensEnum.CreateHdAccount });
     onPress();
   };
 
-  return <DropdownBottomSheetActionButton title="Create new account" onPress={handleButtonPress} />;
+  const handleManageAccountsButtonPress = () => {
+    navigate(ScreensEnum.Settings, { screen: ScreensEnum.ManageAccounts });
+    onPress();
+  };
+
+  return (
+    <>
+      <DropdownBottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
+      <DropdownBottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
+    </>
+  );
 };
 
 export const CurrentAccountDropdown: FC<DropdownValueProps<AccountInterface>> = ({ value, list, onValueChange }) => (

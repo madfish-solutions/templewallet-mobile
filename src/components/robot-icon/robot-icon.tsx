@@ -18,11 +18,13 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
 
   const xml = useMemo(
     () =>
-      avatars.create(seed, {
-        margin: formatSize(4),
-        width: size,
-        height: size
-      }),
+      avatars
+        .create(seed, {
+          margin: formatSize(4),
+          width: size,
+          height: size
+        })
+        .replace('undefined', ''),
     [seed, size]
   );
 

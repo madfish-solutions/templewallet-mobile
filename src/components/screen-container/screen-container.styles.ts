@@ -6,7 +6,8 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
     backgroundColor: colors.pageBG
   },
   scrollViewContentContainer: {
-    padding: formatSize(8)
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16)
   },
   fullScreenMode: {
     justifyContent: 'space-between'
