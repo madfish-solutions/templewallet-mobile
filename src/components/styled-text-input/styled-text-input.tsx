@@ -38,7 +38,6 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
           style={[
             multiline ? styles.multiline : styles.regular,
             isError && styles.error,
-            secureTextEntry && styles.passwordFontSize,
             isPasswordInput && styles.passwordPadding
           ]}
           secureTextEntry={secureTextEntry}
