@@ -33,7 +33,7 @@ export const AddTokenInfo: FC<Props> = ({ isValid, onCancelButtonPress, onConfir
 
       <View style={AddTokenInfoStyles.buttonsContainer}>
         <ButtonLargeSecondary title="Cancel" marginRight={formatSize(16)} onPress={onCancelButtonPress} />
-        <ButtonLargePrimary title="Confirm" disabled={!isValid} onPress={onConfirmButtonPress} />
+        <ButtonLargePrimary title="Confirm" disabled={true} onPress={onConfirmButtonPress} />
       </View>
     </>
   );
