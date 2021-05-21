@@ -23,7 +23,6 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
       isPasswordInput = false,
       value,
       multiline,
-      secureTextEntry,
       ...props
     },
     ref
@@ -40,7 +39,6 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
             isError && styles.error,
             isPasswordInput && styles.passwordPadding
           ]}
-          secureTextEntry={secureTextEntry}
           multiline={multiline}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
