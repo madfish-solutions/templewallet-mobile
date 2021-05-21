@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
 
-export const ImportAccountStyles = StyleSheet.create({
+export const CreateAccountStyles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignContent: 'center',
