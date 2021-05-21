@@ -35,9 +35,9 @@ import { useWalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const colors = useColors();
+  const styles = useWalletStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const styles = useWalletStyles();
 
   const addTokenBottomSheetController = useBottomSheetController();
 

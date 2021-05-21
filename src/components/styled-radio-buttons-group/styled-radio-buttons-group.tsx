@@ -8,8 +8,8 @@ import { isDefined } from '../../utils/is-defined';
 import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.styles';
 
 export interface RadioButton<T extends string> {
-  label: string;
   value: T;
+  label: string;
 }
 
 export interface RadioButtonsGroupProps<T extends string> {

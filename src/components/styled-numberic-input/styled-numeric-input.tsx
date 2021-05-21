@@ -23,7 +23,6 @@ export const StyledNumericInput: FC<Props> = ({
 
   const handleChange = (changedValue: string) => {
     const parsedNumber = +changedValue;
-    console.log(parsedNumber);
 
     if (!isNaN(parsedNumber) && inRange(parsedNumber, min, max)) {
       const isFloat = changedValue.includes('.');

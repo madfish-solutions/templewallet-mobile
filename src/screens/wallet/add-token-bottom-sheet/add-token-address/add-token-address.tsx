@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
 import { Label } from '../../../../components/label/label';
+import { RadioButton } from '../../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../../config/general';
 import { FormNumericInput } from '../../../../form/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../../form/form-radio-buttons-group';
@@ -22,9 +23,9 @@ interface Props {
   onFormSubmitted: EmptyFn;
 }
 
-const typeRadioButtons = [
-  { label: 'FA 1.2', value: TokenTypeEnum.FA_1_2 },
-  { label: 'FA 2', value: TokenTypeEnum.FA_2 }
+const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
+  { value: TokenTypeEnum.FA_1_2, label: 'FA 1.2' },
+  { value: TokenTypeEnum.FA_2, label: 'FA 2' }
 ];
 
 export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {

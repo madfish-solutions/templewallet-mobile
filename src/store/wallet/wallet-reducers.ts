@@ -8,7 +8,8 @@ import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
-  addHdAccountAction, addTokenMetadataAction,
+  addHdAccountAction,
+  addTokenMetadataAction,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,

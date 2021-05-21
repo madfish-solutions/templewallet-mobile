@@ -1,5 +1,5 @@
 import { compose } from '@taquito/taquito';
-import { TokenMetadata, tzip12 } from '@taquito/tzip12';
+import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
@@ -9,6 +9,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { api } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
+import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
@@ -51,8 +52,8 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([{ id, address }, tezos]) =>
       from(tezos.wallet.at(address, compose(tzip12, tzip16))).pipe(
-        switchMap(contract => from(contract.tzip12().getTokenMetadata(id))),
-        map((tokenMetadata: TokenMetadata & any) =>
+        switchMap(contract => contract.tzip12().getTokenMetadata(id)),
+        map((tokenMetadata: TokenMetadataSuggestionInterface) =>
           loadTokenMetadataActions.success({
             id,
             address,
