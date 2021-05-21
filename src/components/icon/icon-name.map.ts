@@ -14,6 +14,7 @@ import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import InfoIcon from './assets/info.svg';
 import LockIcon from './assets/lock.svg';
 import NoResultIcon from './assets/no-result.svg';
+import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
@@ -41,6 +42,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
+  [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,

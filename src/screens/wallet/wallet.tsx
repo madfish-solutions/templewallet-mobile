@@ -1,8 +1,10 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
+import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
@@ -27,13 +29,17 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
+import { AddTokenBottomSheet } from './add-token-bottom-sheet/add-token-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
-import { WalletStyles } from './wallet.styles';
+import { useWalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const colors = useColors();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const styles = useWalletStyles();
+
+  const addTokenBottomSheetController = useBottomSheetController();
 
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
@@ -48,7 +54,7 @@ export const Wallet = () => {
   return (
     <>
       <HeaderCard hasInsetTop={true}>
-        <View style={WalletStyles.accountContainer}>
+        <View style={styles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
             list={hdAccounts}
@@ -85,6 +91,15 @@ export const Wallet = () => {
         ))}
 
         <Divider />
+
+        <TouchableOpacity style={styles.addTokenButton} onPress={addTokenBottomSheetController.open}>
+          <Icon name={IconNameEnum.PlusCircle} />
+          <Text style={styles.addTokenText}>ADD TOKEN</Text>
+        </TouchableOpacity>
+
+        <Divider />
+
+        <AddTokenBottomSheet controller={addTokenBottomSheetController} />
       </ScreenContainer>
     </>
   );
