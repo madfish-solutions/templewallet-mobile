@@ -16,10 +16,9 @@ import {
   importAccountInitialValues,
   importAccountValidationSchema
 } from './import-account.form';
-import { useImportAccountStyles } from './import-account.styles';
+import { ImportAccountStyles } from './import-account.styles';
 
 export const ImportAccount = () => {
-  const styles = useImportAccountStyles();
   const { importWallet } = useShelter();
 
   const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
@@ -44,7 +43,7 @@ export const ImportAccount = () => {
             </View>
 
             <View>
-              <View style={styles.checkbox}>
+              <View style={ImportAccountStyles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" />
                 <Label label="Accept terms" />
               </View>
@@ -53,7 +52,7 @@ export const ImportAccount = () => {
 the Terms of Usage and Privacy Policy"
               />
 
-              <ButtonLargePrimary marginTop={formatSize(24)} title="Import" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary title="Import" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
               <InsetSubstitute type="bottom" />
             </View>
           </>

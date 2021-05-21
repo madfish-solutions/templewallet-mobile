@@ -16,16 +16,15 @@ import {
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
-import { useCreateAccountStyles } from './create-account.styles';
+import { CreateAccountStyles } from './create-account.styles';
 
 export const CreateAccount = () => {
-  const styles = useCreateAccountStyles();
   const { importWallet } = useShelter();
 
   const onSubmit = (data: CreateAccountFormValues) => importWallet(data.seedPhrase, data.password);
 
   return (
-    <ScreenContainer isFullScreenMode>
+    <ScreenContainer isFullScreenMode={true}>
       <Formik
         initialValues={createAccountInitialValues}
         validationSchema={createAccountValidationSchema}
@@ -47,7 +46,7 @@ export const CreateAccount = () => {
             </View>
 
             <View>
-              <View style={styles.checkbox}>
+              <View style={CreateAccountStyles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" />
                 <Label label="I made Seed Phrase backup" />
               </View>
@@ -56,7 +55,7 @@ export const CreateAccount = () => {
 my funds may be lost."
               />
 
-              <ButtonLargePrimary marginTop={formatSize(24)} title="Create" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary title="Create" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
               <InsetSubstitute type="bottom" />
             </View>
           </>
