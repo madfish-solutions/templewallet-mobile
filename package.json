@@ -59,6 +59,7 @@
     "react-native-level-fs": "^3.0.1",
     "react-native-os": "^1.2.6",
     "react-native-qrcode-svg": "^6.1.1",
+    "react-native-radio-buttons-group": "^2.2.4",
     "react-native-randombytes": "^3.6.0",
     "react-native-reanimated": "^1.13.3",
     "react-native-safe-area-context": "^3.2.0",
