@@ -3,6 +3,7 @@ import React, { FC, useState } from 'react';
 
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { AddTokenAddress } from './add-token-address/add-token-address';
 import { AddTokenInfo } from './add-token-info/add-token-info';
 import { addTokenFormInitialValues, addTokenFormValidationSchema, AddTokenFormValues } from './add-token.form';
@@ -18,9 +19,14 @@ export const AddTokenBottomSheet: FC<BottomSheetControllerProps> = ({ controller
         initialValues={addTokenFormInitialValues}
         validationSchema={addTokenFormValidationSchema}
         onSubmit={onSubmit}>
-        {({ submitForm, isValid }) => (
+        {({ values, submitForm, isValid }) => (
           <>
-            {innerScreenIndex === 0 && <AddTokenAddress onNextButtonPress={() => setInnerScreenIndex(1)} />}
+            {innerScreenIndex === 0 && (
+              <AddTokenAddress
+                showTokenIdInput={values.type === TokenTypeEnum.FA_2}
+                onNextButtonPress={() => setInnerScreenIndex(1)}
+              />
+            )}
             {innerScreenIndex === 1 && (
               <AddTokenInfo
                 isValid={isValid}

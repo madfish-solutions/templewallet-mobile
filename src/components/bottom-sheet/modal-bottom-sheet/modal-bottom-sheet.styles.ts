@@ -27,7 +27,6 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
     color: colors.black
   },
   contentContainer: {
-    flex: 1,
     paddingVertical: formatSize(8),
     paddingHorizontal: formatSize(16)
   }
