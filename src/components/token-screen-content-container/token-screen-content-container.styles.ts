@@ -14,8 +14,5 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
   headerText: {
     ...typography.body15Semibold,
     color: colors.gray1
-  },
-  actionsContainer: {
-    flexDirection: 'row'
   }
 }));

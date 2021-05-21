@@ -14,6 +14,7 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, children 
 
   return (
     <ScrollView
+      style={styles.scrollView}
       contentContainerStyle={[
         styles.scrollViewContentContainer,
         conditionalStyle(isFullScreenMode, { ...styles.fullScreenMode, height })
