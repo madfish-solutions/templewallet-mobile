@@ -1,9 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-import { step } from '../../config/styles';
-
-export const ImportAccountStyles = StyleSheet.create({
-  labelText: {
-    marginTop: 2 * step
+export const useImportAccountStyles = createUseStyles(() => ({
+  checkbox: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    paddingLeft: formatSize(5),
+    marginBottom: formatSize(6)
   }
-});
+}));
