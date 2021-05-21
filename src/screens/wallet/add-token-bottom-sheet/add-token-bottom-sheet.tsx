@@ -21,11 +21,7 @@ export const AddTokenBottomSheet: FC<BottomSheetControllerProps> = ({ controller
         onSubmit={onSubmit}>
         {({ submitForm, isValid }) => (
           <>
-            {innerScreenIndex === 0 && (
-              <AddTokenAddress
-                onNextButtonPress={() => setInnerScreenIndex(1)}
-              />
-            )}
+            {innerScreenIndex === 0 && <AddTokenAddress onFormSubmitted={() => setInnerScreenIndex(1)} />}
             {innerScreenIndex === 1 && (
               <AddTokenInfo
                 isValid={isValid}

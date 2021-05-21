@@ -34,6 +34,8 @@
     "@react-navigation/stack": "^5.14.4",
     "@reduxjs/toolkit": "^1.5.1",
     "@taquito/signer": "^8.1.0",
+    "@taquito/tzip12": "^8.1.0",
+    "@taquito/tzip16": "^8.1.0",
     "@taquito/utils": "^8.1.0",
     "@tradle/react-native-http": "^2.0.1",
     "asyncstorage-down": "^4.2.0",

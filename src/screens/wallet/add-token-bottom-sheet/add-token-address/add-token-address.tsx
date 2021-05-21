@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
@@ -10,6 +10,7 @@ import { FormNumericInput } from '../../../../form/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../../interfaces/token-type.enum';
+import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../../styles/format-size';
 import {
   addTokenAddressFormInitialValues,
@@ -18,8 +19,7 @@ import {
 } from './add-token-address.form';
 
 interface Props {
-  showTokenIdInput: boolean;
-  onNextButtonPress: EmptyFn;
+  onFormSubmitted: EmptyFn;
 }
 
 const typeRadioButtons = [
@@ -27,8 +27,13 @@ const typeRadioButtons = [
   { label: 'FA 2', value: TokenTypeEnum.FA_2 }
 ];
 
-export const AddTokenAddress: FC<Props> = ({ showTokenIdInput, onNextButtonPress }) => {
-  const onSubmit = (data: AddTokenAddressFormValues) => console.log('add token');
+export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
+  const dispatch = useDispatch();
+
+  const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
+    dispatch(loadTokenMetadataActions.submit({ id, address }));
+    onFormSubmitted();
+  };
 
   return (
     <Formik

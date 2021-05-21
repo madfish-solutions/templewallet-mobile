@@ -1712,6 +1712,29 @@
     rx-sandbox "^1.0.3"
     rxjs "^6.6.3"
 
+"@taquito/tzip12@^8.1.0":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@taquito/tzip12/-/tzip12-8.1.1.tgz#a8b06ef38c9db47a80545c929f8a12b165b38431"
+  integrity sha512-upLQYLAI4aEBkwJGYcc+4OjTlYyA1T6kPSiQ69Pc6OK4lZSzm+bz47dV0SU7Y8PBiLaek2OrLlmACZKSublGeQ==
+  dependencies:
+    "@taquito/michelson-encoder" "^8.1.1"
+    "@taquito/taquito" "^8.1.1"
+    "@taquito/tzip16" "^8.1.1"
+    bignumber.js "^9.0.1"
+
+"@taquito/tzip16@^8.1.0", "@taquito/tzip16@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@taquito/tzip16/-/tzip16-8.1.1.tgz#0dd4b00c046d86417237e2c1b08ac9cfdcba0a3f"
+  integrity sha512-+pnCv2CuPAWLSNVU3logNd6kmOG6mItAoRi49zJjVD8F/96gY4xNKrjdF+BbgY3pmEhF/h7E5chuTmK9waDtaQ==
+  dependencies:
+    "@taquito/http-utils" "^8.1.0"
+    "@taquito/michelson-encoder" "^8.1.1"
+    "@taquito/rpc" "^8.1.1"
+    "@taquito/taquito" "^8.1.1"
+    "@taquito/utils" "^8.1.0"
+    bignumber.js "^9.0.1"
+    crypto-js "^4.0.0"
+
 "@taquito/utils@^8.1.0":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-8.1.1.tgz#b9fbc880308ad814ae15b4f3402fd40c4ecc7c23"
@@ -3317,6 +3340,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.0.0.tgz#2904ab2677a9d042856a2ea2ef80de92e4a36dcc"
+  integrity sha512-bzHZN8Pn+gS7DQA6n+iUmBfl0hO5DJq++QP3U6uTucDtk/0iGpXd/Gg7CGR0p8tJhofJyaKoWBuJI4eAO00BBg==
 
 css-select-base-adapter@^0.1.1:
   version "0.1.1"
