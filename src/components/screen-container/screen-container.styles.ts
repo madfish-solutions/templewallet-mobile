@@ -2,9 +2,12 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
+  scrollView: {
+    backgroundColor: colors.pageBG
+  },
   scrollViewContentContainer: {
-    backgroundColor: colors.cardBG,
-    padding: formatSize(8)
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16)
   },
   fullScreenMode: {
     justifyContent: 'space-between'

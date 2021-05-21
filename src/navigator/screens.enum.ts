@@ -10,7 +10,8 @@ export enum ScreensEnum {
   DApps = 'DApps',
   Swap = 'Swap',
   Settings = 'Settings',
-  CreateHdAccount = 'CreateHdAccount'
+  CreateHdAccount = 'CreateHdAccount',
+  ManageAccounts = 'ManageAccounts'
 }
 
 export type WalletStackScreensParamList = {
@@ -30,6 +31,7 @@ export type SwapStackScreensParamList = {
 export type SettingsStackScreensParamList = {
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.CreateHdAccount]: undefined;
+  [ScreensEnum.ManageAccounts]: undefined;
 };
 
 export type TabScreensParamList = WalletStackScreensParamList &

@@ -2,9 +2,9 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Text } from 'react-native';
 
+import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TokenHistoryPlaceholder } from '../../../components/token-history-placeholder/token-history-placeholder';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { useTezosTokenHistoryStyles } from './tezos-token-history.styles';
@@ -22,7 +22,7 @@ export const TezosTokenHistory = () => {
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />
       </TouchableOpacity>
 
-      <TokenHistoryPlaceholder />
+      <DataPlaceholder name="Operations" />
     </>
   );
 };

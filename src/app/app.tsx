@@ -1,5 +1,4 @@
 import { PortalProvider } from '@gorhom/portal';
-import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { hide } from 'react-native-bootsplash';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -21,9 +20,7 @@ export const App = () => {
       <PersistGate persistor={persistor} loading={null}>
         <SafeAreaProvider>
           <PortalProvider>
-            <NavigationContainer>
-              <Navigator />
-            </NavigationContainer>
+            <Navigator />
 
             <ToastProvider />
           </PortalProvider>

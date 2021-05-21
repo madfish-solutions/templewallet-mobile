@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useTokenHistoryPlaceholderStyles = createUseStyles(({ colors, typography }) => ({
+export const useDataPlaceholderStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     margin: formatSize(40),
     alignItems: 'center'

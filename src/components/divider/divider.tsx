@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { DividerStyles } from './divider.styles';
+import { formatSize } from '../../styles/format-size';
 
-export const Divider = () => <View style={DividerStyles.container} />;
+interface Props {
+  height?: number;
+}
+
+export const Divider: FC<Props> = ({ height = formatSize(24) }) => <View style={{ height }} />;
