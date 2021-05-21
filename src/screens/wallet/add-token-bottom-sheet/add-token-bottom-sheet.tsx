@@ -19,11 +19,10 @@ export const AddTokenBottomSheet: FC<BottomSheetControllerProps> = ({ controller
         initialValues={addTokenFormInitialValues}
         validationSchema={addTokenFormValidationSchema}
         onSubmit={onSubmit}>
-        {({ values, submitForm, isValid }) => (
+        {({ submitForm, isValid }) => (
           <>
             {innerScreenIndex === 0 && (
               <AddTokenAddress
-                showTokenIdInput={values.type === TokenTypeEnum.FA_2}
                 onNextButtonPress={() => setInnerScreenIndex(1)}
               />
             )}
