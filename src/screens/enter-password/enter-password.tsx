@@ -34,11 +34,18 @@ export const EnterPassword = () => {
         initialValues={enterPasswordInitialValues}
         validationSchema={enterPasswordValidationSchema}
         onSubmit={onSubmit}>
-        {({ submitForm }) => (
+        {({ submitForm, isValid }) => (
           <KeyboardAvoidingView style={styles.formikView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <Label label="Password" description="A password is used to protect the wallet." />
             <FormPasswordInput name="password" />
-            <ButtonLargePrimary title="Unlock" marginBottom={formatSize(23)} onPress={() => submitForm()} />
+
+            <ButtonLargePrimary
+              title="Unlock"
+              disabled={!isValid}
+              marginTop={formatSize(8)}
+              marginBottom={formatSize(24)}
+              onPress={submitForm}
+            />
           </KeyboardAvoidingView>
         )}
       </Formik>

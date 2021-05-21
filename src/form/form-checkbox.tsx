@@ -1,7 +1,7 @@
-import CheckBox from '@react-native-community/checkbox';
 import { useField } from 'formik';
 import React, { FC } from 'react';
 
+import { StyledCheckbox } from '../components/styled-checkbox/styled-checkbox';
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
@@ -13,7 +13,7 @@ export const FormCheckbox: FC<Props> = ({ name }) => {
 
   return (
     <>
-      <CheckBox value={field.value} onValueChange={helpers.setValue} />
+      <StyledCheckbox value={field.value} onValueChange={helpers.setValue} />
       <ErrorMessage meta={meta} />
     </>
   );

@@ -11,7 +11,7 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     color: colors.black,
     borderWidth: formatSize(1),
     borderColor: transparent,
-    ...typography.body17Regular
+    ...typography.body15Regular
   };
 
   return {
@@ -41,9 +41,6 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       position: 'absolute',
       top: formatSize(17),
       right: formatSize(14)
-    },
-    passwordFontSize: {
-      ...typography.caption11Regular
     },
     passwordPadding: {
       paddingRight: formatSize(78)

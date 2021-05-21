@@ -3,6 +3,7 @@ import { object, SchemaOf } from 'yup';
 import { acceptTermsValidation } from '../../form/validation/accept-terms';
 import { passwordConfirmationValidation, passwordValidation } from '../../form/validation/password';
 import { seedPhraseValidation } from '../../form/validation/seed-phrase';
+import { generateSeed } from '../../utils/keys.util';
 
 export type CreateAccountFormValues = {
   seedPhrase: string;
@@ -19,7 +20,7 @@ export const createAccountValidationSchema: SchemaOf<CreateAccountFormValues> = 
 });
 
 export const createAccountInitialValues: CreateAccountFormValues = {
-  seedPhrase: '',
+  seedPhrase: generateSeed(),
   password: '',
   passwordConfirmation: '',
   acceptTerms: false
