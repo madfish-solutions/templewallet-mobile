@@ -8,7 +8,7 @@ import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
-  addHdAccountAction,
+  addHdAccountAction, addTokenMetadataAction,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -77,4 +77,22 @@ export const walletsReducer = createReducer<WalletState>(walletInitialState, bui
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadataInterface, false, error)
   }));
+
+  builder.addCase(addTokenMetadataAction, (state, { payload: tokenMetadata }) => {
+    const slug = tokenMetadataSlug(tokenMetadata);
+
+    return {
+      ...updateCurrentAccountState(state, currentAccount => ({
+        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, {
+          slug,
+          balance: '0',
+          isShown: true
+        })
+      })),
+      tokensMetadata: {
+        ...state.tokensMetadata,
+        [slug]: tokenMetadata
+      }
+    };
+  });
 });

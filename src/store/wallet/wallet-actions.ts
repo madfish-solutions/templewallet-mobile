@@ -15,3 +15,5 @@ export const loadTokenMetadataActions =
   createActions<Pick<TokenMetadataInterface, 'id' | 'address'>, TokenMetadataInterface, string>(
     'assets/LOAD_TOKEN_METADATA'
   );
+
+export const addTokenMetadataAction = createAction<TokenMetadataInterface>('wallet/ADD_TOKEN_METADATA');
