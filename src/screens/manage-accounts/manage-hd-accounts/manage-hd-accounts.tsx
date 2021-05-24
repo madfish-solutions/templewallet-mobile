@@ -16,7 +16,7 @@ export const ManageHdAccounts = () => {
       {hdAccounts.map(account => (
         <Fragment key={account.publicKeyHash}>
           <ManageAccountItem account={account} />
-          <Divider height={formatSize(16)} />
+          <Divider size={formatSize(16)} />
         </Fragment>
       ))}
     </>

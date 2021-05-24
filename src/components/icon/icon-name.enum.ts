@@ -32,5 +32,6 @@ export enum IconNameEnum {
   Clock = 'Clock',
   Info = 'Info',
   ChevronRight = 'ChevronRight',
-  NoResult = 'NoResult'
+  NoResult = 'NoResult',
+  ExternalLink = 'ExternalLink'
 }

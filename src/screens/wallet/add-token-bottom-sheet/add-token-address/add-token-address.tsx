@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../../../components/buttons-container/buttons-container';
+import { ButtonsContainer } from '../../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../../components/divider/divider';
 import { Label } from '../../../../components/label/label';
 import { RadioButton } from '../../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
@@ -62,7 +62,7 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
               </>
             )}
 
-            <Divider height={formatSize(16)} />
+            <Divider size={formatSize(16)} />
           </View>
 
           <ButtonsContainer>

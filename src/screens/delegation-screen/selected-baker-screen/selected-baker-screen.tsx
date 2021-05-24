@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { ButtonDelegateSecondary } from '../../../components/button/button-large/button-delegate-secondary/button-delegate-secondary';
 import { Divider } from '../../../components/divider/divider';
+import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
@@ -11,6 +12,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { openUrl } from '../../../utils/linking.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
 interface Props {
@@ -21,6 +23,8 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
   const colors = useColors();
   const styles = useSelectedBakerScreenStyles();
 
+  const tzktUrl = `https://tzkt.io/${baker.address}`;
+
   return (
     <>
       <View style={styles.bakerCard}>
@@ -29,8 +33,10 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
             <RobotIcon seed={baker.address} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText}>{baker.name}</Text>
-              <View>
+              <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
+                <Divider size={formatSize(4)} />
+                <ExternalLinkButton url={tzktUrl} />
               </View>
             </View>
           </View>
@@ -38,18 +44,20 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
           <Text>REDELEGATE</Text>
         </View>
 
-        <Divider height={formatSize(8)} />
+        <Divider size={formatSize(8)} />
 
         <View style={styles.lowerContainer}>
-          <View style={styles.lowerContainerCell}>
+          <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
             <Text style={styles.cellValueText}>{baker.fee * 100}%</Text>
           </View>
-          <View style={styles.lowerContainerCell}>
+          <Divider size={formatSize(16)} />
+          <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>{baker.freeSpace.toFixed(2)} XTZ</Text>
           </View>
-          <View style={styles.lowerContainerCell}>
+          <Divider size={formatSize(16)} />
+          <View>
             <Text style={styles.cellTitle}>Cycles:</Text>
             <Text style={styles.cellValueText}>XXX</Text>
           </View>
@@ -66,7 +74,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
           title="View on TZKT block explorer"
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
-          onPress={() => null}
+          onPress={() => openUrl(tzktUrl)}
         />
 
         <Text style={styles.descriptionText}>

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../../components/buttons-container/buttons-container';
+import { ButtonsContainer } from '../../../../components/button/buttons-container/buttons-container';
 import { Label } from '../../../../components/label/label';
 import { EmptyFn } from '../../../../config/general';
 import { FormNumericInput } from '../../../../form/form-numeric-input';

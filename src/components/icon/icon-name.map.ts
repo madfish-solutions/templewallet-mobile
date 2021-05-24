@@ -9,6 +9,7 @@ import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
+import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import InfoIcon from './assets/info.svg';
@@ -71,5 +72,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
-  [IconNameEnum.NoResult]: NoResultIcon
+  [IconNameEnum.NoResult]: NoResultIcon,
+  [IconNameEnum.ExternalLink]: ExternalLinkIcon
 };

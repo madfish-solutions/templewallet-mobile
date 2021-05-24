@@ -28,11 +28,11 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     color: colors.black,
     marginBottom: formatSize(2)
   },
-  lowerContainer: {
+  actionsContainer: {
     flexDirection: 'row'
   },
-  lowerContainerCell: {
-    marginRight: formatSize(16)
+  lowerContainer: {
+    flexDirection: 'row'
   },
   cellTitle: {
     ...typography.caption11Regular,

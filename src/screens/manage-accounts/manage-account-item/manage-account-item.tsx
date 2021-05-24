@@ -33,7 +33,7 @@ export const ManageAccountItem: FC<Props> = ({ account }) => {
         <Switch value={true} disabled={true} />
       </View>
 
-      <Divider height={formatSize(16)} />
+      <Divider size={formatSize(16)} />
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>

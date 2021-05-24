@@ -56,7 +56,7 @@ export const Settings = () => {
         </TouchableOpacity>
       </View>
 
-      <Divider height={formatSize(16)} />
+      <Divider size={formatSize(16)} />
 
       <TextSegmentControl
         selectedIndex={segmentedControlValue2}
