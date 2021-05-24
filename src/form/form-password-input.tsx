@@ -18,7 +18,7 @@ export const FormPasswordInput: FC<Props> = ({ name }) => {
       <StyledPasswordInput
         value={field.value}
         isError={isError}
-        isShowCleanButton
+        isShowCleanButton={true}
         onBlur={field.onBlur(name)}
         onChangeText={field.onChange(name)}
       />

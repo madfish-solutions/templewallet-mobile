@@ -3,6 +3,7 @@ export enum IconNameEnum {
   ArrowDown = 'ArrowDown',
   Download = 'Download',
   PlusSquare = 'PlusSquare',
+  PlusCircle = 'PlusCircle',
   XCircle = 'XCircle',
   ShoppingCard = 'ShoppingCard',
   EyeClosedBold = 'EyeClosedBold',

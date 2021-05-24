@@ -3,13 +3,16 @@ import { BigNumber } from 'bignumber.js';
 
 import { initialAccountSettings } from '../../interfaces/account-settings.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
+import { emptyTokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
+  addTokenMetadataAction,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
+  loadTokenMetadataActions,
   setSelectedAccountAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
@@ -62,4 +65,35 @@ export const walletsReducer = createReducer<WalletState>(walletInitialState, bui
       }));
     }, state)
   );
+
+  builder.addCase(loadTokenMetadataActions.submit, state => ({
+    ...state,
+    addTokenSuggestion: createEntity(emptyTokenMetadataInterface, true)
+  }));
+  builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
+    ...state,
+    addTokenSuggestion: createEntity(tokenMetadata, false)
+  }));
+  builder.addCase(loadTokenMetadataActions.fail, (state, { payload: error }) => ({
+    ...state,
+    addTokenSuggestion: createEntity(emptyTokenMetadataInterface, false, error)
+  }));
+
+  builder.addCase(addTokenMetadataAction, (state, { payload: tokenMetadata }) => {
+    const slug = tokenMetadataSlug(tokenMetadata);
+
+    return {
+      ...updateCurrentAccountState(state, currentAccount => ({
+        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, {
+          slug,
+          balance: '0',
+          isShown: true
+        })
+      })),
+      tokensMetadata: {
+        ...state.tokensMetadata,
+        [slug]: tokenMetadata
+      }
+    };
+  });
 });

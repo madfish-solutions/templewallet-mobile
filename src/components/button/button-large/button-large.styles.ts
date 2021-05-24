@@ -5,6 +5,9 @@ import { ButtonStyleConfig } from '../button-style.config';
 export const useButtonLargeSharedStyleConfig = createUseStylesConfig<Omit<ButtonStyleConfig, 'activeColorConfig'>>(
   ({ colors, typography }) => ({
     containerStyle: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBase: 1,
       height: formatSize(50),
       borderRadius: formatSize(10),
       borderWidth: formatSize(2)

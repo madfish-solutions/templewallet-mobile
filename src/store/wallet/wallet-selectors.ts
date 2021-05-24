@@ -36,3 +36,5 @@ export const useTokenSelector = (slug: string): TokenInterface => {
 };
 
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
+
+export const useAddTokenSuggestion = () => useWalletSelector().addTokenSuggestion.data;
