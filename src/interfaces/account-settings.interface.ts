@@ -1,3 +1,4 @@
+import { createEntity } from '../store/create-entity';
 import { LoadableEntityState } from '../store/types';
 import { MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
@@ -9,6 +10,6 @@ export interface AccountSettingsInterface {
 }
 
 export const initialAccountSettings: AccountSettingsInterface = {
-  tezosBalance: { isLoading: false, data: '0' },
+  tezosBalance: createEntity('0'),
   tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isShown: true }))
 };

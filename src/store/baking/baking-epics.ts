@@ -4,8 +4,10 @@ import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { bakingBadApi } from '../../api.service';
+import { BakerInterface } from '../../interfaces/baker.interface';
 import { tezos$ } from '../../utils/network/network.util';
-import { loadSelectedBakerAddressActions } from './baking-actions';
+import { loadBakersListActions, loadSelectedBakerAddressActions } from './baking-actions';
 
 const loadSelectedBakerAddressEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -14,10 +16,21 @@ const loadSelectedBakerAddressEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([address, tezos]) =>
       from(tezos.rpc.getDelegate(address)).pipe(
-        map(bakerAddress => loadSelectedBakerAddressActions.success(bakerAddress)),
+        map(loadSelectedBakerAddressActions.success),
         catchError(err => of(loadSelectedBakerAddressActions.fail(err.message)))
       )
     )
   );
 
-export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic);
+const loadBakersListEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadBakersListActions.submit),
+    switchMap(() =>
+      from(bakingBadApi.get<BakerInterface[]>('/bakers')).pipe(
+        map(({ data }) => loadBakersListActions.success(data)),
+        catchError(err => of(loadBakersListActions.fail(err.message)))
+      )
+    )
+  );
+
+export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic, loadBakersListEpic);

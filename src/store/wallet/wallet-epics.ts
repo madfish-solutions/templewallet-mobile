@@ -7,7 +7,7 @@ import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { api } from '../../api.service';
+import { betterCallDevApi } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
@@ -22,9 +22,11 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     withLatestFrom(currentNetworkId$),
     switchMap(([address, currentNetworkId]) =>
       from(
-        api.get<GetAccountTokenBalancesResponseInterface>(`/account/${currentNetworkId}/${address}/token_balances`, {
-          params: { size: 10, offset: 0 }
-        })
+        betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
+          `/account/${currentNetworkId}/${address}/token_balances`,
+          {
+            params: { size: 10, offset: 0 }
+          })
       ).pipe(
         map(({ data }) => loadTokenBalancesActions.success(data.balances)),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
