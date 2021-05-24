@@ -62,8 +62,5 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     color: colors.black
   },
   descriptionLink: {
-    ...typography.caption11Semibold,
-    color: colors.blue,
-    textDecorationLine: 'underline'
   }
 }));

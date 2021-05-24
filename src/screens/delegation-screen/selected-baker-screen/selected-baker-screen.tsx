@@ -6,6 +6,7 @@ import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { TextLink } from '../../../components/text-link/text-link';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
@@ -79,8 +80,8 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
 
         <Text style={styles.descriptionText}>
           For monitoring your rewards - subscribe to notifications from the{' '}
-          <Text style={styles.descriptionLink}>Baking Bad bot</Text> in the telegram. The bot notifies users about
-          received payments, expected rewards, and if a Baker underpays or misses payments.
+          <TextLink url="https://t.me/baking_bad_bot">Baking Bad bot</TextLink> in the telegram. The bot notifies users
+          about received payments, expected rewards, and if a Baker underpays or misses payments.
         </Text>
       </ScreenContainer>
     </>

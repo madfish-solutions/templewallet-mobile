@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
+import { TextLink } from '../../../components/text-link/text-link';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { formatSize } from '../../../styles/format-size';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
@@ -24,13 +25,14 @@ export const AboutDelegationScreen = () => {
         <Divider size={formatSize(8)} />
         <Text style={styles.text}>Full guide “How to Delegate XTZ” by link below</Text>
         <Divider size={formatSize(8)} />
-        <Text style={styles.link}>
+        <TextLink url="https://www.madfish.solutions/blog/how-to-choose-a-delegate-with-the-temple-wallet/">
           https://www.madfish.solutions/blog/how-to-choose-a-delegate-with-the-temple-wallet/
-        </Text>
+        </TextLink>
         <Divider size={formatSize(8)} />
         <Text style={styles.text}>
-          In case you have any questions, write them in our communities: <Text style={styles.link}>telegram</Text> or{' '}
-          <Text style={styles.link}>discord</Text>.
+          In case you have any questions, write them in our communities:{' '}
+          <TextLink url="https://t.me/madfishdev">telegram</TextLink> or{' '}
+          <TextLink url="https://discord.gg/qFRZ8kVzkv">discord</TextLink>.
         </Text>
       </View>
 
