@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
+import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { formatSize } from '../../../styles/format-size';
@@ -27,12 +29,15 @@ export const AboutDelegationScreen = () => {
         </Text>
         <Divider height={formatSize(8)} />
         <Text style={styles.text}>
-          In case you have any questions, write them in our communities: <Text style={styles.link}>telegram</Text> or{' '}
+          In case you have any questions, write them in our communities: <Text
+          style={styles.link}>telegram</Text> or{' '}
           <Text style={styles.link}>discord</Text>.
         </Text>
       </View>
 
-      <Text>a</Text>
+      <ButtonsContainer>
+        <ButtonDelegatePrimary title="Delegate" onPress={() => null} />
+      </ButtonsContainer>
     </ScreenContainer>
   );
 };
