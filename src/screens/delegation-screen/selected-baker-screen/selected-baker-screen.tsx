@@ -2,14 +2,15 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonDelegateSecondary } from '../../../components/button/button-large/button-delegate-secondary/button-delegate-secondary';
+import { ButtonSmallDelegate } from '../../../components/button/button-small/button-small-delegate/button-small-delegate';
 import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TextLink } from '../../../components/text-link/text-link';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { TextLink } from '../../../components/text-link/text-link';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
@@ -42,7 +43,12 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
             </View>
           </View>
 
-          <Text>REDELEGATE</Text>
+          <ButtonSmallDelegate
+            title="REDELEGATE"
+            marginTop={formatSize(8)}
+            marginRight={formatSize(8)}
+            onPress={() => null}
+          />
         </View>
 
         <Divider size={formatSize(8)} />
