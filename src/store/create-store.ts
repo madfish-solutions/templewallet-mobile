@@ -6,12 +6,15 @@ import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObser
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { catchError } from 'rxjs/operators';
 
-import { displaySettingsReducer } from './display-settings/display-settings-reducer';
+import { bakingReducers } from './baking/baking-reducers';
+import { BakingRootState } from './baking/baking-state';
+import { displaySettingsReducers } from './display-settings/display-settings-reducers';
+import { DisplaySettingsRootState } from './display-settings/display-settings-state';
 import { rootStateReducer } from './root-state.reducers';
-import { walletsReducer } from './wallet/wallet-reducers';
+import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState;
+type RootState = WalletRootState & BakingRootState & DisplaySettingsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -27,9 +30,10 @@ const persistConfig = {
   storage: AsyncStorage
 };
 
-const rootReducer = rootStateReducer({
-  wallet: walletsReducer,
-  displaySettings: displaySettingsReducer
+const rootReducer = rootStateReducer<RootState>({
+  wallet: walletReducers,
+  baking: bakingReducers,
+  displaySettings: displaySettingsReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

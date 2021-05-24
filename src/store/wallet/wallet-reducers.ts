@@ -18,7 +18,7 @@ import {
 import { walletInitialState, WalletState } from './wallet-state';
 import { pushOrUpdateAccountTokensList, tokenBalanceMetadata, updateCurrentAccountState } from './wallet-state.utils';
 
-export const walletsReducer = createReducer<WalletState>(walletInitialState, builder => {
+export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountSettings }]

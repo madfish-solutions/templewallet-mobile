@@ -10,7 +10,7 @@ export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typogra
     color: colors.black
   },
   link: {
-    ...typography.headline4Bold11,
+    ...typography.caption11Semibold,
     color: colors.blue,
     textDecorationLine: 'underline'
   }
