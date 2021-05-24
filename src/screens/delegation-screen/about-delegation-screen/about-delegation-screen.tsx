@@ -29,8 +29,7 @@ export const AboutDelegationScreen = () => {
         </Text>
         <Divider height={formatSize(8)} />
         <Text style={styles.text}>
-          In case you have any questions, write them in our communities: <Text
-          style={styles.link}>telegram</Text> or{' '}
+          In case you have any questions, write them in our communities: <Text style={styles.link}>telegram</Text> or{' '}
           <Text style={styles.link}>discord</Text>.
         </Text>
       </View>

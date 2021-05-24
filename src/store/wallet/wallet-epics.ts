@@ -26,7 +26,8 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
           `/account/${currentNetworkId}/${address}/token_balances`,
           {
             params: { size: 10, offset: 0 }
-          })
+          }
+        )
       ).pipe(
         map(({ data }) => loadTokenBalancesActions.success(data.balances)),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))

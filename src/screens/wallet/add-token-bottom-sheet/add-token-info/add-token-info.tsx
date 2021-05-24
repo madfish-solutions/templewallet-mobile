@@ -1,6 +1,5 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
