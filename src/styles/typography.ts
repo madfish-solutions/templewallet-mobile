@@ -78,6 +78,11 @@ export const typography = {
     fontFamily: FontsEnum.interBold,
     fontSize: formatSize(22)
   },
+  // TODO: rename this
+  headline4Bold11: {
+    fontFamily: FontsEnum.interBold,
+    fontSize: formatSize(11)
+  },
   headline4Regular22: {
     fontFamily: FontsEnum.interRegular,
     fontSize: formatSize(22)
