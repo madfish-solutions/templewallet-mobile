@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from '../../../../components/buttons-container/buttons-container';
 import { Label } from '../../../../components/label/label';
 import { EmptyFn } from '../../../../config/general';
 import { FormNumericInput } from '../../../../form/form-numeric-input';
@@ -14,7 +15,6 @@ import { useAddTokenSuggestion } from '../../../../store/wallet/wallet-selectors
 import { formatSize } from '../../../../styles/format-size';
 import { showSuccessToast } from '../../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
-import { AddTokenInfoStyles } from './add-token-info.styles';
 
 interface Props {
   onCancelButtonPress: EmptyFn;
@@ -54,10 +54,10 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
           <Label label="Icon URL" description="Image URL for token logo." />
           <FormTextInput name="iconUrl" />
 
-          <View style={AddTokenInfoStyles.buttonsContainer}>
+          <ButtonsContainer>
             <ButtonLargeSecondary title="Cancel" marginRight={formatSize(16)} onPress={onCancelButtonPress} />
             <ButtonLargePrimary title="Confirm" disabled={!isValid} onPress={submitForm} />
-          </View>
+          </ButtonsContainer>
         </>
       )}
     </Formik>

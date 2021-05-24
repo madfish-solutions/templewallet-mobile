@@ -5,17 +5,20 @@ import { Text } from 'react-native';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ScreensEnum } from '../../../navigator/screens.enum';
+import { useNavigation } from '../../../navigator/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { useTezosTokenHistoryStyles } from './tezos-token-history.styles';
 
 export const TezosTokenHistory = () => {
-  const styles = useTezosTokenHistoryStyles();
   const colors = useColors();
+  const styles = useTezosTokenHistoryStyles();
+  const { navigate } = useNavigation();
 
   return (
     <>
-      <TouchableOpacity style={styles.delegateContainer}>
+      <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
         <Text style={styles.delegateText}>
           Delegate your XTZ and earn up to <Text style={styles.apyText}>8% APY</Text>
         </Text>

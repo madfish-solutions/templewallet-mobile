@@ -25,7 +25,7 @@ export const EnterPassword = () => {
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
+    <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <WelcomeHeader />
       <View style={styles.imageView}>
         <WelcomeLogo />

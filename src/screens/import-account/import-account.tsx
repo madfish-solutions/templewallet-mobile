@@ -24,7 +24,7 @@ export const ImportAccount = () => {
   const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
 
   return (
-    <ScreenContainer isFullScreenMode>
+    <ScreenContainer isFullScreenMode={true}>
       <Formik
         initialValues={importAccountInitialValues}
         validationSchema={importAccountValidationSchema}

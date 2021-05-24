@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-export const AddTokenInfoStyles = StyleSheet.create({
-  buttonsContainer: {
+export const ButtonsContainerStyles = StyleSheet.create({
+  container: {
     flexDirection: 'row'
   }
 });

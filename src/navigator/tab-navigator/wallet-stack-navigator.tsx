@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
+import { DelegationScreen } from '../../screens/delegation-screen/delegation-screen';
 import { TezosTokenScreen } from '../../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../../screens/token-screen/token-screen';
 import { Wallet } from '../../screens/wallet/wallet';
@@ -17,6 +18,7 @@ export const WalletStackNavigator = () => {
       <WalletStack.Screen name={ScreensEnum.Wallet} component={Wallet} options={{ headerShown: false }} />
       <WalletStack.Screen name={ScreensEnum.TezosTokenScreen} component={TezosTokenScreen} />
       <WalletStack.Screen name={ScreensEnum.TokenScreen} component={TokenScreen} />
+      <WalletStack.Screen name={ScreensEnum.Delegation} component={DelegationScreen} />
     </WalletStack.Navigator>
   );
 };

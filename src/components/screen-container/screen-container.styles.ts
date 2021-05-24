@@ -10,6 +10,7 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
     paddingHorizontal: formatSize(16)
   },
   fullScreenMode: {
+    flexGrow: 1,
     justifyContent: 'space-between'
   }
 }));

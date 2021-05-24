@@ -1,25 +1,23 @@
-import { HeaderHeightContext } from '@react-navigation/stack';
-import React, { FC, useContext } from 'react';
-import { ScrollView, useWindowDimensions } from 'react-native';
+import React, { FC } from 'react';
+import { ScrollView, StyleProp, ViewStyle } from 'react-native';
 
 import { conditionalStyle } from '../../utils/conditional-style';
 import { useScreenContainerStyles } from './screen-container.styles';
 
 interface Props {
   isFullScreenMode?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, children }) => {
+export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, children }) => {
   const styles = useScreenContainerStyles();
-  const headerHeight = useContext(HeaderHeightContext);
-  const height = useWindowDimensions().height - (headerHeight || 0);
 
   return (
     <ScrollView
-      style={styles.scrollView}
+      style={[styles.scrollView, style]}
       contentContainerStyle={[
         styles.scrollViewContentContainer,
-        conditionalStyle(isFullScreenMode, { ...styles.fullScreenMode, height })
+        conditionalStyle(isFullScreenMode, styles.fullScreenMode)
       ]}>
       {children}
     </ScrollView>

@@ -25,9 +25,5 @@ export const useModalBottomSheetStyles = createUseStyles(({ colors, typography }
   title: {
     ...typography.body17Semibold,
     color: colors.black
-  },
-  contentContainer: {
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16)
   }
 }));
