@@ -49,20 +49,21 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
             <Label label="Token type" />
             <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
 
-          <Label label="Address" description="Address of deployed token contract." />
-          <FormTextInput name="address" />
+            <Label label="Address" description="Address of deployed token contract." />
+            <FormTextInput name="address" />
 
-          {values.type === TokenTypeEnum.FA_2 && (
-            <>
-              <Label
-                label="Token ID"
-                description="A non negative integer number that identifies the token inside FA2 contract"
-              />
-              <FormNumericInput name="id" />
-            </>
-          )}
+            {values.type === TokenTypeEnum.FA_2 && (
+              <>
+                <Label
+                  label="Token ID"
+                  description="A non negative integer number that identifies the token inside FA2 contract"
+                />
+                <FormNumericInput name="id" />
+              </>
+            )}
 
-          <Divider height={formatSize(16)} />
+            <Divider height={formatSize(16)} />
+          </View>
 
           <ButtonsContainer>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />

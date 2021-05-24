@@ -6,7 +6,7 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { loadBakersListActions, loadSelectedBakerAddressActions } from '../../store/baking/baking-actions';
+import { loadBakersListActions, loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { useSelectedAccountSelector, useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
@@ -19,7 +19,7 @@ export const TezosTokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
 
   useEffect(() => {
-    dispatch(loadSelectedBakerAddressActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadBakersListActions.submit());
   }, [selectedAccount.publicKeyHash]);
 

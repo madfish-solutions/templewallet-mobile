@@ -1,21 +1,22 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { emptyBaker } from '../../interfaces/baker.interface';
 import { createEntity } from '../create-entity';
-import { loadBakersListActions, loadSelectedBakerAddressActions } from './baking-actions';
+import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 import { bakingInitialState, BakingState } from './baking-state';
 
 export const bakingReducers = createReducer<BakingState>(bakingInitialState, builder => {
-  builder.addCase(loadSelectedBakerAddressActions.submit, state => ({
+  builder.addCase(loadSelectedBakerActions.submit, state => ({
     ...state,
-    selectedBakerAddress: createEntity(null, true)
+    selectedBaker: createEntity(emptyBaker, true)
   }));
-  builder.addCase(loadSelectedBakerAddressActions.success, (state, { payload: address }) => ({
+  builder.addCase(loadSelectedBakerActions.success, (state, { payload: baker }) => ({
     ...state,
-    selectedBakerAddress: createEntity(address, false)
+    selectedBaker: createEntity(baker, false)
   }));
-  builder.addCase(loadSelectedBakerAddressActions.fail, (state, { payload: error }) => ({
+  builder.addCase(loadSelectedBakerActions.fail, (state, { payload: error }) => ({
     ...state,
-    selectedBakerAddress: createEntity(null, false, error)
+    selectedBaker: createEntity(emptyBaker, false, error)
   }));
 
   builder.addCase(loadBakersListActions.submit, state => ({
