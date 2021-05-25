@@ -53,7 +53,10 @@ export const SegmentedControl = <T extends unknown>({
       <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
 
       {values.map((item, index) => (
-        <TouchableOpacity key={index} style={styles.itemContainer} onPress={() => onChange(index)}>
+        <TouchableOpacity
+          key={index}
+          style={[styles.itemContainer, { width: tileWidth }]}
+          onPress={() => onChange(index)}>
           {renderValue({ item, isSelected: index === selectedIndex })}
         </TouchableOpacity>
       ))}
