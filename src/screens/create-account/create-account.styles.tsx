@@ -1,12 +1,16 @@
-import { StyleSheet } from 'react-native';
-
+import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const CreateAccountStyles = StyleSheet.create({
+export const useCreateAccountStyles = createUseStyles(({ colors, typography }) => ({
   checkboxContainer: {
     flexDirection: 'row',
     alignContent: 'center',
-    paddingLeft: formatSize(5),
-    marginBottom: formatSize(6)
+    marginLeft: formatSize(4),
+    marginBottom: formatSize(8)
+  },
+  checkboxText: {
+    ...typography.body15Semibold,
+    color: colors.black,
+    marginLeft: formatSize(10)
   }
-});
+}));

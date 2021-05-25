@@ -1,8 +1,9 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -16,10 +17,11 @@ import {
   createAccountInitialValues,
   createAccountValidationSchema
 } from './create-account.form';
-import { CreateAccountStyles } from './create-account.styles';
+import { useCreateAccountStyles } from './create-account.styles';
 
 export const CreateAccount = () => {
   const { importWallet } = useShelter();
+  const styles = useCreateAccountStyles();
 
   const onSubmit = (data: CreateAccountFormValues) => importWallet(data.seedPhrase, data.password);
 
@@ -46,9 +48,11 @@ export const CreateAccount = () => {
             </View>
 
             <View>
-              <View style={CreateAccountStyles.checkboxContainer}>
+              <Divider />
+
+              <View style={styles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" />
-                <Label label="I made Seed Phrase backup" />
+                <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </View>
               <Label
                 description="And accept the risks that if I lose the phrase,
