@@ -4,6 +4,7 @@ import { TextInput, TextInputProps, View } from 'react-native';
 import { emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { isString } from '../../utils/is-string';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
@@ -46,13 +47,10 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
           onChangeText={onChangeText}
           {...props}
         />
-        {isShowCleanButton && !!value && (
-          <TouchableIcon
-            size={formatSize(16)}
-            name={IconNameEnum.XCircle}
-            style={styles.cleanButton}
-            onPress={() => onChangeText('')}
-          />
+        {isShowCleanButton && isString(value) && (
+          <View style={styles.cleanButton}>
+            <TouchableIcon size={formatSize(16)} name={IconNameEnum.XCircle} onPress={() => onChangeText('')} />
+          </View>
         )}
       </View>
     );

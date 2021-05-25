@@ -1,4 +1,4 @@
-import { BottomSheetBackdropProps, TouchableOpacity } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import React, { FC, useMemo, useState } from 'react';
 import Animated, { call, Extrapolate, interpolate } from 'react-native-reanimated';
 
@@ -26,9 +26,5 @@ export const BottomSheetBackdrop: FC<Props> = ({ animatedIndex, style, onPress }
 
   Animated.useCode(() => call([opacity], ([val]) => setIsOpen(val !== 0)), [opacity]);
 
-  return isOpen ? (
-    <Animated.View style={containerStyle}>
-      <TouchableOpacity style={styles.touchable} onPress={onPress} />
-    </Animated.View>
-  ) : null;
+  return isOpen ? <Animated.View style={containerStyle} onTouchEnd={onPress} /> : null;
 };

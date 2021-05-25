@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
@@ -7,8 +6,8 @@ import { ReceiveBottomSheet } from '../../screens/wallet/receive-bottom-sheet/re
 import { SendBottomSheet } from '../../screens/wallet/send-bottom-sheet/send-bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { ButtonMedium } from '../button/button-medium/button-medium';
+import { ButtonsContainer } from '../buttons-container/buttons-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { HeaderCardActionButtonsStyles } from './header-card-action-buttons.styles';
 
 export const HeaderCardActionButtons = () => {
   const receiveBottomSheetController = useBottomSheetController();
@@ -16,7 +15,7 @@ export const HeaderCardActionButtons = () => {
 
   return (
     <>
-      <View style={HeaderCardActionButtonsStyles.container}>
+      <ButtonsContainer>
         <ButtonMedium
           title="RECEIVE"
           iconName={IconNameEnum.ArrowDown}
@@ -30,7 +29,7 @@ export const HeaderCardActionButtons = () => {
           onPress={sendBottomSheetController.open}
         />
         <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
-      </View>
+      </ButtonsContainer>
 
       <ReceiveBottomSheet controller={receiveBottomSheetController} />
       <SendBottomSheet controller={sendBottomSheetController} />

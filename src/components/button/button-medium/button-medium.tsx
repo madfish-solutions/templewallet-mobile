@@ -13,5 +13,5 @@ interface Props extends ButtonSharedProps {
 export const ButtonMedium: FC<Props> = props => {
   const styleConfig = useButtonMediumStyleConfig();
 
-  return <Button {...props} styleConfig={styleConfig} />;
+  return <Button {...props} styleConfig={styleConfig} isFullWidth={true} />;
 };

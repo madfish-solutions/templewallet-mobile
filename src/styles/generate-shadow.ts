@@ -32,6 +32,7 @@ const androidDepthPenumbra = [
 
 const interpolate = (i: number, a: number, b: number, a2: number, b2: number) => ((i - a) * (b2 - a2)) / (b - a) + a2;
 
+// TODO: figure out how do elevation works on Android && fix its behaviour
 export const generateShadow = (depth: number, shadowColor: string) => {
   const s = androidDepthPenumbra[depth];
   const y = s.y === 1 ? 1 : Math.floor(s.y * 0.5);
