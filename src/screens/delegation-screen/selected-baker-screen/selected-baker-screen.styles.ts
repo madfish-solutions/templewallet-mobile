@@ -60,7 +60,5 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   descriptionText: {
     ...typography.caption11Regular,
     color: colors.black
-  },
-  descriptionLink: {
   }
 }));

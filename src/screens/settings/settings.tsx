@@ -30,15 +30,13 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const { revealSeedPhrase } = useShelter();
 
-  const [segmentedControlValue2, setSegmentedControlValue2] = useState(1);
-
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
-  const isDarkTheme = theme === ThemesEnum.dark;
+  const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
-  const handleSwitchValueChange = (setDarkTheme: boolean) =>
-    dispatch(changeTheme(setDarkTheme ? ThemesEnum.dark : ThemesEnum.light));
+  const handleThemeSegmentControlChange = (newThemeIndex: number) =>
+    dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   return (
     <ScreenContainer>
@@ -58,17 +56,14 @@ export const Settings = () => {
 
       <Divider size={formatSize(16)} />
 
-      <TextSegmentControl
-        selectedIndex={segmentedControlValue2}
-        values={['Light', 'Dark', 'System']}
-        width={formatSize(200)}
-        onChange={setSegmentedControlValue2}
-      />
-      <Divider />
-
       <View style={styles.darkAppearanceContainer}>
         <Label label="Dark Appearance" description="Manage the appearance of the app" />
-        <Switch onValueChange={handleSwitchValueChange} value={isDarkTheme} />
+        <TextSegmentControl
+          selectedIndex={selectedThemeIndex}
+          values={['Light', 'Dark']}
+          width={formatSize(120)}
+          onChange={handleThemeSegmentControlChange}
+        />
       </View>
       <Divider />
 

@@ -4,8 +4,8 @@ import { Text, View } from 'react-native';
 import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
-import { TextLink } from '../../../components/text-link/text-link';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { TextLink } from '../../../components/text-link/text-link';
 import { formatSize } from '../../../styles/format-size';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 
