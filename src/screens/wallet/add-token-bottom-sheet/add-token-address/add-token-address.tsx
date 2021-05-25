@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../../components/divider/divider';
 import { Label } from '../../../../components/label/label';
@@ -22,6 +23,7 @@ import {
 } from './add-token-address.form';
 
 interface Props {
+  onCloseButtonPress: EmptyFn;
   onFormSubmitted: EmptyFn;
 }
 
@@ -30,7 +32,7 @@ const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
   { value: TokenTypeEnum.FA_2, label: 'FA 2' }
 ];
 
-export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
+export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
@@ -66,6 +68,8 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
           </View>
 
           <ButtonsContainer>
+            <ButtonLargeSecondary title="Close" onPress={onCloseButtonPress} />
+            <Divider size={formatSize(16)} />
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </ButtonsContainer>
         </>

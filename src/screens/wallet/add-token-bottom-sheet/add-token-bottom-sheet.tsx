@@ -10,7 +10,9 @@ export const AddTokenBottomSheet: FC<BottomSheetControllerProps> = ({ controller
 
   return (
     <ModalBottomSheet title="Add Token" controller={controller}>
-      {innerScreenIndex === 0 && <AddTokenAddress onFormSubmitted={() => setInnerScreenIndex(1)} />}
+      {innerScreenIndex === 0 && (
+        <AddTokenAddress onCloseButtonPress={controller.close} onFormSubmitted={() => setInnerScreenIndex(1)} />
+      )}
       {innerScreenIndex === 1 && (
         <AddTokenInfo onCancelButtonPress={() => setInnerScreenIndex(0)} onFormSubmitted={controller.close} />
       )}

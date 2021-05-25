@@ -20,13 +20,11 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     alignItems: 'center'
   },
   bakerContainerData: {
-    marginLeft: formatSize(10),
     justifyContent: 'space-between'
   },
   nameText: {
     ...typography.caption13Semibold,
-    color: colors.black,
-    marginBottom: formatSize(2)
+    color: colors.black
   },
   actionsContainer: {
     flexDirection: 'row'
@@ -53,8 +51,7 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   },
   rewardsText: {
     ...typography.body15Semibold,
-    color: colors.gray1,
-    marginRight: formatSize(6)
+    color: colors.gray1
   },
 
   descriptionText: {

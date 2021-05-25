@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
@@ -6,10 +6,15 @@ import { ButtonsContainer } from '../../../components/button/buttons-container/b
 import { Divider } from '../../../components/divider/divider';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
+import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 
-export const AboutDelegationScreen = () => {
+interface Props {
+  onDelegatePress: EmptyFn;
+}
+
+export const AboutDelegationScreen: FC<Props> = ({ onDelegatePress }) => {
   const styles = useAboutDelegationScreenStyles();
 
   return (
@@ -37,7 +42,7 @@ export const AboutDelegationScreen = () => {
       </View>
 
       <ButtonsContainer>
-        <ButtonDelegatePrimary title="Delegate" onPress={() => null} />
+        <ButtonDelegatePrimary title="Delegate" onPress={onDelegatePress} />
       </ButtonsContainer>
     </ScreenContainer>
   );

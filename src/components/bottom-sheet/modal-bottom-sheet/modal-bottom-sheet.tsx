@@ -25,7 +25,9 @@ export const ModalBottomSheet: FC<Props> = ({ title, controller, children }) => 
           <Text style={styles.title}>{title}</Text>
           <TouchableIcon name={IconNameEnum.Close} size={closeIconSize} onPress={controller.close} />
         </View>
-        <ScreenContainer isFullScreenMode={true}>{children}</ScreenContainer>
+        {/*<ScreenContainer isFullScreenMode={false}>*/}
+          {children}
+        {/*</ScreenContainer>*/}
       </View>
     </BottomSheet>
   );

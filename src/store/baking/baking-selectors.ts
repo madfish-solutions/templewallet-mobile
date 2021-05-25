@@ -12,4 +12,4 @@ export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
   return [selectedBaker, isBakerSelected];
 };
 
-export const useBakersListSelector = () => useBakingSelector().bakersList;
+export const useBakersListSelector = () => useBakingSelector().bakersList.data;
