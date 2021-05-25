@@ -19,6 +19,7 @@ import {
   enterPasswordValidationSchema
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
+import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();

@@ -50,7 +50,7 @@ export const SegmentedControl = <T extends unknown>({
 
   return (
     <View style={[styles.container, { width }]} onLayout={handleLayout}>
-      <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
+      <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }], zIndex: 2 }]} />
 
       <View style={styles.contentContainer}>
         {values.map((item, index) => (
