@@ -1,8 +1,9 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -18,7 +19,6 @@ import {
   enterPasswordValidationSchema
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
-import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
