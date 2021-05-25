@@ -9,6 +9,7 @@ export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
     borderColor: colors.white,
     borderWidth: formatSize(2),
     borderRadius: formatSize(8),
+    margin: formatSize(2),
     ...generateShadow(1, colors.black)
   },
   rootMargin: {
