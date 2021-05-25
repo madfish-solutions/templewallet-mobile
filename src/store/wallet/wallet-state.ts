@@ -2,6 +2,7 @@ import { WalletAccountInterface } from '../../interfaces/wallet-account.interfac
 import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadataInterface, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
+import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface WalletState {
@@ -21,10 +22,7 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: {
-    isLoading: false,
-    data: emptyTokenMetadataInterface
-  }
+  addTokenSuggestion: createEntity(emptyTokenMetadataInterface)
 };
 
 export interface WalletRootState {

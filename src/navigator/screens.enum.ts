@@ -7,6 +7,7 @@ export enum ScreensEnum {
   Wallet = 'Wallet',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
+  Delegation = 'Delegation',
   DApps = 'DApps',
   Swap = 'Swap',
   Settings = 'Settings',
@@ -18,6 +19,7 @@ export type WalletStackScreensParamList = {
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { slug: string };
+  [ScreensEnum.Delegation]: undefined;
 };
 
 export type DAppsStackScreensParamList = {

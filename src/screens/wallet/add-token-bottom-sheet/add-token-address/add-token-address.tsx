@@ -1,8 +1,10 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from '../../../../components/buttons-container/buttons-container';
 import { Divider } from '../../../../components/divider/divider';
 import { Label } from '../../../../components/label/label';
 import { RadioButton } from '../../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
@@ -43,25 +45,29 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
       onSubmit={onSubmit}>
       {({ values, submitForm, isValid }) => (
         <>
-          <Label label="Token type" />
-          <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
+          <View>
+            <Label label="Token type" />
+            <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
 
-          <Label label="Address" description="Address of deployed token contract." />
-          <FormTextInput name="address" />
+            <Label label="Address" description="Address of deployed token contract." />
+            <FormTextInput name="address" />
 
-          {values.type === TokenTypeEnum.FA_2 && (
-            <>
-              <Label
-                label="Token ID"
-                description="A non negative integer number that identifies the token inside FA2 contract"
-              />
-              <FormNumericInput name="id" />
-            </>
-          )}
+            {values.type === TokenTypeEnum.FA_2 && (
+              <>
+                <Label
+                  label="Token ID"
+                  description="A non negative integer number that identifies the token inside FA2 contract"
+                />
+                <FormNumericInput name="id" />
+              </>
+            )}
 
-          <Divider height={formatSize(16)} />
+            <Divider height={formatSize(16)} />
+          </View>
 
-          <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+          <ButtonsContainer>
+            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+          </ButtonsContainer>
         </>
       )}
     </Formik>

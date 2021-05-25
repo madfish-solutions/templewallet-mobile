@@ -1,3 +1,4 @@
+import { createEntity } from '../store/create-entity';
 import { AccountSettingsInterface } from './account-settings.interface';
 import { AccountInterface } from './account.interface';
 
@@ -7,6 +8,6 @@ export const emptyWalletAccount: WalletAccountInterface = {
   name: '',
   publicKey: '',
   publicKeyHash: 'empty_public_key_hash',
-  tezosBalance: { isLoading: false, data: '0' },
+  tezosBalance: createEntity('0'),
   tokensList: []
 };

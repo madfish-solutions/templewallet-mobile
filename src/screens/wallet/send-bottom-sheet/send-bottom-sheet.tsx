@@ -1,12 +1,12 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { View } from 'react-native';
 
 import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
 import { ModalBottomSheet } from '../../../components/bottom-sheet/modal-bottom-sheet/modal-bottom-sheet';
 import { BottomSheetControllerProps } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { step } from '../../../config/styles';
@@ -16,7 +16,6 @@ import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { SendBottomSheetFormValues, sendBottomSheetValidationSchema } from './send-bottom-sheet.form';
-import { SendBottomSheetStyles } from './send-bottom-sheet.styles';
 
 export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) => {
   const { send } = useShelter();
@@ -58,10 +57,10 @@ export const SendBottomSheet: FC<BottomSheetControllerProps> = ({ controller }) 
             <FormInputSlider name="gasFee" />
             <Divider />
 
-            <View style={SendBottomSheetStyles.buttonsContainer}>
+            <ButtonsContainer>
               <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={controller.close} />
               <ButtonLargePrimary title="Send" onPress={submitForm} />
-            </View>
+            </ButtonsContainer>
           </>
         )}
       </Formik>
