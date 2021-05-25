@@ -35,7 +35,7 @@ export const EnterPassword = () => {
         validationSchema={enterPasswordValidationSchema}
         onSubmit={onSubmit}>
         {({ submitForm, isValid }) => (
-          <KeyboardAvoidingView style={styles.formikView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <KeyboardAvoidingView style={styles.formikView} behavior="padding">
             <Label label="Password" description="A password is used to protect the wallet." />
             <FormPasswordInput name="password" />
 
