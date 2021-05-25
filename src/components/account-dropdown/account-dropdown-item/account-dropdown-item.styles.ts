@@ -6,7 +6,7 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     flexDirection: 'row'
   },
   infoContainer: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'space-between',
     marginLeft: formatSize(10)
   },
