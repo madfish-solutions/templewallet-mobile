@@ -5,7 +5,8 @@ import { generateShadow } from '../../../styles/generate-shadow';
 export const useButtonSmallStyles = createUseStylesConfig(({ colors, typography }) => ({
   containerStyle: {
     ...generateShadow(1, colors.black),
-    flex: 0,
+    flexShrink: 0,
+    flexGrow: 0,
     paddingHorizontal: formatSize(8),
     height: formatSize(26),
     borderRadius: formatSize(17)

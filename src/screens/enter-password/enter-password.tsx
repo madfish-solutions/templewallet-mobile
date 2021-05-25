@@ -18,6 +18,7 @@ import {
   enterPasswordValidationSchema
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
+import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
@@ -39,13 +40,15 @@ export const EnterPassword = () => {
             <Label label="Password" description="A password is used to protect the wallet." />
             <FormPasswordInput name="password" />
 
-            <ButtonLargePrimary
-              title="Unlock"
-              disabled={!isValid}
-              marginTop={formatSize(8)}
-              marginBottom={formatSize(24)}
-              onPress={submitForm}
-            />
+            <ButtonsContainer>
+              <ButtonLargePrimary
+                title="Unlock"
+                disabled={!isValid}
+                marginTop={formatSize(8)}
+                marginBottom={formatSize(24)}
+                onPress={submitForm}
+              />
+            </ButtonsContainer>
           </KeyboardAvoidingView>
         )}
       </Formik>

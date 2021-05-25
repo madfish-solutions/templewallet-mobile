@@ -1,7 +1,10 @@
 import { StyleSheet } from 'react-native';
 
 export const ButtonStyles = StyleSheet.create({
-  containerStyle: {
+  container: {
+    flexGrow: 1
+  },
+  touchableOpacity: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
