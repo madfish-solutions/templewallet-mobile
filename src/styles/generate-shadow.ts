@@ -2,7 +2,6 @@
  * Data taken from
  * https://ethercreative.github.io/react-native-shadow-generator/
  **/
-import { isIOS } from '../config/system';
 
 const androidDepthPenumbra = [
   { x: 0, y: 1, blur: 1, spread: 0 },
@@ -38,17 +37,15 @@ export const generateShadow = (depth: number, shadowColor: string) => {
   const s = androidDepthPenumbra[depth];
   const y = s.y === 1 ? 1 : Math.floor(s.y * 0.5);
 
-  return isIOS
-    ? {
-        shadowColor,
-        shadowOffset: {
-          width: 0,
-          height: y
-        },
-        shadowOpacity: +interpolate(depth, 1, 24, 0.2, 0.6).toFixed(2),
-        shadowRadius: +interpolate(s.blur, 1, 38, 1, 16).toFixed(2),
+  return {
+    shadowColor,
+    shadowOffset: {
+      width: 0,
+      height: y
+    },
+    shadowOpacity: +interpolate(depth, 1, 24, 0.2, 0.6).toFixed(2),
+    shadowRadius: +interpolate(s.blur, 1, 38, 1, 16).toFixed(2),
 
-        elevation: depth + 1
-      }
-    : {};
+    elevation: depth + 1
+  };
 };

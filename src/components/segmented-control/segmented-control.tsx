@@ -50,16 +50,18 @@ export const SegmentedControl = <T extends unknown>({
 
   return (
     <View style={[styles.container, { width }]} onLayout={handleLayout}>
-      <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
+      <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }], zIndex: 2 }]} />
 
-      {values.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[styles.itemContainer, { width: tileWidth }]}
-          onPress={() => onChange(index)}>
-          {renderValue({ item, isSelected: index === selectedIndex })}
-        </TouchableOpacity>
-      ))}
+      <View style={styles.contentContainer}>
+        {values.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.itemContainer, { width: tileWidth }]}
+            onPress={() => onChange(index)}>
+            {renderValue({ item, isSelected: index === selectedIndex })}
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 };
