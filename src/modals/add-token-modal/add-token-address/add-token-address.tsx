@@ -15,7 +15,6 @@ import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
-import { formatSize } from '../../../styles/format-size';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,

@@ -61,7 +61,6 @@ export const SendModal: FC = () => {
             <Divider />
           </View>
 
-
           <ButtonsContainer>
             <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={goBack} />
             <ButtonLargePrimary title="Send" onPress={submitForm} />

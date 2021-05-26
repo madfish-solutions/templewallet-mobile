@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
+import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
@@ -16,7 +17,6 @@ import { useAddTokenSuggestion } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
-import { Divider } from '../../../components/divider/divider';
 
 interface Props {
   onCancelButtonPress: EmptyFn;
