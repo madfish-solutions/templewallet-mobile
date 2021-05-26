@@ -3,18 +3,18 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../../../components/buttons-container/buttons-container';
-import { Divider } from '../../../../components/divider/divider';
-import { Label } from '../../../../components/label/label';
-import { RadioButton } from '../../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
-import { EmptyFn } from '../../../../config/general';
-import { FormNumericInput } from '../../../../form/form-numeric-input';
-import { FormRadioButtonsGroup } from '../../../../form/form-radio-buttons-group';
-import { FormTextInput } from '../../../../form/form-text-input';
-import { TokenTypeEnum } from '../../../../interfaces/token-type.enum';
-import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
-import { formatSize } from '../../../../styles/format-size';
+import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
+import { Divider } from '../../../components/divider/divider';
+import { Label } from '../../../components/label/label';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { EmptyFn } from '../../../config/general';
+import { FormNumericInput } from '../../../form/form-numeric-input';
+import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
+import { FormTextInput } from '../../../form/form-text-input';
+import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
+import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
@@ -44,7 +44,7 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
       validationSchema={addTokenAddressFormValidationSchema}
       onSubmit={onSubmit}>
       {({ values, submitForm, isValid }) => (
-        <>
+        <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Token type" />
             <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
@@ -62,13 +62,13 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
               </>
             )}
 
-            <Divider height={formatSize(16)} />
+            <Divider />
           </View>
 
           <ButtonsContainer>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </ButtonsContainer>
-        </>
+        </ScreenContainer>
       )}
     </Formik>
   );

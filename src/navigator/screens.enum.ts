@@ -2,49 +2,54 @@ export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
   CreateAccount = 'CreateAccount',
-  EnterPassword = 'EnterPassword',
-  ConfirmationWindow = 'ConfirmationWindow',
+
+  /** Wallet stack **/
   Wallet = 'Wallet',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
+
+  /** DApps stack **/
   DApps = 'DApps',
+
+  /** Swap stack **/
   Swap = 'Swap',
+
+  /** Settings stack **/
   Settings = 'Settings',
   CreateHdAccount = 'CreateHdAccount',
   ManageAccounts = 'ManageAccounts'
 }
 
-export type WalletStackScreensParamList = {
+export type ScreensParamList = {
+  [ScreensEnum.Welcome]: undefined;
+  [ScreensEnum.ImportAccount]: undefined;
+  [ScreensEnum.CreateAccount]: undefined;
+
+  /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { slug: string };
   [ScreensEnum.Delegation]: undefined;
-};
 
-export type DAppsStackScreensParamList = {
+  /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
-};
 
-export type SwapStackScreensParamList = {
+  /** Swap stack **/
   [ScreensEnum.Swap]: undefined;
-};
 
-export type SettingsStackScreensParamList = {
+  /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.CreateHdAccount]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
 };
 
-export type TabScreensParamList = WalletStackScreensParamList &
-  DAppsStackScreensParamList &
-  SwapStackScreensParamList &
-  SettingsStackScreensParamList;
-
-export type ScreensParamList = {
-  [ScreensEnum.Welcome]: undefined;
-  [ScreensEnum.ImportAccount]: undefined;
-  [ScreensEnum.CreateAccount]: undefined;
-  [ScreensEnum.EnterPassword]: undefined;
-  [ScreensEnum.ConfirmationWindow]: undefined;
-} & TabScreensParamList;
+export const walletStackScreens = [
+  ScreensEnum.Wallet,
+  ScreensEnum.TezosTokenScreen,
+  ScreensEnum.TokenScreen,
+  ScreensEnum.Delegation
+];
+export const dAppsStackScreens = [ScreensEnum.DApps];
+export const swapStackScreens = [ScreensEnum.Swap];
+export const settingsStackScreens = [ScreensEnum.Settings, ScreensEnum.CreateHdAccount, ScreensEnum.ManageAccounts];

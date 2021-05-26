@@ -15,7 +15,7 @@ export const DropdownBottomSheet: FC<Props> = ({ title, controller, children }) 
   const contentHeight = 0.5 * useWindowDimensions().height;
 
   return (
-    <BottomSheet controller={controller} contentHeight={contentHeight} hasBackgroundComponent={false}>
+    <BottomSheet controller={controller} contentHeight={contentHeight}>
       <View style={styles.root}>
         <View style={styles.headerContainer}>
           <Text style={styles.title}>{title}</Text>
