@@ -10,6 +10,7 @@ import { CurrentRouteNameContext } from './current-route-name.context';
 import { MainStackScreen } from './main-stack';
 import { ModalsEnum, ModalsParamList } from './modals.enum';
 import { ScreensEnum } from './screens.enum';
+import { useStatusBarStyle } from './use-status-bar-style.hook';
 
 type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
@@ -18,6 +19,8 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const navigationRef = useRef<NavigationContainerRef>(null);
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
+
+  useStatusBarStyle();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(navigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
