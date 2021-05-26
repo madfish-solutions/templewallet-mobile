@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
+import { useScreenHeader } from '../../components/header/use-screen-header.hook';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -22,6 +23,8 @@ import { useCreateAccountStyles } from './create-account.styles';
 export const CreateAccount = () => {
   const { importWallet } = useShelter();
   const styles = useCreateAccountStyles();
+
+  useScreenHeader('Create a new Wallet');
 
   const onSubmit = (data: CreateAccountFormValues) => importWallet(data.seedPhrase, data.password);
 

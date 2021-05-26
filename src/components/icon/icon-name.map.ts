@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
 import ArrowDownIcon from './assets/arrow-down.svg';
+import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
@@ -20,8 +21,14 @@ import QrScannerIcon from './assets/qr-scanner.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
+import DiscordIcon from './assets/socials/discord.svg';
+import RedditIcon from './assets/socials/reddit.svg';
+import TelegramIcon from './assets/socials/telegram.svg';
+import TwitterIcon from './assets/socials/twitter.svg';
+import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import TagIcon from './assets/tag.svg';
+import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import BlndTokenIcon from './assets/tokens/blnd.svg';
 import EthTzTokenIcon from './assets/tokens/ethTz.svg';
 import KUsdTokenIcon from './assets/tokens/kUsd.svg';
@@ -40,6 +47,7 @@ import { IconNameEnum } from './icon-name.enum';
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
+  [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
@@ -71,5 +79,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
-  [IconNameEnum.NoResult]: NoResultIcon
+  [IconNameEnum.NoResult]: NoResultIcon,
+  [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
+  [IconNameEnum.Telegram]: TelegramIcon,
+  [IconNameEnum.Discord]: DiscordIcon,
+  [IconNameEnum.Twitter]: TwitterIcon,
+  [IconNameEnum.YouTube]: YouTubeIcon,
+  [IconNameEnum.Reddit]: RedditIcon
 };

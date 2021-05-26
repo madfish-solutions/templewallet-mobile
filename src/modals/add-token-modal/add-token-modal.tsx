@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { useModalHeader } from '../../components/modal-header/use-modal-header.hook';
+import { useModalHeader } from '../../components/header/use-modal-header.hook';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { AddTokenAddress } from './add-token-address/add-token-address';
 import { AddTokenInfo } from './add-token-info/add-token-info';

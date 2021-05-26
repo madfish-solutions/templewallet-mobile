@@ -1,6 +1,6 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 
-export const useModalHeaderTitleStyles = createUseStyles(({ colors, typography }) => ({
+export const useHeaderTitleStyles = createUseStyles(({ colors, typography }) => ({
   title: {
     ...typography.body17Semibold,
     color: colors.black

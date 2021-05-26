@@ -4,7 +4,6 @@ import React from 'react';
 import { emptyComponent } from '../config/general';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
-import { CreateHdAccount } from '../screens/create-hd-account/create-hd-account';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ImportAccount } from '../screens/import-account/import-account';
@@ -65,8 +64,11 @@ export const MainStackScreen = () => {
             />
 
             {/** Settings stack **/}
-            <MainStack.Screen name={ScreensEnum.Settings} component={Settings} options={{ animationEnabled: false }} />
-            <MainStack.Screen name={ScreensEnum.CreateHdAccount} component={CreateHdAccount} />
+            <MainStack.Screen
+              name={ScreensEnum.Settings}
+              component={Settings}
+              options={{ animationEnabled: false, headerShown: false }}
+            />
             <MainStack.Screen name={ScreensEnum.ManageAccounts} component={ManageAccounts} />
           </>
         )}

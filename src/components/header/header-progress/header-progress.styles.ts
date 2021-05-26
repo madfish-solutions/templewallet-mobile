@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useModalHeaderProgressStyles = createUseStyles(({ colors, typography }) => ({
+export const useHeaderProgressStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     alignItems: 'center',
     marginHorizontal: formatSize(16)

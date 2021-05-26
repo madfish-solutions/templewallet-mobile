@@ -1,6 +1,7 @@
 export enum IconNameEnum {
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
+  ArrowLeft = 'ArrowLeft',
   Download = 'Download',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
@@ -32,5 +33,11 @@ export enum IconNameEnum {
   Clock = 'Clock',
   Info = 'Info',
   ChevronRight = 'ChevronRight',
-  NoResult = 'NoResult'
+  NoResult = 'NoResult',
+  TempleLogoWithText = 'TempleLogoWithText',
+  Telegram = 'Telegram',
+  Discord = 'Discord',
+  Twitter = 'Twitter',
+  YouTube = 'YouTube',
+  Reddit = 'Reddit'
 }

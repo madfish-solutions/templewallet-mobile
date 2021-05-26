@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { FC } from 'react';
 
 import { AccountInterface } from '../../interfaces/account.interface';
+import { ModalsEnum } from '../../navigator/modals.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { DropdownBottomSheetActionButton } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet-action-button/dropdown-bottom-sheet-action-button';
 import {
@@ -22,12 +23,12 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
 
   const handleCreateNewAccountButtonPress = () => {
-    navigate(ScreensEnum.Settings, { screen: ScreensEnum.CreateHdAccount });
+    navigate(ModalsEnum.CreateHdAccount);
     onPress();
   };
 
   const handleManageAccountsButtonPress = () => {
-    navigate(ScreensEnum.Settings, { screen: ScreensEnum.ManageAccounts });
+    navigate(ScreensEnum.ManageAccounts);
     onPress();
   };
 

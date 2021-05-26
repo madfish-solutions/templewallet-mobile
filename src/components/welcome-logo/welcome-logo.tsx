@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 
 import { useWelcomeLogoStyles } from './welcome-logo.styles';
 
+/** @deprecated **/
 export const WelcomeLogo = () => {
   const styles = useWelcomeLogoStyles();
 

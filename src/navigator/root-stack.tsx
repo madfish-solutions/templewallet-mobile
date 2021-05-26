@@ -4,6 +4,7 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import React, { useRef, useState } from 'react';
 
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -39,6 +40,7 @@ export const RootStackScreen = () => {
           <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} />
           <RootStack.Screen name={ModalsEnum.Send} component={SendModal} />
           <RootStack.Screen name={ModalsEnum.AddToken} component={AddTokenModal} />
+          <RootStack.Screen name={ModalsEnum.CreateHdAccount} component={CreateHdAccountModal} />
         </RootStack.Navigator>
       </CurrentRouteNameContext.Provider>
     </NavigationContainer>
