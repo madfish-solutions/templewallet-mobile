@@ -31,7 +31,7 @@ export const MainStackScreen = () => {
 
   return (
     <>
-      <MainStack.Navigator screenOptions={{ ...styleScreenOptions }}>
+      <MainStack.Navigator screenOptions={styleScreenOptions}>
         {!isAuthorised ? (
           <>
             <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
@@ -41,26 +41,38 @@ export const MainStackScreen = () => {
         ) : (
           <>
             {/** Wallet stack **/}
-            <MainStack.Screen name={ScreensEnum.Wallet} component={Wallet} options={{ headerShown: false }} />
+            <MainStack.Screen
+              name={ScreensEnum.Wallet}
+              component={Wallet}
+              options={{ animationEnabled: false, headerShown: false }}
+            />
             <MainStack.Screen name={ScreensEnum.TezosTokenScreen} component={TezosTokenScreen} />
             <MainStack.Screen name={ScreensEnum.TokenScreen} component={TokenScreen} />
             <MainStack.Screen name={ScreensEnum.Delegation} component={DelegationScreen} />
 
             {/** DApps stack **/}
-            <MainStack.Screen name={ScreensEnum.DApps} component={emptyComponent} />
+            <MainStack.Screen
+              name={ScreensEnum.DApps}
+              component={emptyComponent}
+              options={{ animationEnabled: false }}
+            />
 
             {/** Swap stack **/}
-            <MainStack.Screen name={ScreensEnum.Swap} component={emptyComponent} />
+            <MainStack.Screen
+              name={ScreensEnum.Swap}
+              component={emptyComponent}
+              options={{ animationEnabled: false }}
+            />
 
             {/** Settings stack **/}
-            <MainStack.Screen name={ScreensEnum.Settings} component={Settings} />
+            <MainStack.Screen name={ScreensEnum.Settings} component={Settings} options={{ animationEnabled: false }} />
             <MainStack.Screen name={ScreensEnum.CreateHdAccount} component={CreateHdAccount} />
             <MainStack.Screen name={ScreensEnum.ManageAccounts} component={ManageAccounts} />
           </>
         )}
       </MainStack.Navigator>
 
-      <TabBar />
+      {isAuthorised && <TabBar />}
 
       {isAuthorised && (
         <>
