@@ -8,17 +8,15 @@ import { ButtonLargeSecondary } from '../../components/button/button-large/butto
 import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
-import { useModalHeader } from '../../components/header/use-modal-header.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { step } from '../../config/styles';
 import { FormInputSlider } from '../../form/form-input-slider';
 import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { formatSize } from '../../styles/format-size';
+import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
 export const SendModal: FC = () => {
   const { send } = useShelter();
@@ -32,8 +30,6 @@ export const SendModal: FC = () => {
     recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
     gasFee: 0
   };
-
-  useModalHeader('Send');
 
   // TODO: integrate gasFee with send request
   const onSubmit = (data: SendModalFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 import { Divider } from '../../components/divider/divider';
-import { HeaderTitle } from '../../components/header/header-title/header-title';
-import { useScreenHeader } from '../../components/header/use-screen-header.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { formatSize } from '../../styles/format-size';
@@ -14,8 +12,6 @@ const manageHdAccountsIndex = 0;
 export const ManageAccounts = () => {
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageHdAccounts = segmentedControlIndex === manageHdAccountsIndex;
-
-  useScreenHeader(() => <HeaderTitle title="Manage Accounts"/>);
 
   return (
     <ScreenContainer>

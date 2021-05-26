@@ -6,7 +6,6 @@ import { ButtonLargePrimary } from '../../components/button/button-large/button-
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
-import { useModalHeader } from '../../components/header/use-modal-header.hook';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
@@ -25,8 +24,6 @@ export const CreateHdAccountModal = () => {
   const createHdAccountInitialValues: CreateHdAccountModalFormValues = {
     name: `Account ${accountIndex}`
   };
-
-  useModalHeader('Create account');
 
   const onSubmit = ({ name }: CreateHdAccountModalFormValues) => createHdAccount(name);
 
