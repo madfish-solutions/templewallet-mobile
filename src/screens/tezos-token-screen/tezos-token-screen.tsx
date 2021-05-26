@@ -3,6 +3,9 @@ import { useDispatch } from 'react-redux';
 
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
+import { HeaderQrScannerButton } from '../../components/header/header-qr-scanner-button/header-qr-scanner-button';
+import { HeaderTokenInfo } from '../../components/header/header-token-info/header-token-info';
+import { useScreenHeader } from '../../components/header/use-screen-header.hook';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
@@ -17,6 +20,11 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const tezosBalance = useTezosBalanceSelector();
   const selectedAccount = useSelectedAccountSelector();
+
+  useScreenHeader(
+    () => <HeaderTokenInfo token={XTZ_TOKEN_METADATA} />,
+    () => <HeaderQrScannerButton />
+  );
 
   useEffect(() => {
     dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));

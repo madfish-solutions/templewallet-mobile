@@ -3,6 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { HeaderTitle } from '../../components/header/header-title/header-title';
 import { useScreenHeader } from '../../components/header/use-screen-header.hook';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
@@ -22,7 +23,7 @@ import { ImportAccountStyles } from './import-account.styles';
 export const ImportAccount = () => {
   const { importWallet } = useShelter();
 
-  useScreenHeader('Import existing Wallet');
+  useScreenHeader(() => <HeaderTitle title="Import existing Wallet" />);
 
   const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
 

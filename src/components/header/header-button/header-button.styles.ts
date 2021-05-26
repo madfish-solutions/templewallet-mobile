@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { formatSize } from '../../../styles/format-size';
 
-export const HeaderBackButtonStyles = StyleSheet.create({
+export const HeaderButtonStyles = StyleSheet.create({
   icon: {
     marginHorizontal: formatSize(16)
   }
