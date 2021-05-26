@@ -6,6 +6,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { useModalHeader } from '../../components/modal-header/use-modal-header.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
@@ -19,6 +20,8 @@ export const ReceiveModal: FC = () => {
   const styles = useReceiveModalStyles();
   const [, setString] = useClipboard();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
+
+  useModalHeader('Receive');
 
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
