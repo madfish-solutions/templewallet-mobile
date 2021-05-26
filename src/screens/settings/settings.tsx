@@ -82,6 +82,7 @@ export const Settings = () => {
       </TouchableOpacity>
 
       <Button title="+ Create new" onPress={() => navigate(ScreensEnum.CreateHdAccount)} />
+      <Button title="modal test" onPress={() => navigate("MyModal")} />
       <Divider />
 
       <Button title="Lock the App" onPress={lock} />

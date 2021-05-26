@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { isDefined } from '../../utils/is-defined';
+import { CurrentRouteNameContext } from '../current-route-name.context';
 import {
   dAppsStackScreens,
   ScreensEnum,
@@ -14,12 +15,9 @@ import {
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
-interface Props {
-  currentRouteName?: ScreensEnum;
-}
-
-export const TabBar: FC<Props> = ({ currentRouteName }) => {
+export const TabBar: FC = () => {
   const styles = useTabBarStyles();
+  const currentRouteName = useContext(CurrentRouteNameContext);
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);

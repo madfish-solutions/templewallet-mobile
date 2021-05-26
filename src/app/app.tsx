@@ -6,7 +6,7 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { RootStackScreen } from '../navigator/navigator';
+import { RootStackScreen } from '../navigator/root-stack';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
 
