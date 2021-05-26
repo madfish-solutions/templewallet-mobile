@@ -7,9 +7,10 @@ import { useScreenContainerStyles } from './screen-container.styles';
 interface Props {
   isFullScreenMode?: boolean;
   style?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
-export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, children }) => {
+export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, contentContainerStyle, children }) => {
   const styles = useScreenContainerStyles();
 
   return (
@@ -17,7 +18,8 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, ch
       style={[styles.scrollView, style]}
       contentContainerStyle={[
         styles.scrollViewContentContainer,
-        conditionalStyle(isFullScreenMode, styles.fullScreenMode)
+        conditionalStyle(isFullScreenMode, styles.fullScreenMode),
+        contentContainerStyle
       ]}>
       {children}
     </ScrollView>

@@ -6,6 +6,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -22,7 +23,7 @@ export const ReceiveModal: FC = () => {
   const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
-    <View style={styles.rootContainer}>
+    <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <View style={styles.tokenContainer}>
         <Icon name={IconNameEnum.XtzToken} size={5 * step} />
         <View style={styles.tokenInfoContainer}>
@@ -53,6 +54,6 @@ export const ReceiveModal: FC = () => {
         <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} marginRight={step} onPress={handleCopyToClipboard} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
-    </View>
+    </ScreenContainer>
   );
 };

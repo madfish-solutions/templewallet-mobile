@@ -1,5 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
+import { View } from 'react-native';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -7,6 +8,7 @@ import { ButtonLargeSecondary } from '../../components/button/button-large/butto
 import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
+import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { step } from '../../config/styles';
 import { FormInputSlider } from '../../form/form-input-slider';
 import { FormNumericInput } from '../../form/form-numeric-input';
@@ -39,28 +41,32 @@ export const SendModal: FC = () => {
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm }) => (
-        <>
-          <Label label="From" description="Select account to send from." />
-          <AccountFormDropdown name="account" list={hdAccounts} />
-          <Divider />
+        <ScreenContainer isFullScreenMode={true}>
+          <View>
+            <Label label="From" description="Select account to send from." />
+            <AccountFormDropdown name="account" list={hdAccounts} />
+            <Divider />
 
-          <Label label="To" description="Address or Tezos domain to send tez funds to." />
-          <FormTextInput name="recipient" />
-          <Divider />
+            <Label label="To" description="Address or Tezos domain to send tez funds to." />
+            <FormTextInput name="recipient" />
+            <Divider />
 
-          <Label label="Amount" description="Set XTZ amount to send." />
-          <FormNumericInput name="amount" />
-          <Divider />
+            <Label label="Amount" description="Set XTZ amount to send." />
+            <FormNumericInput name="amount" />
+            <Divider />
 
-          <Label label="Fee" />
-          <FormInputSlider name="gasFee" />
-          <Divider />
+            <Label label="Fee" />
+            <FormInputSlider name="gasFee" />
+
+            <Divider />
+          </View>
+
 
           <ButtonsContainer>
             <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={goBack} />
             <ButtonLargePrimary title="Send" onPress={submitForm} />
           </ButtonsContainer>
-        </>
+        </ScreenContainer>
       )}
     </Formik>
   );

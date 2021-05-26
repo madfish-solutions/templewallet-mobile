@@ -7,6 +7,7 @@ import { ButtonLargePrimary } from '../../../components/button/button-large/butt
 import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input';
@@ -44,7 +45,7 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
       validationSchema={addTokenAddressFormValidationSchema}
       onSubmit={onSubmit}>
       {({ values, submitForm, isValid }) => (
-        <>
+        <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Token type" />
             <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
@@ -62,13 +63,13 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
               </>
             )}
 
-            <Divider height={formatSize(16)} />
+            <Divider />
           </View>
 
           <ButtonsContainer>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </ButtonsContainer>
-        </>
+        </ScreenContainer>
       )}
     </Formik>
   );
