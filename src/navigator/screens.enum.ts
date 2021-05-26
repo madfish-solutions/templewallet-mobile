@@ -2,18 +2,34 @@ export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
   CreateAccount = 'CreateAccount',
-  EnterPassword = 'EnterPassword',
-  ConfirmationWindow = 'ConfirmationWindow',
+
+  /** Wallet stack **/
   Wallet = 'Wallet',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
+
+  /** DApps stack **/
   DApps = 'DApps',
+
+  /** Swap stack **/
   Swap = 'Swap',
+
+  /** Settings stack **/
   Settings = 'Settings',
   CreateHdAccount = 'CreateHdAccount',
   ManageAccounts = 'ManageAccounts'
 }
+
+export const walletStackScreens = [
+  ScreensEnum.Wallet,
+  ScreensEnum.TezosTokenScreen,
+  ScreensEnum.TokenScreen,
+  ScreensEnum.Delegation
+];
+export const dAppsStackScreens = [ScreensEnum.DApps];
+export const swapStackScreens = [ScreensEnum.Swap];
+export const settingsStackScreens = [ScreensEnum.Settings, ScreensEnum.CreateHdAccount, ScreensEnum.ManageAccounts];
 
 export type WalletStackScreensParamList = {
   [ScreensEnum.Wallet]: undefined;
@@ -45,6 +61,4 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.CreateAccount]: undefined;
-  [ScreensEnum.EnterPassword]: undefined;
-  [ScreensEnum.ConfirmationWindow]: undefined;
 } & TabScreensParamList;
