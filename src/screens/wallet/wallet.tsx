@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
-import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
@@ -12,6 +11,7 @@ import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
+import { ModalsEnum } from '../../navigator/modals.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import {
@@ -29,7 +29,6 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
-import { AddTokenBottomSheet } from './add-token-bottom-sheet/add-token-bottom-sheet';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useWalletStyles } from './wallet.styles';
 
@@ -38,8 +37,6 @@ export const Wallet = () => {
   const styles = useWalletStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-
-  const addTokenBottomSheetController = useBottomSheetController();
 
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
@@ -92,14 +89,12 @@ export const Wallet = () => {
 
         <Divider />
 
-        <TouchableOpacity style={styles.addTokenButton} onPress={addTokenBottomSheetController.open}>
+        <TouchableOpacity style={styles.addTokenButton} onPress={() => navigate(ModalsEnum.AddToken)}>
           <Icon name={IconNameEnum.PlusCircle} />
           <Text style={styles.addTokenText}>ADD TOKEN</Text>
         </TouchableOpacity>
 
         <Divider />
-
-        <AddTokenBottomSheet controller={addTokenBottomSheetController} />
       </ScreenContainer>
     </>
   );

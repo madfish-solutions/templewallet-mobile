@@ -1,16 +1,19 @@
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import React, { useRef, useState } from 'react';
-import { Text } from 'react-native';
 
+import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { ReceiveModal } from '../modals/receive-modal/receive-modal';
+import { SendModal } from '../modals/send-modal/send-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { MainStackScreen } from './main-stack';
+import { ModalsEnum, ModalsParamList } from './modals.enum';
 import { ScreensEnum } from './screens.enum';
 
-const RootStack = createStackNavigator();
+type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
-const dummyModal = () => <Text>hii</Text>;
+const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
   const navigationRef = useRef<NavigationContainerRef>(null);
@@ -27,9 +30,12 @@ export const RootStackScreen = () => {
       <CurrentRouteNameContext.Provider value={currentRouteName}>
         <RootStack.Navigator
           mode="modal"
-          screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}>
-          <RootStack.Screen name="Main" component={MainStackScreen} options={{ headerShown: false }} />
-          <RootStack.Screen name="MyModal" component={dummyModal} />
+          screenOptions={{ gestureEnabled: true, ...TransitionPresets.ModalPresentationIOS }}>
+          <RootStack.Screen name="MainStack" component={MainStackScreen} options={{ headerShown: false }} />
+
+          <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} />
+          <RootStack.Screen name={ModalsEnum.Send} component={SendModal} />
+          <RootStack.Screen name={ModalsEnum.AddToken} component={AddTokenModal} />
         </RootStack.Navigator>
       </CurrentRouteNameContext.Provider>
     </NavigationContainer>

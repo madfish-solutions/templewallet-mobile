@@ -1,8 +1,8 @@
 import { mixed, object, SchemaOf } from 'yup';
 
-import { tokenAddressValidation } from '../../../../form/validation/token-address';
-import { tokenIdValidation } from '../../../../form/validation/token-id';
-import { TokenTypeEnum } from '../../../../interfaces/token-type.enum';
+import { tokenAddressValidation } from '../../../form/validation/token-address';
+import { tokenIdValidation } from '../../../form/validation/token-id';
+import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 
 export type AddTokenAddressFormValues = {
   type: TokenTypeEnum;

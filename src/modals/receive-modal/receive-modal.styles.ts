@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useReceiveBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
+export const useReceiveModalStyles = createUseStyles(({ colors, typography }) => ({
   rootContainer: {
     alignItems: 'center',
     paddingVertical: formatSize(32)
