@@ -39,5 +39,6 @@ export enum IconNameEnum {
   Discord = 'Discord',
   Twitter = 'Twitter',
   YouTube = 'YouTube',
-  Reddit = 'Reddit'
+  Reddit = 'Reddit',
+  ExternalLink = 'ExternalLink'
 }

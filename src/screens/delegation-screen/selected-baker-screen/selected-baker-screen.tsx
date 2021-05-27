@@ -2,22 +2,28 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonDelegateSecondary } from '../../../components/button/button-large/button-delegate-secondary/button-delegate-secondary';
+import { ButtonSmallDelegate } from '../../../components/button/button-small/button-small-delegate/button-small-delegate';
 import { Divider } from '../../../components/divider/divider';
+import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { TextLink } from '../../../components/text-link/text-link';
+import { EmptyFn } from '../../../config/general';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
 interface Props {
   baker: BakerInterface;
+  onRedelegatePress: EmptyFn;
 }
 
-export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
+export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
   const colors = useColors();
   const styles = useSelectedBakerScreenStyles();
 
@@ -27,29 +33,40 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
         <View style={styles.upperContainer}>
           <View style={styles.bakerContainer}>
             <RobotIcon seed={baker.address} />
+            <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText}>{baker.name}</Text>
-              <View>
+              <Divider size={formatSize(2)} />
+              <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
+                <Divider size={formatSize(4)} />
+                <ExternalLinkButton url={tzktUrl(baker.address)} />
               </View>
             </View>
           </View>
 
-          <Text>REDELEGATE</Text>
+          <ButtonSmallDelegate
+            title="REDELEGATE"
+            marginTop={formatSize(8)}
+            marginRight={formatSize(8)}
+            onPress={onRedelegatePress}
+          />
         </View>
 
-        <Divider height={formatSize(8)} />
+        <Divider size={formatSize(8)} />
 
         <View style={styles.lowerContainer}>
-          <View style={styles.lowerContainerCell}>
+          <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{baker.fee * 100}%</Text>
+            <Text style={styles.cellValueText}>{(baker.fee * 100).toFixed(2)}%</Text>
           </View>
-          <View style={styles.lowerContainerCell}>
+          <Divider size={formatSize(16)} />
+          <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>{baker.freeSpace.toFixed(2)} XTZ</Text>
           </View>
-          <View style={styles.lowerContainerCell}>
+          <Divider size={formatSize(16)} />
+          <View>
             <Text style={styles.cellTitle}>Cycles:</Text>
             <Text style={styles.cellValueText}>XXX</Text>
           </View>
@@ -58,6 +75,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
 
       <View style={styles.rewardsContainer}>
         <Text style={styles.rewardsText}>Rewards</Text>
+        <Divider size={formatSize(6)} />
         <Icon name={IconNameEnum.SoonBadge} color={colors.gray3} size={formatSize(32)} />
       </View>
 
@@ -66,13 +84,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker }) => {
           title="View on TZKT block explorer"
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
-          onPress={() => null}
+          onPress={() => openUrl(tzktUrl(baker.address))}
         />
 
         <Text style={styles.descriptionText}>
           For monitoring your rewards - subscribe to notifications from the{' '}
-          <Text style={styles.descriptionLink}>Baking Bad bot</Text> in the telegram. The bot notifies users about
-          received payments, expected rewards, and if a Baker underpays or misses payments.
+          <TextLink url="https://t.me/baking_bad_bot">Baking Bad bot</TextLink> in the telegram. The bot notifies users
+          about received payments, expected rewards, and if a Baker underpays or misses payments.
         </Text>
       </ScreenContainer>
     </>

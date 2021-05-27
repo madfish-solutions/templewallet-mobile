@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { formatSize } from '../../styles/format-size';
 
 interface Props {
-  height?: number;
+  size?: number;
 }
 
-export const Divider: FC<Props> = ({ height = formatSize(24) }) => <View style={{ height }} />;
+export const Divider: FC<Props> = ({ size = formatSize(24) }) => <View style={{ height: size, width: size }} />;

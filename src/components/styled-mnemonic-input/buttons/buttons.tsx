@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
-import { ButtonSmall } from '../../button/button-small/button-small';
+import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { useButtonsStyles } from './buttons.styles';
 
 interface Props {
@@ -20,11 +20,11 @@ export const Buttons: FC<Props> = ({ isShowGenerateNew, isInputMode, onCopy, onP
   return (
     <View style={styles.buttonsContainer}>
       {isInputMode ? (
-        <ButtonSmall title="Paste" onPress={onPaste} />
+        <ButtonSmallSecondary title="Paste" onPress={onPaste} />
       ) : (
         <>
-          {isShowGenerateNew && <ButtonSmall marginRight={formatSize(8)} title="Get New" onPress={onGetNew} />}
-          <ButtonSmall title="Copy" onPress={onCopy} />
+          {isShowGenerateNew && <ButtonSmallSecondary marginRight={formatSize(8)} title="Get New" onPress={onGetNew} />}
+          <ButtonSmallSecondary title="Copy" onPress={onCopy} />
         </>
       )}
     </View>
