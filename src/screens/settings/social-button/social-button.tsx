@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../styles/format-size';
+import { openUrl } from '../../../utils/linking.util';
 import { useSocialButtonStyles } from './social-button.styles';
 
 interface Props {
@@ -11,11 +12,11 @@ interface Props {
   url: string;
 }
 
-export const SocialButton: FC<Props> = ({ iconName }) => {
+export const SocialButton: FC<Props> = ({ iconName, url }) => {
   const styles = useSocialButtonStyles();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => null}>
+    <TouchableOpacity style={styles.container} onPress={() => openUrl(url)}>
       <Icon name={iconName} size={formatSize(24)} />
     </TouchableOpacity>
   );

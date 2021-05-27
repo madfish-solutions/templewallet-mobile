@@ -12,6 +12,7 @@ import { Label } from '../../components/label/label';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../config/socials';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
@@ -49,11 +50,11 @@ export const Settings = () => {
           <Text style={styles.versionText}>{`Version: ${getVersion()}    Build: ${getBuildNumber()}`}</Text>
 
           <View style={styles.socialsContainer}>
-            <SocialButton iconName={IconNameEnum.Telegram} url="" />
-            <SocialButton iconName={IconNameEnum.Discord} url="" />
-            <SocialButton iconName={IconNameEnum.Twitter} url="" />
-            <SocialButton iconName={IconNameEnum.YouTube} url="" />
-            <SocialButton iconName={IconNameEnum.Reddit} url="" />
+            <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />
+            <SocialButton iconName={IconNameEnum.Discord} url={discordUrl} />
+            <SocialButton iconName={IconNameEnum.Twitter} url={twitterUrl} />
+            <SocialButton iconName={IconNameEnum.YouTube} url={youTubeUrl} />
+            <SocialButton iconName={IconNameEnum.Reddit} url={redditUrl} />
           </View>
         </View>
       </HeaderCard>

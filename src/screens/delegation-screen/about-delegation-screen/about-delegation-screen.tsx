@@ -7,6 +7,7 @@ import { Divider } from '../../../components/divider/divider';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
+import { discordUrl, telegramUrl } from '../../../config/socials';
 import { formatSize } from '../../../styles/format-size';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 
@@ -35,9 +36,8 @@ export const AboutDelegationScreen: FC<Props> = ({ onDelegatePress }) => {
         </TextLink>
         <Divider size={formatSize(8)} />
         <Text style={styles.text}>
-          In case you have any questions, write them in our communities:{' '}
-          <TextLink url="https://t.me/madfishdev">telegram</TextLink> or{' '}
-          <TextLink url="https://discord.gg/qFRZ8kVzkv">discord</TextLink>.
+          In case you have any questions, write them in our communities: <TextLink url={telegramUrl}>telegram</TextLink>{' '}
+          <TextLink url={discordUrl}>discord</TextLink>.
         </Text>
       </View>
 
