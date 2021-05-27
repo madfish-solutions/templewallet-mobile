@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import React, { useRef, useState } from 'react';
 
-import { generateModalOptions } from '../components/header/generate-modal-options.util';
+import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
@@ -41,18 +41,18 @@ export const RootStackScreen = () => {
           <RootStack.Screen
             name={ModalsEnum.Receive}
             component={ReceiveModal}
-            options={generateModalOptions('Receive')}
+            options={useModalOptions('Receive')}
           />
-          <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={generateModalOptions('Send')} />
+          <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
           <RootStack.Screen
             name={ModalsEnum.AddToken}
             component={AddTokenModal}
-            options={generateModalOptions('Add Token')}
+            options={useModalOptions('Add Token')}
           />
           <RootStack.Screen
             name={ModalsEnum.CreateHdAccount}
             component={CreateHdAccountModal}
-            options={generateModalOptions('Create account')}
+            options={useModalOptions('Create account')}
           />
         </RootStack.Navigator>
       </CurrentRouteNameContext.Provider>
