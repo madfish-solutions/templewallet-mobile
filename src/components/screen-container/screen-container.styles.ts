@@ -7,7 +7,7 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   },
   scrollViewContentContainer: {
     paddingTop: formatSize(8),
-    paddingBottom: formatSize(24),
+    paddingBottom: formatSize(16),
     paddingHorizontal: formatSize(16)
   },
   fullScreenMode: {
