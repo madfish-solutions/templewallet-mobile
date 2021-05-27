@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
@@ -16,6 +16,7 @@ import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
+import { formatSize } from '../../../styles/format-size';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,

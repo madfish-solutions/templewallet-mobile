@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { useState } from 'react';
-import { Button, Switch, Text, View } from 'react-native';
+import React from 'react';
+import { Button, Text, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -77,19 +77,14 @@ export const Settings = () => {
         <View style={styles.darkAppearanceContainer}>
           <Label label="Dark Appearance" description="Manage the appearance of the app" />
           <TextSegmentControl
-          selectedIndex={selectedThemeIndex}
-          values={['Light', 'Dark']}
-          width={formatSize(120)}
-          onChange={handleThemeSegmentControlChange}
-        />
+            selectedIndex={selectedThemeIndex}
+            values={['Light', 'Dark']}
+            width={formatSize(120)}
+            onChange={handleThemeSegmentControlChange}
+          />
         </View>
         <Divider />
 
-        <Label label="Selected Account" description="You could switch between yours accounts" />
-
-        <Divider />
-
-        <Label label="List of your HD accounts:" description="(press to reveal your private key)" />
         <TouchableOpacity style={styles.accountItem} onPress={() => revealSeedPhrase()}>
           <Text>Seed phrase</Text>
         </TouchableOpacity>

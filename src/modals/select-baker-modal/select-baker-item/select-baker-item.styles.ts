@@ -1,13 +1,18 @@
-import { createUseStyles } from '../../../../../styles/create-use-styles';
-import { formatSize } from '../../../../../styles/format-size';
-import { generateShadow } from '../../../../../styles/generate-shadow';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
+import { generateShadow } from '../../../styles/generate-shadow';
 
 export const useSelectBakerItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     ...generateShadow(1, colors.black),
-    padding: formatSize(8),
+    padding: formatSize(6),
     borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG
+    backgroundColor: colors.cardBG,
+    borderWidth: formatSize(2),
+    borderColor: colors.cardBG
+  },
+  containerSelected: {
+    borderColor: colors.orange
   },
   upperContainer: {
     flexDirection: 'row',
@@ -19,7 +24,6 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
     alignItems: 'center'
   },
   bakerContainerData: {
-    marginLeft: formatSize(10),
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -31,7 +35,7 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   actionsContainer: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    margin: formatSize(12)
+    margin: formatSize(4)
   },
   lowerContainer: {
     flexDirection: 'row'
@@ -43,5 +47,5 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   cellValueText: {
     ...typography.numbersRegular15,
     color: colors.black
-  },
+  }
 }));

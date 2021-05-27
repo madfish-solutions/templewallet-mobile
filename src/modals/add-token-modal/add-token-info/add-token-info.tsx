@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
+import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
@@ -61,7 +61,8 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
           </View>
 
           <ButtonsContainer>
-            <ButtonLargeSecondary title="Cancel" marginRight={formatSize(16)} onPress={onCancelButtonPress} />
+            <ButtonLargeSecondary title="Cancel" onPress={onCancelButtonPress} />
+            <Divider size={formatSize(16)} />
             <ButtonLargePrimary title="Confirm" disabled={!isValid} onPress={submitForm} />
           </ButtonsContainer>
         </ScreenContainer>

@@ -2,27 +2,33 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { Divider } from '../../../../../components/divider/divider';
-import { ExternalLinkButton } from '../../../../../components/icon/external-link-button/external-link-button';
-import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
-import { BakerInterface } from '../../../../../interfaces/baker.interface';
-import { formatSize } from '../../../../../styles/format-size';
-import { tzktUrl } from '../../../../../utils/linking.util';
+import { AvatarImage } from '../../../components/avatar-image/avatar-image';
+import { Divider } from '../../../components/divider/divider';
+import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
+import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
+import { EmptyFn } from '../../../config/general';
+import { BakerInterface } from '../../../interfaces/baker.interface';
+import { formatSize } from '../../../styles/format-size';
+import { conditionalStyle } from '../../../utils/conditional-style';
+import { tzktUrl } from '../../../utils/linking.util';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props {
   baker: BakerInterface;
+  selected: boolean;
+  onPress: EmptyFn;
 }
 
-export const SelectBakerItem: FC<Props> = ({ baker }) => {
+export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
+      onPress={onPress}>
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
-          <RobotIcon seed={baker.address} />
+          <AvatarImage uri={baker.logo} />
           <Divider size={formatSize(10)} />
           <Text style={styles.nameText}>{baker.name}</Text>
         </View>

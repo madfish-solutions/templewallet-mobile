@@ -31,7 +31,7 @@ export const TezosTokenHistory = () => {
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />
       </TouchableOpacity>
 
-      <DataPlaceholder name="Operations" />
+      <DataPlaceholder text="Operations will be available soon" />
     </>
   );
 };
