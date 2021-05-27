@@ -9,13 +9,13 @@ import { ButtonsContainer } from '../../components/buttons-container/buttons-con
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { step } from '../../config/styles';
 import { FormInputSlider } from '../../form/form-input-slider';
 import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { formatSize } from '../../styles/format-size';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
 export const SendModal: FC = () => {
@@ -62,7 +62,7 @@ export const SendModal: FC = () => {
           </View>
 
           <ButtonsContainer>
-            <ButtonLargeSecondary title="Close" marginRight={2 * step} onPress={goBack} />
+            <ButtonLargeSecondary title="Close" marginRight={formatSize(16)} onPress={goBack} />
             <ButtonLargePrimary title="Send" onPress={submitForm} />
           </ButtonsContainer>
         </ScreenContainer>

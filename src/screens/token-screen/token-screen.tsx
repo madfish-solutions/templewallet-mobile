@@ -3,6 +3,8 @@ import React from 'react';
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
+import { HeaderTokenInfo } from '../../components/header/header-token-info/header-token-info';
+import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
@@ -16,6 +18,13 @@ export const TokenScreen = () => {
 
   const slug = useNavigationParams('slug');
   const token = useTokenSelector(slug);
+
+  useNavigationSetOptions(
+    {
+      headerTitle: () => <HeaderTokenInfo token={token} />
+    },
+    [token]
+  );
 
   return (
     <>

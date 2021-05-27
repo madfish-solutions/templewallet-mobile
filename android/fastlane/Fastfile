@@ -39,7 +39,7 @@ platform :android do
       }
     )
     upload_to_play_store(
-      track: 'internal'
+      track: 'alpha'
     )
   end
 end
