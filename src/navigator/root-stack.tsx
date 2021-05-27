@@ -38,11 +38,7 @@ export const RootStackScreen = () => {
           screenOptions={{ gestureEnabled: true, ...TransitionPresets.ModalPresentationIOS }}>
           <RootStack.Screen name="MainStack" component={MainStackScreen} options={{ headerShown: false }} />
 
-          <RootStack.Screen
-            name={ModalsEnum.Receive}
-            component={ReceiveModal}
-            options={useModalOptions('Receive')}
-          />
+          <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
           <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
           <RootStack.Screen
             name={ModalsEnum.AddToken}
