@@ -21,8 +21,8 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to Play Store"
-  lane :beta do
+  desc "Submit a new Build to Play Store Alpha track"
+  lane :alpha do
     store_password = prompt(text: "Signing Store Password: ", secure_text: true)
     key_password = prompt(text: "Alias Key Password: ", secure_text: true)
     releaseFilePath = File.join(Dir.pwd, "..", "app/temple-wallet.keystore")
