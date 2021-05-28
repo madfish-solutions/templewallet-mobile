@@ -2,7 +2,8 @@ export enum ModalsEnum {
   Receive = 'Receive',
   Send = 'Send',
   AddToken = 'AddToken',
-  CreateHdAccount = 'CreateHdAccount'
+  CreateHdAccount = 'CreateHdAccount',
+  SelectBaker = 'SelectBaker'
 }
 
 export type ModalsParamList = {
@@ -10,4 +11,5 @@ export type ModalsParamList = {
   [ModalsEnum.Send]: undefined;
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
+  [ModalsEnum.SelectBaker]: undefined;
 };

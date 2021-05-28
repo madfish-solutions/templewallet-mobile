@@ -8,6 +8,7 @@ export const useDataPlaceholderStyles = createUseStyles(({ colors, typography })
   },
   text: {
     ...typography.caption13Regular,
-    color: colors.gray1
+    color: colors.gray1,
+    textAlign: 'center'
   }
 }));

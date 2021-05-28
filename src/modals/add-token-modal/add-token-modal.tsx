@@ -19,7 +19,9 @@ export const AddTokenModal: FC = () => {
 
   return (
     <>
-      {innerScreenIndex === 0 && <AddTokenAddress onFormSubmitted={() => setInnerScreenIndex(1)} />}
+      {innerScreenIndex === 0 && (
+        <AddTokenAddress onCloseButtonPress={goBack} onFormSubmitted={() => setInnerScreenIndex(1)} />
+      )}
       {innerScreenIndex === 1 && (
         <AddTokenInfo onCancelButtonPress={() => setInnerScreenIndex(0)} onFormSubmitted={goBack} />
       )}

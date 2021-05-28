@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { useState } from 'react';
-import { Button, Switch, Text, View } from 'react-native';
+import React from 'react';
+import { Button, Text, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -12,6 +12,7 @@ import { Label } from '../../components/label/label';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../config/socials';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
@@ -33,15 +34,13 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const { revealSeedPhrase } = useShelter();
 
-  const [segmentedControlValue2, setSegmentedControlValue2] = useState(1);
-
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
-  const isDarkTheme = theme === ThemesEnum.dark;
+  const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
-  const handleSwitchValueChange = (setDarkTheme: boolean) =>
-    dispatch(changeTheme(setDarkTheme ? ThemesEnum.dark : ThemesEnum.light));
+  const handleThemeSegmentControlChange = (newThemeIndex: number) =>
+    dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   return (
     <>
@@ -51,11 +50,11 @@ export const Settings = () => {
           <Text style={styles.versionText}>{`Version: ${getVersion()}    Build: ${getBuildNumber()}`}</Text>
 
           <View style={styles.socialsContainer}>
-            <SocialButton iconName={IconNameEnum.Telegram} url="" />
-            <SocialButton iconName={IconNameEnum.Discord} url="" />
-            <SocialButton iconName={IconNameEnum.Twitter} url="" />
-            <SocialButton iconName={IconNameEnum.YouTube} url="" />
-            <SocialButton iconName={IconNameEnum.Reddit} url="" />
+            <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />
+            <SocialButton iconName={IconNameEnum.Discord} url={discordUrl} />
+            <SocialButton iconName={IconNameEnum.Twitter} url={twitterUrl} />
+            <SocialButton iconName={IconNameEnum.YouTube} url={youTubeUrl} />
+            <SocialButton iconName={IconNameEnum.Reddit} url={redditUrl} />
           </View>
         </View>
       </HeaderCard>
@@ -74,27 +73,19 @@ export const Settings = () => {
           </TouchableOpacity>
         </View>
 
-        <Divider height={formatSize(16)} />
-
-        <TextSegmentControl
-          selectedIndex={segmentedControlValue2}
-          values={['Light', 'Dark', 'System']}
-          width={formatSize(200)}
-          onChange={setSegmentedControlValue2}
-        />
-        <Divider />
+        <Divider size={formatSize(16)} />
 
         <View style={styles.darkAppearanceContainer}>
           <Label label="Dark Appearance" description="Manage the appearance of the app" />
-          <Switch onValueChange={handleSwitchValueChange} value={isDarkTheme} />
+          <TextSegmentControl
+            selectedIndex={selectedThemeIndex}
+            values={['Light', 'Dark']}
+            width={formatSize(120)}
+            onChange={handleThemeSegmentControlChange}
+          />
         </View>
         <Divider />
 
-        <Label label="Selected Account" description="You could switch between yours accounts" />
-
-        <Divider />
-
-        <Label label="List of your HD accounts:" description="(press to reveal your private key)" />
         <TouchableOpacity style={styles.accountItem} onPress={() => revealSeedPhrase()}>
           <Text>Seed phrase</Text>
         </TouchableOpacity>

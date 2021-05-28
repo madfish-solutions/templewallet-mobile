@@ -4,8 +4,10 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../../components/buttons-container/buttons-container';
+import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
+import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
@@ -15,6 +17,7 @@ import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
+import { formatSize } from '../../../styles/format-size';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
@@ -22,6 +25,7 @@ import {
 } from './add-token-address.form';
 
 interface Props {
+  onCloseButtonPress: EmptyFn;
   onFormSubmitted: EmptyFn;
 }
 
@@ -30,7 +34,7 @@ const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
   { value: TokenTypeEnum.FA_2, label: 'FA 2' }
 ];
 
-export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
+export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
@@ -65,9 +69,15 @@ export const AddTokenAddress: FC<Props> = ({ onFormSubmitted }) => {
             <Divider />
           </View>
 
-          <ButtonsContainer>
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
-          </ButtonsContainer>
+          <View>
+            <ButtonsContainer>
+              <ButtonLargeSecondary title="Close" onPress={onCloseButtonPress} />
+              <Divider size={formatSize(16)} />
+              <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            </ButtonsContainer>
+
+            <InsetSubstitute type="bottom" />
+          </View>
         </ScreenContainer>
       )}
     </Formik>

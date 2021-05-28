@@ -7,7 +7,7 @@
     "android": "react-native run-android",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew assembleRelease",
-    "android:test-flight": "cd android && fastlane beta",
+    "android:test-flight": "cd android && fastlane alpha",
     "ios": "react-native run-ios",
     "ios:pods": "cd ios && pod install",
     "ios:test-flight": "cd ios && fastlane beta",

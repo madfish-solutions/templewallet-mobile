@@ -10,6 +10,7 @@ import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
+import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import InfoIcon from './assets/info.svg';
@@ -18,6 +19,7 @@ import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
@@ -85,5 +87,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Discord]: DiscordIcon,
   [IconNameEnum.Twitter]: TwitterIcon,
   [IconNameEnum.YouTube]: YouTubeIcon,
-  [IconNameEnum.Reddit]: RedditIcon
+  [IconNameEnum.Reddit]: RedditIcon,
+  [IconNameEnum.ExternalLink]: ExternalLinkIcon,
+  [IconNameEnum.Search]: SearchIcon
 };

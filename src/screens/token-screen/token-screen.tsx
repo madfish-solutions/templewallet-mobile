@@ -36,7 +36,10 @@ export const TokenScreen = () => {
         <HeaderCardActionButtons />
       </HeaderCard>
 
-      <TokenScreenContentContainer historyComponent={<DataPlaceholder />} infoComponent={<TokenInfo token={token} />} />
+      <TokenScreenContentContainer
+        historyComponent={<DataPlaceholder text="Data will be available soon" />}
+        infoComponent={<TokenInfo token={token} />}
+      />
     </>
   );
 };

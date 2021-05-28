@@ -4,8 +4,9 @@ import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
+import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
+import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
@@ -42,10 +43,15 @@ export const CreateHdAccountModal = () => {
             <Divider />
           </View>
 
-          <ButtonsContainer>
-            <ButtonLargeSecondary title="Close" marginRight={formatSize(16)} onPress={goBack} />
-            <ButtonLargePrimary title="Save" onPress={submitForm} />
-          </ButtonsContainer>
+          <View>
+            <ButtonsContainer>
+              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <Divider size={formatSize(16)} />
+              <ButtonLargePrimary title="Save" onPress={submitForm} />
+            </ButtonsContainer>
+
+            <InsetSubstitute type="bottom" />
+          </View>
         </ScreenContainer>
       )}
     </Formik>

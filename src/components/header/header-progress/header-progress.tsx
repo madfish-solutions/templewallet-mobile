@@ -23,7 +23,7 @@ export const HeaderProgress: FC<Props> = ({ current, total }) => {
         {current}/{total}
       </Text>
 
-      <Divider height={formatSize(4)} />
+      <Divider size={formatSize(4)} />
 
       <View style={[styles.progressContainer, { width: progressContainerWidth }]}>
         <View style={[styles.progressLine, { width: progressLineWith }]} />

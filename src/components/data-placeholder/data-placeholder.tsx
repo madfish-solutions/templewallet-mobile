@@ -7,16 +7,16 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { useDataPlaceholderStyles } from './data-placeholder.styles';
 
 interface Props {
-  name?: string;
+  text: string;
 }
 
-export const DataPlaceholder: FC<Props> = ({ name = 'Data' }) => {
+export const DataPlaceholder: FC<Props> = ({ text }) => {
   const styles = useDataPlaceholderStyles();
 
   return (
     <View style={styles.container}>
       <Icon name={IconNameEnum.NoResult} size={formatSize(120)} />
-      <Text style={styles.text}>{name} will be available soon</Text>
+      <Text style={styles.text}>{text}</Text>
     </View>
   );
 };
