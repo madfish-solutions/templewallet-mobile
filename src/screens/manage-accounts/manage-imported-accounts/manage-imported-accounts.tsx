@@ -6,6 +6,6 @@ import { InfoText } from '../info-text/info-text';
 export const ManageImportedAccounts = () => (
   <>
     <InfoText />
-    <DataPlaceholder name="Imported Accounts" />
+    <DataPlaceholder text="Imported Accounts will be available soon" />
   </>
 );

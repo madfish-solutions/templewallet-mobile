@@ -20,7 +20,7 @@ export const ManageAccounts = () => {
         values={['HD', 'Imported']}
         onChange={setSegmentedControlIndex}
       />
-      <Divider height={formatSize(16)} />
+      <Divider size={formatSize(16)} />
 
       {showManageHdAccounts ? <ManageHdAccounts /> : <ManageImportedAccounts />}
     </ScreenContainer>

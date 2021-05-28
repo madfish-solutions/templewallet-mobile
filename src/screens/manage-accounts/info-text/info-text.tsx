@@ -13,7 +13,7 @@ export const InfoText = () => {
       <Text style={styles.text}>
         If you ever switch between browsers or devices, you will need this seed phrase to access your accounts.
       </Text>
-      <Divider height={formatSize(16)} />
+      <Divider size={formatSize(16)} />
     </>
   );
 };

@@ -3,7 +3,6 @@ import React from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../components/buttons-container/buttons-container';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -40,15 +39,13 @@ export const EnterPassword = () => {
             <Label label="Password" description="A password is used to protect the wallet." />
             <FormPasswordInput name="password" />
 
-            <ButtonsContainer>
-              <ButtonLargePrimary
-                title="Unlock"
-                disabled={!isValid}
-                marginTop={formatSize(8)}
-                marginBottom={formatSize(24)}
-                onPress={submitForm}
-              />
-            </ButtonsContainer>
+            <ButtonLargePrimary
+              title="Unlock"
+              disabled={!isValid}
+              marginTop={formatSize(8)}
+              marginBottom={formatSize(24)}
+              onPress={submitForm}
+            />
           </KeyboardAvoidingView>
         )}
       </Formik>

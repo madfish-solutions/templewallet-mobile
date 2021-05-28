@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Switch, Text, View } from 'react-native';
 
-import { ButtonSmall } from '../../../components/button/button-small/button-small';
+import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
@@ -33,7 +33,7 @@ export const ManageAccountItem: FC<Props> = ({ account }) => {
         <Switch value={true} disabled={true} />
       </View>
 
-      <Divider height={formatSize(16)} />
+      <Divider size={formatSize(16)} />
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
@@ -43,7 +43,7 @@ export const ManageAccountItem: FC<Props> = ({ account }) => {
           <Text style={styles.equityText}>X XXX.XX $</Text>
         </View>
 
-        <ButtonSmall
+        <ButtonSmallSecondary
           title="Reveal"
           marginBottom={formatSize(8)}
           onPress={() => revealSecretKey(account.publicKeyHash)}

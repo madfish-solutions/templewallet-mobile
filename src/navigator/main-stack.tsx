@@ -1,10 +1,13 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
+import { generateScreenOptions } from '../components/header/generate-screen-options.util';
+import { HeaderQrScannerButton } from '../components/header/header-qr-scanner-button/header-qr-scanner-button';
+import { HeaderTitle } from '../components/header/header-title/header-title';
+import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
-import { CreateHdAccount } from '../screens/create-hd-account/create-hd-account';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ImportAccount } from '../screens/import-account/import-account';
@@ -16,6 +19,8 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { emptyTokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
 import { TabBar } from './tab-bar/tab-bar';
 import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
@@ -35,8 +40,16 @@ export const MainStackScreen = () => {
         {!isAuthorised ? (
           <>
             <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
-            <MainStack.Screen name={ScreensEnum.ImportAccount} component={ImportAccount} />
-            <MainStack.Screen name={ScreensEnum.CreateAccount} component={CreateAccount} />
+            <MainStack.Screen
+              name={ScreensEnum.ImportAccount}
+              component={ImportAccount}
+              options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.CreateAccount}
+              component={CreateAccount}
+              options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
+            />
           </>
         ) : (
           <>
@@ -46,9 +59,24 @@ export const MainStackScreen = () => {
               component={Wallet}
               options={{ animationEnabled: false, headerShown: false }}
             />
-            <MainStack.Screen name={ScreensEnum.TezosTokenScreen} component={TezosTokenScreen} />
-            <MainStack.Screen name={ScreensEnum.TokenScreen} component={TokenScreen} />
-            <MainStack.Screen name={ScreensEnum.Delegation} component={DelegationScreen} />
+            <MainStack.Screen
+              name={ScreensEnum.TezosTokenScreen}
+              component={TezosTokenScreen}
+              options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />, <HeaderQrScannerButton />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.TokenScreen}
+              component={TokenScreen}
+              options={generateScreenOptions(
+                <HeaderTokenInfo token={emptyTokenMetadataInterface} />,
+                <HeaderQrScannerButton />
+              )}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.Delegation}
+              component={DelegationScreen}
+              options={generateScreenOptions(<HeaderTitle title="Delegation" />)}
+            />
 
             {/** DApps stack **/}
             <MainStack.Screen
@@ -65,9 +93,16 @@ export const MainStackScreen = () => {
             />
 
             {/** Settings stack **/}
-            <MainStack.Screen name={ScreensEnum.Settings} component={Settings} options={{ animationEnabled: false }} />
-            <MainStack.Screen name={ScreensEnum.CreateHdAccount} component={CreateHdAccount} />
-            <MainStack.Screen name={ScreensEnum.ManageAccounts} component={ManageAccounts} />
+            <MainStack.Screen
+              name={ScreensEnum.Settings}
+              component={Settings}
+              options={{ animationEnabled: false, headerShown: false }}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.ManageAccounts}
+              component={ManageAccounts}
+              options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+            />
           </>
         )}
       </MainStack.Navigator>

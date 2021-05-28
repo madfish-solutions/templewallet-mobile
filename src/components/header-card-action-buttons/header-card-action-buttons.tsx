@@ -5,7 +5,7 @@ import { step } from '../../config/styles';
 import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { ButtonMedium } from '../button/button-medium/button-medium';
-import { ButtonsContainer } from '../buttons-container/buttons-container';
+import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 export const HeaderCardActionButtons = () => {

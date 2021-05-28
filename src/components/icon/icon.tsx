@@ -8,12 +8,14 @@ import { iconNameMap } from './icon-name.map';
 export interface IconProps {
   name: IconNameEnum;
   size?: number;
+  width?: number;
+  height?: number;
   color?: string;
   style?: ViewStyle;
 }
 
-export const Icon: FC<IconProps> = ({ name, size = 2 * step, color, style }) => {
+export const Icon: FC<IconProps> = ({ name, size = 2 * step, width = size, height = size, color, style }) => {
   const Svg = useMemo(() => iconNameMap[name], [name]);
 
-  return <Svg width={size} height={size} color={color} style={style} />;
+  return <Svg width={width} height={height} color={color} style={style} />;
 };
