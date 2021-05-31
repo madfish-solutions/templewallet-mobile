@@ -6,7 +6,8 @@ import { Divider } from '../../../components/divider/divider';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { useShelter } from '../../../shelter/use-shelter.hook';
+import { ModalsEnum } from '../../../navigator/modals.enum';
+import { useNavigation } from '../../../navigator/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
@@ -17,7 +18,7 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account }) => {
   const styles = useManageAccountItemStyles();
-  const { revealSecretKey } = useShelter();
+  const { navigate } = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -46,7 +47,7 @@ export const ManageAccountItem: FC<Props> = ({ account }) => {
         <ButtonSmallSecondary
           title="Reveal"
           marginBottom={formatSize(8)}
-          onPress={() => revealSecretKey(account.publicKeyHash)}
+          onPress={() => navigate(ModalsEnum.RevealPrivateKey, { account })}
         />
       </View>
     </View>

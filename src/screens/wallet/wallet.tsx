@@ -28,7 +28,6 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useWalletStyles } from './wallet.styles';
 
@@ -83,7 +82,7 @@ export const Wallet = () => {
             name={token.name}
             balance={token.balance}
             iconName={token.iconName}
-            onPress={() => navigate(ScreensEnum.TokenScreen, { slug: tokenMetadataSlug(token) })}
+            onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
           />
         ))}
 

@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React from 'react';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
@@ -8,16 +9,14 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { useNavigationParams } from '../../navigator/use-navigation-params.hook';
-import { useSelectedAccountSelector, useTokenSelector } from '../../store/wallet/wallet-selectors';
+import { ScreensEnum, ScreensParamList } from '../../navigator/screens.enum';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
-
-  const slug = useNavigationParams('slug');
-  const token = useTokenSelector(slug);
+  const token = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params.token;
 
   useNavigationSetOptions(
     {

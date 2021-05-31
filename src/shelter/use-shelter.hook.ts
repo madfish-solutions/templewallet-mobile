@@ -5,11 +5,15 @@ import { useDispatch } from 'react-redux';
 import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { SendInterface } from '../interfaces/send.interface';
+import { EventFn } from '../config/general';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { tezos$ } from '../utils/network/network.util';
+import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
+import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
+import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
+import { SendParams } from './interfaces/send-params.interface';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
@@ -17,11 +21,11 @@ export const useShelter = () => {
   const hdAccounts = useHdAccountsListSelector();
   const { goBack } = useNavigation();
 
-  const importWallet$ = useMemo(() => new Subject<{ seedPhrase: string; password: string }>(), []);
-  const send$ = useMemo(() => new Subject<SendInterface>(), []);
+  const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
+  const send$ = useMemo(() => new Subject<SendParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
-  const revealSecretKey$ = useMemo(() => new Subject<string>(), []);
-  const revealSeedPhrase$ = useMemo(() => new Subject(), []);
+  const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
+  const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
 
   useEffect(() => {
     const subscriptions = [
@@ -47,7 +51,7 @@ export const useShelter = () => {
           switchMap(data =>
             Shelter.revealSecretKey$(data.from).pipe(
               switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, SendInterface] => [privateKey, data])
+              map((privateKey): [string, SendParams] => [privateKey, data])
             )
           ),
           withLatestFrom(tezos$),
@@ -62,12 +66,21 @@ export const useShelter = () => {
         .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
 
       merge(
-        revealSecretKey$.pipe(switchMap(publicKeyHash => Shelter.revealSecretKey$(publicKeyHash))),
+        revealSecretKey$.pipe(
+          switchMap(({ publicKeyHash, successCallback }) =>
+            Shelter.revealSecretKey$(publicKeyHash).pipe(
+              map((secretKey): [string | undefined, EventFn<string>] => [secretKey, successCallback])
+            )
+          )
+        ),
         revealSeedPhrase$.pipe(
-          switchMap(() => Shelter.revealSeedPhrase$()),
-          catchError(() => of(undefined))
+          switchMap(({ successCallback }) =>
+            Shelter.revealSeedPhrase$()
+              .pipe(catchError(() => of(undefined)))
+              .pipe(map((seedPhrase): [string | undefined, EventFn<string>] => [seedPhrase, successCallback]))
+          )
         )
-      ).subscribe(value => value !== undefined && Alert.alert(value, '', [{ text: 'OK' }]))
+      ).subscribe(([value, successCallback]) => value !== undefined && successCallback(value))
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -77,8 +90,8 @@ export const useShelter = () => {
   const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
-  const revealSecretKey = (key: string) => revealSecretKey$.next(key);
-  const revealSeedPhrase = () => revealSeedPhrase$.next();
+  const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
+  const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
   return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

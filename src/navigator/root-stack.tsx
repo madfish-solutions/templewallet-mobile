@@ -7,6 +7,8 @@ import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
+import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
+import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -55,6 +57,16 @@ export const RootStackScreen = () => {
             name={ModalsEnum.SelectBaker}
             component={SelectBakerModal}
             options={useModalOptions('Select Baker')}
+          />
+          <RootStack.Screen
+            name={ModalsEnum.RevealSeedPhrase}
+            component={RevealSeedPhraseModal}
+            options={useModalOptions('Reveal Seed')}
+          />
+          <RootStack.Screen
+            name={ModalsEnum.RevealPrivateKey}
+            component={RevealPrivateKeyModal}
+            options={useModalOptions('Reveal Private key')}
           />
         </RootStack.Navigator>
       </CurrentRouteNameContext.Provider>
