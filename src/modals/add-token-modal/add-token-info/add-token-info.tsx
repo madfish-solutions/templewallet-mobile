@@ -53,7 +53,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
               label="Decimal"
               description="A number of decimal places after point. For example: 8 for BTC, 2 for USD."
             />
-            <FormNumericInput name="decimals" />
+            <FormNumericInput name="decimals" decimals={0} />
 
             <Label label="Icon URL" description="Image URL for token logo." />
             <FormTextInput name="iconUrl" />

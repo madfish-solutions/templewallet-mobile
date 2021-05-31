@@ -18,6 +18,12 @@
                 android:launchMode="singleTask"
                 android:windowSoftInputMode="adjustPan"
                 android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/tezos_url_scheme" />
+            </intent-filter>
         </activity>
 
         <activity

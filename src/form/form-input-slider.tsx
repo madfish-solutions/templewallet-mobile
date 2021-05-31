@@ -1,19 +1,21 @@
 import { useField } from 'formik';
 import React, { FC } from 'react';
 
-import { StyledInputSlider } from '../components/styled-input-slider/styled-input-slider';
+import { Slider } from '../components/slider/slider';
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props {
   name: string;
 }
 
-export const FormInputSlider: FC<Props> = ({ name }) => {
+export const FormInputSlider: FC<Props> = ({ name, children }) => {
   const [field, meta, helpers] = useField<number>(name);
 
   return (
     <>
-      <StyledInputSlider value={field.value} onChange={helpers.setValue} />
+      <Slider value={field.value} onValueChange={helpers.setValue}>
+        {children}
+      </Slider>
       <ErrorMessage meta={meta} />
     </>
   );

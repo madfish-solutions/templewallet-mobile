@@ -1,10 +1,11 @@
 import { InMemorySigner } from '@taquito/signer';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { merge, of, Subject, throwError } from 'rxjs';
+import { merge, of, pipe, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { EstimateInterface } from '../interfaces/estimate.interface';
 import { SendInterface } from '../interfaces/send.interface';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
@@ -51,12 +52,27 @@ export const useShelter = () => {
             )
           ),
           withLatestFrom(tezos$),
-          switchMap(([[privateKey, data], tezos]) => {
+          switchMap(([[privateKey, { params }], tezos]) => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
 
-            return tezos.contract.transfer({ to: data.to, amount: data.amount });
+            if (params instanceof Array) {
+              const batch = tezos.wallet.batch(params);
+
+              return batch.send();
+            }
+
+            switch (params.kind) {
+              case 'origination':
+                return tezos.wallet.originate(params).send();
+              case 'delegation':
+                return tezos.wallet.setDelegate(params).send();
+              case 'transaction':
+                return tezos.wallet.transfer(params).send();
+              default:
+                return throwError('Params of this kind are not supported yet');
+            }
           })
         )
         .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
@@ -74,11 +90,44 @@ export const useShelter = () => {
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
-  const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
+  const send = (payload: SendInterface) => send$.next(payload);
+  const estimate = useCallback(
+    async (payload: EstimateInterface) => {
+      const [[privateKey, { params }], tezos] = await pipe(
+        switchMap((data: EstimateInterface) =>
+          Shelter.revealSecretKey$(data.from).pipe(
+            switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+            map((privateKey): [string, EstimateInterface] => [privateKey, data])
+          )
+        ),
+        withLatestFrom(tezos$)
+      )(of(payload)).toPromise();
+
+      tezos.setProvider({
+        signer: new InMemorySigner(privateKey)
+      });
+
+      if (params instanceof Array) {
+        return tezos.estimate.batch(params);
+      }
+
+      switch (params.kind) {
+        case 'origination':
+          return [await tezos.estimate.originate(params)];
+        case 'delegation':
+          return [await tezos.estimate.setDelegate(params)];
+        case 'transaction':
+          return [await tezos.estimate.transfer(params)];
+        default:
+          throw new Error('Params of this kind are not supported yet');
+      }
+    },
+    [tezos$]
+  );
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (key: string) => revealSecretKey$.next(key);
   const revealSeedPhrase = () => revealSeedPhrase$.next();
 
-  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
+  return { estimate, importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

@@ -1,15 +1,17 @@
-import { number, object, SchemaOf, string } from 'yup';
+import { BigNumber } from 'bignumber.js';
+import { object, SchemaOf, string } from 'yup';
 
+import { assetAmountValidation } from '../../form/validation/asset-amount';
 import { AccountInterface } from '../../interfaces/account.interface';
 
 export type SendModalFormValues = {
   account: AccountInterface;
-  amount: number;
+  amount: BigNumber;
   recipient: string;
 };
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  amount: number().required(),
+  amount: assetAmountValidation.clone().required(),
   account: object().shape({}).required(),
   recipient: string().required()
 });

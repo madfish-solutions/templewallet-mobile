@@ -1,10 +1,12 @@
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Linking } from 'react-native';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
@@ -27,6 +29,14 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(navigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  useEffect(() => {
+    const listener = ({ url }: { url: string }) => Alert.alert('Got URL', url, [{ text: 'OK' }]);
+
+    Linking.addEventListener('url', listener);
+
+    return () => Linking.removeEventListener('url', listener);
+  }, []);
 
   return (
     <NavigationContainer
@@ -56,6 +66,7 @@ export const RootStackScreen = () => {
             component={SelectBakerModal}
             options={useModalOptions('Select Baker')}
           />
+          <RootStack.Screen name={ModalsEnum.Confirm} component={ConfirmModal} />
         </RootStack.Navigator>
       </CurrentRouteNameContext.Provider>
     </NavigationContainer>

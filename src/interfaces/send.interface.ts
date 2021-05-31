@@ -1,5 +1,6 @@
+import { WalletParamsWithKind } from '@taquito/taquito';
+
 export interface SendInterface {
   from: string;
-  amount: number;
-  to: string;
+  params: WalletParamsWithKind | WalletParamsWithKind[];
 }

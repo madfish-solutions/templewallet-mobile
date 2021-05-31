@@ -9,6 +9,7 @@ import BookIcon from './assets/book.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClockIcon from './assets/clock.svg';
+import CloseNoCircleIcon from './assets/close-no-circle.svg';
 import CloseIcon from './assets/close.svg';
 import CmdlineIcon from './assets/cmdline.svg';
 import CopyIcon from './assets/copy.svg';
@@ -75,6 +76,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
+  [IconNameEnum.CloseNoCircle]: CloseNoCircleIcon,
   [IconNameEnum.XtzToken]: XtzTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,

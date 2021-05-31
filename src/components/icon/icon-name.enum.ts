@@ -20,6 +20,7 @@ export enum IconNameEnum {
   Settings = 'Settings',
   SoonBadge = 'SoonBadge',
   Close = 'Close',
+  CloseNoCircle = 'CloseNoCircle',
   XtzToken = 'XtzToken',
   TzBtcToken = 'TzBtcToken',
   UsdTzToken = 'UsdTzToken',

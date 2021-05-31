@@ -1,5 +1,6 @@
+import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
@@ -10,30 +11,41 @@ import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { FormInputSlider } from '../../form/form-input-slider';
 import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
+import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
+import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { MAINNET_NETWORK } from '../../utils/network/networks';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
 export const SendModal: FC = () => {
-  const { send } = useShelter();
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const hdAccounts = useHdAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const SendBottomSheetInitialValues: SendModalFormValues = {
-    account: selectedAccount,
-    amount: 0,
-    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
-    gasFee: 0
-  };
+  const SendBottomSheetInitialValues: SendModalFormValues = useMemo(
+    () => ({
+      account: selectedAccount,
+      amount: new BigNumber(0),
+      recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
+    }),
+    []
+  );
 
   // TODO: integrate gasFee with send request
-  const onSubmit = (data: SendModalFormValues) => send(data.account.publicKeyHash, data.amount, data.recipient);
+  const onSubmit = useCallback(
+    (data: SendModalFormValues) =>
+      navigate(ModalsEnum.Confirm, {
+        type: ConfirmPayloadType.internalOperations,
+        networkRpc: MAINNET_NETWORK.rpcBaseURL,
+        sourcePkh: data.account.publicKeyHash,
+        opParams: [{ kind: 'transaction', amount: data.amount.times(1e6).toString(), to: data.recipient, mutez: true }]
+      }),
+    []
+  );
 
   return (
     <Formik
@@ -53,12 +65,7 @@ export const SendModal: FC = () => {
             <Divider />
 
             <Label label="Amount" description="Set XTZ amount to send." />
-            <FormNumericInput name="amount" />
-            <Divider />
-
-            <Label label="Fee" />
-            <FormInputSlider name="gasFee" />
-
+            <FormNumericInput name="amount" decimals={6} min={0} />
             <Divider />
           </View>
 
