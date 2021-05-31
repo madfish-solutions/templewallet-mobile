@@ -17,8 +17,7 @@ export const RevealSeedPhraseModal = () => {
 
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
     account,
-    derivationPath: '',
-    seedPhrase: 'tert'
+    derivationPath: ''
   };
 
   return (

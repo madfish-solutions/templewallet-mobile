@@ -5,13 +5,12 @@ import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from '
 import { emptyFn } from '../../../config/general';
 import { isString } from '../../../utils/is-string';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
-import { StyledTextInput, StyledTextInputProps } from '../../styled-text-input/styled-text-input';
+import { StyledTextInput } from '../../styled-text-input/styled-text-input';
+import { MnemonicProps } from '../mnemonic.props';
 import { useMnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 
-type Props = Pick<StyledTextInputProps, 'value' | 'isError' | 'onChangeText' | 'onBlur'>;
-
-export const MnemonicInput: FC<Props> = ({ value, isError, onChangeText = emptyFn, onBlur = emptyFn }) => {
+export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur = emptyFn }) => {
   const styles = useMnemonicStyles();
   const [clipboardValue] = useClipboard();
 
