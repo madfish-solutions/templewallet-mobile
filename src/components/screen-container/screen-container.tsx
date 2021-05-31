@@ -1,6 +1,8 @@
+import { useHeaderHeight } from '@react-navigation/stack';
 import React, { FC } from 'react';
-import { ScrollView, StyleProp, ViewStyle } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle } from 'react-native';
 
+import { isIOS } from '../../config/system';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { useScreenContainerStyles } from './screen-container.styles';
 
@@ -12,16 +14,22 @@ interface Props {
 
 export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, contentContainerStyle, children }) => {
   const styles = useScreenContainerStyles();
+  const headerHeight = useHeaderHeight();
 
   return (
-    <ScrollView
+    <KeyboardAvoidingView
       style={[styles.scrollView, style]}
-      contentContainerStyle={[
-        styles.scrollViewContentContainer,
-        conditionalStyle(isFullScreenMode, styles.fullScreenMode),
-        contentContainerStyle
-      ]}>
-      {children}
-    </ScrollView>
+      keyboardVerticalOffset={headerHeight}
+      {...(isIOS && { behavior: 'padding' })}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollViewContentContainer,
+          conditionalStyle(isFullScreenMode, styles.fullScreenMode),
+          contentContainerStyle
+        ]}
+        keyboardShouldPersistTaps="handled">
+        {children}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };

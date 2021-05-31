@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import React, { FC } from 'react';
 
-import { StyledMnemonicInput } from '../components/styled-mnemonic-input/styled-mnemonic-input';
+import { StyledMnemonicInput } from '../components/mnemonic/styled-mnemonic-input/styled-mnemonic-input';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 

@@ -17,7 +17,6 @@ import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
 import { changeTheme } from '../../store/display-settings/display-settings-actions';
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -32,7 +31,6 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { lock } = useAppLock();
   const { navigate } = useNavigation();
-  const { revealSeedPhrase } = useShelter();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -84,12 +82,6 @@ export const Settings = () => {
             onChange={handleThemeSegmentControlChange}
           />
         </View>
-        <Divider />
-
-        <TouchableOpacity style={styles.accountItem} onPress={() => revealSeedPhrase()}>
-          <Text>Seed phrase</Text>
-        </TouchableOpacity>
-
         <Divider />
 
         <Button title="Lock the App" onPress={lock} />

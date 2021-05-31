@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../../../styles/create-use-styles';
+import { formatSize } from '../../../../styles/format-size';
 
 export const useProtectedStyles = createUseStyles(({ colors, typography }) => ({
   protectedImage: {

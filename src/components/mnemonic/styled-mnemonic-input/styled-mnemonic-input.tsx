@@ -2,10 +2,10 @@ import { useClipboard } from '@react-native-clipboard/clipboard';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { TextInput, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { isString } from '../../utils/is-string';
-import { generateSeed } from '../../utils/keys.util';
-import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
+import { emptyFn } from '../../../config/general';
+import { isString } from '../../../utils/is-string';
+import { generateSeed } from '../../../utils/keys.util';
+import { StyledTextInput, StyledTextInputProps } from '../../styled-text-input/styled-text-input';
 import { Buttons } from './buttons/buttons';
 import { Protected } from './protected/protected';
 import { useStyledMnemonicInputStyles } from './styled-mnemonic-input.styles';
