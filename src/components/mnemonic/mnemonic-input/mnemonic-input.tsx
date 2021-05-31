@@ -24,6 +24,7 @@ export const MnemonicInput: FC<Props> = ({ value, isError, onChangeText = emptyF
     setIsFocused(false);
     onBlur(e);
   };
+
   const handlePasteButtonPress = () => {
     inputRef.current?.focus();
     onChangeText(clipboardValue);
@@ -37,9 +38,9 @@ export const MnemonicInput: FC<Props> = ({ value, isError, onChangeText = emptyF
         isError={isError}
         multiline={true}
         placeholder="e.g. cat, dog, coffee, ocean..."
-        onChangeText={onChangeText}
-        onFocus={() => setIsFocused(true)}
         onBlur={handleBlur}
+        onFocus={() => setIsFocused(true)}
+        onChangeText={onChangeText}
       />
       <View style={styles.buttonsContainer}>
         <ButtonSmallSecondary title="Paste" onPress={handlePasteButtonPress} />

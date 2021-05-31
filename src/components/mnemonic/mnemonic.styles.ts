@@ -7,6 +7,7 @@ export const useMnemonicStyles = createUseStyles(() => ({
   },
   buttonsContainer: {
     position: 'absolute',
+    flexDirection: 'row',
     bottom: formatSize(8),
     right: formatSize(8)
   }
