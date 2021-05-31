@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
 export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {

@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
-export const useDropdownBottomSheetActionButtonStyles = createUseStyles(({ colors, typography }) => ({
+export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     alignItems: 'center',
     padding: formatSize(12),
