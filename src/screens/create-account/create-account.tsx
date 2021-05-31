@@ -38,7 +38,7 @@ export const CreateAccount = () => {
                 label="Seed phrase"
                 description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
               />
-              <FormMnemonicInput name="seedPhrase" isShowGenerateNew={true} />
+              <FormMnemonicInput name="seedPhrase" />
 
               <Label label="Password" description="A password is used to protect the wallet." />
               <FormPasswordInput name="password" />

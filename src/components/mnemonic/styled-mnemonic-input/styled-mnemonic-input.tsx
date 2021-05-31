@@ -7,7 +7,6 @@ import { isString } from '../../../utils/is-string';
 import { generateSeed } from '../../../utils/keys.util';
 import { StyledTextInput, StyledTextInputProps } from '../../styled-text-input/styled-text-input';
 import { Buttons } from './buttons/buttons';
-import { Protected } from './protected/protected';
 import { useStyledMnemonicInputStyles } from './styled-mnemonic-input.styles';
 
 interface Props extends StyledTextInputProps {
@@ -60,9 +59,7 @@ export const StyledMnemonicInput: FC<Props> = ({
         multiline
       />
 
-      {isProtected ? (
-        <Protected onReveal={onReveal} />
-      ) : (
+      {isProtected ? null : (
         <Buttons
           isInputMode={isInputMode}
           isShowGenerateNew={isShowGenerateNew}

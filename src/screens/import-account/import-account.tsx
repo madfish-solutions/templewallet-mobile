@@ -32,7 +32,7 @@ export const ImportAccount = () => {
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
-            <FormMnemonicInput name="seedPhrase" isInputMode />
+            <FormMnemonicInput name="seedPhrase" />
 
             <Label label="Password" description="A password is used to protect the wallet." />
             <FormPasswordInput name="password" />
