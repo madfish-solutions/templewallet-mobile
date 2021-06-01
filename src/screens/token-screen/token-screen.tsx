@@ -33,7 +33,7 @@ export const TokenScreen = () => {
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons />
+        <HeaderCardActionButtons slug={slug} />
       </HeaderCard>
 
       <TokenScreenContentContainer

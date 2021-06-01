@@ -10,6 +10,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
+import { tzToMutez } from '../../utils/tezos.util';
 import { useConfirmModalStyles } from './confirm-modal.styles';
 import { InternalOperationsConfirm } from './internal-operations-confirm/internal-operations-confirm';
 
@@ -17,7 +18,7 @@ export const ConfirmModal: FC = () => {
   const styles = useConfirmModalStyles();
   const { navigate } = useNavigation();
   const { estimate, send } = useShelter();
-  const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum>>();
+  const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirm>>();
   const [estimations, setEstimations] = useState<Estimate[]>();
   const [estimationError, setEstimationError] = useState<Error>();
 
@@ -32,8 +33,8 @@ export const ConfirmModal: FC = () => {
         const { opParams } = params;
         const processedOpParams = opParams.map((op, index) => {
           const { totalCost, storageLimit } = estimations![index];
-          const rawAddGasFee = additionalGasFee.times(1e6);
-          const rawAddStorageFee = additionalStorageFee.times(1e6);
+          const rawAddGasFee = tzToMutez(additionalGasFee, 6);
+          const rawAddStorageFee = tzToMutez(additionalStorageFee, 6);
 
           return {
             ...op,
@@ -45,17 +46,14 @@ export const ConfirmModal: FC = () => {
               .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length).integerValue() : 0)
           };
         });
-        console.warn({
-          from: params.sourcePkh,
-          params: processedOpParams.length === 1 ? processedOpParams[0] : processedOpParams
-        });
+        console.log(JSON.stringify(processedOpParams));
         send({
           from: params.sourcePkh,
           params: processedOpParams.length === 1 ? processedOpParams[0] : processedOpParams
         });
       }
     },
-    [params, navigate, send]
+    [params, navigate, send, estimations]
   );
 
   useEffect(() => {
@@ -76,7 +74,7 @@ export const ConfirmModal: FC = () => {
         }
       }
     })();
-  }, []);
+  }, [estimate, params]);
 
   if (!params) {
     return (

@@ -8,7 +8,11 @@ import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
-export const HeaderCardActionButtons = () => {
+type Props = {
+  slug?: string;
+};
+
+export const HeaderCardActionButtons = ({ slug }: Props) => {
   const { navigate } = useNavigation();
 
   return (
@@ -23,7 +27,7 @@ export const HeaderCardActionButtons = () => {
         title="SEND"
         iconName={IconNameEnum.ArrowUp}
         marginRight={step}
-        onPress={() => navigate(ModalsEnum.Send)}
+        onPress={() => navigate(ModalsEnum.Send, slug ? { slug } : undefined)}
       />
       <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
     </ButtonsContainer>

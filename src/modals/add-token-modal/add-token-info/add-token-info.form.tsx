@@ -1,9 +1,10 @@
+import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
 export type AddTokenInfoFormValues = {
   symbol: string;
   name: string;
-  decimals: number;
+  decimals: BigNumber;
   iconUrl?: string;
 };
 

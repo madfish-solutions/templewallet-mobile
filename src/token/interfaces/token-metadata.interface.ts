@@ -1,4 +1,5 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 
 export interface TokenMetadataInterface {
   id: number;
@@ -8,6 +9,7 @@ export interface TokenMetadataInterface {
   decimals: number;
   iconName?: IconNameEnum;
   iconUrl?: string;
+  type: TokenTypeEnum;
 }
 
 export const emptyTokenMetadataInterface: TokenMetadataInterface = {
@@ -15,5 +17,6 @@ export const emptyTokenMetadataInterface: TokenMetadataInterface = {
   address: '',
   name: '',
   symbol: '',
-  decimals: 0
+  decimals: 0,
+  type: TokenTypeEnum.FA_1_2
 };

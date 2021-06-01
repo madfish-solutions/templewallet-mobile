@@ -6,7 +6,11 @@ export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
     return bigNum;
   }
 
-  return bigNum.integerValue().div(10 ** decimals);
+  return bigNum.integerValue().div(new BigNumber(10).pow(decimals));
+};
+
+export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
+  return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;

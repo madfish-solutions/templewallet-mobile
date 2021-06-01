@@ -87,43 +87,49 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
+  }, [
+    dispatch,
+    importWallet$,
+    revealSecretKey$,
+    createHdAccount$,
+    hdAccounts.length,
+    goBack,
+    revealSeedPhrase$,
+    send$
+  ]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (payload: SendInterface) => send$.next(payload);
-  const estimate = useCallback(
-    async (payload: EstimateInterface) => {
-      const [[privateKey, { params }], tezos] = await pipe(
-        switchMap((data: EstimateInterface) =>
-          Shelter.revealSecretKey$(data.from).pipe(
-            switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-            map((privateKey): [string, EstimateInterface] => [privateKey, data])
-          )
-        ),
-        withLatestFrom(tezos$)
-      )(of(payload)).toPromise();
+  const estimate = useCallback(async (payload: EstimateInterface) => {
+    const [[privateKey, { params }], tezos] = await pipe(
+      switchMap((data: EstimateInterface) =>
+        Shelter.revealSecretKey$(data.from).pipe(
+          switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+          map((privateKey): [string, EstimateInterface] => [privateKey, data])
+        )
+      ),
+      withLatestFrom(tezos$)
+    )(of(payload)).toPromise();
 
-      tezos.setProvider({
-        signer: new InMemorySigner(privateKey)
-      });
+    tezos.setProvider({
+      signer: new InMemorySigner(privateKey)
+    });
 
-      if (params instanceof Array) {
-        return tezos.estimate.batch(params);
-      }
+    if (params instanceof Array) {
+      return tezos.estimate.batch(params);
+    }
 
-      switch (params.kind) {
-        case 'origination':
-          return [await tezos.estimate.originate(params)];
-        case 'delegation':
-          return [await tezos.estimate.setDelegate(params)];
-        case 'transaction':
-          return [await tezos.estimate.transfer(params)];
-        default:
-          throw new Error('Params of this kind are not supported yet');
-      }
-    },
-    [tezos$]
-  );
+    switch (params.kind) {
+      case 'origination':
+        return [await tezos.estimate.originate(params)];
+      case 'delegation':
+        return [await tezos.estimate.setDelegate(params)];
+      case 'transaction':
+        return [await tezos.estimate.transfer(params)];
+      default:
+        throw new Error('Params of this kind are not supported yet');
+    }
+  }, []);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (key: string) => revealSecretKey$.next(key);

@@ -1,7 +1,8 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { TokenMetadataInterface } from '../interfaces/token-metadata.interface';
 
-export const XTZ_TOKEN_METADATA: Omit<TokenMetadataInterface, 'id' | 'address'> = {
+export const XTZ_TOKEN_METADATA: Omit<TokenMetadataInterface, 'id' | 'address' | 'type'> = {
   name: 'Tezos',
   symbol: 'XTZ',
   decimals: 6,
@@ -15,7 +16,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Tezos BTC',
     symbol: 'tzBTC',
     decimals: 8,
-    iconName: IconNameEnum.TzBtcToken
+    iconName: IconNameEnum.TzBtcToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -23,14 +25,16 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Kolibri',
     symbol: 'kUSD',
     decimals: 18,
-    iconName: IconNameEnum.KUsdToken
+    iconName: IconNameEnum.KUsdToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
     address: 'KT1AxaBxkFLCUi3f8rdDAAxBKHfzY8LfKDRA',
     name: 'Quipuswap Liquidating kUSD',
     symbol: 'QLkUSD',
-    decimals: 36
+    decimals: 36,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -38,7 +42,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Wrapped Tezos',
     symbol: 'wXTZ',
     decimals: 6,
-    iconName: IconNameEnum.WXtzToken
+    iconName: IconNameEnum.WXtzToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -46,7 +51,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Stably USD',
     symbol: 'USDS',
     decimals: 6,
-    iconName: IconNameEnum.UsdSToken
+    iconName: IconNameEnum.UsdSToken,
+    type: TokenTypeEnum.FA_2
   },
   {
     id: 0,
@@ -54,7 +60,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'ETH Tez',
     symbol: 'ETHtz',
     decimals: 18,
-    iconName: IconNameEnum.EthTzToken
+    iconName: IconNameEnum.EthTzToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -62,7 +69,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'USD Tez',
     symbol: 'USDtz',
     decimals: 6,
-    iconName: IconNameEnum.UsdTzToken
+    iconName: IconNameEnum.UsdTzToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -70,7 +78,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Staker Governance Token',
     symbol: 'STKR',
     decimals: 18,
-    iconName: IconNameEnum.StkrToken
+    iconName: IconNameEnum.StkrToken,
+    type: TokenTypeEnum.FA_1_2
   },
   {
     id: 0,
@@ -78,6 +87,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Blend',
     symbol: 'BLND',
     decimals: 18,
-    iconName: IconNameEnum.BlndToken
+    iconName: IconNameEnum.BlndToken,
+    type: TokenTypeEnum.FA_1_2
   }
 ];

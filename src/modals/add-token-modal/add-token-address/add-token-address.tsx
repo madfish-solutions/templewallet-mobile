@@ -37,8 +37,8 @@ const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
 export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
 
-  const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
-    dispatch(loadTokenMetadataActions.submit({ id: id.toNumber(), address }));
+  const onSubmit = ({ id, address, type }: AddTokenAddressFormValues) => {
+    dispatch(loadTokenMetadataActions.submit({ id: id.toNumber(), address, type }));
     onFormSubmitted();
   };
 

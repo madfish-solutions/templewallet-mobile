@@ -22,11 +22,14 @@ import { step } from '../../../config/styles';
 import { ErrorMessage } from '../../../form/error-message/error-message';
 import { assetAmountValidation } from '../../../form/validation/asset-amount';
 import { InternalOperationsPayload } from '../../../interfaces/confirm-payload/internal-operations-payload.interface';
+import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { useNavigation } from '../../../navigator/use-navigation.hook';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector, useTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tryParseExpenses } from '../../../utils/expenses.util';
+import { mutezToTz } from '../../../utils/tezos.util';
 import { InternalOpsConfirmFormValues } from './internal-operations-confirm.form';
 import { useInternalOpsConfirmStyles } from './internal-operations-confirm.styles';
 
@@ -41,8 +44,8 @@ export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({ 
     () =>
       estimations.reduce(
         (sumPart, estimation) => ({
-          gasFee: sumPart.gasFee.plus(new BigNumber(estimation.totalCost).div(1e6)),
-          storageFee: sumPart.storageFee.plus(new BigNumber(estimation.storageLimit).div(1e6))
+          gasFee: sumPart.gasFee.plus(mutezToTz(new BigNumber(estimation.totalCost), 6)),
+          storageFee: sumPart.storageFee.plus(mutezToTz(new BigNumber(estimation.storageLimit), 6))
         }),
         { gasFee: new BigNumber(0), storageFee: new BigNumber(0) }
       ),
@@ -139,38 +142,59 @@ const FormContent: FC<FormContentProps> = ({
   );
   const rawExpenses = useMemo(() => tryParseExpenses(opParams, sourcePkh), [opParams, sourcePkh]);
   const rawPureExpenses = useMemo(() => rawExpenses.map(({ expenses }) => expenses).flat(), [rawExpenses]);
+  const firstExpense = rawPureExpenses[0];
   const firstExpenseRecipientAccount = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === rawPureExpenses[0].to),
-    [rawPureExpenses, hdAccounts]
+    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === firstExpense.to),
+    [firstExpense, hdAccounts]
+  );
+  const tokens = useTokensListSelector();
+  const firstExpenseToken = useMemo(
+    () =>
+      tokens.find(
+        ({ type, address, id }) =>
+          firstExpense.tokenAddress === address && (type !== TokenTypeEnum.FA_2 || id === firstExpense.tokenId)
+      ),
+    [tokens, firstExpense]
+  );
+  const assetDecimals = firstExpenseToken?.decimals ?? XTZ_TOKEN_METADATA.decimals;
+  const assetSymbol = firstExpenseToken?.symbol ?? XTZ_TOKEN_METADATA.symbol;
+
+  const handleSliderChange = useCallback(
+    (newValue: number) => {
+      setValues({
+        sliderValue: newValue,
+        gasFee: basicFees.gasFee.plus(1e-4).plus(newValue * 5e-5),
+        storageFee: basicFees.storageFee
+      });
+    },
+    [basicFees, setValues]
   );
 
-  const handleSliderChange = useCallback((newValue: number) => {
-    setValues({
-      sliderValue: newValue,
-      gasFee: basicFees.gasFee.plus(1e-4).plus(newValue * 5e-5),
-      storageFee: basicFees.storageFee
-    });
-  }, []);
+  const handleGasFeeChange = useCallback(
+    (newValue?: BigNumber) => {
+      setFieldValue('gasFee', newValue, true);
+      if (newValue) {
+        const newSliderValue = Math.min(
+          100,
+          Math.max(0, newValue.minus(basicFees.gasFee).minus(1e4).div(5e-5).integerValue().toNumber())
+        );
+        setFieldValue('sliderValue', newSliderValue);
+      } else {
+        setFieldValue('sliderValue', 0);
+      }
+    },
+    [basicFees, setFieldValue]
+  );
 
-  const handleGasFeeChange = useCallback((newValue?: BigNumber) => {
-    setFieldValue('gasFee', newValue, true);
-    if (newValue) {
-      const newSliderValue = Math.min(
-        100,
-        Math.max(0, newValue.minus(basicFees.gasFee).minus(1e4).div(5e-5).integerValue().toNumber())
-      );
-      setFieldValue('sliderValue', newSliderValue);
-    } else {
-      setFieldValue('sliderValue', 0);
-    }
-  }, []);
-
-  const handleStorageFeeChange = useCallback((newValue?: BigNumber) => setFieldValue('storageFee', newValue), []);
+  const handleStorageFeeChange = useCallback(
+    (newValue?: BigNumber) => setFieldValue('storageFee', newValue),
+    [setFieldValue]
+  );
 
   return (
     <ScreenContainer isFullScreenMode={true}>
       <View>
-        {rawExpenses.length === 1 && (
+        {rawPureExpenses.length === 1 && (
           <>
             <View style={styles.row}>
               <View style={styles.sendAddressesLeftHalf}>
@@ -197,9 +221,11 @@ const FormContent: FC<FormContentProps> = ({
                 <Text style={styles.label}>Amount</Text>
               </View>
               <Divider size={formatSize(16)} />
-              {rawExpenses[0].amount && (
+              {rawPureExpenses[0].amount && (
                 <>
-                  <Text style={styles.totalNumber}>{rawExpenses[0].amount.div(1e6).toFixed()} XTZ</Text>
+                  <Text style={styles.totalNumber}>
+                    {mutezToTz(rawPureExpenses[0].amount, assetDecimals).toFixed()} {assetSymbol}
+                  </Text>
                   <Text style={styles.totalUsdNumber}>XXX.XX $</Text>
                 </>
               )}

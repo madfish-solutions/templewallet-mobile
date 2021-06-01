@@ -58,7 +58,7 @@ export const StyledNumericInput: FC<Props> = ({
         }
       }
     },
-    [decimals, setLocalValue, min, max, onChange, readOnly]
+    [decimals, setLocalValue, min, max, onChange]
   );
 
   const handleFocus = useCallback(

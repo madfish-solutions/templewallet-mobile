@@ -11,7 +11,7 @@ export enum ModalsEnum {
 
 export type ModalsParamList = {
   [ModalsEnum.Receive]: undefined;
-  [ModalsEnum.Send]: undefined;
+  [ModalsEnum.Send]: { slug: string } | undefined;
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
   [ModalsEnum.SelectBaker]: undefined;

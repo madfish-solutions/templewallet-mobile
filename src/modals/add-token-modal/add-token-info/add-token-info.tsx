@@ -1,5 +1,6 @@
+import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -27,9 +28,17 @@ interface Props {
 export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
   const tokenSuggestion = useAddTokenSuggestion();
+  const initialValues = useMemo(
+    () => ({
+      ...tokenSuggestion,
+      decimals: new BigNumber(tokenSuggestion.decimals)
+    }),
+    [tokenSuggestion]
+  );
 
   const onSubmit = (data: AddTokenInfoFormValues) => {
-    dispatch(addTokenMetadataAction({ ...tokenSuggestion, ...data }));
+    const tokenMetadata = { ...initialValues, ...data };
+    dispatch(addTokenMetadataAction({ ...tokenMetadata, decimals: tokenMetadata.decimals.toNumber() }));
     showSuccessToast('Token successfully added');
     onFormSubmitted();
   };
@@ -37,7 +46,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={tokenSuggestion}
+      initialValues={initialValues}
       validationSchema={addTokenInfoFormValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (

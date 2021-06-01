@@ -10,17 +10,21 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { betterCallDevApi } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
+import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { assertFA2TokenContract } from '../../token/utils/token.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { loadTezosBalanceActions, loadTokenBalancesActions, loadTokenMetadataActions } from './wallet-actions';
 
+// loadTokenBalancesActions.success(data.balances)
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
     withLatestFrom(currentNetworkId$),
-    switchMap(([address, currentNetworkId]) =>
+    withLatestFrom(tezos$),
+    switchMap(([[address, currentNetworkId], tezos]) =>
       from(
         betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
           `/account/${currentNetworkId}/${address}/token_balances`,
@@ -29,7 +33,27 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
           }
         )
       ).pipe(
-        map(({ data }) => loadTokenBalancesActions.success(data.balances)),
+        switchMap(({ data }) =>
+          from(
+            Promise.all(
+              data.balances.map(async balance => {
+                try {
+                  await assertFA2TokenContract(await tezos.wallet.at(balance.contract));
+
+                  return {
+                    ...balance,
+                    token_type: TokenTypeEnum.FA_2
+                  };
+                } catch (e) {
+                  return {
+                    ...balance,
+                    token_type: TokenTypeEnum.FA_1_2
+                  };
+                }
+              })
+            )
+          ).pipe(map(finalData => loadTokenBalancesActions.success(finalData)))
+        ),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -53,9 +77,21 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ id, address }, tezos]) =>
+    switchMap(([{ id, address, type }, tezos]) =>
       from(tezos.wallet.at(address, compose(tzip12, tzip16))).pipe(
-        switchMap(contract => contract.tzip12().getTokenMetadata(id)),
+        switchMap(async contract => {
+          try {
+            return contract.tzip12().getTokenMetadata(id);
+          } catch {
+            const tzip16Metadata = await contract.tzip16().getMetadata();
+
+            return {
+              token_id: 0,
+              decimals: 0,
+              ...tzip16Metadata
+            };
+          }
+        }),
         map((tokenMetadata: TokenMetadataSuggestionInterface) =>
           loadTokenMetadataActions.success({
             id,
@@ -68,7 +104,8 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
               tokenMetadata.logo ??
               tokenMetadata.icon ??
               tokenMetadata.iconUri ??
-              tokenMetadata.iconUrl
+              tokenMetadata.iconUrl,
+            type
           })
         ),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
