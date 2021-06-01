@@ -49,7 +49,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
         />
         {isShowCleanButton && isString(value) && (
           <View style={styles.cleanButton}>
-            <TouchableIcon size={formatSize(16)} name={IconNameEnum.XCircle} onPress={() => onChangeText('')} />
+            <TouchableIcon size={formatSize(16)} name={IconNameEnum.InputXCircle} onPress={() => onChangeText('')} />
           </View>
         )}
       </View>

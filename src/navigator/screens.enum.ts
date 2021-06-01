@@ -8,6 +8,8 @@ export enum ScreensEnum {
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
+  ManageAssets = 'ManageAssets',
+  Activity = 'Activity',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -24,6 +26,8 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.CreateAccount]: undefined;
+  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.Activity]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -46,7 +50,9 @@ export const walletStackScreens = [
   ScreensEnum.Wallet,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
-  ScreensEnum.Delegation
+  ScreensEnum.Delegation,
+  ScreensEnum.ManageAssets,
+  ScreensEnum.Activity
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.Swap];

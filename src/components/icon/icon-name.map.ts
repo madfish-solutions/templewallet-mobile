@@ -10,10 +10,12 @@ import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DownloadIcon from './assets/download.svg';
+import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import InfoIcon from './assets/info.svg';
+import IosSearchIcon from './assets/ios-search.svg';
 import LockIcon from './assets/lock.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -42,6 +44,7 @@ import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import XtzTokenIcon from './assets/tokens/xtz.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
+import InputXCircleIcon from './assets/input-x-circle.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
@@ -54,6 +57,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
+  [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
@@ -89,5 +93,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouTube]: YouTubeIcon,
   [IconNameEnum.Reddit]: RedditIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
-  [IconNameEnum.Search]: SearchIcon
+  [IconNameEnum.IosSearch]: IosSearchIcon,
+  [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.Edit]: EditIcon
 };

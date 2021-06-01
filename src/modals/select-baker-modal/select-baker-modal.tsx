@@ -35,8 +35,7 @@ export const SelectBakerModal: FC = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: BakerInterface[] = [];
 
-      for (let i = 0; i < bakersList.length; i++) {
-        const baker = bakersList[i];
+      for (const baker of bakersList) {
         const { name, address } = baker;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || address.toLowerCase().includes(lowerCaseSearchValue)) {
