@@ -2,11 +2,11 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { EmptyFn } from '../../../config/general';
-import { formatSize } from '../../../styles/format-size';
-import { isDefined } from '../../../utils/is-defined';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { EmptyFn } from '../../../../config/general';
+import { formatSize } from '../../../../styles/format-size';
+import { isDefined } from '../../../../utils/is-defined';
 import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props {
