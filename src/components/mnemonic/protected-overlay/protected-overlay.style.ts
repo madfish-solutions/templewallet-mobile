@@ -10,6 +10,7 @@ export const useProtectedOverlayStyle = createUseStyles(({ colors, typography })
     overflow: 'hidden'
   },
   protectedBackground: {
+    backgroundColor: colors.gray3,
     width: '100%',
     height: '100%'
   },

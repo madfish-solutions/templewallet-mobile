@@ -1,3 +1,4 @@
+import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
@@ -35,41 +36,47 @@ export const RootStackScreen = () => {
       ref={navigationRef}
       onReady={handleNavigationContainerStateChange}
       onStateChange={handleNavigationContainerStateChange}>
-      <CurrentRouteNameContext.Provider value={currentRouteName}>
-        <RootStack.Navigator
-          mode="modal"
-          screenOptions={{ cardOverlayEnabled: true, gestureEnabled: true, ...TransitionPresets.ModalPresentationIOS }}>
-          <RootStack.Screen name="MainStack" component={MainStackScreen} options={{ headerShown: false }} />
+      <PortalProvider>
+        <CurrentRouteNameContext.Provider value={currentRouteName}>
+          <RootStack.Navigator
+            mode="modal"
+            screenOptions={{
+              cardOverlayEnabled: true,
+              gestureEnabled: true,
+              ...TransitionPresets.ModalPresentationIOS
+            }}>
+            <RootStack.Screen name="MainStack" component={MainStackScreen} options={{ headerShown: false }} />
 
-          <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
-          <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
-          <RootStack.Screen
-            name={ModalsEnum.AddToken}
-            component={AddTokenModal}
-            options={useModalOptions('Add Token')}
-          />
-          <RootStack.Screen
-            name={ModalsEnum.CreateHdAccount}
-            component={CreateHdAccountModal}
-            options={useModalOptions('Create account')}
-          />
-          <RootStack.Screen
-            name={ModalsEnum.SelectBaker}
-            component={SelectBakerModal}
-            options={useModalOptions('Select Baker')}
-          />
-          <RootStack.Screen
-            name={ModalsEnum.RevealSeedPhrase}
-            component={RevealSeedPhraseModal}
-            options={useModalOptions('Reveal Seed')}
-          />
-          <RootStack.Screen
-            name={ModalsEnum.RevealPrivateKey}
-            component={RevealPrivateKeyModal}
-            options={useModalOptions('Reveal Private key')}
-          />
-        </RootStack.Navigator>
-      </CurrentRouteNameContext.Provider>
+            <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
+            <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
+            <RootStack.Screen
+              name={ModalsEnum.AddToken}
+              component={AddTokenModal}
+              options={useModalOptions('Add Token')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.CreateHdAccount}
+              component={CreateHdAccountModal}
+              options={useModalOptions('Create account')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.SelectBaker}
+              component={SelectBakerModal}
+              options={useModalOptions('Select Baker')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.RevealSeedPhrase}
+              component={RevealSeedPhraseModal}
+              options={useModalOptions('Reveal Seed')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.RevealPrivateKey}
+              component={RevealPrivateKeyModal}
+              options={useModalOptions('Reveal Private key')}
+            />
+          </RootStack.Navigator>
+        </CurrentRouteNameContext.Provider>
+      </PortalProvider>
     </NavigationContainer>
   );
 };
