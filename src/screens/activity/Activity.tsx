@@ -5,8 +5,10 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { SearchInput } from '../../components/search-input/search-input';
 
 export const Activity = () => (
-  <ScreenContainer>
+  <>
     <SearchInput placeholder="Search by address" />
-    <DataPlaceholder text="Activity will be available soon" />
-  </ScreenContainer>
+    <ScreenContainer>
+      <DataPlaceholder text="Activity will be available soon" />
+    </ScreenContainer>
+  </>
 );

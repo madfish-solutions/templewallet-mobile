@@ -19,16 +19,5 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
   hideZeroBalanceText: {
     ...typography.caption11Regular,
     color: colors.gray1
-  },
-  addTokenButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: formatSize(8)
-  },
-  addTokenText: {
-    ...typography.tagline13Tag,
-    color: colors.orange,
-    marginLeft: formatSize(2)
   }
 }));

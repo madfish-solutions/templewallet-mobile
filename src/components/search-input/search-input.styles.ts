@@ -5,7 +5,8 @@ import { hexa } from '../../utils/style.util';
 export const useSearchInputStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     position: 'relative',
-    margin: formatSize(8)
+    marginVertical: formatSize(8),
+    marginHorizontal: formatSize(16)
   },
   iconContainer: {
     position: 'absolute',

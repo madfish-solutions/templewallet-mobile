@@ -1,23 +1,38 @@
 import React from 'react';
 import { Text } from 'react-native';
 
+import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
+import { Divider } from '../../components/divider/divider';
+import { PlusCircleButton } from '../../components/plus-circle-button/plus-circle-button';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
+import { ModalsEnum } from '../../navigator/modals.enum';
+import { useNavigation } from '../../navigator/use-navigation.hook';
 import { ManageAssetsItem } from './manage-assets-item/manage-assets-item';
+import { useManageAssetsStyles } from './manage-assets.styles';
 
 export const ManageAssets = () => {
+  const styles = useManageAssetsStyles();
+  const { navigate } = useNavigation();
   const { filteredTokensList, setSearchValue } = useFilteredTokenList();
 
   return (
-    <ScreenContainer>
-      <SearchInput onChangeText={setSearchValue} />
+    <>
+      <SearchInput placeholder="Search by address" onChangeText={setSearchValue} />
+      <ScreenContainer>
+        <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
 
-      <Text>Show, remove and hide tokens at your home screen.</Text>
+        {filteredTokensList.length === 0 ? (
+          <DataPlaceholder text="No tokens matching search criteria were found" />
+        ) : (
+          filteredTokensList.map(token => <ManageAssetsItem key={token.address} token={token} />)
+        )}
 
-      {filteredTokensList.map(token => (
-        <ManageAssetsItem key={token.address} token={token} />
-      ))}
-    </ScreenContainer>
+        <Divider />
+        <PlusCircleButton text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        <Divider />
+      </ScreenContainer>
+    </>
   );
 };

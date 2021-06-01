@@ -1,11 +1,9 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { StyledCheckbox } from '../../../components/styled-checkbox/styled-checkbox';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
@@ -81,11 +79,7 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
           </>
         )}
 
-        <TouchableOpacity style={styles.addTokenButton} onPress={() => navigate(ModalsEnum.AddToken)}>
-          <Icon name={IconNameEnum.PlusCircle} />
-          <Text style={styles.addTokenText}>ADD TOKEN</Text>
-        </TouchableOpacity>
-
+        <PlusCircleButton text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
         <Divider />
       </ScreenContainer>
     </>

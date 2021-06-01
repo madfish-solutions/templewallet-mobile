@@ -43,4 +43,4 @@ export const TokenContainer: FC<TokenPreviewProps> = ({
       <View style={styles.rightContainer}>{children}</View>
     </View>
   );
-}
+};

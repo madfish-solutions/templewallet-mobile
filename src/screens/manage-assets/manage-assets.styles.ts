@@ -1,0 +1,11 @@
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
+
+export const useManageAssetsStyles = createUseStyles(({ colors, typography }) => ({
+  descriptionText: {
+    ...typography.caption13Regular,
+    color: colors.gray1,
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(4)
+  }
+}));
