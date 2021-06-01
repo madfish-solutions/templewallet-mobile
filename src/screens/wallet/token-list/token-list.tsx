@@ -2,6 +2,7 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
@@ -14,7 +15,7 @@ import { useTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
-import { tokenMetadataSlug } from '../../../token/utils/token.utils';
+import { filterTezos } from '../../../utils/filter.util';
 import { isString } from '../../../utils/is-string';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -35,6 +36,10 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredTokensList, setFilteredTokensList] = useState<TokenInterface[]>([]);
+
+  const [isShowTezos, setIsShowTezos] = useState(true);
+
+  const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
 
   useEffect(() => {
     const result: TokenInterface[] = [];
@@ -73,6 +78,11 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
     }
   }, [isHideZeroBalance, searchValue, tokensList, nonZeroBalanceTokenList]);
 
+  useEffect(
+    () => setIsShowTezos(filterTezos(tezosBalance, isHideZeroBalance, searchValue)),
+    [isHideZeroBalance, searchValue, tezosBalance]
+  );
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -86,27 +96,35 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
       </View>
 
       <ScreenContainer>
-        <TokenListItem
-          symbol={XTZ_TOKEN_METADATA.symbol}
-          name={XTZ_TOKEN_METADATA.name}
-          balance={tezosBalance}
-          apy={8}
-          iconName={XTZ_TOKEN_METADATA.iconName}
-          onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
-        />
+        {isShowPlaceholder ? (
+          <DataPlaceholder text="No records found." />
+        ) : (
+          <>
+            {isShowTezos && (
+              <TokenListItem
+                symbol={XTZ_TOKEN_METADATA.symbol}
+                name={XTZ_TOKEN_METADATA.name}
+                balance={tezosBalance}
+                apy={8}
+                iconName={XTZ_TOKEN_METADATA.iconName}
+                onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
+              />
+            )}
 
-        {filteredTokensList.map(token => (
-          <TokenListItem
-            key={token.address}
-            symbol={token.symbol}
-            name={token.name}
-            balance={token.balance}
-            iconName={token.iconName}
-            onPress={() => navigate(ScreensEnum.TokenScreen, { slug: tokenMetadataSlug(token) })}
-          />
-        ))}
+            {filteredTokensList.map(token => (
+              <TokenListItem
+                key={token.address}
+                symbol={token.symbol}
+                name={token.name}
+                balance={token.balance}
+                iconName={token.iconName}
+                onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
+              />
+            ))}
 
-        <Divider />
+            <Divider />
+          </>
+        )}
 
         <TouchableOpacity style={styles.addTokenButton} onPress={() => navigate(ModalsEnum.AddToken)}>
           <Icon name={IconNameEnum.PlusCircle} />

@@ -7,12 +7,14 @@ import { HeaderQrScannerButton } from '../components/header/header-qr-scanner-bu
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
+import { Activity } from '../screens/activity/Activity';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
+import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { Settings } from '../screens/settings/settings';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
@@ -81,6 +83,16 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Delegation}
                 component={DelegationScreen}
                 options={generateScreenOptions(<HeaderTitle title="Delegation" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ManageAssets}
+                component={ManageAssets}
+                options={generateScreenOptions(<HeaderTitle title="Manage Assets" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Activity}
+                component={Activity}
+                options={generateScreenOptions(<HeaderTitle title="Activity" />)}
               />
 
               {/** DApps stack **/}
