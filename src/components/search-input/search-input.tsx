@@ -1,6 +1,8 @@
+import { debounce } from 'lodash-es';
 import React, { FC } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { Icon } from '../icon/icon';
@@ -9,9 +11,11 @@ import { useSearchInputStyles } from './search-input.styles';
 
 type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText'>;
 
-export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText }) => {
+export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn }) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
+
+  const debouncedOnChangeText = debounce(onChangeText);
 
   return (
     <View style={styles.container}>
@@ -23,7 +27,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText }) => 
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor={colors.gray2}
-        onChangeText={onChangeText}
+        onChangeText={debouncedOnChangeText}
       />
     </View>
   );
