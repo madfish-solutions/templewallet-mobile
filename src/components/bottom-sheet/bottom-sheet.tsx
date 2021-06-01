@@ -31,11 +31,9 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
 
           {children}
 
-          <View style={styles.footerContainer}>
-            <TouchableOpacity onPress={controller.close}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
         </View>
       </GorhomBottomSheet>
     </Portal>

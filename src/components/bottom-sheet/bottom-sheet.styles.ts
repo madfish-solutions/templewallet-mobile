@@ -10,9 +10,9 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     borderRadius: formatSize(14)
   },
   headerContainer: {
+    height: formatSize(44),
     justifyContent: 'center',
     alignItems: 'center',
-    padding: formatSize(12),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },
@@ -20,14 +20,14 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     ...typography.caption13Regular,
     color: colors.gray1
   },
-  footerContainer: {
-    paddingHorizontal: formatSize(12),
-    paddingTop: formatSize(15),
-    paddingBottom: formatSize(19)
+  cancelButton: {
+    height: formatSize(56),
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   cancelButtonText: {
     ...typography.body17Semibold,
     color: colors.orange,
-    alignSelf: 'center'
+    paddingBottom: formatSize(4)
   }
 }));

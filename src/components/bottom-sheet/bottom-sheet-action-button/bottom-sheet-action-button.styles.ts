@@ -3,8 +3,9 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typography }) => ({
   container: {
+    height: formatSize(40),
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: formatSize(12),
     backgroundColor: colors.navigation,
     borderColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
