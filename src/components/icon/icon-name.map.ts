@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertIcon from './assets/alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
@@ -89,5 +90,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouTube]: YouTubeIcon,
   [IconNameEnum.Reddit]: RedditIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
-  [IconNameEnum.Search]: SearchIcon
+  [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.Alert]: AlertIcon
 };

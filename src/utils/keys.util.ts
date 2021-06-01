@@ -24,7 +24,7 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
   }
 };
 
-const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
+export const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
 
 export const seedToHDPrivateKey = (seed: Buffer, hdAccountIndex: number) =>
   seedToPrivateKey(deriveSeed(seed, getDerivationPath(hdAccountIndex)));

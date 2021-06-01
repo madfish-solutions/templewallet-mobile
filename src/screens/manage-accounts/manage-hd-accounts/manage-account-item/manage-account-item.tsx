@@ -1,23 +1,23 @@
 import React, { FC } from 'react';
 import { Switch, Text, View } from 'react-native';
 
-import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
-import { Divider } from '../../../components/divider/divider';
-import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../components/robot-icon/robot-icon';
-import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { useShelter } from '../../../shelter/use-shelter.hook';
-import { formatSize } from '../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
+import { Divider } from '../../../../components/divider/divider';
+import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
+import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
+import { EventFn } from '../../../../config/general';
+import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { formatSize } from '../../../../styles/format-size';
+import { XTZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
   account: WalletAccountInterface;
+  onRevealButtonPress: EventFn<WalletAccountInterface>;
 }
 
-export const ManageAccountItem: FC<Props> = ({ account }) => {
+export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
   const styles = useManageAccountItemStyles();
-  const { revealSecretKey } = useShelter();
 
   return (
     <View style={styles.container}>
@@ -46,7 +46,7 @@ export const ManageAccountItem: FC<Props> = ({ account }) => {
         <ButtonSmallSecondary
           title="Reveal"
           marginBottom={formatSize(8)}
-          onPress={() => revealSecretKey(account.publicKeyHash)}
+          onPress={() => onRevealButtonPress(account)}
         />
       </View>
     </View>

@@ -1,10 +1,10 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
-import { DropdownBottomSheet } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet';
+import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
@@ -51,6 +51,7 @@ export const Dropdown = <T extends unknown>({
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
+  const contentHeight = 0.5 * useWindowDimensions().height;
 
   const createDropdownItemPressHandler = (item: T) => () => {
     onValueChange(item);
@@ -63,7 +64,7 @@ export const Dropdown = <T extends unknown>({
         {renderValue({ value })}
       </TouchableOpacity>
 
-      <DropdownBottomSheet title={title} controller={dropdownBottomSheetController}>
+      <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.contentContainer}>
             {list.map((item, index) => {
@@ -81,7 +82,7 @@ export const Dropdown = <T extends unknown>({
         </ScrollView>
 
         {renderActionButtons({ onPress: () => dropdownBottomSheetController.close() })}
-      </DropdownBottomSheet>
+      </BottomSheet>
     </>
   );
 };
