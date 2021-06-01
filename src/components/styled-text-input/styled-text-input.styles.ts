@@ -4,8 +4,6 @@ import { transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const multilineInputHeight = formatSize(200);
-
 export const useStyledTextInputStyles = createUseStyles(({ colors, typography }) => {
   const commonStyles: TextStyle = {
     borderRadius: formatSize(8),
@@ -30,8 +28,8 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       paddingHorizontal: formatSize(12),
       paddingTop: formatSize(12),
       paddingBottom: formatSize(60),
-      minHeight: multilineInputHeight,
-      maxHeight: multilineInputHeight
+      minHeight: formatSize(200),
+      maxHeight: formatSize(200)
     },
     error: {
       borderColor: colors.destructive
