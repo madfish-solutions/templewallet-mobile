@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertIcon from './assets/alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
@@ -95,5 +96,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon
 };

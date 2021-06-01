@@ -25,7 +25,7 @@ export const SendModal: FC = () => {
   const hdAccounts = useHdAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const SendBottomSheetInitialValues: SendModalFormValues = {
+  const SendModalInitialValues: SendModalFormValues = {
     account: selectedAccount,
     amount: 0,
     recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne',
@@ -38,7 +38,7 @@ export const SendModal: FC = () => {
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={SendBottomSheetInitialValues}
+      initialValues={SendModalInitialValues}
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm }) => (

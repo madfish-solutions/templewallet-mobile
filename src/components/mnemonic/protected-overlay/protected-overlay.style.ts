@@ -3,26 +3,27 @@ import { StyleSheet } from 'react-native';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useProtectedStyles = createUseStyles(({ colors, typography }) => ({
-  protectedImage: {
+export const useProtectedOverlayStyle = createUseStyles(({ colors, typography }) => ({
+  container: {
     ...StyleSheet.absoluteFillObject,
+    borderRadius: formatSize(8),
+    overflow: 'hidden'
+  },
+  protectedBackground: {
+    backgroundColor: colors.gray3,
     width: '100%',
     height: '100%'
   },
-  protectedView: {
+  touchableOpacity: {
     ...StyleSheet.absoluteFillObject,
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
     justifyContent: 'center',
     alignItems: 'center'
   },
   title: {
     ...typography.body20Bold,
-    color: colors.black,
-    marginTop: formatSize(5)
+    color: colors.black
   },
-  secondTitle: {
+  description: {
     ...typography.body17Semibold,
     color: colors.black
   }

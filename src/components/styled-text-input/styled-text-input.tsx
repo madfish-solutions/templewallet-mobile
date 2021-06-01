@@ -11,19 +11,19 @@ import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 export interface StyledTextInputProps extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
-  isShowCleanButton?: boolean;
   isPasswordInput?: boolean;
+  isShowCleanButton?: boolean;
 }
 
 export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
     {
-      onChangeText = emptyFn,
-      isShowCleanButton = false,
-      isError = false,
-      isPasswordInput = false,
       value,
       multiline,
+      isError = false,
+      isPasswordInput = false,
+      isShowCleanButton = false,
+      onChangeText = emptyFn,
       ...props
     },
     ref

@@ -1,8 +1,9 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { KeyboardAvoidingView, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -30,27 +31,29 @@ export const EnterPassword = () => {
       <View style={styles.imageView}>
         <WelcomeLogo />
       </View>
-      <Formik
-        initialValues={enterPasswordInitialValues}
-        validationSchema={enterPasswordValidationSchema}
-        onSubmit={onSubmit}>
-        {({ submitForm, isValid }) => (
-          <KeyboardAvoidingView style={styles.formikView} behavior="padding">
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
 
-            <ButtonLargePrimary
-              title="Unlock"
-              disabled={!isValid}
-              marginTop={formatSize(8)}
-              marginBottom={formatSize(24)}
-              onPress={submitForm}
-            />
-          </KeyboardAvoidingView>
-        )}
-      </Formik>
-      <View style={styles.bottomView}>
-        <Label description="Having troubles?" />
+      <View>
+        <Formik
+          initialValues={enterPasswordInitialValues}
+          validationSchema={enterPasswordValidationSchema}
+          onSubmit={onSubmit}>
+          {({ submitForm, isValid }) => (
+            <View>
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput name="password" />
+
+              <ButtonLargePrimary
+                title="Unlock"
+                disabled={!isValid}
+                marginTop={formatSize(8)}
+                marginBottom={formatSize(24)}
+                onPress={submitForm}
+              />
+            </View>
+          )}
+        </Formik>
+        <Text style={styles.bottomText}>Having troubles?</Text>
+        <Divider size={formatSize(4)} />
         <EraseDataButton />
         <InsetSubstitute type="bottom" />
       </View>

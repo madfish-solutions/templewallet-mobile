@@ -1,0 +1,1 @@
+export const OVERLAY_SHOW_TIMEOUT = 12000;

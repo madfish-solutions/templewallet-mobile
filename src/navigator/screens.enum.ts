@@ -1,3 +1,5 @@
+import { TokenInterface } from '../token/interfaces/token.interface';
+
 export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
@@ -32,7 +34,7 @@ export type ScreensParamList = {
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
-  [ScreensEnum.TokenScreen]: { slug: string };
+  [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
 
   /** DApps stack **/
