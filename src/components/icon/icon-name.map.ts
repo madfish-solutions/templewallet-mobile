@@ -45,6 +45,7 @@ import UsdSTokenIcon from './assets/tokens/usds.svg';
 import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import XtzTokenIcon from './assets/tokens/xtz.svg';
+import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
@@ -97,5 +98,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
-  [IconNameEnum.Edit]: EditIcon
+  [IconNameEnum.Edit]: EditIcon,
+  [IconNameEnum.Trash]: TrashIcon
 };

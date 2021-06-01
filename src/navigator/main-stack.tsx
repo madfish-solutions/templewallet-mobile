@@ -44,11 +44,11 @@ export const MainStackScreen = () => {
           {!isAuthorised ? (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
-              <MainStack.Screen
-                name={ScreensEnum.ImportAccount}
-                component={ImportAccount}
-                options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
-              />
+              {/*<MainStack.Screen*/}
+              {/*  name={ScreensEnum.ImportAccount}*/}
+              {/*  component={ImportAccount}*/}
+              {/*  options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}*/}
+              {/*/>*/}
               <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
                 component={CreateAccount}

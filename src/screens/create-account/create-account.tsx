@@ -54,10 +54,7 @@ export const CreateAccount = () => {
                 <FormCheckbox name="acceptTerms" />
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </View>
-              <Label
-                description="And accept the risks that if I lose the phrase,
-my funds may be lost."
-              />
+              <Label description={'And accept the risks that if I lose the phrase, \nmy funds may be lost.'} />
 
               <ButtonLargePrimary title="Create" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
               <InsetSubstitute type="bottom" />
