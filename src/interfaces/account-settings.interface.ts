@@ -11,5 +11,5 @@ export interface AccountSettingsInterface {
 
 export const initialAccountSettings: AccountSettingsInterface = {
   tezosBalance: createEntity('0'),
-  tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isShown: true }))
+  tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isVisible: true }))
 };

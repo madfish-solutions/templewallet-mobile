@@ -13,10 +13,18 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  setSelectedAccountAction
+  removeTokenAction,
+  setSelectedAccountAction,
+  toggleTokenVisibilityAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
-import { pushOrUpdateAccountTokensList, tokenBalanceMetadata, updateCurrentAccountState } from './wallet-state.utils';
+import {
+  pushOrUpdateAccountTokensList,
+  removeTokenFromTokenList,
+  toggleTokenVisibility,
+  tokenBalanceMetadata,
+  updateCurrentAccountState
+} from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
@@ -57,7 +65,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       const accountToken: AccountTokenInterface = {
         slug,
         balance: mutezToTz(new BigNumber(tokenBalance.balance), tokenMetadata.decimals).toString(),
-        isShown: true
+        isVisible: true
       };
 
       return updateCurrentAccountState(newState, currentAccount => ({
@@ -87,7 +95,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, {
           slug,
           balance: '0',
-          isShown: true
+          isVisible: true
         })
       })),
       tokensMetadata: {
@@ -96,4 +104,14 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       }
     };
   });
+  builder.addCase(removeTokenAction, (state, { payload: slug }) =>
+    updateCurrentAccountState(state, currentAccount => ({
+      tokensList: removeTokenFromTokenList(currentAccount.tokensList, slug)
+    }))
+  );
+  builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
+    updateCurrentAccountState(state, currentAccount => ({
+      tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
+    }))
+  );
 });

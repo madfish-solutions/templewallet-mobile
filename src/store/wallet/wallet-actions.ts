@@ -17,3 +17,5 @@ export const loadTokenMetadataActions =
   );
 
 export const addTokenMetadataAction = createAction<TokenMetadataInterface>('wallet/ADD_TOKEN_METADATA');
+export const removeTokenAction = createAction<string>('wallet/REMOVE_TOKEN');
+export const toggleTokenVisibilityAction = createAction<string>('wallet/TOGGLE_TOKEN_VISIBILITY');

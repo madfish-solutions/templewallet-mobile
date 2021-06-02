@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { useTokensListSelector } from '../store/wallet/wallet-selectors';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 
-export const useFilteredTokenList = () => {
-  const tokensList = useTokensListSelector();
-
+export const useFilteredTokenList = (tokensList: TokenInterface[]) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(false);
   const [nonZeroBalanceTokenList, setNonZeroBalanceTokenList] = useState<TokenInterface[]>([]);
 

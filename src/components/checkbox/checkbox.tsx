@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import Svg, { Path, Rect } from 'react-native-svg';
+import { Svg, Path, Rect } from 'react-native-svg';
 
 import { EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
