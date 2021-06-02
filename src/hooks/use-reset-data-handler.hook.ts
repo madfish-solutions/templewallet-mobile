@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux';
 import { Alert } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { rootStateResetAction } from '../store/root-state.actions';
 
