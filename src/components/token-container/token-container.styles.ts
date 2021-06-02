@@ -1,11 +1,12 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useTokenListItemStyles = createUseStyles(({ colors, typography }) => ({
-  rootContainer: {
+export const useTokenContainerStyles = createUseStyles(({ colors, typography }) => ({
+  container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: formatSize(12),
+    alignItems: 'center',
+    paddingVertical: formatSize(12),
     borderBottomWidth: formatSize(0.5),
     borderColor: colors.lines
   },
@@ -40,15 +41,7 @@ export const useTokenListItemStyles = createUseStyles(({ colors, typography }) =
     color: colors.gray1
   },
   rightContainer: {
-    justifyContent: 'center',
-    alignItems: 'flex-end'
-  },
-  balanceText: {
-    ...typography.numbersRegular15,
-    color: colors.black
-  },
-  valueText: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 }));

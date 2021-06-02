@@ -35,8 +35,7 @@ export const SelectBakerModal: FC = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: BakerInterface[] = [];
 
-      for (let i = 0; i < bakersList.length; i++) {
-        const baker = bakersList[i];
+      for (const baker of bakersList) {
         const { name, address } = baker;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || address.toLowerCase().includes(lowerCaseSearchValue)) {
@@ -52,13 +51,17 @@ export const SelectBakerModal: FC = () => {
 
   return (
     <>
+      <Divider size={formatSize(16)} />
       <View style={styles.upperContainer}>
         <Label
           label="Delegate to Recommended Bakers"
           description="Click on the Baker you want to delegate funds to. This list is powered by Baking Bad."
         />
+      </View>
+      <View style={styles.searchContainer}>
         <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
-
+      </View>
+      <View style={styles.upperContainer}>
         <Text style={styles.infoText}>The higher the better</Text>
       </View>
 

@@ -1,4 +1,3 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -7,8 +6,7 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/modals.enum';
 import { useNavigation } from '../../../navigator/use-navigation.hook';
@@ -68,10 +66,7 @@ export const ManageHdAccounts = () => {
 
       <Divider />
 
-      <TouchableOpacity style={styles.addAccountButton} onPress={() => navigate(ModalsEnum.CreateHdAccount)}>
-        <Icon name={IconNameEnum.PlusCircle} />
-        <Text style={styles.addAccountText}>CREATE NEW</Text>
-      </TouchableOpacity>
+      <PlusCircleButton text="CREATE NEW" onPress={() => navigate(ModalsEnum.CreateHdAccount)} />
 
       <BottomSheet
         title="Select what do you want to reveal:"
