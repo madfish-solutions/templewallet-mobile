@@ -3,8 +3,11 @@ import { Dimensions } from 'react-native';
 
 const basicScreenWidth = 375;
 const maxLayoutScale = 1.1;
-const layoutScale = clamp(Dimensions.get('screen').width / basicScreenWidth, maxLayoutScale);
+export const layoutScale = clamp(Dimensions.get('screen').width / basicScreenWidth, maxLayoutScale);
 
+/** @deprecated
+ * use formatSize() instead
+ */
 export const step = 8 * layoutScale;
 
 export const greyLight = '#707070';

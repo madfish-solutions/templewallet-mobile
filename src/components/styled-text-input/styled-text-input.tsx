@@ -11,19 +11,19 @@ import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 export interface StyledTextInputProps extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
-  isShowCleanButton?: boolean;
   isPasswordInput?: boolean;
+  isShowCleanButton?: boolean;
 }
 
 export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
     {
-      onChangeText = emptyFn,
-      isShowCleanButton = false,
-      isError = false,
-      isPasswordInput = false,
       value,
       multiline,
+      isError = false,
+      isPasswordInput = false,
+      isShowCleanButton = false,
+      onChangeText = emptyFn,
       ...props
     },
     ref
@@ -49,7 +49,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
         />
         {isShowCleanButton && isString(value) && (
           <View style={styles.cleanButton}>
-            <TouchableIcon size={formatSize(16)} name={IconNameEnum.XCircle} onPress={() => onChangeText('')} />
+            <TouchableIcon size={formatSize(16)} name={IconNameEnum.InputXCircle} onPress={() => onChangeText('')} />
           </View>
         )}
       </View>

@@ -12,6 +12,7 @@ export enum IconNameEnum {
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
   Slow = 'Slow',
+  InputXCircle = 'InputXCircle',
   XCircle = 'XCircle',
   ShoppingCard = 'ShoppingCard',
   EyeClosedBold = 'EyeClosedBold',
@@ -49,5 +50,9 @@ export enum IconNameEnum {
   YouTube = 'YouTube',
   Reddit = 'Reddit',
   ExternalLink = 'ExternalLink',
-  Search = 'Search'
+  IosSearch = 'IosSearch',
+  Search = 'Search',
+  Alert = 'Alert',
+  Edit = 'Edit',
+  Trash = 'Trash'
 }

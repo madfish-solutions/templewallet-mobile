@@ -3,8 +3,10 @@ import { formatSize } from '../../styles/format-size';
 
 export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }) => ({
   upperContainer: {
-    paddingTop: formatSize(16),
     paddingHorizontal: formatSize(16)
+  },
+  searchContainer: {
+    paddingHorizontal: formatSize(8)
   },
   infoText: {
     ...typography.caption11Regular,

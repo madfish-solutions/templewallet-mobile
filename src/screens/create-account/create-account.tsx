@@ -8,7 +8,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { FormMnemonicInput } from '../../form/form-mnemonic-input';
+import { FormMnemonicCreate } from '../../form/form-mnemonic-create';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { formatSize } from '../../styles/format-size';
@@ -38,7 +38,7 @@ export const CreateAccount = () => {
                 label="Seed phrase"
                 description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
               />
-              <FormMnemonicInput name="seedPhrase" isShowGenerateNew={true} />
+              <FormMnemonicCreate name="seedPhrase" />
 
               <Label label="Password" description="A password is used to protect the wallet." />
               <FormPasswordInput name="password" />
@@ -54,10 +54,7 @@ export const CreateAccount = () => {
                 <FormCheckbox name="acceptTerms" />
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </View>
-              <Label
-                description="And accept the risks that if I lose the phrase,
-my funds may be lost."
-              />
+              <Label description={'And accept the risks that if I lose the phrase, \nmy funds may be lost.'} />
 
               <ButtonLargePrimary title="Create" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
               <InsetSubstitute type="bottom" />

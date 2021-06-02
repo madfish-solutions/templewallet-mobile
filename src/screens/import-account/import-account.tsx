@@ -24,40 +24,38 @@ export const ImportAccount = () => {
   const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
-      <Formik
-        initialValues={importAccountInitialValues}
-        validationSchema={importAccountValidationSchema}
-        onSubmit={onSubmit}>
-        {({ submitForm, isValid }) => (
-          <>
-            <View>
-              <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
-              <FormMnemonicInput name="seedPhrase" isInputMode />
+    <Formik
+      initialValues={importAccountInitialValues}
+      validationSchema={importAccountValidationSchema}
+      onSubmit={onSubmit}>
+      {({ submitForm, isValid }) => (
+        <ScreenContainer isFullScreenMode={true}>
+          <View>
+            <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
+            <FormMnemonicInput name="seedPhrase" />
 
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput name="password" />
+            <Label label="Password" description="A password is used to protect the wallet." />
+            <FormPasswordInput name="password" />
 
-              <Label label="Repeat Password" description="Please enter the password again." />
-              <FormPasswordInput name="passwordConfirmation" />
+            <Label label="Repeat Password" description="Please enter the password again." />
+            <FormPasswordInput name="passwordConfirmation" />
+          </View>
+
+          <View>
+            <View style={ImportAccountStyles.checkboxContainer}>
+              <FormCheckbox name="acceptTerms" />
+              <Label label="Accept terms" />
             </View>
-
-            <View>
-              <View style={ImportAccountStyles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" />
-                <Label label="Accept terms" />
-              </View>
-              <Label
-                description="I have read and agree to
+            <Label
+              description="I have read and agree to
 the Terms of Usage and Privacy Policy"
-              />
+            />
 
-              <ButtonLargePrimary title="Import" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
-              <InsetSubstitute type="bottom" />
-            </View>
-          </>
-        )}
-      </Formik>
-    </ScreenContainer>
+            <ButtonLargePrimary title="Import" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
+            <InsetSubstitute type="bottom" />
+          </View>
+        </ScreenContainer>
+      )}
+    </Formik>
   );
 };

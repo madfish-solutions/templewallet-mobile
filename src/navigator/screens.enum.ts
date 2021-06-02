@@ -1,3 +1,5 @@
+import { TokenInterface } from '../token/interfaces/token.interface';
+
 export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
@@ -8,6 +10,8 @@ export enum ScreensEnum {
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
+  ManageAssets = 'ManageAssets',
+  Activity = 'Activity',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -24,11 +28,13 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.CreateAccount]: undefined;
+  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.Activity]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
-  [ScreensEnum.TokenScreen]: { slug: string };
+  [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
 
   /** DApps stack **/
@@ -46,7 +52,9 @@ export const walletStackScreens = [
   ScreensEnum.Wallet,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
-  ScreensEnum.Delegation
+  ScreensEnum.Delegation,
+  ScreensEnum.ManageAssets,
+  ScreensEnum.Activity
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.Swap];

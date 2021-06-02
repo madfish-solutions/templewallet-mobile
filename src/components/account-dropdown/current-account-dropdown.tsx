@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ModalsEnum } from '../../navigator/modals.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
-import { DropdownBottomSheetActionButton } from '../bottom-sheet/dropdown-bottom-sheet/dropdown-bottom-sheet-action-button/dropdown-bottom-sheet-action-button';
+import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,
   DropdownActionButtonsComponent,
@@ -34,8 +34,8 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
 
   return (
     <>
-      <DropdownBottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
-      <DropdownBottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
+      <BottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
+      <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );
 };

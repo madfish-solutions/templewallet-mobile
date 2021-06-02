@@ -1,3 +1,3 @@
-import { step } from '../config/styles';
+import { layoutScale } from '../config/styles';
 
-export const formatSize = (size: number): number => (size / step) * step;
+export const formatSize = (size: number): number => size * layoutScale;

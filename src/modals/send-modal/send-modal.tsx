@@ -20,12 +20,9 @@ import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-pay
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
-import {
-  useHdAccountsListSelector,
-  useSelectedAccountSelector,
-  useTokenSelector
-} from '../../store/wallet/wallet-selectors';
+import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { tezos$ } from '../../utils/network/network.util';
 import { MAINNET_NETWORK } from '../../utils/network/networks';
 import { tzToMutez } from '../../utils/tezos.util';
@@ -37,11 +34,9 @@ export const SendModal: FC = () => {
   const hdAccounts = useHdAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const tokenSlug = params?.slug ?? '';
-  const token = useTokenSelector(tokenSlug);
-  console.log(token);
+  const token = params.token;
 
-  const SendBottomSheetInitialValues: SendModalFormValues = useMemo(
+  const sendModalInitialValues: SendModalFormValues = useMemo(
     () => ({
       account: selectedAccount,
       amount: new BigNumber(0),
@@ -56,7 +51,7 @@ export const SendModal: FC = () => {
       let opParams: any[] = [
         { kind: 'transaction', amount: tzToMutez(data.amount, 6).toString(), to: data.recipient, mutez: true }
       ];
-      if (tokenSlug) {
+      if (token) {
         const contract = await from([token.address])
           .pipe(
             withLatestFrom(tezos$),
@@ -93,13 +88,13 @@ export const SendModal: FC = () => {
         opParams
       });
     },
-    [navigate, token, tokenSlug, selectedAccount.publicKeyHash]
+    [navigate, token, selectedAccount.publicKeyHash]
   );
 
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={SendBottomSheetInitialValues}
+      initialValues={sendModalInitialValues}
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm }) => (
@@ -113,8 +108,8 @@ export const SendModal: FC = () => {
             <FormTextInput name="recipient" />
             <Divider />
 
-            <Label label="Amount" description={`Set ${tokenSlug ? token.symbol : 'XTZ'} amount to send.`} />
-            <FormNumericInput name="amount" decimals={tokenSlug ? token.decimals : 6} min={0} />
+            <Label label="Amount" description={`Set ${token?.symbol ?? 'XTZ'} amount to send.`} />
+            <FormNumericInput name="amount" decimals={token?.decimals ?? XTZ_TOKEN_METADATA.decimals} min={0} />
             <Divider />
           </View>
 

@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { emptyTokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { tokenMetadataSlug } from '../../token/utils/token.utils';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { findSelectedAccount } from '../../utils/wallet-account.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
@@ -22,17 +22,21 @@ export const useTokensListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
   const tokensMetadata = useWalletSelector().tokensMetadata;
 
-  return selectedAccountTokensList.map(({ slug, balance, isShown }) => ({
-    balance,
-    isShown,
-    ...(tokensMetadata[slug] ?? emptyTokenMetadataInterface)
-  }));
-};
+  const [tokensList, setTokensList] = useState<TokenInterface[]>([]);
 
-export const useTokenSelector = (slug: string): TokenInterface => {
-  const tokensList = useTokensListSelector();
+  useEffect(
+    () =>
+      setTokensList(
+        selectedAccountTokensList.map(({ slug, balance, isShown }) => ({
+          balance,
+          isShown,
+          ...(tokensMetadata[slug] ?? emptyTokenMetadataInterface)
+        }))
+      ),
+    [selectedAccountTokensList, tokensMetadata]
+  );
 
-  return tokensList.find(token => tokenMetadataSlug(token) === slug) ?? emptyToken;
+  return tokensList;
 };
 
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;

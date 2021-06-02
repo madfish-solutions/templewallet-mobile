@@ -3,6 +3,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   scrollView: {
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: colors.pageBG
   },
   scrollViewContentContainer: {
