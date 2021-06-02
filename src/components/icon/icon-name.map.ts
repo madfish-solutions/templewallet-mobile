@@ -19,6 +19,7 @@ import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import LockIcon from './assets/lock.svg';
+import LogOutIcon from './assets/log-out.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
@@ -99,5 +100,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Search]: SearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
-  [IconNameEnum.Trash]: TrashIcon
+  [IconNameEnum.Trash]: TrashIcon,
+  [IconNameEnum.LogOut]: LogOutIcon
 };

@@ -46,5 +46,6 @@ export enum IconNameEnum {
   Search = 'Search',
   Alert = 'Alert',
   Edit = 'Edit',
-  Trash = 'Trash'
+  Trash = 'Trash',
+  LogOut = 'LogOut'
 }

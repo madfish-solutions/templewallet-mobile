@@ -7,6 +7,7 @@ import { HeaderQrScannerButton } from '../components/header/header-qr-scanner-bu
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
+import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/Activity';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -119,6 +120,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManageAccounts}
                 component={ManageAccounts}
                 options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.About}
+                component={About}
+                options={generateScreenOptions(<HeaderTitle title="About" />)}
               />
             </>
           )}
