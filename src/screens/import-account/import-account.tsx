@@ -1,8 +1,9 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -16,9 +17,10 @@ import {
   importAccountInitialValues,
   importAccountValidationSchema
 } from './import-account.form';
-import { ImportAccountStyles } from './import-account.styles';
+import { useImportAccountStyles } from './import-account.styles';
 
 export const ImportAccount = () => {
+  const styles = useImportAccountStyles();
   const { importWallet } = useShelter();
 
   const onSubmit = ({ seedPhrase, password }: ImportAccountFormValues) => importWallet(seedPhrase, password);
@@ -42,9 +44,11 @@ export const ImportAccount = () => {
           </View>
 
           <View>
-            <View style={ImportAccountStyles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms" />
-              <Label label="Accept terms" />
+            <View style={styles.checkboxContainer}>
+              <FormCheckbox name="acceptTerms">
+                <Divider size={formatSize(8)} />
+                <Text style={styles.checkboxText}>Accept terms</Text>
+              </FormCheckbox>
             </View>
             <Label
               description="I have read and agree to

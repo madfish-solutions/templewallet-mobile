@@ -5,7 +5,7 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Divider } from '../../../components/divider/divider';
 import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { StyledCheckbox } from '../../../components/styled-checkbox/styled-checkbox';
+import { Checkbox } from '../../../components/checkbox/checkbox';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum } from '../../../navigator/modals.enum';
 import { ScreensEnum } from '../../../navigator/screens.enum';
@@ -40,9 +40,14 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
     <>
       <View style={styles.headerContainer}>
         <View style={styles.hideZeroBalanceContainer}>
-          <StyledCheckbox value={isHideZeroBalance} size={formatSize(16)} onValueChange={setIsHideZeroBalance} />
-          <Divider size={formatSize(2)} />
-          <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
+          <Checkbox
+            value={isHideZeroBalance}
+            size={formatSize(16)}
+            strokeWidth={formatSize(2)}
+            onChange={setIsHideZeroBalance}>
+            <Divider size={formatSize(4)} />
+            <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
+          </Checkbox>
         </View>
 
         <SearchContainer onChange={setSearchValue} />
