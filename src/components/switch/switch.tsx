@@ -1,0 +1,52 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC } from 'react';
+import { Animated } from 'react-native';
+
+import { ANIMATION_DURATION_FAST } from '../../config/animation';
+import { emptyFn, EventFn } from '../../config/general';
+import { useAnimationInterpolate } from '../../hooks/use-animation-interpolate.hook';
+import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
+import { useUpdateAnimation } from '../../hooks/use-update-animation.hook';
+import { formatSize } from '../../styles/format-size';
+import { generateHitSlop } from '../../styles/generate-hit-slop';
+import { useColors } from '../../styles/use-colors';
+import { useSwitchStyles } from './switch.styles';
+
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+
+interface Props {
+  value: boolean;
+  disabled?: boolean;
+  onChange?: EventFn<boolean>;
+}
+
+export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
+  const colors = useColors();
+  const styles = useSwitchStyles();
+  const animation = useAnimationRef();
+
+  useUpdateAnimation(animation, value, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
+
+  const backgroundColor = useAnimationInterpolate(
+    animation,
+    {
+      outputRange: disabled ? [colors.disabled, colors.disabled] : [colors.lines, colors.orange]
+    },
+    [colors, disabled]
+  );
+
+  const translateX = useAnimationInterpolate(animation, {
+    outputRange: [0, formatSize(20)]
+  });
+
+  return (
+    <AnimatedTouchableOpacity
+      activeOpacity={1}
+      disabled={disabled}
+      style={[styles.touchableOpacity, { backgroundColor }]}
+      hitSlop={generateHitSlop(formatSize(4))}
+      onPress={() => onChange(!value)}>
+      <Animated.View style={[styles.toggle, { transform: [{ translateX }] }]} />
+    </AnimatedTouchableOpacity>
+  );
+};

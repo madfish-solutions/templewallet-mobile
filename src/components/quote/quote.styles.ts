@@ -1,20 +1,19 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useWelcomeHeaderStyles = createUseStyles(({ colors, typography }) => ({
-  headerTitle: {
+export const useQuoteStyles = createUseStyles(({ colors, typography }) => ({
+  text: {
     ...typography.caption13Semibold,
-    textAlign: 'right',
     color: colors.black,
+    textAlign: 'right',
     paddingLeft: formatSize(70)
   },
-  headerTitleQuotes: {
+  textQuotes: {
     ...typography.headline4Bold22,
     color: colors.gray3
   },
-  headerSecondTitle: {
+  author: {
     ...typography.tagline11Tag,
-    marginTop: formatSize(8),
     color: colors.gray1,
     textAlign: 'right'
   }

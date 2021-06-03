@@ -38,19 +38,46 @@ export const pushOrUpdateAccountTokensList = (
   slug: string,
   accountToken: AccountTokenInterface
 ) => {
+  const result: AccountTokenInterface[] = [];
   let didUpdate = false;
 
-  const result = tokensList.map(token => {
+  for (const token of tokensList) {
     if (token.slug === slug) {
       didUpdate = true;
 
-      return accountToken;
+      result.push(accountToken);
+    } else {
+      result.push(token);
     }
-
-    return token;
-  });
+  }
 
   !didUpdate && result.push(accountToken);
+
+  return result;
+};
+
+export const removeTokenFromTokenList = (tokensList: AccountTokenInterface[], slug: string) => {
+  const result: AccountTokenInterface[] = [];
+
+  for (const token of tokensList) {
+    if (token.slug !== slug) {
+      result.push(token);
+    }
+  }
+
+  return result;
+};
+
+export const toggleTokenVisibility = (tokensList: AccountTokenInterface[], slug: string) => {
+  const result: AccountTokenInterface[] = [];
+
+  for (const token of tokensList) {
+    if (token.slug === slug) {
+      result.push({ ...token, isVisible: !token.isVisible });
+    } else {
+      result.push(token);
+    }
+  }
 
   return result;
 };
