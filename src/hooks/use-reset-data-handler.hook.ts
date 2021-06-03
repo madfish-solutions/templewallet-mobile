@@ -1,24 +1,21 @@
-import React from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLink } from '../../../components/button/button-link/button-link';
-import { rootStateResetAction } from '../../../store/root-state.actions';
+import { rootStateResetAction } from '../store/root-state.actions';
 
-export const EraseDataButton = () => {
+export const useResetDataHandler = () => {
   const dispatch = useDispatch();
 
-  const handleResetDataButtonPress = () =>
+  return () =>
     Alert.alert('Are you sure you want to reset the Temple Wallet?', 'As a result, all your data will be deleted.', [
       {
         text: 'Cancel',
         style: 'cancel'
       },
       {
-        text: 'OK',
+        text: 'Reset',
+        style: 'destructive',
         onPress: () => dispatch(rootStateResetAction())
       }
     ]);
-
-  return <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />;
 };

@@ -1,47 +1,29 @@
-import { step, white } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
 
 export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
-  headerContainer: {
-    alignItems: 'center'
+  upperContainer: {
+    position: 'relative'
   },
-  versionText: {
-    ...typography.numbersStatus8,
-    color: colors.gray1,
-    marginVertical: formatSize(8)
-  },
-  socialsContainer: {
-    flexDirection: 'row'
+  quoteContainer: {
+    position: 'absolute',
+    top: formatSize(-64),
+    right: formatSize(4)
   },
   actionsContainer: {
-    ...generateShadow(1, colors.black),
-    padding: formatSize(8),
-    borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG
-  },
-  actionRowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  actionText: {
-    ...typography.caption13Semibold,
-    color: colors.black
-  },
-  actionTextMargin: {
-    marginLeft: formatSize(8)
-  },
-  darkAppearanceContainer: {
+  logoutButton: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    padding: formatSize(8)
   },
-  accountItem: {
-    backgroundColor: white,
-    padding: step,
-    marginBottom: step,
-    borderRadius: step
+  logoutButtonText: {
+    ...typography.tagline13Tag,
+    color: colors.destructive,
+    marginRight: formatSize(2)
   }
 }));

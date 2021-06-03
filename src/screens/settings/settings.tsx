@@ -1,36 +1,37 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
-import { getBuildNumber, getVersion } from 'react-native-device-info';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
-import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { Label } from '../../components/label/label';
+import { MadeWithLove } from '../../components/made-with-love/made-with-love';
+import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../config/socials';
+import { WhiteContainer } from '../../components/white-container/white-container';
+import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
+import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
+import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
-import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { changeTheme } from '../../store/display-settings/display-settings-actions';
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { generateHitSlop } from '../../styles/generate-hit-slop';
-import { EraseDataButton } from './erase-data-button/erase-data-button';
+import { useColors } from '../../styles/use-colors';
+import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
-import { SocialButton } from './social-button/social-button';
 
 export const Settings = () => {
+  const colors = useColors();
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
-  const { lock } = useAppLock();
   const { navigate } = useNavigation();
+  const handleLogoutButtonPress = useResetDataHandler();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -42,50 +43,63 @@ export const Settings = () => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true}>
-        <View style={styles.headerContainer}>
-          <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(104)} height={formatSize(32)} />
-          <Text style={styles.versionText}>{`Version: ${getVersion()}    Build: ${getBuildNumber()}`}</Text>
+      <SettingsHeader />
 
-          <View style={styles.socialsContainer}>
-            <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />
-            <SocialButton iconName={IconNameEnum.Discord} url={discordUrl} />
-            <SocialButton iconName={IconNameEnum.Twitter} url={twitterUrl} />
-            <SocialButton iconName={IconNameEnum.YouTube} url={youTubeUrl} />
-            <SocialButton iconName={IconNameEnum.Reddit} url={redditUrl} />
+      <ScreenContainer isFullScreenMode={true}>
+        <View style={styles.upperContainer}>
+          <View style={styles.quoteContainer}>
+            <Quote quote="Buy on the peak = ride on the dick." author="Furry hamster" />
           </View>
-        </View>
-      </HeaderCard>
-      <ScreenContainer>
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.actionRowContainer}
-            hitSlop={generateHitSlop(formatSize(8))}
-            onPress={() => navigate(ScreensEnum.ManageAccounts)}>
-            <View style={styles.actionRowContainer}>
-              <RobotIcon seed={publicKeyHash} size={formatSize(32)} />
-              <Text style={[styles.actionText, styles.actionTextMargin]}>Accounts</Text>
-            </View>
 
-            <Icon name={IconNameEnum.ChevronRight} />
+          <WhiteContainer>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.ManageAccounts)}>
+              <View style={styles.actionsContainer}>
+                <RobotIcon seed={publicKeyHash} size={formatSize(32)} />
+                <WhiteContainerText text="Accounts" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction disabled={true}>
+              <WhiteContainerText text="Appearance" />
+
+              <TextSegmentControl
+                selectedIndex={selectedThemeIndex}
+                values={['Light', 'Dark']}
+                width={formatSize(120)}
+                onChange={handleThemeSegmentControlChange}
+              />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction disabled={true}>
+              <WhiteContainerText text="DApps" />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} color={colors.disabled} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)}>
+              <WhiteContainerText text="About" />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider />
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButtonPress}>
+            <Text style={styles.logoutButtonText}>LOG OUT</Text>
+            <Icon name={IconNameEnum.LogOut} />
           </TouchableOpacity>
+          <Divider />
         </View>
 
-        <Divider size={formatSize(16)} />
-
-        <View style={styles.darkAppearanceContainer}>
-          <Label label="Dark Appearance" description="Manage the appearance of the app" />
-          <TextSegmentControl
-            selectedIndex={selectedThemeIndex}
-            values={['Light', 'Dark']}
-            width={formatSize(120)}
-            onChange={handleThemeSegmentControlChange}
-          />
-        </View>
-        <Divider />
-
-        <Button title="Lock the App" onPress={lock} />
-        <EraseDataButton />
+        <MadeWithLove />
       </ScreenContainer>
     </>
   );

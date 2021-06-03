@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../../../styles/create-use-styles';
+import { formatSize } from '../../../../styles/format-size';
 
 const size = formatSize(40);
 
