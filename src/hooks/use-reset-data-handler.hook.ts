@@ -13,7 +13,8 @@ export const useResetDataHandler = () => {
         style: 'cancel'
       },
       {
-        text: 'OK',
+        text: 'Reset',
+        style: 'destructive',
         onPress: () => dispatch(rootStateResetAction())
       }
     ]);

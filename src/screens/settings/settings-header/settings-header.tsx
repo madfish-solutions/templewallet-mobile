@@ -17,7 +17,7 @@ export const SettingsHeader = () => {
     <HeaderCard hasInsetTop={true}>
       <View style={styles.headerContainer}>
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(104)} height={formatSize(32)} />
-        <Text style={styles.versionText}>{`Version: ${getVersion()}    Build: ${getBuildNumber()}`}</Text>
+        <Text style={styles.versionText}>{`VERSION: ${getVersion()}    BUILD: ${getBuildNumber()}`}</Text>
 
         <View style={styles.socialsContainer}>
           <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />

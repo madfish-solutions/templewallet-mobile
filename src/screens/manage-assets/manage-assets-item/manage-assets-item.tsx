@@ -28,6 +28,7 @@ export const ManageAssetsItem: FC<Props> = ({ token }) => {
       },
       {
         text: 'Delete',
+        style: 'destructive',
         onPress: () => dispatch(removeTokenAction(slug))
       }
     ]);
