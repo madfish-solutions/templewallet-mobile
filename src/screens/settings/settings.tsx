@@ -6,10 +6,14 @@ import { useDispatch } from 'react-redux';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { MadeWithLove } from '../../components/made-with-love/made-with-love';
 import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { WhiteContainer } from '../../components/white-container/white-container';
+import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
+import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/screens.enum';
@@ -19,12 +23,8 @@ import { useThemeSelector } from '../../store/display-settings/display-settings-
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { MadeWithLove } from './made-with-love/made-with-love';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
-import { WhiteContainer } from './white-container/white-container';
-import { WhiteContainerAction } from './white-container/white-container-action/white-container-action';
-import { WhiteContainerText } from './white-container/white-container-text/white-container-text';
 
 export const Settings = () => {
   const colors = useColors();

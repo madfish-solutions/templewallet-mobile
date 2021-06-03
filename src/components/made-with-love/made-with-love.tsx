@@ -2,8 +2,8 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { website } from '../../../config/socials';
-import { openUrl } from '../../../utils/linking.util';
+import { website } from '../../config/socials';
+import { openUrl } from '../../utils/linking.util';
 import Heart from './heart.svg';
 import { useMadeWithLoveStyles } from './made-with-love.styles';
 import MadfishLogo from './madfish-logo.svg';

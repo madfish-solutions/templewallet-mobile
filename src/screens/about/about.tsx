@@ -4,7 +4,12 @@ import { Text, View } from 'react-native';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { MadeWithLove } from '../../components/made-with-love/made-with-love';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { WhiteContainer } from '../../components/white-container/white-container';
+import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
+import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
+import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import {
   contact,
   featureRequest,
@@ -16,11 +21,6 @@ import {
 } from '../../config/socials';
 import { formatSize } from '../../styles/format-size';
 import { openUrl } from '../../utils/linking.util';
-import { MadeWithLove } from '../settings/made-with-love/made-with-love';
-import { WhiteContainer } from '../settings/white-container/white-container';
-import { WhiteContainerAction } from '../settings/white-container/white-container-action/white-container-action';
-import { WhiteContainerDivider } from '../settings/white-container/white-container-divider/white-container-divider';
-import { WhiteContainerText } from '../settings/white-container/white-container-text/white-container-text';
 import { useAboutStyles } from './about.styles';
 
 export const About = () => {

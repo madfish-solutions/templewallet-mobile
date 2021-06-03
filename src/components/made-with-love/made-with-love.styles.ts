@@ -1,4 +1,4 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
+import { createUseStyles } from '../../styles/create-use-styles';
 
 export const useMadeWithLoveStyles = createUseStyles(({ colors, typography }) => ({
   container: {
