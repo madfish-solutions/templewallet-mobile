@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Text, FlatList, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -11,24 +11,41 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { SearchInput } from '../../components/search-input/search-input';
 import { BakerInterface } from '../../interfaces/baker.interface';
+import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
+import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useBakersListSelector } from '../../store/baking/baking-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isString } from '../../utils/is-string';
+import { MAINNET_NETWORK } from '../../utils/network/networks';
 import { SelectBakerItem } from './select-baker-item/select-baker-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const SelectBakerModal: FC = () => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
 
   const bakersList = useBakersListSelector();
+  const selectedAccount = useSelectedAccountSelector();
 
   const [filteredBakersList, setFilteredBakersList] = useState(bakersList);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
 
   const debouncedSetSearchValue = debounce(setSearchValue);
+
+  const handleNextPress = useCallback(() => {
+    if (!selectedBaker) {
+      return;
+    }
+    navigate(ModalsEnum.Confirm, {
+      type: ConfirmPayloadType.internalOperations,
+      opParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
+      sourcePkh: selectedAccount.publicKeyHash,
+      networkRpc: MAINNET_NETWORK.rpcBaseURL
+    });
+  }, [selectedBaker, navigate, selectedAccount]);
 
   useEffect(() => {
     if (isString(searchValue)) {
@@ -90,7 +107,7 @@ export const SelectBakerModal: FC = () => {
         <ButtonsContainer>
           <ButtonLargeSecondary title="Close" onPress={goBack} />
           <Divider size={formatSize(16)} />
-          <ButtonLargePrimary title="Next" disabled={true} onPress={() => null} />
+          <ButtonLargePrimary title="Next" disabled={!selectedBaker} onPress={handleNextPress} />
         </ButtonsContainer>
 
         <InsetSubstitute type="bottom" />

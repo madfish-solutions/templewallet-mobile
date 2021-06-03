@@ -13,25 +13,19 @@ import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { Label } from '../../../components/label/label';
-import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { Slider } from '../../../components/slider/slider';
 import { StyledNumericInput } from '../../../components/styled-numberic-input/styled-numeric-input';
-import { step } from '../../../config/styles';
 import { ErrorMessage } from '../../../form/error-message/error-message';
 import { assetAmountValidation } from '../../../form/validation/asset-amount';
 import { InternalOperationsPayload } from '../../../interfaces/confirm-payload/internal-operations-payload.interface';
-import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { useNavigation } from '../../../navigator/use-navigation.hook';
-import { useHdAccountsListSelector, useTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
-import { tryParseExpenses } from '../../../utils/expenses.util';
 import { mutezToTz } from '../../../utils/tezos.util';
 import { InternalOpsConfirmFormValues } from './internal-operations-confirm.form';
 import { useInternalOpsConfirmStyles } from './internal-operations-confirm.styles';
+import { OperationDetailsView } from './operations-details-view';
 
 type InternalOperationsConfirmProps = {
   estimations: Estimate[];
@@ -128,36 +122,12 @@ const FormContent: FC<FormContentProps> = ({
   getFieldMeta
 }) => {
   const { opParams, sourcePkh } = params;
-  const hdAccounts = useHdAccountsListSelector();
   const styles = useInternalOpsConfirmStyles();
   const [shouldShowDetailedSettings, setShouldShowDetailedSettings] = useState(false);
   const { goBack } = useNavigation();
 
   const showDetailedSettings = useCallback(() => setShouldShowDetailedSettings(true), []);
   const hideDetailedSettings = useCallback(() => setShouldShowDetailedSettings(false), []);
-
-  const sourceAccount = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === sourcePkh),
-    [sourcePkh, hdAccounts]
-  );
-  const rawExpenses = useMemo(() => tryParseExpenses(opParams, sourcePkh), [opParams, sourcePkh]);
-  const rawPureExpenses = useMemo(() => rawExpenses.map(({ expenses }) => expenses).flat(), [rawExpenses]);
-  const firstExpense = rawPureExpenses[0];
-  const firstExpenseRecipientAccount = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === firstExpense.to),
-    [firstExpense, hdAccounts]
-  );
-  const tokens = useTokensListSelector();
-  const firstExpenseToken = useMemo(
-    () =>
-      tokens.find(
-        ({ type, address, id }) =>
-          firstExpense.tokenAddress === address && (type !== TokenTypeEnum.FA_2 || id === firstExpense.tokenId)
-      ),
-    [tokens, firstExpense]
-  );
-  const assetDecimals = firstExpenseToken?.decimals ?? XTZ_TOKEN_METADATA.decimals;
-  const assetSymbol = firstExpenseToken?.symbol ?? XTZ_TOKEN_METADATA.symbol;
 
   const handleSliderChange = useCallback(
     (newValue: number) => {
@@ -194,45 +164,7 @@ const FormContent: FC<FormContentProps> = ({
   return (
     <ScreenContainer isFullScreenMode={true}>
       <View>
-        {rawPureExpenses.length === 1 && (
-          <>
-            <View style={styles.row}>
-              <View style={styles.sendAddressesLeftHalf}>
-                <View style={styles.senderView}>
-                  <Text style={styles.label}>From</Text>
-                  <RobotIcon size={formatSize(44)} seed={sourcePkh} />
-                  <Text style={styles.accountLabel}>{sourceAccount?.name ?? ''}</Text>
-                  <PublicKeyHashText publicKeyHash={sourcePkh} />
-                </View>
-                <View style={styles.arrowContainer}>
-                  <Icon size={formatSize(24)} name={IconNameEnum.ArrowRight} style={styles.arrowIcon} />
-                </View>
-              </View>
-              <View style={styles.recipientView}>
-                <Text style={styles.label}>To</Text>
-                <RobotIcon size={formatSize(44)} seed={rawPureExpenses[0].to} />
-                <Text style={styles.accountLabel}>{firstExpenseRecipientAccount?.name ?? ''}</Text>
-                <PublicKeyHashText publicKeyHash={rawPureExpenses[0].to} />
-              </View>
-            </View>
-            <Divider />
-            <View>
-              <View style={styles.amountLabelWrapper}>
-                <Text style={styles.label}>Amount</Text>
-              </View>
-              <Divider size={formatSize(16)} />
-              {rawPureExpenses[0].amount && (
-                <>
-                  <Text style={styles.totalNumber}>
-                    {mutezToTz(rawPureExpenses[0].amount, assetDecimals).toFixed()} {assetSymbol}
-                  </Text>
-                  <Text style={styles.totalUsdNumber}>XXX.XX $</Text>
-                </>
-              )}
-              <Divider />
-            </View>
-          </>
-        )}
+        <OperationDetailsView opParams={opParams} sourcePkh={sourcePkh} />
         <View style={styles.row}>
           <View style={styles.feeView}>
             <Text style={styles.feeLabel}>Gas fee:</Text>
@@ -293,7 +225,7 @@ const FormContent: FC<FormContentProps> = ({
       </View>
 
       <ButtonsContainer>
-        <ButtonLargeSecondary title="Back" marginRight={2 * step} onPress={goBack} />
+        <ButtonLargeSecondary title="Back" marginRight={formatSize(2)} onPress={goBack} />
         <ButtonLargePrimary title="Confirm" onPress={submitForm} />
       </ButtonsContainer>
     </ScreenContainer>
