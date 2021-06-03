@@ -9,13 +9,16 @@ import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
+import { useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { ManageAssetsItem } from './manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from './manage-assets.styles';
 
 export const ManageAssets = () => {
   const styles = useManageAssetsStyles();
   const { navigate } = useNavigation();
-  const { filteredTokensList, setSearchValue } = useFilteredTokenList();
+
+  const tokensList = useTokensListSelector();
+  const { filteredTokensList, setSearchValue } = useFilteredTokenList(tokensList);
 
   return (
     <>

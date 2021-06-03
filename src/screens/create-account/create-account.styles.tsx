@@ -3,14 +3,10 @@ import { formatSize } from '../../styles/format-size';
 
 export const useCreateAccountStyles = createUseStyles(({ colors, typography }) => ({
   checkboxContainer: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    marginLeft: formatSize(4),
-    marginBottom: formatSize(8)
+    marginLeft: formatSize(4)
   },
   checkboxText: {
     ...typography.body15Semibold,
-    color: colors.black,
-    marginLeft: formatSize(10)
+    color: colors.black
   }
 }));

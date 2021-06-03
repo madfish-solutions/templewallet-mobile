@@ -6,5 +6,5 @@ export type TokenInterface = Omit<AccountTokenInterface, 'slug'> & TokenMetadata
 export const emptyToken: TokenInterface = {
   ...emptyTokenMetadataInterface,
   balance: '0',
-  isShown: true
+  isVisible: true
 };

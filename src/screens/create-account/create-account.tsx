@@ -51,9 +51,12 @@ export const CreateAccount = () => {
               <Divider />
 
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" />
-                <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
+                <FormCheckbox name="acceptTerms">
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
+                </FormCheckbox>
               </View>
+              <Divider size={formatSize(8)} />
               <Label description={'And accept the risks that if I lose the phrase, \nmy funds may be lost.'} />
 
               <ButtonLargePrimary title="Create" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
