@@ -10,7 +10,7 @@ export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
     top: formatSize(-64),
     right: formatSize(4)
   },
-  actionRowContainer: {
+  actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'

@@ -53,7 +53,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.ManageAccounts)}>
-              <View style={styles.actionRowContainer}>
+              <View style={styles.actionsContainer}>
                 <RobotIcon seed={publicKeyHash} size={formatSize(32)} />
                 <WhiteContainerText text="Accounts" />
               </View>
