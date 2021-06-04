@@ -1,7 +1,7 @@
 import { Estimate } from '@taquito/taquito/dist/types/contract/estimate';
 import { BigNumber } from 'bignumber.js';
 import { Formik, FormikProps } from 'formik';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { number, object, SchemaOf } from 'yup';
@@ -16,7 +16,7 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { Slider } from '../../../components/slider/slider';
 import { StyledNumericInput } from '../../../components/styled-numberic-input/styled-numeric-input';
-import { ErrorMessage } from '../../../form/error-message/error-message';
+import { FormNumericInput } from '../../../form/form-numeric-input';
 import { assetAmountValidation } from '../../../form/validation/asset-amount';
 import { InternalOperationsPayload } from '../../../interfaces/confirm-payload/internal-operations-payload.interface';
 import { useNavigation } from '../../../navigator/use-navigation.hook';
@@ -136,8 +136,7 @@ const FormContent: FC<FormContentProps> = ({
   setValues,
   setFieldValue,
   params,
-  basicFees,
-  getFieldMeta
+  basicFees
 }) => {
   const { opParams, sourcePkh } = params;
   const styles = useInternalOpsConfirmStyles();
@@ -158,25 +157,22 @@ const FormContent: FC<FormContentProps> = ({
     [basicFees, setValues]
   );
 
-  const handleGasFeeChange = useCallback(
-    (newValue?: BigNumber) => {
-      setFieldValue('gasFee', newValue, true);
-      if (newValue) {
-        const newSliderValue = Math.min(
-          100,
-          Math.max(0, newValue.minus(basicFees.gasFee).minus(1e4).div(5e-5).integerValue().toNumber())
-        );
-        setFieldValue('sliderValue', newSliderValue);
-      } else {
-        setFieldValue('sliderValue', 0);
-      }
-    },
-    [basicFees, setFieldValue]
-  );
+  useEffect(() => {
+    const newGasFee = values.gasFee;
+    if (newGasFee) {
+      const newSliderValue = Math.min(
+        2,
+        Math.max(0, newGasFee.minus(basicFees.gasFee).minus(1e4).div(5e-5).integerValue().toNumber())
+      );
+      setFieldValue('sliderValue', newSliderValue);
+    } else {
+      setFieldValue('sliderValue', 0);
+    }
+  }, [values.gasFee, basicFees, setFieldValue]);
 
-  const handleStorageFeeChange = useCallback(
-    (newValue?: BigNumber) => setFieldValue('storageFee', newValue),
-    [setFieldValue]
+  const totalFee = useMemo(
+    () => (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0),
+    [values.gasFee, values.storageFee]
   );
 
   return (
@@ -187,15 +183,27 @@ const FormContent: FC<FormContentProps> = ({
           <View style={styles.feeView}>
             <Text style={styles.feeLabel}>Gas fee:</Text>
             <View style={styles.row}>
-              <Text style={styles.feeAmount}>{values.gasFee.toFixed()} XTZ</Text>
-              <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
+              {values.gasFee ? (
+                <>
+                  <Text style={styles.feeAmount}>{values.gasFee.toFixed()} XTZ</Text>
+                  <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
+                </>
+              ) : (
+                <Text style={styles.feeAmount}>Not defined</Text>
+              )}
             </View>
           </View>
           <View style={styles.feeView}>
             <Text style={styles.feeLabel}>Storage fee:</Text>
             <View style={styles.row}>
-              <Text style={styles.feeAmount}>{values.storageFee.toFixed()} XTZ</Text>
-              <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
+              {values.storageFee ? (
+                <>
+                  <Text style={styles.feeAmount}>{values.storageFee.toFixed()} XTZ</Text>
+                  <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
+                </>
+              ) : (
+                <Text style={styles.feeAmount}>Not defined</Text>
+              )}
             </View>
           </View>
         </View>
@@ -215,33 +223,30 @@ const FormContent: FC<FormContentProps> = ({
                   <Icon size={formatSize(24)} name={IconNameEnum.Fast} style={styles.sliderIcon} />
                 </Slider>
               </View>
-              <TouchableOpacity onPress={showDetailedSettings} style={styles.toggleSettingsButton}>
-                <Icon size={formatSize(16)} name={IconNameEnum.Gear} style={styles.orangeIcon} />
-              </TouchableOpacity>
+              <View>
+                <TouchableOpacity onPress={showDetailedSettings} style={styles.toggleSettingsButton}>
+                  <Icon size={formatSize(16)} name={IconNameEnum.Gear} style={styles.orangeIcon} />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
           <View style={[styles.row, conditionalStyle(!shouldShowDetailedSettings, styles.hidden)]}>
             <View style={styles.feeInputForm}>
               <Label description="Total:" />
-              <StyledNumericInput decimals={6} value={values.gasFee.plus(values.storageFee)} readOnly />
+              <StyledNumericInput decimals={6} value={totalFee} readOnly />
 
               <Label description="Gas fee:" />
-              <StyledNumericInput decimals={6} value={values.gasFee} onChange={handleGasFeeChange} isShowCleanButton />
-              <ErrorMessage meta={getFieldMeta('gasFee')} />
+              <FormNumericInput decimals={6} name="gasFee" isShowCleanButton />
 
               <Label description="Storage fee:" />
-              <StyledNumericInput
-                decimals={6}
-                value={values.storageFee}
-                onChange={handleStorageFeeChange}
-                isShowCleanButton
-              />
-              <ErrorMessage meta={getFieldMeta('storageFee')} />
+              <FormNumericInput decimals={6} name="storageFee" isShowCleanButton />
             </View>
             {estimationWasSuccessful && (
-              <TouchableOpacity onPress={hideDetailedSettings} style={styles.toggleSettingsButton}>
-                <Icon size={formatSize(16)} name={IconNameEnum.CloseNoCircle} style={styles.orangeIcon} />
-              </TouchableOpacity>
+              <View>
+                <TouchableOpacity onPress={hideDetailedSettings} style={styles.toggleSettingsButton}>
+                  <Icon size={formatSize(16)} name={IconNameEnum.CloseNoCircle} style={styles.orangeIcon} />
+                </TouchableOpacity>
+              </View>
             )}
           </View>
 

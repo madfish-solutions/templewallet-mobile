@@ -9,12 +9,13 @@ import { ErrorMessage } from './error-message/error-message';
 interface Props {
   name: string;
   decimals?: number;
+  isShowCleanButton?: boolean;
   min?: BigNumber | number;
   max?: BigNumber | number;
   readOnly?: boolean;
 }
 
-export const FormNumericInput: FC<Props> = ({ name, decimals, min, max, readOnly }) => {
+export const FormNumericInput: FC<Props> = ({ name, decimals, isShowCleanButton, min, max, readOnly }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
 
@@ -22,6 +23,7 @@ export const FormNumericInput: FC<Props> = ({ name, decimals, min, max, readOnly
     <>
       <StyledNumericInput
         decimals={decimals}
+        isShowCleanButton={isShowCleanButton}
         min={min}
         max={max}
         value={field.value}

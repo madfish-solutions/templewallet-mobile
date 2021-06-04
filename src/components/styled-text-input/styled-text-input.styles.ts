@@ -18,14 +18,15 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
     regular: {
       ...commonStyles,
       paddingVertical: formatSize(13),
-      paddingHorizontal: formatSize(12),
+      paddingLeft: formatSize(12),
       paddingRight: formatSize(40),
       minHeight: formatSize(50)
     },
     multiline: {
       ...commonStyles,
       textAlignVertical: 'top',
-      paddingHorizontal: formatSize(12),
+      paddingLeft: formatSize(12),
+      paddingRight: formatSize(12),
       paddingTop: formatSize(12),
       paddingBottom: formatSize(60),
       minHeight: formatSize(200),
