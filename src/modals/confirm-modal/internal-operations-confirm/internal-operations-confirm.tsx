@@ -28,21 +28,27 @@ import { useInternalOpsConfirmStyles } from './internal-operations-confirm.style
 import { OperationDetailsView } from './operations-details-view';
 
 type InternalOperationsConfirmProps = {
-  estimations: Estimate[];
+  buttonsDisabled: boolean;
+  estimations?: Estimate[];
   params: InternalOperationsPayload;
   onSubmit: (values: { additionalGasFee: BigNumber; additionalStorageFee: BigNumber }) => void;
 };
 
-export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({ estimations, params, onSubmit }) => {
+export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({
+  buttonsDisabled,
+  estimations,
+  params,
+  onSubmit
+}) => {
   const basicFees = useMemo(
     () =>
-      estimations.reduce(
+      estimations?.reduce(
         (sumPart, estimation) => ({
           gasFee: sumPart.gasFee.plus(mutezToTz(new BigNumber(estimation.totalCost), 6)),
           storageFee: sumPart.storageFee.plus(mutezToTz(new BigNumber(estimation.storageLimit), 6))
         }),
         { gasFee: new BigNumber(0), storageFee: new BigNumber(0) }
-      ),
+      ) ?? { gasFee: new BigNumber(1e-6), storageFee: new BigNumber(0) },
     [estimations]
   );
 
@@ -99,12 +105,22 @@ export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({ 
       initialValues={initialValues}
       validationSchema={internalOpsConfirmValidationSchema}
       onSubmit={handleSubmit}>
-      {formikProps => <FormContent {...formikProps} basicFees={basicFees} params={params} />}
+      {formikProps => (
+        <FormContent
+          {...formikProps}
+          basicFees={basicFees}
+          buttonsDisabled={buttonsDisabled}
+          estimationWasSuccessful={!!estimations}
+          params={params}
+        />
+      )}
     </Formik>
   );
 };
 
 type FormContentProps = FormikProps<InternalOpsConfirmFormValues> & {
+  buttonsDisabled: boolean;
+  estimationWasSuccessful: boolean;
   params: InternalOperationsPayload;
   basicFees: {
     gasFee: BigNumber;
@@ -113,6 +129,8 @@ type FormContentProps = FormikProps<InternalOpsConfirmFormValues> & {
 };
 
 const FormContent: FC<FormContentProps> = ({
+  buttonsDisabled,
+  estimationWasSuccessful,
   submitForm,
   values,
   setValues,
@@ -123,7 +141,7 @@ const FormContent: FC<FormContentProps> = ({
 }) => {
   const { opParams, sourcePkh } = params;
   const styles = useInternalOpsConfirmStyles();
-  const [shouldShowDetailedSettings, setShouldShowDetailedSettings] = useState(false);
+  const [shouldShowDetailedSettings, setShouldShowDetailedSettings] = useState(!estimationWasSuccessful);
   const { goBack } = useNavigation();
 
   const showDetailedSettings = useCallback(() => setShouldShowDetailedSettings(true), []);
@@ -185,8 +203,13 @@ const FormContent: FC<FormContentProps> = ({
         <View>
           {!shouldShowDetailedSettings && (
             <View style={styles.row}>
-              <View style={styles.feeInputForm}>
-                <Slider onValueChange={handleSliderChange} value={values.sliderValue} minimumValue={0} maximumValue={2}>
+              <View style={styles.shortFeeInputForm}>
+                <Slider
+                  onValueChange={handleSliderChange}
+                  value={values.sliderValue}
+                  minimumValue={0}
+                  maximumValue={2}
+                  style={styles.slider}>
                   <Icon size={formatSize(24)} name={IconNameEnum.Slow} style={styles.sliderIcon} />
                   <Icon size={formatSize(24)} name={IconNameEnum.NormalSpeed} style={styles.sliderIcon} />
                   <Icon size={formatSize(24)} name={IconNameEnum.Fast} style={styles.sliderIcon} />
@@ -215,9 +238,11 @@ const FormContent: FC<FormContentProps> = ({
               />
               <ErrorMessage meta={getFieldMeta('storageFee')} />
             </View>
-            <TouchableOpacity onPress={hideDetailedSettings} style={styles.toggleSettingsButton}>
-              <Icon size={formatSize(16)} name={IconNameEnum.CloseNoCircle} style={styles.orangeIcon} />
-            </TouchableOpacity>
+            {estimationWasSuccessful && (
+              <TouchableOpacity onPress={hideDetailedSettings} style={styles.toggleSettingsButton}>
+                <Icon size={formatSize(16)} name={IconNameEnum.CloseNoCircle} style={styles.orangeIcon} />
+              </TouchableOpacity>
+            )}
           </View>
 
           <Divider />
@@ -225,8 +250,8 @@ const FormContent: FC<FormContentProps> = ({
       </View>
 
       <ButtonsContainer>
-        <ButtonLargeSecondary title="Back" marginRight={formatSize(2)} onPress={goBack} />
-        <ButtonLargePrimary title="Confirm" onPress={submitForm} />
+        <ButtonLargeSecondary title="Back" disabled={buttonsDisabled} marginRight={formatSize(2)} onPress={goBack} />
+        <ButtonLargePrimary title="Confirm" disabled={buttonsDisabled} onPress={submitForm} />
       </ButtonsContainer>
     </ScreenContainer>
   );

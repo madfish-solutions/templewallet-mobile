@@ -11,13 +11,18 @@ import { betterCallDevApi } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
+import { showSuccessToast } from '../../toast/toast.utils';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { assertFA2TokenContract } from '../../token/utils/token.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
-import { loadTezosBalanceActions, loadTokenBalancesActions, loadTokenMetadataActions } from './wallet-actions';
+import {
+  loadTezosBalanceActions,
+  loadTokenBalancesActions,
+  loadTokenMetadataActions,
+  confirmationActions
+} from './wallet-actions';
 
-// loadTokenBalancesActions.success(data.balances)
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
@@ -113,4 +118,45 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const walletEpics = combineEpics(loadTezosAssetsEpic, loadTokenAssetsEpic, loadTokenMetadataEpic);
+const operationConfirmationEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(confirmationActions.submit),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([{ opHash, type }, tezos]) =>
+      from(tezos.operation.createOperation(opHash)).pipe(
+        switchMap(operation =>
+          from(operation.confirmation(1)).pipe(
+            map(({ completed }) => {
+              if (!completed) {
+                throw new Error('Unknown reason');
+              }
+
+              showSuccessToast('Operation confirmed!');
+
+              return confirmationActions.success({
+                opHash,
+                type
+              });
+            })
+          )
+        ),
+        catchError(err =>
+          of(
+            confirmationActions.fail({
+              opHash,
+              type,
+              error: err.message
+            })
+          )
+        )
+      )
+    )
+  );
+
+export const walletEpics = combineEpics(
+  loadTezosAssetsEpic,
+  loadTokenAssetsEpic,
+  loadTokenMetadataEpic,
+  operationConfirmationEpic
+);

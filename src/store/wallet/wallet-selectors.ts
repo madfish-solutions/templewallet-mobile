@@ -39,6 +39,16 @@ export const useTokensListSelector = (): TokenInterface[] => {
   return tokensList;
 };
 
+export const usePendingOperationsSelector = () => {
+  const toofta1 = useWalletSelector();
+
+  return toofta1.pendingOperations;
+};
+
+export const useCompletedOperationsSelector = () => useWalletSelector().completedOperations;
+
+export const useConfirmationErrorOperationsSelector = () => useWalletSelector().confirmationErrorOperations;
+
 export const useVisibleTokensListSelector = () => {
   const tokensList = useTokensListSelector();
 

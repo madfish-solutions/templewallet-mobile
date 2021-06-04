@@ -7,7 +7,7 @@ import { greyLight200, orangeLight200 } from '../../config/styles';
 import { useSliderStyles } from './slider.styles';
 
 type Props = Required<Pick<SliderProps, 'value' | 'onValueChange'>> &
-  Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'>;
+  Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step' | 'style'>;
 
 export const Slider: FC<Props> = ({
   value,
@@ -15,6 +15,7 @@ export const Slider: FC<Props> = ({
   minimumValue = 0,
   maximumValue = 100,
   step = 1,
+  style,
   children
 }) => {
   const styles = useSliderStyles();
@@ -24,7 +25,7 @@ export const Slider: FC<Props> = ({
     <>
       <RNSlider
         value={value}
-        style={styles.slider}
+        style={style}
         step={step}
         minimumValue={minimumValue}
         maximumValue={maximumValue}

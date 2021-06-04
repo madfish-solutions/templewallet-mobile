@@ -28,6 +28,7 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NormalSpeedIcon from './assets/normal-speed.svg';
+import OkIcon from './assets/ok.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
@@ -117,5 +118,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.Trash]: TrashIcon,
-  [IconNameEnum.LogOut]: LogOutIcon
+  [IconNameEnum.LogOut]: LogOutIcon,
+  [IconNameEnum.Ok]: OkIcon
 };

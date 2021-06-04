@@ -43,6 +43,7 @@ export enum IconNameEnum {
   Info = 'Info',
   ChevronRight = 'ChevronRight',
   NoResult = 'NoResult',
+  Ok = 'Ok',
   TempleLogoWithText = 'TempleLogoWithText',
   Telegram = 'Telegram',
   Discord = 'Discord',

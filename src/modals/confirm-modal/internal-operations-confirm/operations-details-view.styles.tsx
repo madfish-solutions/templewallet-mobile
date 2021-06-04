@@ -23,7 +23,8 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     justifyContent: 'center'
   },
   totalNumber: {
-    ...typography.numbersMedium20
+    ...typography.numbersMedium20,
+    color: colors.black
   },
   totalUsdNumber: {
     ...typography.numbersRegular17,
@@ -48,6 +49,10 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     color: colors.black,
     marginBottom: formatSize(4)
   },
+  delegationAccountLabel: {
+    ...typography.caption13Semibold,
+    color: colors.black
+  },
   previewTitleWrapper: {
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines,
@@ -67,10 +72,16 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     flexGrow: 1
   },
   accountTitle: {
-    marginLeft: formatSize(10)
+    marginLeft: formatSize(10),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   balanceSection: {
-    marginRight: formatSize(16)
+    marginRight: formatSize(16),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end'
   },
   balanceLabel: {
     ...typography.numbersRegular13,
@@ -82,6 +93,7 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
   },
   unknownBakerText: {
     marginRight: formatSize(4),
-    ...typography.body15Regular
+    ...typography.body15Regular,
+    color: colors.black
   }
 }));

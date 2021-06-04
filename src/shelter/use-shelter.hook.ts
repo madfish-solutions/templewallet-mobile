@@ -1,15 +1,17 @@
 import { InMemorySigner } from '@taquito/signer';
+import { WalletOperation, OpKind } from '@taquito/taquito';
 import { useCallback, useEffect, useMemo } from 'react';
-import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { merge, of, pipe, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { EstimateInterface } from '../interfaces/estimate.interface';
+import { OperationSuccessPayload } from '../interfaces/operation-success-payload';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountAction, confirmationActions } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { tezos$ } from '../utils/network/network.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
@@ -56,30 +58,60 @@ export const useShelter = () => {
             )
           ),
           withLatestFrom(tezos$),
-          switchMap(([[privateKey, { params }], tezos]) => {
+          switchMap(async ([[privateKey, { params }], tezos]) => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
 
+            let opPromise: Promise<WalletOperation>;
+            let operationType: OperationSuccessPayload['type'];
+            let successMessage: string;
             if (params instanceof Array) {
               const batch = tezos.wallet.batch(params);
 
-              return batch.send();
+              opPromise = batch.send();
+              operationType = 'batch';
+              successMessage = 'Operations batch sent! Confirming...';
+            } else {
+              switch (params.kind) {
+                case OpKind.ORIGINATION:
+                  operationType = OpKind.ORIGINATION;
+                  opPromise = tezos.wallet.originate(params).send();
+                  successMessage = 'Contract origination request sent! Confirming...';
+                  break;
+                case OpKind.DELEGATION:
+                  operationType = OpKind.DELEGATION;
+                  opPromise = tezos.wallet.setDelegate(params).send();
+                  successMessage = 'Delegation request sent! Confirming...';
+                  break;
+                case OpKind.TRANSACTION:
+                  operationType = OpKind.TRANSACTION;
+                  opPromise = tezos.wallet.transfer(params).send();
+                  successMessage = 'Transaction sent! Confirming...';
+                  break;
+                default:
+                  throw new Error('Params of this kind are not supported yet');
+              }
             }
 
-            switch (params.kind) {
-              case 'origination':
-                return tezos.wallet.originate(params).send();
-              case 'delegation':
-                return tezos.wallet.setDelegate(params).send();
-              case 'transaction':
-                return tezos.wallet.transfer(params).send();
-              default:
-                return throwError('Params of this kind are not supported yet');
-            }
+            return {
+              opHash: (await opPromise).opHash,
+              successMessage,
+              type: operationType
+            };
           })
         )
-        .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
+        .subscribe(
+          ({ successMessage, ...payload }) => {
+            dispatch(confirmationActions.submit(payload));
+            showSuccessToast(successMessage);
+            goBack();
+          },
+          error => {
+            showErrorToast(`Error while sending operations: ${error.message}`);
+            goBack();
+          }
+        ),
 
       merge(
         revealSecretKey$.pipe(

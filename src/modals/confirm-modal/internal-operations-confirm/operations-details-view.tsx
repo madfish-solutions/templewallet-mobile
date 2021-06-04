@@ -64,12 +64,12 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
           <View style={styles.shortInfoSection}>
             <RobotIcon size={formatSize(44)} seed={sourcePkh} />
             <View style={styles.accountTitle}>
-              <Text style={styles.accountLabel}>{sourceAccount?.name ?? ''}</Text>
-              <PublicKeyHashText publicKeyHash={sourceAccount!.publicKeyHash} />
+              <Text style={styles.delegationAccountLabel}>{sourceAccount?.name ?? ''}</Text>
+              <PublicKeyHashText publicKeyHash={sourcePkh} />
             </View>
           </View>
           <View style={styles.balanceSection}>
-            <Text style={styles.balanceLabel}>{sourceAccount!.tezosBalance.data} XTZ</Text>
+            <Text style={styles.balanceLabel}>{sourceAccount?.tezosBalance.data ?? 'XXX.XX'} XTZ</Text>
           </View>
         </View>
         <Divider size={formatSize(32)} />

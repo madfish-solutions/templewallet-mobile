@@ -7,19 +7,18 @@ import { Text, View } from 'react-native';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
-import { ScreensEnum } from '../../navigator/screens.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
+import { showErrorToast } from '../../toast/toast.utils';
 import { tzToMutez } from '../../utils/tezos.util';
 import { useConfirmModalStyles } from './confirm-modal.styles';
 import { InternalOperationsConfirm } from './internal-operations-confirm/internal-operations-confirm';
 
 export const ConfirmModal: FC = () => {
   const styles = useConfirmModalStyles();
-  const { navigate } = useNavigation();
   const { estimate, send } = useShelter();
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirm>>();
   const [estimations, setEstimations] = useState<Estimate[]>();
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [estimationError, setEstimationError] = useState<Error>();
 
   const handleOperationsSubmit = useCallback(
@@ -28,32 +27,33 @@ export const ConfirmModal: FC = () => {
       if (!params) {
         return;
       }
-      navigate(ScreensEnum.Wallet);
       if (params.type === ConfirmPayloadType.internalOperations) {
+        setButtonsDisabled(true);
         const { opParams } = params;
-        const processedOpParams = opParams.map((op, index) => {
-          const { totalCost, storageLimit } = estimations![index];
-          const rawAddGasFee = tzToMutez(additionalGasFee, 6);
-          const rawAddStorageFee = tzToMutez(additionalStorageFee, 6);
+        const processedOpParams = estimations
+          ? opParams.map((op, index) => {
+              const { totalCost, storageLimit } = estimations[index];
+              const rawAddGasFee = tzToMutez(additionalGasFee, 6);
+              const rawAddStorageFee = tzToMutez(additionalStorageFee, 6);
 
-          return {
-            ...op,
-            fee: new BigNumber(totalCost)
-              .plus(rawAddGasFee.div(opParams.length).integerValue())
-              .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length).integerValue() : 0),
-            storage_limit: new BigNumber(storageLimit)
-              .plus(rawAddStorageFee.div(opParams.length).integerValue())
-              .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length).integerValue() : 0)
-          };
-        });
-        console.log(JSON.stringify(processedOpParams));
+              return {
+                ...op,
+                fee: new BigNumber(totalCost)
+                  .plus(rawAddGasFee.div(opParams.length).integerValue())
+                  .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length).integerValue() : 0),
+                storage_limit: new BigNumber(storageLimit)
+                  .plus(rawAddStorageFee.div(opParams.length).integerValue())
+                  .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length).integerValue() : 0)
+              };
+            })
+          : opParams;
         send({
           from: params.sourcePkh,
           params: processedOpParams.length === 1 ? processedOpParams[0] : processedOpParams
         });
       }
     },
-    [params, navigate, send, estimations]
+    [params, send, estimations]
   );
 
   useEffect(() => {
@@ -70,6 +70,7 @@ export const ConfirmModal: FC = () => {
           });
           setEstimations(estimations);
         } catch (e) {
+          showErrorToast('Warning! The transaction is likely to fail!');
           setEstimationError(e);
         }
       }
@@ -84,17 +85,7 @@ export const ConfirmModal: FC = () => {
     );
   }
 
-  if (estimationError) {
-    return (
-      <ScreenContainer isFullScreenMode={true}>
-        <View>
-          <Text style={styles.errorMessage}>{estimationError.message}</Text>
-        </View>
-      </ScreenContainer>
-    );
-  }
-
-  if (!estimations && params.type === ConfirmPayloadType.internalOperations) {
+  if (!estimations && !estimationError && params.type === ConfirmPayloadType.internalOperations) {
     return (
       <ScreenContainer isFullScreenMode={true}>
         <View>
@@ -106,7 +97,14 @@ export const ConfirmModal: FC = () => {
 
   switch (params.type) {
     case ConfirmPayloadType.internalOperations:
-      return <InternalOperationsConfirm params={params} estimations={estimations!} onSubmit={handleOperationsSubmit} />;
+      return (
+        <InternalOperationsConfirm
+          params={params}
+          estimations={estimations}
+          onSubmit={handleOperationsSubmit}
+          buttonsDisabled={buttonsDisabled}
+        />
+      );
     default:
       return (
         <ScreenContainer isFullScreenMode={true}>
