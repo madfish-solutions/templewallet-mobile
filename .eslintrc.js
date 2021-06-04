@@ -20,9 +20,7 @@ module.exports = {
     'comma-dangle': ['error', 'never'],
     'no-void': 'off',
     'no-shadow': 'off',
-    'react-hooks/rules-of-hooks': 'warn',
-    'react-hooks/exhaustive-deps': 'warn',
-    // 'react-hooks/exhaustive-deps': 'off',
+    'react-hooks/exhaustive-deps': 'off',
     'import/order': [
       'error',
       {
