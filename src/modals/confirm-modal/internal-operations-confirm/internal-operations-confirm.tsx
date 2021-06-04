@@ -157,18 +157,20 @@ const FormContent: FC<FormContentProps> = ({
     [basicFees, setValues]
   );
 
-  useEffect(() => {
-    const newGasFee = values.gasFee;
-    if (newGasFee) {
-      const newSliderValue = Math.min(
-        2,
-        Math.max(0, newGasFee.minus(basicFees.gasFee).minus(1e4).div(5e-5).integerValue().toNumber())
-      );
-      setFieldValue('sliderValue', newSliderValue);
-    } else {
-      setFieldValue('sliderValue', 0);
-    }
-  }, [values.gasFee, basicFees, setFieldValue]);
+  const handleGasFeeChange = useCallback(
+    (newGasFee?: BigNumber) => {
+      if (newGasFee) {
+        const newSliderValue = Math.min(
+          2,
+          Math.max(0, newGasFee.minus(basicFees.gasFee).minus(1e-4).div(5e-5).integerValue().toNumber())
+        );
+        setFieldValue('sliderValue', newSliderValue);
+      } else {
+        setFieldValue('sliderValue', 0);
+      }
+    },
+    [basicFees, setFieldValue]
+  );
 
   const totalFee = useMemo(
     () => (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0),
@@ -236,7 +238,7 @@ const FormContent: FC<FormContentProps> = ({
               <StyledNumericInput decimals={6} value={totalFee} readOnly />
 
               <Label description="Gas fee:" />
-              <FormNumericInput decimals={6} name="gasFee" isShowCleanButton />
+              <FormNumericInput decimals={6} name="gasFee" isShowCleanButton onChange={handleGasFeeChange} />
 
               <Label description="Storage fee:" />
               <FormNumericInput decimals={6} name="storageFee" isShowCleanButton />

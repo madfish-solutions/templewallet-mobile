@@ -1,8 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 import { useField } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
 import { StyledNumericInput } from '../components/styled-numberic-input/styled-numeric-input';
+import { EventFn } from '../config/general';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
@@ -12,12 +13,21 @@ interface Props {
   isShowCleanButton?: boolean;
   min?: BigNumber | number;
   max?: BigNumber | number;
+  onChange?: EventFn<BigNumber | undefined>;
   readOnly?: boolean;
 }
 
-export const FormNumericInput: FC<Props> = ({ name, decimals, isShowCleanButton, min, max, readOnly }) => {
+export const FormNumericInput: FC<Props> = ({ name, decimals, isShowCleanButton, min, max, onChange, readOnly }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
+
+  const handleChange = useCallback(
+    (newValue?: BigNumber) => {
+      helpers.setValue(newValue);
+      onChange?.(newValue);
+    },
+    [helpers, onChange]
+  );
 
   return (
     <>
@@ -29,7 +39,7 @@ export const FormNumericInput: FC<Props> = ({ name, decimals, isShowCleanButton,
         value={field.value}
         isError={isError}
         onBlur={field.onBlur(name)}
-        onChange={helpers.setValue}
+        onChange={handleChange}
         readOnly={readOnly}
       />
       <ErrorMessage meta={meta} />
