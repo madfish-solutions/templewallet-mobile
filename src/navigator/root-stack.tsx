@@ -84,7 +84,11 @@ export const RootStackScreen = () => {
               component={RevealPrivateKeyModal}
               options={useModalOptions('Reveal Private key')}
             />
-            <RootStack.Screen name={ModalsEnum.Confirm} component={ConfirmModal} />
+            <RootStack.Screen
+              name={ModalsEnum.Confirm}
+              component={ConfirmModal}
+              options={useModalOptions('Confirm Operation')}
+            />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
