@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 
 import { ActivityGroupsList } from '../../../components/activity-groups-list/activity-groups-list';
+import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ActivityGroup } from '../../../interfaces/activity.interface';
@@ -51,6 +52,8 @@ export const TezosTokenHistory = () => {
         )}
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />
       </TouchableOpacity>
+
+      <Divider size={formatSize(16)} />
 
       <ActivityGroupsList activityGroups={filteredActivityGroups} />
     </>

@@ -2,8 +2,8 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ActivityStatusEnum } from '../../../../enums/activity-status.enum';
-import { useActivityStatusBadgeStyles } from './activity-status-badge.styles';
 import { useColors } from '../../../../styles/use-colors';
+import { useActivityStatusBadgeStyles } from './activity-status-badge.styles';
 
 interface Props {
   status: ActivityStatusEnum;

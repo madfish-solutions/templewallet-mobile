@@ -88,7 +88,7 @@ export const mapOperationsToActivities = (address: string, operations: Operation
 export const extractEntrypoint = (operationParameters?: string): string => {
   try {
     if (isDefined(operationParameters)) {
-      const entrypoint = operationParameters.match(/\{\"entrypoint\":\"[^\"]*/g)?.map(i => i.slice(15));
+      const entrypoint = operationParameters.match(/{"entrypoint":"[^"]*/g)?.map(i => i.slice(15));
 
       if (isDefined(entrypoint) && isDefined(entrypoint[0])) {
         return entrypoint[0];
