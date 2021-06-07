@@ -8,7 +8,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
 import { About } from '../screens/about/about';
-import { Activity } from '../screens/activity/Activity';
+import { Activity } from '../screens/activity/activity';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';

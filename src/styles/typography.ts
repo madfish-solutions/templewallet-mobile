@@ -56,7 +56,7 @@ export const typography = {
   },
   numbersMedium11: {
     fontFamily: FontsEnum.rubikMedium,
-    fontSize: formatSize(17)
+    fontSize: formatSize(11)
   },
   numbersStatus8: {
     fontFamily: FontsEnum.rubikSemiBold,

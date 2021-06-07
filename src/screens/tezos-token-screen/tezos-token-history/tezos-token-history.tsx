@@ -1,15 +1,18 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
+import { ActivityGroupsList } from '../../../components/activity-groups-list/activity-groups-list';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ActivityGroup } from '../../../interfaces/activity.interface';
 import { ScreensEnum } from '../../../navigator/screens.enum';
 import { useNavigation } from '../../../navigator/use-navigation.hook';
+import { useActivityGroupsSelector } from '../../../store/activity/activity-selectors';
 import { useSelectedBakerSelector } from '../../../store/baking/baking-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { isDefined } from '../../../utils/is-defined';
 import { useTezosTokenHistoryStyles } from './tezos-token-history.styles';
 
 export const TezosTokenHistory = () => {
@@ -17,6 +20,24 @@ export const TezosTokenHistory = () => {
   const styles = useTezosTokenHistoryStyles();
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
+  const activityGroups = useActivityGroupsSelector();
+
+  const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
+
+  useEffect(() => {
+    const result: ActivityGroup[] = [];
+
+    for (const activityGroup of activityGroups) {
+      for (const activity of activityGroup) {
+        if (!isDefined(activity.tokenSlug)) {
+          result.push(activityGroup);
+          break;
+        }
+      }
+    }
+
+    setFilteredActivityGroupsList(result);
+  }, [activityGroups]);
 
   return (
     <>
@@ -31,7 +52,7 @@ export const TezosTokenHistory = () => {
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />
       </TouchableOpacity>
 
-      <DataPlaceholder text="Operations will be available soon" />
+      <ActivityGroupsList activityGroups={filteredActivityGroups} />
     </>
   );
 };

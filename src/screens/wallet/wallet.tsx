@@ -8,6 +8,7 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
+import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -35,6 +36,7 @@ export const Wallet = () => {
   useEffect(() => {
     dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
   }, [selectedAccount.publicKeyHash]);
 
   return (
