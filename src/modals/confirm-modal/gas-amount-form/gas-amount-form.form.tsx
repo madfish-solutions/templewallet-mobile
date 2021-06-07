@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-export type InternalOpsConfirmFormValues = {
+export type GasAmountFormValues = {
   gasFee: BigNumber;
   storageFee: BigNumber;
   sliderValue: number;

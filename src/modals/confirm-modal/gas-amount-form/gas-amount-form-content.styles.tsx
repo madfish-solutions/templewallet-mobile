@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useInternalOpsConfirmStyles = createUseStyles(({ colors, typography }) => ({
+export const useGasAmountFormContentStyles = createUseStyles(({ colors, typography }) => ({
   row: {
     flexDirection: 'row'
   },

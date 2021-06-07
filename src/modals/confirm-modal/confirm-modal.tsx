@@ -32,20 +32,22 @@ export const ConfirmModal: FC = () => {
     if (params.type === ConfirmPayloadType.internalOperations) {
       setButtonsDisabled(true);
       const { opParams } = params;
+      const rawAddGasFee = tzToMutez(additionalGasFee, 6);
+      const rawAddStorageFee = tzToMutez(additionalStorageFee, 6);
+      const rawAddGasFeePerOp = rawAddGasFee.div(opParams.length).integerValue();
+      const rawAddStorageFeePerOp = rawAddStorageFee.div(opParams.length).integerValue();
       const processedOpParams = estimations
         ? opParams.map((op, index) => {
             const { totalCost, storageLimit } = estimations[index];
-            const rawAddGasFee = tzToMutez(additionalGasFee, 6);
-            const rawAddStorageFee = tzToMutez(additionalStorageFee, 6);
 
             return {
               ...op,
               fee: new BigNumber(totalCost)
-                .plus(rawAddGasFee.div(opParams.length).integerValue())
-                .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length).integerValue() : 0),
+                .plus(rawAddGasFeePerOp)
+                .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length) : 0),
               storage_limit: new BigNumber(storageLimit)
-                .plus(rawAddStorageFee.div(opParams.length).integerValue())
-                .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length).integerValue() : 0)
+                .plus(rawAddStorageFeePerOp)
+                .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length) : 0)
             };
           })
         : opParams;
