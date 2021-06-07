@@ -8,7 +8,6 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { InternalOperationsPayload } from '../../../interfaces/confirm-payload/internal-operations-payload.interface';
-import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { useBakersListSelector } from '../../../store/baking/baking-selectors';
 import { useHdAccountsListSelector, useTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -35,10 +34,7 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
   const tokens = useTokensListSelector();
   const firstExpenseToken =
     firstExpense &&
-    tokens.find(
-      ({ type, address, id }) =>
-        firstExpense.tokenAddress === address && (type !== TokenTypeEnum.FA_2 || id === firstExpense.tokenId)
-    );
+    tokens.find(({ address, id }) => firstExpense.tokenAddress === address && id === firstExpense.tokenId);
 
   if (opParams.length > 1) {
     return <Text>Displaying multiple operations isn't supported yet.</Text>;

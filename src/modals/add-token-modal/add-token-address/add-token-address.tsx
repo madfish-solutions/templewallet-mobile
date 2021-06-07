@@ -38,7 +38,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
   const dispatch = useDispatch();
 
   const onSubmit = ({ id, address, type }: AddTokenAddressFormValues) => {
-    dispatch(loadTokenMetadataActions.submit({ id: id.toNumber(), address, type }));
+    dispatch(loadTokenMetadataActions.submit({ id: type === TokenTypeEnum.FA_2 ? id.toNumber() : undefined, address }));
     onFormSubmitted();
   };
 

@@ -1,4 +1,3 @@
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
@@ -21,13 +20,11 @@ export const tokenBalanceMetadata = ({
   contract,
   name,
   symbol,
-  decimals,
-  token_type
-}: TokenBalanceInterface & { token_type: TokenTypeEnum }): TokenMetadataInterface => ({
+  decimals
+}: TokenBalanceInterface): TokenMetadataInterface => ({
   ...emptyTokenMetadataInterface,
   id: token_id,
   address: contract,
-  type: token_type,
   ...(isDefined(name) && { name }),
   ...(isDefined(symbol) && { symbol }),
   ...(isDefined(decimals) && { decimals })

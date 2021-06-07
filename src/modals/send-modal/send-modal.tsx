@@ -19,7 +19,6 @@ import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
 import { EstimateInterface } from '../../interfaces/estimate.interface';
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -64,7 +63,7 @@ export const SendModal: FC = () => {
         .toPromise();
       let transferParams;
 
-      if (token.type === TokenTypeEnum.FA_2) {
+      if (token.id !== undefined) {
         transferParams = contract.methods
           .transfer([
             {

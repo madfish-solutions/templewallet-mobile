@@ -3,7 +3,6 @@ import { createAction } from '@reduxjs/toolkit';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { OperationErrorPayload } from '../../interfaces/operation-error-payload';
 import { OperationSuccessPayload } from '../../interfaces/operation-success-payload';
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
@@ -17,12 +16,11 @@ export const confirmationActions =
 export const removeConfirmationSuccessAction = createAction<string>('wallet/REMOVE_CONFIRMATION_SUCCESS');
 export const removeConfirmationErrorAction = createAction<string>('wallet/REMOVE_CONFIRMATION_ERROR');
 
-export const loadTokenBalancesActions =
-  createActions<string, (TokenBalanceInterface & { token_type: TokenTypeEnum })[], string>('assets/LOAD_TOKENS');
+export const loadTokenBalancesActions = createActions<string, TokenBalanceInterface[], string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<string, string, string>('assets/LOAD_TEZOS');
 
 export const loadTokenMetadataActions =
-  createActions<Pick<TokenMetadataInterface, 'id' | 'address' | 'type'>, TokenMetadataInterface, string>(
+  createActions<Pick<TokenMetadataInterface, 'id' | 'address'>, TokenMetadataInterface, string>(
     'assets/LOAD_TOKEN_METADATA'
   );
 

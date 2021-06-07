@@ -10,7 +10,6 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { betterCallDevApi } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { showSuccessToast } from '../../toast/toast.utils';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { assertFA2TokenContract } from '../../token/utils/token.utils';
@@ -45,14 +44,11 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
                 try {
                   await assertFA2TokenContract(await tezos.wallet.at(balance.contract));
 
-                  return {
-                    ...balance,
-                    token_type: TokenTypeEnum.FA_2
-                  };
+                  return balance;
                 } catch (e) {
                   return {
                     ...balance,
-                    token_type: TokenTypeEnum.FA_1_2
+                    token_id: undefined
                   };
                 }
               })
@@ -82,10 +78,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ id, address, type }, tezos]) =>
+    switchMap(([{ id, address }, tezos]) =>
       from(tezos.wallet.at(address, compose(tzip12, tzip16))).pipe(
         switchMap(async contract => {
           try {
+            if (id === undefined) {
+              throw new Error();
+            }
+
             return contract.tzip12().getTokenMetadata(id);
           } catch {
             const tzip16Metadata = await contract.tzip16().getMetadata();
@@ -109,8 +109,7 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
               tokenMetadata.logo ??
               tokenMetadata.icon ??
               tokenMetadata.iconUri ??
-              tokenMetadata.iconUrl,
-            type
+              tokenMetadata.iconUrl
           })
         ),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))

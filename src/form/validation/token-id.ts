@@ -10,4 +10,5 @@ export const tokenIdValidation: SchemaOf<BigNumber> = object()
 
     return value.integerValue().eq(value) && value.gte(0);
   })
+  .default(new BigNumber(0))
   .required();
