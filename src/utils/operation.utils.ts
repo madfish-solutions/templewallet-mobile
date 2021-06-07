@@ -1,13 +1,9 @@
-import { BigNumber } from 'bignumber.js';
-
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import { OperationInterface } from '../interfaces/operation.interface';
-import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { isDefined } from './is-defined';
-import { mutezToTz } from './tezos.util';
 
 export const mapOperationsToActivities = (address: string, operations: OperationInterface[]) => {
   const activities: ActivityInterface[] = [];
@@ -62,11 +58,6 @@ export const mapOperationsToActivities = (address: string, operations: Operation
           continue;
       }
 
-      let parsedAmount = mutezToTz(new BigNumber(amount), XTZ_TOKEN_METADATA.decimals);
-      if (source.address === address) {
-        parsedAmount = parsedAmount.multipliedBy(-1);
-      }
-
       activities.push({
         type,
         hash,
@@ -74,9 +65,7 @@ export const mapOperationsToActivities = (address: string, operations: Operation
         source,
         entrypoint,
         destination,
-        amount: parsedAmount,
-        tokenSymbol: XTZ_TOKEN_METADATA.symbol,
-        tokenName: XTZ_TOKEN_METADATA.name,
+        amount: source.address === address ? `-${amount}` : amount,
         timestamp: new Date(timestamp).getTime()
       });
     }

@@ -1,7 +1,7 @@
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
-import { emptyTokenMetadataInterface, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { isDefined } from '../../utils/is-defined';
 import { WalletState } from './wallet-state';
 
@@ -22,7 +22,7 @@ export const tokenBalanceMetadata = ({
   symbol,
   decimals
 }: TokenBalanceInterface): TokenMetadataInterface => ({
-  ...emptyTokenMetadataInterface,
+  ...emptyTokenMetadata,
   id: token_id,
   address: contract,
   ...(isDefined(name) && { name }),

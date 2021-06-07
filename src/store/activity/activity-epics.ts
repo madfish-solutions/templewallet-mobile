@@ -12,19 +12,14 @@ import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { WalletRootState } from '../wallet/wallet-state';
 import { loadActivityGroupsActions } from './activity-actions';
 
-export const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     toPayload(),
-    withLatestFrom(currentNetworkId$, state$, (address, currentNetworkId, state) => ({
-      address,
-      currentNetworkId,
-      tokensMetadata: state.wallet.tokensMetadata
-    })),
-    switchMap(({ address, currentNetworkId, tokensMetadata }) =>
+    withLatestFrom(currentNetworkId$),
+    switchMap(([address, currentNetworkId]) =>
       forkJoin(
         from(
           tzktApi.get<OperationInterface[]>(
@@ -36,7 +31,7 @@ export const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Obse
             `/tokens/${currentNetworkId}/transfers/${address}`,
             { params: { max: 100, start: 0 } }
           )
-        ).pipe(map(({ data }) => mapTransfersToActivities(address, data.transfers, tokensMetadata)))
+        ).pipe(map(({ data }) => mapTransfersToActivities(address, data.transfers)))
       ).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),

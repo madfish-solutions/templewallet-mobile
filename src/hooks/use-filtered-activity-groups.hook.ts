@@ -4,9 +4,11 @@ import { ActivityGroup } from '../interfaces/activity.interface';
 import { useActivityGroupsSelector } from '../store/activity/activity-selectors';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
+import { useTokenMetadata } from './use-token-metadata.hook';
 
 export const useFilteredActivityGroups = () => {
   const activityGroups = useActivityGroupsSelector();
+  const { getTokenMetadata } = useTokenMetadata();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
@@ -18,11 +20,12 @@ export const useFilteredActivityGroups = () => {
 
       for (const activityGroup of activityGroups) {
         for (const activity of activityGroup) {
-          const { tokenSymbol, tokenName, tokenSlug, source, destination } = activity;
+          const { tokenSlug, source, destination } = activity;
+          const { symbol, name } = getTokenMetadata(tokenSlug);
 
           if (
-            tokenSymbol.toLowerCase().includes(lowerCaseSearchValue) ||
-            tokenName.toLowerCase().includes(lowerCaseSearchValue) ||
+            symbol.toLowerCase().includes(lowerCaseSearchValue) ||
+            name.toLowerCase().includes(lowerCaseSearchValue) ||
             (isDefined(tokenSlug) && tokenSlug.toLowerCase().includes(lowerCaseSearchValue)) ||
             source.address.toLowerCase().includes(lowerCaseSearchValue) ||
             destination.address.toLowerCase().includes(lowerCaseSearchValue)
@@ -37,7 +40,7 @@ export const useFilteredActivityGroups = () => {
     } else {
       setFilteredActivityGroupsList(activityGroups);
     }
-  }, [searchValue, activityGroups]);
+  }, [searchValue, activityGroups, getTokenMetadata]);
 
   return {
     filteredActivityGroups,
