@@ -10,7 +10,7 @@ export interface TokenMetadataInterface {
   iconUrl?: string;
 }
 
-export interface AssetsMetadataInterface extends TokenMetadataInterface {
+export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'address'> {
   address?: string;
 }
 

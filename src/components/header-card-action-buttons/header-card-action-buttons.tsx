@@ -4,13 +4,13 @@ import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
-import { AssetsMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 interface Props {
-  asset: AssetsMetadataInterface;
+  asset: AssetMetadataInterface;
 }
 
 export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
