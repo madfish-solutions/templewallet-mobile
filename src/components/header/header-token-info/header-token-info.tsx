@@ -8,7 +8,7 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
 interface Props {
-  token: Omit<TokenMetadataInterface, 'id' | 'address' | 'type'>;
+  token: Omit<TokenMetadataInterface, 'id' | 'address'>;
 }
 
 export const HeaderTokenInfo: FC<Props> = ({ token }) => {

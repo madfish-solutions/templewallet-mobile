@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { useField } from 'formik';
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 
 import { StyledNumericInput } from '../components/styled-numberic-input/styled-numeric-input';
 import { emptyFn, EventFn } from '../config/general';
@@ -29,13 +29,10 @@ export const FormNumericInput: FC<Props> = ({
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
 
-  const handleChange = useCallback(
-    (newValue?: BigNumber) => {
-      helpers.setValue(newValue);
-      onChange(newValue);
-    },
-    [helpers, onChange]
-  );
+  const handleChange = (newValue?: BigNumber) => {
+    helpers.setValue(newValue);
+    onChange(newValue);
+  };
 
   return (
     <>

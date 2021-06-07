@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
 import { emptyFn, EventFn } from '../../config/general';
@@ -51,13 +51,10 @@ export const StyledNumericInput: FC<Props> = ({
     }
   };
 
-  const handleFocus = useCallback(
-    (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
-      setFocused(true);
-      onFocus(evt);
-    },
-    [setFocused, onFocus]
-  );
+  const handleFocus = (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setFocused(true);
+    onFocus(evt);
+  };
 
   const handleBlur = (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(false);
