@@ -3,7 +3,7 @@ import { WalletContract, TezosToolkit } from '@taquito/taquito';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import assert, { AssertionError } from '../../utils/assert.utils';
 
-export const tokenMetadataSlug = <T extends { address: string; id: number }>({ address, id }: T) => `${address}_${id}`;
+export const tokenMetadataSlug = <T extends { address: string; id?: number }>({ address, id }: T) => `${address}_${id}`;
 
 function signatureAssertionFactory(name: string, args: string[]) {
   return (contract: WalletContract) => {
