@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from '../../../components/divider/divider';
@@ -26,27 +26,19 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
   const styles = useOpsDetailsStyles();
   const knownBakers = useBakersListSelector();
 
-  const sourceAccount = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === sourcePkh),
-    [sourcePkh, hdAccounts]
-  );
-  const rawExpenses = useMemo(() => tryParseExpenses(opParams, sourcePkh), [opParams, sourcePkh]);
-  const rawPureExpenses = useMemo(() => rawExpenses.map(({ expenses }) => expenses).flat(), [rawExpenses]);
+  const sourceAccount = hdAccounts.find(({ publicKeyHash }) => publicKeyHash === sourcePkh);
+  const rawExpenses = tryParseExpenses(opParams, sourcePkh);
+  const rawPureExpenses = rawExpenses.map(({ expenses }) => expenses).flat();
   const firstExpense = rawPureExpenses[0];
-  const firstExpenseRecipientAccount = useMemo(
-    () => firstExpense && hdAccounts.find(({ publicKeyHash }) => publicKeyHash === firstExpense.to),
-    [firstExpense, hdAccounts]
-  );
+  const firstExpenseRecipientAccount =
+    firstExpense && hdAccounts.find(({ publicKeyHash }) => publicKeyHash === firstExpense.to);
   const tokens = useTokensListSelector();
-  const firstExpenseToken = useMemo(
-    () =>
-      firstExpense &&
-      tokens.find(
-        ({ type, address, id }) =>
-          firstExpense.tokenAddress === address && (type !== TokenTypeEnum.FA_2 || id === firstExpense.tokenId)
-      ),
-    [tokens, firstExpense]
-  );
+  const firstExpenseToken =
+    firstExpense &&
+    tokens.find(
+      ({ type, address, id }) =>
+        firstExpense.tokenAddress === address && (type !== TokenTypeEnum.FA_2 || id === firstExpense.tokenId)
+    );
 
   if (opParams.length > 1) {
     return <Text>Displaying multiple operations isn't supported yet.</Text>;

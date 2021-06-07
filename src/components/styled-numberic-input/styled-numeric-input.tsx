@@ -1,18 +1,17 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
-import { EventFn } from '../../config/general';
+import { emptyFn, EventFn } from '../../config/general';
 import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
 
-interface Props extends Pick<StyledTextInputProps, 'isError' | 'onBlur' | 'onFocus'> {
+interface Props extends Pick<StyledTextInputProps, 'isError' | 'onBlur' | 'onFocus' | 'editable'> {
   decimals?: number;
   value?: BigNumber;
   isShowCleanButton?: boolean;
-  min?: BigNumber | number;
-  max?: BigNumber | number;
+  min?: BigNumber;
+  max?: BigNumber;
   onChange?: EventFn<BigNumber | undefined>;
-  readOnly?: boolean;
 }
 
 const defaultMin = new BigNumber(0);
@@ -20,76 +19,54 @@ const defaultMax = new BigNumber(Number.MAX_SAFE_INTEGER);
 
 export const StyledNumericInput: FC<Props> = ({
   decimals = 6,
+  editable,
   value,
   isShowCleanButton,
   min = defaultMin,
   max = defaultMax,
   isError,
-  onBlur,
-  onFocus,
-  onChange,
-  readOnly
+  onBlur = emptyFn,
+  onFocus = emptyFn,
+  onChange = emptyFn
 }) => {
-  const valueStr = useMemo(() => (value === undefined ? '' : new BigNumber(value).toFixed()), [value]);
-
-  const [localValue, setLocalValue] = useState(valueStr);
+  const [localValue, setLocalValue] = useState('');
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
-    if (!focused) {
-      setLocalValue(valueStr);
+    !focused && setLocalValue(value === undefined ? '' : new BigNumber(value).toFixed());
+  }, [setLocalValue, focused, value]);
+
+  const handleChange = (rawVal: string) => {
+    let val = rawVal.replace(/ /g, '').replace(/,/g, '.');
+    const numVal = new BigNumber(val || 0).decimalPlaces(decimals);
+    const indexOfDot = val.indexOf('.');
+    const decimalsCount = indexOfDot === -1 ? 0 : val.length - indexOfDot - 1;
+    if (decimalsCount > decimals) {
+      val = val.substring(0, indexOfDot + decimals + 1);
     }
-  }, [setLocalValue, focused, valueStr]);
 
-  const handleChange = useCallback(
-    (rawVal: string) => {
-      let val = rawVal.replace(/ /g, '').replace(/,/g, '.');
-      let numVal = new BigNumber(val || 0);
-      const indexOfDot = val.indexOf('.');
-      if (indexOfDot !== -1 && val.length - indexOfDot > decimals + 1) {
-        val = val.substring(0, indexOfDot + decimals + 1);
-        numVal = new BigNumber(val);
-      }
-
-      if (!numVal.isNaN() && numVal.isGreaterThanOrEqualTo(min) && numVal.isLessThanOrEqualTo(max)) {
-        setLocalValue(val);
-        if (onChange) {
-          onChange(val !== '' ? numVal : undefined);
-        }
-      }
-    },
-    [decimals, setLocalValue, min, max, onChange]
-  );
+    if (numVal.gte(min) && numVal.lte(max)) {
+      setLocalValue(val);
+      onChange(val !== '' ? numVal : undefined);
+    }
+  };
 
   const handleFocus = useCallback(
     (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
       setFocused(true);
-      if (onFocus) {
-        onFocus(evt);
-        if (evt.defaultPrevented) {
-          return;
-        }
-      }
+      onFocus(evt);
     },
     [setFocused, onFocus]
   );
 
-  const handleBlur = useCallback(
-    (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
-      setFocused(false);
-      if (onBlur) {
-        onBlur(evt);
-        if (evt.defaultPrevented) {
-          return;
-        }
-      }
-    },
-    [setFocused, onBlur]
-  );
+  const handleBlur = (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setFocused(false);
+    onBlur(evt);
+  };
 
   return (
     <StyledTextInput
-      editable={!readOnly}
+      editable={editable}
       value={localValue}
       isError={isError}
       keyboardType="numeric"

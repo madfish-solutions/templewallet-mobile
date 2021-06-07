@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { greyLight200, orangeLight200 } from '../../config/styles';
+import { isDefined } from '../../utils/is-defined';
 import { useSliderStyles } from './slider.styles';
 
 type Props = Required<Pick<SliderProps, 'value' | 'onValueChange'>> &
@@ -34,7 +35,7 @@ export const Slider: FC<Props> = ({
         maximumTrackTintColor={greyLight200}
         onValueChange={debouncedValueChange}
       />
-      {children && <View style={styles.bottomContainer}>{children}</View>}
+      {isDefined(children) && <View style={styles.bottomContainer}>{children}</View>}
     </>
   );
 };

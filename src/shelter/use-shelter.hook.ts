@@ -1,12 +1,11 @@
 import { InMemorySigner } from '@taquito/signer';
 import { WalletOperation, OpKind } from '@taquito/taquito';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { merge, of, pipe, Subject, throwError } from 'rxjs';
+import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
-import { EstimateInterface } from '../interfaces/estimate.interface';
 import { OperationSuccessPayload } from '../interfaces/operation-success-payload';
 import { useNavigation } from '../navigator/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction, confirmationActions } from '../store/wallet/wallet-actions';
@@ -145,40 +144,10 @@ export const useShelter = () => {
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (payload: SendParams) => send$.next(payload);
-  const estimate = useCallback(async (payload: EstimateInterface) => {
-    const [[privateKey, { params }], tezos] = await pipe(
-      switchMap((data: EstimateInterface) =>
-        Shelter.revealSecretKey$(data.from).pipe(
-          switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-          map((privateKey): [string, EstimateInterface] => [privateKey, data])
-        )
-      ),
-      withLatestFrom(tezos$)
-    )(of(payload)).toPromise();
-
-    tezos.setProvider({
-      signer: new InMemorySigner(privateKey)
-    });
-
-    if (params instanceof Array) {
-      return tezos.estimate.batch(params);
-    }
-
-    switch (params.kind) {
-      case 'origination':
-        return [await tezos.estimate.originate(params)];
-      case 'delegation':
-        return [await tezos.estimate.setDelegate(params)];
-      case 'transaction':
-        return [await tezos.estimate.transfer(params)];
-      default:
-        throw new Error('Params of this kind are not supported yet');
-    }
-  }, []);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
-  return { estimate, importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
+  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

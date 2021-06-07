@@ -1,7 +1,7 @@
 import { Estimate } from '@taquito/taquito/dist/types/contract/estimate';
 import { BigNumber } from 'bignumber.js';
 import { Formik, FormikProps } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { number, object, SchemaOf } from 'yup';
@@ -52,15 +52,12 @@ export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({
     [estimations]
   );
 
-  const handleSubmit = useCallback(
-    ({ gasFee, storageFee }: InternalOpsConfirmFormValues) => {
-      onSubmit({
-        additionalGasFee: gasFee.minus(basicFees.gasFee),
-        additionalStorageFee: storageFee.minus(basicFees.storageFee)
-      });
-    },
-    [onSubmit, basicFees]
-  );
+  const handleSubmit = ({ gasFee, storageFee }: InternalOpsConfirmFormValues) => {
+    onSubmit({
+      additionalGasFee: gasFee.minus(basicFees.gasFee),
+      additionalStorageFee: storageFee.minus(basicFees.storageFee)
+    });
+  };
 
   const internalOpsConfirmValidationSchema = useMemo<SchemaOf<InternalOpsConfirmFormValues>>(
     () =>
@@ -90,14 +87,11 @@ export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({
     [basicFees]
   );
 
-  const initialValues = useMemo(
-    () => ({
-      gasFee: basicFees.gasFee.plus(1e-4),
-      storageFee: basicFees.storageFee,
-      sliderValue: 0
-    }),
-    [basicFees]
-  );
+  const initialValues = {
+    gasFee: basicFees.gasFee.plus(1e-4),
+    storageFee: basicFees.storageFee,
+    sliderValue: 0
+  };
 
   return (
     <Formik
@@ -143,39 +137,33 @@ const FormContent: FC<FormContentProps> = ({
   const [shouldShowDetailedSettings, setShouldShowDetailedSettings] = useState(!estimationWasSuccessful);
   const { goBack } = useNavigation();
 
-  const showDetailedSettings = useCallback(() => setShouldShowDetailedSettings(true), []);
-  const hideDetailedSettings = useCallback(() => setShouldShowDetailedSettings(false), []);
+  const showDetailedSettings = () => setShouldShowDetailedSettings(true);
+  const hideDetailedSettings = () => setShouldShowDetailedSettings(false);
 
-  const handleSliderChange = useCallback(
-    (newValue: number) => {
-      setValues({
+  const handleSliderChange = (newValue: number) => {
+    setValues(
+      {
         sliderValue: newValue,
         gasFee: basicFees.gasFee.plus(1e-4).plus(newValue * 5e-5),
         storageFee: basicFees.storageFee
-      });
-    },
-    [basicFees, setValues]
-  );
+      },
+      true
+    );
+  };
 
-  const handleGasFeeChange = useCallback(
-    (newGasFee?: BigNumber) => {
-      if (newGasFee) {
-        const newSliderValue = Math.min(
-          2,
-          Math.max(0, newGasFee.minus(basicFees.gasFee).minus(1e-4).div(5e-5).integerValue().toNumber())
-        );
-        setFieldValue('sliderValue', newSliderValue);
-      } else {
-        setFieldValue('sliderValue', 0);
-      }
-    },
-    [basicFees, setFieldValue]
-  );
+  const handleGasFeeChange = (newGasFee?: BigNumber) => {
+    if (newGasFee) {
+      const newSliderValue = Math.min(
+        2,
+        Math.max(0, newGasFee.minus(basicFees.gasFee).minus(1e-4).div(5e-5).integerValue().toNumber())
+      );
+      setFieldValue('sliderValue', newSliderValue);
+    } else {
+      setFieldValue('sliderValue', 0);
+    }
+  };
 
-  const totalFee = useMemo(
-    () => (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0),
-    [values.gasFee, values.storageFee]
-  );
+  const totalFee = (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -235,7 +223,7 @@ const FormContent: FC<FormContentProps> = ({
           <View style={[styles.row, conditionalStyle(!shouldShowDetailedSettings, styles.hidden)]}>
             <View style={styles.feeInputForm}>
               <Label description="Total:" />
-              <StyledNumericInput decimals={6} value={totalFee} readOnly />
+              <StyledNumericInput decimals={6} value={totalFee} editable={false} />
 
               <Label description="Gas fee:" />
               <FormNumericInput decimals={6} name="gasFee" isShowCleanButton onChange={handleGasFeeChange} />

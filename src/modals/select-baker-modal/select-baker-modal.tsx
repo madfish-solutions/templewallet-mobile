@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, FlatList, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -18,7 +18,6 @@ import { useBakersListSelector } from '../../store/baking/baking-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isString } from '../../utils/is-string';
-import { MAINNET_NETWORK } from '../../utils/network/networks';
 import { SelectBakerItem } from './select-baker-item/select-baker-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
@@ -35,17 +34,16 @@ export const SelectBakerModal: FC = () => {
 
   const debouncedSetSearchValue = debounce(setSearchValue);
 
-  const handleNextPress = useCallback(() => {
+  const handleNextPress = () => {
     if (!selectedBaker) {
       return;
     }
     navigate(ModalsEnum.Confirm, {
       type: ConfirmPayloadType.internalOperations,
       opParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
-      sourcePkh: selectedAccount.publicKeyHash,
-      networkRpc: MAINNET_NETWORK.rpcBaseURL
+      sourcePkh: selectedAccount.publicKeyHash
     });
-  }, [selectedBaker, navigate, selectedAccount]);
+  };
 
   useEffect(() => {
     if (isString(searchValue)) {

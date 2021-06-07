@@ -3,21 +3,17 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => ({
   row: {
-    display: 'flex',
     flexDirection: 'row'
   },
   sendAddressesLeftHalf: {
     flexGrow: 1,
-    display: 'flex',
     flexDirection: 'row'
   },
   recipientView: {
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end'
   },
   arrowContainer: {
-    display: 'flex',
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center'
@@ -31,7 +27,6 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     color: colors.gray1
   },
   senderView: {
-    display: 'flex',
     flexDirection: 'column'
   },
   arrowIcon: {
@@ -57,29 +52,24 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines,
     paddingBottom: formatSize(8),
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   accountView: {
-    display: 'flex',
     flexDirection: 'row'
   },
   shortInfoSection: {
-    display: 'flex',
     flexDirection: 'row',
     flexGrow: 1
   },
   accountTitle: {
     marginLeft: formatSize(10),
-    display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
   balanceSection: {
     marginRight: formatSize(16),
-    display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end'
   },
@@ -88,7 +78,6 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     color: colors.black
   },
   unknownBakerLabel: {
-    display: 'flex',
     flexDirection: 'row'
   },
   unknownBakerText: {

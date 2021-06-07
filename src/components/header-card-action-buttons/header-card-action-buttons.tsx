@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/modals.enum';
@@ -13,7 +13,7 @@ type Props = {
   token?: TokenInterface;
 };
 
-export const HeaderCardActionButtons = ({ token }: Props) => {
+export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
 
   return (
@@ -21,13 +21,13 @@ export const HeaderCardActionButtons = ({ token }: Props) => {
       <ButtonMedium
         title="RECEIVE"
         iconName={IconNameEnum.ArrowDown}
-        marginRight={formatSize(1)}
+        marginRight={formatSize(8)}
         onPress={() => navigate(ModalsEnum.Receive)}
       />
       <ButtonMedium
         title="SEND"
         iconName={IconNameEnum.ArrowUp}
-        marginRight={formatSize(1)}
+        marginRight={formatSize(8)}
         onPress={() => navigate(ModalsEnum.Send, { token })}
       />
       <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />

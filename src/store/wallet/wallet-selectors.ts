@@ -39,11 +39,7 @@ export const useTokensListSelector = (): TokenInterface[] => {
   return tokensList;
 };
 
-export const usePendingOperationsSelector = () => {
-  const toofta1 = useWalletSelector();
-
-  return toofta1.pendingOperations;
-};
+export const usePendingOperationsSelector = () => useWalletSelector().pendingOperations;
 
 export const useCompletedOperationsSelector = () => useWalletSelector().completedOperations;
 

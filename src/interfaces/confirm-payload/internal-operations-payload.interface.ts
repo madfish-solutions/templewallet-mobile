@@ -5,7 +5,6 @@ import { InternalConfirmPayloadBase } from './internal-confirm-payload-base.inte
 
 export interface InternalOperationsPayload extends InternalConfirmPayloadBase {
   type: ConfirmPayloadType.internalOperations;
-  networkRpc: string;
   opParams: any[];
   bytesToSign?: string;
   rawToSign?: any;

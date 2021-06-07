@@ -134,7 +134,7 @@ def getPassword(String keyChain) {
    stdout.toString().trim()
 }
 
-def keystorePassword = getPassword("temple_wallet_keystore")
+def keystorePassword = "temple_wallet_keystore"// getPassword("temple_wallet_keystore")
 
 android {
     ndkVersion rootProject.ext.ndkVersion

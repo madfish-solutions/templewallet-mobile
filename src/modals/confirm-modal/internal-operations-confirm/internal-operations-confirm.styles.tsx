@@ -3,7 +3,6 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useInternalOpsConfirmStyles = createUseStyles(({ colors, typography }) => ({
   row: {
-    display: 'flex',
     flexDirection: 'row'
   },
   feeView: {
