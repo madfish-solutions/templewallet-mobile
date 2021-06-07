@@ -41,6 +41,7 @@ export const useShelter = () => {
         .pipe(switchMap(name => Shelter.createHdAccount$(name, hdAccounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
+            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
             goBack();
           }

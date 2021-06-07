@@ -7,9 +7,11 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
+import DealIcon from './assets/deal.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
@@ -101,5 +103,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.Trash]: TrashIcon,
-  [IconNameEnum.LogOut]: LogOutIcon
+  [IconNameEnum.LogOut]: LogOutIcon,
+  [IconNameEnum.Clipboard]: ClipboardIcon,
+  [IconNameEnum.Deal]: DealIcon
 };

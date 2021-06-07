@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { emptyTokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { findSelectedAccount } from '../../utils/wallet-account.utils';
 import { WalletRootState, WalletState } from './wallet-state';
@@ -18,9 +18,11 @@ export const useSelectedAccountSelector = () => {
   return findSelectedAccount(hdAccounts, selectedAccountPublicKeyHash);
 };
 
+export const useTokensMetadataSelector = () => useWalletSelector().tokensMetadata;
+
 export const useTokensListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
-  const tokensMetadata = useWalletSelector().tokensMetadata;
+  const tokensMetadata = useTokensMetadataSelector();
 
   const [tokensList, setTokensList] = useState<TokenInterface[]>([]);
 
@@ -30,7 +32,7 @@ export const useTokensListSelector = (): TokenInterface[] => {
         selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
           balance,
           isVisible,
-          ...(tokensMetadata[slug] ?? emptyTokenMetadataInterface)
+          ...(tokensMetadata[slug] ?? emptyTokenMetadata)
         }))
       ),
     [selectedAccountTokensList, tokensMetadata]

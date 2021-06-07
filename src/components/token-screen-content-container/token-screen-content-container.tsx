@@ -33,7 +33,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
         />
       </View>
 
-      <ScreenContainer>{showHistoryComponent ? historyComponent : infoComponent}</ScreenContainer>
+      {showHistoryComponent ? historyComponent : <ScreenContainer>{infoComponent}</ScreenContainer>}
     </>
   );
 };

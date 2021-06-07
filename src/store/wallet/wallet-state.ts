@@ -1,6 +1,6 @@
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
-import { emptyTokenMetadataInterface, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
@@ -22,7 +22,7 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadataInterface)
+  addTokenSuggestion: createEntity(emptyTokenMetadata)
 };
 
 export interface WalletRootState {
