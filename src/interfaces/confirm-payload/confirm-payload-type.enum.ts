@@ -1,4 +1,4 @@
-export enum ConfirmPayloadType {
+export enum ConfirmPayloadTypeEnum {
   'connect',
   'confirm_operations',
   'sign',

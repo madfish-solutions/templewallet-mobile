@@ -22,7 +22,7 @@ import { useGasAmountFormContentStyles } from './gas-amount-form-content.styles'
 import { GasAmountFormValues } from './gas-amount-form.form';
 
 type GasAmountFormContentProps = FormikProps<GasAmountFormValues> & {
-  buttonsDisabled: boolean;
+  isLoading: boolean;
   estimationWasSuccessful: boolean;
   basicFees: {
     gasFee: BigNumber;
@@ -31,7 +31,7 @@ type GasAmountFormContentProps = FormikProps<GasAmountFormValues> & {
 };
 
 export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
-  buttonsDisabled,
+  isLoading,
   children,
   estimationWasSuccessful,
   submitForm,
@@ -110,15 +110,11 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
             <View style={styles.row}>
               <View style={styles.shortFeeInputForm}>
                 <Slider
-                  onValueChange={handleSliderChange}
                   value={values.sliderValue}
                   minimumValue={0}
                   maximumValue={2}
-                  style={styles.slider}>
-                  <Icon size={formatSize(24)} name={IconNameEnum.Slow} style={styles.sliderIcon} />
-                  <Icon size={formatSize(24)} name={IconNameEnum.NormalSpeed} style={styles.sliderIcon} />
-                  <Icon size={formatSize(24)} name={IconNameEnum.Fast} style={styles.sliderIcon} />
-                </Slider>
+                  onValueChange={handleSliderChange}
+                />
               </View>
               <View>
                 <TouchableOpacity onPress={showDetailedSettings} style={styles.toggleSettingsButton}>
@@ -152,8 +148,8 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
       </View>
 
       <ButtonsContainer>
-        <ButtonLargeSecondary title="Back" disabled={buttonsDisabled} marginRight={formatSize(15)} onPress={goBack} />
-        <ButtonLargePrimary title="Confirm" disabled={buttonsDisabled} onPress={submitForm} />
+        <ButtonLargeSecondary title="Back" disabled={isLoading} marginRight={formatSize(15)} onPress={goBack} />
+        <ButtonLargePrimary title="Confirm" disabled={isLoading} onPress={submitForm} />
       </ButtonsContainer>
     </ScreenContainer>
   );

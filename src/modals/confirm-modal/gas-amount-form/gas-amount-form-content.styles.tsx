@@ -24,11 +24,6 @@ export const useGasAmountFormContentStyles = createUseStyles(({ colors, typograp
   hidden: {
     display: 'none'
   },
-  sliderIcon: {
-    color: colors.gray1,
-    width: formatSize(24),
-    height: formatSize(24)
-  },
   orangeIcon: {
     width: formatSize(16),
     height: formatSize(16),
@@ -46,8 +41,5 @@ export const useGasAmountFormContentStyles = createUseStyles(({ colors, typograp
   feeInputForm: {
     marginRight: formatSize(24),
     flexGrow: 1
-  },
-  slider: {
-    height: formatSize(28)
   }
 }));

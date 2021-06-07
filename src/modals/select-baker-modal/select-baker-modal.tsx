@@ -11,7 +11,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { SearchInput } from '../../components/search-input/search-input';
 import { BakerInterface } from '../../interfaces/baker.interface';
-import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
+import { ConfirmPayloadTypeEnum } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
 import { ModalsEnum } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useBakersListSelector } from '../../store/baking/baking-selectors';
@@ -39,7 +39,7 @@ export const SelectBakerModal: FC = () => {
       return;
     }
     navigate(ModalsEnum.Confirm, {
-      type: ConfirmPayloadType.internalOperations,
+      type: ConfirmPayloadTypeEnum.internalOperations,
       opParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
       sourcePkh: selectedAccount.publicKeyHash
     });

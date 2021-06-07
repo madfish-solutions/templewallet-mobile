@@ -1,8 +1,8 @@
-import { ConfirmPayloadType } from './confirm-payload-type.enum';
+import { ConfirmPayloadTypeEnum } from './confirm-payload-type.enum';
 import { InternalConfirmPayloadBase } from './internal-confirm-payload-base.interface';
 
 export interface InternalSignPayload extends InternalConfirmPayloadBase {
-  type: ConfirmPayloadType.internalSign;
+  type: ConfirmPayloadTypeEnum.internalSign;
   bytes: string;
   watermark?: string;
 }

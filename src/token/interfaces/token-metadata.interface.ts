@@ -10,6 +10,10 @@ export interface TokenMetadataInterface {
   iconUrl?: string;
 }
 
+export interface AssetsMetadataInterface extends TokenMetadataInterface {
+  address?: string;
+}
+
 export const emptyTokenMetadataInterface: TokenMetadataInterface = {
   address: '',
   name: '',

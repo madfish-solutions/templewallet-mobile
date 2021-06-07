@@ -32,9 +32,10 @@ export const StyledNumericInput: FC<Props> = ({
   const [localValue, setLocalValue] = useState('');
   const [focused, setFocused] = useState(false);
 
-  useEffect(() => {
-    !focused && setLocalValue(value === undefined ? '' : new BigNumber(value).toFixed());
-  }, [setLocalValue, focused, value]);
+  useEffect(
+    () => void (!focused && setLocalValue(value === undefined ? '' : new BigNumber(value).toFixed())),
+    [setLocalValue, focused, value]
+  );
 
   const handleChange = (rawVal: string) => {
     let val = rawVal.replace(/ /g, '').replace(/,/g, '.');

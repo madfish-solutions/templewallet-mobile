@@ -50,42 +50,42 @@ export const useShelter = () => {
 
       send$
         .pipe(
-          switchMap(data =>
-            Shelter.revealSecretKey$(data.from).pipe(
+          switchMap(({ from, params }) =>
+            Shelter.revealSecretKey$(from).pipe(
               switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, SendParams] => [privateKey, data])
+              map((privateKey): [string, SendParams['params']] => [privateKey, params])
             )
           ),
           withLatestFrom(tezos$),
-          switchMap(async ([[privateKey, { params }], tezos]) => {
+          switchMap(async ([[privateKey, params], tezos]) => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
 
-            let opPromise: Promise<WalletOperation>;
+            let operation: Promise<WalletOperation>;
             let operationType: OperationSuccessPayload['type'];
             let successMessage: string;
             if (params instanceof Array) {
               const batch = tezos.wallet.batch(params);
 
-              opPromise = batch.send();
+              operation = batch.send();
               operationType = 'batch';
               successMessage = 'Operations batch sent! Confirming...';
             } else {
               switch (params.kind) {
                 case OpKind.ORIGINATION:
                   operationType = OpKind.ORIGINATION;
-                  opPromise = tezos.wallet.originate(params).send();
+                  operation = tezos.wallet.originate(params).send();
                   successMessage = 'Contract origination request sent! Confirming...';
                   break;
                 case OpKind.DELEGATION:
                   operationType = OpKind.DELEGATION;
-                  opPromise = tezos.wallet.setDelegate(params).send();
+                  operation = tezos.wallet.setDelegate(params).send();
                   successMessage = 'Delegation request sent! Confirming...';
                   break;
                 case OpKind.TRANSACTION:
                   operationType = OpKind.TRANSACTION;
-                  opPromise = tezos.wallet.transfer(params).send();
+                  operation = tezos.wallet.transfer(params).send();
                   successMessage = 'Transaction sent! Confirming...';
                   break;
                 default:
@@ -94,7 +94,7 @@ export const useShelter = () => {
             }
 
             return {
-              opHash: (await opPromise).opHash,
+              opHash: (await operation).opHash,
               successMessage,
               type: operationType
             };

@@ -52,7 +52,7 @@ export const Wallet = () => {
 
         <TokenEquityValue balance={tezosBalance} symbol={XTZ_TOKEN_METADATA.symbol} />
 
-        <HeaderCardActionButtons />
+        <HeaderCardActionButtons asset={XTZ_TOKEN_METADATA} />
       </HeaderCard>
 
       <TokenList tezosBalance={tezosBalance} />

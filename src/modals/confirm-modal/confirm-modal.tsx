@@ -5,7 +5,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { ConfirmPayloadType } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
+import { ConfirmPayloadTypeEnum } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
@@ -29,7 +29,7 @@ export const ConfirmModal: FC = () => {
     if (!params) {
       return;
     }
-    if (params.type === ConfirmPayloadType.internalOperations) {
+    if (params.type === ConfirmPayloadTypeEnum.internalOperations) {
       setButtonsDisabled(true);
       const { opParams } = params;
       const rawAddGasFee = tzToMutez(additionalGasFee, 6);
@@ -63,7 +63,7 @@ export const ConfirmModal: FC = () => {
       return;
     }
     (async () => {
-      if (params.type === ConfirmPayloadType.internalOperations) {
+      if (params.type === ConfirmPayloadTypeEnum.internalOperations) {
         const { opParams } = params;
         const publicKey = accounts.find(({ publicKeyHash }) => publicKeyHash === params.sourcePkh)?.publicKey;
         try {
@@ -95,7 +95,7 @@ export const ConfirmModal: FC = () => {
     );
   }
 
-  if (!estimations && !estimationError && params.type === ConfirmPayloadType.internalOperations) {
+  if (!estimations && !estimationError && params.type === ConfirmPayloadTypeEnum.internalOperations) {
     return (
       <ScreenContainer isFullScreenMode={true}>
         <View>
@@ -106,13 +106,13 @@ export const ConfirmModal: FC = () => {
   }
 
   switch (params.type) {
-    case ConfirmPayloadType.internalOperations:
+    case ConfirmPayloadTypeEnum.internalOperations:
       return (
         <InternalOperationsConfirm
           params={params}
           estimations={estimations}
           onSubmit={handleOperationsSubmit}
-          buttonsDisabled={buttonsDisabled}
+          isLoading={buttonsDisabled}
         />
       );
     default:

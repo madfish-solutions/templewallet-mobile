@@ -1,6 +1,6 @@
 import { ConfirmPayload } from '../interfaces/confirm-payload/confirm-payload.type';
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
-import { TokenInterface } from '../token/interfaces/token.interface';
+import { AssetsMetadataInterface } from '../token/interfaces/token-metadata.interface';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -15,7 +15,7 @@ export enum ModalsEnum {
 
 export type ModalsParamList = {
   [ModalsEnum.Receive]: undefined;
-  [ModalsEnum.Send]: { token?: TokenInterface };
+  [ModalsEnum.Send]: { asset: AssetsMetadataInterface };
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
   [ModalsEnum.SelectBaker]: undefined;

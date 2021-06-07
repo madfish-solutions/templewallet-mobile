@@ -30,7 +30,7 @@ export const TezosTokenScreen = () => {
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons />
+        <HeaderCardActionButtons asset={XTZ_TOKEN_METADATA} />
       </HeaderCard>
 
       <TokenScreenContentContainer historyComponent={<TezosTokenHistory />} infoComponent={<TezosTokenInfo />} />

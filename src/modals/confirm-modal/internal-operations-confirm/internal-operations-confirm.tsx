@@ -7,19 +7,19 @@ import { GasAmountForm } from '../gas-amount-form/gas-amount-form';
 import { OperationDetailsView } from './operations-details-view';
 
 type InternalOperationsConfirmProps = {
-  buttonsDisabled: boolean;
+  isLoading: boolean;
   estimations?: Estimate[];
   params: InternalOperationsPayload;
   onSubmit: (values: { additionalGasFee: BigNumber; additionalStorageFee: BigNumber }) => void;
 };
 
 export const InternalOperationsConfirm: FC<InternalOperationsConfirmProps> = ({
-  buttonsDisabled,
+  isLoading,
   estimations,
   params,
   onSubmit
 }) => (
-  <GasAmountForm buttonsDisabled={buttonsDisabled} estimations={estimations} onSubmit={onSubmit}>
+  <GasAmountForm isLoading={isLoading} estimations={estimations} onSubmit={onSubmit}>
     <OperationDetailsView opParams={params.opParams} sourcePkh={params.sourcePkh} />
   </GasAmountForm>
 );

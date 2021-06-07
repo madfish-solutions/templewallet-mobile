@@ -1,7 +1,7 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { TokenMetadataInterface } from '../interfaces/token-metadata.interface';
+import { AssetsMetadataInterface, TokenMetadataInterface } from '../interfaces/token-metadata.interface';
 
-export const XTZ_TOKEN_METADATA: Omit<TokenMetadataInterface, 'id' | 'address'> = {
+export const XTZ_TOKEN_METADATA: AssetsMetadataInterface = {
   name: 'Tezos',
   symbol: 'XTZ',
   decimals: 6,

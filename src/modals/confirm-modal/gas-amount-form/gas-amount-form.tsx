@@ -10,12 +10,12 @@ import { GasAmountFormContent } from '../gas-amount-form/gas-amount-form-content
 import { GasAmountFormValues } from '../gas-amount-form/gas-amount-form.form';
 
 type GasAmountFormProps = {
-  buttonsDisabled: boolean;
+  isLoading: boolean;
   estimations?: Estimate[];
   onSubmit: (values: { additionalGasFee: BigNumber; additionalStorageFee: BigNumber }) => void;
 };
 
-export const GasAmountForm: FC<GasAmountFormProps> = ({ buttonsDisabled, children, estimations, onSubmit }) => {
+export const GasAmountForm: FC<GasAmountFormProps> = ({ isLoading, children, estimations, onSubmit }) => {
   const basicFees = useMemo(
     () =>
       estimations?.reduce(
@@ -79,7 +79,7 @@ export const GasAmountForm: FC<GasAmountFormProps> = ({ buttonsDisabled, childre
         <GasAmountFormContent
           {...formikProps}
           basicFees={basicFees}
-          buttonsDisabled={buttonsDisabled}
+          isLoading={isLoading}
           estimationWasSuccessful={!!estimations}>
           {children}
         </GasAmountFormContent>
