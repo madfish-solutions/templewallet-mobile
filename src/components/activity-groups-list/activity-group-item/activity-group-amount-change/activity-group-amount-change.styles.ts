@@ -1,0 +1,18 @@
+import { createUseStyles } from '../../../../styles/create-use-styles';
+
+export const useActivityGroupAmountChangeStyles = createUseStyles(({ colors, typography }) => ({
+  container: {
+    alignItems: 'flex-end'
+  },
+  amountText: {
+    ...typography.numbersRegular17,
+    color: colors.destructive
+  },
+  positiveAmountText: {
+    color: colors.adding
+  },
+  valueText: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
+  }
+}));
