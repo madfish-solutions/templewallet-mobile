@@ -10,12 +10,9 @@ import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
   addTokenMetadataAction,
-  confirmationActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  removeConfirmationErrorAction,
-  removeConfirmationSuccessAction,
   removeSendingErrorAction,
   removeTokenAction,
   setSelectedAccountAction,
@@ -51,37 +48,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   );
 
   builder.addCase(removeSendingErrorAction, state => ({ ...state, sendingError: undefined }));
-
-  builder.addCase(confirmationActions.submit, (state, { payload: newOp }) => ({
-    ...state,
-    pendingOperations: [...state.pendingOperations, newOp]
-  }));
-  builder.addCase(
-    confirmationActions.success,
-    ({ pendingOperations, completedOperations, ...restState }, { payload: completedOp }) => ({
-      ...restState,
-      pendingOperations: pendingOperations.filter(({ opHash }) => opHash !== completedOp.opHash),
-      completedOperations: [...completedOperations, completedOp]
-    })
-  );
-  builder.addCase(
-    confirmationActions.fail,
-    ({ pendingOperations, confirmationErrorOperations, ...restState }, { payload: failedOp }) => ({
-      ...restState,
-      pendingOperations: pendingOperations.filter(({ opHash }) => opHash !== failedOp.opHash),
-      confirmationErrorOperations: [...confirmationErrorOperations, failedOp]
-    })
-  );
-
-  builder.addCase(removeConfirmationSuccessAction, (state, { payload: completedOpHash }) => ({
-    ...state,
-    completedOperations: state.completedOperations.filter(({ opHash }) => opHash !== completedOpHash)
-  }));
-
-  builder.addCase(removeConfirmationErrorAction, (state, { payload: failedOpHash }) => ({
-    ...state,
-    confirmationErrorOperations: state.confirmationErrorOperations.filter(({ opHash }) => opHash !== failedOpHash)
-  }));
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
     tokenBalancesList.reduce((prevState, tokenBalance) => {

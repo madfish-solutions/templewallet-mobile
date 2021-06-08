@@ -1,8 +1,12 @@
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito';
+
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import { OperationInterface } from '../interfaces/operation.interface';
+import { tokenMetadataSlug } from '../token/utils/token.utils';
+import { tryParseExpenses } from './expenses.util';
 import { isDefined } from './is-defined';
 
 export const mapOperationsToActivities = (address: string, operations: OperationInterface[]) => {
@@ -88,4 +92,44 @@ export const extractEntrypoint = (operationParameters?: string): string => {
   }
 
   return '';
+};
+
+export const mapParamsWithKindToPartialActivities = (address: string, operations: WalletParamsWithKind[]) => {
+  return operations.map(operationParams => {
+    switch (operationParams.kind) {
+      case OpKind.TRANSACTION:
+        const expenses = tryParseExpenses([operationParams], address);
+        const firstExpense = expenses[0].expenses[0];
+
+        return {
+          type: ActivityTypeEnum.Transaction,
+          amount: firstExpense?.amount.toString() ?? '0',
+          tokenSlug:
+            firstExpense?.tokenAddress &&
+            tokenMetadataSlug({ address: firstExpense.tokenAddress, id: firstExpense.tokenId }),
+          entrypoint: operationParams.parameter?.entrypoint,
+          destination: {
+            address: expenses[0].expenses[0]?.to
+          }
+        };
+      case OpKind.DELEGATION:
+        return {
+          type: ActivityTypeEnum.Delegation,
+          amount: '0',
+          entrypoint: '',
+          destination: {
+            address: operationParams.delegate
+          }
+        };
+      default:
+        return {
+          type: ActivityTypeEnum.Origination,
+          amount: '0',
+          entrypoint: '',
+          destination: {
+            address: ''
+          }
+        };
+    }
+  });
 };

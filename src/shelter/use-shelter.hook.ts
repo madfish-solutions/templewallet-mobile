@@ -6,12 +6,15 @@ import { merge, of, Subject, throwError } from 'rxjs';
 import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
-import { OperationSuccessPayload } from '../interfaces/operation-success-payload';
+import { ActivityStatusEnum } from '../enums/activity-status.enum';
+import { ActivityInterface } from '../interfaces/activity.interface';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { addHdAccountAction, setSelectedAccountAction, confirmationActions } from '../store/wallet/wallet-actions';
+import { pushActivityAction } from '../store/activity/activity-actions';
+import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { tezos$ } from '../utils/network/network.util';
+import { mapParamsWithKindToPartialActivities } from '../utils/operation.utils';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
@@ -54,38 +57,36 @@ export const useShelter = () => {
           switchMap(({ from, params }) =>
             Shelter.revealSecretKey$(from).pipe(
               switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, SendParams['params']] => [privateKey, params])
+              map((privateKey): [string, SendParams] => [privateKey, { from, params }])
             )
           ),
           withLatestFrom(tezos$),
-          switchMap(async ([[privateKey, params], tezos]) => {
+          switchMap(async ([[privateKey, { from, params }], tezos]) => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
 
             let operation: Promise<WalletOperation>;
-            let operationType: OperationSuccessPayload['type'];
+            let activityGroup: Omit<ActivityInterface, 'status' | 'hash' | 'timestamp' | 'source'>[];
             let successMessage: string;
             if (params instanceof Array) {
               const batch = tezos.wallet.batch(params);
 
               operation = batch.send();
-              operationType = 'batch';
+              activityGroup = mapParamsWithKindToPartialActivities(from, params);
               successMessage = 'Operations batch sent! Confirming...';
             } else {
+              activityGroup = mapParamsWithKindToPartialActivities(from, [params]);
               switch (params.kind) {
                 case OpKind.ORIGINATION:
-                  operationType = OpKind.ORIGINATION;
                   operation = tezos.wallet.originate(params).send();
                   successMessage = 'Contract origination request sent! Confirming...';
                   break;
                 case OpKind.DELEGATION:
-                  operationType = OpKind.DELEGATION;
                   operation = tezos.wallet.setDelegate(params).send();
                   successMessage = 'Delegation request sent! Confirming...';
                   break;
                 case OpKind.TRANSACTION:
-                  operationType = OpKind.TRANSACTION;
                   operation = tezos.wallet.transfer(params).send();
                   successMessage = 'Transaction sent! Confirming...';
                   break;
@@ -94,16 +95,24 @@ export const useShelter = () => {
               }
             }
 
+            const { opHash: operationHash } = await operation;
+            const timestamp = Date.now();
+
             return {
-              opHash: (await operation).opHash,
               successMessage,
-              type: operationType
+              activityGroup: activityGroup.map(activityProps => ({
+                ...activityProps,
+                status: ActivityStatusEnum.Pending,
+                hash: operationHash,
+                timestamp,
+                source: { address: from }
+              }))
             };
           })
         )
         .subscribe(
-          ({ successMessage, ...payload }) => {
-            dispatch(confirmationActions.submit(payload));
+          ({ successMessage, activityGroup }) => {
+            dispatch(pushActivityAction(activityGroup));
             showSuccessToast(successMessage);
             goBack();
           },

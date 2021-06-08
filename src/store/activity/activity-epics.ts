@@ -5,14 +5,16 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { betterCallDevApi, tzktApi } from '../../api.service';
+import { ActivityStatusEnum } from '../../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
+import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { currentNetworkId$ } from '../../utils/network/network.util';
+import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { loadActivityGroupsActions } from './activity-actions';
+import { loadActivityGroupsActions, pushActivityAction, replaceActivityAction } from './activity-actions';
 
 export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -40,4 +42,49 @@ export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const activityEpics = combineEpics(loadActivityGroupsEpic);
+const operationConfirmationEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(pushActivityAction),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([activity, tezos]) =>
+      from(tezos.operation.createOperation(activity[0].hash)).pipe(
+        switchMap(operation =>
+          from(operation.confirmation(1)).pipe(
+            map(({ completed, block }) => {
+              if (!completed) {
+                throw new Error('Unknown reason');
+              }
+
+              showSuccessToast('Operation confirmed!');
+
+              return replaceActivityAction(
+                activity.map(activityEntry => ({
+                  ...activityEntry,
+                  status: ActivityStatusEnum.Applied,
+                  timestamp: new Date(block.header.timestamp).getTime()
+                }))
+              );
+            })
+          )
+        ),
+        catchError(error =>
+          of(error).pipe(
+            map(() => {
+              showErrorToast(`Transaction confirmation failed: ${error.message}`);
+
+              return replaceActivityAction(
+                activity.map(activityEntry => ({
+                  ...activityEntry,
+                  status: ActivityStatusEnum.Failed,
+                  timestamp: new Date().getTime()
+                }))
+              );
+            })
+          )
+        )
+      )
+    )
+  );
+
+export const activityEpics = combineEpics(loadActivityGroupsEpic, operationConfirmationEpic);

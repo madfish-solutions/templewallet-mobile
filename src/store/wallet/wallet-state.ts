@@ -1,5 +1,3 @@
-import { OperationErrorPayload } from '../../interfaces/operation-error-payload';
-import { OperationSuccessPayload } from '../../interfaces/operation-success-payload';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -12,9 +10,6 @@ export interface WalletState {
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
-  pendingOperations: OperationSuccessPayload[];
-  completedOperations: OperationSuccessPayload[];
-  confirmationErrorOperations: OperationErrorPayload[];
 }
 
 export const walletInitialState: WalletState = {
@@ -27,10 +22,7 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadata),
-  pendingOperations: [],
-  completedOperations: [],
-  confirmationErrorOperations: []
+  addTokenSuggestion: createEntity(emptyTokenMetadata)
 };
 
 export interface WalletRootState {
