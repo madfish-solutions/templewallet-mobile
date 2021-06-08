@@ -9,11 +9,13 @@ import ArrowUpIcon from './assets/arrow-up.svg';
 import BookIcon from './assets/book.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseNoCircleIcon from './assets/close-no-circle.svg';
 import CloseIcon from './assets/close.svg';
 import CmdlineIcon from './assets/cmdline.svg';
 import CopyIcon from './assets/copy.svg';
+import DealIcon from './assets/deal.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
@@ -119,5 +121,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
+  [IconNameEnum.Clipboard]: ClipboardIcon,
+  [IconNameEnum.Deal]: DealIcon,
   [IconNameEnum.Ok]: OkIcon
 };

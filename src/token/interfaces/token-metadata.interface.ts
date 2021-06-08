@@ -14,7 +14,7 @@ export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'ad
   address?: string;
 }
 
-export const emptyTokenMetadataInterface: TokenMetadataInterface = {
+export const emptyTokenMetadata: TokenMetadataInterface = {
   address: '',
   name: '',
   symbol: '',

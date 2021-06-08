@@ -3,12 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
-import { HeaderQrScannerButton } from '../components/header/header-qr-scanner-button/header-qr-scanner-button';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
 import { About } from '../screens/about/about';
-import { Activity } from '../screens/activity/Activity';
+import { Activity } from '../screens/activity/activity';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
@@ -24,7 +23,7 @@ import { Welcome } from '../screens/welcome/welcome';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { emptyTokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
 import { TabBar } from './tab-bar/tab-bar';
 import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
@@ -67,18 +66,12 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={XTZ_TOKEN_METADATA} />,
-                  <HeaderQrScannerButton />
-                )}
+                options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={emptyTokenMetadataInterface} />,
-                  <HeaderQrScannerButton />
-                )}
+                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}

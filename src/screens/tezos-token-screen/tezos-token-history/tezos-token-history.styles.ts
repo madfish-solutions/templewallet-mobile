@@ -10,7 +10,7 @@ export const useTezosTokenHistoryStyles = createUseStyles(({ colors, typography 
     paddingHorizontal: formatSize(8),
     borderRadius: formatSize(8),
     backgroundColor: colors.blue,
-    marginTop: formatSize(8)
+    marginHorizontal: formatSize(16)
   },
   delegateText: {
     ...typography.caption13Semibold,
