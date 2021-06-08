@@ -71,9 +71,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={emptyTokenMetadata} />
-                )}
+                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}
