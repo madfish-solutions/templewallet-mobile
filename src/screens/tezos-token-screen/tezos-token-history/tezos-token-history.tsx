@@ -42,6 +42,7 @@ export const TezosTokenHistory = () => {
 
   return (
     <>
+      <Divider size={formatSize(8)} />
       <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
         {isBakerSelected ? (
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
@@ -52,8 +53,7 @@ export const TezosTokenHistory = () => {
         )}
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />
       </TouchableOpacity>
-
-      <Divider size={formatSize(16)} />
+      <Divider size={formatSize(8)} />
 
       <ActivityGroupsList activityGroups={filteredActivityGroups} />
     </>
