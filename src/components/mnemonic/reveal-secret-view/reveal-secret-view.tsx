@@ -1,4 +1,4 @@
-import { useClipboard } from '@react-native-clipboard/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
@@ -16,13 +16,12 @@ interface Props {
 
 export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress }) => {
   const styles = useMnemonicStyles();
-  const [, setClipboardValue] = useClipboard();
 
   return (
     <View style={styles.container}>
       <StyledTextInput value={value} editable={false} multiline={true} />
       <View style={styles.buttonsContainer}>
-        <ButtonSmallSecondary title="COPY" onPress={() => isString(value) && setClipboardValue(value)} />
+        <ButtonSmallSecondary title="COPY" onPress={() => isString(value) && Clipboard.setString(value)} />
       </View>
       {!isString(value) && <ProtectedOverlay onPress={onProtectedOverlayPress} />}
     </View>

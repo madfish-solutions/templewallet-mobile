@@ -1,9 +1,10 @@
-import { useClipboard } from '@react-native-clipboard/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
+import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -17,10 +18,7 @@ import { useReceiveModalStyles } from './receive-modal.styles';
 export const ReceiveModal: FC = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
-  const [, setString] = useClipboard();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
-
-  const handleCopyToClipboard = () => setString(publicKeyHash);
 
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
@@ -47,11 +45,16 @@ export const ReceiveModal: FC = () => {
         <ButtonMedium
           title="SHARE"
           iconName={IconNameEnum.Share}
-          marginRight={step}
           disabled={true}
           onPress={emptyFn}
         />
-        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} marginRight={step} onPress={handleCopyToClipboard} />
+        <Divider size={formatSize(8)} />
+        <ButtonMedium
+          title="COPY"
+          iconName={IconNameEnum.Copy}
+          onPress={() => Clipboard.setString(publicKeyHash)}
+        />
+        <Divider size={formatSize(8)} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
     </ScreenContainer>
