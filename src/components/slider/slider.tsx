@@ -10,12 +10,13 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSliderStyles } from './slider.styles';
 
-type Props = Required<Pick<SliderProps, 'value' | 'onValueChange'>> &
-  Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'>;
+type Props = Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'> &
+  Required<Pick<SliderProps, 'value' | 'onValueChange'>>;
 
-export const Slider: FC<Props> = ({ value, onValueChange, minimumValue = 0, maximumValue = 100, step = 1 }) => {
+export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100, step = 1, onValueChange }) => {
   const colors = useColors();
   const styles = useSliderStyles();
+
   const debouncedValueChange = debounce(onValueChange);
 
   return (
