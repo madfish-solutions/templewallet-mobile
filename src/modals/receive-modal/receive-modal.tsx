@@ -42,18 +42,9 @@ export const ReceiveModal: FC = () => {
       <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
 
       <View style={styles.buttonsContainer}>
-        <ButtonMedium
-          title="SHARE"
-          iconName={IconNameEnum.Share}
-          disabled={true}
-          onPress={emptyFn}
-        />
+        <ButtonMedium title="SHARE" iconName={IconNameEnum.Share} disabled={true} onPress={emptyFn} />
         <Divider size={formatSize(8)} />
-        <ButtonMedium
-          title="COPY"
-          iconName={IconNameEnum.Copy}
-          onPress={() => copyStringToClipboard(publicKeyHash)}
-        />
+        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={() => copyStringToClipboard(publicKeyHash)} />
         <Divider size={formatSize(8)} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
