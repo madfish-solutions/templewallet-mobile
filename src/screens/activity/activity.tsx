@@ -9,7 +9,7 @@ export const Activity = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search by address" onChangeText={setSearchValue} />
+      <SearchInput placeholder="Search" onChangeText={setSearchValue} />
       <ActivityGroupsList activityGroups={filteredActivityGroups} />
     </>
   );
