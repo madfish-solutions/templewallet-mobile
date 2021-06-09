@@ -7,6 +7,7 @@ import { formatSize } from '../../styles/format-size';
 import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
+import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 interface Props {
@@ -18,18 +19,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
 
   return (
     <ButtonsContainer>
-      <ButtonMedium
-        title="RECEIVE"
-        iconName={IconNameEnum.ArrowDown}
-        marginRight={formatSize(8)}
-        onPress={() => navigate(ModalsEnum.Receive)}
-      />
-      <ButtonMedium
-        title="SEND"
-        iconName={IconNameEnum.ArrowUp}
-        marginRight={formatSize(8)}
-        onPress={() => navigate(ModalsEnum.Send, { asset })}
-      />
+      <ButtonMedium title="RECEIVE" iconName={IconNameEnum.ArrowDown} onPress={() => navigate(ModalsEnum.Receive)} />
+      <Divider size={formatSize(8)} />
+      <ButtonMedium title="SEND" iconName={IconNameEnum.ArrowUp} onPress={() => navigate(ModalsEnum.Send, { asset })} />
+      <Divider size={formatSize(8)} />
       <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
     </ButtonsContainer>
   );
