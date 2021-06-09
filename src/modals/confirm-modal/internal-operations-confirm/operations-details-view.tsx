@@ -17,16 +17,16 @@ import { mutezToTz } from '../../../utils/tezos.util';
 import { SelectBakerItem } from '../../select-baker-modal/select-baker-item/select-baker-item';
 import { useOpsDetailsStyles } from './operations-details-view.styles';
 
-export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams' | 'sourcePkh'>> = ({
-  opParams,
-  sourcePkh
+export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'operationsParams' | 'sourcePublicKeyHash'>> = ({
+  operationsParams,
+  sourcePublicKeyHash
 }) => {
   const hdAccounts = useHdAccountsListSelector();
   const styles = useOpsDetailsStyles();
   const knownBakers = useBakersListSelector();
 
-  const sourceAccount = hdAccounts.find(({ publicKeyHash }) => publicKeyHash === sourcePkh);
-  const rawExpenses = tryParseExpenses(opParams, sourcePkh);
+  const sourceAccount = hdAccounts.find(({ publicKeyHash }) => publicKeyHash === sourcePublicKeyHash);
+  const rawExpenses = tryParseExpenses(operationsParams, sourcePublicKeyHash);
   const rawPureExpenses = rawExpenses.map(({ expenses }) => expenses).flat();
   const firstExpense = rawPureExpenses[0];
   const firstExpenseRecipientAccount =
@@ -36,12 +36,12 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
     firstExpense &&
     tokens.find(({ address, id }) => firstExpense.tokenAddress === address && id === firstExpense.tokenId);
 
-  if (opParams.length > 1) {
+  if (operationsParams.length > 1) {
     return <Text>Displaying multiple operations isn't supported yet.</Text>;
   }
 
-  if (opParams[0].kind === 'delegation') {
-    const { delegate } = opParams[0];
+  if (operationsParams[0].kind === 'delegation') {
+    const { delegate } = operationsParams[0];
     const baker = knownBakers.find(({ address }) => address === delegate);
 
     return (
@@ -50,10 +50,10 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
         <Divider size={formatSize(28)} />
         <View style={styles.accountView}>
           <View style={styles.shortInfoSection}>
-            <RobotIcon size={formatSize(44)} seed={sourcePkh} />
+            <RobotIcon size={formatSize(44)} seed={sourcePublicKeyHash} />
             <View style={styles.accountTitle}>
               <Text style={styles.delegationAccountLabel}>{sourceAccount?.name ?? ''}</Text>
-              <PublicKeyHashText publicKeyHash={sourcePkh} />
+              <PublicKeyHashText publicKeyHash={sourcePublicKeyHash} />
             </View>
           </View>
           <View style={styles.balanceSection}>
@@ -89,9 +89,9 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'opParams'
         <View style={styles.sendAddressesLeftHalf}>
           <View style={styles.senderView}>
             <Text style={styles.label}>From</Text>
-            <RobotIcon size={formatSize(44)} seed={sourcePkh} />
+            <RobotIcon size={formatSize(44)} seed={sourcePublicKeyHash} />
             <Text style={styles.accountLabel}>{sourceAccount?.name ?? ''}</Text>
-            <PublicKeyHashText publicKeyHash={sourcePkh} />
+            <PublicKeyHashText publicKeyHash={sourcePublicKeyHash} />
           </View>
           <View style={styles.arrowContainer}>
             <Icon size={formatSize(24)} name={IconNameEnum.ArrowRight} style={styles.arrowIcon} />

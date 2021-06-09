@@ -67,11 +67,11 @@ export const StyledNumericInput: FC<Props> = ({
       editable={editable}
       value={localValue}
       isError={isError}
+      isShowCleanButton={isShowCleanButton}
       keyboardType="numeric"
       onBlur={handleBlur}
       onFocus={handleFocus}
       onChangeText={handleChange}
-      isShowCleanButton={isShowCleanButton}
     />
   );
 };

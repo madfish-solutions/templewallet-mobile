@@ -40,8 +40,8 @@ export const SelectBakerModal: FC = () => {
     }
     navigate(ModalsEnum.Confirm, {
       type: ConfirmPayloadTypeEnum.internalOperations,
-      opParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
-      sourcePkh: selectedAccount.publicKeyHash
+      operationsParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
+      sourcePublicKeyHash: selectedAccount.publicKeyHash
     });
   };
 

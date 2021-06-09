@@ -38,6 +38,7 @@ export const FormNumericInput: FC<Props> = ({
     <>
       <StyledNumericInput
         decimals={decimals}
+        editable={editable}
         isShowCleanButton={isShowCleanButton}
         min={min}
         max={max}
@@ -45,7 +46,6 @@ export const FormNumericInput: FC<Props> = ({
         isError={isError}
         onBlur={field.onBlur(name)}
         onChange={handleChange}
-        editable={editable}
       />
       <ErrorMessage meta={meta} />
     </>

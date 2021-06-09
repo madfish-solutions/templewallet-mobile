@@ -2,10 +2,10 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
-import { forkJoin, from, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { from, of, Subject } from 'rxjs';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -18,7 +18,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { ConfirmPayloadTypeEnum } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
-import { EstimateInterface } from '../../interfaces/estimate.interface';
+import { InternalOperationsPayload } from '../../interfaces/confirm-payload/internal-operations-payload.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -40,56 +40,85 @@ export const SendModal: FC = () => {
     recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
   };
 
+  const onSubmit$ = useMemo(() => new Subject<SendModalFormValues>(), []);
+
+  useEffect(() => {
+    onSubmit$
+      .pipe(
+        withLatestFrom(tezos$),
+        switchMap(([data, tezos]) => {
+          const tokenAddress = asset.address;
+
+          return isDefined(tokenAddress)
+            ? from(tezos.wallet.at(tokenAddress)).pipe(
+                switchMap(contract => {
+                  const transferParamsObserver = isDefined(asset.id)
+                    ? of(
+                        contract.methods
+                          .transfer([
+                            {
+                              from_: selectedAccount.publicKeyHash,
+                              txs: [
+                                {
+                                  to_: data.recipient,
+                                  token_id: asset.id,
+                                  amount: tzToMutez(data.amount, asset.decimals).toString()
+                                }
+                              ]
+                            }
+                          ])
+                          .toTransferParams()
+                      )
+                    : of(
+                        contract.methods
+                          .transfer(
+                            selectedAccount.publicKeyHash,
+                            data.recipient,
+                            tzToMutez(data.amount, asset.decimals).toString()
+                          )
+                          .toTransferParams()
+                      );
+
+                  return transferParamsObserver.pipe(
+                    map((transferParams): [SendModalFormValues, InternalOperationsPayload['operationsParams']] => [
+                      data,
+                      [
+                        {
+                          kind: OpKind.TRANSACTION,
+                          ...transferParams
+                        }
+                      ]
+                    ])
+                  );
+                })
+              )
+            : of<[SendModalFormValues, InternalOperationsPayload['operationsParams']]>([
+                data,
+                [
+                  {
+                    kind: OpKind.TRANSACTION,
+                    amount: tzToMutez(data.amount, asset.decimals).toString(),
+                    to: data.recipient,
+                    mutez: true
+                  }
+                ]
+              ]);
+        })
+      )
+      .subscribe(([data, operationsParams]) => {
+        navigate(ModalsEnum.Confirm, {
+          type: ConfirmPayloadTypeEnum.internalOperations,
+          sourcePublicKeyHash: data.account.publicKeyHash,
+          operationsParams
+        });
+      });
+
+    return () => {
+      onSubmit$.unsubscribe();
+    };
+  }, [asset, navigate, onSubmit$, selectedAccount.publicKeyHash]);
   // TODO: integrate gasFee with send request
-  const onSubmit = async (data: SendModalFormValues) => {
-    let opParams: EstimateInterface['params'] = [];
-
-    if (isDefined(asset.address)) {
-      let transferParams;
-
-      const contract = await forkJoin(tezos$, of(asset.address))
-        .pipe(switchMap(([tezos, assetAddress]) => from(tezos.wallet.at(assetAddress))))
-        .toPromise();
-
-      if (asset.id === undefined) {
-        transferParams = contract.methods
-          .transfer(selectedAccount.publicKeyHash, data.recipient, tzToMutez(data.amount, asset.decimals).toString())
-          .toTransferParams();
-      } else {
-        transferParams = contract.methods
-          .transfer([
-            {
-              from_: selectedAccount.publicKeyHash,
-              txs: [
-                { to_: data.recipient, token_id: asset.id, amount: tzToMutez(data.amount, asset.decimals).toString() }
-              ]
-            }
-          ])
-          .toTransferParams();
-      }
-      opParams = [
-        {
-          kind: OpKind.TRANSACTION,
-          ...transferParams
-        }
-      ];
-    } else {
-      opParams = [
-        {
-          kind: OpKind.TRANSACTION,
-          amount: tzToMutez(data.amount, asset.decimals).toString(),
-          to: data.recipient,
-          mutez: true
-        }
-      ];
-    }
-
-    navigate(ModalsEnum.Confirm, {
-      type: ConfirmPayloadTypeEnum.internalOperations,
-      sourcePkh: data.account.publicKeyHash,
-      opParams
-    });
-  };
+  const onSubmit = (data: SendModalFormValues) => onSubmit$.next(data);
 
   return (
     <Formik
