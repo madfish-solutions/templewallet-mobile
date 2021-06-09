@@ -25,7 +25,7 @@ interface Props {
 export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
   const colors = useColors();
   const styles = useSwitchStyles();
-  const animation = useAnimationRef();
+  const animation = useAnimationRef(value);
 
   useUpdateAnimation(animation, value, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
 
