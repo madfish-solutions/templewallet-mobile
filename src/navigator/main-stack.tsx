@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
-import { HeaderQrScannerButton } from '../components/header/header-qr-scanner-button/header-qr-scanner-button';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
@@ -67,18 +66,12 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={XTZ_TOKEN_METADATA} />,
-                  <HeaderQrScannerButton />
-                )}
+                options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(
-                  <HeaderTokenInfo token={emptyTokenMetadata} />,
-                  <HeaderQrScannerButton />
-                )}
+                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}

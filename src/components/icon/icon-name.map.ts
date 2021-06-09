@@ -121,7 +121,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
-  [IconNameEnum.Ok]: OkIcon,
   [IconNameEnum.Clipboard]: ClipboardIcon,
-  [IconNameEnum.Deal]: DealIcon
+  [IconNameEnum.Deal]: DealIcon,
+  [IconNameEnum.Ok]: OkIcon
 };

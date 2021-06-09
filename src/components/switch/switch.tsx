@@ -1,6 +1,7 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Animated } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { ANIMATION_DURATION_FAST } from '../../config/animation';
 import { emptyFn, EventFn } from '../../config/general';
@@ -13,6 +14,7 @@ import { useColors } from '../../styles/use-colors';
 import { useSwitchStyles } from './switch.styles';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const hapticFeedbackOptions = { enableVibrateFallback: false, ignoreAndroidSystemSettings: false };
 
 interface Props {
   value: boolean;
@@ -45,7 +47,8 @@ export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
       disabled={disabled}
       style={[styles.touchableOpacity, { backgroundColor }]}
       hitSlop={generateHitSlop(formatSize(4))}
-      onPress={() => onChange(!value)}>
+      onPress={() => onChange(!value)}
+      onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}>
       <Animated.View style={[styles.toggle, { transform: [{ translateX }] }]} />
     </AnimatedTouchableOpacity>
   );
