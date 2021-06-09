@@ -1,4 +1,3 @@
-import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -13,6 +12,7 @@ import { step } from '../../config/styles';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
 export const ReceiveModal: FC = () => {
@@ -52,7 +52,7 @@ export const ReceiveModal: FC = () => {
         <ButtonMedium
           title="COPY"
           iconName={IconNameEnum.Copy}
-          onPress={() => Clipboard.setString(publicKeyHash)}
+          onPress={() => copyStringToClipboard(publicKeyHash)}
         />
         <Divider size={formatSize(8)} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
