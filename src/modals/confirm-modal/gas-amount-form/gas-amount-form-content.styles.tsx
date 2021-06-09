@@ -18,7 +18,7 @@ export const useGasAmountFormContentStyles = createUseStyles(({ colors, typograp
     color: colors.black
   },
   feeAmountUsd: {
-    ...typography.numbersRegular15,
+    ...typography.numbersRegular11,
     color: colors.gray1
   },
   hidden: {
