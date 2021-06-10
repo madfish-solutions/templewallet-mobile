@@ -1,7 +1,7 @@
 export enum ConfirmPayloadTypeEnum {
-  'connect',
-  'confirm_operations',
-  'sign',
-  'internalOperations',
-  'internalSign'
+  Connect = 'connect',
+  ConfirmOperations = 'confirm_operations',
+  Sign = 'sign',
+  InternalOperations = 'internal_operations',
+  InternalSign = 'internal_sign'
 }

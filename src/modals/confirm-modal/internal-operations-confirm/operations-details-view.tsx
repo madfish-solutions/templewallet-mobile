@@ -11,6 +11,7 @@ import { InternalOperationsPayload } from '../../../interfaces/confirm-payload/i
 import { useBakersListSelector } from '../../../store/baking/baking-selectors';
 import { useHdAccountsListSelector, useTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { useColors } from '../../../styles/use-colors';
 import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { tryParseExpenses } from '../../../utils/expenses.util';
 import { mutezToTz } from '../../../utils/tezos.util';
@@ -22,6 +23,7 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'operation
   sourcePublicKeyHash
 }) => {
   const hdAccounts = useHdAccountsListSelector();
+  const colors = useColors();
   const styles = useOpsDetailsStyles();
   const knownBakers = useBakersListSelector();
 
@@ -87,14 +89,14 @@ export const OperationDetailsView: FC<Pick<InternalOperationsPayload, 'operation
     <>
       <View style={styles.row}>
         <View style={styles.sendAddressesLeftHalf}>
-          <View style={styles.senderView}>
+          <View>
             <Text style={styles.label}>From</Text>
             <RobotIcon size={formatSize(44)} seed={sourcePublicKeyHash} />
             <Text style={styles.accountLabel}>{sourceAccount?.name ?? ''}</Text>
             <PublicKeyHashText publicKeyHash={sourcePublicKeyHash} />
           </View>
           <View style={styles.arrowContainer}>
-            <Icon size={formatSize(24)} name={IconNameEnum.ArrowRight} style={styles.arrowIcon} />
+            <Icon name={IconNameEnum.ArrowRight} size={formatSize(24)} color={colors.destructive} />
           </View>
         </View>
         <View style={styles.recipientView}>

@@ -4,7 +4,7 @@ import { ConfirmPayloadTypeEnum } from './confirm-payload-type.enum';
 import { DAppConfirmPayloadBase } from './dapp-confirm-payload-base.interface';
 
 export interface DAppOperationsPayload extends DAppConfirmPayloadBase {
-  type: ConfirmPayloadTypeEnum.confirm_operations;
+  type: ConfirmPayloadTypeEnum.ConfirmOperations;
   sourcePkh: string;
   sourcePublicKey: string;
   opParams: any[];

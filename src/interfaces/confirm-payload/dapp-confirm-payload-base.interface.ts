@@ -3,7 +3,7 @@ import { ConfirmPayloadTypeEnum } from './confirm-payload-type.enum';
 import { DAppMetadata } from './dapp-metadata.interface';
 
 export interface DAppConfirmPayloadBase extends ConfirmPayloadBase {
-  type: ConfirmPayloadTypeEnum.connect | ConfirmPayloadTypeEnum.confirm_operations | ConfirmPayloadTypeEnum.sign;
+  type: ConfirmPayloadTypeEnum.Connect | ConfirmPayloadTypeEnum.ConfirmOperations | ConfirmPayloadTypeEnum.Sign;
   origin: string;
   networkRpc: string;
   appMeta: DAppMetadata;

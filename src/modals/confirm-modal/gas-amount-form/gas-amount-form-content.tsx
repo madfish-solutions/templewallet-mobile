@@ -110,7 +110,7 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
               </View>
               <View>
                 <TouchableOpacity style={styles.toggleSettingsButton} onPress={showDetailedSettings}>
-                  <Icon size={formatSize(16)} name={IconNameEnum.Gear} style={styles.orangeIcon} />
+                  <Icon name={IconNameEnum.Gear} style={styles.orangeIcon} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -130,7 +130,7 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
             {estimationWasSuccessful && (
               <View>
                 <TouchableOpacity style={styles.toggleSettingsButton} onPress={hideDetailedSettings}>
-                  <Icon size={formatSize(16)} name={IconNameEnum.CloseNoCircle} style={styles.orangeIcon} />
+                  <Icon size={formatSize(16)} name={IconNameEnum.X} style={styles.orangeIcon} />
                 </TouchableOpacity>
               </View>
             )}

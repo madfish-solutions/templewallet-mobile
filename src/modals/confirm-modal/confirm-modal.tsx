@@ -13,7 +13,7 @@ export const ConfirmModal: FC = () => {
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirm>>();
 
   switch (params.type) {
-    case ConfirmPayloadTypeEnum.internalOperations:
+    case ConfirmPayloadTypeEnum.InternalOperations:
       return <InternalOperationsConfirm payload={params} />;
     default:
       return (

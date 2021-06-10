@@ -26,14 +26,6 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     ...typography.numbersRegular17,
     color: colors.gray1
   },
-  senderView: {
-    flexDirection: 'column'
-  },
-  arrowIcon: {
-    width: formatSize(24),
-    height: formatSize(24),
-    color: colors.destructive
-  },
   label: {
     ...typography.body15Semibold,
     color: colors.gray1,

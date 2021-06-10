@@ -33,9 +33,9 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
         onValueChange={debouncedValueChange}
       />
       <View style={styles.bottomContainer}>
-        <Icon size={formatSize(24)} name={IconNameEnum.Slow} color={colors.gray1} />
-        <Icon size={formatSize(32)} name={IconNameEnum.NormalSpeed} color={colors.gray1} />
-        <Icon size={formatSize(24)} name={IconNameEnum.Fast} color={colors.gray1} />
+        <Icon size={formatSize(24)} name={IconNameEnum.GLow} color={colors.gray1} />
+        <Icon size={formatSize(32)} name={IconNameEnum.GMid} color={colors.gray1} />
+        <Icon size={formatSize(24)} name={IconNameEnum.GHigh} color={colors.gray1} />
       </View>
     </>
   );

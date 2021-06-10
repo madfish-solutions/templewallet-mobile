@@ -107,7 +107,7 @@ export const SendModal: FC = () => {
       )
       .subscribe(([data, operationsParams]) => {
         navigate(ModalsEnum.Confirm, {
-          type: ConfirmPayloadTypeEnum.internalOperations,
+          type: ConfirmPayloadTypeEnum.InternalOperations,
           sourcePublicKeyHash: data.account.publicKeyHash,
           operationsParams
         });
