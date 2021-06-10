@@ -6,7 +6,7 @@ import { useLabelStyles } from './label.styles';
 
 interface Props {
   label?: string;
-  description?: string;
+  description?: React.ReactChild | React.ReactChild[];
 }
 
 export const Label: FC<Props> = ({ label, description }) => {
@@ -15,7 +15,12 @@ export const Label: FC<Props> = ({ label, description }) => {
   return (
     <View style={styles.container}>
       {isDefined(label) && <Text style={styles.label}>{label}</Text>}
-      {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+      {isDefined(description) &&
+        (description && typeof description === 'object' ? (
+          description
+        ) : (
+          <Text style={styles.description}>{description}</Text>
+        ))}
     </View>
   );
 };
