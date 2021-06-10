@@ -1,19 +1,21 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
 import { Divider } from '../../components/divider/divider';
+import { Icon } from '../../components/icon/icon';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
-import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
+import { conditionalStyle } from '../../utils/conditional-style';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -25,16 +27,24 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
+  const handlePasswordBlur = () => setPasswordFocused(false);
+  const handlePasswordFocus = () => setPasswordFocused(true);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
-      <WelcomeHeader />
       <View style={styles.imageView}>
-        <WelcomeLogo />
+        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-
+      <View style={[styles.quoteView, conditionalStyle(passwordFocused, styles.hidden)]}>
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
+        />
+      </View>
+      {passwordFocused && <Divider size={formatSize(12)} />}
       <View>
         <Formik
           initialValues={enterPasswordInitialValues}
@@ -43,15 +53,11 @@ export const EnterPassword = () => {
           {({ submitForm, isValid }) => (
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput name="password" />
+              <FormPasswordInput name="password" onBlur={handlePasswordBlur} onFocus={handlePasswordFocus} />
 
-              <ButtonLargePrimary
-                title="Unlock"
-                disabled={!isValid}
-                marginTop={formatSize(8)}
-                marginBottom={formatSize(24)}
-                onPress={submitForm}
-              />
+              <Divider size={formatSize(8)} />
+              <ButtonLargePrimary title="Unlock" disabled={!isValid} onPress={submitForm} />
+              <Divider />
             </View>
           )}
         </Formik>
