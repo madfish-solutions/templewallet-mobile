@@ -22,8 +22,5 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
     ...typography.caption13Regular,
     color: colors.gray1,
     textAlign: 'center'
-  },
-  hidden: {
-    display: 'none'
   }
 }));
