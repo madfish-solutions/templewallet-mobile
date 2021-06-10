@@ -35,6 +35,7 @@ export const SearchContainer: FC<Props> = ({ onChange }) => {
       {isSearchMode ? (
         <>
           <TextInput
+            autoFocus={true}
             style={styles.searchInput}
             placeholder="Search token"
             placeholderTextColor={colors.gray1}
