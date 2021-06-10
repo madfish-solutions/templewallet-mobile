@@ -118,14 +118,14 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
           <View style={[styles.row, conditionalStyle(!shouldShowDetailedSettings, styles.hidden)]}>
             <View style={styles.feeInputForm}>
               <Label description="Total:" />
-              <StyledNumericInput value={totalFee} decimals={6} editable={false} />
+              <StyledNumericInput value={totalFee} editable={false} />
               <Divider size={formatSize(16)} />
 
               <Label description="Gas fee:" />
-              <FormNumericInput name="gasFee" decimals={6} isShowCleanButton={true} />
+              <FormNumericInput name="gasFee" isShowCleanButton={true} />
 
               <Label description="Storage fee:" />
-              <FormNumericInput name="storageFee" decimals={6} isShowCleanButton={true} />
+              <FormNumericInput name="storageFee" isShowCleanButton={true} />
             </View>
             {estimationWasSuccessful && (
               <View>

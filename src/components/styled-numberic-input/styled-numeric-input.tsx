@@ -11,8 +11,8 @@ const DEFAULT_MIN_VALUE = new BigNumber(0);
 const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
-  decimals = 6,
   value,
+  decimals = 6,
   editable,
   isError,
   isShowCleanButton,
