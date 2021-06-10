@@ -3,12 +3,12 @@ import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { Divider } from '../../components/divider/divider';
+import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Label } from '../../components/label/label';
+import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { WelcomeHeader } from '../../components/welcome-header/welcome-header';
-import { WelcomeLogo } from '../../components/welcome-logo/welcome-logo';
 import { ScreensEnum } from '../../navigator/screens.enum';
 import { useNavigation } from '../../navigator/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -20,28 +20,30 @@ export const Welcome = () => {
 
   return (
     <ScreenContainer isFullScreenMode={true}>
-      <View>
-        <WelcomeHeader />
-      </View>
       <View style={styles.imageView}>
-        <WelcomeLogo />
+        <InsetSubstitute />
+        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
+      </View>
+      <View style={styles.quoteView}>
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
+        />
       </View>
       <View>
         <ButtonLargePrimary
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}
-          marginBottom={formatSize(8)}
           onPress={() => navigate(ScreensEnum.CreateAccount)}
         />
-        <Label description="New to Temple Wallet? Let's set it up! This will create a new wallet and seed phrase" />
+        <Divider size={formatSize(24)} />
+
         <ButtonLargeSecondary
           title="Import existing Wallet"
-          iconName={IconNameEnum.Download}
-          marginTop={formatSize(24)}
-          marginBottom={formatSize(8)}
+          iconName={IconNameEnum.DownloadCloud}
           onPress={() => navigate(ScreensEnum.ImportAccount)}
         />
-        <Label description="Already have a seed phrase? Import your existing wallet using a 12 or more mnemonic words" />
+        <Divider size={formatSize(43)} />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

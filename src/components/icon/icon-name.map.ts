@@ -14,6 +14,7 @@ import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DealIcon from './assets/deal.svg';
+import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
@@ -73,6 +74,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GLow]: GLowIcon,
   [IconNameEnum.GMid]: GMidIcon,
   [IconNameEnum.GHigh]: GHighIcon,
+  [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,

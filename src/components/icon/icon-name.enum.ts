@@ -10,6 +10,7 @@ export enum IconNameEnum {
   GLow = 'GLow',
   GMid = 'GMid',
   GHigh = 'GHigh',
+  DownloadCloud = 'DownloadCloud',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
   InputXCircle = 'InputXCircle',
