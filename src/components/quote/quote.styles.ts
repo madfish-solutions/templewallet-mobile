@@ -1,12 +1,10 @@
 import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
 
 export const useQuoteStyles = createUseStyles(({ colors, typography }) => ({
   text: {
     ...typography.caption13Semibold,
     color: colors.black,
-    textAlign: 'right',
-    paddingLeft: formatSize(70)
+    textAlign: 'center'
   },
   textQuotes: {
     ...typography.headline4Bold22,
