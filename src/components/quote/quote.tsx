@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
