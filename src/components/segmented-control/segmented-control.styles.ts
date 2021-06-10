@@ -35,7 +35,6 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: formatSize(3),
     paddingHorizontal: formatSize(8)
   }
 }));
