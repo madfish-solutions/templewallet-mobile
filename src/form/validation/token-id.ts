@@ -4,11 +4,11 @@ import { object, SchemaOf } from 'yup';
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})
   .test('non-negative', 'Should be non-negative integer', value => {
-    if (!(value instanceof BigNumber)) {
-      return false;
+    if (value instanceof BigNumber) {
+      return value.integerValue().eq(value) && value.gte(0);
     }
 
-    return value.integerValue().eq(value) && value.gte(0);
+    return false;
   })
   .default(new BigNumber(0))
   .required();

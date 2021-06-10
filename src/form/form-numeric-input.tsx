@@ -16,11 +16,11 @@ interface Props
 export const FormNumericInput: FC<Props> = ({
   name,
   decimals,
-  isShowCleanButton,
   min,
   max,
-  onChange = emptyFn,
-  editable
+  editable,
+  isShowCleanButton,
+  onChange = emptyFn
 }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
