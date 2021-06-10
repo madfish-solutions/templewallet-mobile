@@ -5,15 +5,16 @@ import React, { FC, useMemo } from 'react';
 import { number, object, SchemaOf } from 'yup';
 
 import { assetAmountValidation } from '../../../form/validation/asset-amount';
+import { isDefined } from '../../../utils/is-defined';
 import { mutezToTz } from '../../../utils/tezos.util';
-import { GasAmountFormContent } from '../gas-amount-form/gas-amount-form-content';
-import { GasAmountFormValues } from '../gas-amount-form/gas-amount-form.form';
+import { GasAmountFormContent } from './gas-amount-form-content';
+import { GasAmountFormValues } from './gas-amount-form.form';
 
-type GasAmountFormProps = {
+interface GasAmountFormProps {
   isLoading: boolean;
   estimations?: Estimate[];
   onSubmit: (values: { additionalGasFee: BigNumber; additionalStorageFee: BigNumber }) => void;
-};
+}
 
 export const GasAmountForm: FC<GasAmountFormProps> = ({ isLoading, children, estimations, onSubmit }) => {
   const basicFees = useMemo(
@@ -28,12 +29,15 @@ export const GasAmountForm: FC<GasAmountFormProps> = ({ isLoading, children, est
     [estimations]
   );
 
-  const handleSubmit = ({ gasFee, storageFee }: GasAmountFormValues) => {
-    onSubmit({
-      additionalGasFee: gasFee.minus(basicFees.gasFee),
-      additionalStorageFee: storageFee.minus(basicFees.storageFee)
-    });
-  };
+  const handleSubmit = ({ gasFee, storageFee }: GasAmountFormValues) =>
+    void (
+      isDefined(gasFee) &&
+      isDefined(storageFee) &&
+      onSubmit({
+        additionalGasFee: gasFee.minus(basicFees.gasFee),
+        additionalStorageFee: storageFee.minus(basicFees.storageFee)
+      })
+    );
 
   const internalOpsConfirmValidationSchema = useMemo<SchemaOf<GasAmountFormValues>>(
     () =>
@@ -41,21 +45,21 @@ export const GasAmountForm: FC<GasAmountFormProps> = ({ isLoading, children, est
         gasFee: assetAmountValidation
           .clone()
           .test('min-gas-fee', `Minimal value is ${basicFees.gasFee.toFixed()}`, value => {
-            if (!(value instanceof BigNumber)) {
-              return false;
+            if (value instanceof BigNumber) {
+              return value.gte(basicFees.gasFee);
             }
 
-            return value.gte(basicFees.gasFee);
+            return false;
           })
           .required(),
         storageFee: assetAmountValidation
           .clone()
           .test('min-storage-fee', `Minimal value is ${basicFees.storageFee.toFixed()}`, value => {
-            if (!(value instanceof BigNumber)) {
-              return false;
+            if (value instanceof BigNumber) {
+              return value.gte(basicFees.storageFee);
             }
 
-            return value.gte(basicFees.storageFee);
+            return false;
           })
           .required(),
         sliderValue: number().required()
@@ -63,7 +67,7 @@ export const GasAmountForm: FC<GasAmountFormProps> = ({ isLoading, children, est
     [basicFees]
   );
 
-  const initialValues = {
+  const initialValues: GasAmountFormValues = {
     gasFee: basicFees.gasFee.plus(1e-4),
     storageFee: basicFees.storageFee,
     sliderValue: 0

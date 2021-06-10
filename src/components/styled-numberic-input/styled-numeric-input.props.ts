@@ -7,7 +7,5 @@ export interface StyledNumericInputProps
   extends Pick<StyledTextInputProps, 'editable' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'> {
   value?: BigNumber;
   decimals?: number;
-  min?: BigNumber;
-  max?: BigNumber;
   onChange?: EventFn<BigNumber | undefined>;
 }

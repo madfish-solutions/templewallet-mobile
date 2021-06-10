@@ -13,8 +13,6 @@ const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   decimals = 6,
   value,
-  min = DEFAULT_MIN_VALUE,
-  max = DEFAULT_MAX_VALUE,
   editable,
   isError,
   isShowCleanButton,
@@ -40,7 +38,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
       normalizedStringValue = normalizedStringValue.substring(0, indexOfDot + decimals + 1);
     }
 
-    if (newValue.gte(min) && newValue.lte(max)) {
+    if (newValue.gte(DEFAULT_MIN_VALUE) && newValue.lte(DEFAULT_MAX_VALUE)) {
       setStringValue(normalizedStringValue);
       onChange(normalizedStringValue !== '' ? newValue : undefined);
     }

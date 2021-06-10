@@ -4,44 +4,27 @@ import React, { FC } from 'react';
 
 import { StyledNumericInput } from '../components/styled-numberic-input/styled-numeric-input';
 import { StyledNumericInputProps } from '../components/styled-numberic-input/styled-numeric-input.props';
-import { emptyFn } from '../config/general';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props
-  extends Pick<StyledNumericInputProps, 'decimals' | 'min' | 'max' | 'editable' | 'isShowCleanButton' | 'onChange'> {
+interface Props extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 'isShowCleanButton'> {
   name: string;
 }
 
-export const FormNumericInput: FC<Props> = ({
-  name,
-  decimals,
-  min,
-  max,
-  editable,
-  isShowCleanButton,
-  onChange = emptyFn
-}) => {
+export const FormNumericInput: FC<Props> = ({ name, decimals, editable, isShowCleanButton }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
-
-  const handleChange = (newValue?: BigNumber) => {
-    helpers.setValue(newValue);
-    onChange(newValue);
-  };
 
   return (
     <>
       <StyledNumericInput
         value={field.value}
         decimals={decimals}
-        min={min}
-        max={max}
         editable={editable}
         isError={isError}
         isShowCleanButton={isShowCleanButton}
         onBlur={field.onBlur(name)}
-        onChange={handleChange}
+        onChange={helpers.setValue}
       />
       <ErrorMessage meta={meta} />
     </>

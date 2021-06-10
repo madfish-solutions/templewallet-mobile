@@ -65,14 +65,15 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
     [basicFees.gasFee]
   );
 
-  const handleGasFeeChange = (newGasFee?: BigNumber) => {
-    let newSliderValue = 0;
-    isDefined(newGasFee) && (newSliderValue = Math.min(sliderMaxValue, Math.max(sliderMinValue, newGasFee.toNumber())));
+  const totalFee = useMemo(() => {
+    const gasFee = values.gasFee ?? new BigNumber(0);
+    const storageFee = values.storageFee ?? 0;
 
+    const newSliderValue = Math.min(sliderMaxValue, Math.max(sliderMinValue, gasFee.toNumber()));
     setFieldValue('sliderValue', newSliderValue);
-  };
 
-  const totalFee = (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0);
+    return gasFee.plus(storageFee);
+  }, [values.gasFee, values.storageFee]);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -81,25 +82,17 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
         <View style={styles.row}>
           <View style={styles.feeView}>
             <Text style={styles.feeLabel}>Gas fee:</Text>
-            {values.gasFee ? (
-              <>
-                <Text style={styles.feeAmount}>{values.gasFee.toFixed()} TEZ</Text>
-                <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
-              </>
-            ) : (
-              <Text style={styles.feeAmount}>Not defined</Text>
-            )}
+            <Text style={styles.feeAmount}>
+              {isDefined(values.gasFee) ? `${values.gasFee.toFixed()} TEZ` : 'Not defined'}
+            </Text>
+            <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
           </View>
           <View style={styles.feeView}>
             <Text style={styles.feeLabel}>Storage fee:</Text>
-            {values.storageFee ? (
-              <>
-                <Text style={styles.feeAmount}>{values.storageFee.toFixed()} TEZ</Text>
-                <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
-              </>
-            ) : (
-              <Text style={styles.feeAmount}>Not defined</Text>
-            )}
+            <Text style={styles.feeAmount}>
+              {isDefined(values.storageFee) ? `${values.storageFee.toFixed()} TEZ` : 'Not defined'}
+            </Text>
+            <Text style={styles.feeAmountUsd}>(XXX.XX $)</Text>
           </View>
         </View>
         <Divider size={formatSize(32)} />
@@ -129,7 +122,7 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
               <Divider size={formatSize(16)} />
 
               <Label description="Gas fee:" />
-              <FormNumericInput name="gasFee" decimals={6} isShowCleanButton={true} onChange={handleGasFeeChange} />
+              <FormNumericInput name="gasFee" decimals={6} isShowCleanButton={true} />
 
               <Label description="Storage fee:" />
               <FormNumericInput name="storageFee" decimals={6} isShowCleanButton={true} />

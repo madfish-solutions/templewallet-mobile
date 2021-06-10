@@ -8,7 +8,7 @@ import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { tezos$ } from './network/network.util';
 import { ReadOnlySigner } from './read-only.signer.util';
 
-export const estimate = async ({ params }: EstimateInterface, publicKey: string, publicKeyHash: string) => {
+const estimate = async ({ params }: EstimateInterface, publicKey: string, publicKeyHash: string) => {
   const tezos = await of(new ReadOnlySigner(publicKeyHash, publicKey))
     .pipe(
       withLatestFrom(tezos$),
