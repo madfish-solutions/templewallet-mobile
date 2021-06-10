@@ -40,7 +40,7 @@ export const Welcome = () => {
 
         <ButtonLargeSecondary
           title="Import existing Wallet"
-          iconName={IconNameEnum.Download}
+          iconName={IconNameEnum.DownloadCloud}
           onPress={() => navigate(ScreensEnum.ImportAccount)}
         />
         <Divider size={formatSize(43)} />
