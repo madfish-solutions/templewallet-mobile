@@ -19,6 +19,7 @@ import { useNavigation } from '../../../navigator/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
+import { isDefined } from '../../../utils/is-defined';
 import { useGasAmountFormContentStyles } from './gas-amount-form-content.styles';
 import { GasAmountFormValues } from './gas-amount-form.form';
 
@@ -59,16 +60,16 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
     );
   };
 
-  const sliderMinValue = useMemo(() => basicFees.gasFee.plus(1e-4).toNumber(), [basicFees.gasFee]);
-  const sliderMaxValue = useMemo(() => basicFees.gasFee.plus(2e-4).toNumber(), [basicFees.gasFee]);
+  const [sliderMinValue, sliderMaxValue] = useMemo<[number, number]>(
+    () => [basicFees.gasFee.plus(1e-4).toNumber(), basicFees.gasFee.plus(2e-4).toNumber()],
+    [basicFees.gasFee]
+  );
 
   const handleGasFeeChange = (newGasFee?: BigNumber) => {
-    if (newGasFee) {
-      const newSliderValue = Math.min(sliderMaxValue, Math.max(sliderMinValue, newGasFee.toNumber()));
-      setFieldValue('sliderValue', newSliderValue);
-    } else {
-      setFieldValue('sliderValue', 0);
-    }
+    let newSliderValue = 0;
+    isDefined(newGasFee) && (newSliderValue = Math.min(sliderMaxValue, Math.max(sliderMinValue, newGasFee.toNumber())));
+
+    setFieldValue('sliderValue', newSliderValue);
   };
 
   const totalFee = (values.gasFee ?? new BigNumber(0)).plus(values.storageFee ?? 0);
@@ -124,14 +125,14 @@ export const GasAmountFormContent: FC<GasAmountFormContentProps> = ({
           <View style={[styles.row, conditionalStyle(!shouldShowDetailedSettings, styles.hidden)]}>
             <View style={styles.feeInputForm}>
               <Label description="Total:" />
-              <StyledNumericInput decimals={6} value={totalFee} editable={false} />
+              <StyledNumericInput value={totalFee} decimals={6} editable={false} />
               <Divider size={formatSize(16)} />
 
               <Label description="Gas fee:" />
-              <FormNumericInput decimals={6} name="gasFee" isShowCleanButton onChange={handleGasFeeChange} />
+              <FormNumericInput name="gasFee" decimals={6} isShowCleanButton={true} onChange={handleGasFeeChange} />
 
               <Label description="Storage fee:" />
-              <FormNumericInput decimals={6} name="storageFee" isShowCleanButton />
+              <FormNumericInput name="storageFee" decimals={6} isShowCleanButton={true} />
             </View>
             {estimationWasSuccessful && (
               <View>

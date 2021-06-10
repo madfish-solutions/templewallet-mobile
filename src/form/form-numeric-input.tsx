@@ -3,18 +3,14 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 
 import { StyledNumericInput } from '../components/styled-numberic-input/styled-numeric-input';
-import { emptyFn, EventFn } from '../config/general';
+import { StyledNumericInputProps } from '../components/styled-numberic-input/styled-numeric-input.props';
+import { emptyFn } from '../config/general';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props {
+interface Props
+  extends Pick<StyledNumericInputProps, 'decimals' | 'min' | 'max' | 'editable' | 'isShowCleanButton' | 'onChange'> {
   name: string;
-  decimals?: number;
-  isShowCleanButton?: boolean;
-  min?: BigNumber;
-  max?: BigNumber;
-  onChange?: EventFn<BigNumber | undefined>;
-  editable?: boolean;
 }
 
 export const FormNumericInput: FC<Props> = ({
@@ -37,13 +33,13 @@ export const FormNumericInput: FC<Props> = ({
   return (
     <>
       <StyledNumericInput
+        value={field.value}
         decimals={decimals}
-        editable={editable}
-        isShowCleanButton={isShowCleanButton}
         min={min}
         max={max}
-        value={field.value}
+        editable={editable}
         isError={isError}
+        isShowCleanButton={isShowCleanButton}
         onBlur={field.onBlur(name)}
         onChange={handleChange}
       />

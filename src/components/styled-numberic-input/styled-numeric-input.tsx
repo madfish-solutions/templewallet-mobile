@@ -2,27 +2,19 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
-import { emptyFn, EventFn } from '../../config/general';
+import { emptyFn } from '../../config/general';
 import { isDefined } from '../../utils/is-defined';
-import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
+import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { StyledNumericInputProps } from './styled-numeric-input.props';
 
-interface Props
-  extends Pick<StyledTextInputProps, 'editable' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'> {
-  decimals?: number;
-  value?: BigNumber;
-  min?: BigNumber;
-  max?: BigNumber;
-  onChange?: EventFn<BigNumber | undefined>;
-}
+const DEFAULT_MIN_VALUE = new BigNumber(0);
+const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 
-const defaultMin = new BigNumber(0);
-const defaultMax = new BigNumber(Number.MAX_SAFE_INTEGER);
-
-export const StyledNumericInput: FC<Props> = ({
+export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   decimals = 6,
   value,
-  min = defaultMin,
-  max = defaultMax,
+  min = DEFAULT_MIN_VALUE,
+  max = DEFAULT_MAX_VALUE,
   editable,
   isError,
   isShowCleanButton,
