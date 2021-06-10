@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { CurrentRouteNameContext } from '../current-route-name.context';
 import {
@@ -14,7 +15,6 @@ import {
 } from '../screens.enum';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
-import { formatSize } from '../../styles/format-size';
 
 export const TabBar: FC = () => {
   const styles = useTabBarStyles();

@@ -18,14 +18,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export const TabBarButton: FC<Props> = ({
-  label,
-  iconName,
-  iconWidth,
-  routeName,
-  focused,
-  disabled = false
-}) => {
+export const TabBarButton: FC<Props> = ({ label, iconName, iconWidth, routeName, focused, disabled = false }) => {
   const colors = useColors();
   const styles = useTabBarButtonStyles();
   const { navigate } = useNavigation();
