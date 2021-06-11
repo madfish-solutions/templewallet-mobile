@@ -71,14 +71,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress })
               </FormCheckbox>
             </View>
             <CheckboxLabel>
-              <Text>I have read and agree to</Text>
-              <Text>
-                <>
-                  the <TextLink url={termsOfUse}>Terms of Usage</TextLink>
-                  <Text> and </Text>
-                </>
-                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-              </Text>
+              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Usage</TextLink> and{' '}
+              <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
             </CheckboxLabel>
 
             <Divider />

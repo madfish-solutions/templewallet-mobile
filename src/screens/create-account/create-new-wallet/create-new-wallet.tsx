@@ -67,10 +67,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onFormSubmitted }) =
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </FormCheckbox>
             </View>
-            <CheckboxLabel>
-              <Text>And accept the risks that if I lose the phrase,</Text>
-              <Text>my funds may be lost.</Text>
-            </CheckboxLabel>
+            <CheckboxLabel>And accept the risks that if I lose the phrase,{'\n'}my funds may be lost.</CheckboxLabel>
 
             <Divider />
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
