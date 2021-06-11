@@ -7,7 +7,7 @@ import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { useNavigation } from '../navigator/use-navigation.hook';
-import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
+import { addHdAccountAction, clearSeedPhraseAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { tezos$ } from '../utils/network/network.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
@@ -35,6 +35,7 @@ export const useShelter = () => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
+            dispatch(clearSeedPhraseAction());
           }
         }),
       createHdAccount$

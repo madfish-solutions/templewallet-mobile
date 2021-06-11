@@ -47,6 +47,8 @@ export const useVisibleTokensListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
+export const useSubmittedSeedPhraseSelector = () => useWalletSelector().submittedSeedPhrase;
+
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
 
 export const useAddTokenSuggestion = () => useWalletSelector().addTokenSuggestion.data;
