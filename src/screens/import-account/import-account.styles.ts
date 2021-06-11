@@ -9,6 +9,9 @@ export const useImportAccountStyles = createUseStyles(({ colors, typography }) =
     ...typography.body15Semibold,
     color: colors.black
   },
+  labelContainer: {
+    marginHorizontal: formatSize(6)
+  },
   labelWrapper: {
     flexDirection: 'row',
     flexWrap: 'wrap'

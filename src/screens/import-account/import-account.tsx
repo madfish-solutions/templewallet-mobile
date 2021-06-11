@@ -1,20 +1,19 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { TextLink } from '../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../config/socials';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormMnemonicInput } from '../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { formatSize } from '../../styles/format-size';
-import { openUrl } from '../../utils/linking.util';
 import {
   ImportAccountFormValues,
   importAccountInitialValues,
@@ -53,23 +52,15 @@ export const ImportAccount = () => {
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
             </View>
-            <Label
-              description={
-                <>
-                  <Text style={styles.labelText}>I have read and agree to</Text>
-                  <View style={styles.labelWrapper}>
-                    <Text style={styles.labelText}>the </Text>
-                    <TouchableOpacity onPress={() => openUrl(termsOfUse)}>
-                      <Text style={styles.link}>Terms of Usage</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.labelText}> and </Text>
-                    <TouchableOpacity onPress={() => openUrl(privacyPolicy)}>
-                      <Text style={styles.link}>Privacy Policy</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              }
-            />
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>I have read and agree to</Text>
+              <Text style={styles.labelText}>
+                <Text>the </Text>
+                <TextLink url={termsOfUse}>Terms of Usage</TextLink>
+                <Text> and </Text>
+                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+              </Text>
+            </View>
 
             <ButtonLargePrimary title="Import" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
             <InsetSubstitute type="bottom" />
