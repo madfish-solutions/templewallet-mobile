@@ -10,7 +10,7 @@ export interface WalletState {
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
-  submittedSeedPhrase?: string;
+  submittedSeedPhrase: string;
 }
 
 export const walletInitialState: WalletState = {
@@ -23,7 +23,8 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadata)
+  addTokenSuggestion: createEntity(emptyTokenMetadata),
+  submittedSeedPhrase: ''
 };
 
 export interface WalletRootState {

@@ -14,7 +14,7 @@ import { Label } from '../../../components/label/label';
 import { NewSeedPhraseAttention } from '../../../components/new-seed-phrase-attention/new-seed-phrase-attention';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../../form/form-checkbox';
-import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
+import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
 import { submitSeedPhraseAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import {
@@ -55,7 +55,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onFormSubmitted }) =
           <Divider size={formatSize(12)} />
           <View style={styles.seedPhraseInputContainer}>
             <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
-            <FormMnemonicInput name="seedPhrase" />
+            <FormMnemonicCreate name="seedPhrase" />
           </View>
 
           <View>

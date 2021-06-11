@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { HeaderProgress } from '../../components/header/header-progress/header-progress';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { CreateNewPassword } from './create-new-password/create-new-password';
-import { CreateNewWallet } from './create-new-wallet/create-new-wallet';
+import { ImportWallet } from './import-wallet/import-wallet';
 
 export const ImportAccount = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
@@ -17,7 +17,7 @@ export const ImportAccount = () => {
 
   return (
     <>
-      {innerScreenIndex === 0 && <CreateNewWallet onFormSubmitted={() => setInnerScreenIndex(1)} />}
+      {innerScreenIndex === 0 && <ImportWallet onFormSubmitted={() => setInnerScreenIndex(1)} />}
       {innerScreenIndex === 1 && <CreateNewPassword onGoBackPress={() => setInnerScreenIndex(0)} />}
     </>
   );
