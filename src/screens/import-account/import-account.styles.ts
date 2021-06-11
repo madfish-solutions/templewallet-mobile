@@ -8,5 +8,12 @@ export const useImportAccountStyles = createUseStyles(({ colors, typography }) =
   checkboxText: {
     ...typography.body15Semibold,
     color: colors.black
+  },
+  labelContainer: {
+    marginHorizontal: formatSize(6)
+  },
+  labelText: {
+    ...typography.caption11Regular,
+    color: colors.gray1
   }
 }));

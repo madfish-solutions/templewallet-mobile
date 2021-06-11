@@ -7,6 +7,8 @@ import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { TextLink } from '../../components/text-link/text-link';
+import { privacyPolicy, termsOfUse } from '../../config/socials';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormMnemonicInput } from '../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../form/form-password-input';
@@ -50,10 +52,15 @@ export const ImportAccount = () => {
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
             </View>
-            <Label
-              description="I have read and agree to
-the Terms of Usage and Privacy Policy"
-            />
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>I have read and agree to</Text>
+              <Text style={styles.labelText}>
+                <Text>the </Text>
+                <TextLink url={termsOfUse}>Terms of Usage</TextLink>
+                <Text> and </Text>
+                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+              </Text>
+            </View>
 
             <ButtonLargePrimary title="Import" disabled={!isValid} marginTop={formatSize(24)} onPress={submitForm} />
             <InsetSubstitute type="bottom" />
