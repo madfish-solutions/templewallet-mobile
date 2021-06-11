@@ -4,9 +4,11 @@ import { HeaderProgress } from '../../components/header/header-progress/header-p
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 import { CreateNewWallet } from './create-new-wallet/create-new-wallet';
+import { CreateNewWalletFormValues } from './create-new-wallet/create-new-wallet.form';
 
 export const CreateAccount = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
+  const [seedPhrase, setSeedPhrase] = useState('');
 
   useNavigationSetOptions(
     {
@@ -15,10 +17,17 @@ export const CreateAccount = () => {
     [innerScreenIndex]
   );
 
+  const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase }: CreateNewWalletFormValues) => {
+    setSeedPhrase(newSeedPhrase);
+    setInnerScreenIndex(1);
+  };
+
   return (
     <>
-      {innerScreenIndex === 0 && <CreateNewWallet onFormSubmitted={() => setInnerScreenIndex(1)} />}
-      {innerScreenIndex === 1 && <CreateNewPassword onGoBackPress={() => setInnerScreenIndex(0)} />}
+      {innerScreenIndex === 0 && <CreateNewWallet onSubmit={handleImportWalletFormSubmit} />}
+      {innerScreenIndex === 1 && (
+        <CreateNewPassword seedPhrase={seedPhrase} onGoBackPress={() => setInnerScreenIndex(0)} />
+      )}
     </>
   );
 };

@@ -1,7 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
@@ -15,7 +14,6 @@ import { NewSeedPhraseAttention } from '../../../components/new-seed-phrase-atte
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
-import { submitSeedPhraseAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import {
   createNewWalletInitialValues,
@@ -25,17 +23,11 @@ import {
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
 
 type CreateNewWalletProps = {
-  onFormSubmitted: () => void;
+  onSubmit: (formValues: CreateNewWalletFormValues) => void;
 };
 
-export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onFormSubmitted }) => {
-  const dispatch = useDispatch();
+export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onSubmit }) => {
   const styles = useCreateNewWalletStyles();
-
-  const handleSubmit = ({ seedPhrase }: CreateNewWalletFormValues) => {
-    dispatch(submitSeedPhraseAction(seedPhrase));
-    onFormSubmitted();
-  };
 
   useNavigationSetOptions(
     {
@@ -49,7 +41,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onFormSubmitted }) =
     <Formik
       initialValues={createNewWalletInitialValues}
       validationSchema={createNewWalletValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <Divider size={formatSize(12)} />

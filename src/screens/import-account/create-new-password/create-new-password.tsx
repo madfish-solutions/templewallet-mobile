@@ -17,7 +17,6 @@ import { privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useSubmittedSeedPhraseSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import {
   createNewPasswordInitialValues,
@@ -28,12 +27,12 @@ import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 type CreateNewPasswordProps = {
   onGoBackPress: () => void;
+  seedPhrase: string;
 };
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
-  const seedPhrase = useSubmittedSeedPhraseSelector();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
     importWallet(seedPhrase, password);

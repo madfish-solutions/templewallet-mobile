@@ -1,7 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../components/divider/divider';
@@ -12,23 +11,16 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
-import { submitSeedPhraseAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { importWalletInitialValues, importWalletValidationSchema, ImportWalletFormValues } from './import-wallet.form';
 import { useImportWalletStyles } from './import-wallet.styles';
 
 type ImportWalletProps = {
-  onFormSubmitted: () => void;
+  onSubmit: (formValues: ImportWalletFormValues) => void;
 };
 
-export const ImportWallet: FC<ImportWalletProps> = ({ onFormSubmitted }) => {
-  const dispatch = useDispatch();
+export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
   const styles = useImportWalletStyles();
-
-  const handleSubmit = ({ seedPhrase }: ImportWalletFormValues) => {
-    dispatch(submitSeedPhraseAction(seedPhrase));
-    onFormSubmitted();
-  };
 
   useNavigationSetOptions(
     {
@@ -42,7 +34,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onFormSubmitted }) => {
     <Formik
       initialValues={importWalletInitialValues}
       validationSchema={importWalletValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <Divider size={formatSize(12)} />

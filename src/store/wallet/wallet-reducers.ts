@@ -15,7 +15,6 @@ import {
   loadTokenMetadataActions,
   removeTokenAction,
   setSelectedAccountAction,
-  submitSeedPhraseAction,
   toggleTokenVisibilityAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
@@ -46,11 +45,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(loadTezosBalanceActions.fail, (state, { payload: error }) =>
     updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', false, error) }))
   );
-
-  builder.addCase(submitSeedPhraseAction, (state, { payload }) => ({
-    ...state,
-    submittedSeedPhrase: payload
-  }));
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
     tokenBalancesList.reduce((prevState, tokenBalance) => {
