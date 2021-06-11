@@ -54,7 +54,10 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onFormSubmitted }) =
         <ScreenContainer isFullScreenMode={true}>
           <Divider size={formatSize(12)} />
           <View style={styles.seedPhraseInputContainer}>
-            <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
+            <Label
+              label="Seed phrase"
+              description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
+            />
             <FormMnemonicCreate name="seedPhrase" />
           </View>
 
