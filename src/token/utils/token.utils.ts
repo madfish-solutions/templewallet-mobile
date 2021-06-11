@@ -5,25 +5,17 @@ import assert, { AssertionError } from '../../utils/assert.utils';
 
 export const tokenMetadataSlug = <T extends { address: string; id?: number }>({ address, id }: T) => `${address}_${id}`;
 
-function signatureAssertionFactory(name: string, args: string[]) {
-  return (contract: WalletContract) => {
-    const signatures = contract.parameterSchema.ExtractSignatures();
-    const receivedSignature = signatures.find(signature => signature[0] === name);
-    assert(receivedSignature);
-    const receivedArgs = receivedSignature.slice(1);
-    assert(receivedArgs.length === args.length);
-    receivedArgs.forEach((receivedArg, index) => assert(receivedArg === args[index]));
-  };
-}
+const signatureAssertionFactory = (name: string, args: string[]) => (contract: WalletContract) => {
+  const signatures = contract.parameterSchema.ExtractSignatures();
+  const receivedSignature = signatures.find(signature => signature[0] === name);
 
-function viewSuccessAssertionFactory(name: string, args: any[]) {
-  return async (contract: WalletContract, tezos: TezosToolkit) => {
-    assert(contract.views[name]);
-    await contract.views[name](...args).read((tezos as any).lambdaContract);
-  };
-}
+  assert(receivedSignature);
+  const receivedArgs = receivedSignature.slice(1);
 
-const STUB_TEZOS_ADDRESS = 'tz1TTXUmQaxe1dTLPtyD4WMQP6aKYK9C8fKw';
+  assert(receivedArgs.length === args.length);
+  receivedArgs.forEach((receivedArg, index) => assert(receivedArg === args[index]));
+};
+
 const FA12_METHODS_ASSERTIONS = [
   {
     name: 'transfer',
@@ -58,8 +50,7 @@ const FA2_METHODS_ASSERTIONS = [
   },
   {
     name: 'balance_of',
-    assertion: (contract: WalletContract, tezos: TezosToolkit, tokenId: number) =>
-      viewSuccessAssertionFactory('balance_of', [[{ owner: STUB_TEZOS_ADDRESS, token_id: tokenId }]])(contract, tezos)
+    assertion: signatureAssertionFactory('balance_of', ['list'])
   }
 ];
 
@@ -85,15 +76,15 @@ export async function assertTokenType(
   await Promise.all(
     assertions.map(async ({ name, assertion }) => {
       if (typeof contract.methods[name] !== 'function') {
-        throw new NotMatchingStandardError(`'${name}' method isn't defined in contract`);
+        throw new Error(`'${name}' method isn't defined in contract`);
       }
       try {
         await assertion(contract, tezos, tokenId!);
       } catch (e) {
         if (e instanceof AssertionError) {
-          throw new NotMatchingStandardError(`The signature of method '${name}' doesn't match standard`);
+          throw new Error(`The signature of method '${name}' doesn't match standard`);
         } else if (e.value?.string === 'FA2_TOKEN_UNDEFINED') {
-          throw new IncorrectTokenIdError('Incorrect token ID');
+          throw new Error('Incorrect token ID');
         } else {
           throw new Error(`An unknown error occurred while checking '${name}' entrypoint`);
         }
@@ -102,20 +93,14 @@ export async function assertTokenType(
   );
 }
 
+// TODO: check this  when sending tokens
 export async function assertFA2TokenContract(contract: WalletContract) {
-  const assertions = FA2_METHODS_ASSERTIONS.slice(0, 2) as {
-    name: string;
-    assertion: (contract: WalletContract) => void;
-  }[];
   await Promise.all(
-    assertions.map(async ({ name, assertion }) => {
+    FA2_METHODS_ASSERTIONS.map(async ({ name, assertion }) => {
       if (typeof contract.methods[name] !== 'function') {
-        throw new NotMatchingStandardError(`'${name}' method isn't defined in contract`);
+        throw new Error(`'${name}' method isn't defined in contract`);
       }
       await assertion(contract);
     })
   );
 }
-
-export class NotMatchingStandardError extends Error {}
-export class IncorrectTokenIdError extends Error {}

@@ -10,6 +10,7 @@ export const XTZ_TOKEN_METADATA: AssetMetadataInterface = {
 
 export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
+    id: 0,
     address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
     name: 'Tezos BTC',
     symbol: 'tzBTC',
@@ -17,6 +18,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.TzBtcToken
   },
   {
+    id: 0,
     address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
     name: 'Kolibri',
     symbol: 'kUSD',
@@ -24,12 +26,14 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.KUsdToken
   },
   {
+    id: 0,
     address: 'KT1AxaBxkFLCUi3f8rdDAAxBKHfzY8LfKDRA',
     name: 'Quipuswap Liquidating kUSD',
     symbol: 'QLkUSD',
     decimals: 36
   },
   {
+    id: 0,
     address: 'KT1VYsVfmobT7rsMVivvZ4J8i3bPiqz12NaH',
     name: 'Wrapped Tezos',
     symbol: 'wXTZ',
@@ -45,6 +49,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.UsdSToken
   },
   {
+    id: 0,
     address: 'KT19at7rQUvyjxnZ2fBv7D9zc8rkyG7gAoU8',
     name: 'ETH Tez',
     symbol: 'ETHtz',
@@ -52,6 +57,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.EthTzToken
   },
   {
+    id: 0,
     address: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',
     name: 'USD Tez',
     symbol: 'USDtz',
@@ -59,6 +65,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.UsdTzToken
   },
   {
+    id: 0,
     address: 'KT1AEfeckNbdEYwaMKkytBwPJPycz7jdSGea',
     name: 'Staker Governance Token',
     symbol: 'STKR',
@@ -66,6 +73,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     iconName: IconNameEnum.StkrToken
   },
   {
+    id: 0,
     address: 'KT1MEouXPpCx9eFJYnxfAWpFA7NxhW3rDgUN',
     name: 'Blend',
     symbol: 'BLND',

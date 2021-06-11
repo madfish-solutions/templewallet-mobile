@@ -1,7 +1,7 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
 export interface TokenMetadataInterface {
-  id?: number;
+  id: number;
   address: string;
   name: string;
   symbol: string;
@@ -10,11 +10,13 @@ export interface TokenMetadataInterface {
   iconUrl?: string;
 }
 
-export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'address'> {
+export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'id' | 'address'> {
+  id?: number;
   address?: string;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {
+  id: 0,
   address: '',
   name: '',
   symbol: '',

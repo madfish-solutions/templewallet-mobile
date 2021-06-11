@@ -18,7 +18,7 @@ export interface TokenBalanceInterface {
   symbol?: string;
   tags: string[];
   thumbnail_uri?: string;
-  token_id?: number;
+  token_id: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   token_info?: any;
   volume_24_hours?: number;

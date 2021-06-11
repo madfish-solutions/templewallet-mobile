@@ -11,7 +11,6 @@ import { betterCallDevApi } from '../../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { assertFA2TokenContract } from '../../token/utils/token.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { loadTezosBalanceActions, loadTokenBalancesActions, loadTokenMetadataActions } from './wallet-actions';
@@ -21,8 +20,7 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
     withLatestFrom(currentNetworkId$),
-    withLatestFrom(tezos$),
-    switchMap(([[address, currentNetworkId], tezos]) =>
+    switchMap(([address, currentNetworkId]) =>
       from(
         betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
           `/account/${currentNetworkId}/${address}/token_balances`,
@@ -31,24 +29,7 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
           }
         )
       ).pipe(
-        switchMap(({ data }) =>
-          from(
-            Promise.all(
-              data.balances.map(async balance => {
-                try {
-                  await assertFA2TokenContract(await tezos.wallet.at(balance.contract));
-
-                  return balance;
-                } catch (e) {
-                  return {
-                    ...balance,
-                    token_id: undefined
-                  };
-                }
-              })
-            )
-          ).pipe(map(finalData => loadTokenBalancesActions.success(finalData)))
-        ),
+        map(({ data }) => loadTokenBalancesActions.success(data.balances)),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -74,23 +55,7 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([{ id, address }, tezos]) =>
       from(tezos.wallet.at(address, compose(tzip12, tzip16))).pipe(
-        switchMap(async contract => {
-          try {
-            if (id === undefined) {
-              throw new Error();
-            }
-
-            return contract.tzip12().getTokenMetadata(id);
-          } catch {
-            const tzip16Metadata = await contract.tzip16().getMetadata();
-
-            return {
-              token_id: 0,
-              decimals: 0,
-              ...tzip16Metadata
-            };
-          }
-        }),
+        switchMap(contract => contract.tzip12().getTokenMetadata(id)),
         map((tokenMetadata: TokenMetadataSuggestionInterface) =>
           loadTokenMetadataActions.success({
             id,

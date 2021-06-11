@@ -29,7 +29,7 @@ import { tzToMutez } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
 export const SendModal: FC = () => {
-  const asset = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params.asset;
+  const { asset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack, navigate } = useNavigation();
   const hdAccounts = useHdAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -47,12 +47,12 @@ export const SendModal: FC = () => {
       .pipe(
         withLatestFrom(tezos$),
         switchMap(([data, tezos]) => {
-          const tokenAddress = asset.address;
+          const { id, address, decimals } = asset;
 
-          return isDefined(tokenAddress)
-            ? from(tezos.wallet.at(tokenAddress)).pipe(
+          return isDefined(address)
+            ? from(tezos.wallet.at(address)).pipe(
                 switchMap(contract => {
-                  const transferParamsObserver = isDefined(asset.id)
+                  const transferParamsObserver = isDefined(id)
                     ? of(
                         contract.methods
                           .transfer([
@@ -61,8 +61,8 @@ export const SendModal: FC = () => {
                               txs: [
                                 {
                                   to_: data.recipient,
-                                  token_id: asset.id,
-                                  amount: tzToMutez(data.amount, asset.decimals).toString()
+                                  token_id: id,
+                                  amount: tzToMutez(data.amount, decimals).toString()
                                 }
                               ]
                             }
@@ -74,7 +74,7 @@ export const SendModal: FC = () => {
                           .transfer(
                             selectedAccount.publicKeyHash,
                             data.recipient,
-                            tzToMutez(data.amount, asset.decimals).toString()
+                            tzToMutez(data.amount, decimals).toString()
                           )
                           .toTransferParams()
                       );
@@ -97,7 +97,7 @@ export const SendModal: FC = () => {
                 [
                   {
                     kind: OpKind.TRANSACTION,
-                    amount: tzToMutez(data.amount, asset.decimals).toString(),
+                    amount: tzToMutez(data.amount, decimals).toString(),
                     to: data.recipient,
                     mutez: true
                   }

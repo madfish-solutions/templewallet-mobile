@@ -10,7 +10,6 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
     flexDirection: 'row'
   },
   recipientView: {
-    flexDirection: 'column',
     alignItems: 'flex-end'
   },
   arrowContainer: {
@@ -57,12 +56,10 @@ export const useOpsDetailsStyles = createUseStyles(({ colors, typography }) => (
   },
   accountTitle: {
     marginLeft: formatSize(10),
-    flexDirection: 'column',
     justifyContent: 'space-between'
   },
   balanceSection: {
     marginRight: formatSize(16),
-    flexDirection: 'column',
     justifyContent: 'flex-end'
   },
   balanceLabel: {

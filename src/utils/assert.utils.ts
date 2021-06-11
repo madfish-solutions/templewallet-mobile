@@ -1,3 +1,5 @@
+import { isDefined } from './is-defined';
+
 export class AssertionError extends Error {
   constructor(message?: string, public actual?: unknown) {
     super(message);
@@ -5,7 +7,7 @@ export class AssertionError extends Error {
 }
 
 export default function assert(value: unknown): asserts value {
-  if (!value) {
+  if (!isDefined(value)) {
     throw new AssertionError(`The value ${value} is not truthy`, value);
   }
 }
