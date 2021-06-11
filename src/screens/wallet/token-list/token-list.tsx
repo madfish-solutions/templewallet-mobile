@@ -55,7 +55,7 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <ScreenContainer>
+      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (

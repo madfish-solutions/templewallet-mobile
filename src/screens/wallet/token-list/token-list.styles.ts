@@ -2,6 +2,10 @@ import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
 export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
+  contentContainerStyle: {
+    paddingRight: 0,
+    paddingLeft: formatSize(16)
+  },
   headerContainer: {
     height: formatSize(40),
     flexDirection: 'row',
