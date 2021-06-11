@@ -10,7 +10,6 @@ import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
   addTokenMetadataAction,
-  clearSeedPhraseAction,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -51,10 +50,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(submitSeedPhraseAction, (state, { payload }) => ({
     ...state,
     submittedSeedPhrase: payload
-  }));
-  builder.addCase(clearSeedPhraseAction, state => ({
-    ...state,
-    submittedSeedPhrase: undefined
   }));
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>

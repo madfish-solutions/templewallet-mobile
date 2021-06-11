@@ -17,7 +17,6 @@ export const loadTokenMetadataActions =
   );
 
 export const submitSeedPhraseAction = createAction<string>('wallet/SUBMIT_SEED_PHRASE_ACTION');
-export const clearSeedPhraseAction = createAction('wallet/CLEAR_SEED_PHRASE_ACTION');
 
 export const addTokenMetadataAction = createAction<TokenMetadataInterface>('wallet/ADD_TOKEN_METADATA');
 export const removeTokenAction = createAction<string>('wallet/REMOVE_TOKEN');
