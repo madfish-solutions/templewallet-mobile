@@ -1,7 +1,7 @@
 import { WalletContract } from '@taquito/taquito';
 
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
-import assert from '../../utils/assert.utils';
+import { assert } from '../../utils/assert.utils';
 import { TokenMethodsAssertionInterface } from '../interfaces/token-methods-assertion.interface';
 
 const signatureAssertionFactory = (name: string, args: string[]) => (contract: WalletContract) => {
