@@ -11,7 +11,7 @@ export const useSearchContainerStyles = createUseStyles(({ colors, typography })
     color: colors.black,
     height: formatSize(28),
     width: formatSize(128),
-    paddingVertical: formatSize(8),
+    paddingVertical: 0,
     paddingHorizontal: formatSize(12),
     backgroundColor: colors.input,
     borderRadius: formatSize(10)

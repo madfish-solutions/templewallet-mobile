@@ -6,6 +6,7 @@ export const useTokenContainerStyles = createUseStyles(({ colors, typography }) 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingRight: formatSize(16),
     paddingVertical: formatSize(12),
     borderBottomWidth: formatSize(0.5),
     borderColor: colors.lines
