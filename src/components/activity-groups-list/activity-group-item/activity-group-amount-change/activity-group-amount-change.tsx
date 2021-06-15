@@ -24,15 +24,16 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
           const { decimals, symbol } = getTokenMetadata(tokenSlug);
 
           const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
-          const isPositive = parsedAmount.isPositive();
+          const roundedAmount = parsedAmount.decimalPlaces(parsedAmount.abs().lt(1000) ? 6 : 2, BigNumber.ROUND_DOWN);
+          const isPositive = roundedAmount.isPositive();
 
           return {
-            parsedAmount,
+            roundedAmount,
             isPositive,
             symbol
           };
         })
-        .filter(({ parsedAmount }) => !parsedAmount.isEqualTo(0)),
+        .filter(({ roundedAmount }) => !roundedAmount.isEqualTo(0)),
     [group, getTokenMetadata]
   );
 
@@ -40,10 +41,10 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   return (
     <View style={styles.container}>
-      {nonZeroAmounts.map(({ parsedAmount, isPositive, symbol }, index) => (
+      {nonZeroAmounts.map(({ roundedAmount, isPositive, symbol }, index) => (
         <Text key={index} style={[styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)]}>
           {isPositive && '+'}
-          {parsedAmount.toString()} {symbol}
+          {roundedAmount.toFixed()} {symbol}
         </Text>
       ))}
 
