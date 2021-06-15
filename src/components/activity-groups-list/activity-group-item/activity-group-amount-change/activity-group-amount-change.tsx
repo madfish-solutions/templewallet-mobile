@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { useTokenMetadata } from '../../../../hooks/use-token-metadata.hook';
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
@@ -24,16 +25,15 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
           const { decimals, symbol } = getTokenMetadata(tokenSlug);
 
           const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
-          const roundedAmount = parsedAmount.decimalPlaces(parsedAmount.abs().lt(1000) ? 6 : 2, BigNumber.ROUND_DOWN);
-          const isPositive = roundedAmount.isPositive();
+          const isPositive = parsedAmount.isPositive();
 
           return {
-            roundedAmount,
+            parsedAmount,
             isPositive,
             symbol
           };
         })
-        .filter(({ roundedAmount }) => !roundedAmount.isEqualTo(0)),
+        .filter(({ parsedAmount }) => !parsedAmount.isEqualTo(0)),
     [group, getTokenMetadata]
   );
 
@@ -41,10 +41,10 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   return (
     <View style={styles.container}>
-      {nonZeroAmounts.map(({ roundedAmount, isPositive, symbol }, index) => (
+      {nonZeroAmounts.map(({ parsedAmount, isPositive, symbol }, index) => (
         <Text key={index} style={[styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)]}>
           {isPositive && '+'}
-          {roundedAmount.toFixed()} {symbol}
+          {formatAssetAmount(parsedAmount)} {symbol}
         </Text>
       ))}
 
