@@ -3,63 +3,66 @@ import { WalletParamsWithKind, OpKind } from '@taquito/taquito';
 import { OpPreview, OpPreviewType, Token } from './types';
 
 export function getOpPreview(op: WalletParamsWithKind): OpPreview {
-  switch (op.kind) {
-    case OpKind.DELEGATION:
+  if (op.kind === OpKind.DELEGATION) {
+    // Delegate
+    return {
+      type: OpPreviewType.Delegate,
+      baker: op.delegate
+    };
+  } else if (op.kind === OpKind.TRANSACTION) {
+    // Tezos send
+    if (!op.parameter && op.amount > 0) {
       return {
-        type: OpPreviewType.Delegate,
-        baker: op.delegate
+        type: OpPreviewType.Send,
+        transfers: [
+          {
+            asset: 'tez',
+            recipient: op.to,
+            amount: op.amount.toString()
+          }
+        ]
       };
+    }
 
-    case OpKind.TRANSACTION:
-      if (!op.parameter && op.amount > 0) {
+    if (op.parameter) {
+      // Tokens send
+      const tokenTransfers = tryParseTokenTransfers(op.parameter, op.to);
+      if (tokenTransfers.length > 0) {
         return {
           type: OpPreviewType.Send,
-          transfers: [
-            {
-              asset: 'tez',
-              recipient: op.to,
-              amount: op.amount.toString()
-            }
-          ]
+          transfers: tokenTransfers.map(({ token, to, amount }) => ({
+            asset: token,
+            recipient: to,
+            amount
+          }))
         };
       }
 
-      if (op.parameter) {
-        const tokenTransfers = tryParseTokenTransfers(op.parameter, op.to);
-        if (tokenTransfers.length > 0) {
-          return {
-            type: OpPreviewType.Send,
-            transfers: tokenTransfers.map(({ token, to, amount }) => ({
-              asset: token,
-              recipient: to,
-              amount
-            }))
-          };
-        }
-
-        const fa1_2Approve = tryParseFA1_2Approve(op.parameter, op.to);
-        if (fa1_2Approve) {
-          return {
-            type: OpPreviewType.FA1_2Approve,
-            asset: fa1_2Approve.token,
-            approveTo: fa1_2Approve.to,
-            amount: fa1_2Approve.amount
-          };
-        }
-
+      // FA1.2 Token Approve
+      const fa1_2Approve = tryParseFA1_2Approve(op.parameter, op.to);
+      if (fa1_2Approve) {
         return {
-          type: OpPreviewType.ContractCall,
-          contract: op.to,
-          entrypoint: op.parameter.entrypoint
+          type: OpPreviewType.FA1_2Approve,
+          asset: fa1_2Approve.token,
+          approveTo: fa1_2Approve.to,
+          amount: fa1_2Approve.amount
         };
       }
 
-    default:
+      // Smart contract call
       return {
-        type: OpPreviewType.Other,
-        opKind: op.kind
+        type: OpPreviewType.ContractCall,
+        contract: op.to,
+        entrypoint: op.parameter.entrypoint
       };
+    }
   }
+
+  // Rest...
+  return {
+    type: OpPreviewType.Other,
+    opKind: op.kind
+  };
 }
 
 /**
