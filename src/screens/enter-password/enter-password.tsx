@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Keyboard, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
@@ -15,6 +15,7 @@ import { FormPasswordInput } from '../../form/form-password-input';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
+import { useKeyboardShown } from '../../utils/keyboard.util';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -26,19 +27,9 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
-  const [keyboardShown, setKeyboardShown] = useState(false);
+  const keyboardShown = useKeyboardShown();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
-
-  useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardShown(false));
-
-    return () => {
-      showListener.remove();
-      hideListener.remove();
-    };
-  }, []);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>

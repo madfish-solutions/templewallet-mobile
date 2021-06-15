@@ -24,6 +24,7 @@ import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
+import { useKeyboardShown } from '../utils/keyboard.util';
 import { ScreensEnum, ScreensParamList } from './screens.enum';
 import { TabBar } from './tab-bar/tab-bar';
 import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
@@ -35,6 +36,7 @@ const isConfirmation = false;
 export const MainStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const keyboardShown = useKeyboardShown();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   return (
@@ -123,7 +125,7 @@ export const MainStackScreen = () => {
           )}
         </MainStack.Navigator>
 
-        {isAuthorised && <TabBar />}
+        {isAuthorised && !keyboardShown && <TabBar />}
       </PortalProvider>
 
       {isAuthorised && (
