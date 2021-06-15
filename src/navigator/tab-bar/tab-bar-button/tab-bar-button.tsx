@@ -5,8 +5,8 @@ import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
-import { ScreensEnum } from '../../screens.enum';
-import { useNavigation } from '../../use-navigation.hook';
+import { ScreensEnum } from '../../enums/screens.enum';
+import { useNavigation } from '../../hooks/use-navigation.hook';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
 interface Props {

@@ -16,8 +16,8 @@ import { WhiteContainerAction } from '../../components/white-container/white-con
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
-import { ScreensEnum } from '../../navigator/screens.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { changeTheme } from '../../store/display-settings/display-settings-actions';
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';

@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React from 'react';
 
 import { emptyFn } from '../../config/general';
-import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
 import {

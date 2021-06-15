@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { FC } from 'react';
 
-import { AccountInterface } from '../../interfaces/account.interface';
-import { ModalsEnum } from '../../navigator/modals.enum';
-import { ScreensEnum } from '../../navigator/screens.enum';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,
@@ -15,7 +15,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { accountEqualityFn } from './account-equality-fn';
 
-const renderAccountValue: DropdownValueComponent<AccountInterface> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ value }) => (
   <AccountDropdownItem account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
 );
 
@@ -40,7 +40,11 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-export const CurrentAccountDropdown: FC<DropdownValueProps<AccountInterface>> = ({ value, list, onValueChange }) => (
+export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>> = ({
+  value,
+  list,
+  onValueChange
+}) => (
   <Dropdown
     title="Accounts"
     value={value}

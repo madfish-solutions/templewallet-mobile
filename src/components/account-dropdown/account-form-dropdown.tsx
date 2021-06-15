@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import { FormDropdown } from '../../form/form-dropdown';
-import { AccountInterface } from '../../interfaces/account.interface';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -10,10 +10,10 @@ import { accountEqualityFn } from './account-equality-fn';
 
 interface Props {
   name: string;
-  list: AccountInterface[];
+  list: WalletAccountInterface[];
 }
 
-const renderAccountValue: DropdownValueComponent<AccountInterface> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ value }) => (
   <DropdownItemContainer>
     <AccountDropdownItem account={value} actionIconName={IconNameEnum.TriangleDown} />
   </DropdownItemContainer>

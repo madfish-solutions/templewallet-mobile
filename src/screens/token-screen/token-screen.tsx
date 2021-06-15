@@ -10,7 +10,7 @@ import { PublicKeyHashText } from '../../components/public-key-hash-text/public-
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
-import { ScreensEnum, ScreensParamList } from '../../navigator/screens.enum';
+import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TokenInfo } from './token-info/token-info';

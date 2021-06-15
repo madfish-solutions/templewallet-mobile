@@ -10,7 +10,7 @@ interface Props extends Pick<StyledTextInputProps, 'multiline' | 'editable' | 'i
 }
 
 export const FormTextInput: FC<Props> = ({ name, multiline = false, editable, isShowCleanButton }) => {
-  const [field, meta] = useField<string>(name);
+  const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
   return (
@@ -21,7 +21,7 @@ export const FormTextInput: FC<Props> = ({ name, multiline = false, editable, is
         editable={editable}
         isError={isError}
         isShowCleanButton={isShowCleanButton}
-        onBlur={field.onBlur(name)}
+        onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
       />
       <ErrorMessage meta={meta} />

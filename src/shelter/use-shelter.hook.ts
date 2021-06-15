@@ -1,20 +1,18 @@
 import { InMemorySigner } from '@taquito/signer';
-import { WalletOperation, OpKind } from '@taquito/taquito';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { merge, of, Subject, throwError } from 'rxjs';
-import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
-import { useNavigation } from '../navigator/use-navigation.hook';
+import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { pushActivityAction } from '../store/activity/activity-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { tezos$ } from '../utils/network/network.util';
-import { mapParamsWithKindToPartialActivities } from '../utils/operation.utils';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
@@ -65,37 +63,12 @@ export const useShelter = () => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
+            const batch = tezos.wallet.batch(params);
 
-            let operation: Promise<WalletOperation>;
-            let activityGroup: Omit<ActivityInterface, 'status' | 'hash' | 'timestamp' | 'source'>[];
-            let successMessage: string;
-            if (params instanceof Array) {
-              const batch = tezos.wallet.batch(params);
+            const activityGroup: Omit<ActivityInterface, 'status' | 'hash' | 'timestamp' | 'source'>[] = [];
+            const successMessage = 'Operations batch sent! Confirming...';
 
-              operation = batch.send();
-              activityGroup = mapParamsWithKindToPartialActivities(from, params);
-              successMessage = 'Operations batch sent! Confirming...';
-            } else {
-              activityGroup = mapParamsWithKindToPartialActivities(from, [params]);
-              switch (params.kind) {
-                case OpKind.ORIGINATION:
-                  operation = tezos.wallet.originate(params).send();
-                  successMessage = 'Contract origination request sent! Confirming...';
-                  break;
-                case OpKind.DELEGATION:
-                  operation = tezos.wallet.setDelegate(params).send();
-                  successMessage = 'Delegation request sent! Confirming...';
-                  break;
-                case OpKind.TRANSACTION:
-                  operation = tezos.wallet.transfer(params).send();
-                  successMessage = 'Transaction sent! Confirming...';
-                  break;
-                default:
-                  throw new Error('Params of this kind are not supported yet');
-              }
-            }
-
-            const { opHash: operationHash } = await operation;
+            const { opHash: operationHash } = await batch.send();
             const timestamp = Date.now();
 
             return {

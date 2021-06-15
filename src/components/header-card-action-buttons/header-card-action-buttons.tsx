@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
 import { emptyFn } from '../../config/general';
-import { ModalsEnum } from '../../navigator/modals.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { ButtonMedium } from '../button/button-medium/button-medium';

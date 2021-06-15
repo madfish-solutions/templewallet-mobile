@@ -1,6 +1,6 @@
-import { ConfirmPayload } from '../interfaces/confirm-payload/confirm-payload.type';
-import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
-import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
+import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -8,7 +8,7 @@ export enum ModalsEnum {
   AddToken = 'AddToken',
   CreateHdAccount = 'CreateHdAccount',
   SelectBaker = 'SelectBaker',
-  Confirm = 'Confirm',
+  Confirmation = 'Confirmation',
   RevealSeedPhrase = 'RevealSeedPhrase',
   RevealPrivateKey = 'RevealPrivateKey'
 }
@@ -19,7 +19,7 @@ export type ModalsParamList = {
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
   [ModalsEnum.SelectBaker]: undefined;
-  [ModalsEnum.Confirm]: ConfirmPayload;
+  [ModalsEnum.Confirmation]: ConfirmationModalParams;
   [ModalsEnum.RevealSeedPhrase]: { account?: WalletAccountInterface };
   [ModalsEnum.RevealPrivateKey]: { account: WalletAccountInterface };
 };

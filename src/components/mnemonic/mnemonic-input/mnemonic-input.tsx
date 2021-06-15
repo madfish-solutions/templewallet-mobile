@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC, useRef, useState } from 'react';
-import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../../config/general';
 import { isString } from '../../../utils/is-string';
@@ -18,9 +18,9 @@ export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText 
 
   const isShowOverlay = !isFocused && isString(value);
 
-  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+  const handleBlur = () => {
     setIsFocused(false);
-    onBlur(e);
+    onBlur();
   };
 
   const handlePasteButtonPress = async () => {

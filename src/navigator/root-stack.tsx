@@ -1,13 +1,12 @@
 import { PortalProvider } from '@gorhom/portal';
-import { NavigationContainerRef } from '@react-navigation/core';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { Alert, Linking } from 'react-native';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
-import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
+import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
@@ -15,23 +14,24 @@ import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
+import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
+import { ScreensEnum } from './enums/screens.enum';
+import { useStatusBarStyle } from './hooks/use-status-bar-style.hook';
 import { MainStackScreen } from './main-stack';
-import { ModalsEnum, ModalsParamList } from './modals.enum';
-import { ScreensEnum } from './screens.enum';
-import { useStatusBarStyle } from './use-status-bar-style.hook';
+
+export const globalNavigationRef = createRef<NavigationContainerRef>();
 
 type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
-  const navigationRef = useRef<NavigationContainerRef>(null);
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useStatusBarStyle();
 
   const handleNavigationContainerStateChange = () =>
-    setCurrentRouteName(navigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+    setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
   useEffect(() => {
     const listener = ({ url }: { url: string }) => Alert.alert('Got URL', url, [{ text: 'OK' }]);
@@ -43,7 +43,7 @@ export const RootStackScreen = () => {
 
   return (
     <NavigationContainer
-      ref={navigationRef}
+      ref={globalNavigationRef}
       onReady={handleNavigationContainerStateChange}
       onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
@@ -85,8 +85,8 @@ export const RootStackScreen = () => {
               options={useModalOptions('Reveal Private key')}
             />
             <RootStack.Screen
-              name={ModalsEnum.Confirm}
-              component={ConfirmModal}
+              name={ModalsEnum.Confirmation}
+              component={ConfirmationModal}
               options={useModalOptions('Confirm Operation')}
             />
           </RootStack.Navigator>

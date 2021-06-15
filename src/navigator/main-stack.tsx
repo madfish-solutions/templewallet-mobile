@@ -24,9 +24,9 @@ import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { ScreensEnum, ScreensParamList } from './screens.enum';
+import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
+import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
-import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 

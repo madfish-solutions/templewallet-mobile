@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
+import { EmptyFn, emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { isString } from '../../utils/is-string';
@@ -13,6 +13,7 @@ export interface StyledTextInputProps extends Omit<TextInputProps, 'style'> {
   isError?: boolean;
   isPasswordInput?: boolean;
   isShowCleanButton?: boolean;
+  onBlur?: EmptyFn;
 }
 
 export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
@@ -24,12 +25,18 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
       isPasswordInput = false,
       isShowCleanButton = false,
       onChangeText = emptyFn,
+      onBlur = emptyFn,
       ...props
     },
     ref
   ) => {
     const styles = useStyledTextInputStyles();
     const colors = useColors();
+
+    const handleCleanButtonPress = () => {
+      onChangeText('');
+      onBlur();
+    };
 
     return (
       <View style={styles.view}>
@@ -49,7 +56,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
         />
         {isShowCleanButton && isString(value) && (
           <View style={styles.cleanButton}>
-            <TouchableIcon size={formatSize(16)} name={IconNameEnum.InputXCircle} onPress={() => onChangeText('')} />
+            <TouchableIcon size={formatSize(16)} name={IconNameEnum.InputXCircle} onPress={handleCleanButtonPress} />
           </View>
         )}
       </View>

@@ -3,9 +3,9 @@ import { object, SchemaOf } from 'yup';
 
 export const assetAmountValidation: SchemaOf<BigNumber> = object()
   .shape({})
-  .test('non-negative', 'Should be non-negative', value => {
+  .test('is-greater-than', 'Should be greater than 0', value => {
     if (value instanceof BigNumber) {
-      return value.gte(0);
+      return value.gt(0);
     }
 
     return false;

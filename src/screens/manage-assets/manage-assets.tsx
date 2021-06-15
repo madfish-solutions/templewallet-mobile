@@ -7,8 +7,8 @@ import { PlusCircleButton } from '../../components/plus-circle-button/plus-circl
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
-import { ModalsEnum } from '../../navigator/modals.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { ManageAssetsItem } from './manage-assets-item/manage-assets-item';

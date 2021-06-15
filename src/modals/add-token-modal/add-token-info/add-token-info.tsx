@@ -15,7 +15,7 @@ import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { addTokenMetadataAction } from '../../../store/wallet/wallet-actions';
-import { useAddTokenSuggestion } from '../../../store/wallet/wallet-selectors';
+import { useAddTokenSuggestionSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
@@ -27,7 +27,7 @@ interface Props {
 
 export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
-  const tokenSuggestion = useAddTokenSuggestion();
+  const tokenSuggestion = useAddTokenSuggestionSelector();
   const initialValues = {
     ...tokenSuggestion,
     decimals: new BigNumber(tokenSuggestion.decimals)

@@ -1,11 +1,8 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { OpKind } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
-import { from, of, Subject } from 'rxjs';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { useDispatch } from 'react-redux';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -17,108 +14,43 @@ import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormNumericInput } from '../../form/form-numeric-input';
 import { FormTextInput } from '../../form/form-text-input';
-import { ConfirmPayloadTypeEnum } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
-import { InternalOperationsPayload } from '../../interfaces/confirm-payload/internal-operations-payload.interface';
-import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
-import { tezos$ } from '../../utils/network/network.util';
-import { tzToMutez } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
 export const SendModal: FC = () => {
+  const dispatch = useDispatch();
   const { asset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
-  const { goBack, navigate } = useNavigation();
+  const { goBack } = useNavigation();
+
   const hdAccounts = useHdAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const sendModalInitialValues: SendModalFormValues = {
-    account: selectedAccount,
-    amount: new BigNumber(0),
-    recipient: 'tz1L21Z9GWpyh1FgLRKew9CmF17AxQJZFfne'
-  };
+  const sendModalInitialValues = useMemo<SendModalFormValues>(
+    () => ({
+      sender: selectedAccount,
+      receiverPublicKeyHash: '',
+      amount: undefined
+    }),
+    [selectedAccount]
+  );
 
-  const onSubmit$ = useMemo(() => new Subject<SendModalFormValues>(), []);
-
-  useEffect(() => {
-    onSubmit$
-      .pipe(
-        withLatestFrom(tezos$),
-        switchMap(([data, tezos]) => {
-          const { id, address, decimals } = asset;
-
-          return isDefined(address)
-            ? from(tezos.wallet.at(address)).pipe(
-                switchMap(contract => {
-                  const transferParamsObserver = isDefined(id)
-                    ? of(
-                        contract.methods
-                          .transfer([
-                            {
-                              from_: selectedAccount.publicKeyHash,
-                              txs: [
-                                {
-                                  to_: data.recipient,
-                                  token_id: id,
-                                  amount: tzToMutez(data.amount, decimals).toString()
-                                }
-                              ]
-                            }
-                          ])
-                          .toTransferParams()
-                      )
-                    : of(
-                        contract.methods
-                          .transfer(
-                            selectedAccount.publicKeyHash,
-                            data.recipient,
-                            tzToMutez(data.amount, decimals).toString()
-                          )
-                          .toTransferParams()
-                      );
-
-                  return transferParamsObserver.pipe(
-                    map((transferParams): [SendModalFormValues, InternalOperationsPayload['operationsParams']] => [
-                      data,
-                      [
-                        {
-                          kind: OpKind.TRANSACTION,
-                          ...transferParams
-                        }
-                      ]
-                    ])
-                  );
-                })
-              )
-            : of<[SendModalFormValues, InternalOperationsPayload['operationsParams']]>([
-                data,
-                [
-                  {
-                    kind: OpKind.TRANSACTION,
-                    amount: tzToMutez(data.amount, decimals).toString(),
-                    to: data.recipient,
-                    mutez: true
-                  }
-                ]
-              ]);
+  const onSubmit = ({ sender, receiverPublicKeyHash, amount }: SendModalFormValues) =>
+    void (
+      isDefined(amount) &&
+      dispatch(
+        sendAssetActions.submit({
+          asset,
+          sender,
+          receiverPublicKeyHash,
+          amount: amount.toNumber()
         })
       )
-      .subscribe(([data, operationsParams]) => {
-        navigate(ModalsEnum.Confirm, {
-          type: ConfirmPayloadTypeEnum.InternalOperations,
-          sourcePublicKeyHash: data.account.publicKeyHash,
-          operationsParams
-        });
-      });
-
-    return () => {
-      onSubmit$.unsubscribe();
-    };
-  }, [asset, navigate, onSubmit$, selectedAccount.publicKeyHash]);
-  // TODO: integrate gasFee with send request
-  const onSubmit = (data: SendModalFormValues) => onSubmit$.next(data);
+    );
 
   return (
     <Formik
@@ -130,11 +62,11 @@ export const SendModal: FC = () => {
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="From" description="Select account to send from." />
-            <AccountFormDropdown name="account" list={hdAccounts} />
+            <AccountFormDropdown name="sender" list={hdAccounts} />
             <Divider />
 
-            <Label label="To" description="Address or Tezos domain to send tez funds to." />
-            <FormTextInput name="recipient" />
+            <Label label="To" description={`Address or Tezos domain to send ${asset.symbol} funds to.`} />
+            <FormTextInput name="receiverPublicKeyHash" />
             <Divider />
 
             <Label label="Amount" description={`Set ${asset.symbol} amount to send.`} />

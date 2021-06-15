@@ -5,10 +5,5 @@ export const useConfirmModalStyles = createUseStyles(({ colors, typography }) =>
     ...typography.body17Semibold,
     textAlign: 'center',
     color: colors.destructive
-  },
-  loadingMessage: {
-    ...typography.body17Semibold,
-    textAlign: 'center',
-    color: colors.black
   }
 }));

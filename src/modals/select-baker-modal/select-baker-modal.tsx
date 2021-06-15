@@ -1,22 +1,23 @@
+import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, FlatList, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
 import { SearchInput } from '../../components/search-input/search-input';
 import { BakerInterface } from '../../interfaces/baker.interface';
-import { ConfirmPayloadTypeEnum } from '../../interfaces/confirm-payload/confirm-payload-type.enum';
-import { ModalsEnum } from '../../navigator/modals.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from '../../store/baking/baking-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { SelectBakerItem } from './select-baker-item/select-baker-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
@@ -35,14 +36,12 @@ export const SelectBakerModal: FC = () => {
   const debouncedSetSearchValue = debounce(setSearchValue);
 
   const handleNextPress = () => {
-    if (!selectedBaker) {
-      return;
-    }
-    navigate(ModalsEnum.Confirm, {
-      type: ConfirmPayloadTypeEnum.InternalOperations,
-      operationsParams: [{ kind: 'delegation', delegate: selectedBaker.address }],
-      sourcePublicKeyHash: selectedAccount.publicKeyHash
-    });
+    isDefined(selectedBaker) &&
+      navigate(ModalsEnum.Confirmation, {
+        type: ConfirmationTypeEnum.InternalOperations,
+        sender: selectedAccount,
+        opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address }]
+      });
   };
 
   useEffect(() => {
@@ -101,15 +100,11 @@ export const SelectBakerModal: FC = () => {
         windowSize={10}
       />
 
-      <View style={styles.buttonsContainer}>
-        <ButtonsContainer>
-          <ButtonLargeSecondary title="Close" onPress={goBack} />
-          <Divider size={formatSize(16)} />
-          <ButtonLargePrimary title="Next" disabled={!selectedBaker} onPress={handleNextPress} />
-        </ButtonsContainer>
-
-        <InsetSubstitute type="bottom" />
-      </View>
+      <ModalButtonsContainer>
+        <ButtonLargeSecondary title="Close" onPress={goBack} />
+        <Divider size={formatSize(16)} />
+        <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
+      </ModalButtonsContainer>
     </>
   );
 };

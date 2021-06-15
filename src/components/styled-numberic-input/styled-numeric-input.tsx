@@ -49,9 +49,9 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
     onFocus(evt);
   };
 
-  const handleBlur = (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+  const handleBlur = () => {
     setFocused(false);
-    onBlur(evt);
+    onBlur();
   };
 
   return (

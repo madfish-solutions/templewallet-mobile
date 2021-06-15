@@ -8,8 +8,8 @@ import { ButtonSmallSecondary } from '../../../components/button/button-small/bu
 import { Divider } from '../../../components/divider/divider';
 import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { ModalsEnum } from '../../../navigator/modals.enum';
-import { useNavigation } from '../../../navigator/use-navigation.hook';
+import { ModalsEnum } from '../../../navigator/enums/modals.enum';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';

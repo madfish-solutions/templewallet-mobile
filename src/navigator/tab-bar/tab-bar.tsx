@@ -12,7 +12,7 @@ import {
   settingsStackScreens,
   swapStackScreens,
   walletStackScreens
-} from '../screens.enum';
+} from '../enums/screens.enum';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 

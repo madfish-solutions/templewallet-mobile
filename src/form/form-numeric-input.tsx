@@ -23,7 +23,7 @@ export const FormNumericInput: FC<Props> = ({ name, decimals, editable, isShowCl
         editable={editable}
         isError={isError}
         isShowCleanButton={isShowCleanButton}
-        onBlur={field.onBlur(name)}
+        onBlur={() => helpers.setTouched(true)}
         onChange={helpers.setValue}
       />
       <ErrorMessage meta={meta} />

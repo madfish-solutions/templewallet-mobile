@@ -1,7 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-export type GasAmountFormValues = {
+export interface FeeFormInputValues {
   gasFee?: BigNumber;
   storageFee?: BigNumber;
-  sliderValue: number;
-};
+}

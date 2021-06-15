@@ -16,12 +16,5 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
   },
   flatList: {
     paddingHorizontal: formatSize(16)
-  },
-  buttonsContainer: {
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16),
-    backgroundColor: colors.navigation,
-    borderTopWidth: formatSize(0.5),
-    borderColor: colors.lines
   }
 }));
