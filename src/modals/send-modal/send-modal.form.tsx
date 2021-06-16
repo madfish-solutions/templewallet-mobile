@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
-import { assetAmountValidation } from '../../form/validation/asset-amount';
+import { bigNumberValidation } from '../../form/validation/big-number';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 
 export interface SendModalFormValues {
@@ -13,5 +13,14 @@ export interface SendModalFormValues {
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
   sender: object().shape({}).required(),
   receiverPublicKeyHash: string().required(),
-  amount: assetAmountValidation.required()
+  amount: bigNumberValidation
+    .clone()
+    .test('is-greater-than', 'Should be greater than 0', value => {
+      if (value instanceof BigNumber) {
+        return value.gt(0);
+      }
+
+      return false;
+    })
+    .required()
 });

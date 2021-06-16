@@ -46,10 +46,6 @@ interface OtherParamPreviewInterface extends ParamPreviewBaseInterface {
 // TODO: replace this type with AssetMetadataInterface
 type Asset = 'tez' | Token;
 
-interface FA2Token extends Token {
-  id: number;
-}
-
 export interface Token {
   contract: string;
   id?: number;

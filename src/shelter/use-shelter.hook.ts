@@ -1,5 +1,4 @@
 import { InMemorySigner } from '@taquito/signer';
-import { WalletParamsWithKind } from '@taquito/taquito';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { merge, of, Subject, throwError } from 'rxjs';
@@ -50,32 +49,27 @@ export const useShelter = () => {
 
       send$
         .pipe(
-          switchMap(({ publicKeyHash, opParams }) =>
+          switchMap(({ publicKeyHash, opParams, successCallback }) =>
             Shelter.revealSecretKey$(publicKeyHash).pipe(
               switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, WalletParamsWithKind[]] => [privateKey, opParams])
-            )
-          ),
-          withLatestFrom(tezos$),
-          switchMap(async ([[privateKey, opParams], tezos]) => {
-            tezos.setProvider({
-              signer: new InMemorySigner(privateKey)
-            });
+              withLatestFrom(tezos$),
+              switchMap(([privateKey, tezos]) => {
+                tezos.setProvider({
+                  signer: new InMemorySigner(privateKey)
+                });
 
-            return tezos.wallet.batch(opParams).send();
-          })
+                return tezos.wallet.batch(opParams).send();
+              }),
+              map(({ opHash }) => ({ opHash, successCallback }))
+            )
+          )
         )
         .subscribe(
-          ({ opHash }) => {
-            console.log(opHash);
-            // dispatch(pushActivityAction(activityGroup));
+          ({ opHash, successCallback }) => {
+            successCallback(opHash);
             showSuccessToast('Sent successfully');
-            goBack();
           },
-          error => {
-            showErrorToast(`Error while sending operations: ${error.message}`);
-            goBack();
-          }
+          error => showErrorToast(error.message)
         ),
 
       merge(

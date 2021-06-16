@@ -16,6 +16,7 @@ import { SendModal } from '../modals/send-modal/send-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
+import { StacksEnum } from './enums/stacks.enum';
 import { useStatusBarStyle } from './hooks/use-status-bar-style.hook';
 import { MainStackScreen } from './main-stack';
 
@@ -55,7 +56,11 @@ export const RootStackScreen = () => {
               gestureEnabled: true,
               ...TransitionPresets.ModalPresentationIOS
             }}>
-            <RootStack.Screen name="MainStack" component={MainStackScreen} options={{ headerShown: false }} />
+            <RootStack.Screen
+              name={StacksEnum.MainStack}
+              component={MainStackScreen}
+              options={{ headerShown: false }}
+            />
 
             <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
             <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />

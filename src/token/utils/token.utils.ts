@@ -1,5 +1,4 @@
-import { WalletContract } from '@taquito/taquito';
-
+import { ContractType } from '../../interfaces/contract.type';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 
@@ -11,8 +10,7 @@ export const validateToken = (tokenType: TokenTypeEnum) => {
   const assertions = TokenMethodsAssertionsMap[tokenType];
 };
 
-// TODO: check token type when sending tokens
-export const getTokenType = (contract: WalletContract) => {
+export const getTokenType = (contract: ContractType) => {
   const assertions = TokenMethodsAssertionsMap[TokenTypeEnum.FA_2];
 
   try {

@@ -1,10 +1,9 @@
-import { WalletContract } from '@taquito/taquito';
-
+import { ContractType } from '../../interfaces/contract.type';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { assert } from '../../utils/assert.utils';
 import { TokenMethodsAssertionInterface } from '../interfaces/token-methods-assertion.interface';
 
-const signatureAssertionFactory = (name: string, args: string[]) => (contract: WalletContract) => {
+const signatureAssertionFactory = (name: string, args: string[]) => (contract: ContractType) => {
   const signatures = contract.parameterSchema.ExtractSignatures();
   const receivedSignature = signatures.find(signature => signature[0] === name);
 

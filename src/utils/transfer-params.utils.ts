@@ -4,8 +4,10 @@ import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { tzToMutez } from './tezos.util';
 
@@ -19,9 +21,9 @@ export const getTransferParams$ = (
   const { id, address, decimals } = asset;
 
   return isDefined(address)
-    ? from(tezos.wallet.at(address)).pipe(
+    ? from(tezos.contract.at(address)).pipe(
         map(contract =>
-          isDefined(id)
+          getTokenType(contract) === TokenTypeEnum.FA_2
             ? contract.methods.transfer([
                 {
                   from_: sender.publicKeyHash,
@@ -29,7 +31,7 @@ export const getTransferParams$ = (
                     {
                       to_: receiverPublicKeyHash,
                       token_id: id,
-                      amount: tzToMutez(amount, decimals).toString()
+                      amount: tzToMutez(amount, decimals).toFixed()
                     }
                   ]
                 }
@@ -37,7 +39,7 @@ export const getTransferParams$ = (
             : contract.methods.transfer(
                 sender.publicKeyHash,
                 receiverPublicKeyHash,
-                tzToMutez(amount, decimals).toString()
+                tzToMutez(amount, decimals).toFixed()
               )
         ),
         map(contractMethod => contractMethod.toTransferParams())

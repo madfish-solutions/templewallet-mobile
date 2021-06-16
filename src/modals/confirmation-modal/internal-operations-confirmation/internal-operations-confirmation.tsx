@@ -11,6 +11,7 @@ import { ButtonLargeSecondary } from '../../../components/button/button-large/bu
 import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { StacksEnum } from '../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
@@ -31,7 +32,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
   const styles = useInternalOperationsConfirmationStyles();
   const dispatch = useDispatch();
   const { send } = useShelter();
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
 
   const estimations = useEstimationsSelector();
   const { basicFees, estimationWasSuccessful, formValidationSchema, formInitialValues } = useFeeForm(estimations.data);
@@ -39,8 +40,6 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
   useEffect(() => void dispatch(loadEstimationsActions.submit({ sender, opParams })), []);
 
   const handleSubmit = ({ gasFee, storageFee }: FeeFormInputValues) => {
-    console.log('submit');
-
     if (isDefined(gasFee) && isDefined(storageFee)) {
       let params: WalletParamsWithKind[] = opParams;
 
@@ -66,11 +65,12 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
         });
       }
 
-      console.log('SEND');
-
       send({
         publicKeyHash: sender.publicKeyHash,
-        opParams: params
+        opParams: params,
+        successCallback: (opHash: string) => {
+          navigate(StacksEnum.MainStack);
+        }
       });
     }
   };

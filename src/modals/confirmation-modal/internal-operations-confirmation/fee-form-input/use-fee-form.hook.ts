@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
-import { assetAmountValidation } from '../../../../form/validation/asset-amount';
+import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { mutezToTz } from '../../../../utils/tezos.util';
 
@@ -30,7 +30,7 @@ export const useFeeForm = (estimationsList: EstimationInterface[]) => {
         storageFee: basicFees.storageFee
       },
       formValidationSchema: object().shape({
-        gasFee: assetAmountValidation
+        gasFee: bigNumberValidation
           .clone()
           .test('min-gas-fee', `Minimal value is ${basicFees.gasFee.toFixed()}`, value => {
             if (value instanceof BigNumber) {
@@ -40,7 +40,7 @@ export const useFeeForm = (estimationsList: EstimationInterface[]) => {
             return false;
           })
           .required(),
-        storageFee: assetAmountValidation
+        storageFee: bigNumberValidation
           .clone()
           .test('min-storage-fee', `Minimal value is ${basicFees.storageFee.toFixed()}`, value => {
             if (value instanceof BigNumber) {

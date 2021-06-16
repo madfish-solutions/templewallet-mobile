@@ -1,6 +1,6 @@
-import { WalletContract } from '@taquito/taquito';
+import { ContractType } from '../../interfaces/contract.type';
 
 export interface TokenMethodsAssertionInterface {
   name: string;
-  assertionFn: (contract: WalletContract) => void;
+  assertionFn: (contract: ContractType) => void;
 }
