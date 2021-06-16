@@ -1,14 +1,12 @@
 import { InMemorySigner } from '@taquito/signer';
+import { WalletParamsWithKind } from '@taquito/taquito';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { merge, of, Subject, throwError } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
-import { ActivityStatusEnum } from '../enums/activity-status.enum';
-import { ActivityInterface } from '../interfaces/activity.interface';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { pushActivityAction } from '../store/activity/activity-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
@@ -52,41 +50,26 @@ export const useShelter = () => {
 
       send$
         .pipe(
-          switchMap(({ from, params }) =>
-            Shelter.revealSecretKey$(from).pipe(
+          switchMap(({ publicKeyHash, opParams }) =>
+            Shelter.revealSecretKey$(publicKeyHash).pipe(
               switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, SendParams] => [privateKey, { from, params }])
+              map((privateKey): [string, WalletParamsWithKind[]] => [privateKey, opParams])
             )
           ),
           withLatestFrom(tezos$),
-          switchMap(async ([[privateKey, { from, params }], tezos]) => {
+          switchMap(async ([[privateKey, opParams], tezos]) => {
             tezos.setProvider({
               signer: new InMemorySigner(privateKey)
             });
-            const batch = tezos.wallet.batch(params);
 
-            const activityGroup: Omit<ActivityInterface, 'status' | 'hash' | 'timestamp' | 'source'>[] = [];
-            const successMessage = 'Operations batch sent! Confirming...';
-
-            const { opHash: operationHash } = await batch.send();
-            const timestamp = Date.now();
-
-            return {
-              successMessage,
-              activityGroup: activityGroup.map(activityProps => ({
-                ...activityProps,
-                status: ActivityStatusEnum.Pending,
-                hash: operationHash,
-                timestamp,
-                source: { address: from }
-              }))
-            };
+            return tezos.wallet.batch(opParams).send();
           })
         )
         .subscribe(
-          ({ successMessage, activityGroup }) => {
-            dispatch(pushActivityAction(activityGroup));
-            showSuccessToast(successMessage);
+          ({ opHash }) => {
+            console.log(opHash);
+            // dispatch(pushActivityAction(activityGroup));
+            showSuccessToast('Sent successfully');
             goBack();
           },
           error => {

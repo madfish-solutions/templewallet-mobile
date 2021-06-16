@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { AccountDropdownItem } from '../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
@@ -24,6 +23,7 @@ import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useFeeForm } from './fee-form-input/use-fee-form.hook';
 import { useInternalOperationsConfirmationStyles } from './internal-operations-confirmation.styles';
+import { OperationsPreview } from './operations-preview/operations-preview';
 
 type Props = Omit<ConfirmationModalParams, 'type'>;
 
@@ -39,6 +39,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
   useEffect(() => void dispatch(loadEstimationsActions.submit({ sender, opParams })), []);
 
   const handleSubmit = ({ gasFee, storageFee }: FeeFormInputValues) => {
+    console.log('submit');
+
     if (isDefined(gasFee) && isDefined(storageFee)) {
       let params: WalletParamsWithKind[] = opParams;
 
@@ -64,20 +66,14 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
         });
       }
 
+      console.log('SEND');
+
       send({
-        from: sender.publicKeyHash,
-        params
+        publicKeyHash: sender.publicKeyHash,
+        opParams: params
       });
     }
   };
-
-  if (estimations.isLoading) {
-    return (
-      <ScreenContainer isFullScreenMode={true}>
-        <Text style={styles.loadingMessage}>Loading...</Text>
-      </ScreenContainer>
-    );
-  }
 
   return (
     <Formik<FeeFormInputValues>
@@ -88,33 +84,44 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
       {({ values, setValues, isValid, isSubmitting, submitForm }) => (
         <>
           <ScreenContainer>
-            <Text style={styles.sectionTitle}>Account</Text>
-            <Divider />
+            {estimations.isLoading ? (
+              <Text style={styles.loadingMessage}>Loading...</Text>
+            ) : (
+              <>
+                <Text style={styles.sectionTitle}>Account</Text>
+                <Divider />
 
-            <AccountDropdownItem account={sender} />
-            <Divider />
+                <AccountDropdownItem account={sender} />
+                <Divider />
 
-            <Text style={styles.sectionTitle}>Preview</Text>
-            <Divider size={formatSize(12)} />
+                <Text style={styles.sectionTitle}>Preview</Text>
+                <Divider size={formatSize(12)} />
 
-            <View style={styles.divider} />
+                <View style={styles.divider} />
+                <Divider size={formatSize(8)} />
 
-            <DataPlaceholder text="Operations preview will be there soon" />
-            <Divider />
+                <OperationsPreview opParams={opParams} />
+                <Divider />
 
-            <FeeFormInput
-              values={values}
-              basicFees={basicFees}
-              estimationWasSuccessful={estimationWasSuccessful}
-              setValues={setValues}
-            />
+                <FeeFormInput
+                  values={values}
+                  basicFees={basicFees}
+                  estimationWasSuccessful={estimationWasSuccessful}
+                  setValues={setValues}
+                />
+              </>
+            )}
             <Divider />
           </ScreenContainer>
 
           <ModalButtonsContainer>
             <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={goBack} />
             <Divider size={formatSize(16)} />
-            <ButtonLargePrimary title="Confirm" disabled={isSubmitting || !isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Confirm"
+              disabled={estimations.isLoading || isSubmitting || !isValid}
+              onPress={submitForm}
+            />
           </ModalButtonsContainer>
         </>
       )}

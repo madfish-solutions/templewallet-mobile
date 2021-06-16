@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
-import { number, object } from 'yup';
+import { object } from 'yup';
 
 import { assetAmountValidation } from '../../../../form/validation/asset-amount';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
@@ -27,8 +27,7 @@ export const useFeeForm = (estimationsList: EstimationInterface[]) => {
     () => ({
       formInitialValues: {
         gasFee: basicFees.gasFee.plus(1e-4),
-        storageFee: basicFees.storageFee,
-        sliderValue: 0
+        storageFee: basicFees.storageFee
       },
       formValidationSchema: object().shape({
         gasFee: assetAmountValidation
@@ -50,8 +49,7 @@ export const useFeeForm = (estimationsList: EstimationInterface[]) => {
 
             return false;
           })
-          .required(),
-        sliderValue: number().required()
+          .required()
       })
     }),
     [basicFees]
