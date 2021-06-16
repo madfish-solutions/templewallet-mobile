@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Keyboard, KeyboardEvent, Platform } from 'react-native';
+import { Keyboard, KeyboardEvent } from 'react-native';
+
+import { isIOS } from '../config/system';
 
 export const useKeyboard = () => {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
@@ -15,7 +17,7 @@ export const useKeyboard = () => {
   }, []);
 
   useEffect(() => {
-    if (Platform.OS === 'ios') {
+    if (isIOS) {
       Keyboard.addListener('keyboardWillShow', handleKeyboardShow);
       Keyboard.addListener('keyboardWillHide', handleKeyboardHide);
     } else {
@@ -24,7 +26,7 @@ export const useKeyboard = () => {
     }
 
     return () => {
-      if (Platform.OS === 'ios') {
+      if (isIOS) {
         Keyboard.removeListener('keyboardWillShow', handleKeyboardShow);
         Keyboard.removeListener('keyboardWillHide', handleKeyboardHide);
       } else {

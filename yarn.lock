@@ -2171,14 +2171,6 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-animation@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/animation/-/animation-0.1.3.tgz#132bdfde017464b0daa7dfa138eec0608770e45e"
-  integrity sha1-Eyvf3gF0ZLDap9+hOO7AYIdw5F4=
-  dependencies:
-    ms ">= 0.1.0"
-    request-animation-frame ">= 0.1.0"
-
 anser@^1.4.9:
   version "1.4.10"
   resolved "https://registry.yarnpkg.com/anser/-/anser-1.4.10.tgz#befa3eddf282684bd03b63dcda3927aef8c2e35b"
@@ -6659,11 +6651,6 @@ ms@2.1.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-"ms@>= 0.1.0":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
-  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
-
 nanoclone@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/nanoclone/-/nanoclone-0.2.1.tgz#dd4090f8f1a110d26bb32c49ed2f5b9235209ed4"
@@ -8021,11 +8008,6 @@ repeat-string@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
-
-"request-animation-frame@>= 0.1.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/request-animation-frame/-/request-animation-frame-0.1.1.tgz#a70e1edf15fc6a7217bbf1f0a2dda9d7aa83d266"
-  integrity sha1-pw4e3xX8anIXu/Hwot2p16qD0mY=
 
 request-promise-core@1.1.4:
   version "1.1.4"

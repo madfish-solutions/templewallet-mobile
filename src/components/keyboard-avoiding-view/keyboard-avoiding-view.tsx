@@ -1,8 +1,10 @@
-import { animateTiming, ANIMATION_DURATION_FAST, useAnimationRef } from 'animation';
 import React, { FC, useEffect } from 'react';
 import { Animated } from 'react-native';
 
+import { ANIMATION_DURATION_FAST } from '../../config/animation';
+import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
 import { useKeyboard } from '../../hooks/use-keyboard.hook';
+import { animateTiming } from '../../utils/animate-timing.util';
 
 export const KeyboardAvoidingView: FC = ({ children }) => {
   const { keyboardHeight } = useKeyboard();
