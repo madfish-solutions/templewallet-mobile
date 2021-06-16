@@ -11,11 +11,18 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
   },
   imageView: {
     marginTop: formatSize(108),
-    marginBottom: formatSize(73),
-    alignItems: 'center'
+    marginBottom: formatSize(90),
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  noQuoteImageView: {
+    flexGrow: 1
   },
   quoteView: {
+    flexGrow: 1,
+    justifyContent: 'center',
     marginHorizontal: formatSize(4),
+    marginBottom: formatSize(18),
     alignItems: 'stretch'
   },
   bottomText: {

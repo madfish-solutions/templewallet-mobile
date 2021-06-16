@@ -16,6 +16,7 @@ import { useKeyboard } from '../../hooks/use-keyboard.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
+import { conditionalStyle } from '../../utils/conditional-style';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -33,12 +34,10 @@ export const EnterPassword = () => {
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
-      <View style={styles.imageView}>
+      <View style={[styles.imageView, conditionalStyle(isKeyboardOpen, styles.noQuoteImageView)]}>
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      {isKeyboardOpen ? (
-        <Divider size={formatSize(12)} />
-      ) : (
+      {!isKeyboardOpen && (
         <View style={styles.quoteView}>
           <Quote
             quote="The only function of economic forecasting is to make astrology look more respectable."
