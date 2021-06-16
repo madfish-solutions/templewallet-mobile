@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { useTokenMetadata } from '../../../../hooks/use-token-metadata.hook';
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
@@ -43,7 +44,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       {nonZeroAmounts.map(({ parsedAmount, isPositive, symbol }, index) => (
         <Text key={index} style={[styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)]}>
           {isPositive && '+'}
-          {parsedAmount.toString()} {symbol}
+          {formatAssetAmount(parsedAmount)} {symbol}
         </Text>
       ))}
 
