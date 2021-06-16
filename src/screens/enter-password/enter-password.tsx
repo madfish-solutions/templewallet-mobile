@@ -12,10 +12,10 @@ import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { useKeyboard } from '../../hooks/use-keyboard.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
-import { useKeyboardShown } from '../../utils/keyboard.util';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -27,7 +27,7 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
-  const keyboardShown = useKeyboardShown();
+  const { isKeyboardOpen } = useKeyboard();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
@@ -36,7 +36,7 @@ export const EnterPassword = () => {
       <View style={styles.imageView}>
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      {keyboardShown ? (
+      {isKeyboardOpen ? (
         <Divider size={formatSize(12)} />
       ) : (
         <View style={styles.quoteView}>
