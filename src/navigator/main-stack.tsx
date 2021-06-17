@@ -36,6 +36,8 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const isConfirmation = false;
 
+const DATA_REFRESH_INTERVAL = 60 * 1000;
+
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const { isLocked } = useAppLock();
@@ -45,14 +47,16 @@ export const MainStackScreen = () => {
 
   useEffect(() => {
     if (isAuthorised) {
-      const intervalId = setInterval(() => {
+      let timeoutId = setTimeout(function updateData() {
         dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
         dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
         dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
         dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
-      }, 6000);
 
-      return () => clearInterval(intervalId);
+        timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
+      }, DATA_REFRESH_INTERVAL);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [isAuthorised, selectedAccount.publicKeyHash]);
 

@@ -51,11 +51,11 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
         const rawAddStorageFeePerOp = rawAddStorageFee.div(opParams.length).integerValue();
 
         params = opParams.map((param, index) => {
-          const { totalCost, storageLimit } = estimations.data[index];
+          const { suggestedFeeMutez, storageLimit } = estimations.data[index];
 
           return {
             ...param,
-            fee: new BigNumber(totalCost)
+            fee: new BigNumber(suggestedFeeMutez)
               .plus(rawAddGasFeePerOp)
               .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length) : 0),
             storage_limit: new BigNumber(storageLimit)

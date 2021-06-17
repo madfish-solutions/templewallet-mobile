@@ -113,7 +113,7 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
       tezos.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
 
       return from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
-        map(estimates => estimates.map(({ totalCost, storageLimit }) => ({ totalCost, storageLimit }))),
+        map(estimates => estimates.map(({ suggestedFeeMutez, storageLimit }) => ({ suggestedFeeMutez, storageLimit }))),
         map(loadEstimationsActions.success),
         catchError(err => {
           showErrorToast('Warning! The transaction is likely to fail!');

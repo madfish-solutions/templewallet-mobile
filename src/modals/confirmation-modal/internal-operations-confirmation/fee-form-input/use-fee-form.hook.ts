@@ -13,7 +13,7 @@ export const useFeeForm = (estimationsList: EstimationInterface[]) => {
     const basicFees = estimationWasSuccessful
       ? estimationsList.reduce(
           (sumPart, estimation) => ({
-            gasFee: sumPart.gasFee.plus(mutezToTz(new BigNumber(estimation.totalCost), 6)),
+            gasFee: sumPart.gasFee.plus(mutezToTz(new BigNumber(estimation.suggestedFeeMutez), 6)),
             storageFee: sumPart.storageFee.plus(mutezToTz(new BigNumber(estimation.storageLimit), 6))
           }),
           { gasFee: new BigNumber(0), storageFee: new BigNumber(0) }
