@@ -38,7 +38,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   }));
 
   builder.addCase(loadTezosBalanceActions.submit, state =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', true) }))
+    updateCurrentAccountState(state, currentAccount => ({
+      tezosBalance: createEntity(currentAccount.tezosBalance.data, true)
+    }))
   );
   builder.addCase(loadTezosBalanceActions.success, (state, { payload: balance }) =>
     updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(balance, false) }))

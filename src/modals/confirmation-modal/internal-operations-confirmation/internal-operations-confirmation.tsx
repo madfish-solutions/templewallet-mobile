@@ -69,6 +69,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
         publicKeyHash: sender.publicKeyHash,
         opParams: params,
         successCallback: (opHash: string) => {
+          // TODO: map opHash and operationsPreview into activity and display it
+          console.log(opHash);
           navigate(StacksEnum.MainStack);
         }
       });

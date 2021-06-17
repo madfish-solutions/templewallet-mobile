@@ -1,6 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
@@ -21,7 +22,10 @@ import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { loadActivityGroupsActions } from '../store/activity/activity-actions';
+import { loadSelectedBakerActions } from '../store/baking/baking-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
+import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
@@ -33,9 +37,24 @@ const MainStack = createStackNavigator<ScreensParamList>();
 const isConfirmation = false;
 
 export const MainStackScreen = () => {
+  const dispatch = useDispatch();
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+
+  useEffect(() => {
+    if (isAuthorised) {
+      const intervalId = setInterval(() => {
+        dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+      }, 6000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [isAuthorised, selectedAccount.publicKeyHash]);
 
   return (
     <>

@@ -29,8 +29,8 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   const dispatch = useDispatch();
   const tokenSuggestion = useAddTokenSuggestionSelector();
   const initialValues = {
-    ...tokenSuggestion,
-    decimals: new BigNumber(tokenSuggestion.decimals)
+    ...tokenSuggestion.data,
+    decimals: new BigNumber(tokenSuggestion.data.decimals)
   };
 
   const onSubmit = (data: AddTokenInfoFormValues) => {

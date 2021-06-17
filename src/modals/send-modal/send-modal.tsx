@@ -53,11 +53,7 @@ export const SendModal: FC = () => {
     );
 
   return (
-    <Formik
-      enableReinitialize={true}
-      initialValues={sendModalInitialValues}
-      validationSchema={sendModalValidationSchema}
-      onSubmit={onSubmit}>
+    <Formik initialValues={sendModalInitialValues} validationSchema={sendModalValidationSchema} onSubmit={onSubmit}>
       {({ submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
