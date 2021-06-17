@@ -45,8 +45,12 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
       />
       <View style={styles.buttonsContainer}>
         <ButtonSmallSecondary title="GEN NEW" onPress={handleGenerateNewButtonPress} />
-        <Divider size={formatSize(8)} />
-        <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
+        {value ? (
+          <>
+            <Divider size={formatSize(8)} />
+            <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
+          </>
+        ) : null}
       </View>
       {isShowOverlay && <ProtectedOverlay onPress={hideOverlay} />}
     </View>
