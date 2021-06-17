@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Keyboard, Text, View } from 'react-native';
+import React from 'react';
+import { Animated, Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
@@ -11,10 +11,16 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { ANIMATION_DURATION_FAST } from '../../config/animation';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { useAnimationInterpolate } from '../../hooks/use-animation-interpolate.hook';
+import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
+import { useKeyboard } from '../../hooks/use-keyboard.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
+import { useUpdateAnimation } from '../../hooks/use-update-animation.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
+import { conditionalStyle } from '../../utils/conditional-style';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -26,35 +32,47 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
-  const [keyboardShown, setKeyboardShown] = useState(false);
+  const { isKeyboardOpen } = useKeyboard();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
-  useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardShown(false));
-
-    return () => {
-      showListener.remove();
-      hideListener.remove();
-    };
-  }, []);
+  const quoteAnimation = useAnimationRef(true);
+  useUpdateAnimation(quoteAnimation, !isKeyboardOpen, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
+  const height = useAnimationInterpolate(
+    quoteAnimation,
+    {
+      outputRange: [0, formatSize(80)]
+    },
+    []
+  );
+  const marginTop = useAnimationInterpolate(
+    quoteAnimation,
+    {
+      outputRange: [0, formatSize(70)]
+    },
+    []
+  );
+  const marginBottom = useAnimationInterpolate(
+    quoteAnimation,
+    {
+      outputRange: [0, formatSize(88)]
+    },
+    []
+  );
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
-      <View style={styles.imageView}>
+      <View style={[styles.imageView, conditionalStyle(isKeyboardOpen, styles.noQuoteImageView)]}>
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      {keyboardShown ? (
-        <Divider size={formatSize(12)} />
-      ) : (
-        <View style={styles.quoteView}>
-          <Quote
-            quote="The only function of economic forecasting is to make astrology look more respectable."
-            author="John Kenneth Galbraith"
-          />
-        </View>
-      )}
+
+      <Animated.View style={[styles.quoteView, { height, marginTop, marginBottom }]}>
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
+        />
+      </Animated.View>
+
       <View>
         <Formik
           initialValues={enterPasswordInitialValues}
