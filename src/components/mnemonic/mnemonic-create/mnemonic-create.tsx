@@ -45,7 +45,7 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
       />
       <View style={styles.buttonsContainer}>
         <ButtonSmallSecondary title="GEN NEW" onPress={handleGenerateNewButtonPress} />
-        {value ? (
+        {isString(value) ? (
           <>
             <Divider size={formatSize(8)} />
             <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
