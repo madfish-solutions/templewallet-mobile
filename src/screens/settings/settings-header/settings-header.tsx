@@ -14,7 +14,7 @@ export const SettingsHeader = () => {
   const styles = useSettingsHeaderStyles();
 
   return (
-    <HeaderCard hasInsetTop={true}>
+    <HeaderCard hasInsetTop={true} style={styles.headerCard}>
       <View style={styles.headerContainer}>
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(104)} height={formatSize(32)} />
         <Text style={styles.versionText}>{`VERSION: ${getVersion()}    BUILD: ${getBuildNumber()}`}</Text>
