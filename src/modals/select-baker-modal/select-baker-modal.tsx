@@ -51,23 +51,25 @@ export const SelectBakerModal: FC = () => {
 
   return (
     <>
-      <Divider size={formatSize(16)} />
-      <View style={styles.upperContainer}>
-        <Label
-          label="Delegate to Recommended Bakers"
-          description="Click on the Baker you want to delegate funds to. This list is powered by Baking Bad."
-        />
-      </View>
-      <View style={styles.searchContainer}>
-        <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
-      </View>
-      <View style={styles.upperContainer}>
-        <Text style={styles.infoText}>The higher the better</Text>
-      </View>
+      <View style={styles.background}>
+        <Divider size={formatSize(16)} />
+        <View style={styles.upperContainer}>
+          <Label
+            label="Delegate to Recommended Bakers"
+            description="Click on the Baker you want to delegate funds to. This list is powered by Baking Bad."
+          />
+        </View>
+        <View style={styles.searchContainer}>
+          <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
+        </View>
+        <View style={styles.upperContainer}>
+          <Text style={styles.infoText}>The higher the better</Text>
+        </View>
 
-      {filteredBakersList.length === 0 && (
-        <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
-      )}
+        {filteredBakersList.length === 0 && (
+          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
+        )}
+      </View>
 
       <FlatList
         data={filteredBakersList}
