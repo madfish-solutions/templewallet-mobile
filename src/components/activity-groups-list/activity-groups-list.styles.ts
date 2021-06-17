@@ -5,7 +5,7 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   sectionListContentContainer: {
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(16)
+    paddingLeft: formatSize(16)
   },
   sectionHeaderText: {
     ...typography.numbersMedium13,

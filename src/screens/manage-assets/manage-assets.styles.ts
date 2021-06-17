@@ -7,5 +7,9 @@ export const useManageAssetsStyles = createUseStyles(({ colors, typography }) =>
     color: colors.gray1,
     paddingVertical: formatSize(8),
     paddingHorizontal: formatSize(4)
+  },
+  contentContainerStyle: {
+    paddingRight: 0,
+    paddingLeft: formatSize(16)
   }
 }));

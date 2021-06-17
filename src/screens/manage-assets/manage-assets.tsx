@@ -23,7 +23,7 @@ export const ManageAssets = () => {
   return (
     <>
       <SearchInput placeholder="Search by address" onChangeText={setSearchValue} />
-      <ScreenContainer>
+      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
         <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
 
         {filteredTokensList.length === 0 ? (
