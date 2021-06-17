@@ -4,11 +4,15 @@ import { Text, View } from 'react-native';
 import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../../components/divider/divider';
+import { Icon } from '../../../components/icon/icon';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
-import { discordUrl, telegramUrl } from '../../../config/socials';
+import { delegationManual, discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
 import { formatSize } from '../../../styles/format-size';
+import { useColors } from '../../../styles/use-colors';
+import { SocialButton } from '../../settings/settings-header/social-button/social-button';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 
 interface Props {
@@ -17,28 +21,37 @@ interface Props {
 
 export const AboutDelegationScreen: FC<Props> = ({ onDelegatePress }) => {
   const styles = useAboutDelegationScreenStyles();
+  const { blue } = useColors();
 
   return (
     <ScreenContainer isFullScreenMode={true}>
-      <View>
-        <Text style={styles.title}>What is Tezos delegation?</Text>
+      <View style={styles.content}>
         <Divider size={formatSize(8)} />
+        <Icon name={IconNameEnum.Deal} size={formatSize(64)} color={blue} />
+        <Divider size={formatSize(16)} />
+        <Text style={styles.title}>
+          Delegate your Tezos in this section and earn 5-6% annually from Baking rewards.
+        </Text>
+        <Divider size={formatSize(16)} />
         <Text style={styles.text}>
           {
-            "How to delegate your tokens to the Baker?\nIf you have XTZ tokens but you don't want to launch your node, you can delegate your XTZ tokens to Bakers with an already running node to get rewards from the mining based on your contribution. \n\nDelegation is the right and opportunity of every member of the Tezos network to transfer their vote in the form of XTZ tokens to other Bakers. Delegated funds are not frozen and are not moved anywhere. They remain in your wallet, and you can spend them or change Baker at any time. \n\nThe delegation system is also part of the LPoS consensus and allows users to be involved in supporting the network. Also, delegation helps significantly speed up transactions, makes them cheap, creates the basis for network scaling, and brings a passive income for delegators. \n\nDelegation is the in-build function of the Temple Wallet.\n\n"
+            'Delegation is part of the Tezos Liquid Proof-of-Stake (LPoS) consensus mechanism that allows you to use your Tezos voting power to choose a baker who will create blockchain blocks and earn rewards. Part of these rewards is distributed back to you. Your Tezos stay in your wallet, and you can spend them or change a baker anytime.'
           }
         </Text>
-        <Divider size={formatSize(8)} />
-        <Text style={styles.text}>Full guide “How to Delegate XTZ” by link below</Text>
-        <Divider size={formatSize(8)} />
-        <TextLink url="https://www.madfish.solutions/blog/how-to-choose-a-delegate-with-the-temple-wallet/">
-          https://www.madfish.solutions/blog/how-to-choose-a-delegate-with-the-temple-wallet/
-        </TextLink>
-        <Divider size={formatSize(8)} />
-        <Text style={styles.text}>
-          In case you have any questions, write them in our communities: <TextLink url={telegramUrl}>telegram</TextLink>{' '}
-          <TextLink url={discordUrl}>discord</TextLink>.
-        </Text>
+        <Divider size={formatSize(16)} />
+        <Text style={styles.text}>Please, watch this video for more details.</Text>
+        <Divider size={formatSize(16)} />
+        <TextLink url={delegationManual}>({delegationManual})</TextLink>
+        <Divider size={formatSize(16)} />
+        <Text style={styles.text}>In case you have any questions, write them in our communities</Text>
+        <Divider size={formatSize(16)} />
+        <View style={styles.buttonLinksContainer}>
+          <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />
+          <SocialButton iconName={IconNameEnum.Discord} url={discordUrl} />
+          <SocialButton iconName={IconNameEnum.Twitter} url={twitterUrl} />
+          <SocialButton iconName={IconNameEnum.YouTube} url={youTubeUrl} />
+          <SocialButton iconName={IconNameEnum.Reddit} url={redditUrl} />
+        </View>
       </View>
 
       <ButtonsContainer>

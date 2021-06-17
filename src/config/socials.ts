@@ -12,3 +12,4 @@ export const repository = 'https://github.com/madfish-solutions/templewallet-mob
 export const privacyPolicy = 'https://templewallet.com/privacy';
 export const termsOfUse = 'https://templewallet.com/terms';
 export const contact = 'https://templewallet.com/contact';
+export const delegationManual = 'https://youtu.be/iFH8WEfuaDI';
