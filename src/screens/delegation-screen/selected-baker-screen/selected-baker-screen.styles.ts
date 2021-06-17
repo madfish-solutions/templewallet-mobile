@@ -51,7 +51,7 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   },
   rewardsText: {
     ...typography.body15Semibold,
-    color: colors.gray1
+    color: colors.black
   },
 
   descriptionText: {
