@@ -8,7 +8,7 @@ export const ErrorMessageStyles = StyleSheet.create({
     fontSize: 1.5 * step,
     lineHeight: 1.5 * step,
     marginTop: 0.5 * step,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-start'
   },
   rootVisible: {
     color: red
