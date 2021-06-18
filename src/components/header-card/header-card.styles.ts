@@ -6,6 +6,7 @@ export const useHeaderCardStyles = createUseStyles(({ colors }) => ({
   container: {
     padding: formatSize(16),
     backgroundColor: colors.navigation,
-    ...generateShadow(23, colors.black10)
+    ...generateShadow(2, colors.black10),
+    marginBottom: formatSize(4)
   }
 }));
