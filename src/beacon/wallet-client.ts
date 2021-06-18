@@ -6,6 +6,7 @@ import {
   BeaconErrorType,
   BeaconRequestOutputMessage,
   BeaconResponseInputMessage,
+  P2PPairingRequest,
   getSenderId
 } from '@airgap/beacon-sdk';
 
@@ -53,3 +54,12 @@ async function sendNetworkNotSupportedError(id: string) {
 async function isNetworkSupported(_network?: Network) {
   return true;
 }
+
+export const isBeaconMessage: (obj: unknown) => obj is P2PPairingRequest = (obj: unknown): obj is P2PPairingRequest => {
+  return (
+    typeof (obj as P2PPairingRequest).name === 'string' &&
+    typeof (obj as P2PPairingRequest).publicKey === 'string' &&
+    typeof (obj as P2PPairingRequest).relayServer === 'string'
+    // version is not checked to be v1 compatible
+  );
+};

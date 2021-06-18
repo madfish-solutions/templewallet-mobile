@@ -1,8 +1,10 @@
+import { Serializer } from '@airgap/beacon-sdk';
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useEffect, useState } from 'react';
 import { Alert, Linking } from 'react-native';
+import { initWalletClient, isBeaconMessage, walletClient } from '../beacon/wallet-client';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -35,11 +37,32 @@ export const RootStackScreen = () => {
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
   useEffect(() => {
-    const listener = ({ url }: { url: string }) => Alert.alert('Got URL', url, [{ text: 'OK' }]);
+    const listener = async ({ url }: { url: string }) => {
+      Alert.alert('Got URL', url, [{ text: 'OK' }]);
+
+      try {
+        const usp = new URL(url).searchParams;
+        const type = usp.get('type');
+        const data = usp.get('data');
+        if (type === 'tzip10' && data) {
+          const json: Record<string, unknown> = (await new Serializer().deserialize(data)) as any;
+          if (isBeaconMessage(json)) {
+            await walletClient.isConnected;
+            await walletClient.addPeer(json);
+          }
+        }
+      } catch {}
+    };
 
     Linking.addEventListener('url', listener);
 
     return () => Linking.removeEventListener('url', listener);
+  }, []);
+
+  useEffect(() => {
+    initWalletClient(({ message }) => {
+      console.info('Beacon message', message);
+    });
   }, []);
 
   return (
