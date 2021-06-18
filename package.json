@@ -20,6 +20,7 @@
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true"
   },
   "dependencies": {
+    "@airgap/beacon-sdk": "2.2.9",
     "@dicebear/avatars": "4.2.5",
     "@dicebear/avatars-bottts-sprites": "4.2.5",
     "@gorhom/bottom-sheet": "^2.3.0",
