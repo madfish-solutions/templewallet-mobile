@@ -34,22 +34,13 @@ export const useFeeForm = (opParams: WalletParamsWithKind[], estimationsList: Es
     () => ({
       formInitialValues: estimationWasSuccessful ? basicFees : {},
       formValidationSchema: object().shape({
-        gasFeeSum: bigNumberValidation
-          .clone()
-          // .test('required-if-estimation-success', 'Gas fee is required', value => {
-          //   if (estimationWasSuccessful) {
-          //     return isDefined(value);
-          //   }
-          //
-          //   return true;
-          // })
-          .test('min-gas-fee', 'Gas fee is required', value => {
-            if (estimationWasSuccessful) {
-              return isDefined(value) && value instanceof BigNumber && value.gte(0);
-            }
+        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee is required', value => {
+          if (estimationWasSuccessful) {
+            return isDefined(value) && value instanceof BigNumber && value.gte(0);
+          }
 
-            return true;
-          }),
+          return true;
+        }),
         storageLimitSum: bigNumberValidation
           .clone()
           .test('required-if-only-one-operation', 'Storage limit is required', value => {
