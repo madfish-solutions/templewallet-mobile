@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Temple</string>
+    <string name="tezos_url_scheme">tezos</string>
 </resources>

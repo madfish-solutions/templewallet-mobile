@@ -1,7 +1,7 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 
-import { formatSize } from '../styles/format-size';
-import { useColors } from '../styles/use-colors';
+import { formatSize } from '../../styles/format-size';
+import { useColors } from '../../styles/use-colors';
 
 type StackNavigatorStyleOptions = Required<
   Pick<StackNavigationOptions, 'headerStyle' | 'headerTitleStyle' | 'cardStyle'>

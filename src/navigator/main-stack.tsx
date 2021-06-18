@@ -1,6 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
@@ -21,21 +22,43 @@ import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { loadActivityGroupsActions } from '../store/activity/activity-actions';
+import { loadSelectedBakerActions } from '../store/baking/baking-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
+import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { ScreensEnum, ScreensParamList } from './screens.enum';
+import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
+import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
-import { useStackNavigatorStyleOptions } from './use-stack-navigator-style-options.hook';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
 const isConfirmation = false;
 
+const DATA_REFRESH_INTERVAL = 60 * 1000;
+
 export const MainStackScreen = () => {
+  const dispatch = useDispatch();
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+
+  useEffect(() => {
+    if (isAuthorised) {
+      let timeoutId = setTimeout(function updateData() {
+        dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+
+        timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
+      }, DATA_REFRESH_INTERVAL);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isAuthorised, selectedAccount.publicKeyHash]);
 
   return (
     <>

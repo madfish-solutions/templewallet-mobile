@@ -7,11 +7,11 @@ import { activityInitialState, ActivityState } from './activity-state';
 export const activityReducers = createReducer<ActivityState>(activityInitialState, builder => {
   builder.addCase(loadActivityGroupsActions.submit, state => ({
     ...state,
-    activityGroups: createEntity([], true)
+    activityGroups: createEntity(state.activityGroups.data, true)
   }));
-  builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroup }) => ({
+  builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) => ({
     ...state,
-    activityGroups: createEntity(activityGroup, false)
+    activityGroups: createEntity(activityGroups, false)
   }));
   builder.addCase(loadActivityGroupsActions.fail, (state, { payload: error }) => ({
     ...state,

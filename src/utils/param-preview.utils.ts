@@ -1,35 +1,37 @@
 import { WalletParamsWithKind, OpKind } from '@taquito/taquito';
 
-import { OpPreview, OpPreviewType, Token } from './types';
+import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
+import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
 
-export function getOpPreview(op: WalletParamsWithKind): OpPreview {
-  if (op.kind === OpKind.DELEGATION) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getParamPreview = (opParam: WalletParamsWithKind): ParamPreviewInterface => {
+  if (opParam.kind === OpKind.DELEGATION) {
     // Delegate
     return {
-      type: OpPreviewType.Delegate,
-      baker: op.delegate
+      type: ParamPreviewTypeEnum.Delegate,
+      baker: opParam.delegate
     };
-  } else if (op.kind === OpKind.TRANSACTION) {
+  } else if (opParam.kind === OpKind.TRANSACTION) {
     // Tezos send
-    if (!op.parameter && op.amount > 0) {
+    if (!opParam.parameter && opParam.amount > 0) {
       return {
-        type: OpPreviewType.Send,
+        type: ParamPreviewTypeEnum.Send,
         transfers: [
           {
             asset: 'tez',
-            recipient: op.to,
-            amount: op.amount.toString()
+            recipient: opParam.to,
+            amount: opParam.amount.toString()
           }
         ]
       };
     }
 
-    if (op.parameter) {
+    if (opParam.parameter) {
       // Tokens send
-      const tokenTransfers = tryParseTokenTransfers(op.parameter, op.to);
+      const tokenTransfers = tryParseTokenTransfers(opParam.parameter, opParam.to);
       if (tokenTransfers.length > 0) {
         return {
-          type: OpPreviewType.Send,
+          type: ParamPreviewTypeEnum.Send,
           transfers: tokenTransfers.map(({ token, to, amount }) => ({
             asset: token,
             recipient: to,
@@ -39,10 +41,10 @@ export function getOpPreview(op: WalletParamsWithKind): OpPreview {
       }
 
       // FA1.2 Token Approve
-      const fa1_2Approve = tryParseFA1_2Approve(op.parameter, op.to);
+      const fa1_2Approve = tryParseFA1_2Approve(opParam.parameter, opParam.to);
       if (fa1_2Approve) {
         return {
-          type: OpPreviewType.FA1_2Approve,
+          type: ParamPreviewTypeEnum.FA1_2Approve,
           asset: fa1_2Approve.token,
           approveTo: fa1_2Approve.to,
           amount: fa1_2Approve.amount
@@ -51,32 +53,32 @@ export function getOpPreview(op: WalletParamsWithKind): OpPreview {
 
       // Smart contract call
       return {
-        type: OpPreviewType.ContractCall,
-        contract: op.to,
-        entrypoint: op.parameter.entrypoint
+        type: ParamPreviewTypeEnum.ContractCall,
+        contract: opParam.to,
+        entrypoint: opParam.parameter.entrypoint
       };
     }
   }
 
   // Rest...
   return {
-    type: OpPreviewType.Other,
-    opKind: op.kind
+    type: ParamPreviewTypeEnum.Other,
+    opKind: opParam.kind
   };
-}
+};
 
 /**
  * Parse token transfers
  */
 
-type TokenTransferParams = {
+interface TokenTransferParams {
   token: Token;
   from: string;
   to: string;
   amount: string;
-};
+}
 
-export function tryParseTokenTransfers(parameters: any, destination: string): TokenTransferParams[] {
+const tryParseTokenTransfers = (parameters: any, destination: string): TokenTransferParams[] => {
   const tokenTransfers: TokenTransferParams[] = [];
 
   // FA1.2
@@ -144,19 +146,19 @@ export function tryParseTokenTransfers(parameters: any, destination: string): To
   } catch {}
 
   return tokenTransfers;
-}
+};
 
 /**
  * Prase FA1_2 Approve
  */
 
-type FA1_2ApproveParams = {
+interface FA1_2ApproveParams {
   token: Token;
   to: string;
   amount: string;
-};
+}
 
-function tryParseFA1_2Approve(parameters: any, destination: string): FA1_2ApproveParams | null {
+const tryParseFA1_2Approve = (parameters: any, destination: string): FA1_2ApproveParams | null => {
   // FA1.2
   try {
     const { entrypoint, value } = parameters;
@@ -182,4 +184,4 @@ function tryParseFA1_2Approve(parameters: any, destination: string): FA1_2Approv
   } catch {}
 
   return null;
-}
+};

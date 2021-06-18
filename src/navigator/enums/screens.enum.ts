@@ -1,4 +1,4 @@
-import { TokenInterface } from '../token/interfaces/token.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',

@@ -1,15 +1,13 @@
-import { step } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useSliderStyles = createUseStyles(({ colors }) => ({
+export const useSliderStyles = createUseStyles(() => ({
   slider: {
-    height: step * 5
+    height: formatSize(28)
   },
   bottomContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  bottomContainerText: {
-    color: colors.black
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 }));

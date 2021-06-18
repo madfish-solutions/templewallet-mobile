@@ -1,16 +1,13 @@
 import React, { FC, useState } from 'react';
-import { TextInputProps, View } from 'react-native';
+import { View } from 'react-native';
 
 import { isString } from '../../utils/is-string';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
-import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
 import { useStyledPasswordInputStyles } from './styled-password-input.styles';
 
-interface Props extends Omit<TextInputProps, 'style'> {
-  isError?: boolean;
-  isShowCleanButton?: boolean;
-}
+type Props = Omit<StyledTextInputProps, 'isPasswordInput'>;
 
 export const StyledPasswordInput: FC<Props> = ({ value, ...props }) => {
   const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);

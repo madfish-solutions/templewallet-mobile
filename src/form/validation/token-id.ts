@@ -1,3 +1,14 @@
-import { number } from 'yup';
+import { BigNumber } from 'bignumber.js';
+import { object, SchemaOf } from 'yup';
 
-export const tokenIdValidation = number().required().moreThan(-1);
+export const tokenIdValidation: SchemaOf<BigNumber> = object()
+  .shape({})
+  .test('non-negative', 'Should be non-negative integer', value => {
+    if (value instanceof BigNumber) {
+      return value.integerValue().eq(value) && value.gte(0);
+    }
+
+    return false;
+  })
+  .default(new BigNumber(0))
+  .required();

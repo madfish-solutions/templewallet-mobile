@@ -8,7 +8,7 @@ import { Label } from '../../components/label/label';
 import { RevealAttention } from '../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
-import { ModalsEnum, ModalsParamList } from '../../navigator/modals.enum';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {

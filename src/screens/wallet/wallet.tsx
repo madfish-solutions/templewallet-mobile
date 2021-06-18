@@ -34,10 +34,10 @@ export const Wallet = () => {
   const tezosBalance = useTezosBalanceSelector();
 
   useEffect(() => {
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-  }, [selectedAccount.publicKeyHash]);
+  }, []);
 
   return (
     <>
@@ -54,7 +54,7 @@ export const Wallet = () => {
 
         <TokenEquityValue balance={tezosBalance} symbol={XTZ_TOKEN_METADATA.symbol} />
 
-        <HeaderCardActionButtons />
+        <HeaderCardActionButtons asset={XTZ_TOKEN_METADATA} />
       </HeaderCard>
 
       <TokenList tezosBalance={tezosBalance} />

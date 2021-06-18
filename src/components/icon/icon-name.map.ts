@@ -4,7 +4,9 @@ import { SvgProps } from 'react-native-svg';
 import AlertIcon from './assets/alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
+import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import BookOpenIcon from './assets/book-open.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClipboardIcon from './assets/clipboard.svg';
@@ -18,6 +20,10 @@ import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
+import GHighIcon from './assets/g-high.svg';
+import GLowIcon from './assets/g-low.svg';
+import GMidIcon from './assets/g-mid.svg';
+import GearIcon from './assets/gear.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
@@ -39,6 +45,7 @@ import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
+import TerminalIcon from './assets/terminal.svg';
 import BlndTokenIcon from './assets/tokens/blnd.svg';
 import EthTzTokenIcon from './assets/tokens/ethTz.svg';
 import KUsdTokenIcon from './assets/tokens/kUsd.svg';
@@ -52,19 +59,27 @@ import XtzTokenIcon from './assets/tokens/xtz.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
+import XIcon from './assets/x.svg';
 import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
+  [IconNameEnum.ArrowRight]: ArrowRightIcon,
+  [IconNameEnum.BookOpen]: BookOpenIcon,
+  [IconNameEnum.Terminal]: TerminalIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Download]: DownloadIcon,
+  [IconNameEnum.GLow]: GLowIcon,
+  [IconNameEnum.GMid]: GMidIcon,
+  [IconNameEnum.GHigh]: GHighIcon,
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
+  [IconNameEnum.X]: XIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
@@ -107,5 +122,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
   [IconNameEnum.Clipboard]: ClipboardIcon,
-  [IconNameEnum.Deal]: DealIcon
+  [IconNameEnum.Deal]: DealIcon,
+  [IconNameEnum.Gear]: GearIcon
 };

@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { CurrentRouteNameContext } from '../current-route-name.context';
 import {
@@ -11,7 +12,7 @@ import {
   settingsStackScreens,
   swapStackScreens,
   walletStackScreens
-} from '../screens.enum';
+} from '../enums/screens.enum';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
@@ -28,12 +29,14 @@ export const TabBar: FC = () => {
         <TabBarButton
           label="Wallet"
           iconName={IconNameEnum.XtzWallet}
+          iconWidth={formatSize(24)}
           routeName={ScreensEnum.Wallet}
           focused={isStackFocused(walletStackScreens)}
         />
         <TabBarButton
           label="DApps"
           iconName={IconNameEnum.SoonBadge}
+          iconWidth={formatSize(32)}
           routeName={ScreensEnum.DApps}
           focused={isStackFocused(dAppsStackScreens)}
           disabled={true}
@@ -41,6 +44,7 @@ export const TabBar: FC = () => {
         <TabBarButton
           label="Swap"
           iconName={IconNameEnum.SoonBadge}
+          iconWidth={formatSize(32)}
           routeName={ScreensEnum.Swap}
           focused={isStackFocused(swapStackScreens)}
           disabled={true}
@@ -48,6 +52,7 @@ export const TabBar: FC = () => {
         <TabBarButton
           label="Settings"
           iconName={IconNameEnum.Settings}
+          iconWidth={formatSize(22)}
           routeName={ScreensEnum.Settings}
           focused={isStackFocused(settingsStackScreens)}
         />

@@ -1,5 +1,9 @@
+import { WalletParamsWithKind } from '@taquito/taquito';
+
+import { EventFn } from '../../config/general';
+
 export interface SendParams {
-  from: string;
-  amount: number;
-  to: string;
+  publicKeyHash: string;
+  opParams: WalletParamsWithKind[];
+  successCallback: EventFn<string>;
 }

@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const FormMnemonicInput: FC<Props> = ({ name }) => {
-  const [field, meta] = useField<string>(name);
+  const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
   return (
@@ -18,7 +18,7 @@ export const FormMnemonicInput: FC<Props> = ({ name }) => {
       <MnemonicInput
         value={field.value}
         isError={isError}
-        onBlur={field.onBlur(name)}
+        onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
       />
       <ErrorMessage meta={meta} />

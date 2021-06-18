@@ -1,3 +1,4 @@
+import { EstimationInterface } from '../../interfaces/estimation.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -10,6 +11,7 @@ export interface WalletState {
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
+  estimations: LoadableEntityState<EstimationInterface[]>;
 }
 
 export const walletInitialState: WalletState = {
@@ -22,7 +24,8 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadata)
+  addTokenSuggestion: createEntity(emptyTokenMetadata),
+  estimations: createEntity([])
 };
 
 export interface WalletRootState {

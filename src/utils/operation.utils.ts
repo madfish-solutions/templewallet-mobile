@@ -83,9 +83,7 @@ export const extractEntrypoint = (operationParameters?: string): string => {
         return entrypoint[0];
       }
     }
-  } catch (e) {
-    console.log(e);
-  }
+  } catch {}
 
   return '';
 };
