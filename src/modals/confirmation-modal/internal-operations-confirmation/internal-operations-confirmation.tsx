@@ -1,5 +1,3 @@
-import { WalletParamsWithKind } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
@@ -18,7 +16,6 @@ import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
 import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isDefined } from '../../../utils/is-defined';
-import { tzToMutez } from '../../../utils/tezos.util';
 import { ConfirmationModalParams } from '../confirmation-modal.params';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
@@ -35,46 +32,41 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
   const { goBack, navigate } = useNavigation();
 
   const estimations = useEstimationsSelector();
-  const { basicFees, estimationWasSuccessful, formValidationSchema, formInitialValues } = useFeeForm(estimations.data);
+  const {
+    basicFees,
+    estimationWasSuccessful,
+    minimalFeePerStorageByteMutez,
+    onlyOneOperation,
+    formValidationSchema,
+    formInitialValues
+  } = useFeeForm(opParams, estimations.data);
 
   useEffect(() => void dispatch(loadEstimationsActions.submit({ sender, opParams })), []);
 
-  const handleSubmit = ({ gasFee, storageFee }: FeeFormInputValues) => {
-    if (isDefined(gasFee) && isDefined(storageFee)) {
-      let params: WalletParamsWithKind[] = opParams;
+  const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
+    const params = opParams.map((param, index) => {
+      const isLastOpParam = index === opParams.length - 1;
 
-      if (estimationWasSuccessful) {
-        const rawAddGasFee = tzToMutez(gasFee.minus(basicFees.gasFee), 6);
-        const rawAddStorageFee = tzToMutez(storageFee.minus(basicFees.storageFee), 6);
+      const fee = isDefined(gasFeeSum) && isLastOpParam ? gasFeeSum : 0;
+      const storage_limit =
+        isDefined(storageLimitSum) && onlyOneOperation
+          ? storageLimitSum
+          : estimationWasSuccessful
+          ? estimations.data[index].storageLimit
+          : undefined;
 
-        const rawAddGasFeePerOp = rawAddGasFee.div(opParams.length).integerValue();
-        const rawAddStorageFeePerOp = rawAddStorageFee.div(opParams.length).integerValue();
+      return { ...param, fee, storage_limit };
+    });
 
-        params = opParams.map((param, index) => {
-          const { suggestedFeeMutez, storageLimit } = estimations.data[index];
-
-          return {
-            ...param,
-            fee: new BigNumber(suggestedFeeMutez)
-              .plus(rawAddGasFeePerOp)
-              .plus(index === opParams.length - 1 ? rawAddGasFee.mod(opParams.length) : 0),
-            storage_limit: new BigNumber(storageLimit)
-              .plus(rawAddStorageFeePerOp)
-              .plus(index === opParams.length - 1 ? rawAddStorageFee.mod(opParams.length) : 0)
-          };
-        });
+    send({
+      publicKeyHash: sender.publicKeyHash,
+      opParams: params,
+      successCallback: (opHash: string) => {
+        // TODO: map opHash and operationsPreview into activity and display it
+        console.log(opHash);
+        navigate(StacksEnum.MainStack);
       }
-
-      send({
-        publicKeyHash: sender.publicKeyHash,
-        opParams: params,
-        successCallback: (opHash: string) => {
-          // TODO: map opHash and operationsPreview into activity and display it
-          console.log(opHash);
-          navigate(StacksEnum.MainStack);
-        }
-      });
-    }
+    });
   };
 
   return (
@@ -83,7 +75,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
       initialValues={formInitialValues}
       validationSchema={formValidationSchema}
       onSubmit={handleSubmit}>
-      {({ values, setValues, isValid, isSubmitting, submitForm }) => (
+      {({ values, isValid, isSubmitting, setFieldValue, submitForm }) => (
         <>
           <ScreenContainer>
             {estimations.isLoading ? (
@@ -109,7 +101,9 @@ export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) 
                   values={values}
                   basicFees={basicFees}
                   estimationWasSuccessful={estimationWasSuccessful}
-                  setValues={setValues}
+                  onlyOneOperation={onlyOneOperation}
+                  minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
+                  setFieldValue={setFieldValue}
                 />
               </>
             )}

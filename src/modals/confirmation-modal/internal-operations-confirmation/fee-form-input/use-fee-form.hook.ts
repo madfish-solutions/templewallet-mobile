@@ -1,59 +1,75 @@
+import { WalletParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
+import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz } from '../../../../utils/tezos.util';
 
-export const useFeeForm = (estimationsList: EstimationInterface[]) => {
-  const { basicFees, estimationWasSuccessful } = useMemo(() => {
+export const useFeeForm = (opParams: WalletParamsWithKind[], estimationsList: EstimationInterface[]) => {
+  const { basicFees, estimationWasSuccessful, minimalFeePerStorageByteMutez, onlyOneOperation } = useMemo(() => {
     const estimationWasSuccessful = estimationsList.length > 0;
+    const minimalFeePerStorageByteMutez = estimationWasSuccessful
+      ? estimationsList[0].minimalFeePerStorageByteMutez
+      : 0;
+    const onlyOneOperation = opParams.length === 1;
 
-    const basicFees = estimationWasSuccessful
-      ? estimationsList.reduce(
-          (sumPart, estimation) => ({
-            gasFee: sumPart.gasFee.plus(mutezToTz(new BigNumber(estimation.suggestedFeeMutez), 6)),
-            storageFee: sumPart.storageFee.plus(mutezToTz(new BigNumber(estimation.storageLimit), 6))
-          }),
-          { gasFee: new BigNumber(0), storageFee: new BigNumber(0) }
-        )
-      : { gasFee: new BigNumber(1e-6), storageFee: new BigNumber(0) };
+    const basicFees = estimationsList.reduce(
+      (prev, estimation) => ({
+        gasFeeSum: prev.gasFeeSum.plus(mutezToTz(new BigNumber(estimation.suggestedFeeMutez), 6)),
+        storageLimitSum: prev.storageLimitSum.plus(new BigNumber(estimation.storageLimit))
+      }),
+      {
+        gasFeeSum: new BigNumber(0),
+        storageLimitSum: new BigNumber(0)
+      }
+    );
 
-    return { basicFees, estimationWasSuccessful };
+    return { basicFees, estimationWasSuccessful, minimalFeePerStorageByteMutez, onlyOneOperation };
   }, [estimationsList]);
 
   const { formValidationSchema, formInitialValues } = useMemo(
     () => ({
-      formInitialValues: {
-        gasFee: basicFees.gasFee.plus(1e-4),
-        storageFee: basicFees.storageFee
-      },
+      formInitialValues: estimationWasSuccessful ? basicFees : {},
       formValidationSchema: object().shape({
-        gasFee: bigNumberValidation
+        gasFeeSum: bigNumberValidation
           .clone()
-          .test('min-gas-fee', `Minimal value is ${basicFees.gasFee.toFixed()}`, value => {
+          .test('required-if-estimation-success', 'Gas fee is required', value => {
+            if (estimationWasSuccessful) {
+              return isDefined(value);
+            }
+
+            return true;
+          })
+          .test('min-gas-fee', `Minimal value is ${basicFees.gasFeeSum.toFixed()}`, value => {
             if (value instanceof BigNumber) {
-              return value.gte(basicFees.gasFee);
+              return value.gte(basicFees.gasFeeSum);
             }
 
             return false;
-          })
-          .required(),
-        storageFee: bigNumberValidation
+          }),
+        storageLimitSum: bigNumberValidation
           .clone()
-          .test('min-storage-fee', `Minimal value is ${basicFees.storageFee.toFixed()}`, value => {
-            if (value instanceof BigNumber) {
-              return value.gte(basicFees.storageFee);
+          .test('required-if-only-one-operation', 'Storage limit is required', value => {
+            if (onlyOneOperation) {
+              return isDefined(value);
             }
 
-            return false;
+            return true;
           })
-          .required()
       })
     }),
     [basicFees]
   );
 
-  return { basicFees, estimationWasSuccessful, formValidationSchema, formInitialValues };
+  return {
+    basicFees,
+    estimationWasSuccessful,
+    minimalFeePerStorageByteMutez,
+    onlyOneOperation,
+    formValidationSchema,
+    formInitialValues
+  };
 };

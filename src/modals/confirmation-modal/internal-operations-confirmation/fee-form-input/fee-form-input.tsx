@@ -14,6 +14,7 @@ import { FormNumericInput } from '../../../../form/form-numeric-input';
 import { formatSize } from '../../../../styles/format-size';
 import { XTZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
+import { mutezToTz } from '../../../../utils/tezos.util';
 import { FeeFormInputValues } from './fee-form-input.form';
 import { useFeeFormInputStyles } from './fee-form-input.styles';
 
@@ -21,17 +22,30 @@ interface Props {
   values: FeeFormInputValues;
   basicFees: Required<FeeFormInputValues>;
   estimationWasSuccessful: boolean;
-  setValues: FormikHelpers<FeeFormInputValues>['setValues'];
+  onlyOneOperation: boolean;
+  minimalFeePerStorageByteMutez: number;
+  setFieldValue: FormikHelpers<FeeFormInputValues>['setFieldValue'];
 }
 
-export const FeeFormInput: FC<Props> = ({ values, basicFees, estimationWasSuccessful, setValues }) => {
+export const FeeFormInput: FC<Props> = ({
+  values,
+  basicFees,
+  estimationWasSuccessful,
+  onlyOneOperation,
+  minimalFeePerStorageByteMutez,
+  setFieldValue
+}) => {
   const styles = useFeeFormInputStyles();
 
   const [isShowDetailedInput, setIsShowDetailedInput] = useState(!estimationWasSuccessful);
 
-  const sliderMinValue = basicFees.gasFee.plus(1e-4).toNumber();
-  const sliderMaxValue = basicFees.gasFee.plus(2e-4).toNumber();
-  const gasFeeBigNumber = values.gasFee ?? new BigNumber(0);
+  const sliderMinValue = basicFees.gasFeeSum.toNumber();
+  const sliderMaxValue = basicFees.gasFeeSum.plus(2e-4).toNumber();
+  const gasFeeBigNumber = values.gasFeeSum ?? new BigNumber(0);
+
+  const storageFee = isDefined(values.storageLimitSum)
+    ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), XTZ_TOKEN_METADATA.decimals)
+    : undefined;
 
   return (
     <>
@@ -39,7 +53,7 @@ export const FeeFormInput: FC<Props> = ({ values, basicFees, estimationWasSucces
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Gas fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(values.gasFee) ? `${values.gasFee.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
           <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
@@ -49,7 +63,7 @@ export const FeeFormInput: FC<Props> = ({ values, basicFees, estimationWasSucces
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Storage fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(values.storageFee) ? `${values.storageFee.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
           <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
@@ -62,14 +76,18 @@ export const FeeFormInput: FC<Props> = ({ values, basicFees, estimationWasSucces
           {isShowDetailedInput ? (
             <>
               <Label description="Total:" />
-              <StyledNumericInput value={gasFeeBigNumber.plus(values.storageFee ?? 0)} editable={false} />
+              <StyledNumericInput value={gasFeeBigNumber.plus(storageFee ?? 0)} editable={false} />
               <Divider size={formatSize(16)} />
 
               <Label description="Gas fee:" />
-              <FormNumericInput name="gasFee" isShowCleanButton={true} />
+              <FormNumericInput name="gasFeeSum" isShowCleanButton={true} />
 
-              <Label description="Storage fee:" />
-              <FormNumericInput name="storageFee" isShowCleanButton={true} />
+              {onlyOneOperation && (
+                <>
+                  <Label description="Storage limit:" />
+                  <FormNumericInput name="storageLimitSum" isShowCleanButton={true} />
+                </>
+              )}
             </>
           ) : (
             <Slider
@@ -78,10 +96,7 @@ export const FeeFormInput: FC<Props> = ({ values, basicFees, estimationWasSucces
               maximumValue={sliderMaxValue}
               step={1e-6}
               onValueChange={(newValue: number) =>
-                setValues({
-                  gasFee: new BigNumber(newValue).decimalPlaces(XTZ_TOKEN_METADATA.decimals),
-                  storageFee: basicFees.storageFee
-                })
+                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(XTZ_TOKEN_METADATA.decimals))
               }
             />
           )}

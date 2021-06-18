@@ -1,3 +1,5 @@
 import { Estimate } from '@taquito/taquito/dist/types/contract/estimate';
 
-export type EstimationInterface = Pick<Estimate, 'suggestedFeeMutez' | 'storageLimit'>;
+export interface EstimationInterface extends Pick<Estimate, 'suggestedFeeMutez' | 'storageLimit'> {
+  minimalFeePerStorageByteMutez: number;
+}
