@@ -20,7 +20,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} />
+        <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>
       <TextInput
         value={value}
