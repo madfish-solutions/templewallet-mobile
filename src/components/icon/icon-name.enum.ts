@@ -44,6 +44,7 @@ export enum IconNameEnum {
   Info = 'Info',
   ChevronRight = 'ChevronRight',
   NoResult = 'NoResult',
+  TempleLogo = 'TempleLogo',
   TempleLogoWithText = 'TempleLogoWithText',
   Telegram = 'Telegram',
   Discord = 'Discord',
@@ -58,5 +59,6 @@ export enum IconNameEnum {
   Trash = 'Trash',
   LogOut = 'LogOut',
   Clipboard = 'Clipboard',
-  Deal = 'Deal'
+  Deal = 'Deal',
+  Link = 'Link'
 }

@@ -15,8 +15,8 @@ export const PublicKeyHashText: FC<Props> = ({ publicKeyHash, marginTop, marginR
 
   return (
     <TouchableOpacity
-      onPress={() => copyStringToClipboard(publicKeyHash)}
-      style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}>
+      style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
+      onPress={() => copyStringToClipboard(publicKeyHash)}>
       <Text style={styles.publicKeyHashText} numberOfLines={1} ellipsizeMode="middle">
         {publicKeyHash}
       </Text>

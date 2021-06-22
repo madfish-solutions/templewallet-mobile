@@ -16,14 +16,14 @@ import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
 import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isDefined } from '../../../utils/is-defined';
-import { ConfirmationModalParams } from '../confirmation-modal.params';
+import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useFeeForm } from './fee-form-input/use-fee-form.hook';
 import { useInternalOperationsConfirmationStyles } from './internal-operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
 
-type Props = Omit<ConfirmationModalParams, 'type'>;
+type Props = Omit<InternalOperationsConfirmationModalParams, 'type'>;
 
 export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) => {
   const styles = useInternalOperationsConfirmationStyles();

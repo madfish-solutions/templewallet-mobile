@@ -27,6 +27,7 @@ import GearIcon from './assets/gear.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import NoResultIcon from './assets/no-result.svg';
@@ -45,6 +46,7 @@ import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
+import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import BlndTokenIcon from './assets/tokens/blnd.svg';
 import EthTzTokenIcon from './assets/tokens/ethTz.svg';
@@ -108,6 +110,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
+  [IconNameEnum.TempleLogo]: TempleLogoIcon,
   [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
   [IconNameEnum.Telegram]: TelegramIcon,
   [IconNameEnum.Discord]: DiscordIcon,
@@ -123,5 +126,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LogOut]: LogOutIcon,
   [IconNameEnum.Clipboard]: ClipboardIcon,
   [IconNameEnum.Deal]: DealIcon,
-  [IconNameEnum.Gear]: GearIcon
+  [IconNameEnum.Gear]: GearIcon,
+  [IconNameEnum.Link]: LinkIcon
 };
