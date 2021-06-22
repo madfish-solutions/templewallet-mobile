@@ -13,7 +13,7 @@ import { ScreenContainer } from '../../../../components/screen-container/screen-
 import { abortPermissionRequestAction, approvePermissionRequestAction } from '../../../../store/wallet/wallet-actions';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { AppMetadataView } from './app-metadata-view/app-metadata-view';
+import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
   PermissionRequestConfirmationFormValues,
   permissionRequestConfirmationModalValidationSchema
@@ -50,7 +50,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
       {({ submitForm }) => (
         <>
           <ScreenContainer>
-            <AppMetadataView appMetadata={message.appMetadata} />
+            <AppMetadataConnectionView appMetadata={message.appMetadata} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
             <AccountFormDropdown name="approver" list={hdAccounts} />

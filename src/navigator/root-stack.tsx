@@ -1,4 +1,3 @@
-import { Serializer } from '@airgap/beacon-sdk';
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';

@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../../../styles/create-use-styles';
 import { formatSize } from '../../../../../styles/format-size';
 
-export const useAppMetadataViewStyles = createUseStyles(({ colors, typography }) => ({
+export const useAppMetadataConnectionViewStyles = createUseStyles(({ colors, typography }) => ({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

@@ -95,6 +95,7 @@ export class WalletClient extends Client {
         const peer: ExtendedPeerInfo | undefined = peers.find(peerEl => peerEl.senderId === message.senderId);
 
         if (peer) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await this.removePeer(peer as any);
         }
 

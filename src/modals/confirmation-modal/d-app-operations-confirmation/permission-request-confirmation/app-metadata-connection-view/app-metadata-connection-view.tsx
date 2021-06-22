@@ -9,14 +9,14 @@ import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { formatSize } from '../../../../../styles/format-size';
 import { isDefined } from '../../../../../utils/is-defined';
-import { useAppMetadataViewStyles } from './app-metadata-view.styles';
+import { useAppMetadataConnectionViewStyles } from './app-metadata-connection-view.styles';
 
 interface Props {
   appMetadata: AppMetadata;
 }
 
-export const AppMetadataView: FC<Props> = ({ appMetadata }) => {
-  const styles = useAppMetadataViewStyles();
+export const AppMetadataConnectionView: FC<Props> = ({ appMetadata }) => {
+  const styles = useAppMetadataConnectionViewStyles();
 
   return (
     <>
