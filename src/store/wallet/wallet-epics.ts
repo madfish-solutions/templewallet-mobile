@@ -1,22 +1,19 @@
-import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
 import { compose, OpKind, WalletParamsWithKind } from '@taquito/taquito';
 import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { betterCallDevApi } from '../../api.service';
-import { BeaconHandler } from '../../beacon/beacon-handler';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { StacksEnum } from '../../navigator/enums/stacks.enum';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { showErrorToast } from '../../toast/toast.utils';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { ReadOnlySigner } from '../../utils/read-only.signer.util';
@@ -24,7 +21,6 @@ import { mutezToTz } from '../../utils/tezos.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { navigateAction } from '../root-state.actions';
 import {
-  approvePermissionRequestAction,
   loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -135,66 +131,10 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
     })
   );
 
-const approvePermissionRequestEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(approvePermissionRequestAction),
-    toPayload(),
-    switchMap(({ message, publicKey }) =>
-      from(
-        BeaconHandler.respond({
-          type: BeaconMessageType.PermissionResponse,
-          network: message.network,
-          scopes: message.scopes,
-          id: message.id,
-          publicKey
-        })
-      ).pipe(
-        map(() => {
-          showSuccessToast('Successfully approved!');
-
-          return navigateAction(StacksEnum.MainStack);
-        }),
-        catchError(err => {
-          showErrorToast(err.message);
-
-          return EMPTY;
-        })
-      )
-    )
-  );
-
-const abortPermissionRequestEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(approvePermissionRequestAction),
-    toPayload(),
-    switchMap(({ message }) =>
-      from(
-        BeaconHandler.respond({
-          type: BeaconMessageType.Error,
-          id: message.id,
-          errorType: BeaconErrorType.ABORTED_ERROR
-        })
-      ).pipe(
-        map(() => {
-          showSuccessToast('Connection aborted!');
-
-          return navigateAction(StacksEnum.MainStack);
-        }),
-        catchError(err => {
-          showErrorToast(err.message);
-
-          return EMPTY;
-        })
-      )
-    )
-  );
-
 export const walletEpics = combineEpics(
   loadTezosAssetsEpic,
   loadTokenAssetsEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
-  loadEstimationsEpic,
-  approvePermissionRequestEpic,
-  abortPermissionRequestEpic
+  loadEstimationsEpic
 );

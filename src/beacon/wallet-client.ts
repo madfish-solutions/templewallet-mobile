@@ -17,7 +17,7 @@ import {
   PeerInfo,
   PermissionInfo,
   PermissionManager,
-  Serializer,
+  Serializer, Storage,
   TransportStatus,
   TransportType,
   WalletClientOptions,
@@ -55,10 +55,10 @@ export class WalletClient extends Client {
    */
   private pendingRequests: [BeaconRequestMessage, ConnectionContext][] = [];
 
-  constructor({ storage = new LocalStorage(), ...restConfig }: WalletClientOptions) {
-    super({ storage, ...restConfig });
-    this.permissionManager = new PermissionManager(storage);
-    this.appMetadataManager = new AppMetadataManager(storage);
+  constructor(config: WalletClientOptions & { storage: Storage }) {
+    super(config);
+    this.permissionManager = new PermissionManager(config.storage);
+    this.appMetadataManager = new AppMetadataManager(config.storage);
   }
 
   public async init(): Promise<TransportType> {

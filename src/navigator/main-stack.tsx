@@ -16,6 +16,7 @@ import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
+import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ImportAccount } from '../screens/import-account/import-account';
@@ -178,6 +179,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.About}
                 component={About}
                 options={generateScreenOptions(<HeaderTitle title="About" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.DAppsSettings}
+                component={DAppsSettings}
+                options={generateScreenOptions(<HeaderTitle title="DApps" />)}
               />
             </>
           )}

@@ -2,13 +2,11 @@ import { AppMetadata } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AvatarImage } from '../../../../../components/avatar-image/avatar-image';
+import { AppMetadataIcon } from '../../../../../components/app-metadata-icon/app-metadata-icon';
 import { Divider } from '../../../../../components/divider/divider';
 import { Icon } from '../../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
-import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { formatSize } from '../../../../../styles/format-size';
-import { isDefined } from '../../../../../utils/is-defined';
 import { useAppMetadataConnectionViewStyles } from './app-metadata-connection-view.styles';
 
 interface Props {
@@ -23,11 +21,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ appMetadata }) => {
       <Divider size={formatSize(16)} />
       <View style={styles.headerContainer}>
         <View style={styles.appContainer}>
-          {isDefined(appMetadata.icon) ? (
-            <AvatarImage uri={appMetadata.icon} />
-          ) : (
-            <RobotIcon seed={appMetadata.senderId} />
-          )}
+          <AppMetadataIcon appMetadata={appMetadata} />
           <Divider size={formatSize(8)} />
           <Text style={styles.nameText}>{appMetadata.name}</Text>
         </View>
