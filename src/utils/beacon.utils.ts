@@ -7,7 +7,8 @@ export type SemiPartialTezosOperation = PartialTezosOperation & {
   storage_limit?: string;
 };
 
-export function toWalletParam(op: SemiPartialTezosOperation): WalletParamsWithKind {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): WalletParamsWithKind => {
   const { fee, gas_limit, storage_limit, ...rest } = op;
 
   const walletParam = {
@@ -21,6 +22,7 @@ export function toWalletParam(op: SemiPartialTezosOperation): WalletParamsWithKi
     case TezosOperationType.ORIGINATION:
       const { script, ...orgRest } = walletParam;
       const { code, storage } = script as any; // Beacon has wrong types for script prop
+
       return {
         ...orgRest,
         kind: walletParam.kind as any, // Beacon and taquito has different enums for op.kind
@@ -31,6 +33,7 @@ export function toWalletParam(op: SemiPartialTezosOperation): WalletParamsWithKi
 
     case TezosOperationType.TRANSACTION:
       const { destination, amount, parameters, ...txRest } = walletParam;
+
       return {
         ...txRest,
         kind: walletParam.kind as any, // Beacon and taquito has different enums for op.kind
@@ -43,4 +46,4 @@ export function toWalletParam(op: SemiPartialTezosOperation): WalletParamsWithKi
     default:
       return walletParam as any; // Beacon and taquito has different enums for op.kind
   }
-}
+};

@@ -14,7 +14,7 @@ import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interf
 import { abortRequestAction, approveSignPayloadRequestAction } from '../../../../store/d-apps/d-apps-actions';
 import { useHdAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { AppMetadataView } from './app-metadata-view/app-metadata-view';
+import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {

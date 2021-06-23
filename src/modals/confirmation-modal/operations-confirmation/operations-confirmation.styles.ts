@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useInternalOperationsConfirmationStyles = createUseStyles(({ colors, typography }) => ({
+export const useOperationsConfirmationStyles = createUseStyles(({ colors, typography }) => ({
   loadingMessage: {
     ...typography.body17Semibold,
     textAlign: 'center',
