@@ -46,7 +46,7 @@ export const Settings = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View style={styles.upperContainer}>
           <View style={styles.quoteContainer}>
-            <Quote quote="Buy on the peak = ride on the dick." author="Furry hamster" />
+            <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
           </View>
 
           <WhiteContainer>

@@ -14,11 +14,9 @@ import { emptyComponent } from '../config/general';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
-import { ConfirmationWindow } from '../screens/confirmation-window/confirmation-window';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
-import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
@@ -27,7 +25,6 @@ import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-scre
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
-import { useAppLock } from '../shelter/use-app-lock.hook';
 import { loadActivityGroupsActions } from '../store/activity/activity-actions';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
@@ -43,13 +40,10 @@ import { TabBar } from './tab-bar/tab-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const isConfirmation = false;
-
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
-  const { isLocked } = useAppLock();
   const { navigate } = useNavigation();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -99,105 +93,96 @@ export const MainStackScreen = () => {
   }, []);
 
   return (
-    <>
-      <PortalProvider>
-        <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {!isAuthorised ? (
-            <>
-              <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
-              <MainStack.Screen
-                name={ScreensEnum.ImportAccount}
-                component={ImportAccount}
-                options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.CreateAccount}
-                component={CreateAccount}
-                options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
-              />
-            </>
-          ) : (
-            <>
-              {/** Wallet stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.Wallet}
-                component={Wallet}
-                options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.TezosTokenScreen}
-                component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.TokenScreen}
-                component={TokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.Delegation}
-                component={DelegationScreen}
-                options={generateScreenOptions(<HeaderTitle title="Delegation" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.ManageAssets}
-                component={ManageAssets}
-                options={generateScreenOptions(<HeaderTitle title="Manage Assets" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.Activity}
-                component={Activity}
-                options={generateScreenOptions(<HeaderTitle title="Activity" />)}
-              />
+    <PortalProvider>
+      <MainStack.Navigator screenOptions={styleScreenOptions}>
+        {!isAuthorised ? (
+          <>
+            <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
+            <MainStack.Screen
+              name={ScreensEnum.ImportAccount}
+              component={ImportAccount}
+              options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.CreateAccount}
+              component={CreateAccount}
+              options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
+            />
+          </>
+        ) : (
+          <>
+            {/** Wallet stack **/}
+            <MainStack.Screen
+              name={ScreensEnum.Wallet}
+              component={Wallet}
+              options={{ animationEnabled: false, headerShown: false }}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.TezosTokenScreen}
+              component={TezosTokenScreen}
+              options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.TokenScreen}
+              component={TokenScreen}
+              options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.Delegation}
+              component={DelegationScreen}
+              options={generateScreenOptions(<HeaderTitle title="Delegation" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.ManageAssets}
+              component={ManageAssets}
+              options={generateScreenOptions(<HeaderTitle title="Manage Assets" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.Activity}
+              component={Activity}
+              options={generateScreenOptions(<HeaderTitle title="Activity" />)}
+            />
 
-              {/** DApps stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.DApps}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
-              />
+            {/** DApps stack **/}
+            <MainStack.Screen
+              name={ScreensEnum.DApps}
+              component={emptyComponent}
+              options={{ animationEnabled: false }}
+            />
 
-              {/** Swap stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.Swap}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
-              />
+            {/** Swap stack **/}
+            <MainStack.Screen
+              name={ScreensEnum.Swap}
+              component={emptyComponent}
+              options={{ animationEnabled: false }}
+            />
 
-              {/** Settings stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.Settings}
-                component={Settings}
-                options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.ManageAccounts}
-                component={ManageAccounts}
-                options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.About}
-                component={About}
-                options={generateScreenOptions(<HeaderTitle title="About" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.DAppsSettings}
-                component={DAppsSettings}
-                options={generateScreenOptions(<HeaderTitle title="DApps" />)}
-              />
-            </>
-          )}
-        </MainStack.Navigator>
+            {/** Settings stack **/}
+            <MainStack.Screen
+              name={ScreensEnum.Settings}
+              component={Settings}
+              options={{ animationEnabled: false, headerShown: false }}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.ManageAccounts}
+              component={ManageAccounts}
+              options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.About}
+              component={About}
+              options={generateScreenOptions(<HeaderTitle title="About" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.DAppsSettings}
+              component={DAppsSettings}
+              options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+            />
+          </>
+        )}
+      </MainStack.Navigator>
 
-        {isAuthorised && <TabBar />}
-      </PortalProvider>
-
-      {isAuthorised && (
-        <>
-          {isLocked && <EnterPassword />}
-          {isConfirmation && <ConfirmationWindow />}
-        </>
-      )}
-    </>
+      {isAuthorised && <TabBar />}
+    </PortalProvider>
   );
 };

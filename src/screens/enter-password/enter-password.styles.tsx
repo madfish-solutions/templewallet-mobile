@@ -11,12 +11,7 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
   },
   imageView: {
     marginTop: formatSize(108),
-    marginBottom: formatSize(73),
     alignItems: 'center'
-  },
-  quoteView: {
-    marginHorizontal: formatSize(4),
-    alignItems: 'stretch'
   },
   bottomText: {
     ...typography.caption13Regular,

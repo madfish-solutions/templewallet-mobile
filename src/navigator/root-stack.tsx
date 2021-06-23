@@ -12,6 +12,9 @@ import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
+import { EnterPassword } from '../screens/enter-password/enter-password';
+import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -26,6 +29,9 @@ type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
+  const { isLocked } = useAppLock();
+  const isAuthorised = useIsAuthorisedSelector();
+
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useStatusBarStyle();
@@ -88,6 +94,8 @@ export const RootStackScreen = () => {
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
+
+      {isAuthorised && isLocked && <EnterPassword />}
     </NavigationContainer>
   );
 };
