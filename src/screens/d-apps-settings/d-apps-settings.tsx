@@ -14,8 +14,6 @@ export const DAppsSettings = () => {
 
   useEffect(() => void dispatch(loadPermissionsActions.submit()), []);
 
-  console.log(permissions.data);
-
   return (
     <ScreenContainer>
       <Label label="Authorized DApps" description="Click on the Trash icon to reset permissions." />
