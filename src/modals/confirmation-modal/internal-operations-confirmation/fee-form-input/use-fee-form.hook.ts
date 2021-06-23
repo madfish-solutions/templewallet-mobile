@@ -44,7 +44,6 @@ export const useFeeForm = (opParams: WalletParamsWithKind[], estimationsList: Es
         storageLimitSum: bigNumberValidation
           .clone()
           .test('required-if-only-one-operation', 'Storage limit is required', value => {
-            console.log(value);
             if (onlyOneOperation && estimationWasSuccessful) {
               return isDefined(value) && value instanceof BigNumber && value.gte(0);
             }

@@ -1,7 +1,6 @@
-import { InMemorySigner } from '@taquito/signer';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { merge, of, Subject, throwError } from 'rxjs';
+import { merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
@@ -50,13 +49,10 @@ export const useShelter = () => {
       send$
         .pipe(
           switchMap(({ publicKeyHash, opParams, successCallback }) =>
-            Shelter.revealSecretKey$(publicKeyHash).pipe(
-              switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+            Shelter.getSigner$(publicKeyHash).pipe(
               withLatestFrom(tezos$),
-              switchMap(([privateKey, tezos]) => {
-                tezos.setProvider({
-                  signer: new InMemorySigner(privateKey)
-                });
+              switchMap(([signer, tezos]) => {
+                tezos.setProvider({ signer });
 
                 return tezos.wallet.batch(opParams).send();
               }),

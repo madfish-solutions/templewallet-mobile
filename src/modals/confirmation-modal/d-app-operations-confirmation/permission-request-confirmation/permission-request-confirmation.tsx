@@ -10,7 +10,7 @@ import { Divider } from '../../../../components/divider/divider';
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { abortPermissionRequestAction, approvePermissionRequestAction } from '../../../../store/d-apps/d-apps-actions';
+import { abortRequestAction, approvePermissionRequestAction } from '../../../../store/d-apps/d-apps-actions';
 import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
@@ -33,7 +33,6 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
     [selectedAccount]
   );
 
-  const handleCancelButtonPress = () => dispatch(abortPermissionRequestAction({ message }));
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) =>
     void dispatch(
       approvePermissionRequestAction({
@@ -56,7 +55,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AccountFormDropdown name="approver" list={hdAccounts} />
           </ScreenContainer>
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Cancel" onPress={handleCancelButtonPress} />
+            <ButtonLargeSecondary title="Cancel" onPress={() => dispatch(abortRequestAction(message.id))} />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary title="Confirm" onPress={submitForm} />
           </ModalButtonsContainer>

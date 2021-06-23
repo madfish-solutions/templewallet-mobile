@@ -7,11 +7,13 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { BeaconHandler } from '../../beacon/beacon-handler';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
+import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { navigateAction } from '../root-state.actions';
 import {
-  abortPermissionRequestAction,
+  abortRequestAction,
   approvePermissionRequestAction,
+  approveSignPayloadRequestAction,
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
@@ -75,20 +77,49 @@ const approvePermissionRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
-const abortPermissionRequestEpic = (action$: Observable<Action>) =>
+const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
   action$.pipe(
-    ofType(abortPermissionRequestAction),
+    ofType(approveSignPayloadRequestAction),
     toPayload(),
-    switchMap(({ message }) =>
+    switchMap(message =>
+      Shelter.getSigner$(message.sourceAddress).pipe(
+        switchMap(signer => signer.sign(message.payload)),
+        switchMap(({ prefixSig }) =>
+          BeaconHandler.respond({
+            type: BeaconMessageType.SignPayloadResponse,
+            id: message.id,
+            signingType: message.signingType,
+            signature: prefixSig
+          })
+        ),
+        map(() => {
+          showSuccessToast('Successfully signed!');
+
+          return navigateAction(StacksEnum.MainStack);
+        }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
+  );
+
+const abortRequestEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(abortRequestAction),
+    toPayload(),
+    switchMap(id =>
       from(
         BeaconHandler.respond({
+          id,
           type: BeaconMessageType.Error,
-          id: message.id,
           errorType: BeaconErrorType.ABORTED_ERROR
         })
       ).pipe(
         map(() => {
-          showSuccessToast('Connection aborted!');
+          showSuccessToast('Request aborted!');
 
           return navigateAction(StacksEnum.MainStack);
         }),
@@ -105,5 +136,6 @@ export const dAppsEpics = combineEpics(
   loadPermissionsEpic,
   removePermissionEpic,
   approvePermissionRequestEpic,
-  abortPermissionRequestEpic
+  approveSignPayloadRequestEpic,
+  abortRequestEpic
 );

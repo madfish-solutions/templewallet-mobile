@@ -116,4 +116,10 @@ export class Shelter {
     );
 
   static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._password$.getValue());
+
+  static getSigner$ = (publicKeyHash: string) =>
+    Shelter.revealSecretKey$(publicKeyHash).pipe(
+      switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+      map(privateKey => new InMemorySigner(privateKey))
+    );
 }

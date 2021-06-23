@@ -1,6 +1,7 @@
 import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AccountDropdownItem } from '../../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -10,6 +11,7 @@ import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
+import { abortRequestAction, approveSignPayloadRequestAction } from '../../../../store/d-apps/d-apps-actions';
 import { useHdAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { AppMetadataView } from './app-metadata-view/app-metadata-view';
@@ -21,15 +23,13 @@ interface Props {
 
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const styles = useSignPayloadRequestConfirmationStyles();
+  const dispatch = useDispatch();
   const hdAccounts = useHdAccountsListSelector();
 
   const approver = useMemo(
     () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
     [hdAccounts, message.sourceAddress]
   );
-
-  const handleCancelButtonPress = () => null;
-  const handleSignButtonPress = () => null;
 
   return (
     <>
@@ -49,9 +49,9 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         <Text style={styles.payloadText}>{message.payload}</Text>
       </ScreenContainer>
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" onPress={handleCancelButtonPress} />
+        <ButtonLargeSecondary title="Cancel" onPress={() => dispatch(abortRequestAction(message.id))} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Sign" onPress={handleSignButtonPress} />
+        <ButtonLargePrimary title="Sign" onPress={() => dispatch(approveSignPayloadRequestAction(message))} />
       </ModalButtonsContainer>
     </>
   );
