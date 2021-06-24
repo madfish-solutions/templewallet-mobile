@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../../../components/divider/divider';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
-import { abortRequestAction } from '../../../../store/d-apps/d-apps-actions';
+import { abortRequestAction, approveOperationRequestAction } from '../../../../store/d-apps/d-apps-actions';
 import { useHdAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { mapBeaconToTaquitoParams } from '../../../../utils/beacon.utils';
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
@@ -29,7 +29,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     <OperationsConfirmation
       sender={sender}
       opParams={opParams}
-      onSuccessSend={() => null}
+      onSuccessSend={transactionHash => dispatch(approveOperationRequestAction({ message, transactionHash }))}
       onBackButtonPress={() => dispatch(abortRequestAction(message.id))}>
       <AppMetadataView appMetadata={message.appMetadata} />
       <Divider />

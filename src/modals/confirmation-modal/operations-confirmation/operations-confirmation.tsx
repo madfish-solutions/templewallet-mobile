@@ -14,7 +14,9 @@ import { useShelter } from '../../../shelter/use-shelter.hook';
 import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
 import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
+import { tzToMutez } from '../../../utils/tezos.util';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
@@ -48,15 +50,15 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSuccessS
     const params = opParams.map((param, index) => {
       const isLastOpParam = index === opParams.length - 1;
 
-      const fee = isDefined(gasFeeSum) && isLastOpParam ? gasFeeSum : 0;
-      const storage_limit =
+      const fee = isDefined(gasFeeSum) && isLastOpParam ? tzToMutez(gasFeeSum, XTZ_TOKEN_METADATA.decimals) : 0;
+      const storageLimit =
         isDefined(storageLimitSum) && onlyOneOperation
           ? storageLimitSum
           : estimationWasSuccessful
           ? estimations.data[index].storageLimit
           : undefined;
 
-      return { ...param, fee, storage_limit };
+      return { ...param, fee, storageLimit };
     });
 
     send({

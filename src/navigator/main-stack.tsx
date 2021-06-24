@@ -1,17 +1,13 @@
-import { Serializer } from '@airgap/beacon-sdk';
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { Linking } from 'react-native';
-import { URL } from 'react-native-url-polyfill';
 import { useDispatch } from 'react-redux';
 
-import { BeaconHandler, isBeaconMessage } from '../beacon/beacon-handler';
+import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
-import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -31,10 +27,7 @@ import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wall
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { isDefined } from '../utils/is-defined';
-import { ModalsEnum } from './enums/modals.enum';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
-import { useNavigation } from './hooks/use-navigation.hook';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
 
@@ -44,11 +37,11 @@ const DATA_REFRESH_INTERVAL = 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
+  useBeaconHandler();
   useEffect(() => {
     if (isAuthorised) {
       let timeoutId = setTimeout(function updateData() {
@@ -63,34 +56,6 @@ export const MainStackScreen = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [isAuthorised, selectedAccount.publicKeyHash]);
-
-  useEffect(() => {
-    BeaconHandler.init(message => {
-      console.log('puuk', message);
-      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message });
-    });
-
-    const listener = async ({ url }: { url: string }) => {
-      try {
-        const searchParams = new URL(url).searchParams;
-        const type = searchParams.get('type');
-        const data = searchParams.get('data');
-
-        if (type === 'tzip10' && isDefined(data)) {
-          const json = await new Serializer().deserialize(data);
-          if (isBeaconMessage(json)) {
-            await BeaconHandler.addPeer(json);
-          }
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    Linking.addEventListener('url', listener);
-
-    return () => Linking.removeEventListener('url', listener);
-  }, []);
 
   return (
     <PortalProvider>

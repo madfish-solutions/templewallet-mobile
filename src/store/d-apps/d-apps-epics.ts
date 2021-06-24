@@ -12,6 +12,7 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { navigateAction } from '../root-state.actions';
 import {
   abortRequestAction,
+  approveOperationRequestAction,
   approvePermissionRequestAction,
   approveSignPayloadRequestAction,
   loadPermissionsActions,
@@ -106,6 +107,32 @@ const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
+const approveOperationRequestEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(approveOperationRequestAction),
+    toPayload(),
+    switchMap(({ message, transactionHash }) =>
+      from(
+        BeaconHandler.respond({
+          type: BeaconMessageType.OperationResponse,
+          id: message.id,
+          transactionHash
+        })
+      ).pipe(
+        map(() => {
+          showSuccessToast('Successfully sent!');
+
+          return navigateAction(StacksEnum.MainStack);
+        }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
+  );
+
 const abortRequestEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(abortRequestAction),
@@ -137,5 +164,6 @@ export const dAppsEpics = combineEpics(
   removePermissionEpic,
   approvePermissionRequestEpic,
   approveSignPayloadRequestEpic,
+  approveOperationRequestEpic,
   abortRequestEpic
 );
