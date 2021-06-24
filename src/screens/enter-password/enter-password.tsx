@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Keyboard, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
@@ -26,35 +26,21 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
   const { unlock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
-  const [keyboardShown, setKeyboardShown] = useState(false);
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
-
-  useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardShown(false));
-
-    return () => {
-      showListener.remove();
-      hideListener.remove();
-    };
-  }, []);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <View style={styles.imageView}>
+        <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      {keyboardShown ? (
-        <Divider size={formatSize(12)} />
-      ) : (
-        <View style={styles.quoteView}>
-          <Quote
-            quote="The only function of economic forecasting is to make astrology look more respectable."
-            author="John Kenneth Galbraith"
-          />
-        </View>
-      )}
+      <Divider />
+      <Quote
+        quote="The only function of economic forecasting is to make astrology look more respectable."
+        author="John Kenneth Galbraith"
+      />
+      <Divider />
       <View>
         <Formik
           initialValues={enterPasswordInitialValues}

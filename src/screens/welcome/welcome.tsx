@@ -24,12 +24,12 @@ export const Welcome = () => {
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      <View style={styles.quoteView}>
-        <Quote
-          quote="The only function of economic forecasting is to make astrology look more respectable."
-          author="John Kenneth Galbraith"
-        />
-      </View>
+      <Divider />
+      <Quote
+        quote="The only function of economic forecasting is to make astrology look more respectable."
+        author="John Kenneth Galbraith"
+      />
+      <Divider />
       <View>
         <ButtonLargePrimary
           title="Create a new Wallet"

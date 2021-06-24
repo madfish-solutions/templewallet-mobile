@@ -1,5 +1,5 @@
-import Avatars from '@dicebear/avatars';
-import botttsSprites from '@dicebear/avatars-bottts-sprites';
+import { createAvatar } from '@dicebear/avatars';
+import * as botttsSprites from '@dicebear/avatars-bottts-sprites';
 import React, { FC, useMemo } from 'react';
 import { SvgXml } from 'react-native-svg';
 
@@ -11,20 +11,17 @@ interface Props {
   size?: number;
 }
 
-const avatars = new Avatars(botttsSprites);
-
 export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
   const styles = useRobotIconStyles();
 
   const xml = useMemo(
     () =>
-      avatars
-        .create(seed, {
-          margin: formatSize(4),
-          width: size,
-          height: size
-        })
-        .replace('undefined', ''),
+      createAvatar(botttsSprites, {
+        seed,
+        margin: formatSize(4),
+        width: size,
+        height: size
+      }).replace('undefined', ''),
     [seed, size]
   );
 

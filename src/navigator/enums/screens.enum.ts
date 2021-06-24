@@ -22,7 +22,8 @@ export enum ScreensEnum {
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
-  About = 'About'
+  About = 'About',
+  DAppsSettings = 'DAppsSettings'
 }
 
 export type ScreensParamList = {
@@ -48,6 +49,7 @@ export type ScreensParamList = {
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
   [ScreensEnum.About]: undefined;
+  [ScreensEnum.DAppsSettings]: undefined;
 };
 
 export const walletStackScreens = [
@@ -60,4 +62,9 @@ export const walletStackScreens = [
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.Swap];
-export const settingsStackScreens = [ScreensEnum.Settings, ScreensEnum.ManageAccounts, ScreensEnum.About];
+export const settingsStackScreens = [
+  ScreensEnum.Settings,
+  ScreensEnum.ManageAccounts,
+  ScreensEnum.About,
+  ScreensEnum.DAppsSettings
+];

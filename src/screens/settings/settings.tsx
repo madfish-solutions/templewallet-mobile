@@ -22,12 +22,10 @@ import { changeTheme } from '../../store/display-settings/display-settings-actio
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
 
 export const Settings = () => {
-  const colors = useColors();
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
@@ -48,7 +46,7 @@ export const Settings = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View style={styles.upperContainer}>
           <View style={styles.quoteContainer}>
-            <Quote quote="Buy on the peak = ride on the dick." author="Furry hamster" />
+            <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
           </View>
 
           <WhiteContainer>
@@ -77,9 +75,9 @@ export const Settings = () => {
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction disabled={true}>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.DAppsSettings)}>
               <WhiteContainerText text="DApps" />
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} color={colors.disabled} />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
           <Divider size={formatSize(16)} />

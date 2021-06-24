@@ -10,13 +10,15 @@ import { activityReducers } from './activity/activity-reducers';
 import { ActivityRootState } from './activity/activity-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
+import { dAppsReducers } from './d-apps/d-apps-reducers';
+import { DAppsRootState } from './d-apps/d-apps-state';
 import { displaySettingsReducers } from './display-settings/display-settings-reducers';
 import { DisplaySettingsRootState } from './display-settings/display-settings-state';
 import { rootStateReducer } from './root-state.reducers';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState & BakingRootState & DisplaySettingsRootState & ActivityRootState;
+type RootState = WalletRootState & BakingRootState & DisplaySettingsRootState & ActivityRootState & DAppsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -36,7 +38,8 @@ const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
   displaySettings: displaySettingsReducers,
-  activity: activityReducers
+  activity: activityReducers,
+  dApps: dAppsReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
