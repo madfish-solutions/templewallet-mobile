@@ -11,10 +11,9 @@ interface Props {
   size?: number;
 }
 
-export const AppMetadataIcon: FC<Props> = ({ appMetadata, size = formatSize(44) }) => {
-  return isDefined(appMetadata.icon) ? (
+export const AppMetadataIcon: FC<Props> = ({ appMetadata, size = formatSize(44) }) =>
+  isDefined(appMetadata.icon) ? (
     <AvatarImage uri={appMetadata.icon} size={size} />
   ) : (
     <RobotIcon seed={appMetadata.senderId} size={size} />
   );
-};
