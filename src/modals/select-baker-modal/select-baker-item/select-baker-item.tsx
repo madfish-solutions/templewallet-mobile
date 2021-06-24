@@ -9,6 +9,7 @@ import { PublicKeyHashText } from '../../../components/public-key-hash-text/publ
 import { EmptyFn } from '../../../config/general';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
@@ -50,7 +51,9 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <Divider size={formatSize(16)} />
         <View>
           <Text style={styles.cellTitle}>Space:</Text>
-          <Text style={styles.cellValueText}>{baker.freeSpace.toFixed(2)} XTZ</Text>
+          <Text style={styles.cellValueText}>
+            {baker.freeSpace.toFixed(2)} {TEZ_TOKEN_METADATA.symbol}
+          </Text>
         </View>
         <Divider size={formatSize(16)} />
         <View>

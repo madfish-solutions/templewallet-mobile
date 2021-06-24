@@ -28,7 +28,7 @@ export const TabBar: FC = () => {
       <View style={styles.buttonsContainer}>
         <TabBarButton
           label="Wallet"
-          iconName={IconNameEnum.XtzWallet}
+          iconName={IconNameEnum.TezWallet}
           iconWidth={formatSize(24)}
           routeName={ScreensEnum.Wallet}
           focused={isStackFocused(walletStackScreens)}

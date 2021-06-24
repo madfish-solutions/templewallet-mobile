@@ -48,21 +48,21 @@ import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
+import TezWalletIcon from './assets/tez-wallet.svg';
 import BlndTokenIcon from './assets/tokens/blnd.svg';
 import EthTzTokenIcon from './assets/tokens/ethTz.svg';
 import KUsdTokenIcon from './assets/tokens/kUsd.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import StkrTokenIcon from './assets/tokens/stkr.svg';
+import TezTokenIcon from './assets/tokens/tez.svg';
 import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import UsdSTokenIcon from './assets/tokens/usds.svg';
 import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
-import XtzTokenIcon from './assets/tokens/xtz.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XIcon from './assets/x.svg';
-import XtzWalletIcon from './assets/xtz-wallet.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
@@ -85,11 +85,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
-  [IconNameEnum.XtzWallet]: XtzWalletIcon,
+  [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
-  [IconNameEnum.XtzToken]: XtzTokenIcon,
+  [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,
   [IconNameEnum.EthTzToken]: EthTzTokenIcon,

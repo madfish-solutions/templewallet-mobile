@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
@@ -39,7 +39,7 @@ export const AccountDropdownItem: FC<Props> = ({
 
           {showFullData && (
             <Text style={styles.balanceText}>
-              {account?.tezosBalance.data} {XTZ_TOKEN_METADATA.symbol}
+              {account?.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
             </Text>
           )}
         </View>
