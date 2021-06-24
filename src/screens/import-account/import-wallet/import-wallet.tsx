@@ -42,6 +42,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
             <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
             <FormMnemonicInput name="seedPhrase" />
           </View>
+          <Divider />
 
           <View>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
