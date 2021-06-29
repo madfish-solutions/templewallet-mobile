@@ -1,6 +1,5 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { AvatarImage } from '../../../components/avatar-image/avatar-image';
 import { Divider } from '../../../components/divider/divider';
