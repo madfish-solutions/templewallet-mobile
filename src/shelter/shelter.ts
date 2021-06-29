@@ -60,10 +60,16 @@ export class Shelter {
     );
   };
 
-  private static assertBiometryAvailability = async () => {
-    const biometryType = await Keychain.getSupportedBiometryType();
-    if (!biometryType) {
-      throw new Error('Biometrics is not available');
+  private static biometryIsAvailable = async () => {
+    try {
+      const biometryType = await Keychain.getSupportedBiometryType();
+      if (!biometryType) {
+        throw new Error('Biometrics is not available');
+      }
+
+      return { available: true };
+    } catch (e) {
+      return { available: false, error: e };
     }
   };
 
@@ -157,11 +163,26 @@ export class Shelter {
     );
 
   static createBiometricsKeys$ = () =>
-    from(Shelter.assertBiometryAvailability()).pipe(switchMap(() => from(ReactNativeBiometrics.createKeys())));
+    from(Shelter.biometryIsAvailable()).pipe(
+      switchMap(({ available, error }) => {
+        if (!available) {
+          return throwError(error);
+        }
+
+        return from(ReactNativeBiometrics.createKeys());
+      }),
+      catchError(error => of(error as Error))
+    );
 
   static unlockAppWithBiometry$ = () =>
-    from(Shelter.assertBiometryAvailability()).pipe(
-      switchMap(() => from(ReactNativeBiometrics.biometricKeysExist())),
+    from(Shelter.biometryIsAvailable()).pipe(
+      switchMap(({ available, error }) => {
+        if (!available) {
+          return throwError(error);
+        }
+
+        return from(ReactNativeBiometrics.biometricKeysExist());
+      }),
       switchMap(({ keysExist }) => {
         if (!keysExist) {
           throw new Error("Biometry keys don't exist");
@@ -186,6 +207,7 @@ export class Shelter {
         return Shelter.decryptSensitiveData$(PASSWORD_STORAGE_KEY, EMPTY_PASSWORD, true).pipe(
           switchMap(value => Shelter.unlockApp$(value))
         );
-      })
+      }),
+      catchError(error => of(error as Error))
     );
 }

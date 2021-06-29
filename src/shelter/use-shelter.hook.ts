@@ -36,10 +36,12 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
-      createBiometricsKeys$.pipe(switchMap(() => Shelter.createBiometricsKeys$())).subscribe(
-        () => showSuccessToast('Success', 'Biometric keys created successfully'),
-        error => showErrorToast(KNOWN_BIOMETRY_ERROR_MESSAGES[error.message] ?? error.message)
-      ),
+      createBiometricsKeys$.pipe(switchMap(() => Shelter.createBiometricsKeys$())).subscribe(result => {
+        if (result instanceof Error) {
+          showErrorToast('Error', KNOWN_BIOMETRY_ERROR_MESSAGES[result.message] ?? result.message);
+        }
+        showSuccessToast('Success', 'Biometric keys created successfully');
+      }),
       importWallet$
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
         .subscribe(publicData => {
