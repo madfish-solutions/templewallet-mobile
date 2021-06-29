@@ -15,6 +15,7 @@ import { EmptyFn } from '../../../config/general';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
@@ -63,7 +64,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           <Divider size={formatSize(16)} />
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
-            <Text style={styles.cellValueText}>{baker.freeSpace.toFixed(2)} XTZ</Text>
+            <Text style={styles.cellValueText}>
+              {baker.freeSpace.toFixed(2)} {TEZ_TOKEN_METADATA.symbol}
+            </Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>

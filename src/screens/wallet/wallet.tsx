@@ -21,7 +21,7 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -52,9 +52,9 @@ export const Wallet = () => {
           <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} color={colors.disabled} />
         </View>
 
-        <TokenEquityValue balance={tezosBalance} symbol={XTZ_TOKEN_METADATA.symbol} />
+        <TokenEquityValue balance={tezosBalance} symbol={TEZ_TOKEN_METADATA.symbol} />
 
-        <HeaderCardActionButtons asset={XTZ_TOKEN_METADATA} />
+        <HeaderCardActionButtons asset={TEZ_TOKEN_METADATA} />
       </HeaderCard>
 
       <TokenList tezosBalance={tezosBalance} />

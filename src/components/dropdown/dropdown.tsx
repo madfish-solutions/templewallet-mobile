@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { useWindowDimensions, View } from 'react-native';
+import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
@@ -71,11 +71,11 @@ export const Dropdown = <T extends unknown>({
               const isSelected = equalityFn(item, value);
 
               return (
-                <TouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
+                <BottomSheetTouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
                   <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
                     {renderListItem({ item, isSelected })}
                   </DropdownItemContainer>
-                </TouchableOpacity>
+                </BottomSheetTouchableOpacity>
               );
             })}
           </View>

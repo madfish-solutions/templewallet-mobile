@@ -12,6 +12,7 @@ import { step } from '../../config/styles';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
@@ -23,10 +24,10 @@ export const ReceiveModal: FC = () => {
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <View style={styles.tokenContainer}>
-        <Icon name={IconNameEnum.XtzToken} size={5 * step} />
+        <Icon name={IconNameEnum.TezToken} size={5 * step} />
         <View style={styles.tokenInfoContainer}>
-          <Text style={styles.tokenSymbol}>XTZ</Text>
-          <Text style={styles.tokenName}>Tezos</Text>
+          <Text style={styles.tokenSymbol}>{TEZ_TOKEN_METADATA.symbol}</Text>
+          <Text style={styles.tokenName}>{TEZ_TOKEN_METADATA.name}</Text>
         </View>
       </View>
 

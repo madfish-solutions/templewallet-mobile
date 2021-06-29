@@ -52,6 +52,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
           selectionColor={colors.orange}
           value={value}
           onChangeText={onChangeText}
+          onBlur={onBlur}
           {...props}
         />
         {isShowCleanButton && isString(value) && (

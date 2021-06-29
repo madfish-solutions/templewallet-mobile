@@ -61,6 +61,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
           </View>
+          <Divider />
 
           <View>
             <View style={styles.checkboxContainer}>

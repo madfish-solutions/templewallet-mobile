@@ -14,6 +14,7 @@ import { useActivityGroupsSelector } from '../../../store/activity/activity-sele
 import { useSelectedBakerSelector } from '../../../store/baking/baking-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { useTezosTokenHistoryStyles } from './tezos-token-history.styles';
 
@@ -49,7 +50,8 @@ export const TezosTokenHistory = () => {
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
         ) : (
           <Text style={styles.delegateText}>
-            Delegate your XTZ and earn up to <Text style={styles.apyText}>{delegationApy}% APY</Text>
+            Delegate your {TEZ_TOKEN_METADATA.symbol} and earn up to{' '}
+            <Text style={styles.apyText}>{delegationApy}% APY</Text>
           </Text>
         )}
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />

@@ -12,7 +12,7 @@ import { Slider } from '../../../../components/slider/slider';
 import { StyledNumericInput } from '../../../../components/styled-numberic-input/styled-numeric-input';
 import { FormNumericInput } from '../../../../form/form-numeric-input';
 import { formatSize } from '../../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { FeeFormInputValues } from './fee-form-input.form';
@@ -44,7 +44,7 @@ export const FeeFormInput: FC<Props> = ({
   const gasFeeBigNumber = values.gasFeeSum ?? new BigNumber(0);
 
   const storageFee = isDefined(values.storageLimitSum)
-    ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), XTZ_TOKEN_METADATA.decimals)
+    ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_METADATA.decimals)
     : undefined;
 
   return (
@@ -96,7 +96,7 @@ export const FeeFormInput: FC<Props> = ({
               maximumValue={sliderMaxValue}
               step={1e-6}
               onValueChange={(newValue: number) =>
-                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(XTZ_TOKEN_METADATA.decimals))
+                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(TEZ_TOKEN_METADATA.decimals))
               }
             />
           )}
