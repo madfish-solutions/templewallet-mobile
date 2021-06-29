@@ -1,5 +1,6 @@
 import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import * as Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
@@ -10,33 +11,46 @@ import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
 export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
 const PASSWORD_CHECK_KEY = 'app-password';
+const PASSWORD_STORAGE_KEY = 'password-storage-key';
 const EMPTY_PASSWORD = '';
 
-const getKeychainOptions = (key: string): Keychain.Options => ({
-  service: `${APP_IDENTIFIER}/${key}`
+const getKeychainOptions = (key: string, useBiometry?: boolean): Keychain.Options => ({
+  service: `${APP_IDENTIFIER}/${key}`,
+  accessControl: useBiometry ? Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET : undefined,
+  authenticationType: useBiometry ? Keychain.AUTHENTICATION_TYPE.BIOMETRICS : undefined
 });
 
 export class Shelter {
   private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
 
-  private static saveSensitiveData$ = (data: Record<string, string>) =>
+  private static saveSensitiveData$ = (data: Record<string, string>, useBiometry?: boolean) =>
     forkJoin(
       Object.entries(data).map(entry =>
         of(entry).pipe(
           switchMap(([key, value]) =>
-            encryptString$(value, Shelter._password$.getValue()).pipe(
-              switchMap(encryptedData =>
-                Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
-              )
-            )
+            useBiometry
+              ? Keychain.setGenericPassword(key, JSON.stringify(value), getKeychainOptions(key, true))
+              : encryptString$(value, Shelter._password$.getValue()).pipe(
+                  switchMap(encryptedData =>
+                    Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
+                  )
+                )
           ),
           switchMap(result => (result === false ? throwError('Failed to save sensitive data') : of(result)))
         )
       )
     );
 
-  private static decryptSensitiveData$ = (key: string, password: string) =>
-    from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
+  private static decryptSensitiveData$ = (key: string, password: string, useBiometry?: boolean) => {
+    if (useBiometry) {
+      return from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
+        switchMap(keychainData =>
+          keychainData === false ? throwError(`No record in Keychain [${key}]`) : of(JSON.parse(keychainData.password))
+        )
+      );
+    }
+
+    return from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
@@ -44,6 +58,14 @@ export class Shelter {
       switchMap(keychainData => decryptString$(keychainData, password)),
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
+  };
+
+  private static assertBiometryAvailability = async () => {
+    const biometryType = await Keychain.getSupportedBiometryType();
+    if (!biometryType) {
+      throw new Error('Biometrics is not available');
+    }
+  };
 
   static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
@@ -76,6 +98,17 @@ export class Shelter {
           [publicKeyHash]: privateKey,
           [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
         }).pipe(
+          switchMap(() =>
+            from(ReactNativeBiometrics.biometricKeysExist()).pipe(
+              switchMap(({ keysExist }) => {
+                if (keysExist) {
+                  return Shelter.saveSensitiveData$({ [PASSWORD_STORAGE_KEY]: password }, true);
+                }
+
+                return of(true);
+              })
+            )
+          ),
           mapTo({
             name: 'Account 1',
             publicKey,
@@ -121,5 +154,38 @@ export class Shelter {
     Shelter.revealSecretKey$(publicKeyHash).pipe(
       switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
+    );
+
+  static createBiometricsKeys$ = () =>
+    from(Shelter.assertBiometryAvailability()).pipe(switchMap(() => from(ReactNativeBiometrics.createKeys())));
+
+  static unlockAppWithBiometry$ = () =>
+    from(Shelter.assertBiometryAvailability()).pipe(
+      switchMap(() => from(ReactNativeBiometrics.biometricKeysExist())),
+      switchMap(({ keysExist }) => {
+        if (!keysExist) {
+          throw new Error("Biometry keys don't exist");
+        }
+
+        return from(
+          ReactNativeBiometrics.createSignature({
+            promptMessage: 'Sign in',
+            payload: 'message_payload'
+          })
+        );
+      }),
+      switchMap(({ success, error }) => {
+        if (error) {
+          throw new Error(error);
+        }
+
+        if (!success) {
+          return of(false);
+        }
+
+        return Shelter.decryptSensitiveData$(PASSWORD_STORAGE_KEY, EMPTY_PASSWORD, true).pipe(
+          switchMap(value => Shelter.unlockApp$(value))
+        );
+      })
     );
 }

@@ -24,7 +24,7 @@ import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
-  const { unlock } = useAppLock();
+  const { biometricKeysExist, unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
@@ -42,6 +42,7 @@ export const EnterPassword = () => {
       />
       <Divider />
       <View>
+        {biometricKeysExist && <ButtonLink title="Unlock with biometry" onPress={unlockWithBiometry} />}
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}

@@ -50,6 +50,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
+	<key>NSFaceIDUsageDescription</key>
+	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
 	<key>UIRequiredDeviceCapabilities</key>

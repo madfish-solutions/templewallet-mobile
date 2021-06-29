@@ -15,11 +15,19 @@ import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
 import { SendParams } from './interfaces/send-params.interface';
 import { Shelter } from './shelter';
 
+const KNOWN_BIOMETRY_ERROR_MESSAGES: Record<string, string> = {
+  BIOMETRIC_ERROR_NONE_ENROLLED: 'No strong biometrics are enrolled',
+  BIOMETRIC_ERROR_HW_UNAVAILABLE: 'No biometrics are supported or enabled',
+  BIOMETRIC_ERROR_NO_HARDWARE: 'No hardware for biometrics was found',
+  BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED: 'A security update is required to use biometrics'
+};
+
 export const useShelter = () => {
   const dispatch = useDispatch();
   const hdAccounts = useHdAccountsListSelector();
   const { goBack } = useNavigation();
 
+  const createBiometricsKeys$ = useMemo(() => new Subject(), []);
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const send$ = useMemo(() => new Subject<SendParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
@@ -28,6 +36,10 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
+      createBiometricsKeys$.pipe(switchMap(() => Shelter.createBiometricsKeys$())).subscribe(
+        () => showSuccessToast('Success', 'Biometric keys created successfully'),
+        error => showErrorToast(KNOWN_BIOMETRY_ERROR_MESSAGES[error.message] ?? error.message)
+      ),
       importWallet$
         .pipe(switchMap(({ seedPhrase, password }) => Shelter.importHdAccount$(seedPhrase, password)))
         .subscribe(publicData => {
@@ -89,6 +101,7 @@ export const useShelter = () => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [
     dispatch,
+    createBiometricsKeys$,
     importWallet$,
     revealSecretKey$,
     createHdAccount$,
@@ -98,6 +111,7 @@ export const useShelter = () => {
     send$
   ]);
 
+  const createBiometricsKeys = () => createBiometricsKeys$.next();
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
   const send = (payload: SendParams) => send$.next(payload);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
@@ -105,5 +119,5 @@ export const useShelter = () => {
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
-  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
+  return { createBiometricsKeys, importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
 };

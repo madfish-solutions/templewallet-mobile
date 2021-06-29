@@ -1,3 +1,4 @@
+import ReactNativeBiometrics from 'react-native-biometrics';
 import Keychain from 'react-native-keychain';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, from, Observable } from 'rxjs';
@@ -12,10 +13,14 @@ import { keychainResetSuccessAction, rootStateResetAction, untypedNavigateAction
 const rootStateResetEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(rootStateResetAction),
-    switchMap(() => Keychain.getAllGenericPasswordServices()),
-    map(services => services.filter(service => service.startsWith(APP_IDENTIFIER))),
-    switchMap(services => from(services).pipe(switchMap(service => Keychain.resetGenericPassword({ service })))),
-    mapTo(keychainResetSuccessAction())
+    switchMap(() =>
+      from(ReactNativeBiometrics.deleteKeys()).pipe(
+        switchMap(() => Keychain.getAllGenericPasswordServices()),
+        map(services => services.filter(service => service.startsWith(APP_IDENTIFIER))),
+        switchMap(services => from(services).pipe(switchMap(service => Keychain.resetGenericPassword({ service })))),
+        mapTo(keychainResetSuccessAction())
+      )
+    )
   );
 
 const navigateEpic = (action$: Observable<Action>) =>

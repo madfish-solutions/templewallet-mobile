@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLink } from '../../../components/button/button-link/button-link';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../components/divider/divider';
 import { HeaderButton } from '../../../components/header/header-button/header-button';
@@ -32,7 +33,7 @@ type CreateNewPasswordProps = {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
   const styles = useCreateNewPasswordStyles();
-  const { importWallet } = useShelter();
+  const { createBiometricsKeys, importWallet } = useShelter();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
     importWallet(seedPhrase, password);
@@ -60,6 +61,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
+
+            <ButtonLink title="Add biometric authorization" onPress={createBiometricsKeys} />
           </View>
           <Divider />
 
