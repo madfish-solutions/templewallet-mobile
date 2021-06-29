@@ -6,6 +6,7 @@ import { ActivityGroupsList } from '../../../components/activity-groups-list/act
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { delegationApy } from '../../../config/general';
 import { ActivityGroup } from '../../../interfaces/activity.interface';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -49,7 +50,8 @@ export const TezosTokenHistory = () => {
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
         ) : (
           <Text style={styles.delegateText}>
-            Delegate your {TEZ_TOKEN_METADATA.symbol} and earn up to <Text style={styles.apyText}>8% APY</Text>
+            Delegate your {TEZ_TOKEN_METADATA.symbol} and earn up to{' '}
+            <Text style={styles.apyText}>{delegationApy}% APY</Text>
           </Text>
         )}
         <Icon name={IconNameEnum.ChevronRight} color={colors.white} size={formatSize(24)} />

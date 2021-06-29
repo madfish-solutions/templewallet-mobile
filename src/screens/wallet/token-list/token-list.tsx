@@ -6,6 +6,7 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Divider } from '../../../components/divider/divider';
 import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { delegationApy } from '../../../config/general';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
@@ -65,7 +66,7 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
                 symbol={TEZ_TOKEN_METADATA.symbol}
                 name={TEZ_TOKEN_METADATA.name}
                 balance={tezosBalance}
-                apy={8}
+                apy={delegationApy}
                 iconName={TEZ_TOKEN_METADATA.iconName}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
