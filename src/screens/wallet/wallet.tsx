@@ -5,9 +5,11 @@ import { useDispatch } from 'react-redux';
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
-import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import {
   loadTezosBalanceActions,
@@ -19,15 +21,13 @@ import {
   useSelectedAccountSelector,
   useTezosBalanceSelector
 } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
-  const colors = useColors();
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
@@ -49,7 +49,7 @@ export const Wallet = () => {
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 
-          <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} color={colors.disabled} />
+          <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
         <TokenEquityValue balance={tezosBalance} symbol={TEZ_TOKEN_METADATA.symbol} />

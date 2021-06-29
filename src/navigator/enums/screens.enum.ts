@@ -12,6 +12,7 @@ export enum ScreensEnum {
   Delegation = 'Delegation',
   ManageAssets = 'ManageAssets',
   Activity = 'Activity',
+  ScanQrCode = 'ScanQrCode',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -32,6 +33,7 @@ export type ScreensParamList = {
   [ScreensEnum.CreateAccount]: undefined;
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
+  [ScreensEnum.ScanQrCode]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -58,7 +60,8 @@ export const walletStackScreens = [
   ScreensEnum.TokenScreen,
   ScreensEnum.Delegation,
   ScreensEnum.ManageAssets,
-  ScreensEnum.Activity
+  ScreensEnum.Activity,
+  ScreensEnum.ScanQrCode
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.Swap];
