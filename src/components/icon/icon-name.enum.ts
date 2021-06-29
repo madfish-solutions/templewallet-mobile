@@ -1,12 +1,20 @@
 export enum IconNameEnum {
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
+  ArrowRight = 'ArrowRight',
+  BookOpen = 'BookOpen',
+  Terminal = 'Terminal',
   ArrowLeft = 'ArrowLeft',
   Download = 'Download',
+  Gear = 'Gear',
+  GLow = 'GLow',
+  GMid = 'GMid',
+  GHigh = 'GHigh',
   DownloadCloud = 'DownloadCloud',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
   InputXCircle = 'InputXCircle',
+  X = 'X',
   XCircle = 'XCircle',
   ShoppingCard = 'ShoppingCard',
   EyeClosedBold = 'EyeClosedBold',
@@ -36,6 +44,7 @@ export enum IconNameEnum {
   Info = 'Info',
   ChevronRight = 'ChevronRight',
   NoResult = 'NoResult',
+  TempleLogo = 'TempleLogo',
   TempleLogoWithText = 'TempleLogoWithText',
   Telegram = 'Telegram',
   Discord = 'Discord',
@@ -50,5 +59,6 @@ export enum IconNameEnum {
   Trash = 'Trash',
   LogOut = 'LogOut',
   Clipboard = 'Clipboard',
-  Deal = 'Deal'
+  Deal = 'Deal',
+  Link = 'Link'
 }

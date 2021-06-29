@@ -1,24 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { emptyWalletAccount } from '../../interfaces/wallet-account.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
-import { findSelectedAccount } from '../../utils/wallet-account.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-const useWalletSelector = () => useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
-
-export const useHdAccountsListSelector = () => useWalletSelector().hdAccounts;
+export const useHdAccountsListSelector = () =>
+  useSelector<WalletRootState, WalletState['hdAccounts']>(({ wallet }) => wallet.hdAccounts);
 
 export const useIsAuthorisedSelector = () => useHdAccountsListSelector().length > 0;
 
 export const useSelectedAccountSelector = () => {
-  const { hdAccounts, selectedAccountPublicKeyHash } = useWalletSelector();
+  const { hdAccounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(
+    ({ wallet }) => wallet
+  );
 
-  return findSelectedAccount(hdAccounts, selectedAccountPublicKeyHash);
+  // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
+  return useMemo(
+    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount,
+    [hdAccounts, selectedAccountPublicKeyHash]
+  );
 };
 
-export const useTokensMetadataSelector = () => useWalletSelector().tokensMetadata;
+export const useTokensMetadataSelector = () =>
+  useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
 
 export const useTokensListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
@@ -49,4 +55,8 @@ export const useVisibleTokensListSelector = () => {
 
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
 
-export const useAddTokenSuggestion = () => useWalletSelector().addTokenSuggestion.data;
+export const useAddTokenSuggestionSelector = () =>
+  useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);
+
+export const useEstimationsSelector = () =>
+  useSelector<WalletRootState, WalletState['estimations']>(({ wallet }) => wallet.estimations);

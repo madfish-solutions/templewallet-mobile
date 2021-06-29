@@ -2,6 +2,9 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }) => ({
+  background: {
+    backgroundColor: colors.navigation
+  },
   upperContainer: {
     paddingHorizontal: formatSize(16)
   },
@@ -15,13 +18,7 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     paddingHorizontal: formatSize(4)
   },
   flatList: {
-    paddingHorizontal: formatSize(16)
-  },
-  buttonsContainer: {
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16),
     backgroundColor: colors.navigation,
-    borderTopWidth: formatSize(0.5),
-    borderColor: colors.lines
+    paddingHorizontal: formatSize(16)
   }
 }));

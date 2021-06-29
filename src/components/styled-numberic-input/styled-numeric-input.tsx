@@ -1,45 +1,68 @@
-import { inRange } from 'lodash';
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useEffect, useState } from 'react';
+import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
-import { EventFn } from '../../config/general';
-import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
+import { emptyFn } from '../../config/general';
+import { isDefined } from '../../utils/is-defined';
+import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { StyledNumericInputProps } from './styled-numeric-input.props';
 
-interface Props extends Pick<StyledTextInputProps, 'isError' | 'onBlur'> {
-  value: number;
-  min?: number;
-  max?: number;
-  onChange: EventFn<number>;
-}
+const DEFAULT_MIN_VALUE = new BigNumber(0);
+const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 
-export const StyledNumericInput: FC<Props> = ({
+export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
-  min = Number.MIN_SAFE_INTEGER,
-  max = Number.MAX_SAFE_INTEGER,
+  decimals = 6,
+  editable,
   isError,
-  onBlur,
-  onChange
+  isShowCleanButton,
+  onBlur = emptyFn,
+  onFocus = emptyFn,
+  onChange = emptyFn
 }) => {
-  const [displayedValue, setDisplayedValue] = useState<string>(value.toString());
+  const [stringValue, setStringValue] = useState('');
+  const [focused, setFocused] = useState(false);
 
-  const handleChange = (changedValue: string) => {
-    const parsedNumber = +changedValue;
+  useEffect(
+    () => void (!focused && setStringValue(isDefined(value) ? new BigNumber(value).toFixed() : '')),
+    [setStringValue, focused, value]
+  );
 
-    if (!isNaN(parsedNumber) && inRange(parsedNumber, min, max)) {
-      const isFloat = changedValue.includes('.');
+  const handleChange = (newStringValue: string) => {
+    let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
+    const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
 
-      setDisplayedValue(isFloat ? changedValue : parsedNumber.toString());
-      onChange(parsedNumber);
+    const indexOfDot = normalizedStringValue.indexOf('.');
+    const decimalsCount = indexOfDot === -1 ? 0 : normalizedStringValue.length - indexOfDot - 1;
+    if (decimalsCount > decimals) {
+      normalizedStringValue = normalizedStringValue.substring(0, indexOfDot + decimals + 1);
+    }
+
+    if (newValue.gte(DEFAULT_MIN_VALUE) && newValue.lte(DEFAULT_MAX_VALUE)) {
+      setStringValue(normalizedStringValue);
+      onChange(normalizedStringValue !== '' ? newValue : undefined);
     }
   };
 
-  useEffect(() => void (value !== parseFloat(displayedValue) && setDisplayedValue(value.toString())), [value]);
+  const handleFocus = (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setFocused(true);
+    onFocus(evt);
+  };
+
+  const handleBlur = () => {
+    setFocused(false);
+    onBlur();
+  };
 
   return (
     <StyledTextInput
-      value={displayedValue}
+      editable={editable}
+      value={stringValue}
       isError={isError}
+      isShowCleanButton={isShowCleanButton}
       keyboardType="numeric"
-      onBlur={onBlur}
+      onBlur={handleBlur}
+      onFocus={handleFocus}
       onChangeText={handleChange}
     />
   );

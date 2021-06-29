@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
@@ -14,7 +15,7 @@ import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { addTokenMetadataAction } from '../../../store/wallet/wallet-actions';
-import { useAddTokenSuggestion } from '../../../store/wallet/wallet-selectors';
+import { useAddTokenSuggestionSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
@@ -26,10 +27,15 @@ interface Props {
 
 export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
-  const tokenSuggestion = useAddTokenSuggestion();
+  const tokenSuggestion = useAddTokenSuggestionSelector();
+  const initialValues = {
+    ...tokenSuggestion.data,
+    decimals: new BigNumber(tokenSuggestion.data.decimals)
+  };
 
   const onSubmit = (data: AddTokenInfoFormValues) => {
-    dispatch(addTokenMetadataAction({ ...tokenSuggestion, ...data }));
+    const tokenMetadata = { ...initialValues, ...data };
+    dispatch(addTokenMetadataAction({ ...tokenMetadata, decimals: tokenMetadata.decimals.toNumber() }));
     showSuccessToast('Token successfully added');
     onFormSubmitted();
   };
@@ -37,7 +43,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={tokenSuggestion}
+      initialValues={initialValues}
       validationSchema={addTokenInfoFormValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
@@ -53,7 +59,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
               label="Decimal"
               description="A number of decimal places after point. For example: 8 for BTC, 2 for USD."
             />
-            <FormNumericInput name="decimals" />
+            <FormNumericInput name="decimals" decimals={0} />
 
             <Label label="Icon URL" description="Image URL for token logo." />
             <FormTextInput name="iconUrl" />

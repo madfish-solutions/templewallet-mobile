@@ -1,8 +1,8 @@
-import { useHeaderHeight } from '@react-navigation/stack';
 import React, { FC } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle } from 'react-native';
 
 import { isIOS } from '../../config/system';
+import { useHeaderHeight } from '../../hooks/use-header-height.hook';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { useScreenContainerStyles } from './screen-container.styles';
 

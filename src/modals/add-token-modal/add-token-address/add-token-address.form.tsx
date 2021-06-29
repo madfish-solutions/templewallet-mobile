@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { mixed, object, SchemaOf } from 'yup';
 
 import { tokenAddressValidation } from '../../../form/validation/token-address';
@@ -7,7 +8,7 @@ import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 export type AddTokenAddressFormValues = {
   type: TokenTypeEnum;
   address: string;
-  id: number;
+  id: BigNumber;
 };
 
 export const addTokenAddressFormValidationSchema: SchemaOf<AddTokenAddressFormValues> = object().shape({
@@ -19,5 +20,5 @@ export const addTokenAddressFormValidationSchema: SchemaOf<AddTokenAddressFormVa
 export const addTokenAddressFormInitialValues: AddTokenAddressFormValues = {
   type: TokenTypeEnum.FA_2,
   address: '',
-  id: 0
+  id: new BigNumber(0)
 };

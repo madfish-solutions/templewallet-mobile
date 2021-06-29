@@ -1,14 +1,13 @@
-import { InMemorySigner } from '@taquito/signer';
 import { useEffect, useMemo } from 'react';
-import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { merge, of, Subject, throwError } from 'rxjs';
-import { map, catchError, switchMap, withLatestFrom } from 'rxjs/operators';
+import { merge, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
-import { useNavigation } from '../navigator/use-navigation.hook';
+import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { tezos$ } from '../utils/network/network.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
@@ -49,22 +48,25 @@ export const useShelter = () => {
 
       send$
         .pipe(
-          switchMap(data =>
-            Shelter.revealSecretKey$(data.from).pipe(
-              switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
-              map((privateKey): [string, SendParams] => [privateKey, data])
-            )
-          ),
-          withLatestFrom(tezos$),
-          switchMap(([[privateKey, data], tezos]) => {
-            tezos.setProvider({
-              signer: new InMemorySigner(privateKey)
-            });
+          switchMap(({ publicKeyHash, opParams, successCallback }) =>
+            Shelter.getSigner$(publicKeyHash).pipe(
+              withLatestFrom(tezos$),
+              switchMap(([signer, tezos]) => {
+                tezos.setProvider({ signer });
 
-            return tezos.contract.transfer({ to: data.to, amount: data.amount });
-          })
+                return tezos.wallet.batch(opParams).send();
+              }),
+              map(({ opHash }) => ({ opHash, successCallback }))
+            )
+          )
         )
-        .subscribe(() => Alert.alert('Transaction sent', '', [{ text: 'OK' }])),
+        .subscribe(
+          ({ opHash, successCallback }) => {
+            successCallback(opHash);
+            showSuccessToast('Sent successfully');
+          },
+          error => showErrorToast(error.message)
+        ),
 
       merge(
         revealSecretKey$.pipe(
@@ -85,10 +87,19 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length]);
+  }, [
+    dispatch,
+    importWallet$,
+    revealSecretKey$,
+    createHdAccount$,
+    hdAccounts.length,
+    goBack,
+    revealSeedPhrase$,
+    send$
+  ]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
-  const send = (from: string, amount: number, to: string) => send$.next({ from, amount, to });
+  const send = (payload: SendParams) => send$.next(payload);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);

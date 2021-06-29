@@ -1,7 +1,9 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 import { MarginProps } from '../../interfaces/margin.props';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps {
@@ -12,10 +14,12 @@ export const PublicKeyHashText: FC<Props> = ({ publicKeyHash, marginTop, marginR
   const styles = usePublicKeyHashTextStyles();
 
   return (
-    <View style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}>
+    <TouchableOpacity
+      style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
+      onPress={() => copyStringToClipboard(publicKeyHash)}>
       <Text style={styles.publicKeyHashText} numberOfLines={1} ellipsizeMode="middle">
         {publicKeyHash}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };

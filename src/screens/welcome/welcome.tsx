@@ -9,8 +9,8 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { ScreensEnum } from '../../navigator/screens.enum';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { useWelcomeStyles } from './welcome.styles';
 
@@ -24,12 +24,12 @@ export const Welcome = () => {
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
-      <View style={styles.quoteView}>
-        <Quote
-          quote="The only function of economic forecasting is to make astrology look more respectable."
-          author="John Kenneth Galbraith"
-        />
-      </View>
+      <Divider />
+      <Quote
+        quote="The only function of economic forecasting is to make astrology look more respectable."
+        author="John Kenneth Galbraith"
+      />
+      <Divider />
       <View>
         <ButtonLargePrimary
           title="Create a new Wallet"

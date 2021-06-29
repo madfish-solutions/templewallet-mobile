@@ -1,6 +1,7 @@
-import { compose } from '@taquito/taquito';
+import { compose, OpKind, WalletParamsWithKind } from '@taquito/taquito';
 import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
+import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
@@ -8,12 +9,24 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { betterCallDevApi } from '../../api.service';
+import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { showErrorToast } from '../../toast/toast.utils';
 import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
+import { ReadOnlySigner } from '../../utils/read-only.signer.util';
 import { mutezToTz } from '../../utils/tezos.util';
-import { loadTezosBalanceActions, loadTokenBalancesActions, loadTokenMetadataActions } from './wallet-actions';
+import { getTransferParams$ } from '../../utils/transfer-params.utils';
+import { navigateAction } from '../root-state.actions';
+import {
+  loadEstimationsActions,
+  loadTezosBalanceActions,
+  loadTokenBalancesActions,
+  loadTokenMetadataActions,
+  sendAssetActions
+} from './wallet-actions';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -76,4 +89,52 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const walletEpics = combineEpics(loadTezosAssetsEpic, loadTokenAssetsEpic, loadTokenMetadataEpic);
+const sendAssetEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(sendAssetActions.submit),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([{ asset, sender, receiverPublicKeyHash, amount }, tezos]) =>
+      getTransferParams$(asset, sender, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+        map((transferParams): WalletParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
+        map(opParams =>
+          navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, sender, opParams })
+        )
+      )
+    )
+  );
+
+const loadEstimationsEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadEstimationsActions.submit),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([{ sender, opParams }, tezos]) => {
+      tezos.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
+
+      return from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
+        map(estimates =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          estimates.map(({ suggestedFeeMutez, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
+            suggestedFeeMutez,
+            storageLimit,
+            minimalFeePerStorageByteMutez
+          }))
+        ),
+        map(loadEstimationsActions.success),
+        catchError(err => {
+          showErrorToast('Warning! The transaction is likely to fail!');
+
+          return of(loadEstimationsActions.fail(err.message));
+        })
+      );
+    })
+  );
+
+export const walletEpics = combineEpics(
+  loadTezosAssetsEpic,
+  loadTokenAssetsEpic,
+  loadTokenMetadataEpic,
+  sendAssetEpic,
+  loadEstimationsEpic
+);

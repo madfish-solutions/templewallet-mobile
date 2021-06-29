@@ -38,7 +38,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
   const dispatch = useDispatch();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
-    dispatch(loadTokenMetadataActions.submit({ id, address }));
+    dispatch(loadTokenMetadataActions.submit({ id: id.toNumber(), address }));
     onFormSubmitted();
   };
 
@@ -62,7 +62,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
                   label="Token ID"
                   description="A non negative integer number that identifies the token inside FA2 contract"
                 />
-                <FormNumericInput name="id" />
+                <FormNumericInput name="id" decimals={0} />
               </>
             )}
 

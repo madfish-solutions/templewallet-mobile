@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
-import { useNavigation } from '../../navigator/use-navigation.hook';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { AddTokenAddress } from './add-token-address/add-token-address';
 import { AddTokenInfo } from './add-token-info/add-token-info';
 

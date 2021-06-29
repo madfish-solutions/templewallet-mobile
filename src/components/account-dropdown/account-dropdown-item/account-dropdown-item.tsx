@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AccountInterface } from '../../../interfaces/account.interface';
-import { emptyWalletAccount } from '../../../interfaces/wallet-account.interface';
+import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
+import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
@@ -14,7 +14,7 @@ import { RobotIcon } from '../../robot-icon/robot-icon';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
-  account?: AccountInterface;
+  account?: WalletAccountInterface;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
 }
@@ -37,13 +37,17 @@ export const AccountDropdownItem: FC<Props> = ({
         <View style={styles.lowerContainer}>
           <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
 
-          {showFullData && <Text style={styles.balanceText}>XX XXX.XX XTZ</Text>}
+          {showFullData && (
+            <Text style={styles.balanceText}>
+              {account?.tezosBalance.data} {XTZ_TOKEN_METADATA.symbol}
+            </Text>
+          )}
         </View>
       </View>
     </View>
   );
 };
 
-export const renderAccountListItem: DropdownListItemComponent<AccountInterface> = ({ item, isSelected }) => (
+export const renderAccountListItem: DropdownListItemComponent<WalletAccountInterface> = ({ item, isSelected }) => (
   <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );
