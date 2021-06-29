@@ -12,7 +12,7 @@ import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -62,11 +62,11 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
           <>
             {isShowTezos && (
               <TokenListItem
-                symbol={XTZ_TOKEN_METADATA.symbol}
-                name={XTZ_TOKEN_METADATA.name}
+                symbol={TEZ_TOKEN_METADATA.symbol}
+                name={TEZ_TOKEN_METADATA.name}
                 balance={tezosBalance}
                 apy={8}
-                iconName={XTZ_TOKEN_METADATA.iconName}
+                iconName={TEZ_TOKEN_METADATA.iconName}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}

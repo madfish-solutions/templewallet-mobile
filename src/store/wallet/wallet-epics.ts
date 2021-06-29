@@ -14,7 +14,7 @@ import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-a
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
-import { XTZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { ReadOnlySigner } from '../../utils/read-only.signer.util';
 import { mutezToTz } from '../../utils/tezos.util';
@@ -55,7 +55,7 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([address, tezos]) =>
       from(tezos.tz.getBalance(address)).pipe(
-        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, XTZ_TOKEN_METADATA.decimals).toString())),
+        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TEZ_TOKEN_METADATA.decimals).toString())),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )

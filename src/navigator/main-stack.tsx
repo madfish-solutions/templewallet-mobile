@@ -25,7 +25,7 @@ import { loadActivityGroupsActions } from '../store/activity/activity-actions';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { XTZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -85,7 +85,7 @@ export const MainStackScreen = () => {
             <MainStack.Screen
               name={ScreensEnum.TezosTokenScreen}
               component={TezosTokenScreen}
-              options={generateScreenOptions(<HeaderTokenInfo token={XTZ_TOKEN_METADATA} />)}
+              options={generateScreenOptions(<HeaderTokenInfo token={TEZ_TOKEN_METADATA} />)}
             />
             <MainStack.Screen
               name={ScreensEnum.TokenScreen}

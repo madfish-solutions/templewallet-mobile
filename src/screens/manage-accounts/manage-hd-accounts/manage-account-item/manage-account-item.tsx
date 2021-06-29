@@ -9,7 +9,7 @@ import { Switch } from '../../../../components/switch/switch';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../../styles/format-size';
-import { XTZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
@@ -39,7 +39,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
           <Text style={styles.balanceText}>
-            {account.tezosBalance.data} {XTZ_TOKEN_METADATA.symbol}
+            {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
           </Text>
           <Text style={styles.equityText}>X XXX.XX $</Text>
         </View>
