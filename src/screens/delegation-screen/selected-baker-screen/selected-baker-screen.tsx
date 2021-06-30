@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { AvatarImage } from '../../../components/avatar-image/avatar-image';
 import { ButtonDelegateSecondary } from '../../../components/button/button-large/button-delegate-secondary/button-delegate-secondary';
 import { ButtonSmallDelegate } from '../../../components/button/button-small/button-small-delegate/button-small-delegate';
 import { Divider } from '../../../components/divider/divider';
@@ -8,7 +9,6 @@ import { ExternalLinkButton } from '../../../components/icon/external-link-butto
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
@@ -18,7 +18,6 @@ import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
-import { AvatarImage } from '../../../components/avatar-image/avatar-image';
 
 interface Props {
   baker: BakerInterface;
