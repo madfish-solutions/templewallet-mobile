@@ -1,3 +1,4 @@
+import { black } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 import { generateShadow } from '../../../styles/generate-shadow';
@@ -10,7 +11,7 @@ export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
     borderWidth: formatSize(2),
     borderRadius: formatSize(8),
     margin: formatSize(2),
-    ...generateShadow(1, colors.black)
+    ...generateShadow(1, black)
   },
   rootMargin: {
     marginVertical: formatSize(4)
