@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { AddTokenAddress } from './add-token-address/add-token-address';
@@ -11,6 +12,7 @@ export const AddTokenModal: FC = () => {
 
   return (
     <>
+      <ModalStatusBar />
       {innerScreenIndex === 0 && (
         <AddTokenAddress onCloseButtonPress={goBack} onFormSubmitted={() => setInnerScreenIndex(1)} />
       )}

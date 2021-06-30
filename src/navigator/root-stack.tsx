@@ -19,7 +19,6 @@ import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
-import { useStatusBarStyle } from './hooks/use-status-bar-style.hook';
 import { MainStackScreen } from './main-stack';
 
 export const globalNavigationRef = createRef<NavigationContainerRef>();
@@ -33,8 +32,6 @@ export const RootStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
-
-  useStatusBarStyle();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
