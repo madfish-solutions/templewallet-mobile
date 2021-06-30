@@ -16,6 +16,8 @@ import {
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
+const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
+
 export const TabBar: FC = () => {
   const styles = useTabBarStyles();
   const currentRouteName = useContext(CurrentRouteNameContext);
@@ -23,7 +25,9 @@ export const TabBar: FC = () => {
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
-  return (
+  const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
+
+  return isHidden ? null : (
     <View style={styles.container}>
       <View style={styles.buttonsContainer}>
         <TabBarButton

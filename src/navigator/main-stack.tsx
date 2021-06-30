@@ -16,6 +16,7 @@ import { DelegationScreen } from '../screens/delegation-screen/delegation-screen
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
+import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { Settings } from '../screens/settings/settings';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
@@ -106,6 +107,11 @@ export const MainStackScreen = () => {
               name={ScreensEnum.Activity}
               component={Activity}
               options={generateScreenOptions(<HeaderTitle title="Activity" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.ScanQrCode}
+              component={ScanQrCode}
+              options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
             />
 
             {/** DApps stack **/}
