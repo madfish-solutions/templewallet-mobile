@@ -18,6 +18,7 @@ import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
+import { AvatarImage } from '../../../components/avatar-image/avatar-image';
 
 interface Props {
   baker: BakerInterface;
@@ -33,7 +34,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
       <View style={styles.bakerCard}>
         <View style={styles.upperContainer}>
           <View style={styles.bakerContainer}>
-            <RobotIcon seed={baker.address} />
+            <AvatarImage uri={baker.logo} />
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText}>{baker.name}</Text>
