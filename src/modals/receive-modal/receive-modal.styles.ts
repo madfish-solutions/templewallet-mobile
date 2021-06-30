@@ -7,8 +7,7 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     paddingVertical: formatSize(32)
   },
   tokenContainer: {
-    flexDirection: 'row',
-    marginBottom: formatSize(24)
+    flexDirection: 'row'
   },
   tokenInfoContainer: {
     justifyContent: 'center'
@@ -23,17 +22,16 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
   },
   addressTitle: {
     ...typography.body15Semibold,
-    color: colors.black,
-    marginTop: formatSize(24),
-    marginBottom: formatSize(8)
+    color: colors.black
+  },
+  publicKeyHashContainer: {
+    padding: formatSize(12),
+    backgroundColor: colors.blue10,
+    borderRadius: formatSize(8)
   },
   publicKeyHash: {
     ...typography.body17Regular,
-    color: colors.blue,
-    padding: formatSize(12),
-    backgroundColor: colors.blue10,
-    borderRadius: formatSize(8),
-    marginBottom: formatSize(24)
+    color: colors.blue
   },
   buttonsContainer: {
     flexDirection: 'row'
