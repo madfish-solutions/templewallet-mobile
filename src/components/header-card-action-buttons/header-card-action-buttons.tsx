@@ -19,7 +19,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
 
   return (
     <ButtonsContainer>
-      <ButtonMedium title="RECEIVE" iconName={IconNameEnum.ArrowDown} onPress={() => navigate(ModalsEnum.Receive)} />
+      <ButtonMedium
+        title="RECEIVE"
+        iconName={IconNameEnum.ArrowDown}
+        onPress={() => navigate(ModalsEnum.Receive, { asset })}
+      />
       <Divider size={formatSize(8)} />
       <ButtonMedium title="SEND" iconName={IconNameEnum.ArrowUp} onPress={() => navigate(ModalsEnum.Send, { asset })} />
       <Divider size={formatSize(8)} />
