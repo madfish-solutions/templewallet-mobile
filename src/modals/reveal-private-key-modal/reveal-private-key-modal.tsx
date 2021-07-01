@@ -5,6 +5,7 @@ import React from 'react';
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { RevealAttention } from '../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
@@ -32,6 +33,7 @@ export const RevealPrivateKeyModal = () => {
       onSubmit={emptyFn}>
       {({ values }) => (
         <ScreenContainer>
+          <ModalStatusBar />
           <Label
             label="Account"
             description="If you want to reveal a private key from another account - you should select it in the top-right dropdown."

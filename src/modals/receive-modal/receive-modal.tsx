@@ -7,6 +7,7 @@ import { ButtonMedium } from '../../components/button/button-medium/button-mediu
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { step } from '../../config/styles';
@@ -26,6 +27,7 @@ export const ReceiveModal: FC = () => {
 
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
+      <ModalStatusBar />
       <View style={styles.tokenContainer}>
         <Icon name={IconNameEnum.TezToken} size={5 * step} />
         <View style={styles.tokenInfoContainer}>

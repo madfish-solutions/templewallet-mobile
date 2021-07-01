@@ -9,6 +9,7 @@ import { DataPlaceholder } from '../../components/data-placeholder/data-placehol
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
 import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { SearchInput } from '../../components/search-input/search-input';
 import { BakerInterface } from '../../interfaces/baker.interface';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
@@ -65,6 +66,7 @@ export const SelectBakerModal: FC = () => {
 
   return (
     <>
+      <ModalStatusBar />
       <View style={styles.background}>
         <Divider size={formatSize(16)} />
         <View style={styles.upperContainer}>
