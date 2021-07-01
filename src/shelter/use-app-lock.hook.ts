@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import ReactNativeBiometrics from 'react-native-biometrics';
 import { Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -7,7 +6,6 @@ import { showErrorToast } from '../toast/toast.utils';
 import { Shelter } from './shelter';
 
 export const useAppLock = () => {
-  const [biometricKeysExist, setBiometricKeysExist] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
   const unlock$ = useMemo(() => new Subject<string>(), []);
   const unlockWithBiometry$ = useMemo(() => new Subject(), []);
@@ -17,8 +15,6 @@ export const useAppLock = () => {
   const unlockWithBiometry = () => unlockWithBiometry$.next();
 
   useEffect(() => {
-    ReactNativeBiometrics.biometricKeysExist().then(({ keysExist }) => setBiometricKeysExist(keysExist));
-
     const subscriptions = [
       Shelter._isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
@@ -34,5 +30,5 @@ export const useAppLock = () => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [unlock$]);
 
-  return { isLocked, lock, unlock, unlockWithBiometry, biometricKeysExist };
+  return { isLocked, lock, unlock, unlockWithBiometry };
 };

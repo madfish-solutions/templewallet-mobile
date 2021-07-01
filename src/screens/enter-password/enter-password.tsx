@@ -1,7 +1,9 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
+import * as Keychain from 'react-native-keychain';
 
+import { Button } from '../../components/button/button';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
 import { Divider } from '../../components/divider/divider';
@@ -11,10 +13,15 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { transparent } from '../../config/styles';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { useBiometricsEnabledSelector } from '../../store/secure-settings/secure-settings-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useColors } from '../../styles/use-colors';
+import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -23,11 +30,28 @@ import {
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
+  const biometricsEnabled = useBiometricsEnabledSelector();
+  const colors = useColors();
   const styles = useEnterPasswordStyles();
-  const { biometricKeysExist, unlock, unlockWithBiometry } = useAppLock();
+  const { availableBiometryType } = useBiometryAvailability();
+  const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
+  const faceBiometryAvailable =
+    availableBiometryType === Keychain.BIOMETRY_TYPE.FACE || availableBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
+
+  const biometryButtonStyleConfig = {
+    iconStyle: { size: formatSize(40), marginRight: 0 },
+    containerStyle: { height: formatSize(40), borderRadius: 0 },
+    activeColorConfig: { titleColor: colors.orange, backgroundColor: transparent }
+  };
+
+  useEffect(() => {
+    if (isDefined(availableBiometryType) && biometricsEnabled) {
+      unlockWithBiometry();
+    }
+  }, [availableBiometryType, biometricsEnabled]);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
@@ -42,7 +66,6 @@ export const EnterPassword = () => {
       />
       <Divider />
       <View>
-        {biometricKeysExist && <ButtonLink title="Unlock with biometry" onPress={unlockWithBiometry} />}
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}
@@ -50,7 +73,20 @@ export const EnterPassword = () => {
           {({ submitForm, isValid }) => (
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput name="password" />
+              <View style={styles.passwordInputSection}>
+                <View style={styles.passwordInputWrapper}>
+                  <FormPasswordInput name="password" />
+                </View>
+                {isDefined(availableBiometryType) && biometricsEnabled && (
+                  <Button
+                    onPress={unlockWithBiometry}
+                    iconName={faceBiometryAvailable ? IconNameEnum.FaceId : IconNameEnum.TouchId}
+                    marginLeft={formatSize(16)}
+                    marginTop={formatSize(6)}
+                    styleConfig={biometryButtonStyleConfig}
+                  />
+                )}
+              </View>
 
               <Divider size={formatSize(8)} />
               <ButtonLargePrimary title="Unlock" disabled={!isValid} onPress={submitForm} />

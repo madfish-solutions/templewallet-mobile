@@ -13,6 +13,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { WhiteContainer } from '../../components/white-container/white-container';
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
+import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
@@ -70,6 +71,15 @@ export const Settings = () => {
                 width={formatSize(120)}
                 onChange={handleThemeSegmentControlChange}
               />
+            </WhiteContainerAction>
+
+            <WhiteContainerDivider />
+
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+              <View style={styles.actionsContainer}>
+                <WhiteContainerText text="Secure" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
           <Divider size={formatSize(16)} />

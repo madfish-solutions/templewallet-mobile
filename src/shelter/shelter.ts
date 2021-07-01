@@ -7,11 +7,12 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
+import { isDefined } from '../utils/is-defined';
 import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
 export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
 const PASSWORD_CHECK_KEY = 'app-password';
-const PASSWORD_STORAGE_KEY = 'password-storage-key';
+const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
 const EMPTY_PASSWORD = '';
 
 const getKeychainOptions = (key: string, useBiometry?: boolean): Keychain.Options => ({
@@ -41,22 +42,22 @@ export class Shelter {
       )
     );
 
-  private static decryptSensitiveData$ = (key: string, password: string, useBiometry?: boolean) => {
-    if (useBiometry) {
+  private static decryptSensitiveData$ = (key: string, password?: string) => {
+    if (isDefined(password)) {
       return from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
-        switchMap(keychainData =>
-          keychainData === false ? throwError(`No record in Keychain [${key}]`) : of(JSON.parse(keychainData.password))
-        )
+        switchMap(rawKeychainData =>
+          rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
+        ),
+        map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
+        switchMap(keychainData => decryptString$(keychainData, password)),
+        switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
       );
     }
 
-    return from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
-      switchMap(rawKeychainData =>
-        rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
-      ),
-      map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
-      switchMap(keychainData => decryptString$(keychainData, password)),
-      switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
+    return from(Keychain.getGenericPassword(getKeychainOptions(key, true))).pipe(
+      switchMap(keychainData =>
+        keychainData === false ? throwError(`No record in Keychain [${key}]`) : of(JSON.parse(keychainData.password))
+      )
     );
   };
 
@@ -72,6 +73,8 @@ export class Shelter {
       return { available: false, error: e };
     }
   };
+
+  static passwordIsValid = (password: string) => Shelter._password$.getValue() === password;
 
   static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
@@ -104,17 +107,13 @@ export class Shelter {
           [publicKeyHash]: privateKey,
           [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
         }).pipe(
-          switchMap(() =>
-            from(ReactNativeBiometrics.biometricKeysExist()).pipe(
-              switchMap(({ keysExist }) => {
-                if (keysExist) {
-                  return Shelter.saveSensitiveData$({ [PASSWORD_STORAGE_KEY]: password }, true);
-                }
+          switchMap(result => {
+            if (isDefined(result)) {
+              return Shelter.saveSensitiveData$({ [PASSWORD_STORAGE_KEY]: password }, true);
+            }
 
-                return of(true);
-              })
-            )
-          ),
+            return of(true);
+          }),
           mapTo({
             name: 'Account 1',
             publicKey,
@@ -162,18 +161,6 @@ export class Shelter {
       map(privateKey => new InMemorySigner(privateKey))
     );
 
-  static createBiometricsKeys$ = () =>
-    from(Shelter.biometryIsAvailable()).pipe(
-      switchMap(({ available, error }) => {
-        if (!available) {
-          return throwError(error);
-        }
-
-        return from(ReactNativeBiometrics.createKeys());
-      }),
-      catchError(error => of(error as Error))
-    );
-
   static unlockAppWithBiometry$ = () =>
     from(Shelter.biometryIsAvailable()).pipe(
       switchMap(({ available, error }) => {
@@ -204,9 +191,7 @@ export class Shelter {
           return of(false);
         }
 
-        return Shelter.decryptSensitiveData$(PASSWORD_STORAGE_KEY, EMPTY_PASSWORD, true).pipe(
-          switchMap(value => Shelter.unlockApp$(value))
-        );
+        return Shelter.decryptSensitiveData$(PASSWORD_STORAGE_KEY).pipe(switchMap(value => Shelter.unlockApp$(value)));
       }),
       catchError(error => of(error as Error))
     );

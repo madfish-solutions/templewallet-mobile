@@ -3,7 +3,6 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLink } from '../../../components/button/button-link/button-link';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../components/divider/divider';
 import { HeaderButton } from '../../../components/header/header-button/header-button';
@@ -17,7 +16,6 @@ import { TextLink } from '../../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
-import { useShelter } from '../../../shelter/use-shelter.hook';
 import { formatSize } from '../../../styles/format-size';
 import {
   createNewPasswordInitialValues,
@@ -28,16 +26,11 @@ import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 type CreateNewPasswordProps = {
   onGoBackPress: () => void;
-  seedPhrase: string;
+  onSubmit: (values: CreateNewPasswordFormValues) => void;
 };
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, onSubmit }) => {
   const styles = useCreateNewPasswordStyles();
-  const { createBiometricsKeys, importWallet } = useShelter();
-
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
-    importWallet(seedPhrase, password);
-  };
 
   useNavigationSetOptions(
     {
@@ -51,7 +44,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     <Formik
       initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
@@ -61,8 +54,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
-
-            <ButtonLink title="Add biometric authorization" onPress={createBiometricsKeys} />
           </View>
           <Divider />
 

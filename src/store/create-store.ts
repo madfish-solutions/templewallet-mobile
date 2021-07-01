@@ -15,10 +15,17 @@ import { DAppsRootState } from './d-apps/d-apps-state';
 import { displaySettingsReducers } from './display-settings/display-settings-reducers';
 import { DisplaySettingsRootState } from './display-settings/display-settings-state';
 import { rootStateReducer } from './root-state.reducers';
+import { secureSettingsReducers } from './secure-settings/secure-settings-reducers';
+import { SecureSettingsRootState } from './secure-settings/secure-settings-state';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState & BakingRootState & DisplaySettingsRootState & ActivityRootState & DAppsRootState;
+type RootState = WalletRootState &
+  BakingRootState &
+  DisplaySettingsRootState &
+  SecureSettingsRootState &
+  ActivityRootState &
+  DAppsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -38,6 +45,7 @@ const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
   displaySettings: displaySettingsReducers,
+  secureSettings: secureSettingsReducers,
   activity: activityReducers,
   dApps: dAppsReducers
 });

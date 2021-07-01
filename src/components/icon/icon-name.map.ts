@@ -20,6 +20,7 @@ import EditIcon from './assets/edit.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
+import FaceIdIcon from './assets/face-id.svg';
 import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
@@ -59,6 +60,7 @@ import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import UsdSTokenIcon from './assets/tokens/usds.svg';
 import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
+import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
@@ -73,6 +75,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Terminal]: TerminalIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Download]: DownloadIcon,
+  [IconNameEnum.FaceId]: FaceIdIcon,
   [IconNameEnum.GLow]: GLowIcon,
   [IconNameEnum.GMid]: GMidIcon,
   [IconNameEnum.GHigh]: GHighIcon,
@@ -122,6 +125,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Search]: SearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
+  [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
   [IconNameEnum.Clipboard]: ClipboardIcon,

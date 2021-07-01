@@ -5,6 +5,7 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { BiometryAvailabilityProvider } from '../biometry/biometry-availability-provider';
 import { RootStackScreen } from '../navigator/root-stack';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
@@ -18,8 +19,10 @@ export const App = () => {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <SafeAreaProvider>
-          <RootStackScreen />
-          <ToastProvider />
+          <BiometryAvailabilityProvider>
+            <RootStackScreen />
+            <ToastProvider />
+          </BiometryAvailabilityProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>
