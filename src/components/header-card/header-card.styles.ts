@@ -5,9 +5,9 @@ import { generateShadow } from '../../styles/generate-shadow';
 
 export const useHeaderCardStyles = createUseStyles(({ colors }) => ({
   container: {
+    ...generateShadow(1, black),
     padding: formatSize(16),
     backgroundColor: colors.navigation,
-    ...generateShadow(2, black),
-    marginBottom: formatSize(2)
+    marginBottom: formatSize(1)
   }
 }));
