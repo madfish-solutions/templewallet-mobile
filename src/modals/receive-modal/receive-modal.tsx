@@ -1,3 +1,4 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -21,6 +22,8 @@ export const ReceiveModal: FC = () => {
   const styles = useReceiveModalStyles();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
+  const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
+
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <View style={styles.tokenContainer}>
@@ -30,6 +33,7 @@ export const ReceiveModal: FC = () => {
           <Text style={styles.tokenName}>{TEZ_TOKEN_METADATA.name}</Text>
         </View>
       </View>
+      <Divider />
 
       <QRCode
         value={publicKeyHash}
@@ -38,14 +42,20 @@ export const ReceiveModal: FC = () => {
         color={colors.black}
         backgroundColor={colors.pageBG}
       />
+      <Divider />
 
       <Text style={styles.addressTitle}>Address</Text>
-      <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
+      <Divider size={formatSize(8)} />
+
+      <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress}>
+        <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
+      </TouchableOpacity>
+      <Divider />
 
       <View style={styles.buttonsContainer}>
         <ButtonMedium title="SHARE" iconName={IconNameEnum.Share} disabled={true} onPress={emptyFn} />
         <Divider size={formatSize(8)} />
-        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={() => copyStringToClipboard(publicKeyHash)} />
+        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={handleCopyButtonPress} />
         <Divider size={formatSize(8)} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
