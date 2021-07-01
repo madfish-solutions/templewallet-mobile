@@ -23,7 +23,6 @@ export const TokenListItem: FC<Props> = ({ symbol, name, iconName, apy, balance,
       <TokenContainer symbol={symbol} name={name} iconName={iconName} apy={apy}>
         <View style={styles.rightContainer}>
           <Text style={styles.balanceText}>{formattedBalance}</Text>
-          <Text style={styles.valueText}>X XXX.XX $</Text>
         </View>
       </TokenContainer>
     </TouchableOpacity>

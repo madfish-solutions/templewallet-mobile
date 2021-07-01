@@ -8,9 +8,5 @@ export const useTokenListItemStyles = createUseStyles(({ colors, typography }) =
   balanceText: {
     ...typography.numbersRegular15,
     color: colors.black
-  },
-  valueText: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
   }
 }));
