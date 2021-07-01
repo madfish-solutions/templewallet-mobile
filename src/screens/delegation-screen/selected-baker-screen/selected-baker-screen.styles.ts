@@ -1,10 +1,11 @@
+import { black } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 import { generateShadow } from '../../../styles/generate-shadow';
 
 export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typography }) => ({
   bakerCard: {
-    ...generateShadow(1, colors.black),
+    ...generateShadow(1, black),
     margin: formatSize(16),
     padding: formatSize(8),
     borderRadius: formatSize(10),

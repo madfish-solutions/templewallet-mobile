@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { transparent } from '../../config/styles';
+import { black, transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';
@@ -17,7 +17,7 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
   },
   tile: {
     ...StyleSheet.absoluteFillObject,
-    ...generateShadow(1, colors.black),
+    ...generateShadow(1, black),
     zIndex: 1,
     margin: tileMargin,
     borderRadius: formatSize(8),

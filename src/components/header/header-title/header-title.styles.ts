@@ -4,5 +4,8 @@ export const useHeaderTitleStyles = createUseStyles(({ colors, typography }) => 
   title: {
     ...typography.body17Semibold,
     color: colors.black
+  },
+  whiteColor: {
+    color: colors.white
   }
 }));

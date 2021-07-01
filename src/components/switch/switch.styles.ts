@@ -1,3 +1,4 @@
+import { black } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';
@@ -11,7 +12,7 @@ export const useSwitchStyles = createUseStyles(({ colors }) => ({
     borderRadius: formatSize(8)
   },
   toggle: {
-    ...generateShadow(1, colors.black),
+    ...generateShadow(1, black),
     width: formatSize(24),
     height: formatSize(20),
     backgroundColor: colors.white,

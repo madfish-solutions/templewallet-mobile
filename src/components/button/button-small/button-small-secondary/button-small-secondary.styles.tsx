@@ -5,6 +5,6 @@ export const useButtonSmallSecondaryStyles = createUseStylesConfig(({ colors }) 
   ...useButtonSmallSharedStyleConfig(),
   activeColorConfig: {
     titleColor: colors.orange,
-    backgroundColor: colors.cardBG
+    backgroundColor: colors.white
   }
 }));
