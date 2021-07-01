@@ -8,6 +8,7 @@ import { ButtonsContainer } from '../../components/button/buttons-container/butt
 import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -36,6 +37,7 @@ export const CreateHdAccountModal = () => {
       onSubmit={onSubmit}>
       {({ submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
+          <ModalStatusBar />
           <View>
             <Label label="Name" description="Call your account by any name you wish." />
             <FormTextInput name="name" />

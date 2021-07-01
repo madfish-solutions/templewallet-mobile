@@ -1,3 +1,4 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
@@ -7,6 +8,7 @@ import { ButtonMedium } from '../../components/button/button-medium/button-mediu
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
@@ -24,8 +26,11 @@ export const ReceiveModal: FC = () => {
 
   const { name, symbol, iconName = IconNameEnum.NoNameToken } = asset;
 
+  const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
+
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
+      <ModalStatusBar />
       <View style={styles.tokenContainer}>
         <Icon name={iconName} size={formatSize(40)} />
         <Divider size={formatSize(8)} />
@@ -34,6 +39,7 @@ export const ReceiveModal: FC = () => {
           <Text style={styles.tokenName}>{name}</Text>
         </View>
       </View>
+      <Divider />
 
       <QRCode
         value={publicKeyHash}
@@ -42,14 +48,20 @@ export const ReceiveModal: FC = () => {
         color={colors.black}
         backgroundColor={colors.pageBG}
       />
+      <Divider />
 
       <Text style={styles.addressTitle}>Address</Text>
-      <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
+      <Divider size={formatSize(8)} />
+
+      <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress}>
+        <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
+      </TouchableOpacity>
+      <Divider />
 
       <View style={styles.buttonsContainer}>
         <ButtonMedium title="SHARE" iconName={IconNameEnum.Share} disabled={true} onPress={emptyFn} />
         <Divider size={formatSize(8)} />
-        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={() => copyStringToClipboard(publicKeyHash)} />
+        <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={handleCopyButtonPress} />
         <Divider size={formatSize(8)} />
         <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
