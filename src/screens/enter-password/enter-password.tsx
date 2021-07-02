@@ -33,13 +33,14 @@ export const EnterPassword = () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
   const colors = useColors();
   const styles = useEnterPasswordStyles();
-  const { availableBiometryType } = useBiometryAvailability();
+  const { activeBiometryType } = useBiometryAvailability();
   const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
 
+  const shouldEnableUnlockWithBiometry = isDefined(activeBiometryType) && biometricsEnabled;
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
   const faceBiometryAvailable =
-    availableBiometryType === Keychain.BIOMETRY_TYPE.FACE || availableBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
+    activeBiometryType === Keychain.BIOMETRY_TYPE.FACE || activeBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
 
   const biometryButtonStyleConfig = {
     iconStyle: { size: formatSize(40), marginRight: 0 },
@@ -48,10 +49,10 @@ export const EnterPassword = () => {
   };
 
   useEffect(() => {
-    if (isDefined(availableBiometryType) && biometricsEnabled) {
+    if (shouldEnableUnlockWithBiometry) {
       unlockWithBiometry();
     }
-  }, [availableBiometryType, biometricsEnabled]);
+  }, [activeBiometryType, biometricsEnabled]);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
@@ -77,7 +78,7 @@ export const EnterPassword = () => {
                 <View style={styles.passwordInputWrapper}>
                   <FormPasswordInput name="password" />
                 </View>
-                {isDefined(availableBiometryType) && biometricsEnabled && (
+                {shouldEnableUnlockWithBiometry && (
                   <Button
                     onPress={unlockWithBiometry}
                     iconName={faceBiometryAvailable ? IconNameEnum.FaceId : IconNameEnum.TouchId}

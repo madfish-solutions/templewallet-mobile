@@ -4,10 +4,13 @@ import { merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
+import { useBiometryAvailability } from '../hooks/use-biometry-availability.hook';
+import { ScreensEnum } from '../navigator/enums/screens.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
+import { isDefined } from '../utils/is-defined';
 import { tezos$ } from '../utils/network/network.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
@@ -18,7 +21,8 @@ import { Shelter } from './shelter';
 export const useShelter = () => {
   const dispatch = useDispatch();
   const hdAccounts = useHdAccountsListSelector();
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
+  const { availableBiometryType } = useBiometryAvailability();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const send$ = useMemo(() => new Subject<SendParams>(), []);
@@ -34,6 +38,9 @@ export const useShelter = () => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
+            if (isDefined(availableBiometryType)) {
+              navigate(ScreensEnum.SetupBiometry);
+            }
           }
         }),
       createHdAccount$

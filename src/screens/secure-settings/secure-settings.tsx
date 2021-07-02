@@ -1,4 +1,6 @@
 import React from 'react';
+import { Alert } from 'react-native';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import * as Keychain from 'react-native-keychain';
 import { useDispatch } from 'react-redux';
 
@@ -18,16 +20,19 @@ import { isDefined } from '../../utils/is-defined';
 
 export const SecureSettings = () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
-  const { availableBiometryType } = useBiometryAvailability();
+  const { activeBiometryType, availableBiometryType } = useBiometryAvailability();
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
 
-  const biometryIsTouch =
-    availableBiometryType === Keychain.BIOMETRY_TYPE.TOUCH_ID ||
-    availableBiometryType === Keychain.BIOMETRY_TYPE.FINGERPRINT;
+  const biometryIsTouch = isDefined(activeBiometryType)
+    ? activeBiometryType === Keychain.BIOMETRY_TYPE.TOUCH_ID ||
+      activeBiometryType === Keychain.BIOMETRY_TYPE.FINGERPRINT
+    : availableBiometryType !== ReactNativeBiometrics.FaceID;
 
   const handleBiometrySwitch = (newValue: boolean) => {
-    if (newValue) {
+    if (newValue && !isDefined(activeBiometryType) && isDefined(availableBiometryType)) {
+      Alert.alert('TODO: go to settings to setup biometry');
+    } else if (newValue) {
       navigate(ModalsEnum.ApprovePassword, { shouldEnableBiometry: true });
     } else {
       dispatch(setBiometricsEnabled(false));

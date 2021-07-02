@@ -16,6 +16,7 @@ import { TextLink } from '../../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
+import { useShelter } from '../../../shelter/use-shelter.hook';
 import { formatSize } from '../../../styles/format-size';
 import {
   createNewPasswordInitialValues,
@@ -26,11 +27,17 @@ import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 type CreateNewPasswordProps = {
   onGoBackPress: () => void;
-  onSubmit: (values: CreateNewPasswordFormValues) => void;
+  seedPhrase: string;
 };
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, onSubmit }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
   const styles = useCreateNewPasswordStyles();
+
+  const { importWallet } = useShelter();
+
+  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
+    importWallet(seedPhrase, password);
+  };
 
   useNavigationSetOptions(
     {
@@ -44,7 +51,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, o
     <Formik
       initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
-      onSubmit={onSubmit}>
+      onSubmit={handleSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
