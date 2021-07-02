@@ -2,7 +2,6 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
-import ReactNativeBiometrics from 'react-native-biometrics';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -22,7 +21,7 @@ import { ApprovePasswordModalFormValues, approvePasswordModalValidationSchema } 
 
 export const ApprovePasswordModal = () => {
   const { shouldEnableBiometry } = useRoute<RouteProp<ModalsParamList, ModalsEnum.ApprovePassword>>().params;
-  const { activeBiometryType, setBiometricKeysExist } = useBiometryAvailability();
+  const { activeBiometryType, createBiometricKeys } = useBiometryAvailability();
   const { goBack } = useNavigation();
   const { passwordIsCorrect } = useShelter();
   const dispatch = useDispatch();
@@ -33,8 +32,7 @@ export const ApprovePasswordModal = () => {
     if (passwordIsCorrect(password)) {
       if (shouldEnableBiometry && isDefined(activeBiometryType)) {
         try {
-          await ReactNativeBiometrics.createKeys();
-          setBiometricKeysExist(true);
+          await createBiometricKeys();
         } catch (e) {
           showErrorToast('Error', e.message);
 

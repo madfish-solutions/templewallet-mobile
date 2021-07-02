@@ -10,7 +10,7 @@ export function useInnerScreenProgress(total: number) {
     {
       headerRight: () => <HeaderProgress current={innerScreenIndex + 1} total={total} />
     },
-    [innerScreenIndex, total]
+    [innerScreenIndex]
   );
 
   return { innerScreenIndex, setInnerScreenIndex };

@@ -32,7 +32,6 @@ type CreateNewPasswordProps = {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
   const styles = useCreateNewPasswordStyles();
-
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {

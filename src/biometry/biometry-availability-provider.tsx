@@ -9,15 +9,13 @@ type BiometricAvailabilityContextValues = {
   activeBiometryType: Keychain.BIOMETRY_TYPE | null;
   availableBiometryType?: BiometryType;
   biometricKeysExist: boolean;
-  setBiometricKeysExist: (newValue: boolean) => void;
-  updateBiometryAvailability: () => void;
+  createBiometricKeys: () => Promise<void>;
 };
 
 export const BiometryAvailabilityContext = createContext<BiometricAvailabilityContextValues>({
   activeBiometryType: null,
   biometricKeysExist: false,
-  setBiometricKeysExist: noop,
-  updateBiometryAvailability: noop
+  createBiometricKeys: () => Promise.resolve()
 });
 
 export const BiometryAvailabilityProvider: FC = ({ children }) => {
@@ -39,6 +37,11 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
       .catch(noop);
   };
 
+  const createBiometricKeys = async () => {
+    await ReactNativeBiometrics.createKeys();
+    setBiometricKeysExist(true);
+  };
+
   useEffect(() => updateBiometryAvailability(), []);
 
   useEffect(() => {
@@ -55,8 +58,7 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
         activeBiometryType,
         availableBiometryType,
         biometricKeysExist,
-        setBiometricKeysExist,
-        updateBiometryAvailability
+        createBiometricKeys
       }}>
       {children}
     </BiometryAvailabilityContext.Provider>

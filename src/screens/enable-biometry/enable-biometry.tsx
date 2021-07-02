@@ -23,7 +23,7 @@ import { promptGoToSecuritySettings } from '../../utils/prompt-go-to-security-se
 import { useEnableBiometryStyles } from './enable-biometry.styles';
 
 export const EnableBiometry: FC = () => {
-  const { availableBiometryType, activeBiometryType, setBiometricKeysExist } = useBiometryAvailability();
+  const { availableBiometryType, activeBiometryType, createBiometricKeys } = useBiometryAvailability();
   const dispatch = useDispatch();
   const styles = useEnableBiometryStyles();
   const colors = useColors();
@@ -32,18 +32,17 @@ export const EnableBiometry: FC = () => {
 
   const biometryIsFace = availableBiometryType === ReactNativeBiometrics.FaceID;
 
-  const createWallet = () => {
+  const goToWallet = () => {
     navigate(ScreensEnum.Wallet);
   };
 
   const onEnableBiometryClick = () => {
     if (isDefined(activeBiometryType)) {
       setLoading(true);
-      ReactNativeBiometrics.createKeys()
+      createBiometricKeys()
         .then(() => {
-          setBiometricKeysExist(true);
           dispatch(setBiometricsEnabled(true));
-          createWallet();
+          goToWallet();
         })
         .catch(e => showErrorToast('Error', e.message))
         .finally(() => setLoading(false));
@@ -70,7 +69,7 @@ export const EnableBiometry: FC = () => {
 
       <View>
         <ButtonsContainer>
-          <ButtonLargeSecondary title="Skip" disabled={loading} onPress={createWallet} />
+          <ButtonLargeSecondary title="Skip" disabled={loading} onPress={goToWallet} />
           <Divider size={formatSize(16)} />
           <ButtonLargePrimary title="Yes" disabled={loading} onPress={onEnableBiometryClick} />
         </ButtonsContainer>
