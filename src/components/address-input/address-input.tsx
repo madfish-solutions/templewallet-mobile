@@ -22,6 +22,7 @@ export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, o
   return (
     <View style={AddressInputStyles.container}>
       <StyledTextInput
+        ref={inputRef}
         value={value}
         placeholder={placeholder}
         multiline={true}
