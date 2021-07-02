@@ -8,7 +8,7 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
-import { isDefined } from './is-defined';
+import { isString } from './is-string';
 import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
@@ -20,7 +20,7 @@ export const getTransferParams$ = (
 ): Observable<TransferParams> => {
   const { id, address, decimals } = asset;
 
-  return isDefined(address)
+  return isString(address)
     ? from(tezos.contract.at(address)).pipe(
         map(contract =>
           getTokenType(contract) === TokenTypeEnum.FA_2

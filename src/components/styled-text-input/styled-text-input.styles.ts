@@ -1,35 +1,23 @@
-import { TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useStyledTextInputStyles = createUseStyles(({ colors, typography }) => {
-  const commonStyles: TextStyle = {
-    borderRadius: formatSize(8),
-    backgroundColor: colors.input,
-    color: colors.black,
-    borderWidth: formatSize(1),
-    borderColor: transparent,
-    ...typography.body15Regular
-  };
-
   return {
     regular: {
-      ...commonStyles,
-      paddingVertical: formatSize(13),
-      paddingHorizontal: formatSize(12),
-      paddingRight: formatSize(40),
-      minHeight: formatSize(50)
-    },
-    multiline: {
-      ...commonStyles,
-      textAlignVertical: 'top',
-      paddingHorizontal: formatSize(12),
+      ...typography.body15Regular,
+      color: colors.black,
       paddingTop: formatSize(12),
-      paddingBottom: formatSize(60),
-      minHeight: formatSize(200),
-      maxHeight: formatSize(200)
+      paddingBottom: formatSize(12),
+      paddingLeft: formatSize(12),
+      paddingRight: formatSize(40),
+      borderRadius: formatSize(8),
+      backgroundColor: colors.input,
+      borderWidth: formatSize(1),
+      borderColor: transparent,
+      minHeight: formatSize(50)
     },
     error: {
       borderColor: colors.destructive
@@ -46,4 +34,20 @@ export const useStyledTextInputStyles = createUseStyles(({ colors, typography })
       paddingRight: formatSize(78)
     }
   };
+});
+
+export const StyledTextInputStyles = StyleSheet.create({
+  mnemonicInput: {
+    textAlignVertical: 'top',
+    paddingBottom: formatSize(60),
+    minHeight: formatSize(200),
+    maxHeight: formatSize(200)
+  },
+  addressInput: {
+    textAlignVertical: 'top',
+    paddingTop: formatSize(16),
+    paddingBottom: formatSize(16),
+    minHeight: formatSize(80),
+    maxHeight: formatSize(80)
+  }
 });
