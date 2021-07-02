@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 import ReactNativeBiometrics from 'react-native-biometrics';
-import * as Keychain from 'react-native-keychain';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,42 +12,44 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { setBiometricsEnabled } from '../../store/secure-settings/secure-settings-actions';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { showErrorToast } from '../../toast/toast.utils';
+import { isDefined } from '../../utils/is-defined';
+import { promptGoToSecuritySettings } from '../../utils/prompt-go-to-security-settings.util';
 import { useEnableBiometryStyles } from './enable-biometry.styles';
 
-type EnableBiometryProps = {
-  seedPhrase: string;
-  password: string;
-};
-
-export const EnableBiometry: FC<EnableBiometryProps> = ({ seedPhrase, password }) => {
-  const { importWallet } = useShelter();
-  const { activeBiometryType: availableBiometryType, setBiometricKeysExist } = useBiometryAvailability();
+export const EnableBiometry: FC = () => {
+  const { availableBiometryType, activeBiometryType, setBiometricKeysExist } = useBiometryAvailability();
   const dispatch = useDispatch();
   const styles = useEnableBiometryStyles();
   const colors = useColors();
+  const { navigate } = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const biometryIsFace =
-    availableBiometryType === Keychain.BIOMETRY_TYPE.FACE || availableBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
+  const biometryIsFace = availableBiometryType === ReactNativeBiometrics.FaceID;
 
   const createWallet = () => {
-    setLoading(true);
-    importWallet(seedPhrase, password);
+    navigate(ScreensEnum.Wallet);
   };
 
   const onEnableBiometryClick = () => {
-    ReactNativeBiometrics.createKeys()
-      .then(() => {
-        setBiometricKeysExist(true);
-        dispatch(setBiometricsEnabled(true));
-        createWallet();
-      })
-      .catch(e => showErrorToast('Error', e.message));
+    if (isDefined(activeBiometryType)) {
+      setLoading(true);
+      ReactNativeBiometrics.createKeys()
+        .then(() => {
+          setBiometricKeysExist(true);
+          dispatch(setBiometricsEnabled(true));
+          createWallet();
+        })
+        .catch(e => showErrorToast('Error', e.message))
+        .finally(() => setLoading(false));
+    } else {
+      promptGoToSecuritySettings();
+    }
   };
 
   return (

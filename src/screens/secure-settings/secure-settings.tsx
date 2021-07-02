@@ -1,5 +1,4 @@
 import React from 'react';
-import { Alert } from 'react-native';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import * as Keychain from 'react-native-keychain';
 import { useDispatch } from 'react-redux';
@@ -17,6 +16,7 @@ import { setBiometricsEnabled } from '../../store/secure-settings/secure-setting
 import { useBiometricsEnabledSelector } from '../../store/secure-settings/secure-settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
+import { promptGoToSecuritySettings } from '../../utils/prompt-go-to-security-settings.util';
 
 export const SecureSettings = () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
@@ -31,7 +31,7 @@ export const SecureSettings = () => {
 
   const handleBiometrySwitch = (newValue: boolean) => {
     if (newValue && !isDefined(activeBiometryType) && isDefined(availableBiometryType)) {
-      Alert.alert('TODO: go to settings to setup biometry');
+      promptGoToSecuritySettings();
     } else if (newValue) {
       navigate(ModalsEnum.ApprovePassword, { shouldEnableBiometry: true });
     } else {
@@ -42,16 +42,14 @@ export const SecureSettings = () => {
   return (
     <ScreenContainer>
       <Divider size={formatSize(8)} />
-      <WhiteContainer>
-        <WhiteContainerAction disabled={true}>
-          <WhiteContainerText text={biometryIsTouch ? 'Touch ID' : 'Face ID'} />
-          <Switch
-            value={biometricsEnabled}
-            disabled={!isDefined(availableBiometryType)}
-            onChange={handleBiometrySwitch}
-          />
-        </WhiteContainerAction>
-      </WhiteContainer>
+      {isDefined(availableBiometryType) && (
+        <WhiteContainer>
+          <WhiteContainerAction disabled={true}>
+            <WhiteContainerText text={biometryIsTouch ? 'Touch ID' : 'Face ID'} />
+            <Switch value={biometricsEnabled} onChange={handleBiometrySwitch} />
+          </WhiteContainerAction>
+        </WhiteContainer>
+      )}
     </ScreenContainer>
   );
 };

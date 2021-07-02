@@ -15,6 +15,7 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
+import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -23,6 +24,7 @@ import { changeTheme } from '../../store/display-settings/display-settings-actio
 import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { isDefined } from '../../utils/is-defined';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
 
@@ -31,6 +33,7 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
+  const { availableBiometryType } = useBiometryAvailability();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -75,12 +78,15 @@ export const Settings = () => {
 
             <WhiteContainerDivider />
 
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
-              <View style={styles.actionsContainer}>
-                <WhiteContainerText text="Secure" />
-              </View>
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
-            </WhiteContainerAction>
+            {/* TODO: remove this constraint as soon as points which aren't related to biometry appear in 'Secure' section */}
+            {isDefined(availableBiometryType) && (
+              <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+                <View style={styles.actionsContainer}>
+                  <WhiteContainerText text="Secure" />
+                </View>
+                <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              </WhiteContainerAction>
+            )}
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 

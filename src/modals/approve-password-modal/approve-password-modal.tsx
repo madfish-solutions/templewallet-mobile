@@ -17,11 +17,12 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { setBiometricsEnabled } from '../../store/secure-settings/secure-settings-actions';
 import { showErrorToast } from '../../toast/toast.utils';
+import { isDefined } from '../../utils/is-defined';
 import { ApprovePasswordModalFormValues, approvePasswordModalValidationSchema } from './approve-password-modal.form';
 
 export const ApprovePasswordModal = () => {
   const { shouldEnableBiometry } = useRoute<RouteProp<ModalsParamList, ModalsEnum.ApprovePassword>>().params;
-  const { biometricKeysExist, setBiometricKeysExist } = useBiometryAvailability();
+  const { activeBiometryType, setBiometricKeysExist } = useBiometryAvailability();
   const { goBack } = useNavigation();
   const { passwordIsCorrect } = useShelter();
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ export const ApprovePasswordModal = () => {
 
   const handleSubmit = async ({ password }: ApprovePasswordModalFormValues) => {
     if (passwordIsCorrect(password)) {
-      if (!biometricKeysExist && shouldEnableBiometry) {
+      if (shouldEnableBiometry && isDefined(activeBiometryType)) {
         try {
           await ReactNativeBiometrics.createKeys();
           setBiometricKeysExist(true);
