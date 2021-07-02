@@ -9,7 +9,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
 
-export interface StyledTextInputProps extends Omit<TextInputProps, 'style'> {
+export interface StyledTextInputProps extends TextInputProps {
   isError?: boolean;
   isPasswordInput?: boolean;
   isShowCleanButton?: boolean;
@@ -20,7 +20,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
     {
       value,
-      multiline,
+      style,
       isError = false,
       isPasswordInput = false,
       isShowCleanButton = false,
@@ -42,12 +42,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
       <View style={styles.view}>
         <TextInput
           ref={ref}
-          style={[
-            multiline ? styles.multiline : styles.regular,
-            isError && styles.error,
-            isPasswordInput && styles.passwordPadding
-          ]}
-          multiline={multiline}
+          style={[styles.regular, isError && styles.error, isPasswordInput && styles.passwordPadding, style]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           value={value}

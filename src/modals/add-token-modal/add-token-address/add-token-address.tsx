@@ -12,7 +12,7 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
-import { FormNumericInput } from '../../../form/form-numeric-input';
+import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';

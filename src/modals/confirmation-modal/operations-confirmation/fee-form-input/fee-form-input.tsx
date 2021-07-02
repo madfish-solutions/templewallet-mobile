@@ -10,7 +10,7 @@ import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
 import { Slider } from '../../../../components/slider/slider';
 import { StyledNumericInput } from '../../../../components/styled-numberic-input/styled-numeric-input';
-import { FormNumericInput } from '../../../../form/form-numeric-input';
+import { FormNumericInput } from '../../../../form/form-numeric-input/form-numeric-input';
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
@@ -55,7 +55,6 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
-          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
 
         <Divider />
@@ -65,7 +64,6 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
-          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
       </View>
 

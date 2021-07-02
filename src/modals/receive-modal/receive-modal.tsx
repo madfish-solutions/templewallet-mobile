@@ -1,4 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -10,11 +11,10 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
-import { step } from '../../config/styles';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
@@ -22,6 +22,9 @@ export const ReceiveModal: FC = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
+  const { asset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
+
+  const { name, symbol, iconName = IconNameEnum.NoNameToken } = asset;
 
   const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
 
@@ -29,10 +32,11 @@ export const ReceiveModal: FC = () => {
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <ModalStatusBar />
       <View style={styles.tokenContainer}>
-        <Icon name={IconNameEnum.TezToken} size={5 * step} />
+        <Icon name={iconName} size={formatSize(40)} />
+        <Divider size={formatSize(8)} />
         <View style={styles.tokenInfoContainer}>
-          <Text style={styles.tokenSymbol}>{TEZ_TOKEN_METADATA.symbol}</Text>
-          <Text style={styles.tokenName}>{TEZ_TOKEN_METADATA.name}</Text>
+          <Text style={styles.tokenSymbol}>{symbol}</Text>
+          <Text style={styles.tokenName}>{name}</Text>
         </View>
       </View>
       <Divider />

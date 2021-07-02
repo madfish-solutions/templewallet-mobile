@@ -2,16 +2,16 @@ import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from '../../form/validation/big-number';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export interface SendModalFormValues {
-  sender: WalletAccountInterface;
+  token: TokenInterface;
   receiverPublicKeyHash: string;
   amount?: BigNumber;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  sender: object().shape({}).required(),
+  token: object().shape({}).required(),
   receiverPublicKeyHash: string().required(),
   amount: bigNumberValidation
     .clone()

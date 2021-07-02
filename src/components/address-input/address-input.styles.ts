@@ -2,14 +2,14 @@ import { StyleSheet } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
 
-export const MnemonicStyles = StyleSheet.create({
+export const AddressInputStyles = StyleSheet.create({
   container: {
     position: 'relative'
   },
   buttonsContainer: {
     position: 'absolute',
     flexDirection: 'row',
-    bottom: formatSize(8),
-    right: formatSize(8)
+    top: formatSize(12),
+    right: formatSize(12)
   }
 });

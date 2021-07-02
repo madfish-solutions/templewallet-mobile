@@ -6,13 +6,12 @@ import { emptyFn } from '../../../config/general';
 import { isString } from '../../../utils/is-string';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
+import { StyledTextInputStyles } from '../../styled-text-input/styled-text-input.styles';
 import { MnemonicProps } from '../mnemonic.props';
-import { useMnemonicStyles } from '../mnemonic.styles';
+import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 
 export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur = emptyFn }) => {
-  const styles = useMnemonicStyles();
-
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -29,18 +28,19 @@ export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText 
   };
 
   return (
-    <View style={styles.container}>
+    <View style={MnemonicStyles.container}>
       <StyledTextInput
         ref={inputRef}
         value={value}
         isError={isError}
         multiline={true}
+        style={StyledTextInputStyles.mnemonicInput}
         placeholder="e.g. cat, dog, coffee, ocean..."
         onBlur={handleBlur}
         onFocus={() => setIsFocused(true)}
         onChangeText={onChangeText}
       />
-      <View style={styles.buttonsContainer}>
+      <View style={MnemonicStyles.buttonsContainer}>
         <ButtonSmallSecondary title="Paste" onPress={handlePasteButtonPress} />
       </View>
       {isShowOverlay && <ProtectedOverlay onPress={() => inputRef.current?.focus()} />}

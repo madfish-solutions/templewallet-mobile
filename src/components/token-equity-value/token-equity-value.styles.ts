@@ -17,9 +17,5 @@ export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }
   tokenValueText: {
     ...typography.numbersMedium20,
     color: colors.black
-  },
-  equityValueText: {
-    ...typography.numbersRegular15,
-    color: colors.gray1
   }
 }));

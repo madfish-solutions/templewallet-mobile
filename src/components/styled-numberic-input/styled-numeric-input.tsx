@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { isDefined } from '../../utils/is-defined';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { StyledNumericInputProps } from './styled-numeric-input.props';
@@ -12,8 +13,9 @@ const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
-  decimals = 6,
+  decimals = TEZ_TOKEN_METADATA.decimals,
   editable,
+  placeholder,
   isError,
   isShowCleanButton,
   onBlur = emptyFn,
@@ -57,6 +59,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   return (
     <StyledTextInput
       editable={editable}
+      placeholder={placeholder}
       value={stringValue}
       isError={isError}
       isShowCleanButton={isShowCleanButton}
