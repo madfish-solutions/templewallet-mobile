@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -78,7 +78,10 @@ export const SendModal: FC = () => {
       enableReinitialize={true}
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
-      {({ values, submitForm }) => {
+      {({ values, setFieldValue, submitForm }) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => setFieldValue('amount', undefined), [values.token]);
+
         const amountMaxValue = BigNumber.max(
           new BigNumber(values.token.balance).minus(
             values.token.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_MAX_FEE : 0

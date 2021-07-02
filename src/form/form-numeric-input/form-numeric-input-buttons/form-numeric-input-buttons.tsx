@@ -10,22 +10,20 @@ import { FormNumericInputButtonsStyles } from './form-numeric-input-buttons.styl
 
 interface Props {
   maxValue: BigNumber;
-  setValue: EventFn<BigNumber>;
+  onButtonPress: EventFn<BigNumber>;
 }
 
-export const FormNumericInputButtons: FC<Props> = ({ maxValue, setValue }) => {
-  return (
-    <>
-      <View style={FormNumericInputButtonsStyles.container}>
-        <ButtonSmallSecondary title="25%" onPress={() => setValue(maxValue.multipliedBy(0.25))} />
-        <Divider size={formatSize(8)} />
-        <ButtonSmallSecondary title="50%" onPress={() => setValue(maxValue.multipliedBy(0.5))} />
-        <Divider size={formatSize(8)} />
-        <ButtonSmallSecondary title="75%" onPress={() => setValue(maxValue.multipliedBy(0.75))} />
-        <Divider size={formatSize(8)} />
-        <ButtonSmallSecondary title="MAX" onPress={() => setValue(maxValue)} />
-      </View>
+export const FormNumericInputButtons: FC<Props> = ({ maxValue, onButtonPress }) => (
+  <>
+    <View style={FormNumericInputButtonsStyles.container}>
+      <ButtonSmallSecondary title="25%" onPress={() => onButtonPress(maxValue.multipliedBy(0.25))} />
       <Divider size={formatSize(8)} />
-    </>
-  );
-};
+      <ButtonSmallSecondary title="50%" onPress={() => onButtonPress(maxValue.multipliedBy(0.5))} />
+      <Divider size={formatSize(8)} />
+      <ButtonSmallSecondary title="75%" onPress={() => onButtonPress(maxValue.multipliedBy(0.75))} />
+      <Divider size={formatSize(8)} />
+      <ButtonSmallSecondary title="MAX" onPress={() => onButtonPress(maxValue)} />
+    </View>
+    <Divider size={formatSize(8)} />
+  </>
+);
