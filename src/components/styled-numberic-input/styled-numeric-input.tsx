@@ -14,6 +14,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
   decimals = 6,
   editable,
+  placeholder,
   isError,
   isShowCleanButton,
   onBlur = emptyFn,
@@ -57,6 +58,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   return (
     <StyledTextInput
       editable={editable}
+      placeholder={placeholder}
       value={stringValue}
       isError={isError}
       isShowCleanButton={isShowCleanButton}

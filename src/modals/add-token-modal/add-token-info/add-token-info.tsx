@@ -12,7 +12,7 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
-import { FormNumericInput } from '../../../form/form-numeric-input';
+import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { addTokenMetadataAction } from '../../../store/wallet/wallet-actions';
 import { useAddTokenSuggestionSelector } from '../../../store/wallet/wallet-selectors';

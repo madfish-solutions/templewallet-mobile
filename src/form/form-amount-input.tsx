@@ -7,11 +7,11 @@ import { StyledNumericInputProps } from '../components/styled-numberic-input/sty
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 'isShowCleanButton'> {
+interface Props extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 'placeholder' | 'isShowCleanButton'> {
   name: string;
 }
 
-export const FormNumericInput: FC<Props> = ({ name, decimals, editable, isShowCleanButton }) => {
+export const FormAmountInput: FC<Props> = ({ name, decimals, editable, placeholder, isShowCleanButton }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
 
@@ -21,6 +21,7 @@ export const FormNumericInput: FC<Props> = ({ name, decimals, editable, isShowCl
         value={field.value}
         decimals={decimals}
         editable={editable}
+        placeholder={placeholder}
         isError={isError}
         isShowCleanButton={isShowCleanButton}
         onBlur={() => helpers.setTouched(true)}
