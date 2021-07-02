@@ -3,6 +3,13 @@ import { Animated } from 'react-native';
 
 import { ANIMATION_MAX_VALUE, ANIMATION_MIN_VALUE } from '../config/animation';
 
-export const getAnimationValue = (flag: boolean) => (flag ? ANIMATION_MAX_VALUE : ANIMATION_MIN_VALUE);
+export const getAnimationValue = (rawValue: boolean | number) => {
+  if (typeof rawValue === 'number') {
+    return rawValue;
+  }
 
-export const useAnimationRef = (flag = false) => useRef(new Animated.Value(getAnimationValue(flag))).current;
+  return rawValue ? ANIMATION_MAX_VALUE : ANIMATION_MIN_VALUE;
+};
+
+export const useAnimationRef = (initialRawValue: boolean | number = false) =>
+  useRef(new Animated.Value(getAnimationValue(initialRawValue))).current;

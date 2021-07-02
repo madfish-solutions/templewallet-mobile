@@ -31,10 +31,9 @@ export const SegmentedControl = <T extends unknown>({
   onChange
 }: PropsWithChildren<Props<T>>) => {
   const styles = useSegmentedControlStyles();
-  const translateX = useAnimationRef();
   const { layoutWidth, handleLayout } = useLayoutWidth();
-
-  const tileWidth = (layoutWidth - 2 * tileMargin) / (values.length || 1);
+  const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
+  const translateX = useAnimationRef(selectedIndex * tileWidth);
 
   useEffect(
     () =>
