@@ -38,7 +38,7 @@ export const SendModal: FC = () => {
   const tokensList = useTokensListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const assetsList = useMemo<TokenInterface[]>(
+  const tokensListWithTez = useMemo<TokenInterface[]>(
     () => [
       {
         ...emptyToken,
@@ -52,11 +52,11 @@ export const SendModal: FC = () => {
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
-      token: assetsList.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
+      token: tokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
       receiverPublicKeyHash: '',
       amount: undefined
     }),
-    [assetsList]
+    [tokensListWithTez]
   );
 
   const onSubmit = ({ token, receiverPublicKeyHash, amount }: SendModalFormValues) =>
@@ -91,7 +91,7 @@ export const SendModal: FC = () => {
             <ModalStatusBar />
             <View>
               <Label label="Asset" description="Select asset or token." />
-              <TokenFormDropdown name="token" list={assetsList} />
+              <TokenFormDropdown name="token" list={tokensListWithTez} />
               <Divider />
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
