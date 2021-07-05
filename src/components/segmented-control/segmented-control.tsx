@@ -1,9 +1,8 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, PropsWithChildren, useEffect } from 'react';
+import React, { FC, PropsWithChildren, useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 
 import { EventFn } from '../../config/general';
-import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
 import { useLayoutWidth } from '../../hooks/use-layout-width.hook';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
@@ -33,7 +32,7 @@ export const SegmentedControl = <T extends unknown>({
   const styles = useSegmentedControlStyles();
   const { layoutWidth, handleLayout } = useLayoutWidth();
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
-  const translateX = useAnimationRef(selectedIndex * tileWidth);
+  const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
   useEffect(
     () =>
