@@ -7,7 +7,6 @@ const allowInDevMode = false;
 
 setJSExceptionHandler((error, isFatal) => {
   Sentry.captureException(error);
-  console.log(error);
 
   isFatal &&
     Alert.alert(
