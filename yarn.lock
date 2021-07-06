@@ -1883,6 +1883,14 @@
   dependencies:
     xhr2-cookies "^1.1.0"
 
+"@taquito/local-forging@^9.0.1":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/local-forging/-/local-forging-9.2.0.tgz#6117931ce625bd85dad225166efffbcfe4e8681d"
+  integrity sha512-AjBn1GVquHs3Us26DzSZ/vyg2PMCCHfLA0XR758YIOZr/ZS9H1AfqDDoirnf1KkO5+8zBiLm3jvFdgnPOKB0fg==
+  dependencies:
+    "@taquito/utils" "^9.2.0"
+    bignumber.js "^9.0.1"
+
 "@taquito/michel-codec@^9.0.1":
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/@taquito/michel-codec/-/michel-codec-9.0.1.tgz#bd066b6218dcc155ffc641877806465cf2f77a14"
@@ -1966,6 +1974,15 @@
     blakejs "^1.1.0"
     bs58check "^2.1.2"
     buffer "^5.6.0"
+
+"@taquito/utils@^9.2.0":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-9.2.0.tgz#6c9cde66aea30ffd069a02eacc3a3e946bd3eb27"
+  integrity sha512-pawB2Wqym/evBvSvF4AWeu5b+Zo1NArhqRrdoNOP6iBjhTfb7dcgavjhMFgG7/ATF6C17Mkqtn+Tp2V65i3MPA==
+  dependencies:
+    blakejs "^1.1.0"
+    bs58check "^2.1.2"
+    buffer "^6.0.3"
 
 "@tradle/react-native-http@^2.0.1":
   version "2.0.1"
@@ -3139,6 +3156,14 @@ buffer@^5.2.0, buffer@^5.4.3, buffer@^5.6.0:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
+
+buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
+  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
+  dependencies:
+    base64-js "^1.3.1"
+    ieee754 "^1.2.1"
 
 bytes@3.0.0:
   version "3.0.0"
@@ -5122,7 +5147,7 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
-ieee754@^1.1.13, ieee754@^1.1.4:
+ieee754@^1.1.13, ieee754@^1.1.4, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -6468,6 +6493,13 @@ makeerror@1.0.x:
   dependencies:
     tmpl "1.0.x"
 
+map-age-cleaner@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/map-age-cleaner/-/map-age-cleaner-0.1.3.tgz#7d583a7306434c055fe474b0f45078e6e1b4b92a"
+  integrity sha512-bJzx6nMoP6PDLPBFmg7+xRKeFZvFboMrGlxmNj9ClvX53KrmvM5bXFXEWjbz4cz1AFn+jWJ9z/DJSz7hrs0w3w==
+  dependencies:
+    p-defer "^1.0.0"
+
 map-cache@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/map-cache/-/map-cache-0.2.2.tgz#c32abd0bd6525d9b051645bb4f26ac5dc98a0dbf"
@@ -6498,6 +6530,14 @@ mdn-data@2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.4.tgz#699b3c38ac6f1d728091a64650b65d388502fd5b"
   integrity sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==
+
+mem@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/mem/-/mem-8.1.1.tgz#cf118b357c65ab7b7e0817bdf00c8062297c0122"
+  integrity sha512-qFCFUDs7U3b8mBDPyz5EToEKoAkgCzqquIgi9nkkR9bixxOVOre+09lbuH7+9Kn2NFpm56M3GUWVbU2hQgdACA==
+  dependencies:
+    map-age-cleaner "^0.1.3"
+    mimic-fn "^3.1.0"
 
 merge-deep@^3.0.2:
   version "3.0.3"
@@ -6846,6 +6886,11 @@ mimic-fn@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
+
+mimic-fn@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-3.1.0.tgz#65755145bbf3e36954b949c16450427451d5ca74"
+  integrity sha512-Ysbi9uYW9hFyfrThdDEQuykN4Ey6BuwPD2kpI5ES/nFTDn/98yxYNLZJcgUAKPT/mcrLLKaGzJR9YVxJrIdASQ==
 
 min-document@^2.19.0:
   version "2.19.0"
@@ -7295,6 +7340,11 @@ os-tmpdir@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
+
+p-defer@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/p-defer/-/p-defer-1.0.0.tgz#9f6eb182f6c9aa8cd743004a7d4f96b196b0fb0c"
+  integrity sha1-n26xgvbJqozXQwBKfU+WsZaw+ww=
 
 p-each-series@^2.1.0:
   version "2.2.0"
