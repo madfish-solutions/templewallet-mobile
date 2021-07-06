@@ -16,7 +16,9 @@ if (!global.atob) {
 }
 
 if (!global.document) {
-  global.document = {};
+  global.document = {
+    addEventListener: () => null
+  };
 }
 
 if (typeof __dirname === 'undefined') {
