@@ -1,3 +1,4 @@
+import { WalletParamsWithKind } from '@taquito/taquito';
 import { Formik } from 'formik';
 import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
@@ -10,29 +11,29 @@ import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn, EventFn } from '../../../config/general';
-import { useShelter } from '../../../shelter/use-shelter.hook';
+import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
 import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
-import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useFeeForm } from './fee-form-input/use-fee-form.hook';
 import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
 
-interface Props extends Omit<InternalOperationsConfirmationModalParams, 'type'> {
-  onSuccessSend: EventFn<string>;
+interface Props {
+  sender: WalletAccountInterface;
+  opParams: WalletParamsWithKind[];
+  onSubmit: EventFn<WalletParamsWithKind[]>;
   onBackButtonPress: EmptyFn;
 }
 
-export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSuccessSend, onBackButtonPress, children }) => {
+export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, onBackButtonPress, children }) => {
   const styles = useOperationsConfirmationStyles();
   const dispatch = useDispatch();
-  const { send } = useShelter();
 
   const estimations = useEstimationsSelector();
   const {
@@ -61,15 +62,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSuccessS
       return { ...param, fee, storageLimit };
     });
 
-    send({
-      publicKeyHash: sender.publicKeyHash,
-      opParams: params,
-      successCallback: (opHash: string) => {
-        // TODO: map opHash and operationsPreview into activity and display it
-        console.log(opHash);
-        onSuccessSend(opHash);
-      }
-    });
+    onSubmit(params);
   };
 
   return (

@@ -18,7 +18,11 @@ import { rootStateReducer } from './root-state.reducers';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState & BakingRootState & DisplaySettingsRootState & ActivityRootState & DAppsRootState;
+export type RootState = WalletRootState &
+  BakingRootState &
+  DisplaySettingsRootState &
+  ActivityRootState &
+  DAppsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
