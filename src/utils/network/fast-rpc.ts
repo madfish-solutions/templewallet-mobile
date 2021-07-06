@@ -1,5 +1,5 @@
-import { RpcClient } from '@taquito/rpc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RpcClient } from '@taquito/rpc';
 import memoize from 'mem';
 
 interface RPCOptions {
@@ -21,11 +21,13 @@ export class FastRpcClient extends RpcClient {
     if (wantsHead(opts) && this.latestBlock) {
       return this.latestBlock.hash;
     }
+
     return super.getBlockHash(opts);
   }
 
   async getBalance(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getBalanceMemo(address, opts);
   }
 
@@ -36,6 +38,7 @@ export class FastRpcClient extends RpcClient {
 
   async getLiveBlocks(opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getLiveBlocksMemo(opts);
   }
 
@@ -46,6 +49,7 @@ export class FastRpcClient extends RpcClient {
 
   async getStorage(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getStorageMemo(address, opts);
   }
 
@@ -56,6 +60,7 @@ export class FastRpcClient extends RpcClient {
 
   async getScript(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getScriptMemo(address, opts);
   }
 
@@ -66,6 +71,7 @@ export class FastRpcClient extends RpcClient {
 
   async getContract(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getContractMemo(address, opts);
   }
 
@@ -86,6 +92,7 @@ export class FastRpcClient extends RpcClient {
     opts = await this.loadLatestBlock(opts);
     const result = await this.getEntrypointsMemo(contract, opts);
     await AsyncStorage.setItem(cacheKey, JSON.stringify(result));
+
     return result;
   }
 
@@ -96,6 +103,7 @@ export class FastRpcClient extends RpcClient {
 
   async getManagerKey(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getManagerKeyMemo(address, opts);
   }
 
@@ -106,6 +114,7 @@ export class FastRpcClient extends RpcClient {
 
   async getDelegate(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getDelegateMemo(address, opts);
   }
 
@@ -116,6 +125,7 @@ export class FastRpcClient extends RpcClient {
 
   async getBigMapExpr(id: string, expr: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getBigMapExprMemo(id, expr, opts);
   }
 
@@ -126,6 +136,7 @@ export class FastRpcClient extends RpcClient {
 
   async getDelegates(address: string, opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getDelegatesMemo(address, opts);
   }
 
@@ -136,6 +147,7 @@ export class FastRpcClient extends RpcClient {
 
   async getConstants(opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getConstantsMemo(opts);
   }
 
@@ -146,6 +158,7 @@ export class FastRpcClient extends RpcClient {
 
   async getBlock(opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getBlockMemo(opts);
   }
 
@@ -156,6 +169,7 @@ export class FastRpcClient extends RpcClient {
 
   async getBlockHeader(opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getBlockHeaderMemo(opts);
   }
 
@@ -166,6 +180,7 @@ export class FastRpcClient extends RpcClient {
 
   async getBlockMetadata(opts?: RPCOptions) {
     opts = await this.loadLatestBlock(opts);
+
     return this.getBlockMetadataMemo(opts);
   }
 
@@ -178,9 +193,13 @@ export class FastRpcClient extends RpcClient {
 
   private async loadLatestBlock(opts?: RPCOptions) {
     const head = wantsHead(opts);
-    if (!head) return opts;
+    if (!head) {
+      return opts;
+    }
 
     await this.refreshLatestBlock();
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return { block: this.latestBlock!.hash };
   }
 
@@ -202,6 +221,7 @@ function toOptsKey(opts?: RPCOptions) {
 
 function onlyOncePerExec<T>(factory: () => Promise<T>) {
   let worker: Promise<T> | null = null;
+
   return () =>
     worker ??
     (worker = factory().finally(() => {

@@ -47,6 +47,7 @@
     "buffer": "^4.9.2",
     "ed25519-hd-key": "^1.2.0",
     "events": "^1.1.1",
+    "fast-text-encoding": "^1.0.3",
     "formik": "^2.2.6",
     "https-browserify": "^0.0.1",
     "lodash-es": "^4.17.21",
