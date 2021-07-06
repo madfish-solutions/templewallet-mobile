@@ -14,12 +14,7 @@ import { accountPkh$, groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import {
-  addPendingOperation,
-  loadActivityGroupsActions,
-  removePendingOperation,
-  updateActivityGroupsActions
-} from './activity-actions';
+import { addPendingOperation, loadActivityGroupsActions, removePendingOperation } from './activity-actions';
 
 export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -69,20 +64,8 @@ export const removePendingOperationEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removePendingOperation),
     toPayload(),
-    switchMap(() => of(updateActivityGroupsActions.submit('')))
-  );
-
-export const updateActivityGroupsEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(updateActivityGroupsActions.submit),
-    toPayload(),
     withLatestFrom(accountPkh$),
     switchMap(([, address]) => of(loadActivityGroupsActions.submit(address ?? emptyWalletAccount.publicKeyHash)))
   );
 
-export const activityEpics = combineEpics(
-  loadActivityGroupsEpic,
-  addPendingOperationEpic,
-  removePendingOperationEpic,
-  updateActivityGroupsEpic
-);
+export const activityEpics = combineEpics(loadActivityGroupsEpic, addPendingOperationEpic, removePendingOperationEpic);

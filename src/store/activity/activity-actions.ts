@@ -7,10 +7,6 @@ export const loadActivityGroupsActions = createActions<string, ActivityGroup[], 
   'activity/LOAD_ACTIVITY_GROUPS'
 );
 
-export const updateActivityGroupsActions = createActions<string, ActivityGroup[], string>(
-  'activity/UPDATE_ACTIVITY_GROUPS'
-);
-
 export const addPendingOperation = createAction<ActivityGroup>('activity/ADD_PENDING_OPERATIONS');
 
 export const removePendingOperation = createAction<ActivityGroup>('activity/MOVE_OPERATION_TO_READY');
