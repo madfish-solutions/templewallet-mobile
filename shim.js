@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { decode, encode } from 'base-64';
 
+require('fast-text-encoding');
+
 if (!global.localStorage) {
   global.localStorage = {
     getItem: () => null

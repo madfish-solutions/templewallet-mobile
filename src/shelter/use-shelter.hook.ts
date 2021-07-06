@@ -1,18 +1,15 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { merge, of, Subject } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
-import { tezos$ } from '../utils/network/network.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
-import { SendParams } from './interfaces/send-params.interface';
 import { Shelter } from './shelter';
 
 export const useShelter = () => {
@@ -21,7 +18,6 @@ export const useShelter = () => {
   const { goBack } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
-  const send$ = useMemo(() => new Subject<SendParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject<string>(), []);
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
@@ -46,28 +42,6 @@ export const useShelter = () => {
           }
         }),
 
-      send$
-        .pipe(
-          switchMap(({ publicKeyHash, opParams, successCallback }) =>
-            Shelter.getSigner$(publicKeyHash).pipe(
-              withLatestFrom(tezos$),
-              switchMap(([signer, tezos]) => {
-                tezos.setProvider({ signer });
-
-                return tezos.wallet.batch(opParams).send();
-              }),
-              map(({ opHash }) => ({ opHash, successCallback }))
-            )
-          )
-        )
-        .subscribe(
-          ({ opHash, successCallback }) => {
-            successCallback(opHash);
-            showSuccessToast('Sent successfully');
-          },
-          error => showErrorToast(error.message)
-        ),
-
       merge(
         revealSecretKey$.pipe(
           switchMap(({ publicKeyHash, successCallback }) =>
@@ -87,23 +61,13 @@ export const useShelter = () => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [
-    dispatch,
-    importWallet$,
-    revealSecretKey$,
-    createHdAccount$,
-    hdAccounts.length,
-    goBack,
-    revealSeedPhrase$,
-    send$
-  ]);
+  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, hdAccounts.length, goBack, revealSeedPhrase$]);
 
   const importWallet = (seedPhrase: string, password: string) => importWallet$.next({ seedPhrase, password });
-  const send = (payload: SendParams) => send$.next(payload);
   const createHdAccount = (name: string) => createHdAccount$.next(name);
 
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
-  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase, send };
+  return { importWallet, createHdAccount, revealSecretKey, revealSeedPhrase };
 };

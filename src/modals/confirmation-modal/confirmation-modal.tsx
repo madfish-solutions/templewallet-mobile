@@ -21,7 +21,7 @@ const ConfirmationModalContent: FC = () => {
 
   switch (params.type) {
     case ConfirmationTypeEnum.InternalOperations:
-      return <InternalOperationsConfirmation sender={params.sender} opParams={params.opParams} />;
+      return <InternalOperationsConfirmation opParams={params.opParams} />;
     case ConfirmationTypeEnum.DAppOperations:
       return <DAppOperationsConfirmation message={params.message} />;
     default:
