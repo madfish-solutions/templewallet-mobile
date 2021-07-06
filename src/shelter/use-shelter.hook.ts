@@ -5,10 +5,12 @@ import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
+import { addPendingOperation } from '../store/activity/activity-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { tezos$ } from '../utils/network/network.util';
+import { paramsToPendingActions } from '../utils/params-to-actions.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
@@ -56,12 +58,13 @@ export const useShelter = () => {
 
                 return tezos.wallet.batch(opParams).send();
               }),
-              map(({ opHash }) => ({ opHash, successCallback }))
+              map(({ opHash }) => ({ opParams, opHash, successCallback, publicKeyHash }))
             )
           )
         )
         .subscribe(
-          ({ opHash, successCallback }) => {
+          ({ opParams, opHash, successCallback, publicKeyHash }) => {
+            dispatch(addPendingOperation(paramsToPendingActions(opParams, opHash, publicKeyHash)));
             successCallback(opHash);
             showSuccessToast('Sent successfully');
           },

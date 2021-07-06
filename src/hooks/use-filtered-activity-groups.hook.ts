@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
-import { useActivityGroupsSelector } from '../store/activity/activity-selectors';
+import { useActivityGroupsSelector, usePendingOperationsSelector } from '../store/activity/activity-selectors';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { useTokenMetadata } from './use-token-metadata.hook';
 
 export const useFilteredActivityGroups = () => {
   const activityGroups = useActivityGroupsSelector();
+  const pendingActivityGroups = usePendingOperationsSelector();
   const { getTokenMetadata } = useTokenMetadata();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
 
   useEffect(() => {
+    const allGroups = [...(pendingActivityGroups ?? []), ...activityGroups];
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: ActivityGroup[] = [];
 
-      for (const activityGroup of activityGroups) {
+      for (const activityGroup of allGroups) {
         for (const activity of activityGroup) {
           const { tokenSlug, source, destination } = activity;
           const { symbol, name } = getTokenMetadata(tokenSlug);
@@ -38,9 +40,9 @@ export const useFilteredActivityGroups = () => {
 
       setFilteredActivityGroupsList(result);
     } else {
-      setFilteredActivityGroupsList(activityGroups);
+      setFilteredActivityGroupsList(allGroups);
     }
-  }, [searchValue, activityGroups, getTokenMetadata]);
+  }, [searchValue, activityGroups, pendingActivityGroups, getTokenMetadata]);
 
   return {
     filteredActivityGroups,

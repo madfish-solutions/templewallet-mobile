@@ -8,11 +8,18 @@ import { betterCallDevApi, tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
-import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { currentNetworkId$ } from '../../utils/network/network.util';
+import { emptyWalletAccount } from '../../interfaces/wallet-account.interface';
+import { showErrorToast } from '../../toast/toast.utils';
+import { accountPkh$, groupActivitiesByHash } from '../../utils/activity.utils';
+import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { loadActivityGroupsActions } from './activity-actions';
+import {
+  addPendingOperation,
+  loadActivityGroupsActions,
+  removePendingOperation,
+  updateActivityGroupsActions
+} from './activity-actions';
 
 export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -40,4 +47,42 @@ export const loadActivityGroupsEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const activityEpics = combineEpics(loadActivityGroupsEpic);
+export const addPendingOperationEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(addPendingOperation),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([activities, tezos]) =>
+      from(tezos.operation.createOperation(activities[0].hash).then(operation => operation.confirmation(1))).pipe(
+        switchMap(({ completed }) => {
+          if (!completed) {
+            showErrorToast('Error', 'Operation was backtracked');
+          }
+
+          return of(removePendingOperation(activities));
+        })
+      )
+    )
+  );
+
+export const removePendingOperationEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(removePendingOperation),
+    toPayload(),
+    switchMap(() => of(updateActivityGroupsActions.submit('')))
+  );
+
+export const updateActivityGroupsEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(updateActivityGroupsActions.submit),
+    toPayload(),
+    withLatestFrom(accountPkh$),
+    switchMap(([, address]) => of(loadActivityGroupsActions.submit(address ?? emptyWalletAccount.publicKeyHash)))
+  );
+
+export const activityEpics = combineEpics(
+  loadActivityGroupsEpic,
+  addPendingOperationEpic,
+  removePendingOperationEpic,
+  updateActivityGroupsEpic
+);

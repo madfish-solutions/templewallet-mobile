@@ -10,7 +10,7 @@ import { delegationApy } from '../../../config/general';
 import { ActivityGroup } from '../../../interfaces/activity.interface';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useActivityGroupsSelector } from '../../../store/activity/activity-selectors';
+import { useActivityGroupsSelector, usePendingOperationsSelector } from '../../../store/activity/activity-selectors';
 import { useSelectedBakerSelector } from '../../../store/baking/baking-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
@@ -24,13 +24,15 @@ export const TezosTokenHistory = () => {
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
   const activityGroups = useActivityGroupsSelector();
+  const pendingActivityGroups = usePendingOperationsSelector();
 
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
 
   useEffect(() => {
     const result: ActivityGroup[] = [];
 
-    for (const activityGroup of activityGroups) {
+    const allGroups = [...(pendingActivityGroups ?? []), ...activityGroups];
+    for (const activityGroup of allGroups) {
       for (const activity of activityGroup) {
         if (!isDefined(activity.tokenSlug)) {
           result.push(activityGroup);
@@ -40,7 +42,7 @@ export const TezosTokenHistory = () => {
     }
 
     setFilteredActivityGroupsList(result);
-  }, [activityGroups]);
+  }, [activityGroups, pendingActivityGroups]);
 
   return (
     <>

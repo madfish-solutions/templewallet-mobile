@@ -12,6 +12,7 @@ import { loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { accountPkh$ } from '../../utils/activity.utils';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 import { TezosTokenInfo } from './tezos-token-info/tezos-token-info';
 
@@ -24,6 +25,7 @@ export const TezosTokenScreen = () => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
     dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+    accountPkh$.next(selectedAccount.publicKeyHash);
   }, []);
 
   return (

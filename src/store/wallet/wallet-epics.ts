@@ -4,7 +4,7 @@ import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, ignoreElements, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -15,6 +15,7 @@ import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadat
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { accountPkh$ } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { ReadOnlySigner } from '../../utils/read-only.signer.util';
 import { mutezToTz } from '../../utils/tezos.util';
@@ -25,7 +26,8 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  sendAssetActions
+  sendAssetActions,
+  setSelectedAccountAction
 } from './wallet-actions';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
@@ -131,10 +133,18 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
     })
   );
 
+const setSelectedAccountActionEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(setSelectedAccountAction),
+    tap(({ payload: account }) => accountPkh$.next(account)),
+    ignoreElements()
+  );
+
 export const walletEpics = combineEpics(
   loadTezosAssetsEpic,
   loadTokenAssetsEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
-  loadEstimationsEpic
+  loadEstimationsEpic,
+  setSelectedAccountActionEpic
 );

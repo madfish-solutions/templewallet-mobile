@@ -16,6 +16,7 @@ import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
+import { paramsToPendingActions } from '../../../utils/params-to-actions.util';
 import { tzToMutez } from '../../../utils/tezos.util';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
@@ -45,6 +46,8 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSuccessS
   } = useFeeForm(opParams, estimations.data);
 
   useEffect(() => void dispatch(loadEstimationsActions.submit({ sender, opParams })), []);
+
+  useEffect(() => console.log(paramsToPendingActions(opParams, 'toofta', sender.publicKeyHash)), []);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     const params = opParams.map((param, index) => {

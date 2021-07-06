@@ -4,10 +4,12 @@ import { LoadableEntityState } from '../types';
 
 export interface ActivityState {
   activityGroups: LoadableEntityState<ActivityGroup[]>;
+  pendingOperations: ActivityGroup[];
 }
 
 export const activityInitialState: ActivityState = {
-  activityGroups: createEntity([])
+  activityGroups: createEntity([]),
+  pendingOperations: []
 };
 
 export interface ActivityRootState {

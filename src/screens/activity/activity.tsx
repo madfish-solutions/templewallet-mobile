@@ -6,13 +6,17 @@ import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { accountPkh$ } from '../../utils/activity.utils';
 
 export const Activity = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
-  useEffect(() => void dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash)), []);
+  useEffect(() => {
+    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    accountPkh$.next(selectedAccount.publicKeyHash);
+  }, []);
 
   return (
     <>
