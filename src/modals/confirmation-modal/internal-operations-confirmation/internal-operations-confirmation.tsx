@@ -1,20 +1,25 @@
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { StacksEnum } from '../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { approveInternalOperationRequestAction } from '../../../store/wallet/wallet-actions';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'>;
 
-export const InternalOperationsConfirmation: FC<Props> = ({ sender, opParams }) => {
-  const { goBack, navigate } = useNavigation();
+export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
+  const dispatch = useDispatch();
+  const { goBack } = useNavigation();
+
+  const selectedAccount = useSelectedAccountSelector();
 
   return (
     <OperationsConfirmation
-      sender={sender}
+      sender={selectedAccount}
       opParams={opParams}
-      onSuccessSend={() => navigate(StacksEnum.MainStack)}
+      onSubmit={opParams => dispatch(approveInternalOperationRequestAction(opParams))}
       onBackButtonPress={goBack}
     />
   );
