@@ -14,9 +14,40 @@ Other important features include:
 
 ## Installation
 
-To install application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
+First, clone repository:
+```bash
+git clone https://github.com/madfish-solutions/templewallet-mobile.git
+cd templewallet-mobile
+```
 
-If you running your application on MacBook with M1 silicone chip, you'll need install Rosetta:
+Install deps
+```bash
+yarn
+yarn ios:pods
+```
+
+To start app run
+```bash
+// Android application
+yarn android
+
+// iOS application
+yarn ios
+```
+
+If you want to contribute your code, before making a pull request - ensure, that code passes all pipeline checks. You can manually to check it before a pull request running commands
+```
+yarn ts
+yarn lint
+yarn test
+```
+
+
+To run application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
+
+## Installation on computers with M1 silicone chip
+
+If you running application on MacBook with M1 silicone chip, you'll need install Rosetta:
 
 ```bash
 softwareupdate — install-rosetta
@@ -25,7 +56,7 @@ softwareupdate — install-rosetta
 After successfully installed Rosetta - you have to open terminal app using Rosetta (right mouse click on app - 'Get Info' - checkbox 'run with Rosetta') and run these commands:
 
 ```bash
-npm run ios:pods
+yarn ios:pods
 ```
 or
 ```bash
