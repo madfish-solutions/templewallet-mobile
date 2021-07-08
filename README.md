@@ -14,13 +14,15 @@ Other important features include:
 
 ## Installation
 
-First, clone repository:
+To run application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
+
+Clone repository
 ```bash
 git clone https://github.com/madfish-solutions/templewallet-mobile.git
 cd templewallet-mobile
 ```
 
-Install deps
+Install dependencies
 ```bash
 yarn
 yarn ios:pods
@@ -43,8 +45,6 @@ yarn test
 ```
 
 
-To run application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
-
 ## Installation on computers with M1 silicone chip
 
 If you running application on MacBook with M1 silicone chip, you'll need install Rosetta:
@@ -58,6 +58,7 @@ After successfully installed Rosetta - you have to open terminal app using Roset
 ```bash
 yarn ios:pods
 ```
+
 or
 ```bash
 sudo arch -x86_64 gem install ffi
@@ -65,4 +66,4 @@ sudo arch -x86_64 gem install ffi
 arch -x86_64 pod install
 ```
 
-Then you'll need to [add excluded architectures](https://khushwanttanwar.medium.com/xcode-12-compilation-errors-while-running-with-ios-14-simulators-5731c91326e9) in build settings on specified target
+After that, you need to open with Rosetta Xcode application, [add excluded architectures](https://khushwanttanwar.medium.com/xcode-12-compilation-errors-while-running-with-ios-14-simulators-5731c91326e9) in build settings on specified target, choose device where to launch build: emulator or real connected device 
