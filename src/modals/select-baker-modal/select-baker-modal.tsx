@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Text, FlatList, View, ListRenderItemInfo } from 'react-native';
+import React, { FC, memo, useEffect, useMemo, useState } from 'react';
+import { Text, FlatList, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -34,6 +34,19 @@ const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
 };
 const bakersSortFieldsOptions = [BakersSortFieldEnum.Space, BakersSortFieldEnum.Fee, BakersSortFieldEnum.Rank];
 
+type BakerListItemProps = {
+  item: BakerInterface;
+  selected: boolean;
+  onPress: (item: BakerInterface) => void;
+};
+
+const BakerListItem = memo<BakerListItemProps>(({ item, selected, onPress }) => (
+  <>
+    <SelectBakerItem baker={item} selected={selected} onPress={() => onPress(item)} />
+    <Divider size={formatSize(16)} />
+  </>
+));
+
 export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
@@ -55,22 +68,7 @@ export const SelectBakerModal: FC = () => {
       });
   };
 
-  const BakerListItem = useCallback(
-    ({ item }: ListRenderItemInfo<BakerInterface>) => (
-      <>
-        <SelectBakerItem
-          baker={item}
-          selected={item.address === selectedBaker?.address}
-          onPress={() => setSelectedBaker(item)}
-        />
-        <Divider size={formatSize(16)} />
-      </>
-    ),
-    [selectedBaker]
-  );
-
   useEffect(() => {
-    let unsortedBakersList = bakersList;
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: BakerInterface[] = [];
@@ -83,20 +81,22 @@ export const SelectBakerModal: FC = () => {
         }
       }
 
-      unsortedBakersList = result;
+      setFilteredBakersList(result);
+    } else {
+      setFilteredBakersList(bakersList);
     }
-    setFilteredBakersList(
-      sortValue === BakersSortFieldEnum.Rank
-        ? [...unsortedBakersList]
-        : [...unsortedBakersList].sort((a, b) => {
-            if (sortValue === BakersSortFieldEnum.Fee) {
-              return b.fee - a.fee;
-            }
+  }, [searchValue, bakersList]);
 
-            return b.freeSpace - a.freeSpace;
-          })
-    );
-  }, [searchValue, bakersList, sortValue]);
+  const sortedBakersList = useMemo(() => {
+    switch (sortValue) {
+      case BakersSortFieldEnum.Rank:
+        return filteredBakersList;
+      case BakersSortFieldEnum.Fee:
+        return [...filteredBakersList].sort((a, b) => b.fee - a.fee);
+      default:
+        return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
+    }
+  }, [filteredBakersList, sortValue]);
 
   return (
     <>
@@ -141,14 +141,16 @@ export const SelectBakerModal: FC = () => {
           </View>
         </View>
 
-        {filteredBakersList.length === 0 && (
+        {sortedBakersList.length === 0 && (
           <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
         )}
       </View>
 
       <FlatList
-        data={filteredBakersList}
-        renderItem={BakerListItem}
+        data={sortedBakersList}
+        renderItem={({ item }) => (
+          <BakerListItem item={item} selected={item.address === selectedBaker?.address} onPress={setSelectedBaker} />
+        )}
         keyExtractor={item => item.address}
         style={styles.flatList}
         windowSize={10}
