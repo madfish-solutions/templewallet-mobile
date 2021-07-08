@@ -6,7 +6,9 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     backgroundColor: colors.navigation
   },
   upperContainer: {
-    paddingHorizontal: formatSize(16)
+    paddingHorizontal: formatSize(16),
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   searchContainer: {
     paddingHorizontal: formatSize(8)
@@ -20,5 +22,26 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
   flatList: {
     backgroundColor: colors.navigation,
     paddingHorizontal: formatSize(16)
+  },
+  sortSelector: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  sortByLabel: {
+    ...typography.caption11Regular,
+    color: colors.gray2,
+    marginRight: formatSize(2)
+  },
+  bakersSortListItem: {
+    ...typography.body17Regular,
+    color: colors.orange
+  },
+  selectedBakerSortField: {
+    ...typography.caption11Regular,
+    width: formatSize(36)
+  },
+  selectedBakerWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 }));
