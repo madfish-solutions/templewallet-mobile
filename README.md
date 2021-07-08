@@ -1,5 +1,5 @@
 
-![application screenshot](https://github.com/madfish-solutions/templewallet-mobile/blob/master/docs/assets/readmiScreenshot.jpeg?raw=true)
+![application screenshot](./docs/assets/readmiScreenshot.jpeg?raw=true)
 
 # 📝 About
 
