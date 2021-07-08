@@ -1,7 +1,7 @@
 
 ![application screenshot](https://github.com/madfish-solutions/templewallet-mobile/blob/master/docs/assets/readmiScreenshot.jpeg?raw=true)
 
-# About
+# 📝 About
 
 Temple Wallet -  is a non-custodial crypto wallet for interacting with the Tezos ecosystem.
 
@@ -14,28 +14,27 @@ Other important features include:
 - Delegation to bakers
 - Light/Dark mode switching
 
-## Installation
+## ▶️ Installation
 
 To run application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
 
 Clone repository
-```bash
-git clone https://github.com/madfish-solutions/templewallet-mobile.git
-cd templewallet-mobile
+```
+git clone https://github.com/madfish-solutions/templewallet-mobile.git && cd templewallet-mobile
 ```
 
 Install dependencies
-```bash
+```
 yarn
 yarn ios:pods
 ```
 
 To start app run
-```bash
-// Android application
+```
+# Android application
 yarn android
 
-// iOS application
+# iOS application
 yarn ios
 ```
 
@@ -47,12 +46,12 @@ yarn test
 ```
 
 
-## Installation on computers with M1 silicone chip
+## 💻 Installation on computers with M1 silicone chip
 
 If you running application on MacBook with M1 silicone chip, you'll need install Rosetta:
 
-```bash
-softwareupdate — install-rosetta
+```
+softwareupdate --install-rosetta
 ```
 
 After successfully installed Rosetta - you have to open terminal app using Rosetta (right mouse click on app - 'Get Info' - checkbox 'run with Rosetta') and run these commands:
@@ -62,7 +61,7 @@ yarn ios:pods
 ```
 
 or
-```bash
+```
 sudo arch -x86_64 gem install ffi
 
 arch -x86_64 pod install
