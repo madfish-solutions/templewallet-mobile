@@ -20,7 +20,7 @@ import { SecureSettingsRootState } from './secure-settings/secure-settings-state
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-type RootState = WalletRootState &
+export type RootState = WalletRootState &
   BakingRootState &
   DisplaySettingsRootState &
   SecureSettingsRootState &

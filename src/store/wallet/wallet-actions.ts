@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
+import { WalletParamsWithKind } from '@taquito/taquito';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { EstimationInterface } from '../../interfaces/estimation.interface';
@@ -27,3 +28,7 @@ export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_T
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
 export const loadEstimationsActions =
   createActions<LoadEstimationsActionPayloadInterface, EstimationInterface[], string>('wallet/LOAD_ESTIMATIONS');
+
+export const approveInternalOperationRequestAction = createAction<WalletParamsWithKind[]>(
+  'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
+);

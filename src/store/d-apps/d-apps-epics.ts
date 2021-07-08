@@ -9,6 +9,7 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { sendTransaction$ } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
 import {
   abortRequestAction,
@@ -111,14 +112,15 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(approveOperationRequestAction),
     toPayload(),
-    switchMap(({ message, transactionHash }) =>
-      from(
-        BeaconHandler.respond({
-          type: BeaconMessageType.OperationResponse,
-          id: message.id,
-          transactionHash
-        })
-      ).pipe(
+    switchMap(({ message, sender, opParams }) =>
+      sendTransaction$(sender, opParams).pipe(
+        switchMap(({ opHash }) =>
+          BeaconHandler.respond({
+            type: BeaconMessageType.OperationResponse,
+            id: message.id,
+            transactionHash: opHash
+          })
+        ),
         map(() => {
           showSuccessToast('Successfully sent!');
 

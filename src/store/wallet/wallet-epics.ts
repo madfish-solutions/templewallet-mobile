@@ -3,7 +3,7 @@ import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { from, Observable, of } from 'rxjs';
+import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -13,20 +13,23 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { showErrorToast } from '../../toast/toast.utils';
+import { StacksEnum } from '../../navigator/enums/stacks.enum';
+import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
-import { ReadOnlySigner } from '../../utils/read-only.signer.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
+import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
 import {
+  approveInternalOperationRequestAction,
   loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
   sendAssetActions
 } from './wallet-actions';
+import { WalletRootState } from './wallet-state';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -89,16 +92,17 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const sendAssetEpic = (action$: Observable<Action>) =>
+const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ asset, sender, receiverPublicKeyHash, amount }, tezos]) =>
-      getTransferParams$(asset, sender, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+    withSelectedAccount(state$),
+    switchMap(([[{ asset, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
+      getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
         map((transferParams): WalletParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
-          navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, sender, opParams })
+          navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
         )
       )
     )
@@ -109,10 +113,8 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
     ofType(loadEstimationsActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ sender, opParams }, tezos]) => {
-      tezos.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
-
-      return from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
+    switchMap(([{ sender, opParams }, tezos]) =>
+      from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
         map(estimates =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           estimates.map(({ suggestedFeeMutez, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
@@ -127,8 +129,29 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
 
           return of(loadEstimationsActions.fail(err.message));
         })
-      );
-    })
+      )
+    )
+  );
+
+const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+  action$.pipe(
+    ofType(approveInternalOperationRequestAction),
+    toPayload(),
+    withSelectedAccount(state$),
+    switchMap(([opParams, sender]) =>
+      sendTransaction$(sender, opParams).pipe(
+        map(() => {
+          showSuccessToast('Successfully sent!');
+
+          return navigateAction(StacksEnum.MainStack);
+        }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
   );
 
 export const walletEpics = combineEpics(
@@ -136,5 +159,6 @@ export const walletEpics = combineEpics(
   loadTokenAssetsEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
-  loadEstimationsEpic
+  loadEstimationsEpic,
+  approveInternalOperationRequestEpic
 );

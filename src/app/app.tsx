@@ -9,7 +9,9 @@ import { BiometryAvailabilityProvider } from '../biometry/biometry-availability-
 import { RootStackScreen } from '../navigator/root-stack';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
+import { initSentry } from '../utils/sentry.utils';
 
+initSentry();
 enableScreens();
 
 export const App = () => {

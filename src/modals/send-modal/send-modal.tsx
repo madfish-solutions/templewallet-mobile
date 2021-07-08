@@ -65,7 +65,6 @@ export const SendModal: FC = () => {
       dispatch(
         sendAssetActions.submit({
           asset: token,
-          sender: selectedAccount,
           receiverPublicKeyHash,
           amount: amount.toNumber()
         })

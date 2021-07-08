@@ -29,7 +29,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     <OperationsConfirmation
       sender={sender}
       opParams={opParams}
-      onSuccessSend={transactionHash => dispatch(approveOperationRequestAction({ message, transactionHash }))}
+      onSubmit={opParams => dispatch(approveOperationRequestAction({ message, sender, opParams }))}
       onBackButtonPress={() => dispatch(abortRequestAction(message.id))}>
       <AppMetadataView appMetadata={message.appMetadata} />
       <Divider />
