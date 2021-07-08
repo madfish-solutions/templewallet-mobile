@@ -1,5 +1,5 @@
 
-![application screenshot](./docs/assets/readmiScreenshot.jpeg?raw=true)
+![application screenshot](./docs/assets/readmeScreenshot.jpeg)
 
 # 📝 About
 
