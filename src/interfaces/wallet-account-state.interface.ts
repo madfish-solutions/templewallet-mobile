@@ -1,5 +1,5 @@
 import { createEntity } from '../store/create-entity';
-import { AccountStateInterface } from './account-settings.interface';
+import { AccountStateInterface } from './account-state.interface';
 import { AccountInterface } from './account.interface';
 
 export type WalletAccountStateInterface = AccountInterface & AccountStateInterface;

@@ -12,7 +12,7 @@ export interface AccountStateInterface {
   pendingActivities: ActivityGroup[];
 }
 
-export const initialAccountSettings: AccountStateInterface = {
+export const initialAccountState: AccountStateInterface = {
   tezosBalance: createEntity('0'),
   tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: tokenMetadataSlug(token), balance: '0', isVisible: true })),
   activityGroups: createEntity([]),

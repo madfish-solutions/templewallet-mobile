@@ -52,8 +52,7 @@ export const paramsToPendingActions = (
             address: recipient
           },
           amount: `-${amount}`,
-          tokenSlug:
-            typeof asset === 'string' ? undefined : tokenMetadataSlug({ address: asset.contract, id: asset.id }),
+          tokenSlug: asset === 'tez' ? undefined : tokenMetadataSlug({ address: asset.contract, id: asset.id }),
           entrypoint: 'transfer'
         }));
         break;
@@ -79,7 +78,7 @@ export const paramsToPendingActions = (
             entrypoint: 'approve',
             amount: preview.amount,
             tokenSlug:
-              typeof preview.asset === 'string'
+              preview.asset === 'tez'
                 ? undefined
                 : tokenMetadataSlug({ address: preview.asset.contract, id: preview.asset.id })
           }

@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 
-import { initialAccountSettings } from '../../interfaces/account-settings.interface';
+import { initialAccountState } from '../../interfaces/account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
@@ -33,7 +33,7 @@ import {
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountSettings }]
+    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountState }]
   }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
