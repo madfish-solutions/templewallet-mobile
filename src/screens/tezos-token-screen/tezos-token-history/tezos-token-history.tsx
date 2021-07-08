@@ -10,8 +10,11 @@ import { delegationApy } from '../../../config/general';
 import { ActivityGroup } from '../../../interfaces/activity.interface';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useActivityGroupsSelector, usePendingOperationsSelector } from '../../../store/activity/activity-selectors';
 import { useSelectedBakerSelector } from '../../../store/baking/baking-selectors';
+import {
+  useSelectedAccountActivityGroups,
+  useSelectedAccountPendingActivities
+} from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
@@ -23,15 +26,15 @@ export const TezosTokenHistory = () => {
   const styles = useTezosTokenHistoryStyles();
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
-  const activityGroups = useActivityGroupsSelector();
-  const pendingActivityGroups = usePendingOperationsSelector();
+  const activityGroups = useSelectedAccountActivityGroups();
+  const pendingActivityGroups = useSelectedAccountPendingActivities();
 
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
 
   useEffect(() => {
     const result: ActivityGroup[] = [];
 
-    const allGroups = [...(pendingActivityGroups ?? []), ...activityGroups];
+    const allGroups = [...pendingActivityGroups, ...activityGroups];
     for (const activityGroup of allGroups) {
       for (const activity of activityGroup) {
         if (!isDefined(activity.tokenSlug)) {

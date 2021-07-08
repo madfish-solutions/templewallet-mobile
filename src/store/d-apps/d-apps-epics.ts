@@ -9,8 +9,10 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
+import { addPendingOperation } from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
@@ -115,16 +117,21 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
     switchMap(({ message, sender, opParams }) =>
       sendTransaction$(sender, opParams).pipe(
         switchMap(({ opHash }) =>
-          BeaconHandler.respond({
-            type: BeaconMessageType.OperationResponse,
-            id: message.id,
-            transactionHash: opHash
-          })
+          from(
+            BeaconHandler.respond({
+              type: BeaconMessageType.OperationResponse,
+              id: message.id,
+              transactionHash: opHash
+            })
+          ).pipe(switchMap(() => of(opHash)))
         ),
-        map(() => {
+        switchMap(opHash => {
           showSuccessToast('Successfully sent!');
 
-          return navigateAction(StacksEnum.MainStack);
+          return [
+            navigateAction(StacksEnum.MainStack),
+            addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
+          ];
         }),
         catchError(err => {
           showErrorToast(err.message);

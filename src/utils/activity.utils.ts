@@ -1,5 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
-
 import { ActivityGroup, ActivityInterface, emptyActivity } from '../interfaces/activity.interface';
 
 export const groupActivitiesByHash = (operations: ActivityInterface[], transfers: ActivityInterface[]) => {
@@ -20,4 +18,3 @@ export const groupActivitiesByHash = (operations: ActivityInterface[], transfers
 
   return result;
 };
-export const accountPkh$ = new BehaviorSubject<string | undefined>(undefined);

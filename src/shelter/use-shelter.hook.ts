@@ -5,7 +5,6 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { addPendingOperation } from '../store/activity/activity-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useHdAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';

@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
-import { useActivityGroupsSelector, usePendingOperationsSelector } from '../store/activity/activity-selectors';
+import {
+  useSelectedAccountActivityGroups,
+  useSelectedAccountPendingActivities
+} from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { useTokenMetadata } from './use-token-metadata.hook';
 
 export const useFilteredActivityGroups = () => {
-  const activityGroups = useActivityGroupsSelector();
-  const pendingActivityGroups = usePendingOperationsSelector();
+  const activityGroups = useSelectedAccountActivityGroups();
+  const pendingActivityGroups = useSelectedAccountPendingActivities();
   const { getTokenMetadata } = useTokenMetadata();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
 
   useEffect(() => {
-    const allGroups = [...(pendingActivityGroups ?? []), ...activityGroups];
+    const allGroups = [...pendingActivityGroups, ...activityGroups];
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: ActivityGroup[] = [];
