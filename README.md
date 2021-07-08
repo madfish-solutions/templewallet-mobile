@@ -1,4 +1,6 @@
 
+![application screenshot](https://github.com/madfish-solutions/templewallet-mobile/blob/master/docs/assets/readmiScreenshot.jpeg?raw=true)
+
 # About
 
 Temple Wallet -  is a non-custodial crypto wallet for interacting with the Tezos ecosystem.
