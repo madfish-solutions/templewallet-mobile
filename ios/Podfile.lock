@@ -267,6 +267,8 @@ PODS:
   - React-jsinspector (0.64.0)
   - react-native-aes (1.3.10):
     - React-Core
+  - react-native-biometrics (2.1.4):
+    - React
   - react-native-camera (3.44.1):
     - React-Core
     - react-native-camera/RCT (= 3.44.1)
@@ -424,6 +426,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-aes (from `../node_modules/react-native-aes-crypto`)
+  - react-native-biometrics (from `../node_modules/react-native-biometrics`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -509,6 +512,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-aes:
     :path: "../node_modules/react-native-aes-crypto"
+  react-native-biometrics:
+    :path: "../node_modules/react-native-biometrics"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-flipper:
@@ -605,6 +610,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
   react-native-aes: c6e4e3ffcff410535e31e161fca95d50e608d4ee
+  react-native-biometrics: 9d3306e5d29c3bc4e6a3c912d759a94e76a2f683
   react-native-camera: 7bf59f2728ffb019fa25e60a225d2c57e1a8f0f6
   react-native-flipper: a5770950f79017f17f50b316cb74b66d14192c79
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
