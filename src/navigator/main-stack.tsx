@@ -13,7 +13,6 @@ import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
-import { EnableBiometry } from '../screens/enable-biometry/enable-biometry';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
@@ -83,11 +82,6 @@ export const MainStackScreen = () => {
             <MainStack.Screen
               name={ScreensEnum.Wallet}
               component={Wallet}
-              options={{ animationEnabled: false, headerShown: false }}
-            />
-            <MainStack.Screen
-              name={ScreensEnum.SetupBiometry}
-              component={EnableBiometry}
               options={{ animationEnabled: false, headerShown: false }}
             />
             <MainStack.Screen

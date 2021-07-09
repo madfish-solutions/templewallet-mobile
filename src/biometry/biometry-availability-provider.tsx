@@ -19,27 +19,27 @@ export const BiometryAvailabilityContext = createContext<BiometricAvailabilityCo
 });
 
 export const BiometryAvailabilityProvider: FC = ({ children }) => {
-  const [activeBiometryType, setActiveBiometryType] = useState<Keychain.BIOMETRY_TYPE | null>(null);
-  const [availableBiometryType, setAvailableBiometryType] = useState<BiometryType>();
-  const [biometricKeysExist, setBiometricKeysExist] = useState(false);
+  const [biometryType, setBiometryType] = useState<BiometryType>();
+  const [keysExist, setKeysExist] = useState(false);
+
   const appState = useAppStateVisible();
   const prevAppStateRef = useRef(appState);
 
   const updateBiometryAvailability = () => {
-    Keychain.getSupportedBiometryType()
-      .then(biometryType => setActiveBiometryType(biometryType === Keychain.BIOMETRY_TYPE.IRIS ? null : biometryType))
-      .catch(noop);
     ReactNativeBiometrics.isSensorAvailable()
-      .then(({ biometryType }) => setAvailableBiometryType(biometryType))
+      .then(result => {
+        console.log(result);
+        setBiometryType(result.biometryType);
+      })
       .catch(noop);
     ReactNativeBiometrics.biometricKeysExist()
-      .then(({ keysExist }) => setBiometricKeysExist(keysExist))
+      .then(result => setKeysExist(result.keysExist))
       .catch(noop);
   };
 
   const createBiometricKeys = async () => {
     await ReactNativeBiometrics.createKeys();
-    setBiometricKeysExist(true);
+    setKeysExist(true);
   };
 
   useEffect(() => updateBiometryAvailability(), []);
@@ -55,9 +55,8 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
   return (
     <BiometryAvailabilityContext.Provider
       value={{
-        activeBiometryType,
-        availableBiometryType,
-        biometricKeysExist,
+        biometryType,
+        keysExist,
         createBiometricKeys
       }}>
       {children}

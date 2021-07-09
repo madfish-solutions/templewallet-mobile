@@ -6,7 +6,6 @@ export enum ScreensEnum {
   CreateAccount = 'CreateAccount',
 
   /** Wallet stack **/
-  SetupBiometry = 'SetupBiometry',
   Wallet = 'Wallet',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
@@ -38,7 +37,6 @@ export type ScreensParamList = {
   [ScreensEnum.ScanQrCode]: undefined;
 
   /** Wallet stack **/
-  [ScreensEnum.SetupBiometry]: undefined;
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };

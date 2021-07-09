@@ -24,11 +24,24 @@ import {
   CreateNewPasswordFormValues
 } from './create-new-password.form';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
+import ReactNativeBiometrics from 'react-native-biometrics';
+import { noop } from 'lodash';
+import Keychain from 'react-native-keychain';
+import { APP_IDENTIFIER, Shelter } from '../../../shelter/shelter';
 
 type CreateNewPasswordProps = {
   onGoBackPress: () => void;
   seedPhrase: string;
 };
+
+console.log('keeek');
+
+ReactNativeBiometrics.isSensorAvailable()
+  .then((result) => console.log(result))
+  .catch(noop);
+Keychain.getSupportedBiometryType()
+  .then(biometryType => console.log('keychain', biometryType))
+  .catch(noop);
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
   const styles = useCreateNewPasswordStyles();
@@ -46,6 +59,67 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     [onGoBackPress]
   );
 
+  const createSignature = () => {
+    ReactNativeBiometrics.createSignature({
+      promptMessage: 'Sign in',
+      payload: 'message_payload'
+    })
+      .then(result => {
+        console.log('signed', result);
+      })
+      .catch(e => {
+        console.log('signing error', e);
+      });
+  };
+
+  const createKeys = () => {
+    ReactNativeBiometrics.createKeys()
+      .then(result => {
+        console.log('keys created', result);
+      })
+      .catch(e => {
+        console.log('creating keys error', e);
+      });
+  };
+  const key = 'testKey';
+  const value = 'password';
+
+  const savePass = () => {
+    Keychain.getSupportedBiometryType()
+      .then(result => {
+        console.log('getSupportedBiometryType', result);
+      })
+      .catch(e => {
+        console.log('getSupportedBiometryType error', e);
+      });
+
+    Keychain.setGenericPassword(key, JSON.stringify(value), {
+      service: `${APP_IDENTIFIER}/${key}`,
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
+      authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
+    })
+      .then(result => {
+        console.log('setGenericPassword', result);
+      })
+      .catch(e => {
+        console.log('setGenericPassword error', e);
+      });
+  };
+
+  const getPass = () => {
+    Keychain.getGenericPassword({
+      service: `${APP_IDENTIFIER}/${key}`,
+      // accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
+      // authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
+    })
+      .then(result => {
+        console.log('getGenericPassword', result);
+      })
+      .catch(e => {
+        console.log('getGenericPassword error', e);
+      });
+  };
+
   return (
     <Formik
       initialValues={createNewPasswordInitialValues}
@@ -60,6 +134,11 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
+
+            <ButtonLargePrimary title="Create keys" onPress={createKeys} />
+            <ButtonLargePrimary title="Sign" onPress={createSignature} />
+            <ButtonLargePrimary title="Save pass" onPress={savePass} />
+            <ButtonLargePrimary title="get pass" onPress={getPass} />
           </View>
           <Divider />
 
