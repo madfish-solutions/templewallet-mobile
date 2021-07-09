@@ -1,13 +1,15 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, memo, useEffect, useMemo, useState } from 'react';
-import { Text, FlatList, View } from 'react-native';
+import { Text, FlatList, View, TouchableOpacity } from 'react-native';
 
+import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { Dropdown } from '../../components/dropdown/dropdown';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { Label } from '../../components/label/label';
@@ -50,6 +52,7 @@ const BakerListItem = memo<BakerListItemProps>(({ item, selected, onPress }) => 
 export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
+  const revealSelectBottomSheetController = useBottomSheetController();
 
   const bakersList = useBakersListSelector();
 
@@ -116,28 +119,10 @@ export const SelectBakerModal: FC = () => {
           <Text style={styles.infoText}>The higher the better</Text>
           <View style={styles.sortSelector}>
             <Text style={styles.sortByLabel}>Sort by</Text>
-            <Dropdown<BakersSortFieldEnum>
-              title="Sort bakers by:"
-              list={bakersSortFieldsOptions}
-              equalityFn={(a, b) => a === b}
-              renderValue={({ value }) => (
-                <View style={styles.selectedBakerWrapper}>
-                  <Text style={styles.selectedBakerSortField}>
-                    {bakersSortFieldsLabels[value ?? BakersSortFieldEnum.Rank]}
-                  </Text>
-                  <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
-                </View>
-              )}
-              renderListItem={({ item }) => (
-                <Text style={styles.bakersSortListItem}>
-                  {bakersSortFieldsLabels[item ?? BakersSortFieldEnum.Rank]}
-                </Text>
-              )}
-              onValueChange={value => setSortValue(value ?? BakersSortFieldEnum.Rank)}
-              style="nativeLike"
-              contentHeight={formatSize(216)}
-              value={sortValue}
-            />
+            <TouchableOpacity style={styles.selectedBakerWrapper} onPress={revealSelectBottomSheetController.open}>
+              <Text style={styles.selectedBakerSortField}>{bakersSortFieldsLabels[sortValue]}</Text>
+              <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -161,6 +146,22 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
       </ModalButtonsContainer>
+
+      <BottomSheet
+        title="Sort bakers by:"
+        contentHeight={formatSize(216)}
+        controller={revealSelectBottomSheetController}>
+        {bakersSortFieldsOptions.map(value => (
+          <BottomSheetActionButton
+            title={bakersSortFieldsLabels[value]}
+            onPress={() => {
+              setSortValue(value);
+              revealSelectBottomSheetController.close();
+            }}
+            key={value}
+          />
+        ))}
+      </BottomSheet>
     </>
   );
 };
