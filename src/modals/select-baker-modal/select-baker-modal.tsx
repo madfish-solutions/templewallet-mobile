@@ -153,12 +153,12 @@ export const SelectBakerModal: FC = () => {
         controller={revealSelectBottomSheetController}>
         {bakersSortFieldsOptions.map(value => (
           <BottomSheetActionButton
+            key={value}
             title={bakersSortFieldsLabels[value]}
             onPress={() => {
               setSortValue(value);
               revealSelectBottomSheetController.close();
             }}
-            key={value}
           />
         ))}
       </BottomSheet>
