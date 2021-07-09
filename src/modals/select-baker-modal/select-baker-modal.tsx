@@ -119,7 +119,7 @@ export const SelectBakerModal: FC = () => {
           <Text style={styles.infoText}>The higher the better</Text>
           <View style={styles.sortSelector}>
             <Text style={styles.sortByLabel}>Sort by</Text>
-            <TouchableOpacity style={styles.selectedBakerWrapper} onPress={revealSelectBottomSheetController.open}>
+            <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={revealSelectBottomSheetController.open}>
               <Text style={styles.selectedBakerSortField}>{bakersSortFieldsLabels[sortValue]}</Text>
               <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
             </TouchableOpacity>

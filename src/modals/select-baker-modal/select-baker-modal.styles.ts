@@ -41,7 +41,7 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     color: colors.black,
     width: formatSize(36)
   },
-  selectedBakerWrapper: {
+  selectedBakerFieldWrapper: {
     flexDirection: 'row',
     alignItems: 'center'
   }
