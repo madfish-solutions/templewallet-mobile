@@ -34,7 +34,7 @@ interface Props {
 export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, onBackButtonPress, children }) => {
   const styles = useOperationsConfirmationStyles();
   const dispatch = useDispatch();
-  const [estimationsRequested, setEstimationsRequested] = useState(false);
+  const [isEstimationsRequested, setIsEstimationsRequested] = useState(false);
 
   const estimations = useEstimationsSelector();
   const {
@@ -48,7 +48,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
 
   useEffect(() => {
     dispatch(loadEstimationsActions.submit({ sender, opParams }));
-    setEstimationsRequested(true);
+    setIsEstimationsRequested(true);
   }, []);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
@@ -79,7 +79,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
         <>
           <ScreenContainer>
             {children}
-            {estimations.isLoading || !estimationsRequested ? (
+            {estimations.isLoading || !isEstimationsRequested ? (
               <Text style={styles.loadingMessage}>Loading...</Text>
             ) : (
               <>
