@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
-import React, { FC, memo, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, FlatList, View, TouchableOpacity } from 'react-native';
 
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
@@ -25,7 +25,7 @@ import { useBakersListSelector } from '../../store/baking/baking-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
-import { SelectBakerItem } from './select-baker-item/select-baker-item';
+import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 // TODO: replace with translations
@@ -35,19 +35,6 @@ const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Space]: 'Space'
 };
 const bakersSortFieldsOptions = [BakersSortFieldEnum.Space, BakersSortFieldEnum.Fee, BakersSortFieldEnum.Rank];
-
-type BakerListItemProps = {
-  item: BakerInterface;
-  selected: boolean;
-  onPress: (item: BakerInterface) => void;
-};
-
-const BakerListItem = memo<BakerListItemProps>(({ item, selected, onPress }) => (
-  <>
-    <SelectBakerItem baker={item} selected={selected} onPress={() => onPress(item)} />
-    <Divider size={formatSize(16)} />
-  </>
-));
 
 export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
