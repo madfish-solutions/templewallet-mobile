@@ -1,6 +1,6 @@
 import { WalletParamsWithKind } from '@taquito/taquito';
 import { Formik } from 'formik';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -34,6 +34,7 @@ interface Props {
 export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, onBackButtonPress, children }) => {
   const styles = useOperationsConfirmationStyles();
   const dispatch = useDispatch();
+  const [isEstimationsRequested, setIsEstimationsRequested] = useState(false);
 
   const estimations = useEstimationsSelector();
   const {
@@ -45,7 +46,10 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
     formInitialValues
   } = useFeeForm(opParams, estimations.data);
 
-  useEffect(() => void dispatch(loadEstimationsActions.submit({ sender, opParams })), []);
+  useEffect(() => {
+    dispatch(loadEstimationsActions.submit({ sender, opParams }));
+    setIsEstimationsRequested(true);
+  }, []);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     const params = opParams.map((param, index) => {
@@ -75,7 +79,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
         <>
           <ScreenContainer>
             {children}
-            {estimations.isLoading ? (
+            {estimations.isLoading || !isEstimationsRequested ? (
               <Text style={styles.loadingMessage}>Loading...</Text>
             ) : (
               <>
