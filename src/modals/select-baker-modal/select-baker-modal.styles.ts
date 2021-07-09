@@ -32,10 +32,6 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     color: colors.gray2,
     marginRight: formatSize(2)
   },
-  bakersSortListItem: {
-    ...typography.body17Regular,
-    color: colors.orange
-  },
   selectedBakerSortField: {
     ...typography.caption11Regular,
     color: colors.black,
