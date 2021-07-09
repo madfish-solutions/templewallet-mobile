@@ -12,20 +12,13 @@ import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
-import { displaySettingsReducers } from './display-settings/display-settings-reducers';
-import { DisplaySettingsRootState } from './display-settings/display-settings-state';
 import { rootStateReducer } from './root-state.reducers';
-import { secureSettingsReducers } from './secure-settings/secure-settings-reducers';
-import { SecureSettingsRootState } from './secure-settings/secure-settings-state';
+import { settingsReducers } from './settings/settings-reducers';
+import { SettingsRootState } from './settings/settings-state';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-export type RootState = WalletRootState &
-  BakingRootState &
-  DisplaySettingsRootState &
-  SecureSettingsRootState &
-  ActivityRootState &
-  DAppsRootState;
+export type RootState = WalletRootState & BakingRootState & SettingsRootState & ActivityRootState & DAppsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -44,8 +37,7 @@ const persistConfig = {
 const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
-  displaySettings: displaySettingsReducers,
-  secureSettings: secureSettingsReducers,
+  settings: settingsReducers,
   activity: activityReducers,
   dApps: dAppsReducers
 });

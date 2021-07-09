@@ -12,8 +12,8 @@ import { WhiteContainerText } from '../../components/white-container/white-conta
 import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { setBiometricsEnabled } from '../../store/secure-settings/secure-settings-actions';
-import { useBiometricsEnabledSelector } from '../../store/secure-settings/secure-settings-selectors';
+import { setBiometricsEnabled } from '../../store/settings/settings-actions';
+import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { promptGoToSecuritySettings } from '../../utils/prompt-go-to-security-settings.util';

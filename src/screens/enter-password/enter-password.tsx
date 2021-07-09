@@ -18,7 +18,7 @@ import { FormPasswordInput } from '../../form/form-password-input';
 import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
-import { useBiometricsEnabledSelector } from '../../store/secure-settings/secure-settings-selectors';
+import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { isDefined } from '../../utils/is-defined';

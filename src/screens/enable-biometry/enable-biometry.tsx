@@ -14,7 +14,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { setBiometricsEnabled } from '../../store/secure-settings/secure-settings-actions';
+import { setBiometricsEnabled } from '../../store/settings/settings-actions';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { showErrorToast } from '../../toast/toast.utils';

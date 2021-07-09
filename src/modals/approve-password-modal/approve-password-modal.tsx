@@ -14,7 +14,7 @@ import { useBiometryAvailability } from '../../hooks/use-biometry-availability.h
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { setBiometricsEnabled } from '../../store/secure-settings/secure-settings-actions';
+import { setBiometricsEnabled } from '../../store/settings/settings-actions';
 import { showErrorToast } from '../../toast/toast.utils';
 import { isDefined } from '../../utils/is-defined';
 import { ApprovePasswordModalFormValues, approvePasswordModalValidationSchema } from './approve-password-modal.form';
