@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
 
-import { step, red, transparent } from '../../config/styles';
+import { red, transparent } from '../../config/styles';
+import { formatSize } from '../../styles/format-size';
 
 export const ErrorMessageStyles = StyleSheet.create({
   root: {
     color: transparent,
-    fontSize: 1.5 * step,
-    lineHeight: 1.5 * step,
-    marginTop: 0.5 * step,
+    fontSize: formatSize(12),
+    lineHeight: formatSize(12),
+    marginTop: formatSize(4),
     alignSelf: 'flex-start'
   },
   rootVisible: {

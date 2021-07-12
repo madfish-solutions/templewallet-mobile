@@ -1,26 +1,23 @@
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import * as Keychain from 'react-native-keychain';
 
-import { Button } from '../../components/button/button';
+import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { transparent } from '../../config/styles';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
 import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
@@ -30,29 +27,20 @@ import {
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
-  const biometricsEnabled = useBiometricsEnabledSelector();
-  const colors = useColors();
   const styles = useEnterPasswordStyles();
-  const { activeBiometryType } = useBiometryAvailability();
+
+  const { biometryType } = useBiometryAvailability();
   const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
 
-  const shouldEnableUnlockWithBiometry = isDefined(activeBiometryType) && biometricsEnabled;
+  const biometricsEnabled = useBiometricsEnabledSelector();
+
+  const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
+  const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
+
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
-  const faceBiometryAvailable =
-    activeBiometryType === Keychain.BIOMETRY_TYPE.FACE || activeBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
 
-  const biometryButtonStyleConfig = {
-    iconStyle: { size: formatSize(40), marginRight: 0 },
-    containerStyle: { height: formatSize(40), borderRadius: 0 },
-    activeColorConfig: { titleColor: colors.orange, backgroundColor: transparent }
-  };
-
-  useEffect(() => {
-    if (shouldEnableUnlockWithBiometry) {
-      unlockWithBiometry();
-    }
-  }, [activeBiometryType, biometricsEnabled]);
+  useEffect(() => void (isBiometryAvailable && unlockWithBiometry()), [isBiometryAvailable]);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
@@ -78,14 +66,14 @@ export const EnterPassword = () => {
                 <View style={styles.passwordInputWrapper}>
                   <FormPasswordInput name="password" />
                 </View>
-                {shouldEnableUnlockWithBiometry && (
-                  <Button
-                    onPress={unlockWithBiometry}
-                    iconName={faceBiometryAvailable ? IconNameEnum.FaceId : IconNameEnum.TouchId}
-                    marginLeft={formatSize(16)}
-                    marginTop={formatSize(6)}
-                    styleConfig={biometryButtonStyleConfig}
-                  />
+                {isBiometryAvailable && (
+                  <>
+                    <Divider size={formatSize(16)} />
+                    <View>
+                      <Divider size={formatSize(4)} />
+                      <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
+                    </View>
+                  </>
                 )}
               </View>
 

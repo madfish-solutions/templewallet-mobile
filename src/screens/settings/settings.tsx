@@ -15,7 +15,7 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { useBiometryAvailability } from '../../hooks/use-biometry-availability.hook';
+import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -33,7 +33,7 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
-  const { availableBiometryType } = useBiometryAvailability();
+  const { isHardwareAvailable } = useBiometryAvailability();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -78,8 +78,7 @@ export const Settings = () => {
 
             <WhiteContainerDivider />
 
-            {/* TODO: remove this constraint as soon as points which aren't related to biometry appear in 'Secure' section */}
-            {isDefined(availableBiometryType) && (
+            {isHardwareAvailable && (
               <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
                 <View style={styles.actionsContainer}>
                   <WhiteContainerText text="Secure" />

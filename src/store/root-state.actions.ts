@@ -3,10 +3,9 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { NavigationArgsType } from '../interfaces/navigation-args.type';
 import { NavigationParamList } from '../navigator/hooks/use-navigation.hook';
+import { createActions } from './create-actions';
 
-export const rootStateResetAction = createAction('root/RESET');
-
-export const keychainResetSuccessAction = createAction('keychain/RESET-SUCCESS');
+export const rootStateResetAction = createActions('root/RESET');
 
 export const untypedNavigateAction =
   createAction<NavigationArgsType<ParamListBase, keyof ParamListBase>>('navigation/NAVIGATE');

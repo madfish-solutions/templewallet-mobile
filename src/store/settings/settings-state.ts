@@ -4,12 +4,12 @@ import { ThemesEnum } from '../../interfaces/theme.enum';
 
 export interface SettingsState {
   theme: ThemesEnum;
-  biometricsEnabled: boolean;
+  isBiometricsEnabled: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
   theme: Appearance.getColorScheme() === 'dark' ? ThemesEnum.dark : ThemesEnum.light,
-  biometricsEnabled: false
+  isBiometricsEnabled: false
 };
 
 export interface SettingsRootState {

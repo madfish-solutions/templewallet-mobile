@@ -6,4 +6,4 @@ import { SettingsRootState } from './settings-state';
 export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>(({ settings }) => settings.theme);
 
 export const useBiometricsEnabledSelector = () =>
-  useSelector<SettingsRootState, boolean>(({ settings }) => settings.biometricsEnabled);
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBiometricsEnabled);

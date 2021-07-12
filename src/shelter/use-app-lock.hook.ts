@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { showErrorToast } from '../toast/toast.utils';
+import { isDefined } from '../utils/is-defined';
 import { Shelter } from './shelter';
 
 export const useAppLock = () => {
@@ -11,6 +12,19 @@ export const useAppLock = () => {
 
   const lock = () => Shelter.lockApp();
   const unlock = (password: string) => unlock$.next(password);
+  const unlockWithBiometry = async () => {
+    const password = await Shelter.getBiometryPassword()
+      .then(rawKeychainData => {
+        if (rawKeychainData !== false) {
+          return JSON.parse(rawKeychainData.password) as string;
+        }
+
+        return undefined;
+      })
+      .catch(() => undefined);
+
+    isDefined(password) && unlock(password);
+  };
 
   useEffect(() => {
     const subscriptions = [
@@ -23,5 +37,5 @@ export const useAppLock = () => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [unlock$]);
 
-  return { isLocked, lock, unlock };
+  return { isLocked, lock, unlock, unlockWithBiometry };
 };
