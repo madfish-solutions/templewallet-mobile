@@ -1,3 +1,5 @@
+import { Appearance } from 'react-native';
+
 import { ThemesEnum } from '../../interfaces/theme.enum';
 
 export interface SettingsState {
@@ -6,7 +8,7 @@ export interface SettingsState {
 }
 
 export const settingsInitialState: SettingsState = {
-  theme: ThemesEnum.light,
+  theme: Appearance.getColorScheme() === 'dark' ? ThemesEnum.dark : ThemesEnum.light,
   biometricsEnabled: false
 };
 
