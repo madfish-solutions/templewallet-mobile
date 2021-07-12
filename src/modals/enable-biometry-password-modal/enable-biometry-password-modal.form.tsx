@@ -9,4 +9,4 @@ export const enableBiometryPasswordModalValidationSchema: SchemaOf<EnableBiometr
     password: string().required()
   });
 
-export const enableBiometryPasswordModalInitialValues = { password: '' };
+export const enableBiometryPasswordModalInitialValues: EnableBiometryPasswordModalFormValues = { password: '' };

@@ -3,6 +3,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -15,7 +16,6 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -24,7 +24,6 @@ import { changeTheme } from '../../store/settings/settings-actions';
 import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
 
@@ -76,15 +75,17 @@ export const Settings = () => {
               />
             </WhiteContainerAction>
 
-            <WhiteContainerDivider />
-
             {isHardwareAvailable && (
-              <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
-                <View style={styles.actionsContainer}>
-                  <WhiteContainerText text="Secure" />
-                </View>
-                <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
-              </WhiteContainerAction>
+              <>
+                <WhiteContainerDivider />
+
+                <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+                  <View style={styles.actionsContainer}>
+                    <WhiteContainerText text="Secure" />
+                  </View>
+                  <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                </WhiteContainerAction>
+              </>
             )}
           </WhiteContainer>
           <Divider size={formatSize(16)} />

@@ -13,13 +13,10 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { useWelcomeStyles } from './welcome.styles';
-import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
-  const a = useBiometricsEnabledSelector();
-  console.log(a);
 
   return (
     <ScreenContainer isFullScreenMode={true}>

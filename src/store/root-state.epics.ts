@@ -7,7 +7,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { emptyWalletAccount } from '../interfaces/wallet-account.interface';
 import { globalNavigationRef } from '../navigator/root-stack';
-import { getKeychainOptions } from '../shelter/shelter';
+import { getKeychainOptions } from '../utils/keychain.utils';
 import { tezos$ } from '../utils/network/network.util';
 import { ReadOnlySigner } from '../utils/read-only.signer.util';
 import { RootState } from './create-store';

@@ -7,24 +7,16 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
+import {
+  APP_IDENTIFIER,
+  biometryKeychainOptions,
+  getKeychainOptions,
+  PASSWORD_CHECK_KEY,
+  PASSWORD_STORAGE_KEY
+} from '../utils/keychain.utils';
 import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
-export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
-
-const PASSWORD_CHECK_KEY = 'app-password';
-const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
-
 const EMPTY_PASSWORD = '';
-
-export const getKeychainOptions = (key: string): Keychain.Options => ({
-  service: `${APP_IDENTIFIER}/${key}`
-});
-
-const biometryKeychainOptions: Keychain.Options = {
-  ...getKeychainOptions(PASSWORD_STORAGE_KEY),
-  accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-  authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
-};
 
 export class Shelter {
   private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
