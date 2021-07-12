@@ -14,13 +14,15 @@ import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-gro
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import { loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useVisibleTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const dispatch = useDispatch();
   const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const tokensList = useVisibleTokensListSelector();
+  const updatedToken = tokensList.find(({ address, id }) => address === token.address && id === token.id) ?? token;
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
@@ -37,7 +39,7 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue balance={token.balance} symbol={token.symbol} />
+        <TokenEquityValue balance={updatedToken.balance} symbol={token.symbol} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

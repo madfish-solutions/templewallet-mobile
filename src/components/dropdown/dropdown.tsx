@@ -60,7 +60,12 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
+      <TouchableOpacity
+        style={styles.valueContainer}
+        onPress={() => {
+          console.log('press');
+          dropdownBottomSheetController.open();
+        }}>
         {renderValue({ value })}
       </TouchableOpacity>
 

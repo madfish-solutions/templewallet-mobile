@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -8,6 +8,7 @@ import { generateScreenOptions } from '../components/header/generate-screen-opti
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
+import { useOnBlock } from '../hooks/use-on-block.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -34,8 +35,6 @@ import { TabBar } from './tab-bar/tab-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
-
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
@@ -43,20 +42,17 @@ export const MainStackScreen = () => {
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   useBeaconHandler();
-  useEffect(() => {
-    if (isAuthorised) {
-      let timeoutId = setTimeout(function updateData() {
-        dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+  const updateData = useCallback(() => {
+    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
 
-        timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
-      }, DATA_REFRESH_INTERVAL);
+    setTimeout(() => {
+      dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+      dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    }, 10000);
+  }, [dispatch, selectedAccount.publicKeyHash]);
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isAuthorised, selectedAccount.publicKeyHash]);
+  useOnBlock(updateData);
 
   return (
     <PortalProvider>
