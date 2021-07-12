@@ -23,6 +23,8 @@ export const SecureSettings = () => {
 
   const biometricsEnabled = useBiometricsEnabledSelector();
 
+  const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
+
   const handleBiometrySwitch = (newValue: boolean) => {
     if (isDefined(biometryType)) {
       newValue ? navigate(ModalsEnum.EnableBiometryPassword) : dispatch(disableBiometryPassword());
@@ -35,9 +37,9 @@ export const SecureSettings = () => {
     <ScreenContainer>
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => handleBiometrySwitch(!biometricsEnabled)}>
+        <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
           <WhiteContainerText text={biometryType ?? 'Biometrics'} />
-          <Switch value={biometricsEnabled} onChange={handleBiometrySwitch} />
+          <Switch value={isBiometryAvailable} onChange={handleBiometrySwitch} />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
