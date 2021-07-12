@@ -39,14 +39,15 @@ export const SendModal: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
 
   const tokensListWithTez = useMemo<TokenInterface[]>(
-    () => [
-      {
-        ...emptyToken,
-        ...TEZ_TOKEN_METADATA,
-        balance: selectedAccount.tezosBalance.data
-      },
-      ...tokensList
-    ],
+    () =>
+      [
+        {
+          ...emptyToken,
+          ...TEZ_TOKEN_METADATA,
+          balance: selectedAccount.tezosBalance.data
+        },
+        ...tokensList
+      ].filter(token => Number(token.balance) > 0),
     [selectedAccount.tezosBalance.data, tokensList]
   );
 

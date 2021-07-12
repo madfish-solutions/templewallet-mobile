@@ -41,7 +41,7 @@ export const TokenScreen = () => {
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons asset={token} />
+        <HeaderCardActionButtons asset={token} balance={token.balance} />
       </HeaderCard>
 
       <TokenScreenContentContainer

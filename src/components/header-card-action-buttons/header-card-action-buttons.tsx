@@ -12,9 +12,10 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 
 interface Props {
   asset: AssetMetadataInterface;
+  balance: string;
 }
 
-export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
+export const HeaderCardActionButtons: FC<Props> = ({ asset, balance }) => {
   const { navigate } = useNavigation();
 
   return (
@@ -25,7 +26,12 @@ export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
         onPress={() => navigate(ModalsEnum.Receive, { asset })}
       />
       <Divider size={formatSize(8)} />
-      <ButtonMedium title="SEND" iconName={IconNameEnum.ArrowUp} onPress={() => navigate(ModalsEnum.Send, { asset })} />
+      <ButtonMedium
+        title="SEND"
+        disabled={Number(balance) === 0}
+        iconName={IconNameEnum.ArrowUp}
+        onPress={() => navigate(ModalsEnum.Send, { asset })}
+      />
       <Divider size={formatSize(8)} />
       <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
     </ButtonsContainer>
