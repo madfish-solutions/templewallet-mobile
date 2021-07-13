@@ -1,11 +1,10 @@
 import { WalletParamsWithKind } from '@taquito/taquito';
-import { EMPTY, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { Shelter } from '../shelter/shelter';
 import { WalletRootState } from '../store/wallet/wallet-state';
-import { showErrorToast } from '../toast/toast.utils';
 import { createTezosToolkit, currentNetworkRpc$ } from './network/network.util';
 
 export const withSelectedAccount =
