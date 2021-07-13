@@ -55,6 +55,7 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
+          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
 
         <Divider />
@@ -64,6 +65,7 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
+          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
         </View>
       </View>
 

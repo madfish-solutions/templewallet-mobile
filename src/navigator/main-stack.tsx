@@ -32,6 +32,7 @@ import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
+import {loadExchangeRates} from "../store/currency/currency-actions";
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
@@ -44,6 +45,10 @@ export const MainStackScreen = () => {
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   useBeaconHandler();
+  useEffect(() => {
+    dispatch(loadExchangeRates.submit());
+  }, []);
+
   useEffect(() => {
     if (isAuthorised) {
       let timeoutId = setTimeout(function updateData() {

@@ -5,3 +5,5 @@ export const betterCallDevApi = axios.create({ baseURL: 'https://api.better-call
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
 
 export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
+
+export const templeWalletApi = axios.create({ baseURL: 'https://api.templewallet.com/api' });

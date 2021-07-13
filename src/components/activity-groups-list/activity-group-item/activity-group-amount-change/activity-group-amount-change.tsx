@@ -37,6 +37,8 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     [group, getTokenMetadata]
   );
 
+  const isShowValueText = nonZeroAmounts.length > 0;
+
   return (
     <View style={styles.container}>
       {nonZeroAmounts.map(({ parsedAmount, isPositive, symbol }, index) => (
@@ -45,6 +47,8 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
           {formatAssetAmount(parsedAmount)} {symbol}
         </Text>
       ))}
+
+      {isShowValueText && <Text style={styles.valueText}>XX.XX $</Text>}
     </View>
   );
 };

@@ -41,6 +41,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           <Text style={styles.balanceText}>
             {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
           </Text>
+          <Text style={styles.equityText}>X XXX.XX $</Text>
         </View>
 
         <ButtonSmallSecondary
