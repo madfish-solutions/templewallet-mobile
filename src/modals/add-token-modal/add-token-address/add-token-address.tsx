@@ -12,9 +12,9 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
+import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { FormTextInput } from '../../../form/form-text-input';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
@@ -54,7 +54,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
             <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
 
             <Label label="Address" description="Address of deployed token contract." />
-            <FormTextInput name="address" />
+            <FormAddressInput name="address" />
 
             {values.type === TokenTypeEnum.FA_2 && (
               <>
