@@ -7,6 +7,7 @@ import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
+import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -87,6 +88,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.Confirmation}
               component={ConfirmationModal}
               options={useModalOptions('Confirm Operation')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EnableBiometryPassword}
+              component={EnableBiometryPasswordModal}
+              options={useModalOptions('Approve Password')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

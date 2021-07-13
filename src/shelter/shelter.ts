@@ -6,15 +6,17 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
+import { isDefined } from '../utils/is-defined';
+import {
+  APP_IDENTIFIER,
+  biometryKeychainOptions,
+  getKeychainOptions,
+  PASSWORD_CHECK_KEY,
+  PASSWORD_STORAGE_KEY
+} from '../utils/keychain.utils';
 import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
-export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
-const PASSWORD_CHECK_KEY = 'app-password';
 const EMPTY_PASSWORD = '';
-
-const getKeychainOptions = (key: string): Keychain.Options => ({
-  service: `${APP_IDENTIFIER}/${key}`
-});
 
 export class Shelter {
   private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
@@ -122,4 +124,20 @@ export class Shelter {
       switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
     );
+
+  static enableBiometryPassword$ = (password: string) =>
+    from(Keychain.getSupportedBiometryType()).pipe(
+      switchMap(supportedBiometryType =>
+        isDefined(supportedBiometryType)
+          ? Keychain.setGenericPassword(PASSWORD_STORAGE_KEY, JSON.stringify(password), biometryKeychainOptions)
+          : of(false)
+      ),
+      catchError(() => of(false))
+    );
+
+  static disableBiometryPassword$ = () => from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY)));
+
+  static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
+
+  static isPasswordCorrect = (password: string) => password === Shelter._password$.getValue();
 }

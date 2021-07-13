@@ -18,6 +18,7 @@ import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
+import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
@@ -144,6 +145,11 @@ export const MainStackScreen = () => {
               name={ScreensEnum.DAppsSettings}
               component={DAppsSettings}
               options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.SecureSettings}
+              component={SecureSettings}
+              options={generateScreenOptions(<HeaderTitle title="Secure" />)}
             />
           </>
         )}

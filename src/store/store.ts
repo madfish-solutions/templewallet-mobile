@@ -3,6 +3,14 @@ import { bakingEpics } from './baking/baking-epics';
 import { createStore } from './create-store';
 import { dAppsEpics } from './d-apps/d-apps-epics';
 import { rootStateEpics } from './root-state.epics';
+import { settingsEpic } from './settings/settings-epic';
 import { walletEpics } from './wallet/wallet-epics';
 
-export const { store, persistor } = createStore(rootStateEpics, walletEpics, bakingEpics, activityEpics, dAppsEpics);
+export const { store, persistor } = createStore(
+  rootStateEpics,
+  walletEpics,
+  bakingEpics,
+  activityEpics,
+  dAppsEpics,
+  settingsEpic
+);

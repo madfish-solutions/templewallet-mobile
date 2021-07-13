@@ -14,29 +14,29 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../../config/socials';
+import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { formatSize } from '../../../styles/format-size';
 import {
+  CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
-  createNewPasswordValidationSchema,
-  CreateNewPasswordFormValues
+  createNewPasswordValidationSchema
 } from './create-new-password.form';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
-type CreateNewPasswordProps = {
-  onGoBackPress: () => void;
+interface CreateNewPasswordProps {
   seedPhrase: string;
-};
+  onGoBackPress: () => void;
+}
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
-    importWallet(seedPhrase, password);
-  };
+  const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
+    importWallet(seedPhrase, password, useBiometry);
 
   useNavigationSetOptions(
     {
@@ -60,6 +60,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
+
+            <View style={styles.checkboxContainer}>
+              <FormBiometryCheckbox name="useBiometry" />
+            </View>
           </View>
           <Divider />
 
