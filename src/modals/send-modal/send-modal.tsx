@@ -17,6 +17,7 @@ import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-
 import { TokenFormDropdown } from '../../components/token-dropdown/token-form-dropdown';
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormNumericInput } from '../../form/form-numeric-input/form-numeric-input';
+import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
@@ -37,27 +38,27 @@ export const SendModal: FC = () => {
 
   const tokensList = useTokensListSelector();
   const selectedAccount = useSelectedAccountSelector();
+  const { filteredTokensList } = useFilteredTokenList(tokensList, true);
 
-  const tokensListWithTez = useMemo<TokenInterface[]>(
-    () =>
-      [
-        {
-          ...emptyToken,
-          ...TEZ_TOKEN_METADATA,
-          balance: selectedAccount.tezosBalance.data
-        },
-        ...tokensList
-      ].filter(token => Number(token.balance) > 0),
-    [selectedAccount.tezosBalance.data, tokensList]
+  const filteredTokensListWithTez = useMemo<TokenInterface[]>(
+    () => [
+      {
+        ...emptyToken,
+        ...TEZ_TOKEN_METADATA,
+        balance: selectedAccount.tezosBalance.data
+      },
+      ...filteredTokensList
+    ],
+    [selectedAccount.tezosBalance.data, filteredTokensList]
   );
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
-      token: tokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
+      token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
       receiverPublicKeyHash: '',
       amount: undefined
     }),
-    [tokensListWithTez]
+    [filteredTokensListWithTez]
   );
 
   const onSubmit = ({ token, receiverPublicKeyHash, amount }: SendModalFormValues) =>
@@ -94,7 +95,7 @@ export const SendModal: FC = () => {
             <ModalStatusBar />
             <View>
               <Label label="Asset" description="Select asset or token." />
-              <TokenFormDropdown name="token" list={tokensListWithTez} />
+              <TokenFormDropdown name="token" list={filteredTokensListWithTez} />
               <Divider />
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
