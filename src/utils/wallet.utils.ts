@@ -1,5 +1,5 @@
 import { WalletParamsWithKind } from '@taquito/taquito';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
@@ -31,13 +31,9 @@ export const sendTransaction$ = (sender: WalletAccountInterface, opParams: Walle
       return tezos.wallet.batch(opParams).send();
     }),
     catchError(err => {
-      console.log(JSON.parse(err.body)[0].id);
       if (JSON.parse(err.body)[0].id.indexOf('empty_implicit_contract') > -1) {
-        showErrorToast('The balance of TEZ is not enough to make a transaction.');
-
-        return EMPTY;
-      } else {
-        return err.message;
+        throw new Error('The balance of TEZ is not enough to make a transaction.');
       }
+      throw new Error(err.message);
     })
   );
