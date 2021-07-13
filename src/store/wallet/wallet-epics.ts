@@ -146,11 +146,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
           return navigateAction(StacksEnum.MainStack);
         }),
         catchError(err => {
-          if (JSON.parse(err.message)[0].id.indexOf('empty_implicit_contract') > -1) {
-            showErrorToast('The balance of TEZ is not enough to make a transaction.');
-          } else {
-            showErrorToast(err.message);
-          }
+          showErrorToast(err.message);
 
           return EMPTY;
         })
