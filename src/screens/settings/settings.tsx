@@ -3,6 +3,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -13,13 +14,14 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { WhiteContainer } from '../../components/white-container/white-container';
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
+import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { changeTheme } from '../../store/display-settings/display-settings-actions';
-import { useThemeSelector } from '../../store/display-settings/display-settings-selectors';
+import { changeTheme } from '../../store/settings/settings-actions';
+import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { SettingsHeader } from './settings-header/settings-header';
@@ -30,6 +32,7 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
+  const { isHardwareAvailable } = useBiometryAvailability();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -71,6 +74,19 @@ export const Settings = () => {
                 onChange={handleThemeSegmentControlChange}
               />
             </WhiteContainerAction>
+
+            {isHardwareAvailable && (
+              <>
+                <WhiteContainerDivider />
+
+                <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+                  <View style={styles.actionsContainer}>
+                    <WhiteContainerText text="Secure" />
+                  </View>
+                  <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                </WhiteContainerAction>
+              </>
+            )}
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 

@@ -7,7 +7,7 @@ const useBakingSelector = () => useSelector<BakingRootState, BakingState>(({ bak
 
 export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
   const selectedBaker = useBakingSelector().selectedBaker.data;
-  const isBakerSelected = selectedBaker !== emptyBaker;
+  const isBakerSelected = selectedBaker.address !== emptyBaker.address;
 
   return [selectedBaker, isBakerSelected];
 };
