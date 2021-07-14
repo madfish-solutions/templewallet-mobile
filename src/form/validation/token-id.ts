@@ -1,6 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf } from 'yup';
 
+import { requiredErrorMessage } from './messages';
+
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})
   .test('non-negative', 'Should be non-negative integer', value => {
@@ -11,4 +13,4 @@ export const tokenIdValidation: SchemaOf<BigNumber> = object()
     return false;
   })
   .default(new BigNumber(0))
-  .required();
+  .required(requiredErrorMessage);
