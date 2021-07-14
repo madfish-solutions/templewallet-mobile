@@ -35,7 +35,7 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
   selectedBakerSortField: {
     ...typography.caption11Regular,
     color: colors.black,
-    width: formatSize(36)
+    width: formatSize(40)
   },
   selectedBakerFieldWrapper: {
     flexDirection: 'row',
