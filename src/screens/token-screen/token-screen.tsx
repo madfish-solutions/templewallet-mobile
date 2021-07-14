@@ -14,15 +14,17 @@ import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-gro
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import { loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useVisibleTokensListSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { tokenMetadataSlug } from '../../token/utils/token.utils';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const dispatch = useDispatch();
   const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
-  const tokensList = useVisibleTokensListSelector();
-  const updatedToken = tokensList.find(({ address, id }) => address === token.address && id === token.id) ?? token;
+  const tokensList = useTokensListSelector();
+  const updatedToken =
+    tokensList.find(candidateToken => tokenMetadataSlug(candidateToken) === tokenMetadataSlug(token)) ?? token;
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
