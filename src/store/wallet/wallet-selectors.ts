@@ -56,7 +56,7 @@ export const useVisibleTokensListSelector = () => {
 
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
 
-export const useTezosAssetSelector = () => {
+export const useTezosTokenSelector = () => {
   const balance = useTezosBalanceSelector();
 
   return {

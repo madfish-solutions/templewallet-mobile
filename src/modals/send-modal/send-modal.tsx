@@ -21,7 +21,7 @@ import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -37,19 +37,12 @@ export const SendModal: FC = () => {
   const { goBack } = useNavigation();
 
   const tokensList = useTokensListSelector();
-  const selectedAccount = useSelectedAccountSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
+  const tezosToken = useTezosTokenSelector();
 
   const filteredTokensListWithTez = useMemo<TokenInterface[]>(
-    () => [
-      {
-        ...emptyToken,
-        ...TEZ_TOKEN_METADATA,
-        balance: selectedAccount.tezosBalance.data
-      },
-      ...filteredTokensList
-    ],
-    [selectedAccount.tezosBalance.data, filteredTokensList]
+    () => [tezosToken, ...filteredTokensList],
+    [tezosToken, filteredTokensList]
   );
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
