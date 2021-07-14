@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useAssetBalanceSelector, useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
-import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
@@ -16,7 +16,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.styles';
 
 interface Props {
-  asset: AssetMetadataInterface;
+  asset: TokenInterface;
 }
 
 export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
@@ -25,11 +25,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ asset }) => {
   const tezosBalance = Number(rawTezosBalance);
   const styles = useHeaderCardActionButtonsStyles();
 
-  const balance = useAssetBalanceSelector(asset);
   const errorMessage =
     isDefined(asset.address) && tezosBalance === 0 ? 'You need to have TEZ to pay gas fee' : 'Balance is zero';
 
-  const disableSendAsset = Number(balance) === 0 || tezosBalance === 0;
+  const disableSendAsset = Number(asset.balance) === 0 || tezosBalance === 0;
 
   const onTouchStart = () => {
     if (disableSendAsset) {

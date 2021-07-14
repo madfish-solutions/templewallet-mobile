@@ -20,7 +20,7 @@ import {
 import {
   useHdAccountsListSelector,
   useSelectedAccountSelector,
-  useTezosBalanceSelector
+  useTezosAssetSelector
 } from '../../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
@@ -32,7 +32,7 @@ export const Wallet = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
-  const tezosBalance = useTezosBalanceSelector();
+  const tezosAsset = useTezosAssetSelector();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -54,12 +54,12 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue balance={tezosBalance} symbol={TEZ_TOKEN_METADATA.symbol} />
+        <TokenEquityValue balance={tezosAsset.balance} symbol={TEZ_TOKEN_METADATA.symbol} />
 
-        <HeaderCardActionButtons asset={TEZ_TOKEN_METADATA} />
+        <HeaderCardActionButtons asset={tezosAsset} />
       </HeaderCard>
 
-      <TokenList tezosBalance={tezosBalance} />
+      <TokenList tezosBalance={tezosAsset.balance} />
     </>
   );
 };

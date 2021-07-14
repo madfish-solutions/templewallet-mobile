@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { emptyWalletAccount } from '../../interfaces/wallet-account.interface';
-import { AssetMetadataInterface, emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { tokenMetadataSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useHdAccountsListSelector = () =>
@@ -57,16 +56,14 @@ export const useVisibleTokensListSelector = () => {
 
 export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
 
-export const useAssetBalanceSelector = (asset: AssetMetadataInterface) => {
-  const tezosBalance = useTezosBalanceSelector();
-  const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
-  const { address, id } = asset;
+export const useTezosAssetSelector = () => {
+  const balance = useTezosBalanceSelector();
 
-  if (isDefined(address)) {
-    return selectedAccountTokensList.find(({ slug }) => slug === tokenMetadataSlug({ address, id }))?.balance ?? '0';
-  } else {
-    return tezosBalance;
-  }
+  return {
+    ...emptyToken,
+    ...TEZ_TOKEN_METADATA,
+    balance
+  };
 };
 
 export const useAddTokenSuggestionSelector = () =>
