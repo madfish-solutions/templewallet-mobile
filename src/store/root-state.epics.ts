@@ -17,7 +17,7 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
   action$.pipe(
     ofType(rootStateResetAction.submit),
     withLatestFrom(state$, (_, state) =>
-      state.wallet.hdAccounts.map(({ publicKeyHash }) => (publicKeyHash))
+      state.wallet.hdAccounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
     ),
     switchMap(keychainOptionsArray =>
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
