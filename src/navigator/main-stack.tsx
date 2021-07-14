@@ -8,6 +8,7 @@ import { generateScreenOptions } from '../components/header/generate-screen-opti
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
+import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -43,6 +44,7 @@ export const MainStackScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
+  useAppLockTimer();
   useBeaconHandler();
   useEffect(() => {
     if (isAuthorised) {
