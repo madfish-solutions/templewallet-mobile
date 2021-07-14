@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 
-export const useFilteredTokenList = (tokensList: TokenInterface[]) => {
-  const [isHideZeroBalance, setIsHideZeroBalance] = useState(false);
+export const useFilteredTokenList = (tokensList: TokenInterface[], initialIsHideZeroBalance = false) => {
+  const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
   const [nonZeroBalanceTokenList, setNonZeroBalanceTokenList] = useState<TokenInterface[]>([]);
 
   const [searchValue, setSearchValue] = useState<string>();
