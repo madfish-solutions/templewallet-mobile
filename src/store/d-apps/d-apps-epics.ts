@@ -12,8 +12,9 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { tezos$ } from '../../utils/network/network.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
 import { loadActivityGroupsActions } from '../activity/activity-actions';
+import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import { loadTokenBalancesActions } from '../wallet/wallet-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
@@ -156,7 +157,12 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
           completed
             ? of(null).pipe(
                 delay(15000),
-                concatMap(() => [loadTokenBalancesActions.submit(sender), loadActivityGroupsActions.submit(sender)])
+                concatMap(() => [
+                  loadTezosBalanceActions.submit(sender),
+                  loadTokenBalancesActions.submit(sender),
+                  loadActivityGroupsActions.submit(sender),
+                  loadSelectedBakerActions.submit(sender)
+                ])
               )
             : throwError({ message: "Transaction wasn't completed" })
         ),

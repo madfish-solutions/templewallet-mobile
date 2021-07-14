@@ -21,6 +21,7 @@ import { mutezToTz } from '../../utils/tezos.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
 import { loadActivityGroupsActions } from '../activity/activity-actions';
+import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import {
   approveInternalOperationRequestAction,
@@ -165,7 +166,7 @@ const waitForInternalOperationCompletionEpic = (action$: Observable<Action>, sta
     toPayload(),
     withLatestFrom(tezos$),
     withSelectedAccount(state$),
-    switchMap(([[opHash, tezos], selectedAccount]) =>
+    switchMap(([[opHash, tezos], { publicKeyHash }]) =>
       from(tezos.operation.createOperation(opHash)).pipe(
         switchMap(operation => from(operation.confirmation(1))),
         switchMap(({ completed }) =>
@@ -173,8 +174,10 @@ const waitForInternalOperationCompletionEpic = (action$: Observable<Action>, sta
             ? of(null).pipe(
                 delay(15000),
                 concatMap(() => [
-                  loadTokenBalancesActions.submit(selectedAccount.publicKeyHash),
-                  loadActivityGroupsActions.submit(selectedAccount.publicKeyHash)
+                  loadTezosBalanceActions.submit(publicKeyHash),
+                  loadTokenBalancesActions.submit(publicKeyHash),
+                  loadActivityGroupsActions.submit(publicKeyHash),
+                  loadSelectedBakerActions.submit(publicKeyHash)
                 ])
               )
             : throwError({ message: "Transaction wasn't completed" })
