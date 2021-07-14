@@ -1,7 +1,7 @@
 import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -9,15 +9,19 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { tezos$ } from '../../utils/network/network.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
+import { loadActivityGroupsActions } from '../activity/activity-actions';
 import { navigateAction } from '../root-state.actions';
+import { loadTokenBalancesActions } from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
   approvePermissionRequestAction,
   approveSignPayloadRequestAction,
   loadPermissionsActions,
-  removePermissionAction
+  removePermissionAction,
+  waitForOperationCompletionAction
 } from './d-apps-actions';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
@@ -114,18 +118,48 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
     toPayload(),
     switchMap(({ message, sender, opParams }) =>
       sendTransaction$(sender, opParams).pipe(
-        switchMap(({ opHash }) =>
+        switchMap(({ opHash }) => {
           BeaconHandler.respond({
             type: BeaconMessageType.OperationResponse,
             id: message.id,
             transactionHash: opHash
-          })
-        ),
-        map(() => {
+          });
+
+          return of(opHash);
+        }),
+        concatMap(opHash => {
           showSuccessToast('Successfully sent!');
 
-          return navigateAction(StacksEnum.MainStack);
+          return [
+            navigateAction(StacksEnum.MainStack),
+            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash })
+          ];
         }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
+  );
+
+const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(waitForOperationCompletionAction),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([{ opHash, sender }, tezos]) =>
+      from(tezos.operation.createOperation(opHash)).pipe(
+        switchMap(operation => from(operation.confirmation(1))),
+        switchMap(({ completed }) =>
+          completed
+            ? of(null).pipe(
+                delay(15000),
+                concatMap(() => [loadTokenBalancesActions.submit(sender), loadActivityGroupsActions.submit(sender)])
+              )
+            : throwError({ message: "Transaction wasn't completed" })
+        ),
         catchError(err => {
           showErrorToast(err.message);
 
@@ -167,5 +201,6 @@ export const dAppsEpics = combineEpics(
   approvePermissionRequestEpic,
   approveSignPayloadRequestEpic,
   approveOperationRequestEpic,
-  abortRequestEpic
+  abortRequestEpic,
+  waitForOperationCompletionEpic
 );

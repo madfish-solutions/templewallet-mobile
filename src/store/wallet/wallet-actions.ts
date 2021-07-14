@@ -32,3 +32,6 @@ export const loadEstimationsActions =
 export const approveInternalOperationRequestAction = createAction<WalletParamsWithKind[]>(
   'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
 );
+export const waitForInternalOperationCompletionAction = createAction<string>(
+  'wallet/WAIT_FOR_INTERNAL_OPERATION_COMPLETION'
+);

@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -9,7 +9,6 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useOnBlock } from '../hooks/use-on-block.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -37,6 +36,8 @@ import { TabBar } from './tab-bar/tab-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
+const DATA_REFRESH_INTERVAL = 60 * 1000;
+
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
@@ -45,17 +46,20 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
-  const updateData = useCallback(() => {
-    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+  useEffect(() => {
+    if (isAuthorised) {
+      let timeoutId = setTimeout(function updateData() {
+        dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+        dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
 
-    setTimeout(() => {
-      dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-      dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-    }, 10000);
-  }, [dispatch, selectedAccount.publicKeyHash]);
+        timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
+      }, DATA_REFRESH_INTERVAL);
 
-  useOnBlock(updateData);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isAuthorised, selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>

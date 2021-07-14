@@ -3,8 +3,8 @@ import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -20,6 +20,7 @@ import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
+import { loadActivityGroupsActions } from '../activity/activity-actions';
 import { navigateAction } from '../root-state.actions';
 import {
   approveInternalOperationRequestAction,
@@ -27,7 +28,8 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  sendAssetActions
+  sendAssetActions,
+  waitForInternalOperationCompletionAction
 } from './wallet-actions';
 import { WalletRootState } from './wallet-state';
 
@@ -140,11 +142,43 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     withSelectedAccount(state$),
     switchMap(([opParams, sender]) =>
       sendTransaction$(sender, opParams).pipe(
-        map(() => {
+        concatMap(walletOperation => {
           showSuccessToast('Successfully sent!');
 
-          return navigateAction(StacksEnum.MainStack);
+          return [
+            navigateAction(StacksEnum.MainStack),
+            waitForInternalOperationCompletionAction(walletOperation.opHash)
+          ];
         }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
+  );
+
+const waitForInternalOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+  action$.pipe(
+    ofType(waitForInternalOperationCompletionAction),
+    toPayload(),
+    withLatestFrom(tezos$),
+    withSelectedAccount(state$),
+    switchMap(([[opHash, tezos], selectedAccount]) =>
+      from(tezos.operation.createOperation(opHash)).pipe(
+        switchMap(operation => from(operation.confirmation(1))),
+        switchMap(({ completed }) =>
+          completed
+            ? of(null).pipe(
+                delay(15000),
+                concatMap(() => [
+                  loadTokenBalancesActions.submit(selectedAccount.publicKeyHash),
+                  loadActivityGroupsActions.submit(selectedAccount.publicKeyHash)
+                ])
+              )
+            : throwError({ message: "Transaction wasn't completed" })
+        ),
         catchError(err => {
           showErrorToast(err.message);
 
@@ -160,5 +194,6 @@ export const walletEpics = combineEpics(
   loadTokenMetadataEpic,
   sendAssetEpic,
   loadEstimationsEpic,
-  approveInternalOperationRequestEpic
+  approveInternalOperationRequestEpic,
+  waitForInternalOperationCompletionEpic
 );
