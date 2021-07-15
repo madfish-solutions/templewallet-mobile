@@ -11,22 +11,18 @@ import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hoo
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useTokenListStyles } from './token-list.styles';
 
-interface Props {
-  tezosBalance: string;
-}
-
-export const TokenList: FC<Props> = ({ tezosBalance }) => {
+export const TokenList: FC = () => {
   const styles = useTokenListStyles();
   const { navigate } = useNavigation();
 
+  const tezosToken = useTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
@@ -35,8 +31,8 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
   const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
 
   useEffect(
-    () => setIsShowTezos(filterTezos(tezosBalance, isHideZeroBalance, searchValue)),
-    [isHideZeroBalance, searchValue, tezosBalance]
+    () => setIsShowTezos(filterTezos(tezosToken.balance, isHideZeroBalance, searchValue)),
+    [isHideZeroBalance, searchValue, tezosToken.balance]
   );
 
   return (
@@ -63,11 +59,8 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
           <>
             {isShowTezos && (
               <TokenListItem
-                symbol={TEZ_TOKEN_METADATA.symbol}
-                name={TEZ_TOKEN_METADATA.name}
-                balance={tezosBalance}
+                token={tezosToken}
                 apy={delegationApy}
-                iconName={TEZ_TOKEN_METADATA.iconName}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}
@@ -77,11 +70,7 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
                 token.isVisible && (
                   <TokenListItem
                     key={token.address}
-                    symbol={token.symbol}
-                    name={token.name}
-                    balance={token.balance}
-                    iconName={token.iconName}
-                    iconUrl={token.iconUrl}
+                    token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
                 )

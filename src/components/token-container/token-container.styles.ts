@@ -14,10 +14,6 @@ export const useTokenContainerStyles = createUseStyles(({ colors, typography }) 
   leftContainer: {
     flexDirection: 'row'
   },
-  iconContainer: {
-    marginVertical: formatSize(4),
-    marginHorizontal: formatSize(4)
-  },
   infoContainer: {
     justifyContent: 'center',
     marginLeft: formatSize(8)

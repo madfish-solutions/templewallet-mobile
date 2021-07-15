@@ -54,10 +54,8 @@ export const useVisibleTokensListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
-export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
-
-export const useTezosTokenSelector = () => {
-  const balance = useTezosBalanceSelector();
+export const useTezosTokenSelector = (): TokenInterface => {
+  const balance = useSelectedAccountSelector().tezosBalance.data;
 
   return {
     ...emptyToken,
