@@ -81,6 +81,7 @@ export const TokenList: FC<Props> = ({ tezosBalance }) => {
                     name={token.name}
                     balance={token.balance}
                     iconName={token.iconName}
+                    iconUrl={token.iconUrl}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
                 )

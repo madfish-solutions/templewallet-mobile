@@ -13,14 +13,14 @@ interface Props extends TokenPreviewProps {
   onPress: EmptyFn;
 }
 
-export const TokenListItem: FC<Props> = ({ symbol, name, iconName, apy, balance, onPress }) => {
+export const TokenListItem: FC<Props> = ({ symbol, name, iconName, iconUrl, apy, balance, onPress }) => {
   const styles = useTokenListItemStyles();
 
   const formattedBalance = formatAssetAmount(new BigNumber(balance));
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <TokenContainer symbol={symbol} name={name} iconName={iconName} apy={apy}>
+      <TokenContainer symbol={symbol} name={name} iconName={iconName} iconUrl={iconUrl} apy={apy}>
         <View style={styles.rightContainer}>
           <Text style={styles.balanceText}>{formattedBalance}</Text>
         </View>

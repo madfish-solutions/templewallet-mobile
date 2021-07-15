@@ -30,7 +30,8 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     address: 'KT1AxaBxkFLCUi3f8rdDAAxBKHfzY8LfKDRA',
     name: 'Quipuswap Liquidating kUSD',
     symbol: 'QLkUSD',
-    decimals: 36
+    decimals: 36,
+    iconName: IconNameEnum.KUsdToken
   },
   {
     id: 0,
@@ -79,5 +80,19 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'BLND',
     decimals: 18,
     iconName: IconNameEnum.BlndToken
+  },
+  {
+    id: 0,
+    address: 'KT1S6t5PrHXnozytDU3vYdajmsenoBNYY8WJ',
+    name: 'OroPocket Gold',
+    symbol: 'XTZGold',
+    decimals: 6
+  },
+  {
+    id: 0,
+    address: 'KT1EqhKGcu9nztF5p9qa4c3cYVqVewQrJpi2',
+    name: 'OroPocket Silver',
+    symbol: 'XTZSilver',
+    decimals: 6
   }
 ];
