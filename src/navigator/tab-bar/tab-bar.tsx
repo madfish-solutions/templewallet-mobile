@@ -1,8 +1,11 @@
 import React, { FC, useContext } from 'react';
-import { View } from 'react-native';
+import { Dimensions, StatusBar, View } from 'react-native';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { isIOS } from '../../config/system';
+import { useHeaderHeight } from '../../hooks/use-header-height.hook';
+import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { CurrentRouteNameContext } from '../current-route-name.context';
@@ -27,8 +30,14 @@ export const TabBar: FC = () => {
 
   const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
 
+  const headerHeightFromHook = useHeaderHeight();
+  const headerHeight = isIOS ? headerHeightFromHook : StatusBar.currentHeight ?? 0;
+
+  const { layoutHeight, handleLayout } = useLayoutSizes();
+  const offset = Dimensions.get('window').height - headerHeight - layoutHeight;
+
   return isHidden ? null : (
-    <View style={styles.container}>
+    <View style={[styles.container, { top: offset }]} onLayout={handleLayout}>
       <View style={styles.buttonsContainer}>
         <TabBarButton
           label="Wallet"
