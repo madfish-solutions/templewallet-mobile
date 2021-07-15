@@ -2,9 +2,10 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { FC, useEffect, useMemo } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -16,17 +17,25 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
 import { TokenFormDropdown } from '../../components/token-dropdown/token-form-dropdown';
 import { FormAddressInput } from '../../form/form-address-input';
+import { FormCheckbox } from '../../form/form-checkbox';
 import { FormNumericInput } from '../../form/form-numeric-input/form-numeric-input';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
-import { useTezosTokenSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
+import {
+  useHdAccountsListSelector,
+  useSelectedAccountSelector,
+  useTezosTokenSelector,
+  useTokensListSelector
+} from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
+import { useSendModalStyles } from './send-modal.styles';
 
 // TODO: load real fee instead
 const TEZ_MAX_FEE = 0.1;
@@ -36,6 +45,9 @@ export const SendModal: FC = () => {
   const { asset: initialAsset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
+  const { publicKeyHash: senderPublicKeyHash } = useSelectedAccountSelector();
+  const styles = useSendModalStyles();
+  const accounts = useHdAccountsListSelector();
   const tokensList = useTokensListSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
   const tezosToken = useTezosTokenSelector();
@@ -49,18 +61,26 @@ export const SendModal: FC = () => {
     () => ({
       token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
       receiverPublicKeyHash: '',
-      amount: undefined
+      amount: undefined,
+      ownAccount: accounts.filter(({ publicKeyHash }) => publicKeyHash !== senderPublicKeyHash)[0],
+      transferBetweenOwnAccounts: false
     }),
-    [filteredTokensListWithTez]
+    [filteredTokensListWithTez, accounts, senderPublicKeyHash]
   );
 
-  const onSubmit = ({ token, receiverPublicKeyHash, amount }: SendModalFormValues) =>
+  const onSubmit = ({
+    token,
+    receiverPublicKeyHash,
+    ownAccount,
+    transferBetweenOwnAccounts,
+    amount
+  }: SendModalFormValues) =>
     void (
       isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
           asset: token,
-          receiverPublicKeyHash,
+          receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
       )
@@ -73,6 +93,8 @@ export const SendModal: FC = () => {
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
       {({ values, setFieldValue, submitForm }) => {
+        const { transferBetweenOwnAccounts } = values;
+
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => setFieldValue('amount', undefined), [values.token]);
 
@@ -92,8 +114,16 @@ export const SendModal: FC = () => {
               <Divider />
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
-              <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
-              <Divider />
+              <View style={conditionalStyle(transferBetweenOwnAccounts, styles.hidden)}>
+                <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
+              </View>
+              <View style={conditionalStyle(!transferBetweenOwnAccounts, styles.hidden)}>
+                <AccountFormDropdown name="ownAccount" list={accounts} />
+              </View>
+              <FormCheckbox disabled={accounts.length === 1} name="transferBetweenOwnAccounts" size={formatSize(16)}>
+                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+              </FormCheckbox>
+              <Divider size={formatSize(12)} />
 
               <Label label="Amount" description={`Set ${values.token.symbol} amount to send.`} />
               <FormNumericInput
