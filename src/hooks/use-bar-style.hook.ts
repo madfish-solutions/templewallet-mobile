@@ -1,7 +1,7 @@
 import { StatusBarStyle } from 'react-native';
 
 import { ThemesEnum } from '../interfaces/theme.enum';
-import { useThemeSelector } from '../store/display-settings/display-settings-selectors';
+import { useThemeSelector } from '../store/settings/settings-selectors';
 
 export const useBarStyle = () => {
   const theme = useThemeSelector();

@@ -2,6 +2,7 @@ package com.templewallet;
 
 import android.app.Application;
 import android.content.Context;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;

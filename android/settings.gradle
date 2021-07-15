@@ -1,3 +1,5 @@
 rootProject.name = 'TempleWallet'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
+include ':react-native-android-open-settings'
+project(':react-native-android-open-settings').projectDir = new File(settingsDir, '../node_modules/react-native-android-open-settings/android')
