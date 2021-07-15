@@ -114,12 +114,11 @@ export const SendModal: FC = () => {
               <Divider />
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
-              <View style={conditionalStyle(transferBetweenOwnAccounts, styles.hidden)}>
-                <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
-              </View>
-              <View style={conditionalStyle(!transferBetweenOwnAccounts, styles.hidden)}>
+              {transferBetweenOwnAccounts ? (
                 <AccountFormDropdown name="ownAccount" list={accounts} />
-              </View>
+              ) : (
+                <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
+              )}
               <FormCheckbox disabled={accounts.length === 1} name="transferBetweenOwnAccounts" size={formatSize(16)}>
                 <Text style={styles.checkboxText}>Transfer between my accounts</Text>
               </FormCheckbox>
