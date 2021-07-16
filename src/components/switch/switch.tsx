@@ -5,6 +5,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { ANIMATION_DURATION_FAST } from '../../config/animation';
 import { emptyFn, EventFn } from '../../config/general';
+import { white } from '../../config/styles';
 import { useAnimationInterpolate } from '../../hooks/use-animation-interpolate.hook';
 import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
 import { useUpdateAnimation } from '../../hooks/use-update-animation.hook';
@@ -41,6 +42,8 @@ export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
     outputRange: [0, formatSize(20)]
   });
 
+  const toggleColor = disabled ? colors.lines : white;
+
   return (
     <AnimatedTouchableOpacity
       activeOpacity={1}
@@ -49,7 +52,7 @@ export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
       hitSlop={generateHitSlop(formatSize(4))}
       onPress={() => onChange(!value)}
       onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}>
-      <Animated.View style={[styles.toggle, { transform: [{ translateX }] }]} />
+      <Animated.View style={[styles.toggle, { transform: [{ translateX }], backgroundColor: toggleColor }]} />
     </AnimatedTouchableOpacity>
   );
 };

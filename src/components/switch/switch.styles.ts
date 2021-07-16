@@ -15,7 +15,6 @@ export const useSwitchStyles = createUseStyles(({ colors }) => ({
     ...generateShadow(1, black),
     width: formatSize(24),
     height: formatSize(20),
-    backgroundColor: colors.white,
     borderRadius: formatSize(6)
   }
 }));
