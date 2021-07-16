@@ -1,10 +1,9 @@
 import React, { FC, useContext } from 'react';
-import { Dimensions, StatusBar, View } from 'react-native';
+import { StatusBar, useWindowDimensions, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { isIOS } from '../../config/system';
-import { useHeaderHeight } from '../../hooks/use-header-height.hook';
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
@@ -24,21 +23,20 @@ const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
 export const TabBar: FC = () => {
   const styles = useTabBarStyles();
   const currentRouteName = useContext(CurrentRouteNameContext);
+  const insets = useSafeAreaInsets();
+  const dimensions = useWindowDimensions();
+  const { layoutHeight, handleLayout } = useLayoutSizes();
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
   const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
 
-  const headerHeightFromHook = useHeaderHeight();
-  const headerHeight = isIOS ? headerHeightFromHook : StatusBar.currentHeight ?? 0;
-
-  const { layoutHeight, handleLayout } = useLayoutSizes();
-  const offset = Dimensions.get('window').height - headerHeight - layoutHeight;
+  const top = dimensions.height - ((StatusBar.currentHeight ?? 0) + layoutHeight + insets.bottom);
 
   return isHidden ? null : (
-    <View style={[styles.container, { top: offset }]} onLayout={handleLayout}>
-      <View style={styles.buttonsContainer}>
+    <View style={[styles.container, { top }]}>
+      <View style={styles.buttonsContainer} onLayout={handleLayout}>
         <TabBarButton
           label="Wallet"
           iconName={IconNameEnum.TezWallet}
