@@ -3,19 +3,11 @@ import { string } from 'yup';
 
 import { makeRequiredErrorMessage } from './messages';
 
-const eachWordSeparatedError = 'Each word separated with a single space';
 const wordsCountError = '12, 15, 18, 21 or 24 words';
-const validError = 'Just valid pre-generated mnemonic in English';
+const validError = 'Invalid phrase';
 
 export const seedPhraseValidation = string()
   .required(makeRequiredErrorMessage('Seed phrase'))
-  .test('each-word-separated', eachWordSeparatedError, value => {
-    if (value) {
-      return /^([a-zA-Z0-9]+\s?)*$/.test(value) && value[value.length - 1] !== ' ';
-    }
-
-    return false;
-  })
   .test('words-count', wordsCountError, value => {
     if (value) {
       const length = (value as string).split(' ').length;
