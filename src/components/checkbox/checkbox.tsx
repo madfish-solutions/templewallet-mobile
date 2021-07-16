@@ -40,13 +40,13 @@ export const Checkbox: FC<Props> = ({
           width="18.5"
           height="18.5"
           rx="2.25"
-          stroke={disabled ? colors.gray1 : '#FF5B00'}
+          stroke={disabled ? colors.gray1 : colors.orange}
           strokeWidth={strokeWidth}
         />
         {value && (
           <Path
             d="M7 12.75L10 15.75L17.5 8"
-            stroke="#FF5B00"
+            stroke={colors.orange}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"

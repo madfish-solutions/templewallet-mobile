@@ -20,7 +20,7 @@ export const FormCheckbox: FC<Props> = ({ name, children, disabled, size }) => {
 
   return (
     <>
-      <Checkbox disabled={disabled} value={field.value} onChange={handleChange} size={size}>
+      <Checkbox disabled={disabled} value={field.value} size={size} onChange={handleChange}>
         {children}
       </Checkbox>
       <ErrorMessage meta={meta} />
