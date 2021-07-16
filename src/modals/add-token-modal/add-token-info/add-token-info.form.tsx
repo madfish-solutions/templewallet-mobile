@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
-import { requiredErrorMessage } from '../../../form/validation/messages';
+import { makeRequiredErrorMessage } from '../../../form/validation/messages';
 
 export type AddTokenInfoFormValues = {
   symbol: string;
@@ -11,8 +11,8 @@ export type AddTokenInfoFormValues = {
 };
 
 export const addTokenInfoFormValidationSchema: SchemaOf<AddTokenInfoFormValues> = object().shape({
-  symbol: string().required(requiredErrorMessage),
-  name: string().required(requiredErrorMessage),
-  decimals: object().shape({}).nullable(false).required(requiredErrorMessage),
+  symbol: string().required(makeRequiredErrorMessage('Symbol')),
+  name: string().required(makeRequiredErrorMessage('Name')),
+  decimals: object().shape({}).nullable(false).required(makeRequiredErrorMessage('Decimals')),
   iconUrl: string()
 });

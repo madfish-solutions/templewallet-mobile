@@ -1,6 +1,6 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { requiredErrorMessage } from '../../form/validation/messages';
+import { makeRequiredErrorMessage } from '../../form/validation/messages';
 
 export type EnableBiometryPasswordModalFormValues = {
   password: string;
@@ -8,7 +8,7 @@ export type EnableBiometryPasswordModalFormValues = {
 
 export const enableBiometryPasswordModalValidationSchema: SchemaOf<EnableBiometryPasswordModalFormValues> =
   object().shape({
-    password: string().required(requiredErrorMessage)
+    password: string().required(makeRequiredErrorMessage('Current password'))
   });
 
 export const enableBiometryPasswordModalInitialValues: EnableBiometryPasswordModalFormValues = { password: '' };

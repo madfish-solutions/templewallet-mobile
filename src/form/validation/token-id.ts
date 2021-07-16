@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf } from 'yup';
 
-import { requiredErrorMessage } from './messages';
+import { makeRequiredErrorMessage } from './messages';
 
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})
@@ -13,4 +13,4 @@ export const tokenIdValidation: SchemaOf<BigNumber> = object()
     return false;
   })
   .default(new BigNumber(0))
-  .required(requiredErrorMessage);
+  .required(makeRequiredErrorMessage('Token ID'));

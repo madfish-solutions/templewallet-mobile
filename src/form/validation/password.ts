@@ -1,12 +1,12 @@
 import { ref, string } from 'yup';
 
-import { requiredErrorMessage } from './messages';
+import { makeRequiredErrorMessage } from './messages';
 
 const atLeastOneLowerCaseLetterError = 'At least 1 lowercase letter';
 const atLeastOneUpperCaseLetterError = 'At least 1 uppercase letter';
 const atLeastOneNumberError = 'At least 1 number';
 const minError = 'At least 8 characters';
-const onlyAsciiCharsError = "Non-Latin letters aren't allowed";
+const onlyAsciiCharsError = 'Only English letters are allowed';
 
 const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
 const PASSWORD_PATTERN_ONE_UPPER_CASE = new RegExp('(?=.*[A-Z])');
@@ -14,7 +14,7 @@ const PASSWORD_PATTERN_ONE_NUMERIC = new RegExp('(?=.*[0-9])');
 const PASSWORD_PATTERN_ONLY_ASCII_CHARS = new RegExp('^[\u0021-\u007e]*$');
 
 export const passwordValidation = string()
-  .required(requiredErrorMessage)
+  .required(makeRequiredErrorMessage('Password'))
   .min(8, minError)
   .matches(PASSWORD_PATTERN_ONE_LOWER_CASE, atLeastOneLowerCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_UPPER_CASE, atLeastOneUpperCaseLetterError)
@@ -24,5 +24,5 @@ export const passwordValidation = string()
 const repeatPasswordError = 'Must be equal to password above';
 
 export const passwordConfirmationValidation = string()
-  .required('Required')
+  .required(makeRequiredErrorMessage('Repeat Password'))
   .oneOf([ref('password')], repeatPasswordError);
