@@ -45,7 +45,7 @@ export const RootStackScreen = () => {
       gestureEnabled: true,
       ...TransitionPresets.ModalPresentationIOS,
       cardStyle: {
-        backgroundColor: colors.white
+        backgroundColor: colors.pageBG
       }
     }),
     [colors.white]
