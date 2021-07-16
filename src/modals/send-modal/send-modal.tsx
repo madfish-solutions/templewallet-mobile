@@ -32,7 +32,6 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
@@ -45,7 +44,7 @@ export const SendModal: FC = () => {
   const { asset: initialAsset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
-  const { publicKeyHash: senderPublicKeyHash } = useSelectedAccountSelector();
+  const sender = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const accounts = useHdAccountsListSelector();
   const tokensList = useTokensListSelector();
@@ -57,15 +56,20 @@ export const SendModal: FC = () => {
     [tezosToken, filteredTokensList]
   );
 
+  const ownAccountsReceivers = useMemo(
+    () => accounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
+    [accounts, sender.publicKeyHash]
+  );
+
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
       receiverPublicKeyHash: '',
       amount: undefined,
-      ownAccount: accounts.filter(({ publicKeyHash }) => publicKeyHash !== senderPublicKeyHash)[0],
+      ownAccount: ownAccountsReceivers[0],
       transferBetweenOwnAccounts: false
     }),
-    [filteredTokensListWithTez, accounts, senderPublicKeyHash]
+    [filteredTokensListWithTez, ownAccountsReceivers]
   );
 
   const onSubmit = ({
@@ -93,8 +97,6 @@ export const SendModal: FC = () => {
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
       {({ values, setFieldValue, submitForm }) => {
-        const { transferBetweenOwnAccounts } = values;
-
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => setFieldValue('amount', undefined), [values.token]);
 
@@ -114,12 +116,15 @@ export const SendModal: FC = () => {
               <Divider />
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
-              {transferBetweenOwnAccounts ? (
+              {values.transferBetweenOwnAccounts ? (
                 <AccountFormDropdown name="ownAccount" list={accounts} />
               ) : (
                 <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
               )}
-              <FormCheckbox disabled={accounts.length === 1} name="transferBetweenOwnAccounts" size={formatSize(16)}>
+              <FormCheckbox
+                disabled={ownAccountsReceivers.length === 0}
+                name="transferBetweenOwnAccounts"
+                size={formatSize(16)}>
                 <Text style={styles.checkboxText}>Transfer between my accounts</Text>
               </FormCheckbox>
               <Divider size={formatSize(12)} />
