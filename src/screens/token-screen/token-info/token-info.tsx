@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
+import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isDefined } from '../../../utils/is-defined';
 import { useTokenInfoStyles } from './token-info.styles';
 
@@ -20,9 +21,9 @@ export const TokenInfo: FC<Props> = ({ token }) => {
   return (
     <>
       <Label label="Contract" description={`Address of a ${symbol} token contract.`} />
-      <View style={styles.addressContainer}>
+      <TouchableOpacity style={styles.addressContainer} onPress={() => copyStringToClipboard(token.address)}>
         <Text style={styles.addressText}>{token.address}</Text>
-      </View>
+      </TouchableOpacity>
       <Divider />
 
       {isDefined(token.id) && (
