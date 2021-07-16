@@ -1,8 +1,8 @@
 import { noop } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import ReactNativeBiometrics, { BiometryType } from 'react-native-biometrics';
 
-import { useActiveAppEffect } from '../hooks/use-active-app-effect.hook';
+import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
 import { BiometryAvailabilityContext } from './biometry-availability.context';
 
 const NO_HARDWARE_ERROR = 'BIOMETRIC_ERROR_NO_HARDWARE';
@@ -20,8 +20,7 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
       .catch(noop);
   };
 
-  useEffect(updateBiometryAvailability, []);
-  useActiveAppEffect(updateBiometryAvailability);
+  useAppStateStatus(updateBiometryAvailability);
 
   return (
     <BiometryAvailabilityContext.Provider value={{ isHardwareAvailable, biometryType }}>
