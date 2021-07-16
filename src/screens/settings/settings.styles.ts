@@ -7,7 +7,7 @@ export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
   },
   quoteContainer: {
     position: 'absolute',
-    top: formatSize(-64),
+    top: formatSize(-72),
     right: formatSize(4)
   },
   actionsContainer: {

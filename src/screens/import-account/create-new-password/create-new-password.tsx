@@ -80,7 +80,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             </CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Create" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

@@ -51,6 +51,7 @@ export const Settings = () => {
           <View style={styles.quoteContainer}>
             <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
           </View>
+          <Divider size={formatSize(8)} />
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.ManageAccounts)}>
