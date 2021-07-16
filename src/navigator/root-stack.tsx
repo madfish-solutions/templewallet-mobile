@@ -1,7 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useState } from 'react';
+import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -16,6 +16,7 @@ import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -31,11 +32,24 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const colors = useColors();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  const screenOptions = useMemo(
+    () => ({
+      cardOverlayEnabled: true,
+      gestureEnabled: true,
+      ...TransitionPresets.ModalPresentationIOS,
+      cardStyle: {
+        backgroundColor: colors.white
+      }
+    }),
+    [colors.white]
+  );
 
   return (
     <NavigationContainer
@@ -44,13 +58,7 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
         <CurrentRouteNameContext.Provider value={currentRouteName}>
-          <RootStack.Navigator
-            mode="modal"
-            screenOptions={{
-              cardOverlayEnabled: true,
-              gestureEnabled: true,
-              ...TransitionPresets.ModalPresentationIOS
-            }}>
+          <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
