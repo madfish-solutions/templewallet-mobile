@@ -11,7 +11,7 @@ const onlyAsciiCharsError = 'Only English letters are allowed';
 const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
 const PASSWORD_PATTERN_ONE_UPPER_CASE = new RegExp('(?=.*[A-Z])');
 const PASSWORD_PATTERN_ONE_NUMERIC = new RegExp('(?=.*[0-9])');
-const PASSWORD_PATTERN_ONLY_ASCII_CHARS = new RegExp('^[\u0021-\u007e]*$');
+const PASSWORD_PATTERN_ONLY_ENGLISH_LETTERS = new RegExp('^[\u0021-\u007e]*$');
 
 export const passwordValidation = string()
   .required(makeRequiredErrorMessage('Password'))
@@ -19,7 +19,7 @@ export const passwordValidation = string()
   .matches(PASSWORD_PATTERN_ONE_LOWER_CASE, atLeastOneLowerCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_UPPER_CASE, atLeastOneUpperCaseLetterError)
   .matches(PASSWORD_PATTERN_ONE_NUMERIC, atLeastOneNumberError)
-  .matches(PASSWORD_PATTERN_ONLY_ASCII_CHARS, onlyAsciiCharsError);
+  .matches(PASSWORD_PATTERN_ONLY_ENGLISH_LETTERS, onlyAsciiCharsError);
 
 const repeatPasswordError = 'Must be equal to password above';
 
