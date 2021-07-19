@@ -19,4 +19,3 @@ export const approveOperationRequestAction = createAction<ApproveOperationReques
   'd-apps/APPROVE_OPERATION_REQUEST'
 );
 export const abortRequestAction = createAction<string>('d-apps/ABORT_REQUEST');
-export const resetAllPermissionsAction = createAction<void>('d-apps/RESET_ALL_PERMISSIONS');
