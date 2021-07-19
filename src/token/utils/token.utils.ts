@@ -3,9 +3,7 @@ import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 
 export const tokenMetadataSlug = <T extends { address: string; id?: number }>({ address, id }: T) => `${address}_${id}`;
-export const getTokenAddressFromSlug = <T extends [string, string]>(
-  slug: string
-): { tokenAddress: string; tokenId: string } => {
+export const getTokenAddressFromSlug = (slug: string): { tokenAddress: string; tokenId: string } => {
   const splittedString = slug.split('_');
 
   return { tokenAddress: splittedString[0], tokenId: splittedString[1] };

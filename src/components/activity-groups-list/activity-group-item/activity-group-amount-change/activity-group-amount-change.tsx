@@ -38,7 +38,6 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       let exchangeRate;
       if (isString(address)) {
         exchangeRate = tokensExchangeRates.data[address];
-        console.log({ address, name, exchangeRate });
       } else if (name === TEZ_TOKEN_METADATA.name) {
         exchangeRate = tezosExchangeRate.data;
       } else {
