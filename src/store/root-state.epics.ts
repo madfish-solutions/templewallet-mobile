@@ -23,7 +23,7 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
     switchMap(keychainOptionsArray =>
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
     ),
-    switchMap(() => from(BeaconHandler.removeAllPermissions())),
+    switchMap(() => BeaconHandler.removeAllPermissions()),
     mapTo(rootStateResetAction.success())
   );
 
