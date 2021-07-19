@@ -32,43 +32,47 @@ export const TabBar: FC = () => {
 
   const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
 
-  const top = dimensions.height - ((StatusBar.currentHeight ?? 0) + layoutHeight + insets.bottom);
+  const height = layoutHeight + insets.bottom;
+  const top = dimensions.height - ((StatusBar.currentHeight ?? 0) + height);
 
   return isHidden ? null : (
-    <View style={[styles.container, { top }]}>
-      <View style={styles.buttonsContainer} onLayout={handleLayout}>
-        <TabBarButton
-          label="Wallet"
-          iconName={IconNameEnum.TezWallet}
-          iconWidth={formatSize(24)}
-          routeName={ScreensEnum.Wallet}
-          focused={isStackFocused(walletStackScreens)}
-        />
-        <TabBarButton
-          label="DApps"
-          iconName={IconNameEnum.SoonBadge}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.DApps}
-          focused={isStackFocused(dAppsStackScreens)}
-          disabled={true}
-        />
-        <TabBarButton
-          label="Swap"
-          iconName={IconNameEnum.SoonBadge}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.Swap}
-          focused={isStackFocused(swapStackScreens)}
-          disabled={true}
-        />
-        <TabBarButton
-          label="Settings"
-          iconName={IconNameEnum.Settings}
-          iconWidth={formatSize(22)}
-          routeName={ScreensEnum.Settings}
-          focused={isStackFocused(settingsStackScreens)}
-        />
+    <>
+      <View style={[styles.container, { top }]}>
+        <View style={styles.buttonsContainer} onLayout={handleLayout}>
+          <TabBarButton
+            label="Wallet"
+            iconName={IconNameEnum.TezWallet}
+            iconWidth={formatSize(24)}
+            routeName={ScreensEnum.Wallet}
+            focused={isStackFocused(walletStackScreens)}
+          />
+          <TabBarButton
+            label="DApps"
+            iconName={IconNameEnum.SoonBadge}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.DApps}
+            focused={isStackFocused(dAppsStackScreens)}
+            disabled={true}
+          />
+          <TabBarButton
+            label="Swap"
+            iconName={IconNameEnum.SoonBadge}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.Swap}
+            focused={isStackFocused(swapStackScreens)}
+            disabled={true}
+          />
+          <TabBarButton
+            label="Settings"
+            iconName={IconNameEnum.Settings}
+            iconWidth={formatSize(22)}
+            routeName={ScreensEnum.Settings}
+            focused={isStackFocused(settingsStackScreens)}
+          />
+        </View>
+        <InsetSubstitute type="bottom" />
       </View>
-      <InsetSubstitute type="bottom" />
-    </View>
+      <View style={{ height }} />
+    </>
   );
 };
