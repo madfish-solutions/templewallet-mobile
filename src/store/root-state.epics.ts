@@ -1,7 +1,7 @@
 import Keychain from 'react-native-keychain';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, from, Observable } from 'rxjs';
-import { concatMap, distinctUntilKeyChanged, map, switchMap, withLatestFrom, switchMapTo } from 'rxjs/operators';
+import { concatMap, distinctUntilKeyChanged, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -24,16 +24,11 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
     switchMap(keychainOptionsArray =>
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
     ),
-    switchMap(() =>
-      from(BeaconHandler.getPermissions()).pipe(
-        switchMap(permissions =>
-          from(permissions).pipe(
-            switchMap(permission => from(BeaconHandler.removePermission(permission.accountIdentifier)))
-          )
-        )
-      )
+    switchMap(() => from(BeaconHandler.getPermissions())),
+    switchMap(permissions =>
+      from(Promise.all(permissions.map(permission => BeaconHandler.removePermission(permission.accountIdentifier))))
     ),
-    switchMapTo([rootStateResetAction.success(), resetAllPermissionsAction()])
+    switchMap(() => [rootStateResetAction.success(), resetAllPermissionsAction()])
   );
 
 const navigateEpic = (action$: Observable<Action>) =>
