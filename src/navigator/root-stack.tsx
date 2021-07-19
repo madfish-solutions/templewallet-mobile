@@ -48,7 +48,7 @@ export const RootStackScreen = () => {
         backgroundColor: colors.pageBG
       }
     }),
-    [colors.white]
+    [colors.pageBG]
   );
 
   return (
