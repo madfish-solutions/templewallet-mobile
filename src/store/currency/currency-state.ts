@@ -7,14 +7,20 @@ export interface TokenExchangeRate {
   exchangeRate: string;
 }
 
-export interface tokenExchangeRatesState {
-  tokenExchangeRates: LoadableEntityState<TokenExchangeRate[]>;
+export interface MappedTokenExchangeRate {
+  [key: string]: number;
 }
 
-export const currencyInitialState: tokenExchangeRatesState = {
-  tokenExchangeRates: createEntity([])
+export interface exchangeRatesState {
+  tezosExchangeRate: LoadableEntityState<number>;
+  tokensExchangeRates: LoadableEntityState<MappedTokenExchangeRate>;
+}
+
+export const currencyInitialState: exchangeRatesState = {
+  tezosExchangeRate: createEntity(0),
+  tokensExchangeRates: createEntity({})
 };
 
 export interface CurrencyRootState {
-  currency: tokenExchangeRatesState;
+  currency: exchangeRatesState;
 }

@@ -13,6 +13,7 @@ import { TokenScreenContentContainer } from '../../components/token-screen-conte
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
+import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -24,6 +25,7 @@ export const TokenScreen = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
@@ -37,7 +39,11 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue balance={token.balance} symbol={token.symbol} />
+        <TokenEquityValue
+          exchangeRate={tokensExchangeRates.data[token.address]}
+          balance={token.balance}
+          symbol={token.symbol}
+        />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

@@ -13,12 +13,18 @@ const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 
 interface Props {
   balance: string;
   symbol: string;
+  exchangeRate: number;
 }
 
-export const TokenEquityValue: FC<Props> = ({ balance, symbol }) => {
+export const TokenEquityValue: FC<Props> = ({ balance, symbol, exchangeRate }) => {
   const styles = useTokenEquityValueStyles();
 
   const formattedBalance = formatAssetAmount(new BigNumber(balance));
+  const formattedDollarEquivalent = formatAssetAmount(
+    new BigNumber(Number(balance) * exchangeRate),
+    BigNumber.ROUND_DOWN,
+    2
+  );
 
   return (
     <View style={styles.container}>
@@ -29,7 +35,9 @@ export const TokenEquityValue: FC<Props> = ({ balance, symbol }) => {
       <Text style={styles.tokenValueText}>
         {formattedBalance} {symbol}
       </Text>
-      <Text style={styles.equityValueText}>≈ XX XXX.XX $</Text>
+      {formattedDollarEquivalent !== 'NaN' && (
+        <Text style={styles.equityValueText}>≈ {formattedDollarEquivalent} $</Text>
+      )}
     </View>
   );
 };

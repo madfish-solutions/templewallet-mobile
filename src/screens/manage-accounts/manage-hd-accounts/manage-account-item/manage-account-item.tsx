@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
@@ -8,8 +9,10 @@ import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { useTokensExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
+import { formatAssetAmount } from '../../../../utils/number.util';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
@@ -19,6 +22,10 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
   const styles = useManageAccountItemStyles();
+  const { tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const formattedDollarEquivalent = formatAssetAmount(
+    new BigNumber(Number(account.tezosBalance.data) * tezosExchangeRate.data)
+  );
 
   return (
     <View style={styles.container}>
@@ -41,7 +48,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           <Text style={styles.balanceText}>
             {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
           </Text>
-          <Text style={styles.equityText}>X XXX.XX $</Text>
+          {formattedDollarEquivalent !== 'NaN' && <Text style={styles.equityText}>{formattedDollarEquivalent} $</Text>}
         </View>
 
         <ButtonSmallSecondary

@@ -14,6 +14,7 @@ import { FormNumericInput } from '../../../../form/form-numeric-input/form-numer
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
+import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { FeeFormInputValues } from './fee-form-input.form';
 import { useFeeFormInputStyles } from './fee-form-input.styles';
@@ -25,6 +26,7 @@ interface Props {
   onlyOneOperation: boolean;
   minimalFeePerStorageByteMutez: number;
   setFieldValue: FormikHelpers<FeeFormInputValues>['setFieldValue'];
+  exchangeRate: number;
 }
 
 export const FeeFormInput: FC<Props> = ({
@@ -33,7 +35,8 @@ export const FeeFormInput: FC<Props> = ({
   estimationWasSuccessful,
   onlyOneOperation,
   minimalFeePerStorageByteMutez,
-  setFieldValue
+  setFieldValue,
+  exchangeRate
 }) => {
   const styles = useFeeFormInputStyles();
 
@@ -47,6 +50,18 @@ export const FeeFormInput: FC<Props> = ({
     ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_METADATA.decimals)
     : undefined;
 
+  const formattedGasFeeSumInDollarEquivalent = formatAssetAmount(
+    new BigNumber(Number(values.gasFeeSum) * exchangeRate),
+    BigNumber.ROUND_UP,
+    2
+  );
+
+  const formattedStorageFeeInDollarEquivalent = formatAssetAmount(
+    new BigNumber(Number(storageFee) * exchangeRate),
+    BigNumber.ROUND_UP,
+    2
+  );
+
   return (
     <>
       <View style={styles.infoContainer}>
@@ -55,7 +70,9 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
-          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
+          {isDefined(values.gasFeeSum) && (
+            <Text style={styles.infoFeeValue}>{formattedGasFeeSumInDollarEquivalent} $</Text>
+          )}
         </View>
 
         <Divider />
@@ -65,7 +82,7 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
-          <Text style={styles.infoFeeValue}>(XXX.XX $)</Text>
+          {isDefined(storageFee) && <Text style={styles.infoFeeValue}>{formattedStorageFeeInDollarEquivalent} $</Text>}
         </View>
       </View>
 

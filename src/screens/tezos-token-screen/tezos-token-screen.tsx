@@ -8,6 +8,7 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
+import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -19,6 +20,7 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const tezosBalance = useTezosBalanceSelector();
   const selectedAccount = useSelectedAccountSelector();
+  const { tezosExchangeRate } = useTokensExchangeRatesSelector();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -29,7 +31,11 @@ export const TezosTokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue balance={tezosBalance} symbol={TEZ_TOKEN_METADATA.symbol} />
+        <TokenEquityValue
+          exchangeRate={tezosExchangeRate.data}
+          balance={tezosBalance}
+          symbol={TEZ_TOKEN_METADATA.symbol}
+        />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

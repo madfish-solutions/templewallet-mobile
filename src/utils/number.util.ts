@@ -1,4 +1,17 @@
 import { BigNumber } from 'bignumber.js';
 
-export const formatAssetAmount = (amount: BigNumber) =>
-  amount.decimalPlaces(amount.abs().lt(1000) ? 6 : 2, BigNumber.ROUND_DOWN).toFixed();
+import { isDefined } from './is-defined';
+
+export const formatAssetAmount = (
+  amount: BigNumber,
+  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
+  decimalPlace: number | undefined = undefined
+) => {
+
+  return amount
+    .decimalPlaces(
+      amount.abs().lt(1000) && !isDefined(decimalPlace) ? 6 : isDefined(decimalPlace) ? decimalPlace : 2,
+      roundingMode
+    )
+    .toFixed();
+};

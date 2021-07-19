@@ -1,33 +1,41 @@
 import { combineEpics } from 'redux-observable';
-import { from, Observable, of, pipe } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
-import { RootState } from '../create-store';
-import { loadExchangeRates } from './currency-actions';
+import { loadExchangeRates, loadTezosExchangeRate } from './currency-actions';
 import { TokenExchangeRate } from './currency-state';
 
-export const loadExchangeRatesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
-    withLatestFrom(state$, (_, state) => {
-      return state.wallet.tokensMetadata;
-    }),
-    switchMap(tokensMetadata =>
+    switchMap(() =>
       from(templeWalletApi.get<TokenExchangeRate[]>('exchange-rates')).pipe(
         map(({ data }) => {
-          console.log({ tokensMetadata });
-          const actualExchangeRates = data.filter(item => {
-            return item.tokenId === 0;
-          });
+          const mappedRates = Object.fromEntries(
+            data.map(({ tokenAddress, exchangeRate }) => [tokenAddress, Number(exchangeRate)])
+          );
 
-          return loadExchangeRates.success(data);
+          return loadExchangeRates.success(mappedRates);
         }),
         catchError(err => of(loadExchangeRates.fail(err.message)))
       )
     )
   );
 
-export const currencyEpics = combineEpics(loadExchangeRatesEpic);
+export const loadTezosExchangeRateEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadTezosExchangeRate.submit),
+    switchMap(() =>
+      from(templeWalletApi.get<number>('exchange-rates/tez')).pipe(
+        map(({ data }) => {
+          return loadTezosExchangeRate.success(data);
+        }),
+        catchError(err => of(loadExchangeRates.fail(err.message)))
+      )
+    )
+  );
+
+export const currencyEpics = combineEpics(loadExchangeRatesEpic, loadTezosExchangeRateEpic);
