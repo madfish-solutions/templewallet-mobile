@@ -1,26 +1,36 @@
 import { BigNumber } from 'bignumber.js';
-import { object, SchemaOf, string } from 'yup';
+import { boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { bigNumberValidation } from '../../form/validation/big-number';
+import { makeRequiredErrorMessage } from '../../form/validation/messages';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export interface SendModalFormValues {
   token: TokenInterface;
   receiverPublicKeyHash: string;
   amount?: BigNumber;
+  ownAccount: WalletAccountInterface;
+  transferBetweenOwnAccounts: boolean;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  token: object().shape({}).required(),
-  receiverPublicKeyHash: string().required(),
+  token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
+  receiverPublicKeyHash: string()
+    .when('transferBetweenOwnAccounts', (value: string, schema: StringSchema) =>
+      value ? schema : schema.required(makeRequiredErrorMessage('To'))
+    )
+    .ensure(),
   amount: bigNumberValidation
     .clone()
-    .test('is-greater-than', 'Should be greater than 0', value => {
+    .required(makeRequiredErrorMessage('Amount'))
+    .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
       if (value instanceof BigNumber) {
         return value.gt(0);
       }
 
       return false;
-    })
-    .required()
+    }),
+  ownAccount: object().shape({}).required(),
+  transferBetweenOwnAccounts: boolean().required()
 });

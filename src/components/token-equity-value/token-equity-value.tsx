@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatSize } from '../../styles/format-size';
 import { formatAssetAmount } from '../../utils/number.util';
 import { Icon } from '../icon/icon';
@@ -11,20 +12,20 @@ import { useTokenEquityValueStyles } from './token-equity-value.styles';
 const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 interface Props {
-  balance: string;
-  symbol: string;
+  token: TokenInterface;
   exchangeRate: number;
 }
 
-export const TokenEquityValue: FC<Props> = ({ balance, symbol, exchangeRate }) => {
+export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
   const styles = useTokenEquityValueStyles();
 
-  const formattedBalance = formatAssetAmount(new BigNumber(balance));
+    const formattedBalance = formatAssetAmount(new BigNumber(token.balance));
   const formattedDollarEquivalent = formatAssetAmount(
-    new BigNumber(Number(balance) * exchangeRate),
+    new BigNumber(Number(token.balance) * exchangeRate),
     BigNumber.ROUND_DOWN,
     2
   );
+
 
   return (
     <View style={styles.container}>
@@ -33,7 +34,7 @@ export const TokenEquityValue: FC<Props> = ({ balance, symbol, exchangeRate }) =
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
       <Text style={styles.tokenValueText}>
-        {formattedBalance} {symbol}
+        {formattedBalance} {token.symbol}
       </Text>
       {formattedDollarEquivalent !== 'NaN' && (
         <Text style={styles.equityValueText}>≈ {formattedDollarEquivalent} $</Text>

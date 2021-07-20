@@ -20,11 +20,13 @@ export const tokenBalanceMetadata = ({
   contract,
   name,
   symbol,
-  decimals
+  decimals,
+  thumbnail_uri
 }: TokenBalanceInterface): TokenMetadataInterface => ({
   ...emptyTokenMetadata,
   id: token_id,
   address: contract,
+  iconUrl: thumbnail_uri,
   ...(isDefined(name) && { name }),
   ...(isDefined(symbol) && { symbol }),
   ...(isDefined(decimals) && { decimals })

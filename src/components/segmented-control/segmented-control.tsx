@@ -3,7 +3,7 @@ import React, { FC, PropsWithChildren, useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 
 import { EventFn } from '../../config/general';
-import { useLayoutWidth } from '../../hooks/use-layout-width.hook';
+import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> {
@@ -30,7 +30,7 @@ export const SegmentedControl = <T extends unknown>({
   onChange
 }: PropsWithChildren<Props<T>>) => {
   const styles = useSegmentedControlStyles();
-  const { layoutWidth, handleLayout } = useLayoutWidth();
+  const { layoutWidth, handleLayout } = useLayoutSizes();
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 

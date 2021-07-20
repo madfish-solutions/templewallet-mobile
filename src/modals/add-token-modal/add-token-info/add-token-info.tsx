@@ -56,7 +56,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
             <FormTextInput name="name" />
 
             <Label
-              label="Decimal"
+              label="Decimals"
               description="A number of decimal places after point. For example: 8 for BTC, 2 for USD."
             />
             <FormNumericInput name="decimals" decimals={0} />
