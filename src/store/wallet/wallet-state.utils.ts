@@ -8,14 +8,9 @@ import { WalletState } from './wallet-state';
 export const updateCurrentAccountState = (
   state: WalletState,
   updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
-): WalletState => ({
-  ...state,
-  hdAccounts: state.hdAccounts.map(account =>
-    account.publicKeyHash === state.selectedAccountPublicKeyHash ? { ...account, ...updateFn(account) } : account
-  )
-});
+): WalletState => updateAccountState(state, state.selectedAccountPublicKeyHash, updateFn);
 
-export const updateOtherAccountState = (
+export const updateAccountState = (
   state: WalletState,
   accountPublicKeyHash: string,
   updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>

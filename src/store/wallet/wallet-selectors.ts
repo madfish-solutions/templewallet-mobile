@@ -6,13 +6,12 @@ import { WalletAccountInterface } from '../../interfaces/wallet-account.interfac
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useHdAccountsListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) =>
-    wallet.hdAccounts.map(
-      ({ activityGroups: _activityGroups, pendingActivities: _pendingActivities, ...restProps }) => restProps
-    )
+    wallet.hdAccounts.map(walletAccountStateToWalletAccount)
   );
 
 export const useIsAuthorisedSelector = () => useHdAccountsListSelector().length > 0;
@@ -30,11 +29,8 @@ const useSelectedAccountStateSelector = () => {
   );
 };
 
-export const useSelectedAccountSelector = () => {
-  const { name, publicKey, publicKeyHash, tezosBalance, tokensList } = useSelectedAccountStateSelector();
-
-  return { name, publicKey, publicKeyHash, tezosBalance, tokensList };
-};
+export const useSelectedAccountSelector = (): WalletAccountInterface =>
+  walletAccountStateToWalletAccount(useSelectedAccountStateSelector());
 
 export const useSelectedAccountPendingActivities = () => useSelectedAccountStateSelector().pendingActivities ?? [];
 

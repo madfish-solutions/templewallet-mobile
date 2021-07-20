@@ -1,7 +1,7 @@
 import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -123,7 +123,7 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
               id: message.id,
               transactionHash: opHash
             })
-          ).pipe(switchMap(() => of(opHash)))
+          ).pipe(mapTo(opHash))
         ),
         switchMap(opHash => {
           showSuccessToast('Successfully sent!');

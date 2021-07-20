@@ -27,7 +27,7 @@ import {
   toggleTokenVisibility,
   tokenBalanceMetadata,
   updateCurrentAccountState,
-  updateOtherAccountState
+  updateAccountState
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
@@ -135,7 +135,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   }));
 
   builder.addCase(addPendingOperation, (state, { payload }) =>
-    updateOtherAccountState(state, payload[0].source.address, account => ({
+    updateAccountState(state, payload[0].source.address, account => ({
       ...account,
       pendingActivities: [payload, ...account.pendingActivities]
     }))
