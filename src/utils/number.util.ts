@@ -5,12 +5,7 @@ import { isDefined } from './is-defined';
 export const formatAssetAmount = (
   amount: BigNumber,
   roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
-  decimalPlace: number | undefined = undefined
+  decimalPlace = 2
 ) => {
-  return amount
-    .decimalPlaces(
-      amount.abs().lt(1000) && !isDefined(decimalPlace) ? 6 : isDefined(decimalPlace) ? decimalPlace : 2,
-      roundingMode
-    )
-    .toFixed();
+  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
 };

@@ -28,26 +28,24 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
-    let summaryPositiveAmount = 0;
+    let positiveAmountSum = 0;
     for (const { amount, tokenSlug } of group) {
       const { decimals, symbol, name, address } = getTokenMetadata(tokenSlug);
-      if (isString(tokenSlug) && !name) {
-        const { tokenAddress, tokenId } = getTokenAddressFromSlug(tokenSlug);
-        dispatch(loadTokenMetadataActions.submit({ id: Number(tokenId), address: tokenAddress }));
+      if (isString(tokenSlug) && !isString(name)) {
+        const { address, id } = getTokenAddressFromSlug(tokenSlug);
+        dispatch(loadTokenMetadataActions.submit({ id: Number(id), address: address }));
       }
-      let exchangeRate;
+      let exchangeRate = 0;
       if (isString(address)) {
         exchangeRate = tokensExchangeRates.data[address];
       } else if (name === TEZ_TOKEN_METADATA.name) {
         exchangeRate = tezosExchangeRate.data;
-      } else {
-        exchangeRate = 0;
       }
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
 
       if (isPositive) {
-        summaryPositiveAmount += parsedAmount.toNumber() * exchangeRate;
+        positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
 
       amounts.push({
@@ -58,7 +56,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       });
     }
 
-    const dollarSum = formatAssetAmount(new BigNumber(summaryPositiveAmount), BigNumber.ROUND_DOWN, 2);
+    const dollarSum = formatAssetAmount(new BigNumber(positiveAmountSum), BigNumber.ROUND_DOWN, 2);
 
     return { amounts, dollarSum };
   }, [group, getTokenMetadata]);

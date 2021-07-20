@@ -1,26 +1,18 @@
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
-export interface TokenExchangeRate {
-  tokenAddress: string;
-  tokenId?: number;
-  exchangeRate: string;
-}
+export type TokenExchangeRateRecord = Record<string, number>;
 
-export interface MappedTokenExchangeRate {
-  [key: string]: number;
-}
-
-export interface exchangeRatesState {
+export interface ExchangeRatesState {
   tezosExchangeRate: LoadableEntityState<number>;
-  tokensExchangeRates: LoadableEntityState<MappedTokenExchangeRate>;
+  tokensExchangeRates: LoadableEntityState<TokenExchangeRateRecord>;
 }
 
-export const currencyInitialState: exchangeRatesState = {
+export const currencyInitialState: ExchangeRatesState = {
   tezosExchangeRate: createEntity(0),
   tokensExchangeRates: createEntity({})
 };
 
 export interface CurrencyRootState {
-  currency: exchangeRatesState;
+  currency: ExchangeRatesState;
 }
