@@ -32,9 +32,15 @@ const useSelectedAccountStateSelector = () => {
 export const useSelectedAccountSelector = (): WalletAccountInterface =>
   walletAccountStateToWalletAccount(useSelectedAccountStateSelector());
 
-export const useSelectedAccountPendingActivities = () => useSelectedAccountStateSelector().pendingActivities ?? [];
+export const useActivityGroupsSelector = () => {
+  const pendingActivityGroups = useSelectedAccountStateSelector().pendingActivities;
+  const appliedActivityGroups = useSelectedAccountStateSelector().activityGroups.data;
 
-export const useSelectedAccountActivityGroups = () => useSelectedAccountStateSelector().activityGroups?.data ?? [];
+  return useMemo(
+    () => [...pendingActivityGroups, ...appliedActivityGroups],
+    [pendingActivityGroups, appliedActivityGroups]
+  );
+};
 
 export const useTokensMetadataSelector = () =>
   useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
