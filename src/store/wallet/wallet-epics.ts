@@ -4,7 +4,7 @@ import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -78,7 +78,7 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ id, address }, tezos]) =>
+    concatMap(([{ id, address }, tezos]) =>
       from(tezos.contract.at(address, compose(tzip12, tzip16))).pipe(
         switchMap(contract => contract.tzip12().getTokenMetadata(id)),
         map((tokenMetadata: TokenMetadataSuggestionInterface) =>

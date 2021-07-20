@@ -17,6 +17,10 @@ export const useFeeFormInputStyles = createUseStyles(({ colors, typography }) =>
     ...typography.numbersRegular15,
     color: colors.black
   },
+  infoFeeValue: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
+  },
   inputContainer: {
     flexDirection: 'row'
   },

@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from '../../../../components/divider/divider';
+import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
@@ -25,6 +26,7 @@ interface Props {
   onlyOneOperation: boolean;
   minimalFeePerStorageByteMutez: number;
   setFieldValue: FormikHelpers<FeeFormInputValues>['setFieldValue'];
+  exchangeRate: number;
 }
 
 export const FeeFormInput: FC<Props> = ({
@@ -33,7 +35,8 @@ export const FeeFormInput: FC<Props> = ({
   estimationWasSuccessful,
   onlyOneOperation,
   minimalFeePerStorageByteMutez,
-  setFieldValue
+  setFieldValue,
+  exchangeRate
 }) => {
   const styles = useFeeFormInputStyles();
 
@@ -55,6 +58,9 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
+          {isDefined(values.gasFeeSum) && (
+            <DollarEquivalentText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+          )}
         </View>
 
         <Divider />
@@ -64,6 +70,9 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
+          {isDefined(storageFee) && (
+            <DollarEquivalentText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+          )}
         </View>
       </View>
 
