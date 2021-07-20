@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
-import { useActivityGroupsSelector } from '../store/activity/activity-selectors';
+import { useActivityGroupsSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { useTokenMetadata } from './use-token-metadata.hook';
