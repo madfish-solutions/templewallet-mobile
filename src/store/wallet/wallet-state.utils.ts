@@ -1,4 +1,4 @@
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { WalletAccountStateInterface } from '../../interfaces/wallet-account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -7,11 +7,17 @@ import { WalletState } from './wallet-state';
 
 export const updateCurrentAccountState = (
   state: WalletState,
-  updateFn: (currentAccount: WalletAccountInterface) => Partial<WalletAccountInterface>
+  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
+): WalletState => updateAccountState(state, state.selectedAccountPublicKeyHash, updateFn);
+
+export const updateAccountState = (
+  state: WalletState,
+  accountPublicKeyHash: string,
+  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
 ): WalletState => ({
   ...state,
   hdAccounts: state.hdAccounts.map(account =>
-    account.publicKeyHash === state.selectedAccountPublicKeyHash ? { ...account, ...updateFn(account) } : account
+    account.publicKeyHash === accountPublicKeyHash ? { ...account, ...updateFn(account) } : account
   )
 });
 

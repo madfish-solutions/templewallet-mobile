@@ -6,8 +6,6 @@ import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObser
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { catchError } from 'rxjs/operators';
 
-import { activityReducers } from './activity/activity-reducers';
-import { ActivityRootState } from './activity/activity-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -23,7 +21,6 @@ import { WalletRootState } from './wallet/wallet-state';
 export type RootState = WalletRootState &
   BakingRootState &
   SettingsRootState &
-  ActivityRootState &
   DAppsRootState &
   CurrencyRootState;
 
@@ -45,7 +42,6 @@ const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
   settings: settingsReducers,
-  activity: activityReducers,
   dApps: dAppsReducers,
   currency: currencyReducers
 });

@@ -3,26 +3,35 @@ import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { betterCallDevApi } from '../../api.service';
+import { betterCallDevApi, tzktApi } from '../../api.service';
+import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
+import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
+import { OperationInterface } from '../../interfaces/operation.interface';
 import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
+import { mapOperationsToActivities } from '../../utils/operation.utils';
+import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
+import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
 import {
+  addPendingOperation,
   approveInternalOperationRequestAction,
+  loadActivityGroupsActions,
   loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -140,10 +149,13 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     withSelectedAccount(state$),
     switchMap(([opParams, sender]) =>
       sendTransaction$(sender, opParams).pipe(
-        map(() => {
+        switchMap(({ opHash }) => {
           showSuccessToast('Successfully sent!');
 
-          return navigateAction(StacksEnum.MainStack);
+          return [
+            navigateAction(StacksEnum.MainStack),
+            addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
+          ];
         }),
         catchError(err => {
           showErrorToast(err.message);
@@ -154,11 +166,38 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     )
   );
 
+const loadActivityGroupsEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadActivityGroupsActions.submit),
+    toPayload(),
+    withLatestFrom(currentNetworkId$),
+    switchMap(([address, currentNetworkId]) =>
+      forkJoin([
+        from(
+          tzktApi.get<OperationInterface[]>(
+            `accounts/${address}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
+          )
+        ).pipe(map(({ data }) => mapOperationsToActivities(address, data))),
+        from(
+          betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
+            `/tokens/${currentNetworkId}/transfers/${address}`,
+            { params: { max: 100, start: 0 } }
+          )
+        ).pipe(map(({ data }) => mapTransfersToActivities(address, data.transfers)))
+      ]).pipe(
+        map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
+        map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
+        catchError(err => of(loadActivityGroupsActions.fail(err.message)))
+      )
+    )
+  );
+
 export const walletEpics = combineEpics(
   loadTezosAssetsEpic,
   loadTokenAssetsEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
   loadEstimationsEpic,
+  loadActivityGroupsEpic,
   approveInternalOperationRequestEpic
 );

@@ -11,9 +11,9 @@ import { ScreenStatusBar } from '../../components/screen-status-bar/screen-statu
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
+  loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   setSelectedAccountAction

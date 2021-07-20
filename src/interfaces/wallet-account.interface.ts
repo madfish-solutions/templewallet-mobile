@@ -1,8 +1,7 @@
 import { createEntity } from '../store/create-entity';
-import { AccountSettingsInterface } from './account-settings.interface';
-import { AccountInterface } from './account.interface';
+import { WalletAccountStateInterface } from './wallet-account-state.interface';
 
-export type WalletAccountInterface = AccountInterface & AccountSettingsInterface;
+export type WalletAccountInterface = Omit<WalletAccountStateInterface, 'activityGroups' | 'pendingActivities'>;
 
 export const emptyWalletAccount: WalletAccountInterface = {
   name: '',

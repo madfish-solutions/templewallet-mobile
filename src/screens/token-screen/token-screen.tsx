@@ -12,9 +12,8 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
+import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
-import { loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TokenInfo } from './token-info/token-info';

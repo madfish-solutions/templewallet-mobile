@@ -1,4 +1,3 @@
-import { activityEpics } from './activity/activity-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
@@ -7,12 +6,4 @@ import { rootStateEpics } from './root-state.epics';
 import { settingsEpic } from './settings/settings-epic';
 import { walletEpics } from './wallet/wallet-epics';
 
-export const { store, persistor } = createStore(
-  rootStateEpics,
-  walletEpics,
-  bakingEpics,
-  activityEpics,
-  dAppsEpics,
-  settingsEpic,
-  currencyEpics
-);
+export const { store, persistor } = createStore(rootStateEpics, walletEpics, bakingEpics, dAppsEpics, settingsEpic, currencyEpics);
