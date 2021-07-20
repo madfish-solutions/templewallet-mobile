@@ -103,13 +103,10 @@ const removePeerEpic = (action$: Observable<Action>, state$: Observable<DAppsRoo
     withLatestFrom(state$),
     switchMap(([senderId, state]) => {
       const peer = state.dApps.peers.data.find(({ senderId: peerSenderId }) => peerSenderId === senderId);
-      if (peer) {
-        return BeaconHandler.removePeer(peer, true);
-      }
 
-      return Promise.resolve();
+      return peer ? BeaconHandler.removePeer(peer, true) : EMPTY;
     }),
-    map(() => loadPeersActions.submit())
+    map(loadPeersActions.submit)
   );
 
 const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
