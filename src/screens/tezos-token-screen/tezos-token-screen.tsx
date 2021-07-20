@@ -30,10 +30,7 @@ export const TezosTokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue
-          exchangeRate={tezosExchangeRate.data}
-          token={tezosToken}
-        />
+        <TokenEquityValue exchangeRate={tezosExchangeRate.data} token={tezosToken} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

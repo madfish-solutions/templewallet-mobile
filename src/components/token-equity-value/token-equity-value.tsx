@@ -2,8 +2,8 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatSize } from '../../styles/format-size';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatAssetAmount } from '../../utils/number.util';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -19,13 +19,12 @@ interface Props {
 export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
   const styles = useTokenEquityValueStyles();
 
-    const formattedBalance = formatAssetAmount(new BigNumber(token.balance));
+  const formattedBalance = formatAssetAmount(new BigNumber(token.balance));
   const formattedDollarEquivalent = formatAssetAmount(
     new BigNumber(Number(token.balance) * exchangeRate),
     BigNumber.ROUND_DOWN,
     2
   );
-
 
   return (
     <View style={styles.container}>
