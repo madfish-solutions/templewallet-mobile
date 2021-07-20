@@ -1,32 +1,20 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { TokenIcon } from '../token-icon/token-icon';
+import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export interface TokenPreviewProps {
-  symbol: string;
-  name: string;
-  iconName?: IconNameEnum;
-  apy?: number;
-}
-
-export const TokenContainer: FC<TokenPreviewProps> = ({
-  symbol,
-  name,
-  iconName = IconNameEnum.NoNameToken,
-  apy,
-  children
-}) => {
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }) => {
   const styles = useTokenContainerStyles();
+
+  const { symbol, name } = token;
 
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        <Icon name={iconName} size={formatSize(40)} />
+        <TokenIcon token={token} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <Text style={styles.symbolText}>{symbol}</Text>

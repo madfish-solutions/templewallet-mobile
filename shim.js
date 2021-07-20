@@ -3,6 +3,8 @@ import { decode, encode } from 'base-64';
 
 require('text-encoding');
 
+XMLHttpRequest.prototype.overrideMimeType = () => null;
+
 if (!global.localStorage) {
   global.localStorage = {
     getItem: () => null

@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTezosBalanceSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
@@ -21,14 +21,15 @@ interface Props {
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const rawTezosBalance = useTezosBalanceSelector();
-  const tezosBalance = Number(rawTezosBalance);
+  const tezosToken = useTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
   const errorMessage =
-    isDefined(token.address) && tezosBalance === 0 ? 'You need to have TEZ to pay gas fee' : 'Balance is zero';
+    isDefined(token.address) && tezosToken.balance === emptyToken.balance
+      ? 'You need to have TEZ to pay gas fee'
+      : 'Balance is zero';
 
-  const disableSendAsset = Number(token.balance) === 0 || tezosBalance === 0;
+  const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
 
   return (
     <ButtonsContainer>

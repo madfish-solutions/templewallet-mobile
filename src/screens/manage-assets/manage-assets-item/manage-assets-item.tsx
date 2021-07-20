@@ -34,7 +34,7 @@ export const ManageAssetsItem: FC<Props> = ({ token }) => {
     ]);
 
   return (
-    <TokenContainer symbol={token.symbol} name={token.name} iconName={token.iconName}>
+    <TokenContainer token={token}>
       <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={handleTrashIconPress} />
       <Divider size={formatSize(16)} />
       <Switch value={token.isVisible} onChange={() => dispatch(toggleTokenVisibilityAction(slug))} />
