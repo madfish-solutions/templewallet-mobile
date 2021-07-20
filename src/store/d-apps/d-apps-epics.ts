@@ -1,7 +1,7 @@
 import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, from, Observable, of, throwError } from 'rxjs';
-import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, delay, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -10,11 +10,16 @@ import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { tezos$ } from '../../utils/network/network.util';
+import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
-import { loadActivityGroupsActions } from '../activity/activity-actions';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import { loadTezosBalanceActions, loadTokenBalancesActions } from '../wallet/wallet-actions';
+import {
+  addPendingOperation,
+  loadActivityGroupsActions,
+  loadTezosBalanceActions,
+  loadTokenBalancesActions
+} from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
@@ -119,21 +124,22 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
     toPayload(),
     switchMap(({ message, sender, opParams }) =>
       sendTransaction$(sender, opParams).pipe(
-        switchMap(({ opHash }) => {
-          BeaconHandler.respond({
-            type: BeaconMessageType.OperationResponse,
-            id: message.id,
-            transactionHash: opHash
-          });
-
-          return of(opHash);
-        }),
-        concatMap(opHash => {
+        switchMap(({ opHash }) =>
+          from(
+            BeaconHandler.respond({
+              type: BeaconMessageType.OperationResponse,
+              id: message.id,
+              transactionHash: opHash
+            })
+          ).pipe(mapTo(opHash))
+        ),
+        switchMap(opHash => {
           showSuccessToast('Successfully sent!');
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash })
+            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
+            addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
           ];
         }),
         catchError(err => {

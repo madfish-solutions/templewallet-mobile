@@ -1,25 +1,44 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { emptyWalletAccount } from '../../interfaces/wallet-account.interface';
+import { emptyWalletAccountState } from '../../interfaces/wallet-account-state.interface';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useHdAccountsListSelector = () =>
-  useSelector<WalletRootState, WalletState['hdAccounts']>(({ wallet }) => wallet.hdAccounts);
+  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) =>
+    wallet.hdAccounts.map(walletAccountStateToWalletAccount)
+  );
 
 export const useIsAuthorisedSelector = () => useHdAccountsListSelector().length > 0;
 
-export const useSelectedAccountSelector = () => {
+const useSelectedAccountStateSelector = () => {
   const { hdAccounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(
     ({ wallet }) => wallet
   );
 
   // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
   return useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount,
+    () =>
+      hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccountState,
     [hdAccounts, selectedAccountPublicKeyHash]
+  );
+};
+
+export const useSelectedAccountSelector = (): WalletAccountInterface =>
+  walletAccountStateToWalletAccount(useSelectedAccountStateSelector());
+
+export const useActivityGroupsSelector = () => {
+  const pendingActivityGroups = useSelectedAccountStateSelector().pendingActivities;
+  const appliedActivityGroups = useSelectedAccountStateSelector().activityGroups.data;
+
+  return useMemo(
+    () => [...pendingActivityGroups, ...appliedActivityGroups],
+    [pendingActivityGroups, appliedActivityGroups]
   );
 };
 
@@ -53,7 +72,15 @@ export const useVisibleTokensListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
-export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
+export const useTezosTokenSelector = (): TokenInterface => {
+  const balance = useSelectedAccountSelector().tezosBalance.data;
+
+  return {
+    ...emptyToken,
+    ...TEZ_TOKEN_METADATA,
+    balance
+  };
+};
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);
