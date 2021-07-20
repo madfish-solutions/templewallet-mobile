@@ -1,7 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 
-import { isDefined } from './is-defined';
-
 export const formatAssetAmount = (
   amount: BigNumber,
   roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,

@@ -7,8 +7,8 @@ import { PublicKeyHashText } from '../../components/public-key-hash-text/public-
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
-import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
