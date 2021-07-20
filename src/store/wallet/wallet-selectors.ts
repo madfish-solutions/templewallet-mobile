@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 
 import { emptyWalletAccountState } from '../../interfaces/wallet-account-state.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useHdAccountsListSelector = () =>
@@ -69,7 +70,15 @@ export const useVisibleTokensListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
-export const useTezosBalanceSelector = () => useSelectedAccountSelector().tezosBalance.data;
+export const useTezosTokenSelector = (): TokenInterface => {
+  const balance = useSelectedAccountSelector().tezosBalance.data;
+
+  return {
+    ...emptyToken,
+    ...TEZ_TOKEN_METADATA,
+    balance
+  };
+};
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);

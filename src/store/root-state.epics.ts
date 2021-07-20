@@ -5,21 +5,26 @@ import { concatMap, distinctUntilKeyChanged, map, mapTo, switchMap, withLatestFr
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { BeaconHandler } from '../beacon/beacon-handler';
 import { emptyWalletAccount } from '../interfaces/wallet-account.interface';
 import { globalNavigationRef } from '../navigator/root-stack';
-import { APP_IDENTIFIER } from '../shelter/shelter';
+import { getKeychainOptions } from '../utils/keychain.utils';
 import { tezos$ } from '../utils/network/network.util';
 import { ReadOnlySigner } from '../utils/read-only.signer.util';
 import { RootState } from './create-store';
-import { keychainResetSuccessAction, rootStateResetAction, untypedNavigateAction } from './root-state.actions';
+import { rootStateResetAction, untypedNavigateAction } from './root-state.actions';
 
-const rootStateResetEpic = (action$: Observable<Action>) =>
+const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(rootStateResetAction),
-    switchMap(() => Keychain.getAllGenericPasswordServices()),
-    map(services => services.filter(service => service.startsWith(APP_IDENTIFIER))),
-    switchMap(services => from(services).pipe(switchMap(service => Keychain.resetGenericPassword({ service })))),
-    mapTo(keychainResetSuccessAction())
+    ofType(rootStateResetAction.submit),
+    withLatestFrom(state$, (_, state) =>
+      state.wallet.hdAccounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
+    ),
+    switchMap(keychainOptionsArray =>
+      from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
+    ),
+    switchMap(() => BeaconHandler.removeAllPermissions()),
+    mapTo(rootStateResetAction.success())
   );
 
 const navigateEpic = (action$: Observable<Action>) =>

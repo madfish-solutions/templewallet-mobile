@@ -14,6 +14,7 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../../config/socials';
+import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -34,9 +35,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
-    importWallet(seedPhrase, password);
-  };
+  const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
+    importWallet(seedPhrase, password, useBiometry);
 
   useNavigationSetOptions(
     {
@@ -60,6 +60,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
+
+            <View style={styles.checkboxContainer}>
+              <FormBiometryCheckbox name="useBiometry" />
+            </View>
           </View>
           <Divider />
 
@@ -76,7 +80,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             </CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Create" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

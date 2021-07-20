@@ -36,11 +36,11 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue balance={token.balance} symbol={token.symbol} />
+        <TokenEquityValue token={token} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons asset={token} />
+        <HeaderCardActionButtons token={token} />
       </HeaderCard>
 
       <TokenScreenContentContainer

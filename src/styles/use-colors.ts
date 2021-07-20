@@ -1,4 +1,4 @@
-import { useThemeSelector } from '../store/display-settings/display-settings-selectors';
+import { useThemeSelector } from '../store/settings/settings-selectors';
 import { getColors } from './colors';
 
 export const useColors = () => {

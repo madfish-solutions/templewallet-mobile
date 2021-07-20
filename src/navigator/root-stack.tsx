@@ -1,12 +1,13 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useState } from 'react';
+import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
+import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -15,6 +16,7 @@ import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
+import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -30,11 +32,24 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const colors = useColors();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  const screenOptions = useMemo(
+    () => ({
+      cardOverlayEnabled: true,
+      gestureEnabled: true,
+      ...TransitionPresets.ModalPresentationIOS,
+      cardStyle: {
+        backgroundColor: colors.pageBG
+      }
+    }),
+    [colors.pageBG]
+  );
 
   return (
     <NavigationContainer
@@ -43,13 +58,7 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
         <CurrentRouteNameContext.Provider value={currentRouteName}>
-          <RootStack.Navigator
-            mode="modal"
-            screenOptions={{
-              cardOverlayEnabled: true,
-              gestureEnabled: true,
-              ...TransitionPresets.ModalPresentationIOS
-            }}>
+          <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
@@ -87,6 +96,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.Confirmation}
               component={ConfirmationModal}
               options={useModalOptions('Confirm Operation')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EnableBiometryPassword}
+              component={EnableBiometryPasswordModal}
+              options={useModalOptions('Approve Password')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

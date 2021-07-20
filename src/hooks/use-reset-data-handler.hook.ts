@@ -15,7 +15,7 @@ export const useResetDataHandler = () => {
       {
         text: 'Reset',
         style: 'destructive',
-        onPress: () => dispatch(rootStateResetAction())
+        onPress: () => dispatch(rootStateResetAction.submit())
       }
     ]);
 };

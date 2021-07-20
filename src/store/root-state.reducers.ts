@@ -9,7 +9,7 @@ export const rootStateReducer =
   (appState, action) => {
     const rootReducer = reducer(
       appState,
-      on(rootStateResetAction, _ => undefined)
+      on(rootStateResetAction.success, _ => undefined)
     );
 
     const state = rootReducer(appState, action);

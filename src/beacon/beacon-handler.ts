@@ -72,6 +72,14 @@ export class BeaconHandler {
 
     throw new Error('Wallet client not defined!');
   };
+
+  public static removeAllPermissions = () => {
+    if (isDefined(BeaconHandler._walletClient)) {
+      return BeaconHandler._walletClient.removeAllPermissions();
+    }
+
+    throw new Error('Wallet client not defined!');
+  };
 }
 
 async function isNetworkSupported(_message: BeaconRequestOutputMessage) {

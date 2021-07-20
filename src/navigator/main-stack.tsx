@@ -8,6 +8,7 @@ import { generateScreenOptions } from '../components/header/generate-screen-opti
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { emptyComponent } from '../config/general';
+import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -17,6 +18,7 @@ import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
+import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
@@ -45,6 +47,7 @@ export const MainStackScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
+  useAppLockTimer();
   useBeaconHandler();
   useEffect(() => {
     if (isAuthorised) {
@@ -151,6 +154,11 @@ export const MainStackScreen = () => {
               name={ScreensEnum.DAppsSettings}
               component={DAppsSettings}
               options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.SecureSettings}
+              component={SecureSettings}
+              options={generateScreenOptions(<HeaderTitle title="Secure" />)}
             />
           </>
         )}
