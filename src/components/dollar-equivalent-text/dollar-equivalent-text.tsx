@@ -11,15 +11,9 @@ interface Props {
   style: StyleProp<TextStyle>;
 }
 
-export const DollarEquivalentText: FC<Props> = ({ balance, exchangeRate, style }) => {
-  let formattedDollarEquivalent = null;
-  if (isDefined(exchangeRate)) {
-    formattedDollarEquivalent = formatAssetAmount(
-      new BigNumber(Number(balance) * exchangeRate),
-      BigNumber.ROUND_DOWN,
-      2
-    );
-  }
-
-  return formattedDollarEquivalent ? <Text style={style}>{formattedDollarEquivalent} $</Text> : null;
-};
+export const DollarEquivalentText: FC<Props> = ({ balance, exchangeRate, style }) =>
+  isDefined(exchangeRate) ? (
+    <Text style={style}>
+      {formatAssetAmount(new BigNumber(Number(balance) * exchangeRate), BigNumber.ROUND_DOWN, 2)} $
+    </Text>
+  ) : null;
