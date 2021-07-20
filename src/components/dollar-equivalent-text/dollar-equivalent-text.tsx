@@ -7,7 +7,7 @@ import { formatAssetAmount } from '../../utils/number.util';
 
 interface Props {
   balance: string;
-  exchangeRate: number | undefined;
+  exchangeRate?: number;
   style: StyleProp<TextStyle>;
 }
 
