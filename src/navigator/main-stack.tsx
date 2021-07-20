@@ -51,10 +51,6 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
-  useEffect(() => {
-    dispatch(loadExchangeRates.submit());
-    dispatch(loadTezosExchangeRate.submit());
-  }, []);
 
   useEffect(() => {
     if (isAuthorised) {

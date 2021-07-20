@@ -72,8 +72,8 @@ export const TokenList: FC = () => {
               (token, index) =>
                 token.isVisible && (
                   <TokenListItem
-                    exchangeRate={tokensExchangeRates.data[token.address]}
                     key={token.address + index}
+                    exchangeRate={tokensExchangeRates.data[token.address]}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
