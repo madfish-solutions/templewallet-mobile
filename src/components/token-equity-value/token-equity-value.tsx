@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatAssetAmount } from '../../utils/number.util';
+import { DollarEquivalentText } from '../dollar-equivalent-text/dollar-equivalent-text';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useTokenEquityValueStyles } from './token-equity-value.styles';
@@ -20,11 +21,6 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
   const styles = useTokenEquityValueStyles();
 
   const formattedBalance = formatAssetAmount(new BigNumber(token.balance));
-  const formattedDollarEquivalent = formatAssetAmount(
-    new BigNumber(Number(token.balance) * exchangeRate),
-    BigNumber.ROUND_DOWN,
-    2
-  );
 
   return (
     <View style={styles.container}>
@@ -35,9 +31,7 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
       <Text style={styles.tokenValueText}>
         {formattedBalance} {token.symbol}
       </Text>
-      {formattedDollarEquivalent !== 'NaN' && (
-        <Text style={styles.equityValueText}>≈ {formattedDollarEquivalent} $</Text>
-      )}
+      <DollarEquivalentText balance={formattedBalance} exchangeRate={exchangeRate} style={styles.equityValueText} />
     </View>
   );
 };

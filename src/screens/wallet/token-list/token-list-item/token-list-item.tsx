@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
 import { TokenContainer } from '../../../../components/token-container/token-container';
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { EmptyFn } from '../../../../config/general';
@@ -11,25 +12,20 @@ import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props extends TokenContainerProps {
   onPress: EmptyFn;
-  exchangeRate?: string | number;
+  exchangeRate: number;
 }
 
 export const TokenListItem: FC<Props> = ({ token, apy, onPress, exchangeRate }) => {
   const styles = useTokenListItemStyles();
 
   const formattedBalance = formatAssetAmount(new BigNumber(token.balance));
-  const formattedDollarEquivalent = formatAssetAmount(
-    new BigNumber(Number(formattedBalance) * Number(exchangeRate)),
-    BigNumber.ROUND_DOWN,
-    2
-  );
 
   return (
     <TouchableOpacity onPress={onPress}>
       <TokenContainer token={token} apy={apy}>
         <View style={styles.rightContainer}>
           <Text style={styles.balanceText}>{formattedBalance}</Text>
-          {formattedDollarEquivalent !== 'NaN' && <Text style={styles.valueText}>{formattedDollarEquivalent} $</Text>}
+          <DollarEquivalentText balance={formattedBalance} exchangeRate={exchangeRate} style={styles.valueText} />
         </View>
       </TokenContainer>
     </TouchableOpacity>
