@@ -5,6 +5,7 @@ import { concatMap, distinctUntilKeyChanged, map, mapTo, switchMap, withLatestFr
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { BeaconHandler } from '../beacon/beacon-handler';
 import { emptyWalletAccount } from '../interfaces/wallet-account.interface';
 import { globalNavigationRef } from '../navigator/root-stack';
 import { getKeychainOptions } from '../utils/keychain.utils';
@@ -22,6 +23,7 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
     switchMap(keychainOptionsArray =>
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
     ),
+    switchMap(() => BeaconHandler.removeAllPermissions()),
     mapTo(rootStateResetAction.success())
   );
 
