@@ -5,7 +5,7 @@ import {
   P2PPairingRequest,
   BeaconResponseInputMessage
 } from '@airgap/beacon-sdk';
-import { PeerInfo } from '@airgap/beacon-sdk/dist/cjs/types/PeerInfo';
+import { ExtendedPeerInfo, PeerInfo } from '@airgap/beacon-sdk/dist/cjs/types/PeerInfo';
 import * as sodium from 'libsodium-wrappers';
 
 import { EventFn } from '../config/general';
@@ -65,6 +65,14 @@ export class BeaconHandler {
     throw new Error('Wallet client not defined!');
   };
 
+  public static getPeers = () => {
+    if (isDefined(BeaconHandler._walletClient)) {
+      return BeaconHandler._walletClient.getPeers();
+    }
+
+    throw new Error('Wallet client not defined!');
+  };
+
   public static removePermission = (accountIdentifier: string) => {
     if (isDefined(BeaconHandler._walletClient)) {
       return BeaconHandler._walletClient.removePermission(accountIdentifier);
@@ -76,6 +84,20 @@ export class BeaconHandler {
   public static removeAllPermissions = () => {
     if (isDefined(BeaconHandler._walletClient)) {
       return BeaconHandler._walletClient.removeAllPermissions();
+    }
+  };
+
+  public static removePeer = (peer: ExtendedPeerInfo, sendDisconnectToPeer = false) => {
+    if (isDefined(BeaconHandler._walletClient)) {
+      return BeaconHandler._walletClient.removePeer(peer, sendDisconnectToPeer);
+    }
+
+    throw new Error('Wallet client not defined!');
+  };
+
+  public static removeAllPeers = (sendDisconnectToPeer = false) => {
+    if (isDefined(BeaconHandler._walletClient)) {
+      return BeaconHandler._walletClient.removeAllPeers(sendDisconnectToPeer);
     }
 
     throw new Error('Wallet client not defined!');

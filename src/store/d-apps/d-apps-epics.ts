@@ -1,7 +1,7 @@
-import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
+import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -16,9 +16,12 @@ import {
   approveOperationRequestAction,
   approvePermissionRequestAction,
   approveSignPayloadRequestAction,
+  loadPeersActions,
   loadPermissionsActions,
+  removePeerAction,
   removePermissionAction
 } from './d-apps-actions';
+import { DAppsRootState } from './d-apps-state';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -27,6 +30,20 @@ const loadPermissionsEpic = (action$: Observable<Action>) =>
       from(BeaconHandler.getPermissions()).pipe(
         map(loadPermissionsActions.success),
         catchError(err => of(loadPermissionsActions.fail(err.message)))
+      )
+    )
+  );
+
+const loadPeersEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadPeersActions.submit),
+    switchMap(() =>
+      from(BeaconHandler.getPeers()).pipe(
+        switchMap(peers =>
+          forkJoin(peers.map(async peer => ({ ...peer, senderId: await getSenderId(peer.publicKey) })))
+        ),
+        map(loadPeersActions.success),
+        catchError(err => of(loadPeersActions.fail(err.message)))
       )
     )
   );
@@ -77,6 +94,22 @@ const approvePermissionRequestEpic = (action$: Observable<Action>) =>
         })
       )
     )
+  );
+
+const removePeerEpic = (action$: Observable<Action>, state$: Observable<DAppsRootState>) =>
+  action$.pipe(
+    ofType(removePeerAction),
+    toPayload(),
+    withLatestFrom(state$),
+    switchMap(([senderId, state]) => {
+      const peer = state.dApps.peers.data.find(({ senderId: peerSenderId }) => peerSenderId === senderId);
+      if (peer) {
+        return BeaconHandler.removePeer(peer, true);
+      }
+
+      return Promise.resolve();
+    }),
+    map(() => loadPeersActions.submit())
   );
 
 const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
@@ -167,5 +200,7 @@ export const dAppsEpics = combineEpics(
   approvePermissionRequestEpic,
   approveSignPayloadRequestEpic,
   approveOperationRequestEpic,
-  abortRequestEpic
+  abortRequestEpic,
+  loadPeersEpic,
+  removePeerEpic
 );

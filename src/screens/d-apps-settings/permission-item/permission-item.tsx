@@ -1,4 +1,4 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
+import { ExtendedPeerInfo, PermissionInfo } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -8,15 +8,16 @@ import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { removePermissionAction } from '../../../store/d-apps/d-apps-actions';
+import { removePeerAction, removePermissionAction } from '../../../store/d-apps/d-apps-actions';
 import { formatSize } from '../../../styles/format-size';
 import { usePermissionItemStyles } from './permission-item.styles';
 
 interface Props {
   permission: PermissionInfo;
+  peer?: ExtendedPeerInfo;
 }
 
-export const PermissionItem: FC<Props> = ({ permission }) => {
+export const PermissionItem: FC<Props> = ({ permission, peer }) => {
   const styles = usePermissionItemStyles();
   const dispatch = useDispatch();
 
@@ -38,7 +39,10 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
       <TouchableIcon
         name={IconNameEnum.Trash}
         size={formatSize(16)}
-        onPress={() => dispatch(removePermissionAction(permission.accountIdentifier))}
+        onPress={() => {
+          dispatch(removePermissionAction(permission.accountIdentifier));
+          peer && dispatch(removePeerAction(peer.senderId));
+        }}
       />
     </View>
   );
