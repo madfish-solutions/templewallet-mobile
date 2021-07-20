@@ -11,8 +11,8 @@ import { ScreenStatusBar } from '../../components/screen-status-bar/screen-statu
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
 import {
+  loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   setSelectedAccountAction
@@ -22,7 +22,6 @@ import {
   useSelectedAccountSelector,
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -54,12 +53,12 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue balance={tezosToken.balance} symbol={TEZ_TOKEN_METADATA.symbol} />
+        <TokenEquityValue token={tezosToken} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>
 
-      <TokenList tezosBalance={tezosToken.balance} />
+      <TokenList />
     </>
   );
 };
