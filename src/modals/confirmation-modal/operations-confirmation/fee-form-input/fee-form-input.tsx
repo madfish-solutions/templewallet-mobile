@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from '../../../../components/divider/divider';
+import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
@@ -14,7 +15,6 @@ import { FormNumericInput } from '../../../../form/form-numeric-input/form-numer
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
-import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { FeeFormInputValues } from './fee-form-input.form';
 import { useFeeFormInputStyles } from './fee-form-input.styles';
@@ -50,18 +50,6 @@ export const FeeFormInput: FC<Props> = ({
     ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_METADATA.decimals)
     : undefined;
 
-  const formattedGasFeeSumInDollarEquivalent = formatAssetAmount(
-    new BigNumber(Number(values.gasFeeSum) * exchangeRate),
-    BigNumber.ROUND_UP,
-    2
-  );
-
-  const formattedStorageFeeInDollarEquivalent = formatAssetAmount(
-    new BigNumber(Number(storageFee) * exchangeRate),
-    BigNumber.ROUND_UP,
-    2
-  );
-
   return (
     <>
       <View style={styles.infoContainer}>
@@ -71,7 +59,7 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <Text style={styles.infoFeeValue}>{formattedGasFeeSumInDollarEquivalent} $</Text>
+            <DollarEquivalentText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
           )}
         </View>
 
@@ -82,7 +70,9 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
-          {isDefined(storageFee) && <Text style={styles.infoFeeValue}>{formattedStorageFeeInDollarEquivalent} $</Text>}
+          {isDefined(storageFee) && (
+            <DollarEquivalentText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+          )}
         </View>
       </View>
 

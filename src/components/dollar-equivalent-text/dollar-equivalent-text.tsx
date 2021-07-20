@@ -6,7 +6,7 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 
 interface Props {
-  balance: string;
+  balance: string | BigNumber;
   exchangeRate?: number;
   style: StyleProp<TextStyle>;
 }
