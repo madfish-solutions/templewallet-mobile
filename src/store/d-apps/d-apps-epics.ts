@@ -1,7 +1,7 @@
 import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -18,12 +18,9 @@ import {
   approveOperationRequestAction,
   approvePermissionRequestAction,
   approveSignPayloadRequestAction,
-  loadPeersActions,
   loadPermissionsActions,
-  removePeerAction,
   removePermissionAction
 } from './d-apps-actions';
-import { DAppsRootState } from './d-apps-state';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -36,36 +33,37 @@ const loadPermissionsEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadPeersEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadPeersActions.submit),
-    switchMap(() =>
-      from(BeaconHandler.getPeers()).pipe(
-        switchMap(peers =>
-          forkJoin(peers.map(async peer => ({ ...peer, senderId: await getSenderId(peer.publicKey) })))
-        ),
-        map(loadPeersActions.success),
-        catchError(err => of(loadPeersActions.fail(err.message)))
-      )
-    )
-  );
-
 const removePermissionEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removePermissionAction),
     toPayload(),
-    switchMap(accountIdentifier =>
-      from(BeaconHandler.removePermission(accountIdentifier)).pipe(
-        map(() => {
-          showSuccessToast('Permission successfully removed!');
+    switchMap(({ accountIdentifier, senderId }) =>
+      from(BeaconHandler.getPeers()).pipe(
+        switchMap(peers =>
+          forkJoin(
+            peers.map(async peer => {
+              const peerSenderId = await getSenderId(peer.publicKey);
+              if (senderId === peerSenderId) {
+                return BeaconHandler.removePeer({ ...peer, senderId: peerSenderId });
+              }
+            })
+          ).pipe(
+            switchMap(() =>
+              from(BeaconHandler.removePermission(accountIdentifier)).pipe(
+                map(() => {
+                  showSuccessToast('Permission successfully removed!');
 
-          return loadPermissionsActions.submit();
-        }),
-        catchError(err => {
-          showErrorToast(err.message);
+                  return loadPermissionsActions.submit();
+                }),
+                catchError(err => {
+                  showErrorToast(err.message);
 
-          return EMPTY;
-        })
+                  return EMPTY;
+                })
+              )
+            )
+          )
+        )
       )
     )
   );
@@ -96,19 +94,6 @@ const approvePermissionRequestEpic = (action$: Observable<Action>) =>
         })
       )
     )
-  );
-
-const removePeerEpic = (action$: Observable<Action>, state$: Observable<DAppsRootState>) =>
-  action$.pipe(
-    ofType(removePeerAction),
-    toPayload(),
-    withLatestFrom(state$),
-    switchMap(([senderId, state]) => {
-      const peer = state.dApps.peers.data.find(({ senderId: peerSenderId }) => peerSenderId === senderId);
-
-      return peer ? BeaconHandler.removePeer(peer, true) : EMPTY;
-    }),
-    map(loadPeersActions.submit)
   );
 
 const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
@@ -204,7 +189,5 @@ export const dAppsEpics = combineEpics(
   approvePermissionRequestEpic,
   approveSignPayloadRequestEpic,
   approveOperationRequestEpic,
-  abortRequestEpic,
-  loadPeersEpic,
-  removePeerEpic
+  abortRequestEpic
 );

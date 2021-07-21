@@ -1,4 +1,4 @@
-import { ExtendedPeerInfo, PermissionInfo } from '@airgap/beacon-sdk';
+import { PermissionInfo } from '@airgap/beacon-sdk';
 import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import { createAction } from '@reduxjs/toolkit';
 
@@ -7,9 +7,7 @@ import { ApprovePermissionRequestActionPayloadInterface } from '../../interfaces
 import { createActions } from '../create-actions';
 
 export const loadPermissionsActions = createActions<void, PermissionInfo[], string>('d-apps/LOAD_PERMISSIONS');
-export const loadPeersActions = createActions<void, ExtendedPeerInfo[], string>('d-apps/LOAD_PEERS');
-export const removePermissionAction = createAction<string>('d-apps/REMOVE_PERMISSION');
-export const removePeerAction = createAction<string>('d-apps/REMOVE_PEER');
+export const removePermissionAction = createAction<PermissionInfo>('d-apps/REMOVE_PERMISSION');
 
 export const approvePermissionRequestAction = createAction<ApprovePermissionRequestActionPayloadInterface>(
   'd-apps/APPROVE_PERMISSION_REQUEST'

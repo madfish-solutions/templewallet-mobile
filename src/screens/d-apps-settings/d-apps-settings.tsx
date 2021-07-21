@@ -4,18 +4,16 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { loadPeersActions, loadPermissionsActions } from '../../store/d-apps/d-apps-actions';
-import { usePeersSelector, usePermissionsSelector } from '../../store/d-apps/d-apps-selectors';
+import { loadPermissionsActions } from '../../store/d-apps/d-apps-actions';
+import { usePermissionsSelector } from '../../store/d-apps/d-apps-selectors';
 import { PermissionItem } from './permission-item/permission-item';
 
 export const DAppsSettings = () => {
   const dispatch = useDispatch();
   const permissions = usePermissionsSelector();
-  const peers = usePeersSelector();
 
   useEffect(() => {
     dispatch(loadPermissionsActions.submit());
-    dispatch(loadPeersActions.submit());
   }, []);
 
   return (
@@ -25,11 +23,7 @@ export const DAppsSettings = () => {
         <DataPlaceholder text="No connected DApps where found" />
       ) : (
         permissions.data.map(permission => (
-          <PermissionItem
-            key={permission.accountIdentifier}
-            permission={permission}
-            peer={peers.data.find(peer => peer.senderId === permission.senderId)}
-          />
+          <PermissionItem key={permission.accountIdentifier} permission={permission} />
         ))
       )}
     </ScreenContainer>

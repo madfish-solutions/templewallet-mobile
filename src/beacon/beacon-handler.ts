@@ -87,17 +87,17 @@ export class BeaconHandler {
     }
   };
 
-  public static removePeer = (peer: ExtendedPeerInfo, sendDisconnectToPeer = false) => {
+  public static removePeer = (peer: ExtendedPeerInfo) => {
     if (isDefined(BeaconHandler._walletClient)) {
-      return BeaconHandler._walletClient.removePeer(peer, sendDisconnectToPeer);
+      return BeaconHandler._walletClient.removePeer(peer, true);
     }
 
     throw new Error('Wallet client not defined!');
   };
 
-  public static removeAllPeers = (sendDisconnectToPeer = false) => {
+  public static removeAllPeers = () => {
     if (isDefined(BeaconHandler._walletClient)) {
-      return BeaconHandler._walletClient.removeAllPeers(sendDisconnectToPeer);
+      return BeaconHandler._walletClient.removeAllPeers(true);
     }
 
     throw new Error('Wallet client not defined!');
