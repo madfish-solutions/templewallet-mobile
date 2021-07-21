@@ -60,7 +60,6 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
             data.balances.map(async balance => {
               try {
                 const bestTokenMetadata = await getTokenMetadata(balance.contract, balance.token_id);
-                console.log('check');
 
                 return {
                   ...balance,
@@ -70,8 +69,6 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
                   thumbnail_uri: bestTokenMetadata.thumbnailUri
                 };
               } catch (e) {
-                console.log('oy vey', balance.contract, balance.token_id);
-
                 return balance;
               }
             })
