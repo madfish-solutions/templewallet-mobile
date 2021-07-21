@@ -14,28 +14,17 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
     ofType(loadExchangeRates.submit),
     switchMap(() =>
       from(templeWalletApi.get<TokenExchangeRateInterface[]>('exchange-rates')).pipe(
-        map(({ data }) => {
+        switchMap(({ data }) => {
           const mappedRates: TokenExchangeRateRecord = {};
           for (const { tokenAddress, exchangeRate } of data) {
             mappedRates[tokenAddress] = Number(exchangeRate);
           }
 
-          return loadExchangeRates.success(mappedRates);
+          return [loadExchangeRates.success(mappedRates), loadTezosExchangeRate.success(mappedRates[undefined])]
         }),
         catchError(err => of(loadExchangeRates.fail(err.message)))
       )
     )
   );
 
-export const loadTezosExchangeRateEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTezosExchangeRate.submit),
-    switchMap(() =>
-      from(templeWalletApi.get<number>('exchange-rates/tez')).pipe(
-        map(({ data }) => loadTezosExchangeRate.success(data)),
-        catchError(err => of(loadExchangeRates.fail(err.message)))
-      )
-    )
-  );
-
-export const currencyEpics = combineEpics(loadExchangeRatesEpic, loadTezosExchangeRateEpic);
+export const currencyEpics = combineEpics(loadExchangeRatesEpic);
