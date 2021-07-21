@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
-import { loadActivityGroupsActions } from '../../store/activity/activity-actions';
+import { loadActivityGroupsActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 
 export const Activity = () => {

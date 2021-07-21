@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 
-import { initialAccountSettings } from '../../interfaces/account-settings.interface';
+import { initialAccountState } from '../../interfaces/account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
@@ -9,7 +9,9 @@ import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
+  addPendingOperation,
   addTokenMetadataAction,
+  loadActivityGroupsActions,
   loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -24,13 +26,14 @@ import {
   removeTokenFromTokenList,
   toggleTokenVisibility,
   tokenBalanceMetadata,
-  updateCurrentAccountState
+  updateCurrentAccountState,
+  updateAccountState
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountSettings }]
+    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountState }]
   }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
@@ -83,7 +86,11 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   }));
   builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
     ...state,
-    addTokenSuggestion: createEntity(tokenMetadata, false)
+    addTokenSuggestion: createEntity(tokenMetadata, false),
+    tokensMetadata: {
+      ...state.tokensMetadata,
+      [tokenMetadataSlug(tokenMetadata)]: tokenMetadata
+    }
   }));
   builder.addCase(loadTokenMetadataActions.fail, (state, { payload: error }) => ({
     ...state,
@@ -130,4 +137,36 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     ...state,
     estimations: createEntity([], false, error)
   }));
+
+  builder.addCase(addPendingOperation, (state, { payload }) =>
+    updateAccountState(state, payload[0].source.address, account => ({
+      ...account,
+      pendingActivities: [payload, ...account.pendingActivities]
+    }))
+  );
+
+  builder.addCase(loadActivityGroupsActions.submit, state =>
+    updateCurrentAccountState(state, account => ({
+      ...account,
+      activityGroups: createEntity(account.activityGroups.data, true)
+    }))
+  );
+  builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
+    updateCurrentAccountState(state, account => ({
+      ...account,
+      activityGroups: createEntity(activityGroups),
+      pendingActivities: account.pendingActivities.filter(
+        pendingActivityGroup =>
+          !activityGroups.some(
+            completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
+          )
+      )
+    }))
+  );
+  builder.addCase(loadActivityGroupsActions.fail, (state, { payload: error }) =>
+    updateCurrentAccountState(state, account => ({
+      ...account,
+      activityGroups: createEntity(account.activityGroups.data, false, error)
+    }))
+  );
 });

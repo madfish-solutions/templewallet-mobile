@@ -1,5 +1,5 @@
 import { EstimationInterface } from '../../interfaces/estimation.interface';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { WalletAccountStateInterface } from '../../interfaces/wallet-account-state.interface';
 import { MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { tokenMetadataSlug } from '../../token/utils/token.utils';
@@ -7,7 +7,7 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface WalletState {
-  hdAccounts: WalletAccountInterface[];
+  hdAccounts: WalletAccountStateInterface[];
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
