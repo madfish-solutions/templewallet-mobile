@@ -2,7 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { FC, useEffect, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
@@ -78,17 +78,18 @@ export const SendModal: FC = () => {
     ownAccount,
     transferBetweenOwnAccounts,
     amount
-  }: SendModalFormValues) =>
-    void (
-      isDefined(amount) &&
+  }: SendModalFormValues) => {
+    Alert.alert('Trying to send...');
+
+    isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
           asset: token,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
-      )
-    );
+      );
+  };
 
   return (
     <Formik
