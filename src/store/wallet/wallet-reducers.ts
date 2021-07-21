@@ -86,7 +86,11 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   }));
   builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
     ...state,
-    addTokenSuggestion: createEntity(tokenMetadata, false)
+    addTokenSuggestion: createEntity(tokenMetadata, false),
+    tokensMetadata: {
+      ...state.tokensMetadata,
+      [tokenMetadataSlug(tokenMetadata)]: tokenMetadata
+    }
   }));
   builder.addCase(loadTokenMetadataActions.fail, (state, { payload: error }) => ({
     ...state,

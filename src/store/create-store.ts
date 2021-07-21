@@ -8,6 +8,8 @@ import { catchError } from 'rxjs/operators';
 
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
+import { currencyReducers } from './currency/currency-reducers';
+import { CurrencyRootState } from './currency/currency-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
 import { rootStateReducer } from './root-state.reducers';
@@ -16,7 +18,7 @@ import { SettingsRootState } from './settings/settings-state';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
-export type RootState = WalletRootState & BakingRootState & SettingsRootState & DAppsRootState;
+export type RootState = WalletRootState & BakingRootState & SettingsRootState & DAppsRootState & CurrencyRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -36,7 +38,8 @@ const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
   settings: settingsReducers,
-  dApps: dAppsReducers
+  dApps: dAppsReducers,
+  currency: currencyReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

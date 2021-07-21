@@ -80,7 +80,7 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([{ id, address }, tezos]) =>
+    concatMap(([{ id, address }, tezos]) =>
       from(tezos.contract.at(address, compose(tzip12, tzip16))).pipe(
         switchMap(contract => contract.tzip12().getTokenMetadata(id)),
         map((tokenMetadata: TokenMetadataSuggestionInterface) =>

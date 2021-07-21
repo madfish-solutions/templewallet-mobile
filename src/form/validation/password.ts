@@ -2,10 +2,10 @@ import { ref, string } from 'yup';
 
 import { makeRequiredErrorMessage } from './messages';
 
-const atLeastOneLowerCaseLetterError = 'At least 1 lowercase letter';
-const atLeastOneUpperCaseLetterError = 'At least 1 uppercase letter';
+const atLeastOneLowerCaseLetterError = 'At least 1 English lowercase letter';
+const atLeastOneUpperCaseLetterError = 'At least 1 English uppercase letter';
 const atLeastOneNumberError = 'At least 1 number';
-const minError = 'At least 8 characters';
+const minError = 'At least 8 English characters';
 const onlyAsciiCharsError = 'Only English letters are allowed';
 
 const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
