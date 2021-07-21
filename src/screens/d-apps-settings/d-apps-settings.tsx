@@ -12,9 +12,7 @@ export const DAppsSettings = () => {
   const dispatch = useDispatch();
   const permissions = usePermissionsSelector();
 
-  useEffect(() => {
-    dispatch(loadPermissionsActions.submit());
-  }, []);
+  useEffect(() => void dispatch(loadPermissionsActions.submit()), []);
 
   return (
     <ScreenContainer>
