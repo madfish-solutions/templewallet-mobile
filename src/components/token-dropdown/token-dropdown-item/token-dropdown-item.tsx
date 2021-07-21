@@ -2,11 +2,14 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useTokensExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import { formatAssetAmount } from '../../../utils/number.util';
 import { Divider } from '../../divider/divider';
+import { DollarEquivalentText } from '../../dollar-equivalent-text/dollar-equivalent-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
@@ -20,7 +23,9 @@ interface Props {
 export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconName }) => {
   const styles = useTokenDropdownItemStyles();
 
-  const { symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
+  const { address, symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
+  const { tokensExchangeRates, tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const exchangeRate = name === TEZ_TOKEN_METADATA.name ? tezosExchangeRate.data : tokensExchangeRates.data[address];
 
   const formattedBalance = formatAssetAmount(new BigNumber(balance));
 
@@ -35,9 +40,14 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
         </View>
       </View>
       <View style={styles.rightContainer}>
-        <Text style={styles.balance}>
-          {formattedBalance} {symbol}
-        </Text>
+        <View>
+          <Text style={styles.balance}>
+            {formattedBalance} {symbol}
+          </Text>
+          <Text style={styles.dollarEquivalent}>
+            <DollarEquivalentText balance={formattedBalance} exchangeRate={exchangeRate} />
+          </Text>
+        </View>
         {isDefined(actionIconName) && (
           <>
             <Divider size={formatSize(8)} />
