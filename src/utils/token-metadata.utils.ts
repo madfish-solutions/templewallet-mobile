@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import memoize from 'mem';
 
 import { tokenMetadataApi } from '../api.service';
@@ -13,8 +12,6 @@ type TokenMetadata = {
 
 export const getTokenMetadata = memoize(
   (tokenAddress: string, tokenId = 0) =>
-    tokenMetadataApi
-      .get<unknown, AxiosResponse<TokenMetadata>>(`/metadata/${tokenAddress}/${tokenId}`)
-      .then(res => res.data),
+    tokenMetadataApi.get<TokenMetadata>(`/metadata/${tokenAddress}/${tokenId}`).then(res => res.data),
   { cacheKey: ([address, tokenId]) => tokenMetadataSlug({ address, tokenId }) }
 );
