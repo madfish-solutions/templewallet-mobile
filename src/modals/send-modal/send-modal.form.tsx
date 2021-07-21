@@ -17,7 +17,7 @@ export interface SendModalFormValues {
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
   token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
   receiverPublicKeyHash: string()
-    .when('transferBetweenOwnAccounts', (value: string, schema: StringSchema) =>
+    .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
       value ? schema : schema.required(makeRequiredErrorMessage('To'))
     )
     .ensure(),
@@ -31,6 +31,6 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
 
       return false;
     }),
-  ownAccount: object().shape({}).required(),
+  ownAccount: object().shape({}).optional(),
   transferBetweenOwnAccounts: boolean().required()
 });
