@@ -24,6 +24,7 @@ import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
@@ -54,7 +55,29 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
           }
         )
       ).pipe(
-        map(({ data }) => loadTokenBalancesActions.success(data.balances)),
+        switchMap(({ data }) =>
+          forkJoin(
+            data.balances.map(async balance => {
+              try {
+                const bestTokenMetadata = await getTokenMetadata(balance.contract, balance.token_id);
+                console.log('check');
+
+                return {
+                  ...balance,
+                  decimals: bestTokenMetadata.decimals,
+                  symbol: bestTokenMetadata.symbol,
+                  name: bestTokenMetadata.name,
+                  thumbnail_uri: bestTokenMetadata.thumbnailUri
+                };
+              } catch (e) {
+                console.log('oy vey', balance.contract, balance.token_id);
+
+                return balance;
+              }
+            })
+          )
+        ),
+        map(balances => loadTokenBalancesActions.success(balances)),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
