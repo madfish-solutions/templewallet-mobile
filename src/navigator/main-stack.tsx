@@ -1,16 +1,15 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
+import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { emptyComponent } from '../config/general';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { ThemesEnum } from '../interfaces/theme.enum';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -28,14 +27,12 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates, loadTezosExchangeRate } from '../store/currency/currency-actions';
-import { useThemeSelector } from '../store/settings/settings-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions
 } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { useColors } from '../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
@@ -48,8 +45,6 @@ const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
-  const colors = useColors();
-  const theme = useThemeSelector();
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -83,13 +78,9 @@ export const MainStackScreen = () => {
     }
   }, [isAuthorised, selectedAccount.publicKeyHash]);
 
-  useEffect(() => {
-    StatusBar.setBackgroundColor(colors.pageBG);
-    StatusBar.setBarStyle(theme === ThemesEnum.dark ? 'light-content' : 'dark-content');
-  }, [theme, colors]);
-
   return (
     <PortalProvider>
+      {!isAuthorised && <ScreenStatusBar />}
       <MainStack.Navigator screenOptions={styleScreenOptions}>
         {!isAuthorised ? (
           <>
