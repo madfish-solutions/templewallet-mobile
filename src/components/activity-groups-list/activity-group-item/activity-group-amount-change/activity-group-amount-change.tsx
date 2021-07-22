@@ -31,7 +31,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     const amounts = [];
     let positiveAmountSum = 0;
     for (const { amount, tokenSlug } of group) {
-      const { decimals, symbol, name, address, id } = getTokenMetadata(tokenSlug);
+      const { decimals, symbol, name, address } = getTokenMetadata(tokenSlug);
       if (isString(tokenSlug) && !isString(name)) {
         const { address, id } = getTokenAddressFromSlug(tokenSlug);
         dispatch(loadTokenMetadataActions.submit({ id: Number(id), address: address }));
