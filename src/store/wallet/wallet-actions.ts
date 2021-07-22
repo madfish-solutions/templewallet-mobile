@@ -36,6 +36,7 @@ export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDI
 export const approveInternalOperationRequestAction = createAction<WalletParamsWithKind[]>(
   'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
 );
-export const waitForInternalOperationCompletionAction = createAction<string>(
-  'wallet/WAIT_FOR_INTERNAL_OPERATION_COMPLETION'
-);
+export const waitForOperationCompletionAction = createAction<{
+  opHash: string;
+  sender: string;
+}>('d-apps/WAIT_FOR_OPERATION_COMPLETION');

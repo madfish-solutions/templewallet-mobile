@@ -38,7 +38,7 @@ import {
   loadTokenBalancesActions,
   loadTokenMetadataActions,
   sendAssetActions,
-  waitForInternalOperationCompletionAction
+  waitForOperationCompletionAction
 } from './wallet-actions';
 import { WalletRootState } from './wallet-state';
 
@@ -156,7 +156,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForInternalOperationCompletionAction(opHash),
+            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
             addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
           ];
         }),
@@ -169,24 +169,25 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     )
   );
 
-const waitForInternalOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const BCD_INDEXING_DELAY = 15000;
+
+const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
   action$.pipe(
-    ofType(waitForInternalOperationCompletionAction),
+    ofType(waitForOperationCompletionAction),
     toPayload(),
     withLatestFrom(tezos$),
-    withSelectedAccount(state$),
-    switchMap(([[opHash, tezos], { publicKeyHash }]) =>
+    switchMap(([{ opHash, sender }, tezos]) =>
       from(tezos.operation.createOperation(opHash)).pipe(
         switchMap(operation => from(operation.confirmation(1))),
         switchMap(({ completed }) =>
           completed
             ? of(null).pipe(
-                delay(15000),
+                delay(BCD_INDEXING_DELAY),
                 concatMap(() => [
-                  loadTezosBalanceActions.submit(publicKeyHash),
-                  loadTokenBalancesActions.submit(publicKeyHash),
-                  loadActivityGroupsActions.submit(publicKeyHash),
-                  loadSelectedBakerActions.submit(publicKeyHash)
+                  loadTezosBalanceActions.submit(sender),
+                  loadTokenBalancesActions.submit(sender),
+                  loadActivityGroupsActions.submit(sender),
+                  loadSelectedBakerActions.submit(sender)
                 ])
               )
             : throwError({ message: "Transaction wasn't completed" })
@@ -233,7 +234,7 @@ export const walletEpics = combineEpics(
   sendAssetEpic,
   loadEstimationsEpic,
   approveInternalOperationRequestEpic,
-  waitForInternalOperationCompletionEpic,
+  waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
   approveInternalOperationRequestEpic
 );

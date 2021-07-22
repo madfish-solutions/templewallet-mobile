@@ -1,7 +1,7 @@
 import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, concatMap, delay, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -9,25 +9,17 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { Shelter } from '../../shelter/shelter';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { tezos$ } from '../../utils/network/network.util';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
-import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import {
-  addPendingOperation,
-  loadActivityGroupsActions,
-  loadTezosBalanceActions,
-  loadTokenBalancesActions
-} from '../wallet/wallet-actions';
+import { addPendingOperation, waitForOperationCompletionAction } from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
   approvePermissionRequestAction,
   approveSignPayloadRequestAction,
   loadPermissionsActions,
-  removePermissionAction,
-  waitForOperationCompletionAction
+  removePermissionAction
 } from './d-apps-actions';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
@@ -164,36 +156,6 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
-const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(waitForOperationCompletionAction),
-    toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([{ opHash, sender }, tezos]) =>
-      from(tezos.operation.createOperation(opHash)).pipe(
-        switchMap(operation => from(operation.confirmation(1))),
-        switchMap(({ completed }) =>
-          completed
-            ? of(null).pipe(
-                delay(15000),
-                concatMap(() => [
-                  loadTezosBalanceActions.submit(sender),
-                  loadTokenBalancesActions.submit(sender),
-                  loadActivityGroupsActions.submit(sender),
-                  loadSelectedBakerActions.submit(sender)
-                ])
-              )
-            : throwError({ message: "Transaction wasn't completed" })
-        ),
-        catchError(err => {
-          showErrorToast(err.message);
-
-          return EMPTY;
-        })
-      )
-    )
-  );
-
 const abortRequestEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(abortRequestAction),
@@ -226,6 +188,5 @@ export const dAppsEpics = combineEpics(
   approvePermissionRequestEpic,
   approveSignPayloadRequestEpic,
   approveOperationRequestEpic,
-  abortRequestEpic,
-  waitForOperationCompletionEpic
+  abortRequestEpic
 );
