@@ -12,7 +12,7 @@ import { ModalButtonsContainer } from '../../../components/modal-buttons-contain
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn, EventFn } from '../../../config/general';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { useTokensExchangeRatesSelector } from '../../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
 import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -38,7 +38,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
   const [isEstimationsRequested, setIsEstimationsRequested] = useState(false);
 
   const estimations = useEstimationsSelector();
-  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
   const {
     basicFees,
     estimationWasSuccessful,
@@ -107,7 +107,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
                   onlyOneOperation={onlyOneOperation}
                   minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
                   setFieldValue={setFieldValue}
-                  exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]}
+                  exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 />
               </>
             )}

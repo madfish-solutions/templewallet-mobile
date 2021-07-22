@@ -11,7 +11,7 @@ import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hoo
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useTokensExchangeRatesSelector } from '../../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
@@ -28,7 +28,7 @@ export const TokenList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
-  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
   const [isShowTezos, setIsShowTezos] = useState(true);
 
   const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
@@ -64,7 +64,7 @@ export const TokenList: FC = () => {
               <TokenListItem
                 token={tezosToken}
                 apy={delegationApy}
-                exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]}
+                exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}
@@ -74,7 +74,7 @@ export const TokenList: FC = () => {
                 token.isVisible && (
                   <TokenListItem
                     key={token.address + index}
-                    exchangeRate={tokensExchangeRates.data[token.address]}
+                    exchangeRate={exchangeRates.data[token.address]}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />

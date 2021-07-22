@@ -11,7 +11,7 @@ import { ScreenStatusBar } from '../../components/screen-status-bar/screen-statu
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -23,9 +23,9 @@ import {
   useSelectedAccountSelector,
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
-import {TEZ_TOKEN_METADATA} from "../../token/data/tokens-metadata";
 
 export const Wallet = () => {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -56,7 +56,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue token={tezosToken} exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]} />
+        <TokenEquityValue token={tezosToken} exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>

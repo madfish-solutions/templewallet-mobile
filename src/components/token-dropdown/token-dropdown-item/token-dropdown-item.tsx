@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { useTokensExchangeRatesSelector } from '../../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
@@ -24,11 +24,9 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
   const styles = useTokenDropdownItemStyles();
 
   const { address, symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
-  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
   const exchangeRate =
-    name === TEZ_TOKEN_METADATA.name
-      ? tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]
-      : tokensExchangeRates.data[address];
+    name === TEZ_TOKEN_METADATA.name ? exchangeRates.data[TEZ_TOKEN_METADATA.name] : exchangeRates.data[address];
 
   const formattedBalance = formatAssetAmount(new BigNumber(balance));
 
