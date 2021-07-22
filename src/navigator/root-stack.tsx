@@ -22,6 +22,7 @@ import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
 import { MainStackScreen } from './main-stack';
+import { TabBarHeightProvider } from './tab-bar-height-provider';
 
 export const globalNavigationRef = createRef<NavigationContainerRef>();
 
@@ -56,57 +57,63 @@ export const RootStackScreen = () => {
       ref={globalNavigationRef}
       onReady={handleNavigationContainerStateChange}
       onStateChange={handleNavigationContainerStateChange}>
-      <PortalProvider>
-        <CurrentRouteNameContext.Provider value={currentRouteName}>
-          <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
-            <RootStack.Screen
-              name={StacksEnum.MainStack}
-              component={MainStackScreen}
-              options={{ headerShown: false }}
-            />
+      <TabBarHeightProvider>
+        <PortalProvider>
+          <CurrentRouteNameContext.Provider value={currentRouteName}>
+            <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
+              <RootStack.Screen
+                name={StacksEnum.MainStack}
+                component={MainStackScreen}
+                options={{ headerShown: false }}
+              />
 
-            <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
-            <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
-            <RootStack.Screen
-              name={ModalsEnum.AddToken}
-              component={AddTokenModal}
-              options={useModalOptions('Add Token')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.CreateHdAccount}
-              component={CreateHdAccountModal}
-              options={useModalOptions('Create account')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.SelectBaker}
-              component={SelectBakerModal}
-              options={useModalOptions('Select Baker')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.RevealSeedPhrase}
-              component={RevealSeedPhraseModal}
-              options={useModalOptions('Reveal Seed')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.RevealPrivateKey}
-              component={RevealPrivateKeyModal}
-              options={useModalOptions('Reveal Private key')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.Confirmation}
-              component={ConfirmationModal}
-              options={useModalOptions('Confirm Operation')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.EnableBiometryPassword}
-              component={EnableBiometryPasswordModal}
-              options={useModalOptions('Approve Password')}
-            />
-          </RootStack.Navigator>
-        </CurrentRouteNameContext.Provider>
-      </PortalProvider>
+              <RootStack.Screen
+                name={ModalsEnum.Receive}
+                component={ReceiveModal}
+                options={useModalOptions('Receive')}
+              />
+              <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
+              <RootStack.Screen
+                name={ModalsEnum.AddToken}
+                component={AddTokenModal}
+                options={useModalOptions('Add Token')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.CreateHdAccount}
+                component={CreateHdAccountModal}
+                options={useModalOptions('Create account')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.SelectBaker}
+                component={SelectBakerModal}
+                options={useModalOptions('Select Baker')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.RevealSeedPhrase}
+                component={RevealSeedPhraseModal}
+                options={useModalOptions('Reveal Seed')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.RevealPrivateKey}
+                component={RevealPrivateKeyModal}
+                options={useModalOptions('Reveal Private key')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.Confirmation}
+                component={ConfirmationModal}
+                options={useModalOptions('Confirm Operation')}
+              />
+              <RootStack.Screen
+                name={ModalsEnum.EnableBiometryPassword}
+                component={EnableBiometryPasswordModal}
+                options={useModalOptions('Approve Password')}
+              />
+            </RootStack.Navigator>
+          </CurrentRouteNameContext.Provider>
+        </PortalProvider>
 
-      {isAuthorised && isLocked && <EnterPassword />}
+        {isAuthorised && isLocked && <EnterPassword />}
+      </TabBarHeightProvider>
     </NavigationContainer>
   );
 };

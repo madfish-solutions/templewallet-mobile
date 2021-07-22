@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { StatusBar, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -16,6 +16,7 @@ import {
   swapStackScreens,
   walletStackScreens
 } from '../enums/screens.enum';
+import { TabBarHeightContext } from '../tab-bar-height-provider';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
@@ -24,6 +25,7 @@ const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
 export const TabBar: FC = () => {
   const styles = useTabBarStyles();
   const currentRouteName = useContext(CurrentRouteNameContext);
+  const { updateHeight } = useContext(TabBarHeightContext);
   const insets = useSafeAreaInsets();
   const dimensions = useWindowDimensions();
   const { layoutHeight, handleLayout } = useLayoutSizes();
@@ -39,6 +41,10 @@ export const TabBar: FC = () => {
   const androidBottomInset = isAndroid11Plus ? 0 : -statusBarHeight;
   const height = layoutHeight + insets.bottom;
   const top = dimensions.height + androidBottomInset - height;
+
+  useEffect(() => {
+    updateHeight(isHidden ? 0 : height);
+  }, [isHidden, height, updateHeight]);
 
   return isHidden ? null : (
     <>
