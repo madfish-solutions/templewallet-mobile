@@ -7,7 +7,7 @@ import { ApprovePermissionRequestActionPayloadInterface } from '../../interfaces
 import { createActions } from '../create-actions';
 
 export const loadPermissionsActions = createActions<void, PermissionInfo[], string>('d-apps/LOAD_PERMISSIONS');
-export const removePermissionAction = createAction<string>('d-apps/REMOVE_PERMISSION');
+export const removePermissionAction = createAction<PermissionInfo>('d-apps/REMOVE_PERMISSION');
 
 export const approvePermissionRequestAction = createAction<ApprovePermissionRequestActionPayloadInterface>(
   'd-apps/APPROVE_PERMISSION_REQUEST'
