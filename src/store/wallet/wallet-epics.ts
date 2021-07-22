@@ -3,7 +3,7 @@ import { tzip12 } from '@taquito/tzip12';
 import { tzip16 } from '@taquito/tzip16';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -178,20 +178,14 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
     withLatestFrom(tezos$),
     switchMap(([{ opHash, sender }, tezos]) =>
       from(tezos.operation.createOperation(opHash)).pipe(
-        switchMap(operation => from(operation.confirmation(1))),
-        switchMap(({ completed }) =>
-          completed
-            ? of(null).pipe(
-                delay(BCD_INDEXING_DELAY),
-                concatMap(() => [
-                  loadTezosBalanceActions.submit(sender),
-                  loadTokenBalancesActions.submit(sender),
-                  loadActivityGroupsActions.submit(sender),
-                  loadSelectedBakerActions.submit(sender)
-                ])
-              )
-            : throwError({ message: "Transaction wasn't completed" })
-        ),
+        switchMap(operation => operation.confirmation(1)),
+        delay(BCD_INDEXING_DELAY),
+        concatMap(() => [
+          loadTezosBalanceActions.submit(sender),
+          loadTokenBalancesActions.submit(sender),
+          loadActivityGroupsActions.submit(sender),
+          loadSelectedBakerActions.submit(sender)
+        ]),
         catchError(err => {
           showErrorToast(err.message);
 
@@ -233,7 +227,6 @@ export const walletEpics = combineEpics(
   loadTokenMetadataEpic,
   sendAssetEpic,
   loadEstimationsEpic,
-  approveInternalOperationRequestEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
   approveInternalOperationRequestEpic
