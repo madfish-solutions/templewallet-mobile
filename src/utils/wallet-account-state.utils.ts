@@ -1,8 +1,11 @@
+import { omit } from 'lodash-es';
+
 import { WalletAccountStateInterface } from '../interfaces/wallet-account-state.interface';
-import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
+import { initialWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
 
-export const walletAccountStateToWalletAccount = (state: WalletAccountStateInterface): WalletAccountInterface => {
-  const { name, publicKey, publicKeyHash, tezosBalance, tokensList } = state;
-
-  return { name, publicKey, publicKeyHash, tezosBalance, tokensList };
-};
+export const walletAccountStateToWalletAccount = (
+  walletAccountState: WalletAccountStateInterface
+): WalletAccountInterface => ({
+  ...initialWalletAccount,
+  ...omit(walletAccountState, ['activityGroups', 'pendingActivities'])
+});
