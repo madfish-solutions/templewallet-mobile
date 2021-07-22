@@ -14,6 +14,7 @@ import { isString } from '../../../../utils/is-string';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
+import {isDefined} from "../../../../utils/is-defined";
 
 interface Props {
   group: ActivityGroup;
@@ -30,7 +31,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     const amounts = [];
     let positiveAmountSum = 0;
     for (const { amount, tokenSlug } of group) {
-      const { decimals, symbol, name, address } = getTokenMetadata(tokenSlug);
+      const { decimals, symbol, name, address, id } = getTokenMetadata(tokenSlug);
       if (isString(tokenSlug) && !isString(name)) {
         const { address, id } = getTokenAddressFromSlug(tokenSlug);
         dispatch(loadTokenMetadataActions.submit({ id: Number(id), address: address }));
@@ -44,10 +45,9 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
 
-      if (isPositive) {
+      if (isPositive && isDefined(exchangeRate)) {
         positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
-
       amounts.push({
         parsedAmount,
         isPositive,
