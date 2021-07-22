@@ -41,27 +41,25 @@ const removePermissionEpic = (action$: Observable<Action>) =>
       from(BeaconHandler.getPeers()).pipe(
         switchMap(peers =>
           forkJoin(
-            peers.map(async peer => {
-              const peerSenderId = await getSenderId(peer.publicKey);
-              if (senderId === peerSenderId) {
-                return BeaconHandler.removePeer({ ...peer, senderId: peerSenderId });
-              }
-            })
-          ).pipe(
-            switchMap(() =>
-              from(BeaconHandler.removePermission(accountIdentifier)).pipe(
-                map(() => {
-                  showSuccessToast('Permission successfully removed!');
-
-                  return loadPermissionsActions.submit();
-                }),
-                catchError(err => {
-                  showErrorToast(err.message);
-
-                  return EMPTY;
-                })
+            peers.map(peer =>
+              from(getSenderId(peer.publicKey)).pipe(
+                switchMap(peerSenderId =>
+                  senderId === peerSenderId ? BeaconHandler.removePeer({ ...peer, senderId: peerSenderId }) : EMPTY
+                )
               )
             )
+          ).pipe(
+            switchMap(() => BeaconHandler.removePermission(accountIdentifier)),
+            map(() => {
+              showSuccessToast('Permission successfully removed!');
+
+              return loadPermissionsActions.submit();
+            }),
+            catchError(err => {
+              showErrorToast(err.message);
+
+              return EMPTY;
+            })
           )
         )
       )
