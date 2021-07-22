@@ -10,11 +10,11 @@ import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-action
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenAddressFromSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
-import {isDefined} from "../../../../utils/is-defined";
 
 interface Props {
   group: ActivityGroup;
