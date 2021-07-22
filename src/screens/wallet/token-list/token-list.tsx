@@ -14,6 +14,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useTokensExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -27,7 +28,7 @@ export const TokenList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
-  const { tokensExchangeRates, tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
   const [isShowTezos, setIsShowTezos] = useState(true);
 
   const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
@@ -63,7 +64,7 @@ export const TokenList: FC = () => {
               <TokenListItem
                 token={tezosToken}
                 apy={delegationApy}
-                exchangeRate={tezosExchangeRate.data}
+                exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}

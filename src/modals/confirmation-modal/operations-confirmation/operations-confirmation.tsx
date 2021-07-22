@@ -38,7 +38,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
   const [isEstimationsRequested, setIsEstimationsRequested] = useState(false);
 
   const estimations = useEstimationsSelector();
-  const { tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
   const {
     basicFees,
     estimationWasSuccessful,
@@ -107,7 +107,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
                   onlyOneOperation={onlyOneOperation}
                   minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
                   setFieldValue={setFieldValue}
-                  exchangeRate={tezosExchangeRate.data}
+                  exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 />
               </>
             )}

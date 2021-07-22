@@ -24,7 +24,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const dispatch = useDispatch();
   const { getTokenMetadata } = useTokenMetadata();
-  const { tokensExchangeRates, tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
@@ -39,7 +39,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       if (isString(address)) {
         exchangeRate = tokensExchangeRates.data[address];
       } else if (name === TEZ_TOKEN_METADATA.name) {
-        exchangeRate = tezosExchangeRate.data;
+        exchangeRate = tokensExchangeRates.data[TEZ_TOKEN_METADATA.name];
       }
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();

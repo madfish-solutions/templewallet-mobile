@@ -26,7 +26,7 @@ import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
-import { loadExchangeRates, loadTezosExchangeRate } from '../store/currency/currency-actions';
+import { loadExchangeRates } from '../store/currency/currency-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -61,7 +61,6 @@ export const MainStackScreen = () => {
   };
   const initExchangeRateLoading = () => {
     dispatch(loadExchangeRates.submit());
-    dispatch(loadTezosExchangeRate.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);

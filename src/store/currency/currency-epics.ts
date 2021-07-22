@@ -7,7 +7,7 @@ import { ofType } from 'ts-action-operators';
 import { templeWalletApi } from '../../api.service';
 import { TokenExchangeRateInterface } from '../../interfaces/token-exchange-rate.interface';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { loadExchangeRates, loadTezosExchangeRate } from './currency-actions';
+import { loadExchangeRates } from './currency-actions';
 import { TokenExchangeRateRecord } from './currency-state';
 
 export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
@@ -21,7 +21,7 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
             mappedRates[tokenAddress ?? TEZ_TOKEN_METADATA.name] = Number(exchangeRate);
           }
 
-          return [loadExchangeRates.success(mappedRates), loadTezosExchangeRate(mappedRates[TEZ_TOKEN_METADATA.name])];
+          return [loadExchangeRates.success(mappedRates)];
         }),
         catchError(err => of(loadExchangeRates.fail(err.message)))
       )

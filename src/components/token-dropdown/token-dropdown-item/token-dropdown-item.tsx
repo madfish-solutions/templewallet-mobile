@@ -24,8 +24,11 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
   const styles = useTokenDropdownItemStyles();
 
   const { address, symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
-  const { tokensExchangeRates, tezosExchangeRate } = useTokensExchangeRatesSelector();
-  const exchangeRate = name === TEZ_TOKEN_METADATA.name ? tezosExchangeRate.data : tokensExchangeRates.data[address];
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
+  const exchangeRate =
+    name === TEZ_TOKEN_METADATA.name
+      ? tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]
+      : tokensExchangeRates.data[address];
 
   const formattedBalance = formatAssetAmount(new BigNumber(balance));
 

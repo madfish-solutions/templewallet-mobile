@@ -21,7 +21,7 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
   const styles = useManageAccountItemStyles();
-  const { tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { tokensExchangeRates } = useTokensExchangeRatesSelector();
 
   return (
     <View style={styles.container}>
@@ -46,7 +46,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           </Text>
           <DollarEquivalentText
             balance={account.tezosBalance.data}
-            exchangeRate={tezosExchangeRate.data}
+            exchangeRate={tokensExchangeRates.data[TEZ_TOKEN_METADATA.name]}
             style={styles.equityText}
           />
         </View>
