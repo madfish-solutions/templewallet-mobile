@@ -25,6 +25,7 @@ import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
+import { loadExchangeRates, loadTezosExchangeRate } from '../store/currency/currency-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -40,6 +41,7 @@ import { TabBar } from './tab-bar/tab-bar';
 const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
+const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -49,6 +51,7 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
+
   useEffect(() => {
     if (isAuthorised) {
       let timeoutId = setTimeout(function updateData() {
@@ -60,7 +63,17 @@ export const MainStackScreen = () => {
         timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
       }, DATA_REFRESH_INTERVAL);
 
-      return () => clearTimeout(timeoutId);
+      let exchangeRateTimeout = setTimeout(function updateData() {
+        dispatch(loadExchangeRates.submit());
+        dispatch(loadTezosExchangeRate.submit());
+
+        exchangeRateTimeout = setTimeout(updateData, EXCHANGE_RATE_REFRESH_INTERVAL);
+      }, EXCHANGE_RATE_REFRESH_INTERVAL);
+
+      return () => {
+        clearTimeout(timeoutId);
+        clearTimeout(exchangeRateTimeout);
+      };
     }
   }, [isAuthorised, selectedAccount.publicKeyHash]);
 

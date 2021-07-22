@@ -35,10 +35,14 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     justifyContent: 'space-between'
   },
   lowerContainerData: {
-    justifyContent: 'center'
+    justifyContent: 'space-between'
   },
   balanceText: {
     ...typography.numbersRegular15,
     color: colors.black
+  },
+  equityText: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
   }
 }));
