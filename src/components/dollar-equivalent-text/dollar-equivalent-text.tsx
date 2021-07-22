@@ -8,7 +8,7 @@ import { formatAssetAmount } from '../../utils/number.util';
 interface Props {
   balance: string | BigNumber;
   exchangeRate?: number;
-  style: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 }
 
 export const DollarEquivalentText: FC<Props> = ({ balance, exchangeRate, style }) =>

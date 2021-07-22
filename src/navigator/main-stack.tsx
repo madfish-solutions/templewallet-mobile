@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -10,6 +10,7 @@ import { HeaderTokenInfo } from '../components/header/header-token-info/header-t
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { emptyComponent } from '../config/general';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
+import { useAuthorisedTimerEffect } from '../hooks/use-authorized-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
@@ -26,7 +27,7 @@ import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
-import { loadExchangeRates, loadTezosExchangeRate } from '../store/currency/currency-actions';
+import { loadExchangeRates } from '../store/currency/currency-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -53,30 +54,18 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
 
-  useEffect(() => {
-    if (isAuthorised) {
-      let timeoutId = setTimeout(function updateData() {
-        dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-        dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+  const initDataLoading = () => {
+    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+  };
+  const initExchangeRateLoading = () => {
+    dispatch(loadExchangeRates.submit());
+  };
 
-        timeoutId = setTimeout(updateData, DATA_REFRESH_INTERVAL);
-      }, DATA_REFRESH_INTERVAL);
-
-      let exchangeRateTimeout = setTimeout(function updateData() {
-        dispatch(loadExchangeRates.submit());
-        dispatch(loadTezosExchangeRate.submit());
-
-        exchangeRateTimeout = setTimeout(updateData, EXCHANGE_RATE_REFRESH_INTERVAL);
-      }, EXCHANGE_RATE_REFRESH_INTERVAL);
-
-      return () => {
-        clearTimeout(timeoutId);
-        clearTimeout(exchangeRateTimeout);
-      };
-    }
-  }, [isAuthorised, selectedAccount.publicKeyHash]);
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
+  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
 
   return (
     <PortalProvider>

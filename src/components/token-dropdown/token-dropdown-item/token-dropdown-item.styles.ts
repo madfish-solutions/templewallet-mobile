@@ -10,6 +10,7 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center'
   },
   rightContainer: {
+    alignSelf: 'center',
     flexDirection: 'row'
   },
   symbol: {
@@ -24,5 +25,10 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     ...typography.numbersRegular15,
     color: colors.black,
     alignSelf: 'center'
+  },
+  dollarEquivalent: {
+    ...typography.numbersRegular11,
+    color: colors.gray1,
+    alignSelf: 'flex-end'
   }
 }));
