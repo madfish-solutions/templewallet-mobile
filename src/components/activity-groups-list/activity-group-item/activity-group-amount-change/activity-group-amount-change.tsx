@@ -10,6 +10,7 @@ import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-action
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenAddressFromSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
@@ -44,10 +45,9 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
 
-      if (isPositive) {
+      if (isPositive && isDefined(exchangeRate)) {
         positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
-
       amounts.push({
         parsedAmount,
         isPositive,
