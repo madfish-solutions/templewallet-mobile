@@ -7,6 +7,7 @@ import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
+import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { emptyComponent } from '../config/general';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { About } from '../screens/about/about';
@@ -79,6 +80,7 @@ export const MainStackScreen = () => {
 
   return (
     <PortalProvider>
+      <ScreenStatusBar />
       <MainStack.Navigator screenOptions={styleScreenOptions}>
         {!isAuthorised ? (
           <>
