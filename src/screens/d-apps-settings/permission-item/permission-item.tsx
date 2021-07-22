@@ -38,7 +38,7 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
       <TouchableIcon
         name={IconNameEnum.Trash}
         size={formatSize(16)}
-        onPress={() => dispatch(removePermissionAction(permission.accountIdentifier))}
+        onPress={() => dispatch(removePermissionAction(permission))}
       />
     </View>
   );

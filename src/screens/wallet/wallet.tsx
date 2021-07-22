@@ -44,7 +44,6 @@ export const Wallet = () => {
 
   return (
     <>
-      <ScreenStatusBar />
       <HeaderCard hasInsetTop={true}>
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
