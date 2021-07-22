@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { ANDROID_10_VERSION, isAndroid, platformVersion } from '../../config/system';
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
@@ -32,8 +33,12 @@ export const TabBar: FC = () => {
 
   const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
 
+  const isAndroid11Plus = isAndroid && platformVersion > ANDROID_10_VERSION;
+  const statusBarHeight = StatusBar.currentHeight ?? 0;
+
+  const androidBottomInset = isAndroid11Plus ? statusBarHeight : 0;
   const height = layoutHeight + insets.bottom;
-  const top = dimensions.height - ((StatusBar.currentHeight ?? 0) + height);
+  const top = dimensions.height + androidBottomInset - height - statusBarHeight;
 
   return isHidden ? null : (
     <>
