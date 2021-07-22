@@ -80,7 +80,7 @@ export const MainStackScreen = () => {
 
   return (
     <PortalProvider>
-      {!isAuthorised && <ScreenStatusBar />}
+      <ScreenStatusBar />
       <MainStack.Navigator screenOptions={styleScreenOptions}>
         {!isAuthorised ? (
           <>
