@@ -21,10 +21,7 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
             mappedRates[tokenAddress ?? TEZ_TOKEN_METADATA.name] = Number(exchangeRate);
           }
 
-          return [
-            loadExchangeRates.success(mappedRates),
-            loadTezosExchangeRate.success(mappedRates[TEZ_TOKEN_METADATA.name])
-          ];
+          return [loadExchangeRates.success(mappedRates), loadTezosExchangeRate(mappedRates[TEZ_TOKEN_METADATA.name])];
         }),
         catchError(err => of(loadExchangeRates.fail(err.message)))
       )

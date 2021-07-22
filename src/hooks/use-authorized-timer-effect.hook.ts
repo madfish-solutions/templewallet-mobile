@@ -17,5 +17,5 @@ export const useAuthorisedTimerEffect = (callback: EmptyFn, refreshInterval: num
 
       return () => clearTimeout(timeoutId);
     }
-  }, [isAuthorised, ...[deps]]);
+  }, [isAuthorised, ...deps]);
 };
