@@ -1,41 +1,31 @@
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
-import { TokenExchangeRateInterface } from '../../interfaces/token-exchange-rate.interface';
-import { loadExchangeRates, loadTezosExchangeRate } from './currency-actions';
-import { TokenExchangeRateRecord } from './currency-state';
+import { ExchangeRateInterface } from '../../interfaces/token-exchange-rate.interface';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { loadExchangeRates } from './currency-actions';
+import { ExchangeRateRecord } from './currency-state';
 
 export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
     switchMap(() =>
-      from(templeWalletApi.get<TokenExchangeRateInterface[]>('exchange-rates')).pipe(
-        map(({ data }) => {
-          const mappedRates: TokenExchangeRateRecord = {};
+      from(templeWalletApi.get<ExchangeRateInterface[]>('exchange-rates')).pipe(
+        switchMap(({ data }) => {
+          const mappedRates: ExchangeRateRecord = {};
           for (const { tokenAddress, exchangeRate } of data) {
-            mappedRates[tokenAddress] = Number(exchangeRate);
+            mappedRates[tokenAddress ?? TEZ_TOKEN_METADATA.name] = Number(exchangeRate);
           }
 
-          return loadExchangeRates.success(mappedRates);
+          return [loadExchangeRates.success(mappedRates)];
         }),
         catchError(err => of(loadExchangeRates.fail(err.message)))
       )
     )
   );
 
-export const loadTezosExchangeRateEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTezosExchangeRate.submit),
-    switchMap(() =>
-      from(templeWalletApi.get<number>('exchange-rates/tez')).pipe(
-        map(({ data }) => loadTezosExchangeRate.success(data)),
-        catchError(err => of(loadExchangeRates.fail(err.message)))
-      )
-    )
-  );
-
-export const currencyEpics = combineEpics(loadExchangeRatesEpic, loadTezosExchangeRateEpic);
+export const currencyEpics = combineEpics(loadExchangeRatesEpic);

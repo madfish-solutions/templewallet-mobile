@@ -1,6 +1,6 @@
-import { BeaconErrorType, BeaconMessageType } from '@airgap/beacon-sdk';
+import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { EMPTY, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, concatMap, delay, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -45,18 +45,31 @@ const removePermissionEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removePermissionAction),
     toPayload(),
-    switchMap(accountIdentifier =>
-      from(BeaconHandler.removePermission(accountIdentifier)).pipe(
-        map(() => {
-          showSuccessToast('Permission successfully removed!');
+    switchMap(({ accountIdentifier, senderId }) =>
+      from(BeaconHandler.getPeers()).pipe(
+        switchMap(peers =>
+          forkJoin(
+            peers.map(peer =>
+              from(getSenderId(peer.publicKey)).pipe(
+                switchMap(peerSenderId =>
+                  senderId === peerSenderId ? BeaconHandler.removePeer({ ...peer, senderId: peerSenderId }) : EMPTY
+                )
+              )
+            )
+          ).pipe(
+            switchMap(() => BeaconHandler.removePermission(accountIdentifier)),
+            map(() => {
+              showSuccessToast('Permission successfully removed!');
 
-          return loadPermissionsActions.submit();
-        }),
-        catchError(err => {
-          showErrorToast(err.message);
+              return loadPermissionsActions.submit();
+            }),
+            catchError(err => {
+              showErrorToast(err.message);
 
-          return EMPTY;
-        })
+              return EMPTY;
+            })
+          )
+        )
       )
     )
   );

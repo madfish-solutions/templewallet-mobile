@@ -213,7 +213,7 @@ export class WalletClient extends Client {
     return (await this.transport).addPeer(extendedPeer, sendPairingResponse);
   }
 
-  public async removePeer(peer: ExtendedP2PPairingResponse, sendDisconnectToPeer = false): Promise<void> {
+  public async removePeer(peer: ExtendedPeerInfo, sendDisconnectToPeer = false): Promise<void> {
     const removePeerResult = (await this.transport).removePeer(peer);
 
     await this.removePermissionsForPeers([peer]);
@@ -240,7 +240,7 @@ export class WalletClient extends Client {
     return removePeerResult;
   }
 
-  private async removePermissionsForPeers(peersToRemove: ExtendedP2PPairingResponse[]): Promise<void> {
+  private async removePermissionsForPeers(peersToRemove: ExtendedPeerInfo[]): Promise<void> {
     const permissions = await this.permissionManager.getPermissions();
 
     const peerIdsToRemove = peersToRemove.map(peer => peer.senderId);

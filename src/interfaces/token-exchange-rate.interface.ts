@@ -1,4 +1,4 @@
-export interface TokenExchangeRateInterface {
+export interface ExchangeRateInterface {
   tokenAddress: string;
   tokenId?: number;
   exchangeRate: string;
