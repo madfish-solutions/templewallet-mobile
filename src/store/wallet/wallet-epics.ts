@@ -179,7 +179,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
     switchMap(([{ opHash, sender }, tezos]) =>
       from(tezos.operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
-        delay(BCD_INDEXING_DELAY),
+        switchMap(() => of(null).pipe(delay(BCD_INDEXING_DELAY))),
         concatMap(() => [
           loadTezosBalanceActions.submit(sender),
           loadTokenBalancesActions.submit(sender),
