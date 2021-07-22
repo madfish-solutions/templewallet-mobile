@@ -36,9 +36,9 @@ export const TabBar: FC = () => {
   const isAndroid11Plus = isAndroid && platformVersion > ANDROID_10_VERSION;
   const statusBarHeight = StatusBar.currentHeight ?? 0;
 
-  const androidBottomInset = isAndroid11Plus ? statusBarHeight : 0;
+  const androidBottomInset = isAndroid11Plus ? 0 : -statusBarHeight;
   const height = layoutHeight + insets.bottom;
-  const top = dimensions.height + androidBottomInset - height - statusBarHeight;
+  const top = dimensions.height + androidBottomInset - height;
 
   return isHidden ? null : (
     <>
