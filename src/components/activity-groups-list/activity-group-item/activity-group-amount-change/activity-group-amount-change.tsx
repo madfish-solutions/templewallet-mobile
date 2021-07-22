@@ -5,11 +5,12 @@ import { useDispatch } from 'react-redux';
 
 import { useTokenMetadata } from '../../../../hooks/use-token-metadata.hook';
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
-import { useTokensExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenAddressFromSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
@@ -24,7 +25,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const dispatch = useDispatch();
   const { getTokenMetadata } = useTokenMetadata();
-  const { tokensExchangeRates, tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
@@ -37,17 +38,16 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       }
       let exchangeRate = 0;
       if (isString(address)) {
-        exchangeRate = tokensExchangeRates.data[address];
+        exchangeRate = exchangeRates.data[address];
       } else if (name === TEZ_TOKEN_METADATA.name) {
-        exchangeRate = tezosExchangeRate.data;
+        exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
       }
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
 
-      if (isPositive) {
+      if (isPositive && isDefined(exchangeRate)) {
         positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
-
       amounts.push({
         parsedAmount,
         isPositive,

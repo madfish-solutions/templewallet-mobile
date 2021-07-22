@@ -7,11 +7,10 @@ import { HeaderCardActionButtons } from '../../components/header-card-action-but
 import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-import { ScreenStatusBar } from '../../components/screen-status-bar/screen-status-bar';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTokensExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -23,6 +22,7 @@ import {
   useSelectedAccountSelector,
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -33,7 +33,7 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const { tezosExchangeRate } = useTokensExchangeRatesSelector();
+  const { exchangeRates } = useExchangeRatesSelector();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -43,7 +43,6 @@ export const Wallet = () => {
 
   return (
     <>
-      <ScreenStatusBar />
       <HeaderCard hasInsetTop={true}>
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
@@ -55,7 +54,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue token={tezosToken} exchangeRate={tezosExchangeRate.data} />
+        <TokenEquityValue token={tezosToken} exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>
