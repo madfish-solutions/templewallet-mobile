@@ -1,6 +1,4 @@
-import { compose, OpKind, WalletParamsWithKind } from '@taquito/taquito';
-import { tzip12 } from '@taquito/tzip12';
-import { tzip16 } from '@taquito/tzip16';
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
@@ -14,7 +12,6 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
-import { TokenMetadataSuggestionInterface } from '../../interfaces/token-metadata-suggestion.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
@@ -57,21 +54,18 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
       ).pipe(
         switchMap(({ data }) =>
           forkJoin(
-            data.balances.map(async balance => {
-              try {
-                const bestTokenMetadata = await getTokenMetadata(balance.contract, balance.token_id);
-
-                return {
+            data.balances.map(balance =>
+              from(getTokenMetadata(balance.contract, balance.token_id)).pipe(
+                map(tokenMetadata => ({
                   ...balance,
-                  decimals: bestTokenMetadata.decimals,
-                  symbol: bestTokenMetadata.symbol,
-                  name: bestTokenMetadata.name,
-                  thumbnail_uri: bestTokenMetadata.thumbnailUri
-                };
-              } catch (e) {
-                return balance;
-              }
-            })
+                  decimals: tokenMetadata.decimals,
+                  symbol: tokenMetadata.symbol,
+                  name: tokenMetadata.name,
+                  thumbnail_uri: tokenMetadata.thumbnailUri
+                })),
+                catchError(() => of(balance))
+              )
+            )
           )
         ),
         map(balances => loadTokenBalancesActions.success(balances)),
@@ -97,23 +91,16 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
-    withLatestFrom(tezos$),
-    concatMap(([{ id, address }, tezos]) =>
-      from(tezos.contract.at(address, compose(tzip12, tzip16))).pipe(
-        switchMap(contract => contract.tzip12().getTokenMetadata(id)),
-        map((tokenMetadata: TokenMetadataSuggestionInterface) =>
+    concatMap(({ id, address }) =>
+      from(getTokenMetadata(address, id)).pipe(
+        map(tokenMetadata =>
           loadTokenMetadataActions.success({
             id,
             address,
             decimals: tokenMetadata.decimals,
             symbol: tokenMetadata.symbol ?? tokenMetadata.name?.substring(8) ?? '???',
             name: tokenMetadata.name ?? tokenMetadata.symbol ?? 'Unknown Token',
-            iconUrl:
-              tokenMetadata.thumbnailUri ??
-              tokenMetadata.logo ??
-              tokenMetadata.icon ??
-              tokenMetadata.iconUri ??
-              tokenMetadata.iconUrl
+            iconUrl: tokenMetadata.thumbnailUri
           })
         ),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
