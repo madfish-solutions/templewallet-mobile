@@ -20,7 +20,7 @@ export const CreateAccount = () => {
   return (
     <>
       {innerScreenIndex === 0 && (
-        <CreateNewWallet onSubmit={handleImportWalletFormSubmit} initialSeedPhrase={seedPhrase} />
+        <CreateNewWallet initialSeedPhrase={seedPhrase} onSubmit={handleImportWalletFormSubmit} />
       )}
       {innerScreenIndex === 1 && (
         <VerifySeedPhrase
