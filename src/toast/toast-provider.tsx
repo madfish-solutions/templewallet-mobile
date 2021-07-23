@@ -8,8 +8,6 @@ import { CopiedToast } from './copied-toast/copied-toast';
 import { ToastProviderStyles } from './toast-provider.styles';
 import { CustomToast } from './toast/custom-toast';
 
-
-
 interface ToastProps {
   hide: EmptyFn;
   text1: string;

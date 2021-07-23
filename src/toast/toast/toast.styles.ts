@@ -1,5 +1,4 @@
 import { black } from '../../config/styles';
-import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';

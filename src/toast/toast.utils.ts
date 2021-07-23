@@ -1,4 +1,3 @@
-import { GestureResponderEvent } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import { ToastTypeEnum } from '../enums/toast-type.enum';

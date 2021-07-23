@@ -10,7 +10,6 @@ import { EmptyFn } from '../../config/general';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { tzktUrl } from '../../utils/linking.util';
