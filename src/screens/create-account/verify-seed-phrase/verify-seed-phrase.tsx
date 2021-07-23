@@ -44,20 +44,12 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
       const newPosition = shuffledPositions[i];
       if (
         selectedPositions.every(selectedPosition => {
-          if (selectedPosition === 0) {
-            return newPosition > 2;
-          }
-          if (selectedPosition === words.length - 1) {
-            return newPosition < words.length - 3;
-          }
-          if (newPosition === 0) {
-            return selectedPosition > 2;
-          }
-          if (newPosition === words.length - 1) {
-            return selectedPosition < words.length - 3;
+          const distance = Math.abs(selectedPosition - newPosition);
+          if ([selectedPosition, newPosition].some(position => [0, words.length - 1].some(edge => edge === position))) {
+            return distance > 2;
           }
 
-          return Math.abs(selectedPosition - newPosition) > 1;
+          return distance > 1;
         })
       ) {
         selectedPositions.push(newPosition);

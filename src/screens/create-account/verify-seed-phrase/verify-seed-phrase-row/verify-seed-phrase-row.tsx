@@ -14,35 +14,31 @@ type VerifySeedPhraseRowProps = {
 export const VerifySeedPhraseRow: FC<VerifySeedPhraseRowProps> = ({ index, wordPosition, words }) => {
   const styles = useVerifySeedPhraseRowStyles();
 
-  const isFirstWord = wordPosition === 0;
-  const isLastWord = wordPosition === words.length - 1;
+  if (wordPosition === 0) {
+    return (
+      <View style={styles.container}>
+        <SeedPhraseWordInput index={index} position={0} />
+        <SeedPhraseWordGiven position={1} value={words[1]} />
+        <SeedPhraseWordGiven position={2} value={words[2]} />
+      </View>
+    );
+  }
+
+  if (wordPosition === words.length - 1) {
+    return (
+      <View style={styles.container}>
+        <SeedPhraseWordGiven position={words.length - 3} value={words[words.length - 3]} />
+        <SeedPhraseWordGiven position={words.length - 2} value={words[words.length - 2]} />
+        <SeedPhraseWordInput index={index} position={words.length - 1} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {isFirstWord ? (
-        <SeedPhraseWordInput index={index} position={wordPosition} />
-      ) : (
-        <SeedPhraseWordGiven
-          position={isLastWord ? wordPosition - 2 : wordPosition - 1}
-          value={words[isLastWord ? wordPosition - 2 : wordPosition - 1]}
-        />
-      )}
-      {isFirstWord || isLastWord ? (
-        <SeedPhraseWordGiven
-          position={isFirstWord ? wordPosition + 1 : wordPosition - 1}
-          value={words[isFirstWord ? wordPosition + 1 : wordPosition - 1]}
-        />
-      ) : (
-        <SeedPhraseWordInput index={index} position={wordPosition} />
-      )}
-      {isLastWord ? (
-        <SeedPhraseWordInput index={index} position={wordPosition} />
-      ) : (
-        <SeedPhraseWordGiven
-          position={isFirstWord ? wordPosition + 2 : wordPosition + 1}
-          value={words[isFirstWord ? wordPosition + 2 : wordPosition + 1]}
-        />
-      )}
+      <SeedPhraseWordGiven position={wordPosition - 1} value={words[wordPosition - 1]} />
+      <SeedPhraseWordInput index={index} position={wordPosition} />
+      <SeedPhraseWordGiven position={wordPosition + 1} value={words[wordPosition + 1]} />
     </View>
   );
 };
