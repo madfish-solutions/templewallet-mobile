@@ -2,7 +2,7 @@ import { OpKind, WalletParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, concatMap, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -25,6 +25,7 @@ import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
+import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import {
   addPendingOperation,
@@ -34,7 +35,8 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  sendAssetActions
+  sendAssetActions,
+  waitForOperationCompletionAction
 } from './wallet-actions';
 import { WalletRootState } from './wallet-state';
 
@@ -161,9 +163,36 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
 
           return [
             navigateAction(StacksEnum.MainStack),
+            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
             addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
           ];
         }),
+        catchError(err => {
+          showErrorToast(err.message);
+
+          return EMPTY;
+        })
+      )
+    )
+  );
+
+const BCD_INDEXING_DELAY = 15000;
+
+const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(waitForOperationCompletionAction),
+    toPayload(),
+    withLatestFrom(tezos$),
+    switchMap(([{ opHash, sender }, tezos]) =>
+      from(tezos.operation.createOperation(opHash)).pipe(
+        switchMap(operation => operation.confirmation(1)),
+        delay(BCD_INDEXING_DELAY),
+        concatMap(() => [
+          loadTezosBalanceActions.submit(sender),
+          loadTokenBalancesActions.submit(sender),
+          loadActivityGroupsActions.submit(sender),
+          loadSelectedBakerActions.submit(sender)
+        ]),
         catchError(err => {
           showErrorToast(err.message);
 
@@ -205,6 +234,7 @@ export const walletEpics = combineEpics(
   loadTokenMetadataEpic,
   sendAssetEpic,
   loadEstimationsEpic,
+  waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
   approveInternalOperationRequestEpic
 );
