@@ -22,12 +22,10 @@ interface Props {
   text2: string;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
-  props?: {
-    operationHash?: string;
-  };
+  operationHash?: string;
 }
 
-export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType, props }) => {
+export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType, operationHash }) => {
   const styles = useToastStyles();
   const colors = useColors();
 
@@ -68,13 +66,13 @@ export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType,
               ]}>
               {text2}
             </Text>
-            {isDefined(props) && isDefined(props.operationHash) && (
+            {isDefined(operationHash) && (
               <View style={styles.operationHashBlock}>
                 <Text style={styles.description}>Operation hash:</Text>
                 <Divider size={formatSize(8)} />
-                <PublicKeyHashText publicKeyHash={props.operationHash} />
+                <PublicKeyHashText publicKeyHash={operationHash} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(props.operationHash)} />
+                <ExternalLinkButton url={tzktUrl(operationHash)} />
               </View>
             )}
           </View>

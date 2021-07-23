@@ -53,8 +53,7 @@ const backgroundLightColors = {
   cardBG: '#ffffff',
   lines: '#e4e4e4',
   disabled: '#cbcbcb',
-  input: '#f0f0f0',
-  toastBG: basicLightColors.white
+  input: '#f0f0f0'
 };
 
 const backgroundDarkColors: typeof backgroundLightColors = {
@@ -63,8 +62,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   cardBG: '#202020',
   lines: '#000000',
   disabled: '#6F6F6F',
-  input: '#2D2D2D',
-  toastBG: basicDarkColors.white
+  input: '#2D2D2D'
 };
 
 const lightTheme = {

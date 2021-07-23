@@ -8,7 +8,7 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
     ...generateShadow(1, black),
     width: formatSize(343),
     borderRadius: formatSize(8),
-    backgroundColor: colors.toastBG
+    backgroundColor: colors.white
   },
   overlay: {
     borderRadius: formatSize(8),

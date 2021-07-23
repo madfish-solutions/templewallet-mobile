@@ -26,16 +26,16 @@ const config = {
       text1={text1}
       text2={text2}
       toastType={ToastTypeEnum.Success}
-      props={props}
+      operationHash={props?.operationHash}
       hide={hide}
       onPress={onPress}
     />
   ),
   [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress }: ToastProps) => (
-    <CustomToast text1={text1} text2={text2} onPress={onPress} hide={hide} toastType={ToastTypeEnum.Error} />
+    <CustomToast text1={text1} text2={text2} hide={hide} toastType={ToastTypeEnum.Error} onPress={onPress} />
   ),
   [ToastTypeEnum.Warning]: ({ hide, text1, text2, onPress }: ToastProps) => (
-    <CustomToast text1={text1} text2={text2} onPress={onPress} hide={hide} toastType={ToastTypeEnum.Warning} />
+    <CustomToast text1={text1} text2={text2} hide={hide} toastType={ToastTypeEnum.Warning} onPress={onPress} />
   )
 };
 
