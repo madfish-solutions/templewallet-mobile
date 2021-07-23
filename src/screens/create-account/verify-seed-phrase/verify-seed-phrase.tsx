@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import { range, shuffle } from 'lodash-es';
 import React, { FC, Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { object, string, StringSchema } from 'yup';
+import { object, string } from 'yup';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../components/divider/divider';
@@ -65,7 +65,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
   const validationSchema = useMemo(
     () =>
       object().shape(
-        wordsToCheckPositions.reduce<Record<string, StringSchema>>(
+        wordsToCheckPositions.reduce(
           (shape, wordPosition, index) => ({
             ...shape,
             [`word${index}`]: string().oneOf([words[wordPosition]], '').required('')
@@ -78,7 +78,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
 
   const initialValues = useMemo(
     () =>
-      wordsToCheckPositions.reduce<Record<string, string>>(
+      wordsToCheckPositions.reduce(
         (previousValue, _, index) => ({
           ...previousValue,
           [`word${index}`]: ''
