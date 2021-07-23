@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -15,19 +15,25 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
 import { formatSize } from '../../../styles/format-size';
-import {
-  createNewWalletInitialValues,
-  createNewWalletValidationSchema,
-  CreateNewWalletFormValues
-} from './create-new-wallet.form';
+import { isString } from '../../../utils/is-string';
+import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './create-new-wallet.form';
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
 
 type CreateNewWalletProps = {
   onSubmit: (formValues: CreateNewWalletFormValues) => void;
+  initialSeedPhrase: string;
 };
 
-export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onSubmit }) => {
+export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onSubmit, initialSeedPhrase }) => {
   const styles = useCreateNewWalletStyles();
+
+  const createNewWalletInitialValues: CreateNewWalletFormValues = useMemo(
+    () => ({
+      seedPhrase: initialSeedPhrase,
+      madeSeedPhraseBackup: isString(initialSeedPhrase)
+    }),
+    [initialSeedPhrase]
+  );
 
   useNavigationSetOptions(
     {

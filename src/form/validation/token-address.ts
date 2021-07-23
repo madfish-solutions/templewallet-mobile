@@ -1,8 +1,8 @@
 import { string } from 'yup';
 
+import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isKTAddress, isValidAddress } from '../../utils/tezos.util';
-import { makeRequiredErrorMessage } from './messages';
 
 const invalidAddressError = 'Invalid address';
 const invalidKTAddressError = 'Only KT... contract address allowed';

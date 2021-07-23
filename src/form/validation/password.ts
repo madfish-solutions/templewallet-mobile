@@ -1,6 +1,6 @@
 import { ref, string } from 'yup';
 
-import { makeRequiredErrorMessage } from './messages';
+import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
 
 const atLeastOneLowerCaseLetterError = 'At least 1 English lowercase letter';
 const atLeastOneUpperCaseLetterError = 'At least 1 English uppercase letter';

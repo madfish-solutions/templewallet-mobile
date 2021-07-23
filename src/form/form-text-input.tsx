@@ -5,11 +5,19 @@ import { StyledTextInput, StyledTextInputProps } from '../components/styled-text
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isShowCleanButton'> {
+interface Props extends Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isShowCleanButton' | 'style'> {
   name: string;
+  hideError?: boolean;
 }
 
-export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCleanButton }) => {
+export const FormTextInput: FC<Props> = ({
+  name,
+  editable,
+  hideError = false,
+  placeholder,
+  isShowCleanButton,
+  style
+}) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -19,12 +27,13 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
         value={field.value}
         editable={editable}
         placeholder={placeholder}
-        isError={isError}
+        isError={!hideError && isError}
         isShowCleanButton={isShowCleanButton}
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
+        style={style}
       />
-      <ErrorMessage meta={meta} />
+      {!hideError && <ErrorMessage meta={meta} />}
     </>
   );
 };

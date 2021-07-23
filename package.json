@@ -50,6 +50,7 @@
     "events": "^1.1.1",
     "formik": "^2.2.6",
     "https-browserify": "^0.0.1",
+    "jsc-android": "^250230.2.1",
     "lodash-es": "^4.17.21",
     "mem": "^8.1.1",
     "path-browserify": "^0.0.0",

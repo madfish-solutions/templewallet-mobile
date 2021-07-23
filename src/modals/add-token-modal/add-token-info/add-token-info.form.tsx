@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../../form/validation/messages';
+import { makeRequiredErrorMessage } from '../../../utils/i18n.utils';
 
 export type AddTokenInfoFormValues = {
   symbol: string;

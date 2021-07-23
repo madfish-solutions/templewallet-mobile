@@ -2,9 +2,9 @@ import { BigNumber } from 'bignumber.js';
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { bigNumberValidation } from '../../form/validation/big-number';
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
 
 export interface SendModalFormValues {
   token: TokenInterface;
