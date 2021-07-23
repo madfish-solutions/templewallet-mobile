@@ -20,11 +20,11 @@ import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './cr
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
 
 type CreateNewWalletProps = {
-  onSubmit: (formValues: CreateNewWalletFormValues) => void;
   initialSeedPhrase: string;
+  onSubmit: (formValues: CreateNewWalletFormValues) => void;
 };
 
-export const CreateNewWallet: FC<CreateNewWalletProps> = ({ onSubmit, initialSeedPhrase }) => {
+export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, onSubmit }) => {
   const styles = useCreateNewWalletStyles();
 
   const createNewWalletInitialValues: CreateNewWalletFormValues = useMemo(
