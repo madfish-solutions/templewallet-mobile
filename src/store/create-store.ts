@@ -4,6 +4,8 @@ import { Middleware } from 'redux';
 import createDebugger from 'redux-flipper';
 import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import { PersistConfig } from 'redux-persist/lib/types';
 import { catchError } from 'rxjs/operators';
 
 import { bakingReducers } from './baking/baking-reducers';
@@ -28,10 +30,11 @@ if (__DEV__ && !process.env.JEST_WORKER_ID) {
   middlewares.push(createDebugger());
 }
 
-const persistConfig = {
+const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   version: 1,
-  storage: AsyncStorage
+  storage: AsyncStorage,
+  stateReconciler: autoMergeLevel2
 };
 
 const rootReducer = rootStateReducer<RootState>({

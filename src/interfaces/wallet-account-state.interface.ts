@@ -1,15 +1,14 @@
-import { createEntity } from '../store/create-entity';
-import { AccountStateInterface } from './account-state.interface';
-import { AccountInterface } from './account.interface';
+import { AccountStateInterface, emptyAccountState, initialAccountState } from './account-state.interface';
+import { AccountInterface, emptyAccount, initialAccount } from './account.interface';
 
 export type WalletAccountStateInterface = AccountInterface & AccountStateInterface;
 
+export const initialWalletAccountState: WalletAccountStateInterface = {
+  ...initialAccount,
+  ...initialAccountState
+};
+
 export const emptyWalletAccountState: WalletAccountStateInterface = {
-  name: '',
-  publicKey: '',
-  publicKeyHash: 'empty_public_key_hash',
-  tezosBalance: createEntity('0'),
-  tokensList: [],
-  activityGroups: createEntity([]),
-  pendingActivities: []
+  ...emptyAccount,
+  ...emptyAccountState
 };

@@ -12,7 +12,7 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { sendTransaction$ } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
-import { addPendingOperation } from '../wallet/wallet-actions';
+import { addPendingOperation, waitForOperationCompletionAction } from '../wallet/wallet-actions';
 import {
   abortRequestAction,
   approveOperationRequestAction,
@@ -143,6 +143,7 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
 
           return [
             navigateAction(StacksEnum.MainStack),
+            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
             addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
           ];
         }),

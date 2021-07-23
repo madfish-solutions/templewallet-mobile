@@ -18,3 +18,10 @@ export const initialAccountState: AccountStateInterface = {
   activityGroups: createEntity([]),
   pendingActivities: []
 };
+
+export const emptyAccountState: AccountStateInterface = {
+  tezosBalance: createEntity('0'),
+  tokensList: [],
+  activityGroups: createEntity([]),
+  pendingActivities: []
+};

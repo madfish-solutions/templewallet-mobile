@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { emptyWalletAccountState } from '../../interfaces/wallet-account-state.interface';
+import {
+  initialWalletAccountState,
+  WalletAccountStateInterface
+} from '../../interfaces/wallet-account-state.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
@@ -16,15 +19,17 @@ export const useHdAccountsListSelector = () =>
 
 export const useIsAuthorisedSelector = () => useHdAccountsListSelector().length > 0;
 
-const useSelectedAccountStateSelector = () => {
+const useSelectedAccountStateSelector = (): WalletAccountStateInterface => {
   const { hdAccounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(
     ({ wallet }) => wallet
   );
 
   // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
   return useMemo(
-    () =>
-      hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccountState,
+    () => ({
+      ...initialWalletAccountState,
+      ...hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
+    }),
     [hdAccounts, selectedAccountPublicKeyHash]
   );
 };
