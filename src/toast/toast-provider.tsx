@@ -8,6 +8,8 @@ import { CopiedToast } from './copied-toast/copied-toast';
 import { ToastProviderStyles } from './toast-provider.styles';
 import { CustomToast } from './toast/custom-toast';
 
+
+
 interface ToastProps {
   hide: EmptyFn;
   text1: string;
@@ -25,10 +27,10 @@ const config = {
     <CustomToast
       text1={text1}
       text2={text2}
-      onPress={onPress}
-      hide={hide}
       toastType={ToastTypeEnum.Success}
       props={props}
+      hide={hide}
+      onPress={onPress}
     />
   ),
   [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress }: ToastProps) => (

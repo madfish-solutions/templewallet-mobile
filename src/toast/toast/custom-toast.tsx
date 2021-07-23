@@ -14,10 +14,11 @@ import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { tzktUrl } from '../../utils/linking.util';
+import { hexa } from '../../utils/style.util';
 import { useToastStyles } from './toast.styles';
 
 interface Props {
-  onPress?: () => void;
+  onPress?: EmptyFn;
   text1?: string;
   text2: string;
   hide: EmptyFn;
@@ -28,10 +29,16 @@ interface Props {
 }
 
 export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType, props }) => {
-  const styles = useToastStyles(toastType)();
+  const styles = useToastStyles();
   const colors = useColors();
 
-  const onPressHandler = () => {
+  const backgroundColorMap: { [key: string]: string } = {
+    [ToastTypeEnum.Success]: colors.adding,
+    [ToastTypeEnum.Warning]: hexa(colors.peach, 0.1),
+    [ToastTypeEnum.Error]: colors.destructive
+  };
+
+  const handlePress = () => {
     if (isDefined(onPress)) {
       onPress();
     }
@@ -39,17 +46,27 @@ export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType,
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPressHandler}>
-      <View style={styles.overlay}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
+      <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
           <Icon
-            name={isString(text1) ? IconNameEnum.Success : IconNameEnum.AlertShield}
-            color={toastType === ToastTypeEnum.Warning ? undefined : colors.white}
+            name={toastType === ToastTypeEnum.Success ? IconNameEnum.Success : IconNameEnum.AlertShield}
             style={styles.iconLeft}
+            {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
           />
-          <View style={[styles.textWrapper, conditionalStyle(!isDefined(onPress), { marginRight: formatSize(16) })]}>
-            {isString(text1) && <Text style={styles.title}>{text1}</Text>}
-            <Text numberOfLines={!isString(text1) ? 2 : 1} style={styles.description}>
+          <View style={styles.textWrapper}>
+            {isString(text1) && (
+              <Text
+                style={[styles.title, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}>
+                {text1}
+              </Text>
+            )}
+            <Text
+              numberOfLines={!isString(text1) ? 2 : 1}
+              style={[
+                styles.description,
+                { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }
+              ]}>
               {text2}
             </Text>
             {isDefined(props) && isDefined(props.operationHash) && (
@@ -62,12 +79,14 @@ export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType,
               </View>
             )}
           </View>
-          {isDefined(onPress) && (
+          {isDefined(onPress) ? (
             <Icon
               name={IconNameEnum.Navigation}
-              color={toastType === ToastTypeEnum.Warning ? undefined : colors.white}
+              {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
               style={styles.iconRight}
             />
+          ) : (
+            <Divider size={formatSize(16)} />
           )}
         </View>
       </View>

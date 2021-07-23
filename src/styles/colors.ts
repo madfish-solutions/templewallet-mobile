@@ -14,14 +14,16 @@ const basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#000000',
-  white: '#ffffff'
+  white: '#ffffff',
+  peach: '#FF7A00'
 };
 
 const basicDarkColors: typeof basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#ffffff',
-  white: '#000000'
+  white: '#000000',
+  peach: '#FF7A00'
 };
 
 const basicLightAlphaColors = {
@@ -52,10 +54,7 @@ const backgroundLightColors = {
   lines: '#e4e4e4',
   disabled: '#cbcbcb',
   input: '#f0f0f0',
-  toastBG: '#ffffff',
-  successToastOverlay: basicLightColors.adding,
-  warningToastOverlay: hexa('#FF7A00', 0.1),
-  errorToastOverlay: basicLightColors.destructive
+  toastBG: basicLightColors.white
 };
 
 const backgroundDarkColors: typeof backgroundLightColors = {
@@ -65,13 +64,10 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   lines: '#000000',
   disabled: '#6F6F6F',
   input: '#2D2D2D',
-  toastBG: '#000000',
-  successToastOverlay: basicLightColors.adding,
-  warningToastOverlay: hexa(basicDarkColors.black, 0.1),
-  errorToastOverlay: basicDarkColors.destructive
+  toastBG: basicDarkColors.white
 };
 
-const lightTheme: Record<string, string> = {
+const lightTheme = {
   ...accentColors,
   ...accentAlphaColors,
   ...basicLightColors,
