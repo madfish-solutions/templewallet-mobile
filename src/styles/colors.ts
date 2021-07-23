@@ -51,18 +51,27 @@ const backgroundLightColors = {
   cardBG: '#ffffff',
   lines: '#e4e4e4',
   disabled: '#cbcbcb',
-  input: '#f0f0f0'
+  input: '#f0f0f0',
+  toastBG: '#ffffff',
+  successToastOverlay: basicLightColors.adding,
+  warningToastOverlay: hexa('#FF7A00', 0.1),
+  errorToastOverlay: basicLightColors.destructive
 };
+
 const backgroundDarkColors: typeof backgroundLightColors = {
   navigation: '#0d0d0d',
   pageBG: '#171717',
   cardBG: '#202020',
   lines: '#000000',
   disabled: '#6F6F6F',
-  input: '#2D2D2D'
+  input: '#2D2D2D',
+  toastBG: '#000000',
+  successToastOverlay: basicLightColors.adding,
+  warningToastOverlay: hexa(basicDarkColors.black, 0.1),
+  errorToastOverlay: basicDarkColors.destructive
 };
 
-const lightTheme = {
+const lightTheme: Record<string, string> = {
   ...accentColors,
   ...accentAlphaColors,
   ...basicLightColors,

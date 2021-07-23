@@ -51,12 +51,12 @@ const removePermissionEpic = (action$: Observable<Action>) =>
           ).pipe(
             switchMap(() => BeaconHandler.removePermission(accountIdentifier)),
             map(() => {
-              showSuccessToast('Permission successfully removed!');
+              showSuccessToast({ text: 'Permission successfully removed!' });
 
               return loadPermissionsActions.submit();
             }),
             catchError(err => {
-              showErrorToast(err.message);
+              showErrorToast({ text: err.message });
 
               return EMPTY;
             })
@@ -81,12 +81,12 @@ const approvePermissionRequestEpic = (action$: Observable<Action>) =>
         })
       ).pipe(
         map(() => {
-          showSuccessToast('Successfully approved!');
+          showSuccessToast({ text: 'Successfully approved!' });
 
           return navigateAction(StacksEnum.MainStack);
         }),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ text: err.message });
 
           return EMPTY;
         })
@@ -110,12 +110,12 @@ const approveSignPayloadRequestEpic = (action$: Observable<Action>) =>
           })
         ),
         map(() => {
-          showSuccessToast('Successfully signed!');
+          showSuccessToast({ text: 'Successfully signed!' });
 
           return navigateAction(StacksEnum.MainStack);
         }),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ text: err.message });
 
           return EMPTY;
         })
@@ -139,7 +139,11 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
           ).pipe(mapTo(opHash))
         ),
         switchMap(opHash => {
-          showSuccessToast('Successfully sent!');
+          showSuccessToast({
+            operationHash: opHash,
+            text: 'Transaction request sent! Confirming...',
+            title: 'Success!'
+          });
 
           return [
             navigateAction(StacksEnum.MainStack),
@@ -147,7 +151,7 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
           ];
         }),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ text: err.message });
 
           return EMPTY;
         })
@@ -168,12 +172,12 @@ const abortRequestEpic = (action$: Observable<Action>) =>
         })
       ).pipe(
         map(() => {
-          showSuccessToast('Request aborted!');
+          showSuccessToast({ text: 'Request aborted!' });
 
           return navigateAction(StacksEnum.MainStack);
         }),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ text: err.message });
 
           return EMPTY;
         })

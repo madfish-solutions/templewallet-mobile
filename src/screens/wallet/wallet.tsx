@@ -7,7 +7,6 @@ import { HeaderCardActionButtons } from '../../components/header-card-action-but
 import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-import { ScreenStatusBar } from '../../components/screen-status-bar/screen-status-bar';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
