@@ -12,7 +12,7 @@ interface ToastProps {
   hide: EmptyFn;
   text1: string;
   text2: string;
-  onPress?: () => void;
+  onPress?: EmptyFn;
   toastType: ToastTypeEnum;
   props?: {
     operationHash: string;
@@ -23,8 +23,8 @@ const config = {
   [ToastTypeEnum.Copied]: ({ hide }: { hide: EmptyFn }) => <CopiedToast onPress={hide} />,
   [ToastTypeEnum.Success]: ({ hide, text1, text2, onPress, props }: ToastProps) => (
     <CustomToast
-      text1={text1}
-      text2={text2}
+      title={text1}
+      description={text2}
       toastType={ToastTypeEnum.Success}
       operationHash={props?.operationHash}
       hide={hide}
@@ -32,10 +32,10 @@ const config = {
     />
   ),
   [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress }: ToastProps) => (
-    <CustomToast text1={text1} text2={text2} hide={hide} toastType={ToastTypeEnum.Error} onPress={onPress} />
+    <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Error} onPress={onPress} />
   ),
   [ToastTypeEnum.Warning]: ({ hide, text1, text2, onPress }: ToastProps) => (
-    <CustomToast text1={text1} text2={text2} hide={hide} toastType={ToastTypeEnum.Warning} onPress={onPress} />
+    <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Warning} onPress={onPress} />
   )
 };
 

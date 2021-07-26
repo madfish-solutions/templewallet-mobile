@@ -17,19 +17,19 @@ import { hexa } from '../../utils/style.util';
 import { useToastStyles } from './toast.styles';
 
 interface Props {
-  onPress?: EmptyFn;
-  text1?: string;
-  text2: string;
+  title?: string;
+  description: string;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
+  onPress?: EmptyFn;
 }
 
-export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType, operationHash }) => {
+export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
   const styles = useToastStyles();
   const colors = useColors();
 
-  const backgroundColorMap: { [key: string]: string } = {
+  const backgroundColorMap: Record<string, string> = {
     [ToastTypeEnum.Success]: colors.adding,
     [ToastTypeEnum.Warning]: hexa(colors.peach, 0.1),
     [ToastTypeEnum.Error]: colors.destructive
@@ -52,19 +52,19 @@ export const CustomToast: FC<Props> = ({ onPress, text1, text2, hide, toastType,
             {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
           />
           <View style={styles.textWrapper}>
-            {isString(text1) && (
+            {isString(title) && (
               <Text
                 style={[styles.title, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}>
-                {text1}
+                {title}
               </Text>
             )}
             <Text
-              numberOfLines={!isString(text1) ? 2 : 1}
+              numberOfLines={!isString(title) ? 2 : 1}
               style={[
                 styles.description,
                 { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }
               ]}>
-              {text2}
+              {description}
             </Text>
             {isDefined(operationHash) && (
               <View style={styles.operationHashBlock}>

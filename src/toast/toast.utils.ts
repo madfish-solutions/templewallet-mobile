@@ -10,7 +10,7 @@ interface ToastProps {
   operationHash?: string;
 }
 
-export const showErrorToast = ({ text = '', title, onPress }: ToastProps) =>
+export const showErrorToast = ({ text, title, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Error,
     text1: title,
@@ -18,7 +18,7 @@ export const showErrorToast = ({ text = '', title, onPress }: ToastProps) =>
     onPress
   });
 
-export const showSuccessToast = ({ text = '', title, onPress, operationHash }: ToastProps) =>
+export const showSuccessToast = ({ text, title, onPress, operationHash }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Success,
     text1: title,
@@ -29,7 +29,7 @@ export const showSuccessToast = ({ text = '', title, onPress, operationHash }: T
     }
   });
 
-export const showWarningToast = ({ text = '', title, onPress }: ToastProps) =>
+export const showWarningToast = ({ text, title, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Warning,
     text1: title,
