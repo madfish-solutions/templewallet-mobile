@@ -1,7 +1,7 @@
 import { validateMnemonic } from 'bip39';
 import { string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
+import { makeRequiredErrorMessage } from './messages';
 
 const wordsCountError = '12, 15, 18, 21 or 24 words';
 const validError = 'Invalid phrase';

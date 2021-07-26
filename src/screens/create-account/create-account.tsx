@@ -15,8 +15,6 @@ export const CreateAccount = () => {
     setInnerScreenIndex(1);
   };
 
-  const handleSeedPhraseVerify = () => setInnerScreenIndex(2);
-
   return (
     <>
       {innerScreenIndex === 0 && (
@@ -25,7 +23,7 @@ export const CreateAccount = () => {
       {innerScreenIndex === 1 && (
         <VerifySeedPhrase
           seedPhrase={seedPhrase}
-          onVerify={handleSeedPhraseVerify}
+          onVerify={() => setInnerScreenIndex(2)}
           onGoBackPress={() => setInnerScreenIndex(0)}
         />
       )}

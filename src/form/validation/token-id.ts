@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
+import { makeRequiredErrorMessage } from './messages';
 
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})

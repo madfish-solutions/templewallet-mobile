@@ -13,7 +13,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
-import { formatOrdinalNumber } from '../../../utils/i18n.utils';
+import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
@@ -119,7 +119,8 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
               </Fragment>
             ))}
           </View>
-          <View onTouchStart={() => void (!isValid && showErrorToast('Please check your seed phrase'))}>
+          <View
+            onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </View>
         </ScreenContainer>

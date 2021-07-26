@@ -1,6 +1,6 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../utils/i18n.utils';
+import { makeRequiredErrorMessage } from '../../form/validation/messages';
 
 export type EnableBiometryPasswordModalFormValues = {
   password: string;
