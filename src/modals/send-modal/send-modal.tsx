@@ -41,7 +41,8 @@ const TEZ_MAX_FEE = 0.1;
 
 export const SendModal: FC = () => {
   const dispatch = useDispatch();
-  const { asset: initialAsset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
+  const { asset: initialAsset, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
+    useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
   const sender = useSelectedAccountSelector();
@@ -64,7 +65,7 @@ export const SendModal: FC = () => {
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
-      receiverPublicKeyHash: '',
+      receiverPublicKeyHash: initialRecieverPublicKeyHash,
       amount: undefined,
       ownAccount: ownAccountsReceivers[0],
       transferBetweenOwnAccounts: false
