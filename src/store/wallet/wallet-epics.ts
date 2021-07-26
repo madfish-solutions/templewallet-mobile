@@ -135,8 +135,9 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
       from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
         map(estimates =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          estimates.map(({ suggestedFeeMutez, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
+          estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
             suggestedFeeMutez,
+            gasLimit,
             storageLimit,
             minimalFeePerStorageByteMutez
           }))
