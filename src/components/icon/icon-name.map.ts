@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertShield from './assets/alert-shield.svg';
 import AlertIcon from './assets/alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
@@ -31,6 +32,7 @@ import IosSearchIcon from './assets/ios-search.svg';
 import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
@@ -45,6 +47,7 @@ import TelegramIcon from './assets/socials/telegram.svg';
 import TwitterIcon from './assets/socials/twitter.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
+import SuccessIcon from './assets/success.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
@@ -131,5 +134,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Clipboard]: ClipboardIcon,
   [IconNameEnum.Deal]: DealIcon,
   [IconNameEnum.Gear]: GearIcon,
-  [IconNameEnum.Link]: LinkIcon
+  [IconNameEnum.Link]: LinkIcon,
+  [IconNameEnum.AlertShield]: AlertShield,
+  [IconNameEnum.Success]: SuccessIcon,
+  [IconNameEnum.Navigation]: NavigationIcon
 };
