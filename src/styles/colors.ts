@@ -14,14 +14,16 @@ const basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#000000',
-  white: '#ffffff'
+  white: '#ffffff',
+  peach: '#FF7A00'
 };
 
 const basicDarkColors: typeof basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#ffffff',
-  white: '#000000'
+  white: '#000000',
+  peach: '#FF7A00'
 };
 
 const basicLightAlphaColors = {
@@ -53,6 +55,7 @@ const backgroundLightColors = {
   disabled: '#cbcbcb',
   input: '#f0f0f0'
 };
+
 const backgroundDarkColors: typeof backgroundLightColors = {
   navigation: '#0d0d0d',
   pageBG: '#171717',
