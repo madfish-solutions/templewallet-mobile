@@ -1,11 +1,12 @@
 import Toast from 'react-native-toast-message';
 
+import { EmptyFn } from '../config/general';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 
 interface ToastProps {
   text: string;
   title?: string;
-  onPress?: () => void;
+  onPress?: EmptyFn;
   operationHash?: string;
 }
 
