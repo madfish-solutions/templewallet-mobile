@@ -1,5 +1,6 @@
 import { PartialTezosOperation, TezosOperationType } from '@airgap/beacon-sdk';
-import { WalletParamsWithKind } from '@taquito/taquito';
+
+import { ParamsWithKind } from '../interfaces/op-params.interface';
 
 export type SemiPartialTezosOperation = PartialTezosOperation & {
   fee?: string;
@@ -8,14 +9,14 @@ export type SemiPartialTezosOperation = PartialTezosOperation & {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): WalletParamsWithKind => {
+export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsWithKind => {
   const { fee, gas_limit, storage_limit, ...rest } = op;
 
   const walletParam = {
     ...rest,
-    fee,
-    gasLimit: gas_limit,
-    storageLimit: storage_limit
+    fee: fee as any,
+    gasLimit: gas_limit as any,
+    storageLimit: storage_limit as any
   };
 
   switch (walletParam.kind) {
