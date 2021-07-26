@@ -110,7 +110,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
             <Divider />
             {wordsToCheckPositions.map((wordPosition, index) => (
               <Fragment key={index}>
-                <VerifySeedPhraseRow index={index} wordPosition={wordPosition} words={words} />
+                <VerifySeedPhraseRow inputName={`word${index}`} wordPosition={wordPosition} words={words} />
                 {index !== wordsToCheckPositions.length - 1 ? (
                   <Divider size={formatSize(42)} />
                 ) : (

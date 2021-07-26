@@ -8,14 +8,13 @@ import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { useSeedPhraseWordInputStyles } from './seed-phrase-word-input.styles';
 
 type SeedPhraseWordInputProps = {
-  index: number;
+  inputName: string;
   position: number;
 };
 
-export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ index, position }) => {
-  const fieldName = `word${index}`;
+export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, position }) => {
   const styles = useSeedPhraseWordInputStyles();
-  const [field, , helpers] = useField<string>(fieldName);
+  const [field, , helpers] = useField<string>(inputName);
 
   return (
     <View style={styles.container}>
@@ -28,7 +27,7 @@ export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ index, posit
         value={field.value}
         placeholder="Type word"
         onBlur={() => helpers.setTouched(true)}
-        onChangeText={field.onChange(fieldName)}
+        onChangeText={field.onChange(inputName)}
         style={styles.wordInput}
       />
     </View>
