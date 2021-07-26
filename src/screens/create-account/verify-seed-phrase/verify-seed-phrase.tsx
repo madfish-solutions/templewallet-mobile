@@ -92,8 +92,8 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onVerify}
-      validateOnMount={true}>
+      validateOnMount={true}
+      onSubmit={onVerify}>
       {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View style={styles.content}>
