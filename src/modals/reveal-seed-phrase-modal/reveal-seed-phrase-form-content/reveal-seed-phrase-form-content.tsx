@@ -1,5 +1,5 @@
 import { FormikProps } from 'formik/dist/types';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 
 import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
 import { Divider } from '../../../components/divider/divider';
@@ -20,14 +20,17 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
 }) => {
   const hdAccounts = useHdAccountsListSelector();
 
-  useEffect(() => {
+  const derivationPath = useMemo(() => {
     const currentAccountIndex = hdAccounts.findIndex(
       ({ publicKeyHash }) => publicKeyHash === values.account.publicKeyHash
     );
-    const derivationPath = getDerivationPath(currentAccountIndex);
 
-    setFieldValue('derivationPath', derivationPath);
+    return getDerivationPath(currentAccountIndex);
   }, [hdAccounts, values.account.publicKeyHash]);
+
+  useEffect(() => {
+    setFieldValue('derivationPath', derivationPath);
+  }, [derivationPath]);
 
   return (
     <ScreenContainer>
