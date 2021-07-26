@@ -1,7 +1,7 @@
-import { WalletParamsWithKind } from '@taquito/taquito';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { Shelter } from '../shelter/shelter';
 import { WalletRootState } from '../store/wallet/wallet-state';
@@ -20,14 +20,14 @@ export const withSelectedAccount =
       })
     );
 
-export const sendTransaction$ = (sender: WalletAccountInterface, opParams: WalletParamsWithKind[]) =>
+export const sendTransaction$ = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) =>
   Shelter.getSigner$(sender.publicKeyHash).pipe(
     withLatestFrom(currentNetworkRpc$),
     switchMap(([signer, currentNetworkRpc]) => {
       const tezos = createTezosToolkit(currentNetworkRpc);
       tezos.setSignerProvider(signer);
 
-      return tezos.wallet.batch(opParams).send();
+      return tezos.contract.batch(opParams).send();
     }),
     catchError(err => {
       if (JSON.parse(err.body)[0].id.indexOf('empty_implicit_contract') > -1) {

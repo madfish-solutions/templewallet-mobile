@@ -1,20 +1,22 @@
-import { OpKind, WalletParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/taquito';
 
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ActivityGroup, emptyActivity } from '../interfaces/activity.interface';
+import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { tokenMetadataSlug } from '../token/utils/token.utils';
 import { getParamPreview } from './param-preview.utils';
 
-const knownActivityTypes: Record<WalletParamsWithKind['kind'], ActivityTypeEnum> = {
+const knownActivityTypes: Record<ParamsWithKind['kind'], ActivityTypeEnum> = {
   [OpKind.ORIGINATION]: ActivityTypeEnum.Origination,
   [OpKind.TRANSACTION]: ActivityTypeEnum.Transaction,
-  [OpKind.DELEGATION]: ActivityTypeEnum.Delegation
+  [OpKind.DELEGATION]: ActivityTypeEnum.Delegation,
+  [OpKind.ACTIVATION]: ActivityTypeEnum.Activation
 };
 
 export const paramsToPendingActions = (
-  opParams: WalletParamsWithKind[],
+  opParams: ParamsWithKind[],
   hash: string,
   publicKeyHash: string
 ): ActivityGroup => {

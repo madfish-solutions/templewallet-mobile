@@ -1,4 +1,4 @@
-import { OpKind, WalletParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
@@ -11,6 +11,7 @@ import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
+import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
@@ -118,7 +119,7 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     withSelectedAccount(state$),
     switchMap(([[{ asset, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
       getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
-        map((transferParams): WalletParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
+        map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
         )
@@ -159,13 +160,13 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     withSelectedAccount(state$),
     switchMap(([opParams, sender]) =>
       sendTransaction$(sender, opParams).pipe(
-        switchMap(({ opHash }) => {
+        switchMap(({ hash }) => {
           showSuccessToast({ description: 'Successfully sent!' });
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
-            addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
+            waitForOperationCompletionAction({ opHash: hash, sender: sender.publicKeyHash }),
+            addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
           ];
         }),
         catchError(err => {

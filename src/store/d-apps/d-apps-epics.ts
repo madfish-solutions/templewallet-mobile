@@ -129,14 +129,14 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
     toPayload(),
     switchMap(({ message, sender, opParams }) =>
       sendTransaction$(sender, opParams).pipe(
-        switchMap(({ opHash }) =>
+        switchMap(({ hash }) =>
           from(
             BeaconHandler.respond({
               type: BeaconMessageType.OperationResponse,
               id: message.id,
-              transactionHash: opHash
+              transactionHash: hash
             })
-          ).pipe(mapTo(opHash))
+          ).pipe(mapTo(hash))
         ),
         switchMap(opHash => {
           showSuccessToast({
