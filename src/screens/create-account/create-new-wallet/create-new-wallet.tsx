@@ -19,10 +19,10 @@ import { isString } from '../../../utils/is-string';
 import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './create-new-wallet.form';
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
 
-type CreateNewWalletProps = {
+interface CreateNewWalletProps {
   initialSeedPhrase: string;
   onSubmit: (formValues: CreateNewWalletFormValues) => void;
-};
+}
 
 export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, onSubmit }) => {
   const styles = useCreateNewWalletStyles();

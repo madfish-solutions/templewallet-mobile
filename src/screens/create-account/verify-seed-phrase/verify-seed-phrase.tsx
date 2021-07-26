@@ -11,17 +11,18 @@ import { HeaderTitle } from '../../../components/header/header-title/header-titl
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
-type VerifySeedPhraseProps = {
+interface VerifySeedPhraseProps {
   seedPhrase: string;
-  onVerify: () => void;
-  onGoBackPress: () => void;
-};
+  onVerify: EmptyFn;
+  onGoBackPress: EmptyFn;
+}
 
 const WORDS_TO_FILL = 2;
 

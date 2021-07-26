@@ -5,11 +5,11 @@ import { SeedPhraseWordGiven } from '../../../../components/seed-phrase-word-giv
 import { SeedPhraseWordInput } from '../../../../components/seed-phrase-word-input/seed-phrase-word-input';
 import { useVerifySeedPhraseRowStyles } from './verify-seed-phrase-row.styles';
 
-type VerifySeedPhraseRowProps = {
+interface VerifySeedPhraseRowProps {
   inputName: string;
   wordPosition: number;
   words: string[];
-};
+}
 
 export const VerifySeedPhraseRow: FC<VerifySeedPhraseRowProps> = ({ inputName, wordPosition, words }) => {
   const styles = useVerifySeedPhraseRowStyles();

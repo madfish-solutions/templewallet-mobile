@@ -5,10 +5,10 @@ import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
 import { useSeedPhraseWordGivenStyles } from './seed-phrase-word-given.styles';
 
-type SeedPhraseWordGivenProps = {
+interface SeedPhraseWordGivenProps {
   position: number;
   value: string;
-};
+}
 
 export const SeedPhraseWordGiven: FC<SeedPhraseWordGivenProps> = ({ position, value }) => {
   const styles = useSeedPhraseWordGivenStyles();

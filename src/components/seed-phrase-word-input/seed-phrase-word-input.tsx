@@ -7,10 +7,10 @@ import { Divider } from '../divider/divider';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { useSeedPhraseWordInputStyles } from './seed-phrase-word-input.styles';
 
-type SeedPhraseWordInputProps = {
+interface SeedPhraseWordInputProps {
   inputName: string;
   position: number;
-};
+}
 
 export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, position }) => {
   const styles = useSeedPhraseWordInputStyles();
