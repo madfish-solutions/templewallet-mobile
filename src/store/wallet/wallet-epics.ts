@@ -143,7 +143,7 @@ const loadEstimationsEpic = (action$: Observable<Action>) =>
         ),
         map(loadEstimationsActions.success),
         catchError(err => {
-          showErrorToast('Warning! The transaction is likely to fail!');
+          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
 
           return of(loadEstimationsActions.fail(err.message));
         })
@@ -159,7 +159,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
     switchMap(([opParams, sender]) =>
       sendTransaction$(sender, opParams).pipe(
         switchMap(({ opHash }) => {
-          showSuccessToast('Successfully sent!');
+          showSuccessToast({ description: 'Successfully sent!' });
 
           return [
             navigateAction(StacksEnum.MainStack),
@@ -168,7 +168,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
           ];
         }),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ description: err.message });
 
           return EMPTY;
         })
@@ -194,7 +194,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
           loadSelectedBakerActions.submit(sender)
         ]),
         catchError(err => {
-          showErrorToast(err.message);
+          showErrorToast({ description: err.message });
 
           return EMPTY;
         })

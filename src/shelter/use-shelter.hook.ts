@@ -80,12 +80,12 @@ export const useShelter = () => {
         )
         .subscribe(isPasswordSaved => {
           if (isPasswordSaved) {
-            showSuccessToast('Successfully enabled!');
+            showSuccessToast({ description: 'Successfully enabled!' });
 
             dispatch(setIsBiometricsEnabled(true));
             navigate(StacksEnum.MainStack);
           } else {
-            showErrorToast('Wrong password', 'Please, try again');
+            showErrorToast({ description: 'Wrong password, please, try again' });
           }
         })
     ];
