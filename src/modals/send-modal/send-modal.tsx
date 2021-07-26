@@ -41,7 +41,7 @@ const TEZ_MAX_FEE = 0.1;
 
 export const SendModal: FC = () => {
   const dispatch = useDispatch();
-  const { asset: initialAsset, recipient: initialRecieverPublicKeyHash = '' } =
+  const { asset: initialAsset, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 

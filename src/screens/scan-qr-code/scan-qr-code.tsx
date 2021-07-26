@@ -23,7 +23,7 @@ export const ScanQrCode = () => {
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();
     if (isValidAddress(data)) {
-      navigate(ModalsEnum.Send, { asset: TEZ_TOKEN_METADATA, recipient: data });
+      navigate(ModalsEnum.Send, { asset: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
     } else {
       tezosDeepLinkHandler(data);
     }
