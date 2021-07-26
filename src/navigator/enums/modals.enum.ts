@@ -16,7 +16,7 @@ export enum ModalsEnum {
 
 export type ModalsParamList = {
   [ModalsEnum.Receive]: { asset: AssetMetadataInterface };
-  [ModalsEnum.Send]: { asset: AssetMetadataInterface };
+  [ModalsEnum.Send]: { asset: AssetMetadataInterface; receiverPublicKeyHash?: string };
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
   [ModalsEnum.SelectBaker]: undefined;
