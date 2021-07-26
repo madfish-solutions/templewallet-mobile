@@ -27,17 +27,14 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
 
     const opParamsWithFees = estimationWasSuccessful
       ? opParams.map((opParam, i) => {
-          const { fee, gasLimit, storageLimit } =
-            opParam.kind !== OpKind.ACTIVATION ? opParam : { fee: null, gasLimit: null, storageLimit: null };
+          const estimation = estimationsList[withReveal ? i + 1 : i];
+          const {
+            fee = estimation.suggestedFeeMutez,
+            gasLimit = estimation.gasLimit,
+            storageLimit = estimation.storageLimit
+          } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
 
-          const eIndex = withReveal ? i + 1 : i;
-
-          return {
-            ...opParam,
-            fee: fee ?? estimationsList[eIndex].suggestedFeeMutez,
-            gasLimit: gasLimit ?? estimationsList[eIndex].gasLimit,
-            storageLimit: storageLimit ?? estimationsList[eIndex].storageLimit
-          };
+          return { ...opParam, fee, gasLimit, storageLimit };
         })
       : opParams;
 
