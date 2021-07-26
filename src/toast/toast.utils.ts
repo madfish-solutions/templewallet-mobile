@@ -4,36 +4,36 @@ import { EmptyFn } from '../config/general';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 
 interface ToastProps {
-  text: string;
+  description: string;
   title?: string;
   onPress?: EmptyFn;
   operationHash?: string;
 }
 
-export const showErrorToast = ({ text, title, onPress }: ToastProps) =>
+export const showErrorToast = ({ description, title, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Error,
     text1: title,
-    text2: text,
+    text2: description,
     onPress
   });
 
-export const showSuccessToast = ({ text, title, onPress, operationHash }: ToastProps) =>
+export const showSuccessToast = ({ description, title, onPress, operationHash }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Success,
     text1: title,
-    text2: text,
+    text2: description,
     onPress,
     props: {
       operationHash
     }
   });
 
-export const showWarningToast = ({ text, title, onPress }: ToastProps) =>
+export const showWarningToast = ({ description, title, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Warning,
     text1: title,
-    text2: text,
+    text2: description,
     onPress
   });
 

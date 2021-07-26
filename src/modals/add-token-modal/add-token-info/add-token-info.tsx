@@ -36,7 +36,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   const onSubmit = (data: AddTokenInfoFormValues) => {
     const tokenMetadata = { ...initialValues, ...data };
     dispatch(addTokenMetadataAction({ ...tokenMetadata, decimals: tokenMetadata.decimals.toNumber() }));
-    showSuccessToast({ text: 'Token successfully added' });
+    showSuccessToast({ description: 'Token successfully added' });
     onFormSubmitted();
   };
 

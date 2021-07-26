@@ -42,7 +42,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <View
         style={styles.buttonContainer}
         onTouchStart={() =>
-          void (disableSendAsset && showErrorToast({ text: `Can't send ${token.symbol}, ${errorMessage}` }))
+          void (disableSendAsset && showErrorToast({ description: `Can't send ${token.symbol}, ${errorMessage}` }))
         }>
         <ButtonMedium
           title="SEND"
