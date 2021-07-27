@@ -6,7 +6,7 @@ import { formatSize } from '../styles/format-size';
 export const ToastProviderStyles = StyleSheet.create({
   toast: {
     zIndex: zIndexEnum.Toast,
-    left: formatSize(64),
-    right: formatSize(64)
+    left: formatSize(48),
+    right: formatSize(48)
   }
 });

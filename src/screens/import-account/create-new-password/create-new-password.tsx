@@ -13,6 +13,7 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
+import { EmptyFn } from '../../../config/general';
 import { privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
@@ -27,7 +28,7 @@ import {
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 type CreateNewPasswordProps = {
-  onGoBackPress: () => void;
+  onGoBackPress: EmptyFn;
   seedPhrase: string;
 };
 
