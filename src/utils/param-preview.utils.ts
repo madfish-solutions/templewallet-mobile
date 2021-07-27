@@ -1,10 +1,11 @@
-import { WalletParamsWithKind, OpKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/taquito';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
+import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getParamPreview = (opParam: WalletParamsWithKind): ParamPreviewInterface => {
+export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
   if (opParam.kind === OpKind.DELEGATION) {
     // Delegate
     return {

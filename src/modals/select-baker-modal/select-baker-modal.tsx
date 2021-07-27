@@ -22,6 +22,7 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from '../../store/baking/baking-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
@@ -42,6 +43,7 @@ export const SelectBakerModal: FC = () => {
   const revealSelectBottomSheetController = useBottomSheetController();
 
   const bakersList = useBakersListSelector();
+  const selectedAccount = useSelectedAccountSelector();
 
   const [filteredBakersList, setFilteredBakersList] = useState(bakersList);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
@@ -54,7 +56,7 @@ export const SelectBakerModal: FC = () => {
     isDefined(selectedBaker) &&
       navigate(ModalsEnum.Confirmation, {
         type: ConfirmationTypeEnum.InternalOperations,
-        opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address }]
+        opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }]
       });
   };
 

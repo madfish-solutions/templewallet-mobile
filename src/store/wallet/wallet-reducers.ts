@@ -12,7 +12,6 @@ import {
   addPendingOperation,
   addTokenMetadataAction,
   loadActivityGroupsActions,
-  loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -124,19 +123,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
     }))
   );
-
-  builder.addCase(loadEstimationsActions.submit, state => ({
-    ...state,
-    estimations: createEntity([], true)
-  }));
-  builder.addCase(loadEstimationsActions.success, (state, { payload: estimates }) => ({
-    ...state,
-    estimations: createEntity(estimates, false)
-  }));
-  builder.addCase(loadEstimationsActions.fail, (state, { payload: error }) => ({
-    ...state,
-    estimations: createEntity([], false, error)
-  }));
 
   builder.addCase(addPendingOperation, (state, { payload }) =>
     updateAccountState(state, payload[0].source.address, account => ({

@@ -5,6 +5,7 @@ import { makeRequiredErrorMessage } from './messages';
 
 const wordsCountError = '12, 15, 18, 21 or 24 words';
 const validError = 'Invalid phrase';
+const onlyAsciiRegex = new RegExp('^[\u0020-\u007e]*$');
 
 export const seedPhraseValidation = string()
   .required(makeRequiredErrorMessage('Seed phrase'))
@@ -17,4 +18,4 @@ export const seedPhraseValidation = string()
 
     return false;
   })
-  .test('is-mnemonic', validError, value => validateMnemonic(value as string));
+  .test('is-mnemonic', validError, value => onlyAsciiRegex.test(value as string) && validateMnemonic(value as string));
