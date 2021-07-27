@@ -7,3 +7,6 @@ export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>
 
 export const useBiometricsEnabledSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBiometricsEnabled);
+
+export const useBalanceHiddenSelector = () =>
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenState);

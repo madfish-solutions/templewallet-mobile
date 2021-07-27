@@ -7,6 +7,7 @@ import { DollarEquivalentText } from '../../../../components/dollar-equivalent-t
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
+import { TokenEquivalentText } from '../../../../components/token-equivalent-text/token-equivalent-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
@@ -41,9 +42,9 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
-          <Text style={styles.balanceText}>
+          <TokenEquivalentText style={styles.balanceText}>
             {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
-          </Text>
+          </TokenEquivalentText>
           <DollarEquivalentText
             balance={account.tezosBalance.data}
             exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
