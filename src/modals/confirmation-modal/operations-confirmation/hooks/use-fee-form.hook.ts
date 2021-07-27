@@ -23,7 +23,7 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
       ? estimationsList[0].minimalFeePerStorageByteMutez
       : 0;
     const onlyOneOperation = opParams.length === 1;
-    const withReveal = estimationsList.length === opParams.length + 1;
+    const withReveal = estimationWasSuccessful && estimationsList.length === opParams.length + 1;
 
     const opParamsWithFees = estimationWasSuccessful
       ? opParams.map((opParam, i) => {
