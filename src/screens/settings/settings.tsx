@@ -1,6 +1,8 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Alert, Text, useColorScheme, View } from 'react-native';
+import { displaySettings } from 'react-native-android-open-settings';
+import { getManufacturer } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
@@ -34,13 +36,31 @@ export const Settings = () => {
   const handleLogoutButtonPress = useResetDataHandler();
   const { isHardwareAvailable } = useBiometryAvailability();
 
+  const colorScheme = useColorScheme();
   const theme = useThemeSelector();
+  const prevThemeRef = useRef(theme);
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
+
+  useEffect(() => {
+    if (prevThemeRef.current === ThemesEnum.dark && theme === ThemesEnum.light && colorScheme === 'dark') {
+      getManufacturer().then(manufacturer => {
+        const mayBeStillDark = manufacturer.toLowerCase() === 'xiaomi';
+        if (mayBeStillDark) {
+          Alert.alert(
+            'Switching to light theme',
+            "If colors are still dark, go to display settings and disable dark theme for 'Temple' app in 'More dark mode options' menu",
+            [{ text: 'No, thanks' }, { text: 'Go to settings', onPress: () => displaySettings() }]
+          );
+        }
+      });
+    }
+    prevThemeRef.current = theme;
+  }, [theme, colorScheme]);
 
   return (
     <>
