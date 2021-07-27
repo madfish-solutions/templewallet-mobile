@@ -25,7 +25,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
       if (isTheSameDay(date, prevActivityDate)) {
         result[result.length - 1].data.push(activityGroup);
       } else {
-        let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+        let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
         isToday(date) && (title = 'Today');
         isYesterday(date) && (title = 'Yesterday');

@@ -33,7 +33,6 @@ import {
   addPendingOperation,
   approveInternalOperationRequestAction,
   loadActivityGroupsActions,
-  loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -138,32 +137,6 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     )
   );
 
-const loadEstimationsEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadEstimationsActions.submit),
-    toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([{ sender, opParams }, tezos]) =>
-      from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
-        map(estimates =>
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
-            suggestedFeeMutez,
-            gasLimit,
-            storageLimit,
-            minimalFeePerStorageByteMutez
-          }))
-        ),
-        map(loadEstimationsActions.success),
-        catchError(err => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
-
-          return of(loadEstimationsActions.fail(err.message));
-        })
-      )
-    )
-  );
-
 const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
   action$.pipe(
     ofType(approveInternalOperationRequestAction),
@@ -246,7 +219,6 @@ export const walletEpics = combineEpics(
   loadTokenAssetsEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
-  loadEstimationsEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
   approveInternalOperationRequestEpic

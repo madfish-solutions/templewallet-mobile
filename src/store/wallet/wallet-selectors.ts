@@ -89,6 +89,3 @@ export const useTezosTokenSelector = (): TokenInterface => {
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);
-
-export const useEstimationsSelector = () =>
-  useSelector<WalletRootState, WalletState['estimations']>(({ wallet }) => wallet.estimations);
