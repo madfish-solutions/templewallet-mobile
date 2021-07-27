@@ -1,8 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { Formik } from 'formik';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { AccountDropdownItem } from '../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -14,15 +13,14 @@ import { EmptyFn, EventFn } from '../../../config/general';
 import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
-import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
-import { useEstimationsSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
-import { useFeeForm } from './fee-form-input/use-fee-form.hook';
+import { useEstimations } from './hooks/use-estimations.hook';
+import { useFeeForm } from './hooks/use-fee-form.hook';
 import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
 
@@ -35,10 +33,8 @@ interface Props {
 
 export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, onBackButtonPress, children }) => {
   const styles = useOperationsConfirmationStyles();
-  const dispatch = useDispatch();
-  const [isEstimationsRequested, setIsEstimationsRequested] = useState(false);
 
-  const estimations = useEstimationsSelector();
+  const estimations = useEstimations(sender, opParams);
   const { exchangeRates } = useExchangeRatesSelector();
   const {
     opParamsWithFees,
@@ -50,11 +46,6 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
     formValidationSchema,
     formInitialValues
   } = useFeeForm(opParams, estimations.data);
-
-  useEffect(() => {
-    dispatch(loadEstimationsActions.submit({ sender, opParams }));
-    setIsEstimationsRequested(true);
-  }, []);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     // Remove revealGasGee from sum
@@ -92,7 +83,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
         <>
           <ScreenContainer>
             {children}
-            {estimations.isLoading || !isEstimationsRequested ? (
+            {estimations.isLoading ? (
               <Text style={styles.loadingMessage}>Loading...</Text>
             ) : (
               <>
