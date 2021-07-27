@@ -22,6 +22,7 @@ import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { fetchBalance } from '../../utils/token-balance.utils';
 import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
@@ -46,7 +47,8 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
     withLatestFrom(currentNetworkId$),
-    switchMap(([address, currentNetworkId]) =>
+    withLatestFrom(tezos$),
+    switchMap(([[address, currentNetworkId], tezos]) =>
       from(
         betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
           `/account/${currentNetworkId}/${address}/token_balances`,
@@ -67,6 +69,15 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
                   thumbnail_uri: tokenMetadata.thumbnailUri
                 })),
                 catchError(() => of(balance))
+              )
+            )
+          )
+        ),
+        switchMap(tokens =>
+          forkJoin(
+            tokens.map(token =>
+              from(fetchBalance(tezos, { id: token.token_id, address: token.contract }, address)).pipe(
+                map(balance => ({ ...token, balance: balance.toFixed() }))
               )
             )
           )
