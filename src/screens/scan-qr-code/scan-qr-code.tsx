@@ -8,7 +8,9 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { useBarStyle } from '../../hooks/use-bar-style.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { useColors } from '../../styles/use-colors';
+import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
@@ -19,11 +21,14 @@ export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { goBack, navigate } = useNavigation();
   const { lightContent } = useBarStyle();
+  const tezosToken = useTezosTokenSelector();
 
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();
-    if (isValidAddress(data)) {
+    if (isValidAddress(data) && Number(tezosToken.balance) > 0) {
       navigate(ModalsEnum.Send, { asset: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
+    } else if (isValidAddress(data)) {
+      showErrorToast({ description: "Can't send TEZ: the balance is zero" });
     } else {
       tezosDeepLinkHandler(data);
     }
