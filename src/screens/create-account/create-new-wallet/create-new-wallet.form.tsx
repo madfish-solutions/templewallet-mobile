@@ -12,8 +12,3 @@ export const createNewWalletValidationSchema: SchemaOf<CreateNewWalletFormValues
   seedPhrase: seedPhraseValidation,
   madeSeedPhraseBackup: acceptTermsValidation
 });
-
-export const createNewWalletInitialValues: CreateNewWalletFormValues = {
-  seedPhrase: '',
-  madeSeedPhraseBackup: false
-};

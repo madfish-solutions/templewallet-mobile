@@ -1,4 +1,4 @@
-import { WalletParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/taquito';
 import { Formik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -11,6 +11,7 @@ import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn, EventFn } from '../../../config/general';
+import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { loadEstimationsActions } from '../../../store/wallet/wallet-actions';
@@ -27,8 +28,8 @@ import { OperationsPreview } from './operations-preview/operations-preview';
 
 interface Props {
   sender: WalletAccountInterface;
-  opParams: WalletParamsWithKind[];
-  onSubmit: EventFn<WalletParamsWithKind[]>;
+  opParams: ParamsWithKind[];
+  onSubmit: EventFn<ParamsWithKind[]>;
   onBackButtonPress: EmptyFn;
 }
 
@@ -40,10 +41,12 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
   const estimations = useEstimationsSelector();
   const { exchangeRates } = useExchangeRatesSelector();
   const {
+    opParamsWithFees,
     basicFees,
     estimationWasSuccessful,
     minimalFeePerStorageByteMutez,
     onlyOneOperation,
+    revealGasFee,
     formValidationSchema,
     formInitialValues
   } = useFeeForm(opParams, estimations.data);
@@ -54,18 +57,26 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
   }, []);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
-    const params = opParams.map((param, index) => {
+    // Remove revealGasGee from sum
+    // Taquito will add it byself
+    gasFeeSum = gasFeeSum?.minus(revealGasFee);
+
+    const params = opParamsWithFees.map((opParam, index) => {
       const isLastOpParam = index === opParams.length - 1;
 
-      const fee = isDefined(gasFeeSum) && isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_METADATA.decimals) : 0;
-      const storageLimit =
-        isDefined(storageLimitSum) && onlyOneOperation
-          ? storageLimitSum
-          : estimationWasSuccessful
-          ? estimations.data[index].storageLimit
-          : undefined;
+      if (opParam.kind !== OpKind.ACTIVATION) {
+        const patchedOpParam = { ...opParam }; // Make copy;
+        if (isDefined(gasFeeSum)) {
+          patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_METADATA.decimals).toNumber() : 0;
+        }
+        if (isDefined(storageLimitSum) && onlyOneOperation) {
+          patchedOpParam.storageLimit = storageLimitSum.toNumber();
+        }
 
-      return { ...param, fee, storageLimit };
+        return patchedOpParam;
+      }
+
+      return opParam;
     });
 
     onSubmit(params);
@@ -97,7 +108,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
                 <View style={styles.divider} />
                 <Divider size={formatSize(8)} />
 
-                <OperationsPreview opParams={opParams} />
+                <OperationsPreview opParams={opParamsWithFees} />
                 <Divider />
 
                 <FeeFormInput

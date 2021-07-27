@@ -1,8 +1,7 @@
-import { WalletParamsWithKind } from '@taquito/taquito';
-
+import { ParamsWithKind } from './op-params.interface';
 import { WalletAccountInterface } from './wallet-account.interface';
 
 export interface LoadEstimationsActionPayloadInterface {
   sender: WalletAccountInterface;
-  opParams: WalletParamsWithKind[];
+  opParams: ParamsWithKind[];
 }

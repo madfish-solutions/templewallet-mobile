@@ -1,33 +1,73 @@
-import { WalletParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
+import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz } from '../../../../utils/tezos.util';
 
-export const useFeeForm = (opParams: WalletParamsWithKind[], estimationsList: EstimationInterface[]) => {
-  const { basicFees, estimationWasSuccessful, minimalFeePerStorageByteMutez, onlyOneOperation } = useMemo(() => {
+export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: EstimationInterface[]) => {
+  const {
+    opParamsWithFees,
+    basicFees,
+    estimationWasSuccessful,
+    minimalFeePerStorageByteMutez,
+    onlyOneOperation,
+    revealGasFee
+  } = useMemo(() => {
     const estimationWasSuccessful = estimationsList.length > 0;
     const minimalFeePerStorageByteMutez = estimationWasSuccessful
       ? estimationsList[0].minimalFeePerStorageByteMutez
       : 0;
     const onlyOneOperation = opParams.length === 1;
+    const withReveal = estimationsList.length === opParams.length + 1;
 
-    const basicFees = estimationsList.reduce(
-      (prev, estimation) => ({
-        gasFeeSum: prev.gasFeeSum.plus(mutezToTz(new BigNumber(estimation.suggestedFeeMutez), 6)),
-        storageLimitSum: prev.storageLimitSum.plus(new BigNumber(estimation.storageLimit))
-      }),
+    const opParamsWithFees = estimationWasSuccessful
+      ? opParams.map((opParam, i) => {
+          const estimation = estimationsList[withReveal ? i + 1 : i];
+          const {
+            fee = estimation.suggestedFeeMutez,
+            gasLimit = estimation.gasLimit,
+            storageLimit = estimation.storageLimit
+          } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
+
+          return { ...opParam, fee, gasLimit, storageLimit };
+        })
+      : opParams;
+
+    const basicFees = opParamsWithFees.reduce(
+      (prev, opParam) => {
+        const { fee = 0, storageLimit = 0 } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
+
+        return {
+          gasFeeSum: prev.gasFeeSum.plus(mutezToTz(new BigNumber(fee), 6)),
+          storageLimitSum: prev.storageLimitSum.plus(new BigNumber(storageLimit))
+        };
+      },
       {
         gasFeeSum: new BigNumber(0),
         storageLimitSum: new BigNumber(0)
       }
     );
 
-    return { basicFees, estimationWasSuccessful, minimalFeePerStorageByteMutez, onlyOneOperation };
+    const revealGasFee = withReveal ? estimationsList[0].suggestedFeeMutez : 0;
+
+    if (withReveal) {
+      basicFees.gasFeeSum = basicFees.gasFeeSum.plus(estimationsList[0].suggestedFeeMutez);
+      basicFees.storageLimitSum = basicFees.storageLimitSum.plus(estimationsList[0].storageLimit);
+    }
+
+    return {
+      opParamsWithFees,
+      basicFees,
+      estimationWasSuccessful,
+      minimalFeePerStorageByteMutez,
+      onlyOneOperation,
+      revealGasFee
+    };
   }, [estimationsList]);
 
   const { formValidationSchema, formInitialValues } = useMemo(
@@ -56,10 +96,12 @@ export const useFeeForm = (opParams: WalletParamsWithKind[], estimationsList: Es
   );
 
   return {
+    opParamsWithFees,
     basicFees,
     estimationWasSuccessful,
     minimalFeePerStorageByteMutez,
     onlyOneOperation,
+    revealGasFee,
     formValidationSchema,
     formInitialValues
   };

@@ -1,10 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
-import { WalletParamsWithKind } from '@taquito/taquito';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { EstimationInterface } from '../../interfaces/estimation.interface';
 import { LoadEstimationsActionPayloadInterface } from '../../interfaces/load-estimations-action-payload.interface';
+import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
 import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -33,7 +33,7 @@ export const loadEstimationsActions =
 export const loadActivityGroupsActions = createActions<string, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
 
-export const approveInternalOperationRequestAction = createAction<WalletParamsWithKind[]>(
+export const approveInternalOperationRequestAction = createAction<ParamsWithKind[]>(
   'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
 );
 export const waitForOperationCompletionAction = createAction<{
