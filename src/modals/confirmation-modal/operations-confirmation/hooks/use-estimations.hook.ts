@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
@@ -25,13 +25,17 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
             storageLimit,
             minimalFeePerStorageByteMutez
           }))
-        )
+        ),
+        catchError(() => {
+          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+
+          return of([]);
+        })
       )
-      .subscribe(
-        value => setData(value),
-        () => showErrorToast({ description: 'Warning! The transaction is likely to fail!' }),
-        () => setIsLoading(false)
-      );
+      .subscribe(value => {
+        setIsLoading(false);
+        setData(value);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
