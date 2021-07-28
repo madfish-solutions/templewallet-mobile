@@ -16,11 +16,12 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, co
   const styles = useScreenContainerStyles();
   const headerHeight = useHeaderHeight();
   const statusBarHeight = isAndroid ? StatusBar.currentHeight : 0;
+  const keyboardVerticalOffset = headerHeight + (statusBarHeight ?? 0);
 
   return (
     <KeyboardAvoidingView
       style={[styles.scrollView, style]}
-      keyboardVerticalOffset={headerHeight + (statusBarHeight ?? 0)}
+      keyboardVerticalOffset={keyboardVerticalOffset}
       behavior="padding">
       <ScrollView
         contentContainerStyle={[
