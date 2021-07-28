@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useTokenMetadata } from '../../hooks/use-token-metadata.hook';
+import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import {
   initialWalletAccountState,
   WalletAccountStateInterface
@@ -59,7 +59,7 @@ export const useTokensMetadataSelector = () =>
 
 export const useTokensListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
-  const { getTokenMetadata } = useTokenMetadata();
+  const getTokenMetadata = useTokenMetadataGetter();
 
   const [tokensList, setTokensList] = useState<TokenInterface[]>([]);
 

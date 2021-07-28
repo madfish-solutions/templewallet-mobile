@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { useTokenMetadata } from '../../../../hooks/use-token-metadata.hook';
+import { useTokenMetadataGetter } from '../../../../hooks/use-token-metadata-getter.hook';
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
@@ -24,7 +24,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const styles = useActivityGroupAmountChangeStyles();
 
   const dispatch = useDispatch();
-  const { getTokenMetadata } = useTokenMetadata();
+  const getTokenMetadata = useTokenMetadataGetter();
   const { exchangeRates } = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {

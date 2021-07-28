@@ -4,11 +4,11 @@ import { ActivityGroup } from '../interfaces/activity.interface';
 import { useActivityGroupsSelector } from '../store/wallet/wallet-selectors';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isString } from '../utils/is-string';
-import { useTokenMetadata } from './use-token-metadata.hook';
+import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
 export const useFilteredActivityGroups = () => {
   const activityGroups = useActivityGroupsSelector();
-  const { getTokenMetadata } = useTokenMetadata();
+  const getTokenMetadata = useTokenMetadataGetter();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
