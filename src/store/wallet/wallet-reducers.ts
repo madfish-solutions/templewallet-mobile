@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { initialAccountState } from '../../interfaces/account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
-import { tokenMetadataSlug } from '../../token/utils/token.utils';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
@@ -12,10 +12,10 @@ import {
   addPendingOperation,
   addTokenMetadataAction,
   loadActivityGroupsActions,
-  loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
+  loadTokenSuggestionActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction
@@ -55,7 +55,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
     tokenBalancesList.reduce((prevState, tokenBalance) => {
       const tokenMetadata = tokenBalanceMetadata(tokenBalance);
-      const slug = tokenMetadataSlug(tokenMetadata);
+      const slug = getTokenSlug(tokenMetadata);
 
       const newState: WalletState = {
         ...prevState,
@@ -80,25 +80,29 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }, state)
   );
 
-  builder.addCase(loadTokenMetadataActions.submit, state => ({
+  builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadata, true)
   }));
-  builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
+  builder.addCase(loadTokenSuggestionActions.success, (state, { payload: tokenMetadata }) => ({
     ...state,
-    addTokenSuggestion: createEntity(tokenMetadata, false),
-    tokensMetadata: {
-      ...state.tokensMetadata,
-      [tokenMetadataSlug(tokenMetadata)]: tokenMetadata
-    }
+    addTokenSuggestion: createEntity(tokenMetadata, false)
   }));
-  builder.addCase(loadTokenMetadataActions.fail, (state, { payload: error }) => ({
+  builder.addCase(loadTokenSuggestionActions.fail, (state, { payload: error }) => ({
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
   }));
 
+  builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
+    ...state,
+    tokensMetadata: {
+      ...state.tokensMetadata,
+      [getTokenSlug(tokenMetadata)]: tokenMetadata
+    }
+  }));
+
   builder.addCase(addTokenMetadataAction, (state, { payload: tokenMetadata }) => {
-    const slug = tokenMetadataSlug(tokenMetadata);
+    const slug = getTokenSlug(tokenMetadata);
 
     return {
       ...updateCurrentAccountState(state, currentAccount => ({
@@ -124,19 +128,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
     }))
   );
-
-  builder.addCase(loadEstimationsActions.submit, state => ({
-    ...state,
-    estimations: createEntity([], true)
-  }));
-  builder.addCase(loadEstimationsActions.success, (state, { payload: estimates }) => ({
-    ...state,
-    estimations: createEntity(estimates, false)
-  }));
-  builder.addCase(loadEstimationsActions.fail, (state, { payload: error }) => ({
-    ...state,
-    estimations: createEntity([], false, error)
-  }));
 
   builder.addCase(addPendingOperation, (state, { payload }) =>
     updateAccountState(state, payload[0].source.address, account => ({

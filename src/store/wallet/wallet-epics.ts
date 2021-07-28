@@ -22,7 +22,7 @@ import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
-import { getTokenMetadata } from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
@@ -32,10 +32,10 @@ import {
   addPendingOperation,
   approveInternalOperationRequestAction,
   loadActivityGroupsActions,
-  loadEstimationsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
+  loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -58,13 +58,13 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
         switchMap(({ data }) =>
           forkJoin(
             data.balances.map(balance =>
-              from(getTokenMetadata(balance.contract, balance.token_id)).pipe(
-                map(tokenMetadata => ({
+              loadTokenMetadata$(balance.contract, balance.token_id).pipe(
+                map(({ decimals, symbol, name, iconUrl }) => ({
                   ...balance,
-                  decimals: tokenMetadata.decimals,
-                  symbol: tokenMetadata.symbol,
-                  name: tokenMetadata.name,
-                  thumbnail_uri: tokenMetadata.thumbnailUri
+                  decimals,
+                  symbol,
+                  name,
+                  thumbnail_uri: iconUrl
                 })),
                 catchError(() => of(balance))
               )
@@ -90,22 +90,28 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     )
   );
 
+const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadTokenSuggestionActions.submit),
+    toPayload(),
+    switchMap(({ id, address }) =>
+      loadTokenMetadata$(address, id).pipe(
+        concatMap(tokenMetadata => [
+          loadTokenSuggestionActions.success(tokenMetadata),
+          loadTokenMetadataActions.success(tokenMetadata)
+        ]),
+        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
+      )
+    )
+  );
+
 const loadTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     concatMap(({ id, address }) =>
-      from(getTokenMetadata(address, id)).pipe(
-        map(tokenMetadata =>
-          loadTokenMetadataActions.success({
-            id,
-            address,
-            decimals: tokenMetadata.decimals,
-            symbol: tokenMetadata.symbol ?? tokenMetadata.name?.substring(8) ?? '???',
-            name: tokenMetadata.name ?? tokenMetadata.symbol ?? 'Unknown Token',
-            iconUrl: tokenMetadata.thumbnailUri
-          })
-        ),
+      loadTokenMetadata$(address, id).pipe(
+        map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )
     )
@@ -123,32 +129,6 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
         )
-      )
-    )
-  );
-
-const loadEstimationsEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadEstimationsActions.submit),
-    toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([{ sender, opParams }, tezos]) =>
-      from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
-        map(estimates =>
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
-            suggestedFeeMutez,
-            gasLimit,
-            storageLimit,
-            minimalFeePerStorageByteMutez
-          }))
-        ),
-        map(loadEstimationsActions.success),
-        catchError(err => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
-
-          return of(loadEstimationsActions.fail(err.message));
-        })
       )
     )
   );
@@ -233,9 +213,9 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
 export const walletEpics = combineEpics(
   loadTezosAssetsEpic,
   loadTokenAssetsEpic,
+  loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
-  loadEstimationsEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
   approveInternalOperationRequestEpic

@@ -10,7 +10,7 @@ import { TokenContainer } from '../../../components/token-container/token-contai
 import { removeTokenAction, toggleTokenVisibilityAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
-import { tokenMetadataSlug } from '../../../token/utils/token.utils';
+import { getTokenSlug } from '../../../token/utils/token.utils';
 
 interface Props {
   token: TokenInterface;
@@ -18,7 +18,7 @@ interface Props {
 
 export const ManageAssetsItem: FC<Props> = ({ token }) => {
   const dispatch = useDispatch();
-  const slug = tokenMetadataSlug(token);
+  const slug = getTokenSlug(token);
 
   const handleTrashIconPress = () =>
     Alert.alert('Delete token?', 'You can add this token again in the same menu in the "Add token" section.', [
