@@ -5,7 +5,8 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   scrollView: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: colors.pageBG
+    backgroundColor: colors.pageBG,
+    justifyContent: 'flex-end'
   },
   scrollViewContentContainer: {
     paddingTop: formatSize(8),
