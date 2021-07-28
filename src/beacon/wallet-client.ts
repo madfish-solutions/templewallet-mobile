@@ -108,6 +108,7 @@ export class WalletClient extends Client {
         if (message.version !== '1') {
           await this.sendAcknowledgeResponse(message, connectionContext);
         }
+        console.log('intercepting', message, connectionContext);
 
         await IncomingRequestInterceptor.intercept({
           message,
@@ -126,12 +127,14 @@ export class WalletClient extends Client {
    */
   public async _connect(): Promise<void> {
     const transport: WalletP2PTransport = (await this.transport) as WalletP2PTransport;
+    console.log('_connect', transport.connectionStatus);
     if (transport.connectionStatus === TransportStatus.NOT_CONNECTED) {
       await transport.connect();
       transport
         .addListener(async (message: unknown, connectionInfo: ConnectionContext) => {
           if (typeof message === 'string') {
             const deserializedMessage = (await new Serializer().deserialize(message)) as BeaconRequestMessage;
+            console.log('got message', deserializedMessage);
             this.handleResponse(deserializedMessage, connectionInfo);
           }
         })
