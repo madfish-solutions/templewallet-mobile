@@ -7,8 +7,6 @@ import { formatSize } from '../../styles/format-size';
 export const useTabBarStyles = createUseStyles(({ colors }) => ({
   container: {
     backgroundColor: colors.navigation,
-    zIndex: zIndexEnum.TabBar,
-    ...StyleSheet.absoluteFillObject
   },
   buttonsContainer: {
     flexDirection: 'row',

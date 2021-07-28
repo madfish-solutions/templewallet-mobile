@@ -1,10 +1,8 @@
 import React, { FC, useContext } from 'react';
-import { StatusBar, useWindowDimensions, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { CurrentRouteNameContext } from '../current-route-name.context';
@@ -23,22 +21,16 @@ const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
 export const TabBar: FC = () => {
   const styles = useTabBarStyles();
   const currentRouteName = useContext(CurrentRouteNameContext);
-  const insets = useSafeAreaInsets();
-  const dimensions = useWindowDimensions();
-  const { layoutHeight, handleLayout } = useLayoutSizes();
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
   const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
 
-  const height = layoutHeight + insets.bottom;
-  const top = dimensions.height - ((StatusBar.currentHeight ?? 0) + height);
-
   return isHidden ? null : (
     <>
-      <View style={[styles.container, { top }]}>
-        <View style={styles.buttonsContainer} onLayout={handleLayout}>
+      <View style={[styles.container]}>
+        <View style={styles.buttonsContainer}>
           <TabBarButton
             label="Wallet"
             iconName={IconNameEnum.TezWallet}
@@ -72,7 +64,6 @@ export const TabBar: FC = () => {
         </View>
         <InsetSubstitute type="bottom" />
       </View>
-      <View style={{ height }} />
     </>
   );
 };
