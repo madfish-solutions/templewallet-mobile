@@ -9,4 +9,4 @@ export const useBiometricsEnabledSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBiometricsEnabled);
 
 export const useBalanceHiddenSelector = () =>
-  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenState);
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenSetting);

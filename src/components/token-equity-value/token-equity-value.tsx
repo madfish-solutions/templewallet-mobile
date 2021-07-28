@@ -10,6 +10,7 @@ import { formatAssetAmount } from '../../utils/number.util';
 import { DollarEquivalentText } from '../dollar-equivalent-text/dollar-equivalent-text';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { TokenEquivalentText } from '../token-equivalent-text/token-equivalent-text';
 import { useTokenEquityValueStyles } from './token-equity-value.styles';
 
@@ -30,9 +31,11 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity hitSlop={generateHitSlop(formatSize(10))} onPress={hideBalanceHandler}>
-          <Icon name={!isBalanceHidden ? IconNameEnum.EyeOpenBold : IconNameEnum.EyeClosedBold} size={formatSize(24)} />
-        </TouchableOpacity>
+        <TouchableIcon
+          onPress={hideBalanceHandler}
+          name={isBalanceHidden ? IconNameEnum.EyeClosedBold : IconNameEnum.EyeOpenBold}
+          size={formatSize(24)}
+        />
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
       <TokenEquivalentText style={styles.tokenValueText}>

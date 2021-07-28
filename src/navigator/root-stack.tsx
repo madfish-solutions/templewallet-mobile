@@ -3,6 +3,7 @@ import { NavigationContainer, NavigationContainerRef } from '@react-navigation/n
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';
+import { ShortcutItem } from 'react-native-quick-actions';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -36,7 +37,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
-  const isBalanceHiddenState = useBalanceHiddenSelector();
+  const isBalanceHiddenSetting = useBalanceHiddenSelector();
   const colors = useColors();
   const { hideBalanceHandler } = useHideBalance();
 
@@ -58,14 +59,13 @@ export const RootStackScreen = () => {
   );
 
   useEffect(() => {
-    DeviceEventEmitter.addListener('quickActionShortcut', data =>
-      quickActionHandler({ data, isBalanceHiddenState, hideBalanceHandler })
-    );
+    const quickActionShortcutListener = (data: ShortcutItem) =>
+      quickActionHandler({ data, isBalanceHiddenSetting, hideBalanceHandler });
+
+    DeviceEventEmitter.addListener('quickActionShortcut', quickActionShortcutListener);
 
     return () => {
-      DeviceEventEmitter.removeListener('quickActionShortcut', data =>
-        quickActionHandler({ data, isBalanceHiddenState, hideBalanceHandler })
-      );
+      DeviceEventEmitter.removeListener('quickActionShortcut', quickActionShortcutListener);
     };
   }, []);
 

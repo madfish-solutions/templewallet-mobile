@@ -16,10 +16,10 @@ import { initSentry } from '../utils/sentry.utils';
 
 initSentry();
 enableScreens();
-initQuickActions();
 
 export const App = () => {
   useEffect(() => {
+    initQuickActions();
     void hide();
 
     return () => QuickActions.clearShortcutItems();

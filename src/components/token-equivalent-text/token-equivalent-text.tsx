@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const TokenEquivalentText: FC<Props> = ({ style, children }) => {
-  const { isBalanceHidden, hideSymbol } = useHideBalance();
+  const { balanceWrapper } = useHideBalance();
 
-  return <Text style={style}>{!isBalanceHidden ? children : hideSymbol}</Text>;
+  return <Text style={style}>{balanceWrapper(children)}</Text>;
 };

@@ -13,13 +13,11 @@ interface Props {
 }
 
 export const DollarEquivalentText: FC<Props> = ({ balance, exchangeRate, style }) => {
-  const { isBalanceHidden, hideSymbol } = useHideBalance();
+  const { balanceWrapper } = useHideBalance();
 
   return isDefined(exchangeRate) ? (
     <Text style={style}>
-      {!isBalanceHidden
-        ? formatAssetAmount(new BigNumber(Number(balance) * exchangeRate), BigNumber.ROUND_DOWN, 2) + ' $'
-        : hideSymbol}
+      {balanceWrapper(formatAssetAmount(new BigNumber(Number(balance) * exchangeRate), BigNumber.ROUND_DOWN, 2) + ' $')}
     </Text>
   ) : null;
 };

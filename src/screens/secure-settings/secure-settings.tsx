@@ -22,7 +22,7 @@ export const SecureSettings = () => {
   const { biometryType } = useBiometryAvailability();
 
   const biometricsEnabled = useBiometricsEnabledSelector();
-  const isBalanceHiddenState = useBalanceHiddenSelector();
+  const isBalanceHiddenSetting = useBalanceHiddenSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
 
@@ -49,9 +49,9 @@ export const SecureSettings = () => {
       </WhiteContainer>
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => hideBalanceHandler(!isBalanceHiddenState)}>
+        <WhiteContainerAction onPress={() => hideBalanceHandler(!isBalanceHiddenSetting)}>
           <WhiteContainerText text={'Hide mode on Launch'} />
-          <Switch value={isBalanceHiddenState} onChange={hideBalanceHandler} />
+          <Switch value={isBalanceHiddenSetting} onChange={hideBalanceHandler} />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>

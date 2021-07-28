@@ -16,13 +16,13 @@ export const initQuickActions = () =>
 
 export interface QuickActionParams {
   data: ShortcutItem;
-  isBalanceHiddenState: boolean;
+  isBalanceHiddenSetting: boolean;
   hideBalanceHandler: EmptyFn;
 }
 
-export const quickActionHandler = ({ data, isBalanceHiddenState, hideBalanceHandler }: QuickActionParams) => {
+export const quickActionHandler = ({ data, isBalanceHiddenSetting, hideBalanceHandler }: QuickActionParams) => {
   // TODO: find a solution to handle quick actions on cold start
-  if (data && !isBalanceHiddenState) {
+  if (data && !isBalanceHiddenSetting) {
     hideBalanceHandler();
   }
 };
