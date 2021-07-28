@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar, Dimensions } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar } from 'react-native';
 
 import { isAndroid } from '../../config/system';
 import { useHeaderHeight } from '../../hooks/use-header-height.hook';
