@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { useActivityGroupsSelector } from '../store/wallet/wallet-selectors';
-import { isDefined } from '../utils/is-defined';
+import { getTokenSlug } from '../token/utils/token.utils';
 import { isString } from '../utils/is-string';
-import { useTokenMetadata } from './use-token-metadata.hook';
+import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
 export const useFilteredActivityGroups = () => {
   const activityGroups = useActivityGroupsSelector();
-  const { getTokenMetadata } = useTokenMetadata();
+  const getTokenMetadata = useTokenMetadataGetter();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
@@ -20,13 +20,13 @@ export const useFilteredActivityGroups = () => {
 
       for (const activityGroup of activityGroups) {
         for (const activity of activityGroup) {
-          const { tokenSlug, source, destination } = activity;
-          const { symbol, name } = getTokenMetadata(tokenSlug);
+          const { source, destination } = activity;
+          const { symbol, name, address } = getTokenMetadata(getTokenSlug(activity));
 
           if (
             symbol.toLowerCase().includes(lowerCaseSearchValue) ||
             name.toLowerCase().includes(lowerCaseSearchValue) ||
-            (isDefined(tokenSlug) && tokenSlug.toLowerCase().includes(lowerCaseSearchValue)) ||
+            address.toLowerCase().includes(lowerCaseSearchValue) ||
             source.address.toLowerCase().includes(lowerCaseSearchValue) ||
             destination.address.toLowerCase().includes(lowerCaseSearchValue)
           ) {

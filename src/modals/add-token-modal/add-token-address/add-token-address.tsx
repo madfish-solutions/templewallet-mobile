@@ -16,7 +16,7 @@ import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
-import { loadTokenMetadataActions } from '../../../store/wallet/wallet-actions';
+import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import {
   addTokenAddressFormInitialValues,
@@ -38,7 +38,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
   const dispatch = useDispatch();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
-    dispatch(loadTokenMetadataActions.submit({ id: id.toNumber(), address }));
+    dispatch(loadTokenSuggestionActions.submit({ id: id.toNumber(), address }));
     onFormSubmitted();
   };
 
