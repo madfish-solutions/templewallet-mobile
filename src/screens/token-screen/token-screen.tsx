@@ -16,15 +16,14 @@ import { useExchangeRatesSelector } from '../../store/currency/currency-selector
 import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { tokenMetadataSlug } from '../../token/utils/token.utils';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const dispatch = useDispatch();
   const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const tokensList = useTokensListSelector();
-  const updatedToken =
-    tokensList.find(candidateToken => tokenMetadataSlug(candidateToken) === tokenMetadataSlug(token)) ?? token;
+  const updatedToken = tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(token)) ?? token;
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
