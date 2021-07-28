@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -10,9 +10,9 @@ export const useAppLock = () => {
   const [isLocked, setIsLocked] = useState(true);
   const unlock$ = useMemo(() => new Subject<string>(), []);
 
-  const lock = () => Shelter.lockApp();
-  const unlock = (password: string) => unlock$.next(password);
-  const unlockWithBiometry = async () => {
+  const lock = useCallback(() => Shelter.lockApp(), []);
+  const unlock = useCallback((password: string) => unlock$.next(password), [unlock$]);
+  const unlockWithBiometry = useCallback(async () => {
     const password = await Shelter.getBiometryPassword()
       .then(rawKeychainData => {
         if (rawKeychainData !== false) {
@@ -24,7 +24,7 @@ export const useAppLock = () => {
       .catch(() => undefined);
 
     isDefined(password) && unlock(password);
-  };
+  }, [unlock]);
 
   useEffect(() => {
     const subscriptions = [
@@ -37,5 +37,5 @@ export const useAppLock = () => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [unlock$]);
 
-  return { isLocked, lock, unlock, unlockWithBiometry };
+  return useMemo(() => ({ isLocked, lock, unlock, unlockWithBiometry }), [isLocked, lock, unlock, unlockWithBiometry]);
 };

@@ -32,7 +32,7 @@ export const TezosTokenHistory = () => {
 
     for (const activityGroup of activityGroups) {
       for (const activity of activityGroup) {
-        if (!isDefined(activity.tokenSlug)) {
+        if (!isDefined(activity.address)) {
           result.push(activityGroup);
           break;
         }
