@@ -30,6 +30,7 @@ import {
   useTokensListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { showWarningToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
@@ -61,6 +62,7 @@ export const SendModal: FC = () => {
     () => accounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
     [accounts, sender.publicKeyHash]
   );
+  const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
@@ -122,12 +124,19 @@ export const SendModal: FC = () => {
               ) : (
                 <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
               )}
-              <FormCheckbox
-                disabled={ownAccountsReceivers.length === 0}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}>
-                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
-              </FormCheckbox>
+              <View
+                onTouchStart={() =>
+                  void (
+                    transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
+                  )
+                }>
+                <FormCheckbox
+                  disabled={transferBetweenOwnAccountsDisabled}
+                  name="transferBetweenOwnAccounts"
+                  size={formatSize(16)}>
+                  <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+                </FormCheckbox>
+              </View>
               <Divider size={formatSize(12)} />
 
               <Label label="Amount" description={`Set ${values.token.symbol} amount to send.`} />
