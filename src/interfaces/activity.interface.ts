@@ -7,7 +7,8 @@ export interface ActivityInterface {
   status: ActivityStatusEnum;
   hash: string;
   amount: string;
-  tokenSlug?: string;
+  address?: string;
+  id?: number;
   timestamp: number;
   entrypoint?: string;
   source: MemberInterface;
@@ -21,6 +22,7 @@ export const emptyActivity: ActivityInterface = {
   status: ActivityStatusEnum.Pending,
   hash: '',
   amount: '',
+  id: 0,
   timestamp: 0,
   source: emptyMember,
   destination: emptyMember

@@ -3,15 +3,14 @@ import { useCallback } from 'react';
 import { useTokensMetadataSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { isDefined } from '../utils/is-defined';
+import { isString } from '../utils/is-string';
 
-export const useTokenMetadata = () => {
+export const useTokenMetadataGetter = () => {
   const tokensMetadata = useTokensMetadataSelector();
 
-  const getTokenMetadata = useCallback(
-    (slug?: string) => (isDefined(slug) ? tokensMetadata[slug] ?? emptyTokenMetadata : TEZ_TOKEN_METADATA),
+  return useCallback(
+    (slug?: string) =>
+      isString(slug) ? tokensMetadata[slug] ?? emptyTokenMetadata : { ...emptyTokenMetadata, ...TEZ_TOKEN_METADATA },
     [tokensMetadata]
   );
-
-  return { getTokenMetadata };
 };

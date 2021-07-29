@@ -3,12 +3,12 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { useTokenMetadata } from '../../../../hooks/use-token-metadata.hook';
+import { useTokenMetadataGetter } from '../../../../hooks/use-token-metadata-getter.hook';
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
-import { getTokenAddressFromSlug } from '../../../../token/utils/token.utils';
+import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
@@ -24,36 +24,41 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const styles = useActivityGroupAmountChangeStyles();
 
   const dispatch = useDispatch();
-  const { getTokenMetadata } = useTokenMetadata();
+  const getTokenMetadata = useTokenMetadataGetter();
   const { exchangeRates } = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
     let positiveAmountSum = 0;
-    for (const { amount, tokenSlug } of group) {
-      const { decimals, symbol, name, address } = getTokenMetadata(tokenSlug);
-      if (isString(tokenSlug) && !isString(name)) {
-        const { address, id } = getTokenAddressFromSlug(tokenSlug);
-        dispatch(loadTokenMetadataActions.submit({ id: Number(id), address: address }));
+
+    for (const { address, id, amount } of group) {
+      const { decimals, symbol, name } = getTokenMetadata(getTokenSlug({ address, id }));
+      if (isString(address) && !isString(name)) {
+        dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
       }
+
+      const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
+      const isPositive = parsedAmount.isPositive();
       let exchangeRate = 0;
+
       if (isString(address)) {
         exchangeRate = exchangeRates.data[address];
       } else if (name === TEZ_TOKEN_METADATA.name) {
         exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
       }
-      const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
-      const isPositive = parsedAmount.isPositive();
 
       if (isPositive && isDefined(exchangeRate)) {
         positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
-      amounts.push({
-        parsedAmount,
-        isPositive,
-        symbol,
-        exchangeRate
-      });
+
+      if (!parsedAmount.isEqualTo(0)) {
+        amounts.push({
+          parsedAmount,
+          isPositive,
+          symbol,
+          exchangeRate
+        });
+      }
     }
 
     const dollarSum = formatAssetAmount(new BigNumber(positiveAmountSum), BigNumber.ROUND_DOWN, 2);
