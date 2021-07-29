@@ -8,8 +8,8 @@ import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import { formatAssetAmount } from '../../../utils/number.util';
+import { BalanceText } from '../../balance-text/balance-text';
 import { Divider } from '../../divider/divider';
-import { DollarEquivalentText } from '../../dollar-equivalent-text/dollar-equivalent-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
@@ -45,11 +45,9 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
           <Text style={styles.balance}>
             {formattedBalance} {symbol}
           </Text>
-          <DollarEquivalentText
-            balance={formattedBalance}
-            exchangeRate={exchangeRate}
-            style={styles.dollarEquivalent}
-          />
+          <BalanceText exchangeRate={exchangeRate} style={styles.dollarEquivalent}>
+            {formattedBalance}
+          </BalanceText>
         </View>
         {isDefined(actionIconName) && (
           <>

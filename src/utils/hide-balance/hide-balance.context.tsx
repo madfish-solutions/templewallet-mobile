@@ -1,10 +1,10 @@
 import { createContext, ReactNode } from 'react';
 
-import { emptyFn, EmptyFn } from '../../config/general';
+import { emptyFn, EmptyFn, EventFn } from '../../config/general';
 
 interface HideBalanceContextValues {
   isBalanceHidden: boolean;
-  balanceWrapper: (balance: ReactNode | string) => string;
+  balanceWrapper: EventFn<string, string | number>;
   hideBalanceHandler: EmptyFn;
 }
 

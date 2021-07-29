@@ -1,28 +1,42 @@
+import { useEffect } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import QuickActions, { ShortcutItem } from 'react-native-quick-actions';
 
-import { EmptyFn } from '../config/general';
-
-export const initQuickActions = () =>
-  QuickActions.setShortcutItems([
-    {
-      type: 'Hide balance',
-      title: 'Hide balance',
-      icon: 'Prohibit',
-      userInfo: {
-        url: ''
-      }
-    }
-  ]);
+import { useBalanceHiddenSelector } from '../store/settings/settings-selectors';
+import { useHideBalance } from './hide-balance/hide-balance.hook';
+import { isDefined } from './is-defined';
 
 export interface QuickActionParams {
   data: ShortcutItem;
-  isBalanceHiddenSetting: boolean;
-  hideBalanceHandler: EmptyFn;
 }
 
-export const quickActionHandler = ({ data, isBalanceHiddenSetting, hideBalanceHandler }: QuickActionParams) => {
-  // TODO: find a solution to handle quick actions on cold start
-  if (data && !isBalanceHiddenSetting) {
-    hideBalanceHandler();
-  }
+export const useQuickActions = () => {
+  const isBalanceHiddenSetting = useBalanceHiddenSelector();
+  const { hideBalanceHandler } = useHideBalance();
+
+  const quickActionHandler = ({ data }: QuickActionParams) => {
+    // TODO: find a solution to handle quick actions on cold start
+    if (!isDefined(data) && !isBalanceHiddenSetting) {
+      hideBalanceHandler();
+    }
+  };
+
+  useEffect(() => {
+    QuickActions.setShortcutItems([
+      {
+        type: 'Hide balance',
+        title: 'Hide balance',
+        icon: 'Prohibit',
+        userInfo: {
+          url: ''
+        }
+      }
+    ]);
+    DeviceEventEmitter.addListener('quickActionShortcut', quickActionHandler);
+
+    return () => {
+      QuickActions.clearShortcutItems();
+      DeviceEventEmitter.removeListener('quickActionShortcut', quickActionHandler);
+    };
+  }, []);
 };

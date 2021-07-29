@@ -1,9 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useEffect, useMemo, useState } from 'react';
-import { DeviceEventEmitter } from 'react-native';
-import { ShortcutItem } from 'react-native-quick-actions';
+import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -17,11 +15,9 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useBalanceHiddenSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
-import { useHideBalance } from '../utils/hide-balance/hide-balance.hook';
-import { quickActionHandler } from '../utils/quick-actions.utils';
+import { useQuickActions } from '../utils/quick-actions.utils';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -37,12 +33,11 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
-  const isBalanceHiddenSetting = useBalanceHiddenSelector();
   const colors = useColors();
-  const { hideBalanceHandler } = useHideBalance();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
+  useQuickActions();
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
@@ -57,17 +52,6 @@ export const RootStackScreen = () => {
     }),
     [colors.pageBG]
   );
-
-  useEffect(() => {
-    const quickActionShortcutListener = (data: ShortcutItem) =>
-      quickActionHandler({ data, isBalanceHiddenSetting, hideBalanceHandler });
-
-    DeviceEventEmitter.addListener('quickActionShortcut', quickActionShortcutListener);
-
-    return () => {
-      DeviceEventEmitter.removeListener('quickActionShortcut', quickActionShortcutListener);
-    };
-  }, []);
 
   return (
     <NavigationContainer

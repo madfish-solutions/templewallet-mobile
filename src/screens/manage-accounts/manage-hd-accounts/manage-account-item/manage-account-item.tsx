@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { BalanceText } from '../../../../components/balance-text/balance-text';
 import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../../components/divider/divider';
-import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
-import { TokenEquivalentText } from '../../../../components/token-equivalent-text/token-equivalent-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
@@ -42,14 +41,12 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
-          <TokenEquivalentText style={styles.balanceText}>
+          <BalanceText style={styles.balanceText}>
             {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
-          </TokenEquivalentText>
-          <DollarEquivalentText
-            balance={account.tezosBalance.data}
-            exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
-            style={styles.equityText}
-          />
+          </BalanceText>
+          <BalanceText exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]} style={styles.equityText}>
+            {account.tezosBalance.data}
+          </BalanceText>
         </View>
 
         <ButtonSmallSecondary

@@ -21,22 +21,9 @@ export const tezosDeepLinkHandler = async (url: string) => {
   } catch {}
 };
 
-export const deepLinkHandler = async (url: string) => {
-  const href = new URL(url).href;
-  switch (href) {
-    case 'temple://':
-      break;
-    case 'tezos://':
-      await tezosDeepLinkHandler(url);
-      break;
-    default:
-      return;
-  }
-};
-
 export const useDeepLink = () => {
   useEffect(() => {
-    const listener = async ({ url }: { url: string }) => deepLinkHandler(url);
+    const listener = ({ url }: { url: string }) => tezosDeepLinkHandler(url);
 
     Linking.addEventListener('url', listener);
 

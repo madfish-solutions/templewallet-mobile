@@ -34,10 +34,6 @@ export const SecureSettings = () => {
     }
   };
 
-  const hideBalanceHandler = (newValue: boolean) => {
-    dispatch(setIsBalanceHidden(newValue));
-  };
-
   return (
     <ScreenContainer>
       <Divider size={formatSize(8)} />
@@ -49,9 +45,12 @@ export const SecureSettings = () => {
       </WhiteContainer>
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => hideBalanceHandler(!isBalanceHiddenSetting)}>
-          <WhiteContainerText text={'Hide mode on Launch'} />
-          <Switch value={isBalanceHiddenSetting} onChange={hideBalanceHandler} />
+        <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(isBalanceHiddenSetting))}>
+          <WhiteContainerText text="Hide mode on Launch" />
+          <Switch
+            value={isBalanceHiddenSetting}
+            onChange={() => dispatch(setIsBalanceHidden(isBalanceHiddenSetting))}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
