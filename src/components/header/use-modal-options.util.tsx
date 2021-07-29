@@ -16,7 +16,8 @@ export const useModalOptions = (title: string): StackNavigationOptions => {
       height: formatSize(60),
       backgroundColor: colors.navigation,
       borderBottomWidth: formatSize(0.5),
-      borderBottomColor: colors.lines
+      borderBottomColor: colors.lines,
+      shadowOpacity: 0
     },
     headerLeft: () => null,
     headerTitle: () => <HeaderTitle title={title} />,
