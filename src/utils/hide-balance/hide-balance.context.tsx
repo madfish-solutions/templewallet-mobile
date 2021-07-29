@@ -4,7 +4,7 @@ import { emptyFn, EmptyFn, EventFn } from '../../config/general';
 
 interface HideBalanceContextValues {
   isBalanceHidden: boolean;
-  balanceWrapper: EventFn<string, string | number>;
+  balanceWrapper: EventFn<ReactNode, ReactNode>;
   hideBalanceHandler: EmptyFn;
 }
 

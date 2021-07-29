@@ -6,7 +6,7 @@ import { URL } from 'react-native-url-polyfill';
 import { BeaconHandler, isBeaconMessage } from '../beacon/beacon-handler';
 import { isDefined } from './is-defined';
 
-export const tezosDeepLinkHandler = async (url: string) => {
+export const deepLinkHandler = async (url: string) => {
   try {
     const searchParams = new URL(url).searchParams;
     const type = searchParams.get('type');
@@ -23,7 +23,7 @@ export const tezosDeepLinkHandler = async (url: string) => {
 
 export const useDeepLink = () => {
   useEffect(() => {
-    const listener = ({ url }: { url: string }) => tezosDeepLinkHandler(url);
+    const listener = ({ url }: { url: string }) => deepLinkHandler(url);
 
     Linking.addEventListener('url', listener);
 

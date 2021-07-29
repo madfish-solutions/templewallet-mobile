@@ -4,8 +4,8 @@ import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { BalanceText } from '../../../../components/balance-text/balance-text';
 import { Divider } from '../../../../components/divider/divider';
+import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
@@ -59,9 +59,9 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <BalanceText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
+            <DollarValueText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
               {values.gasFeeSum}
-            </BalanceText>
+            </DollarValueText>
           )}
         </View>
 
@@ -73,9 +73,9 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
-            <BalanceText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
+            <DollarValueText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
               {storageFee}
-            </BalanceText>
+            </DollarValueText>
           )}
         </View>
       </View>

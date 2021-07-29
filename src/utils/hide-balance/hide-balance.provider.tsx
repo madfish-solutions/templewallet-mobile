@@ -13,7 +13,7 @@ export const HideBalanceProvider: FC = ({ children }) => {
 
   const hideBalanceHandler = () => setIsBalanceHidden(!isBalanceHidden);
 
-  const balanceWrapper = (balance: ReactNode): string => (!isBalanceHidden ? balance : hideSymbol) as string;
+  const balanceWrapper = (balance: ReactNode): ReactNode => (!isBalanceHidden ? balance : hideSymbol);
 
   return (
     <HideBalanceContext.Provider value={{ isBalanceHidden, balanceWrapper, hideBalanceHandler }}>

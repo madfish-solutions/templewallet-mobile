@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
@@ -7,12 +6,13 @@ import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
-import { formatAssetAmount } from '../../../utils/number.util';
-import { BalanceText } from '../../balance-text/balance-text';
 import { Divider } from '../../divider/divider';
+import { DollarValueText } from '../../dollar-value-text/dollar-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
+import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
+import { TokenValueText } from '../../token-value-text/token-value-text';
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
 interface Props {
@@ -28,8 +28,6 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
   const exchangeRate =
     name === TEZ_TOKEN_METADATA.name ? exchangeRates.data[TEZ_TOKEN_METADATA.name] : exchangeRates.data[address];
 
-  const formattedBalance = formatAssetAmount(new BigNumber(balance));
-
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
@@ -42,12 +40,12 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
       </View>
       <View style={styles.rightContainer}>
         <View>
-          <Text style={styles.balance}>
-            {formattedBalance} {symbol}
-          </Text>
-          <BalanceText exchangeRate={exchangeRate} style={styles.dollarEquivalent}>
-            {formattedBalance}
-          </BalanceText>
+          <HideBalance style={styles.balance}>
+            <TokenValueText tokenSymbol={symbol}>{balance}</TokenValueText>
+          </HideBalance>
+          <HideBalance style={styles.dollarEquivalent}>
+            <DollarValueText exchangeRate={exchangeRate}>{balance}</DollarValueText>
+          </HideBalance>
         </View>
         {isDefined(actionIconName) && (
           <>
