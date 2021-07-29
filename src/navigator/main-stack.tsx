@@ -36,6 +36,7 @@ import {
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
+import { useDeepLink } from '../utils/deep-linking.utils';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
@@ -53,6 +54,7 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
+  useDeepLink();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
