@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from '../../../../components/divider/divider';
-import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
+import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
@@ -56,10 +56,10 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Gas fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <DollarEquivalentText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+            <DollarValueText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
           )}
         </View>
 
@@ -68,10 +68,10 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Storage fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(storageFee) ? `${storageFee.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
-            <DollarEquivalentText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+            <DollarValueText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
           )}
         </View>
       </View>

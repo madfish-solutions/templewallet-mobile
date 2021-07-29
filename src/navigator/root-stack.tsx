@@ -17,6 +17,7 @@ import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
+import { useQuickActions } from '../utils/quick-actions.utils';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -35,6 +36,8 @@ export const RootStackScreen = () => {
   const colors = useColors();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
+
+  useQuickActions();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);

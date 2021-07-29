@@ -136,7 +136,7 @@ android {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 39
+        versionCode 40
         versionName "1.0"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
@@ -198,6 +198,8 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     implementation project(':react-native-android-open-settings')
+
+    implementation project(':react-native-quick-actions')
 
 //     // If your app supports Android versions before Ice Cream Sandwich (API level 14)
 //     implementation 'com.facebook.fresco:animated-base-support:1.3.0'

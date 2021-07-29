@@ -9,6 +9,7 @@ import { BiometryAvailabilityProvider } from '../biometry/biometry-availability.
 import { RootStackScreen } from '../navigator/root-stack';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
+import { HideBalanceProvider } from '../utils/hide-balance/hide-balance.provider';
 import { initSentry } from '../utils/sentry.utils';
 
 initSentry();
@@ -21,10 +22,12 @@ export const App = () => {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <BiometryAvailabilityProvider>
-          <SafeAreaProvider>
-            <RootStackScreen />
-            <ToastProvider />
-          </SafeAreaProvider>
+          <HideBalanceProvider>
+            <SafeAreaProvider>
+              <RootStackScreen />
+              <ToastProvider />
+            </SafeAreaProvider>
+          </HideBalanceProvider>
         </BiometryAvailabilityProvider>
       </PersistGate>
     </Provider>

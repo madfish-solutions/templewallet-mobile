@@ -72,6 +72,7 @@
     "react-native-permissions": "^3.0.4",
     "react-native-qrcode-scanner": "^1.5.4",
     "react-native-qrcode-svg": "^6.1.1",
+    "react-native-quick-actions": "^0.3.13",
     "react-native-radio-buttons-group": "^2.2.4",
     "react-native-randombytes": "^3.6.0",
     "react-native-reanimated": "^1.13.3",

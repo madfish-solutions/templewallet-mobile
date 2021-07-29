@@ -23,7 +23,7 @@ import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { fetchBalance } from '../../utils/token-balance.utils';
-import { getTokenMetadata } from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
@@ -36,6 +36,7 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
+  loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -59,13 +60,13 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
         switchMap(({ data }) =>
           forkJoin(
             data.balances.map(balance =>
-              from(getTokenMetadata(balance.contract, balance.token_id)).pipe(
-                map(tokenMetadata => ({
+              loadTokenMetadata$(balance.contract, balance.token_id).pipe(
+                map(({ decimals, symbol, name, iconUrl }) => ({
                   ...balance,
-                  decimals: tokenMetadata.decimals,
-                  symbol: tokenMetadata.symbol,
-                  name: tokenMetadata.name,
-                  thumbnail_uri: tokenMetadata.thumbnailUri
+                  decimals,
+                  symbol,
+                  name,
+                  thumbnail_uri: iconUrl
                 })),
                 catchError(() => of(balance))
               )
@@ -100,22 +101,28 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     )
   );
 
+const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadTokenSuggestionActions.submit),
+    toPayload(),
+    switchMap(({ id, address }) =>
+      loadTokenMetadata$(address, id).pipe(
+        concatMap(tokenMetadata => [
+          loadTokenSuggestionActions.success(tokenMetadata),
+          loadTokenMetadataActions.success(tokenMetadata)
+        ]),
+        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
+      )
+    )
+  );
+
 const loadTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
     concatMap(({ id, address }) =>
-      from(getTokenMetadata(address, id)).pipe(
-        map(tokenMetadata =>
-          loadTokenMetadataActions.success({
-            id,
-            address,
-            decimals: tokenMetadata.decimals,
-            symbol: tokenMetadata.symbol ?? tokenMetadata.name?.substring(8) ?? '???',
-            name: tokenMetadata.name ?? tokenMetadata.symbol ?? 'Unknown Token',
-            iconUrl: tokenMetadata.thumbnailUri
-          })
-        ),
+      loadTokenMetadata$(address, id).pipe(
+        map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )
     )
@@ -217,6 +224,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
 export const walletEpics = combineEpics(
   loadTezosAssetsEpic,
   loadTokenAssetsEpic,
+  loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,

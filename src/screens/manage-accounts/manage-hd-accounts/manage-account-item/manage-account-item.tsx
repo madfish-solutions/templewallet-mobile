@@ -3,10 +3,12 @@ import { Text, View } from 'react-native';
 
 import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../../components/divider/divider';
-import { DollarEquivalentText } from '../../../../components/dollar-equivalent-text/dollar-equivalent-text';
+import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
+import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
+import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
@@ -41,14 +43,15 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
-          <Text style={styles.balanceText}>
-            {account.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
-          </Text>
-          <DollarEquivalentText
-            balance={account.tezosBalance.data}
-            exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
-            style={styles.equityText}
-          />
+          <HideBalance style={styles.balanceText}>
+            <TokenValueText balance={account.tezosBalance.data} tokenSymbol={TEZ_TOKEN_METADATA.symbol} />
+          </HideBalance>
+          <HideBalance style={styles.equityText}>
+            <DollarValueText
+              balance={account.tezosBalance.data}
+              exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
+            />
+          </HideBalance>
         </View>
 
         <ButtonSmallSecondary
