@@ -62,6 +62,7 @@ export const SendModal: FC = () => {
     () => accounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
     [accounts, sender.publicKeyHash]
   );
+  const canTransferBetweenOwnAccounts = ownAccountsReceivers.length === 0;
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
@@ -125,12 +126,10 @@ export const SendModal: FC = () => {
               )}
               <View
                 onTouchStart={() =>
-                  void (
-                    ownAccountsReceivers.length === 0 && showWarningToast({ description: 'Create one more account' })
-                  )
+                  void (canTransferBetweenOwnAccounts && showWarningToast({ description: 'Create one more account' }))
                 }>
                 <FormCheckbox
-                  disabled={ownAccountsReceivers.length === 0}
+                  disabled={canTransferBetweenOwnAccounts}
                   name="transferBetweenOwnAccounts"
                   size={formatSize(16)}>
                   <Text style={styles.checkboxText}>Transfer between my accounts</Text>
