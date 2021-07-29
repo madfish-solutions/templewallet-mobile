@@ -1,15 +1,13 @@
-import { createContext, ReactNode } from 'react';
+import { createContext } from 'react';
 
-import { emptyFn, EmptyFn, EventFn } from '../../config/general';
+import { emptyFn, EmptyFn } from '../../config/general';
 
 interface HideBalanceContextValues {
   isBalanceHidden: boolean;
-  balanceWrapper: EventFn<ReactNode, ReactNode>;
-  hideBalanceHandler: EmptyFn;
+  toggleHideBalance: EmptyFn;
 }
 
 export const HideBalanceContext = createContext<HideBalanceContextValues>({
   isBalanceHidden: false,
-  balanceWrapper: () => '',
-  hideBalanceHandler: emptyFn
+  toggleHideBalance: emptyFn
 });

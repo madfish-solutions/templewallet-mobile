@@ -6,14 +6,17 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 
 interface Props {
-  style?: StyleProp<TextStyle>;
+  balance: string | BigNumber;
   exchangeRate: number;
-  children: string | BigNumber;
+  style?: StyleProp<TextStyle>;
 }
 
-export const DollarValueText: FC<Props> = ({ style, exchangeRate, children }) =>
-  isDefined(exchangeRate) ? (
+export const DollarValueText: FC<Props> = ({ balance, exchangeRate, style }) => {
+  const bigNumberBalance = balance instanceof BigNumber ? balance : new BigNumber(balance);
+
+  return isDefined(exchangeRate) ? (
     <Text style={style}>
-      {formatAssetAmount(new BigNumber(Number(children) * exchangeRate), BigNumber.ROUND_DOWN, 2)} $
+      {formatAssetAmount(bigNumberBalance.multipliedBy(exchangeRate), BigNumber.ROUND_DOWN, 2)} $
     </Text>
   ) : null;
+};

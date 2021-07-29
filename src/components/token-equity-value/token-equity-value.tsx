@@ -21,7 +21,7 @@ interface Props {
 export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
   const styles = useTokenEquityValueStyles();
 
-  const { hideBalanceHandler, isBalanceHidden } = useHideBalance();
+  const { toggleHideBalance, isBalanceHidden } = useHideBalance();
 
   return (
     <View style={styles.container}>
@@ -29,15 +29,15 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
         <TouchableIcon
           name={isBalanceHidden ? IconNameEnum.EyeClosedBold : IconNameEnum.EyeOpenBold}
           size={formatSize(24)}
-          onPress={hideBalanceHandler}
+          onPress={toggleHideBalance}
         />
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
       <HideBalance style={styles.tokenValueText}>
-        <TokenValueText tokenSymbol={token.symbol}>{token.balance}</TokenValueText>
+        <TokenValueText balance={token.balance} tokenSymbol={token.symbol} />
       </HideBalance>
       <HideBalance style={styles.equityValueText}>
-        <DollarValueText exchangeRate={exchangeRate}>{token.balance}</DollarValueText>
+        <DollarValueText balance={token.balance} exchangeRate={exchangeRate} />
       </HideBalance>
     </View>
   );

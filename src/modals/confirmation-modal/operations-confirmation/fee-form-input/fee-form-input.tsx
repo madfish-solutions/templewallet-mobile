@@ -56,12 +56,10 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Gas fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <DollarValueText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
-              {values.gasFeeSum}
-            </DollarValueText>
+            <DollarValueText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
           )}
         </View>
 
@@ -73,9 +71,7 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
-            <DollarValueText style={styles.infoFeeValue} exchangeRate={exchangeRate}>
-              {storageFee}
-            </DollarValueText>
+            <DollarValueText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
           )}
         </View>
       </View>

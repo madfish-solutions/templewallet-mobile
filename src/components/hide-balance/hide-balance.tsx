@@ -7,8 +7,10 @@ interface Props {
   style: StyleProp<TextStyle>;
 }
 
-export const HideBalance: FC<Props> = ({ style, children }) => {
-  const { balanceWrapper } = useHideBalance();
+const hideSymbol = '•••••••';
 
-  return <Text style={style}>{balanceWrapper(children)}</Text>;
+export const HideBalance: FC<Props> = ({ style, children }) => {
+  const { isBalanceHidden } = useHideBalance();
+
+  return <Text style={style}>{isBalanceHidden ? hideSymbol : children}</Text>;
 };

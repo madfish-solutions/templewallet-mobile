@@ -6,13 +6,18 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 
 interface Props {
-  style?: StyleProp<TextStyle>;
+  balance: string | BigNumber;
   tokenSymbol?: string;
-  children: string | BigNumber;
+  style?: StyleProp<TextStyle>;
 }
 
-export const TokenValueText: FC<Props> = ({ style, tokenSymbol, children }) => (
-  <Text style={style}>
-    {formatAssetAmount(new BigNumber(children))} {isDefined(tokenSymbol) ? tokenSymbol : null}
-  </Text>
-);
+export const TokenValueText: FC<Props> = ({ balance, tokenSymbol, style }) => {
+  const bigNumberBalance = balance instanceof BigNumber ? balance : new BigNumber(balance);
+
+  return (
+    <Text style={style}>
+      {formatAssetAmount(bigNumberBalance)}
+      {isDefined(tokenSymbol) ? ` ${tokenSymbol}` : null}
+    </Text>
+  );
+};

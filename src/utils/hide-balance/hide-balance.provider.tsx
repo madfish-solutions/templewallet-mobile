@@ -1,9 +1,7 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { useBalanceHiddenSelector } from '../../store/settings/settings-selectors';
 import { HideBalanceContext } from './hide-balance.context';
-
-const hideSymbol = '•••••••';
 
 export const HideBalanceProvider: FC = ({ children }) => {
   const isBalanceHiddenSetting = useBalanceHiddenSelector();
@@ -11,13 +9,9 @@ export const HideBalanceProvider: FC = ({ children }) => {
 
   useEffect(() => setIsBalanceHidden(isBalanceHiddenSetting), [isBalanceHiddenSetting]);
 
-  const hideBalanceHandler = () => setIsBalanceHidden(!isBalanceHidden);
-
-  const balanceWrapper = (balance: ReactNode): ReactNode => (!isBalanceHidden ? balance : hideSymbol);
+  const toggleHideBalance = () => setIsBalanceHidden(!isBalanceHidden);
 
   return (
-    <HideBalanceContext.Provider value={{ isBalanceHidden, balanceWrapper, hideBalanceHandler }}>
-      {children}
-    </HideBalanceContext.Provider>
+    <HideBalanceContext.Provider value={{ isBalanceHidden, toggleHideBalance }}>{children}</HideBalanceContext.Provider>
   );
 };
