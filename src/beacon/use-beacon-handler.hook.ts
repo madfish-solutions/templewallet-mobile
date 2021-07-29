@@ -8,9 +8,11 @@ import { BeaconHandler } from './beacon-handler';
 export const useBeaconHandler = () => {
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    BeaconHandler.init(message =>
-      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
-    );
-  }, []);
+  useEffect(
+    () =>
+      void BeaconHandler.init(message =>
+        navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
+      ),
+    []
+  );
 };
