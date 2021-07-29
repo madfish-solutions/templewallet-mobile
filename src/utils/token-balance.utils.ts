@@ -1,5 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { from, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { isDefined } from './is-defined';
@@ -42,22 +44,27 @@ function loadContractForCallLambdaView(tezos: TezosToolkit, address: string) {
   return tezos.contract.at(address);
 }
 
-export async function fetchBalance(
+export const fetchBalance$ = (
   tezos: TezosToolkit,
   token: Pick<TokenMetadataInterface, 'id' | 'address'>,
   accountPublicKeyHash: string
-) {
-  const tokenContract = await loadContractForCallLambdaView(tezos, token.address);
-
-  let rawBalance: BigNumber | undefined;
-  try {
-    rawBalance = await tokenContract.views.getBalance(accountPublicKeyHash).read(MAINNET_NETWORK.lambdaContract);
-  } catch (e) {
-    const response = await tokenContract.views
-      .balance_of([{ owner: accountPublicKeyHash, token_id: token.id }])
-      .read(MAINNET_NETWORK.lambdaContract);
-    rawBalance = response[0].balance;
-  }
-
-  return isDefined(rawBalance) && !rawBalance.isNaN() ? rawBalance : new BigNumber(0);
-}
+) =>
+  from(loadContractForCallLambdaView(tezos, token.address)).pipe(
+    switchMap(tokenContract =>
+      of(null).pipe(
+        switchMap(() =>
+          from(tokenContract.views.getBalance(accountPublicKeyHash).read(MAINNET_NETWORK.lambdaContract))
+        ),
+        catchError(() =>
+          from(
+            tokenContract.views
+              .balance_of([{ owner: accountPublicKeyHash, token_id: token.id }])
+              .read(MAINNET_NETWORK.lambdaContract)
+          ).pipe(map(response => response[0].balance))
+        )
+      )
+    ),
+    map((rawBalance: BigNumber | undefined) =>
+      isDefined(rawBalance) && !rawBalance.isNaN() ? rawBalance : new BigNumber(0)
+    )
+  );
