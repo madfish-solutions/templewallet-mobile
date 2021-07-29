@@ -14,12 +14,9 @@ export const useQuickActions = () => {
   const isBalanceHiddenSetting = useBalanceHiddenSelector();
   const { hideBalanceHandler } = useHideBalance();
 
-  const quickActionHandler = ({ data }: QuickActionParams) => {
+  const quickActionHandler = ({ data }: QuickActionParams) =>
     // TODO: find a solution to handle quick actions on cold start
-    if (!isDefined(data) && !isBalanceHiddenSetting) {
-      hideBalanceHandler();
-    }
-  };
+    !isDefined(data) && !isBalanceHiddenSetting && hideBalanceHandler();
 
   useEffect(() => {
     QuickActions.setShortcutItems([
