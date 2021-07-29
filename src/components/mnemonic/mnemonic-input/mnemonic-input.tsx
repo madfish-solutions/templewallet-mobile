@@ -34,6 +34,7 @@ export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText 
         value={value}
         isError={isError}
         multiline={true}
+        autoCapitalize="none"
         style={StyledTextInputStyles.mnemonicInput}
         placeholder="e.g. cat, dog, coffee, ocean..."
         onBlur={handleBlur}

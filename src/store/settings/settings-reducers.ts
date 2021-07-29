@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { changeTheme, setIsBiometricsEnabled } from './settings-actions';
+import { changeTheme, setIsBalanceHidden, setIsBiometricsEnabled } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
@@ -9,5 +9,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,
     isBiometricsEnabled
+  }));
+
+  builder.addCase(setIsBalanceHidden, (state, { payload: isBalanceHiddenSetting }) => ({
+    ...state,
+    isBalanceHiddenSetting
   }));
 });

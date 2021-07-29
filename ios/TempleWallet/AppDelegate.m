@@ -10,6 +10,7 @@
 #import <React/RCTRootView.h>
 
 #import "RNBootSplash.h"
+#import "RNQuickActionManager.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -66,6 +67,10 @@ static void InitializeFlipper(UIApplication *application) {
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
 
   return YES;
+}
+
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded)) completionHandler {
+  [RNQuickActionManager onQuickActionPress:shortcutItem completionHandler:completionHandler];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

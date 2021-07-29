@@ -15,6 +15,10 @@ export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-
 export const loadTokenBalancesActions = createActions<string, TokenBalanceInterface[], string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<string, string, string>('assets/LOAD_TEZOS');
 
+export const loadTokenSuggestionActions =
+  createActions<Pick<TokenMetadataInterface, 'id' | 'address'>, TokenMetadataInterface, string>(
+    'assets/LOAD_TOKEN_SUGGESTION'
+  );
 export const loadTokenMetadataActions =
   createActions<Pick<TokenMetadataInterface, 'id' | 'address'>, TokenMetadataInterface, string>(
     'assets/LOAD_TOKEN_METADATA'

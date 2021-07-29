@@ -5,7 +5,6 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ActivityGroup, emptyActivity } from '../interfaces/activity.interface';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
-import { tokenMetadataSlug } from '../token/utils/token.utils';
 import { getParamPreview } from './param-preview.utils';
 
 const knownActivityTypes: Record<ParamsWithKind['kind'], ActivityTypeEnum> = {
@@ -50,11 +49,11 @@ export const paramsToPendingActions = (
       case ParamPreviewTypeEnum.Send:
         activities = preview.transfers.map(({ recipient, amount, asset }) => ({
           ...commonActivityProps,
+          ...(asset !== 'tez' && { address: asset.contract, id: asset.id ?? 0 }),
           destination: {
             address: recipient
           },
           amount: `-${amount}`,
-          tokenSlug: asset === 'tez' ? undefined : tokenMetadataSlug({ address: asset.contract, id: asset.id }),
           entrypoint: 'transfer'
         }));
         break;
@@ -74,15 +73,12 @@ export const paramsToPendingActions = (
         activities = [
           {
             ...commonActivityProps,
+            ...(preview.asset !== 'tez' && { address: preview.asset.contract, id: preview.asset.id ?? 0 }),
             destination: {
               address: preview.approveTo
             },
             entrypoint: 'approve',
-            amount: preview.amount,
-            tokenSlug:
-              preview.asset === 'tez'
-                ? undefined
-                : tokenMetadataSlug({ address: preview.asset.contract, id: preview.asset.id })
+            amount: preview.amount
           }
         ];
         break;
