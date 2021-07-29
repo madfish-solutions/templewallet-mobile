@@ -68,7 +68,7 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Storage fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(storageFee) ? `${storageFee.toFixed()} TEZ` : 'Not defined'}
+            {isDefined(storageFee) ? `${storageFee.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
             <DollarValueText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
