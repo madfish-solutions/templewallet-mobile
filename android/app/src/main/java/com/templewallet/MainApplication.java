@@ -5,6 +5,8 @@ import android.content.Context;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import ui.fileselector.RNFileSelectorPackage;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
