@@ -1,6 +1,7 @@
 import { boolean, object, SchemaOf, string } from 'yup';
 
 import { FileInputValue } from '../../../components/file-input/file-input';
+import { makeRequiredErrorMessage } from '../../../form/validation/messages';
 import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
 import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
@@ -30,7 +31,7 @@ export const importKukaiWalletValidationSchema: SchemaOf<ImportKukaiWalletFormVa
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     (value: unknown) => typeof value === 'object' && isDefined(value) && isString((value as any).uri)
   ) as SchemaOf<FileInputValue>,
-  password: string().required(),
+  password: string().required(makeRequiredErrorMessage('File password')),
   shouldUseFilePasswordForExtension: boolean()
 });
 
