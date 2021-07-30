@@ -25,11 +25,11 @@ import { isString } from '../../../utils/is-string';
 import { createNewPasswordValidationSchema, CreateNewPasswordFormValues } from './create-new-password.form';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
-type CreateNewPasswordProps = {
+interface CreateNewPasswordProps {
   initialPassword?: string;
   onGoBackPress: EmptyFn;
   seedPhrase: string;
-};
+}
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const styles = useCreateNewPasswordStyles();

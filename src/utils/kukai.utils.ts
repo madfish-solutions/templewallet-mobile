@@ -29,9 +29,6 @@ async function decrypt_v1(ciphertext: string, password: string, salt: string | n
     }
     const key = await NativeModules.Aes.pbkdf2(password, salt, 10000, 32, 512);
     const plaintext = await NativeModules.Aes.decryptData({ ciphertext, iv: salt }, key);
-    /* const cipherBytes = AES.utils.hex.toBytes(ciphertext);
-    const aesCtr = new AES.ModeOfOperation.ctr(key);
-    const plaintext = aesCtr.decrypt(cipherBytes); */
 
     return Buffer.from(plaintext);
   } catch (e) {
