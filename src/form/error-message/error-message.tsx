@@ -13,9 +13,5 @@ export const ErrorMessage = <T extends unknown>({ meta }: Props<T>) => {
   const isError = hasError(meta);
   const error = (meta.touched && meta.error) || ' ';
 
-  return (
-    <Text style={[ErrorMessageStyles.root, isError && ErrorMessageStyles.rootVisible]}>
-      {typeof error === 'string' ? error : JSON.stringify(error)}
-    </Text>
-  );
+  return <Text style={[ErrorMessageStyles.root, isError && ErrorMessageStyles.rootVisible]}>{error}</Text>;
 };

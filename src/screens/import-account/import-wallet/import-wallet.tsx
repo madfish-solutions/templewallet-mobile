@@ -103,16 +103,16 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
           initialValues={importKukaiWalletInitialValues}
           validationSchema={importKukaiWalletValidationSchema}
           onSubmit={handleKukaiWalletSubmit}>
-          {({ submitForm, isSubmitting }) => (
+          {({ isValid, submitForm, isSubmitting }) => (
             <>
               <View style={styles.seedPhraseInputContainer}>
                 <View>
                   <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
-                  <FormFileInput name="keystoreFile" />
-                  {/* <Divider size={formatSize(32)} /> */}
+                  <Divider size={formatSize(20)} />
+                  <FormFileInput name="keystoreFile" mimeTypes={['application/octet-stream']} />
+                  <Divider size={formatSize(12)} />
                   <Label label="File password" description="Please enter a password for keystore file" />
                   <FormPasswordInput name="password" />
-                  <Divider size={formatSize(16)} />
                   <FormCheckbox name="shouldUseFilePasswordForExtension">
                     <Text style={styles.checkboxText}>Use File Password as Extension Password</Text>
                   </FormCheckbox>
@@ -121,7 +121,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
               <Divider />
 
               <View>
-                <ButtonLargePrimary title="Next" disabled={isSubmitting} onPress={submitForm} />
+                <ButtonLargePrimary title="Next" disabled={!isValid || isSubmitting} onPress={submitForm} />
                 <InsetSubstitute type="bottom" />
               </View>
             </>

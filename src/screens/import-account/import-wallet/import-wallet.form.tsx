@@ -2,6 +2,8 @@ import { boolean, object, SchemaOf, string } from 'yup';
 
 import { FileInputValue } from '../../../components/file-input/file-input';
 import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
+import { isDefined } from '../../../utils/is-defined';
+import { isString } from '../../../utils/is-string';
 
 export type ImportWalletFormValues = {
   seedPhrase: string;
@@ -18,18 +20,15 @@ export const importWalletInitialValues: ImportWalletFormValues = {
 export type ImportKukaiWalletFormValues = {
   keystoreFile: FileInputValue;
   password: string;
-  shouldUseFilePasswordForExtension: boolean;
+  shouldUseFilePasswordForExtension?: boolean;
 };
 
 export const importKukaiWalletValidationSchema: SchemaOf<ImportKukaiWalletFormValues> = object().shape({
-  keystoreFile: object()
-    .shape({
-      fileName: string().required(),
-      uri: string().required()
-    })
-    .required(),
+  keystoreFile: object().test('keystore-file', 'A keystore file is required', (value: unknown) => {
+    return typeof value === 'object' && isDefined(value) && isString((value as any).uri);
+  }) as SchemaOf<FileInputValue>,
   password: string().required(),
-  shouldUseFilePasswordForExtension: boolean().required()
+  shouldUseFilePasswordForExtension: boolean()
 });
 
 export const importKukaiWalletInitialValues: ImportKukaiWalletFormValues = {

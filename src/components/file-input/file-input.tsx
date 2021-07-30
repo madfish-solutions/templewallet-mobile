@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import DocumentPicker, { DocumentPickerOptions, DocumentPickerResponse } from 'react-native-document-picker';
 
 import { EventFn } from '../../config/general';
@@ -34,8 +34,7 @@ export const FileInput: FC<FileInputProps> = ({
   const styles = useFileInputStyles();
   const colors = useColors();
 
-  const cleanInput = (event: GestureResponderEvent) => {
-    event?.stopPropagation();
+  const cleanInput = () => {
     onChange({ fileName: '', uri: '' });
   };
 
