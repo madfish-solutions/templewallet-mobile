@@ -7,7 +7,8 @@ export const useImportWalletStyles = createUseStyles(({ colors, typography }) =>
   },
   checkboxText: {
     ...typography.body15Semibold,
-    color: colors.black
+    color: colors.black,
+    marginLeft: formatSize(10)
   },
   seedPhraseInputContainer: {
     flexGrow: 1

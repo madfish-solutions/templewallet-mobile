@@ -1,7 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC, useState } from 'react';
-import { Alert, View } from 'react-native';
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
+import { Text, View } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,16 +12,30 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
-import { isAndroid } from '../../../config/system';
+import { FormCheckbox } from '../../../form/form-checkbox';
+import { FormFileInput } from '../../../form/form-file-input';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
+import { FormPasswordInput } from '../../../form/form-password-input';
 import { ImportService } from '../../../kukai/import.service';
 import { formatSize } from '../../../styles/format-size';
-import { importWalletInitialValues, importWalletValidationSchema, ImportWalletFormValues } from './import-wallet.form';
+import { showErrorToast } from '../../../toast/toast.utils';
+import {
+  importWalletInitialValues,
+  importWalletValidationSchema,
+  importKukaiWalletInitialValues,
+  importKukaiWalletValidationSchema,
+  ImportKukaiWalletFormValues
+} from './import-wallet.form';
 import { useImportWalletStyles } from './import-wallet.styles';
 
-type ImportWalletProps = {
-  onSubmit: (formValues: ImportWalletFormValues) => void;
-};
+export interface ImportWalletCredentials {
+  seedPhrase: string;
+  password?: string;
+}
+
+interface ImportWalletProps {
+  onSubmit: (formValues: ImportWalletCredentials) => void;
+}
 
 const seedPhraseTabIndex = 0;
 
@@ -39,27 +52,20 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
     []
   );
 
-  const readSeedPhrase = async () => {
+  const handleKukaiWalletSubmit = async (values: ImportKukaiWalletFormValues) => {
     try {
-      let pickResult: DocumentPickerResponse;
-      if (isAndroid) {
-        pickResult = await DocumentPicker.pick<'android'>({
-          type: ['*/*']
-        });
-      } else {
-        pickResult = await DocumentPicker.pick<'ios'>({
-          type: ['public.item']
-        });
-      }
       console.log('Reading file...');
-      const content = await RNFetchBlob.fs.readFile(pickResult.uri, 'utf8');
+      const content = await RNFetchBlob.fs.readFile(values.keystoreFile.uri, 'utf8');
+      console.log(content);
       console.log('Decrypting...');
-      const seedPhrase = await ImportService.getSeedPhrase(content, 'pYLgol7eFt3s08E6');
-      Alert.alert('Seed phrase', seedPhrase);
+      const seedPhrase = await ImportService.getSeedPhrase(content, values.password);
+      onSubmit({
+        seedPhrase,
+        password: values.shouldUseFilePasswordForExtension ? values.password : undefined
+      });
     } catch (e) {
-      if (e.message !== 'User canceled document picker') {
-        console.error(e);
-      }
+      console.error(e);
+      showErrorToast({ description: 'Wrong file, please select another one' });
     }
   };
 
@@ -70,6 +76,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
         values={['Seed phrase', 'Keystore file']}
         onChange={setSegmentedControlIndex}
       />
+      <Divider size={formatSize(32)} />
 
       {showSeedPhraseForm ? (
         <Formik
@@ -78,7 +85,6 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
           onSubmit={onSubmit}>
           {({ submitForm, isValid }) => (
             <>
-              <Divider size={formatSize(12)} />
               <View style={styles.seedPhraseInputContainer}>
                 <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
                 <FormMnemonicInput name="seedPhrase" />
@@ -93,7 +99,34 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
           )}
         </Formik>
       ) : (
-        <ButtonLargePrimary title="Read seed phrase" onPress={readSeedPhrase} />
+        <Formik
+          initialValues={importKukaiWalletInitialValues}
+          validationSchema={importKukaiWalletValidationSchema}
+          onSubmit={handleKukaiWalletSubmit}>
+          {({ submitForm, isSubmitting }) => (
+            <>
+              <View style={styles.seedPhraseInputContainer}>
+                <View>
+                  <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
+                  <FormFileInput name="keystoreFile" />
+                  {/* <Divider size={formatSize(32)} /> */}
+                  <Label label="File password" description="Please enter a password for keystore file" />
+                  <FormPasswordInput name="password" />
+                  <Divider size={formatSize(16)} />
+                  <FormCheckbox name="shouldUseFilePasswordForExtension">
+                    <Text style={styles.checkboxText}>Use File Password as Extension Password</Text>
+                  </FormCheckbox>
+                </View>
+              </View>
+              <Divider />
+
+              <View>
+                <ButtonLargePrimary title="Next" disabled={isSubmitting} onPress={submitForm} />
+                <InsetSubstitute type="bottom" />
+              </View>
+            </>
+          )}
+        </Formik>
       )}
     </ScreenContainer>
   );

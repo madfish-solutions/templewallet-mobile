@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -20,19 +20,18 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { formatSize } from '../../../styles/format-size';
-import {
-  createNewPasswordInitialValues,
-  createNewPasswordValidationSchema,
-  CreateNewPasswordFormValues
-} from './create-new-password.form';
+import { showWarningToast } from '../../../toast/toast.utils';
+import { isString } from '../../../utils/is-string';
+import { createNewPasswordValidationSchema, CreateNewPasswordFormValues } from './create-new-password.form';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 type CreateNewPasswordProps = {
+  initialPassword?: string;
   onGoBackPress: EmptyFn;
   seedPhrase: string;
 };
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
@@ -45,6 +44,23 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       headerTitle: () => <HeaderTitle title="Create a new password" />
     },
     [onGoBackPress]
+  );
+
+  useEffect(() => {
+    if (isString(initialPassword)) {
+      showWarningToast({
+        description: 'The password from the previous screen was used. Remember, it will be used to enter the Wallet.'
+      });
+    }
+  }, []);
+
+  const createNewPasswordInitialValues = useMemo(
+    () => ({
+      password: initialPassword,
+      passwordConfirmation: initialPassword,
+      acceptTerms: false
+    }),
+    [initialPassword]
   );
 
   return (
