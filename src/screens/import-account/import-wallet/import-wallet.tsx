@@ -16,9 +16,9 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormFileInput } from '../../../form/form-file-input';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
-import { ImportService } from '../../../kukai/import.service';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
+import { decryptSeedPhrase } from '../../../utils/kukai.utils';
 import {
   importWalletInitialValues,
   importWalletValidationSchema,
@@ -54,17 +54,13 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
 
   const handleKukaiWalletSubmit = async (values: ImportKukaiWalletFormValues) => {
     try {
-      console.log('Reading file...');
       const content = await RNFetchBlob.fs.readFile(values.keystoreFile.uri, 'utf8');
-      console.log(content);
-      console.log('Decrypting...');
-      const seedPhrase = await ImportService.getSeedPhrase(content, values.password);
+      const seedPhrase = await decryptSeedPhrase(content, values.password);
       onSubmit({
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension ? values.password : undefined
       });
     } catch (e) {
-      console.error(e);
       showErrorToast({ description: 'Wrong file, please select another one' });
     }
   };

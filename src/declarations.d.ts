@@ -12,6 +12,5 @@ declare const crypto: {
 declare function atob(input: string): string;
 declare function btoa(input: string): string;
 
-declare module '@tezos-core-tools/crypto-utils';
 declare module 'node-forge';
 declare module 'scryptsy';

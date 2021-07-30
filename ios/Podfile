@@ -14,8 +14,6 @@ target 'TempleWallet' do
 
   pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 
-  pod 'RNFileSelector', :path => '../node_modules/react-native-file-selector'
-
   target 'TempleWalletTests' do
     inherit! :complete
     # Pods for testing
