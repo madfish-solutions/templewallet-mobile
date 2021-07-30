@@ -20,8 +20,8 @@ export interface FileInputValue {
 
 export interface FileInputProps {
   value?: FileInputValue;
-  mimeTypes?: DocumentPickerOptions<'android'>['type'];
-  utisTypes?: DocumentPickerOptions<'ios'>['type'];
+  mimeTypes?: string[];
+  utisTypes?: string[];
   onChange: EventFn<FileInputValue>;
 }
 
@@ -42,9 +42,9 @@ export const FileInput: FC<FileInputProps> = ({
     try {
       let pickResult: DocumentPickerResponse;
       if (isAndroid) {
-        pickResult = await DocumentPicker.pick({ type: mimeTypes });
+        pickResult = await DocumentPicker.pick({ type: mimeTypes } as DocumentPickerOptions<'android'>);
       } else {
-        pickResult = await DocumentPicker.pick({ type: utisTypes });
+        pickResult = await DocumentPicker.pick({ type: utisTypes } as DocumentPickerOptions<'ios'>);
       }
       onChange({ fileName: pickResult.name, uri: pickResult.uri });
     } catch (e) {
