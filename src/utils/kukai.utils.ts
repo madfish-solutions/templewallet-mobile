@@ -1,4 +1,3 @@
-// import * as AES from 'aes-js';
 import { entropyToMnemonic } from 'bip39';
 import * as forge from 'node-forge';
 import { NativeModules } from 'react-native';
