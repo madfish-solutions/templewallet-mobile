@@ -31,6 +31,6 @@ jobs:
           ./ios/decrypt_authkey.sh
           yarn ios:test-flight
         env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
