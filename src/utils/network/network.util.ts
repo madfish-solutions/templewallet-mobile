@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { FastRpcClient } from './fast-rpc';
 import { MAINNET_NETWORK } from './networks';
 
-export const michelEncoder = new MichelCodecPacker();
+const michelEncoder = new MichelCodecPacker();
 
 export const createTezosToolkit = (rpc: string) => {
   const tezos = new TezosToolkit(getFastRpcClient(rpc));
