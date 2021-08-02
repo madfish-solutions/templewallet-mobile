@@ -16,6 +16,9 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
+      - name: Test clone
+        run: git clone https://github.com/madfish-solutions/templewallet-mobile-certificates.git
+
       - name: Install SSH key to get acces to the Certificates and Provisioning profiles
         uses: shimataro/ssh-key-action@v2
         with:
