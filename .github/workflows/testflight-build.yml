@@ -22,6 +22,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
 
+      - run: ssh -T git@github.com
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
