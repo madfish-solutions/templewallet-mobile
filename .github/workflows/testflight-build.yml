@@ -20,7 +20,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
-          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - run: ssh -T git@github.com
 
