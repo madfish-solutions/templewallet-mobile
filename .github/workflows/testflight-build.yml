@@ -21,6 +21,9 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Install Pods
         run: yarn ios:pods
 
