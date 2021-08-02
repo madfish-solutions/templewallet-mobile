@@ -26,7 +26,8 @@ export type ImportKukaiWalletFormValues = {
 export const importKukaiWalletValidationSchema: SchemaOf<ImportKukaiWalletFormValues> = object().shape({
   keystoreFile: object()
     .shape({})
-    .test('keystore-file', 'A keystore file is required', value => isString(value.uri)) as SchemaOf<FileInputValue>,
+    .test('keystore-file', 'A keystore file is required', value => isString(value?.uri))
+    .required(),
   password: string().required(makeRequiredErrorMessage('File password')),
   shouldUseFilePasswordForExtension: boolean()
 });
