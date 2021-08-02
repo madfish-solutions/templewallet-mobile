@@ -16,13 +16,17 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
-      - name: Install SSH key to get acces to the Certificates and Provisioning profiles
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Setup SSH Keys and known_hosts
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+            ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
 
-      - run: ssh -T git@github.com
+      - name: test
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: ssh -T git@github.com
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
