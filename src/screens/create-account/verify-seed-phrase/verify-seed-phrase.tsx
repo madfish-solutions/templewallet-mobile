@@ -10,6 +10,7 @@ import { HeaderButton } from '../../../components/header/header-button/header-bu
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
@@ -32,7 +33,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
   useNavigationSetOptions(
     {
       headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
-      headerTitle: () => <HeaderTitle title="Create a new Wallet" />
+      headerTitle: () => <HeaderTitle title="Verify your seed" />
     },
     []
   );
@@ -124,6 +125,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
             onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </View>
+          <InsetSubstitute type="bottom" />
         </ScreenContainer>
       )}
     </Formik>
