@@ -22,9 +22,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: Test clone
-        run: git clone git@github.com:madfish-solutions/templewallet-mobile-certificates.git
-
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:

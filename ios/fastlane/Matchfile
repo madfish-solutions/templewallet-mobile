@@ -1,4 +1,4 @@
-git_url("https://github.com/madfish-solutions/templewallet-mobile-certificates.git")
+git_url("git@github.com:madfish-solutions/templewallet-mobile-certificates.git")
 
 storage_mode("git")
 
