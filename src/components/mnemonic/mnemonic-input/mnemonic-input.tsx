@@ -11,7 +11,13 @@ import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 
-export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur = emptyFn }) => {
+export const MnemonicInput: FC<MnemonicProps> = ({
+  value,
+  isError,
+  onChangeText = emptyFn,
+  onBlur = emptyFn,
+  placeholder
+}) => {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -36,7 +42,7 @@ export const MnemonicInput: FC<MnemonicProps> = ({ value, isError, onChangeText 
         multiline={true}
         autoCapitalize="none"
         style={StyledTextInputStyles.mnemonicInput}
-        placeholder="e.g. cat, dog, coffee, ocean..."
+        placeholder={placeholder}
         onBlur={handleBlur}
         onFocus={() => setIsFocused(true)}
         onChangeText={onChangeText}

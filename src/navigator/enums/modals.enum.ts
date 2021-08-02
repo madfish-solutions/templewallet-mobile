@@ -11,7 +11,8 @@ export enum ModalsEnum {
   Confirmation = 'Confirmation',
   RevealSeedPhrase = 'RevealSeedPhrase',
   RevealPrivateKey = 'RevealPrivateKey',
-  EnableBiometryPassword = 'EnableBiometryPassword'
+  EnableBiometryPassword = 'EnableBiometryPassword',
+  ImportAccount = 'ImportAccount'
 }
 
 export type ModalsParamList = {
@@ -24,4 +25,5 @@ export type ModalsParamList = {
   [ModalsEnum.RevealSeedPhrase]: { account?: WalletAccountInterface };
   [ModalsEnum.RevealPrivateKey]: { account: WalletAccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
+  [ModalsEnum.ImportAccount]: undefined;
 };

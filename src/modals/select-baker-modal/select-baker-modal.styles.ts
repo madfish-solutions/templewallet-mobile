@@ -40,5 +40,9 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
   selectedBakerFieldWrapper: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  searchInputContainer: {
+    marginVertical: formatSize(8),
+    marginHorizontal: formatSize(16)
   }
 }));

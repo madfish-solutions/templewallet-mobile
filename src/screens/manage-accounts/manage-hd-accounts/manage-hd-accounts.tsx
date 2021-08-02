@@ -6,7 +6,8 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
+import { IconButton } from '../../../components/icon-button/icon-button';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -66,7 +67,11 @@ export const ManageHdAccounts = () => {
 
       <Divider />
 
-      <PlusCircleButton text="CREATE NEW" onPress={() => navigate(ModalsEnum.CreateHdAccount)} />
+      <IconButton
+        icon={IconNameEnum.PlusCircle}
+        text="CREATE NEW"
+        onPress={() => navigate(ModalsEnum.CreateHdAccount)}
+      />
 
       <BottomSheet
         title="Select what do you want to reveal:"

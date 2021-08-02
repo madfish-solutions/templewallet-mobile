@@ -6,8 +6,10 @@ import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { loadActivityGroupsActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useActivityStyles } from './activity.styles';
 
 export const Activity = () => {
+  const styles = useActivityStyles();
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
@@ -16,7 +18,7 @@ export const Activity = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search" onChangeText={setSearchValue} />
+      <SearchInput containerStyle={styles.inputContainer} placeholder="Search" onChangeText={setSearchValue} />
       <ActivityGroupsList activityGroups={filteredActivityGroups} />
     </>
   );

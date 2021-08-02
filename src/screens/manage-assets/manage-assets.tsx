@@ -3,7 +3,8 @@ import { Text } from 'react-native';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { PlusCircleButton } from '../../components/plus-circle-button/plus-circle-button';
+import { IconButton } from '../../components/icon-button/icon-button';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
@@ -23,7 +24,11 @@ export const ManageAssets = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search by address" onChangeText={setSearchValue} />
+      <SearchInput
+        containerStyle={styles.inputContainer}
+        placeholder="Search by address"
+        onChangeText={setSearchValue}
+      />
       <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
         <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
 
@@ -34,7 +39,7 @@ export const ManageAssets = () => {
         )}
 
         <Divider />
-        <PlusCircleButton text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        <IconButton icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
         <Divider />
       </ScreenContainer>
     </>
