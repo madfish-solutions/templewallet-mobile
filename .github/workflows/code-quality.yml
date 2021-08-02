@@ -3,8 +3,8 @@ name: Code quality
 on:
   pull_request:
     branches:
-      - master
-      - development
+      - master1
+      - development1
 
 jobs:
   code-quality:
