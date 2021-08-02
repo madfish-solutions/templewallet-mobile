@@ -16,16 +16,15 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
-      - name: Test clone
-        run: git clone https://github.com/madfish-solutions/templewallet-mobile-certificates.git
-        with:
-          repo-token: ${{ secrets.REPO_ACCESS_TOKEN }}
 
       - name: Install SSH key to get acces to the Certificates and Provisioning profiles
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Test clone
+        run: git clone git@github.com:madfish-solutions/templewallet-mobile-certificates.git
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
