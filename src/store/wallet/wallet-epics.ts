@@ -6,7 +6,7 @@ import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rx
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { betterCallDevApi, tzktApi } from '../../api.service';
+import { balancesApi, betterCallDevApi, tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
@@ -17,6 +17,7 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
@@ -46,10 +47,10 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
     withLatestFrom(currentNetworkId$),
-    switchMap(([address, currentNetworkId]) =>
+    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
       from(
         betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-          `/account/${currentNetworkId}/${address}/token_balances`,
+          `/account/${currentNetworkId}/${accountPublicKeyHash}/token_balances`,
           {
             params: { size: 10, offset: 0 }
           }
@@ -71,6 +72,21 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
             )
           )
         ),
+        switchMap(tokens =>
+          from(
+            balancesApi.post('/', {
+              account: accountPublicKeyHash,
+              assetSlugs: tokens.map(token => getTokenSlug({ address: token.contract, id: token.token_id }))
+            })
+          ).pipe(
+            map(({ data }) =>
+              tokens.map(token => ({
+                ...token,
+                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? token.balance
+              }))
+            )
+          )
+        ),
         map(balances => loadTokenBalancesActions.success(balances)),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
@@ -82,8 +98,8 @@ const loadTezosAssetsEpic = (action$: Observable<Action>) =>
     ofType(loadTezosBalanceActions.submit),
     toPayload(),
     withLatestFrom(tezos$),
-    switchMap(([address, tezos]) =>
-      from(tezos.tz.getBalance(address)).pipe(
+    switchMap(([accountPublicKeyHash, tezos]) =>
+      from(tezos.tz.getBalance(accountPublicKeyHash)).pipe(
         map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TEZ_TOKEN_METADATA.decimals).toString())),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
@@ -189,19 +205,19 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
     ofType(loadActivityGroupsActions.submit),
     toPayload(),
     withLatestFrom(currentNetworkId$),
-    switchMap(([address, currentNetworkId]) =>
+    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
       forkJoin([
         from(
           tzktApi.get<OperationInterface[]>(
-            `accounts/${address}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
+            `accounts/${accountPublicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
           )
-        ).pipe(map(({ data }) => mapOperationsToActivities(address, data))),
+        ).pipe(map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))),
         from(
           betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${currentNetworkId}/transfers/${address}`,
+            `/tokens/${currentNetworkId}/transfers/${accountPublicKeyHash}`,
             { params: { max: 100, start: 0 } }
           )
-        ).pipe(map(({ data }) => mapTransfersToActivities(address, data.transfers)))
+        ).pipe(map(({ data }) => mapTransfersToActivities(accountPublicKeyHash, data.transfers)))
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
