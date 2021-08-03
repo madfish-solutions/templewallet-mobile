@@ -52,7 +52,9 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+        yarn install
+        bundle instal
 
       - name: Install Pods
         run: yarn ios:pods
