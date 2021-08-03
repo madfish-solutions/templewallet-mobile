@@ -18,6 +18,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
       - name: Install SSH key to get acces to the Certificates and Provisioning profiles
         uses: shimataro/ssh-key-action@v2
         with:
@@ -26,7 +30,7 @@ jobs:
 
       - run: echo "${{ env.TEST_ENV }}"
         env:
-          TEST_ENV: $(git log --pretty=format:'%s' origin/master..origin/${{ github.base_ref }})
+          TEST_ENV: $(git log --pretty=format:'%s' origin/master..origin/${{ steps.extract_branch.outputs.branch }})
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
