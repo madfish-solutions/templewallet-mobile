@@ -26,8 +26,8 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
 
 export const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
 
-export const seedToHDPrivateKey = (seed: Buffer, hdAccountIndex: number) =>
-  seedToPrivateKey(deriveSeed(seed, getDerivationPath(hdAccountIndex)));
+export const seedToHDPrivateKey = (seed: Buffer, derivationPath: string) =>
+  seedToPrivateKey(deriveSeed(seed, derivationPath));
 
 export const getPublicKeyAndHash$ = (privateKey: string) =>
   from(InMemorySigner.fromSecretKey(privateKey)).pipe(

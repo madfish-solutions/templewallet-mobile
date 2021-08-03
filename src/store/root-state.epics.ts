@@ -18,7 +18,7 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
   action$.pipe(
     ofType(rootStateResetAction.submit),
     withLatestFrom(state$, (_, state) =>
-      state.wallet.hdAccounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
+      state.wallet.accounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
     ),
     switchMap(keychainOptionsArray =>
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
@@ -45,7 +45,7 @@ const tezosSignerProviderEpic = (action$: Observable<Action>, state$: Observable
     withLatestFrom(tezos$),
     switchMap(([{ selectedAccountPublicKeyHash, state }, tezos]) => {
       const selectedAccount =
-        state.wallet.hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ??
+        state.wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ??
         emptyWalletAccount;
 
       tezos.setSignerProvider(new ReadOnlySigner(selectedAccount.publicKeyHash, selectedAccount.publicKey));

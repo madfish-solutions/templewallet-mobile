@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
+import { AccountTypeEnum } from '../../interfaces/account.interface';
 import {
   initialWalletAccountState,
   WalletAccountStateInterface
@@ -12,29 +13,51 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-export const useHdAccountsListSelector = () =>
+export const useAccountsListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) =>
-    wallet.hdAccounts.map(walletAccountStateToWalletAccount)
+    wallet.accounts.map(walletAccountStateToWalletAccount)
   );
 
-export const useIsAuthorisedSelector = () => {
-  const hdAccounts = useHdAccountsListSelector();
+export const useHdAccountListSelector = () =>
+  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
+    const accounts = [];
+    for (const account of wallet.accounts) {
+      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+        accounts.push(walletAccountStateToWalletAccount(account));
+      }
+    }
 
-  return useMemo(() => hdAccounts.length > 0, [hdAccounts.length]);
+    return accounts;
+  });
+
+export const useImportedAccountListSelector = () =>
+  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
+    const accounts = [];
+    for (const account of wallet.accounts) {
+      if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
+        accounts.push(walletAccountStateToWalletAccount(account));
+      }
+    }
+
+    return accounts;
+  });
+
+export const useIsAuthorisedSelector = () => {
+  const accounts = useAccountsListSelector();
+
+  return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
 const useSelectedAccountStateSelector = (): WalletAccountStateInterface => {
-  const { hdAccounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(
-    ({ wallet }) => wallet
-  );
+  const { accounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
 
   // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
   return useMemo(
     () => ({
       ...initialWalletAccountState,
-      ...hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
+      ...accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
     }),
-    [hdAccounts, selectedAccountPublicKeyHash]
+    [accounts, selectedAccountPublicKeyHash]
   );
 };
 

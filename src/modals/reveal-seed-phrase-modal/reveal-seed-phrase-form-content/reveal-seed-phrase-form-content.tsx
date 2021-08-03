@@ -8,7 +8,7 @@ import { ModalStatusBar } from '../../../components/modal-status-bar/modal-statu
 import { RevealAttention } from '../../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormTextInput } from '../../../form/form-text-input';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { getDerivationPath } from '../../../utils/keys.util';
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
@@ -18,15 +18,15 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
   values,
   setFieldValue
 }) => {
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
 
   const derivationPath = useMemo(() => {
-    const currentAccountIndex = hdAccounts.findIndex(
+    const currentAccountIndex = accounts.findIndex(
       ({ publicKeyHash }) => publicKeyHash === values.account.publicKeyHash
     );
 
     return getDerivationPath(currentAccountIndex);
-  }, [hdAccounts, values.account.publicKeyHash]);
+  }, [accounts, values.account.publicKeyHash]);
 
   useEffect(() => setFieldValue('derivationPath', derivationPath), [derivationPath]);
 
@@ -37,7 +37,7 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
         label="Account"
         description="If you want to reveal a seed phrase from another account - you should select it in the top-right dropdown."
       />
-      <AccountFormDropdown name="account" list={hdAccounts} />
+      <AccountFormDropdown name="account" list={accounts} />
       <Label
         label="Derivation path"
         description="for HD acccounts. This is the thing you use to recover all your accounts from your seed phrase."

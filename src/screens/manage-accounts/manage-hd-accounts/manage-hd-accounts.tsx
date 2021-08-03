@@ -11,7 +11,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
@@ -22,7 +22,7 @@ export const ManageHdAccounts = () => {
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useHdAccountListSelector();
   const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
 
   const handleRevealButtonPress = (account: WalletAccountInterface) => {
@@ -58,7 +58,7 @@ export const ManageHdAccounts = () => {
 
       <InfoText />
 
-      {hdAccounts.map(account => (
+      {accounts.map(account => (
         <Fragment key={account.publicKeyHash}>
           <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
           <Divider size={formatSize(16)} />

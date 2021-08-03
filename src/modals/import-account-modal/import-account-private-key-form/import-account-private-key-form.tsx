@@ -11,6 +11,8 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { ImportAccountPrivateKeyValues } from '../../../interfaces/import-account-type';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import {
   importAccountPrivateKeyFormInitialValues,
@@ -23,8 +25,13 @@ interface Props {
 }
 
 export const ImportAccountPrivateKeyForm: FC<Props> = ({ importAccountStep, setImportAccountStep }) => {
-  const onSubmit = (values: ImportAccountPrivateKeyValues) => {
-    console.log(values);
+  const { createImportedAccountWithPrivateKey } = useShelter();
+  const accountLength = useAccountsListSelector().length + 1;
+  const onSubmit = ({ privateKey }: ImportAccountPrivateKeyValues) => {
+    createImportedAccountWithPrivateKey({
+      privateKey,
+      name: `Account ${accountLength}`
+    });
   };
 
   return (

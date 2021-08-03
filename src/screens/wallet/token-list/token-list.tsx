@@ -5,6 +5,7 @@ import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
 import { IconButton } from '../../../components/icon-button/icon-button';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
@@ -19,7 +20,6 @@ import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useTokenListStyles } from './token-list.styles';
-import {IconNameEnum} from "../../../components/icon/icon-name.enum";
 
 export const TokenList: FC = () => {
   const styles = useTokenListStyles();

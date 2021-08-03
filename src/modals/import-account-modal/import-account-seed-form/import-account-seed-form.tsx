@@ -15,6 +15,8 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { ImportAccountDerivationEnum, ImportAccountSeedValues } from '../../../interfaces/import-account-type';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import {
   importAccountSeedFormInitialValues,
@@ -29,13 +31,20 @@ interface Props {
 
 export const ImportAccountSeedForm: FC<Props> = ({ setImportAccountStep, importAccountStep }) => {
   const styles = useImportAccountModalStyles();
+  const { createImportedAccountWithSeed } = useShelter();
+  const accountsLength = useAccountsListSelector().length + 1;
   const derivationRadioButtons: RadioButton<ImportAccountDerivationEnum>[] = [
     { value: ImportAccountDerivationEnum.DEFAULT, label: 'Default account (the first one)' },
     { value: ImportAccountDerivationEnum.CUSTOM_PATH, label: 'Custom derivation path' }
   ];
 
   const onSubmit = (values: ImportAccountSeedValues) => {
-    console.log(values);
+    createImportedAccountWithSeed({
+      name: `Account ${accountsLength}`,
+      seedPhrase: values.seedPhrase,
+      password: values.password,
+      derivationPath: values.derivationPath
+    });
   };
 
   return (

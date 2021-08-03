@@ -4,7 +4,8 @@ import * as Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
-import { AccountInterface } from '../interfaces/account.interface';
+import { AccountInterface, AccountTypeEnum } from '../interfaces/account.interface';
+import { showErrorToast } from '../toast/toast.utils';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
@@ -14,7 +15,7 @@ import {
   PASSWORD_CHECK_KEY,
   PASSWORD_STORAGE_KEY
 } from '../utils/keychain.utils';
-import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
+import { getDerivationPath, getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
 const EMPTY_PASSWORD = '';
 
@@ -65,11 +66,36 @@ export class Shelter {
       catchError(() => of(false))
     );
 
+  static createImportedAccountWithPrivateKey$ = (privateKey: string, name: string) => {
+    return getPublicKeyAndHash$(privateKey).pipe(
+      switchMap(([publicKey, publicKeyHash]) =>
+        Shelter.saveSensitiveData$({
+          [publicKeyHash]: privateKey
+        }).pipe(
+          mapTo({
+            name,
+            type: AccountTypeEnum.IMPORTED_ACCOUNT,
+            publicKey,
+            publicKeyHash
+          })
+        )
+      ),
+      catchError(() => {
+        showErrorToast({
+          title: 'Failed to import account.',
+          description: 'This may happen because provided Key is invalid.'
+        });
+
+        return of(undefined);
+      })
+    );
+  };
+
   static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface | undefined> => {
     Shelter._password$.next(password);
 
     const seed = mnemonicToSeedSync(seedPhrase);
-    const privateKey = seedToHDPrivateKey(seed, 0);
+    const privateKey = seedToHDPrivateKey(seed, getDerivationPath(0));
 
     return getPublicKeyAndHash$(privateKey).pipe(
       switchMap(([publicKey, publicKeyHash]) =>
@@ -80,6 +106,7 @@ export class Shelter {
         }).pipe(
           mapTo({
             name: 'Account 1',
+            type: AccountTypeEnum.HD_ACCOUNT,
             publicKey,
             publicKeyHash
           })
@@ -89,17 +116,52 @@ export class Shelter {
     );
   };
 
+  static createImportedAccountWithSeed$ = (
+    name: string,
+    password: string | undefined,
+    derivationPath: string,
+    seedPhrase: string
+  ) => {
+    const seed = mnemonicToSeedSync(seedPhrase, password);
+    const privateKey = seedToHDPrivateKey(seed, derivationPath);
+
+    return getPublicKeyAndHash$(privateKey).pipe(
+      switchMap(([publicKey, publicKeyHash]) =>
+        Shelter.saveSensitiveData$({
+          seedPhrase,
+          [publicKeyHash]: privateKey
+        }).pipe(
+          mapTo({
+            name,
+            type: AccountTypeEnum.IMPORTED_ACCOUNT,
+            publicKey,
+            publicKeyHash
+          })
+        )
+      ),
+      catchError(() => {
+        showErrorToast({
+          title: 'Failed to import account.',
+          description: 'This may happen because provided Key is invalid.'
+        });
+
+        return of(undefined);
+      })
+    );
+  };
+
   static createHdAccount$ = (name: string, accountIndex: number): Observable<AccountInterface | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
-        const privateKey = seedToHDPrivateKey(seed, accountIndex);
+        const privateKey = seedToHDPrivateKey(seed, getDerivationPath(accountIndex));
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
             Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey }).pipe(
               mapTo({
                 name,
+                type: AccountTypeEnum.HD_ACCOUNT,
                 publicKey,
                 publicKeyHash
               })

@@ -1,5 +1,6 @@
 import { mixed, object, SchemaOf, string } from 'yup';
 
+import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { seedPhraseValidation } from '../../form/validation/seed-phrase';
 import {
   ImportAccountDerivationEnum,
@@ -9,7 +10,6 @@ import {
   ImportAccountTypeValues
 } from '../../interfaces/import-account-type';
 import { getDerivationPath } from '../../utils/keys.util';
-import {makeRequiredErrorMessage} from "../../form/validation/messages";
 
 export const importAccountTypeValidationSchema: SchemaOf<ImportAccountTypeValues> = object().shape({
   type: mixed<ImportAccountTypeEnum>().oneOf(Object.values(ImportAccountTypeEnum)).required()
@@ -33,8 +33,8 @@ export const importAccountPrivateKeyFormInitialValues: ImportAccountPrivateKeyVa
 export const importAccountSeedFormValidationSchema: SchemaOf<ImportAccountSeedValues> = object().shape({
   seedPhrase: seedPhraseValidation,
   password: string(),
-  derivation: mixed<ImportAccountTypeEnum>().oneOf(Object.values(ImportAccountTypeEnum)).required(),
-  derivationPath: string()
+  derivation: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)),
+  derivationPath: string().required()
 });
 
 export const importAccountPrivateKeyFormValidationSchema = object().shape({
