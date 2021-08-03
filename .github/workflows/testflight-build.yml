@@ -11,7 +11,7 @@ jobs:
   testflight-build:
     name: Creating new iOS build and uploding it to the Testflight
     runs-on: macos-latest
-    environment: ios
+    environment: fastlane
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
