@@ -9,7 +9,7 @@ on:
 
 jobs:
   testflight-build:
-    name: Creating new iOS build and uploding it to the Testflight
+    name: Create new iOS & Android builds and upload them via Testflight
     runs-on: macos-latest
     environment: fastlane
     steps:
