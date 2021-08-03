@@ -30,6 +30,7 @@ jobs:
       - run: echo "${{ env.TEST_ENV }}"
         env:
           TEST_ENV: $(git log --pretty=format:'%s' origin/master..origin/development)
+      - run: git log --pretty=format:'%s' origin/master..origin/development
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
