@@ -23,9 +23,9 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Generate Changelog
-        run: echo "CHANGELOG=$(git log --pretty=format:'%s' master..development)" >> $GITHUB_ENV
+        run: echo "CHANGELOG=$(git log --pretty=format:'%s' origin/master..origin/development)" >> $GITHUB_ENV
 
-      - run: echo "$(git log --pretty=format:'%s' master..development)"
+      - run: echo "$(git log --pretty=format:'%s' origin/master..origin/development)"
       - run: echo "${{ env.CHANGELOG }}"
 
       - name: Setup Xcode
