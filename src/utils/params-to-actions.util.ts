@@ -65,7 +65,7 @@ export const paramsToPendingActions = (
               address: preview.contract
             },
             entrypoint: preview.entrypoint,
-            amount: '0'
+            amount: preview.amount === '0' ? '0' : `-${preview.amount}`
           }
         ];
         break;
@@ -78,7 +78,7 @@ export const paramsToPendingActions = (
               address: preview.approveTo
             },
             entrypoint: 'approve',
-            amount: preview.amount
+            amount: `-${preview.amount}`
           }
         ];
         break;

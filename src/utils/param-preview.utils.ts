@@ -56,7 +56,8 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
       return {
         type: ParamPreviewTypeEnum.ContractCall,
         contract: opParam.to,
-        entrypoint: opParam.parameter.entrypoint
+        entrypoint: opParam.parameter.entrypoint,
+        amount: (opParam.amount * (opParam.mutez ? 1 : 1e6)).toString()
       };
     }
   }
