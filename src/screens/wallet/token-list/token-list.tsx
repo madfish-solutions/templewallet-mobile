@@ -15,6 +15,7 @@ import { useExchangeRatesSelector } from '../../../store/currency/currency-selec
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { getTokenSlug } from '../../../token/utils/token.utils';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -74,7 +75,7 @@ export const TokenList: FC = () => {
                 token.isVisible && (
                   <TokenListItem
                     key={token.address + index}
-                    exchangeRate={exchangeRates.data[token.address]}
+                    exchangeRate={exchangeRates.data[getTokenSlug(token)]}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />

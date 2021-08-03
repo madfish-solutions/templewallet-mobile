@@ -25,5 +25,5 @@ export const loadTokenMetadata$ = memoize(
         iconUrl: data.thumbnailUri
       }))
     ),
-  { cacheKey: ([address, tokenId]) => getTokenSlug({ address, tokenId }) }
+  { cacheKey: ([address, tokenId]) => getTokenSlug({ address, id: tokenId }) }
 );

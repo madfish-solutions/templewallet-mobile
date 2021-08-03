@@ -41,7 +41,7 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue token={token} exchangeRate={exchangeRates.data[token.address]} />
+        <TokenEquityValue token={token} exchangeRate={exchangeRates.data[getTokenSlug(token)]} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

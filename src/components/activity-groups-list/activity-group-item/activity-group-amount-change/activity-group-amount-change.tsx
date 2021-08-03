@@ -42,7 +42,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       let exchangeRate = 0;
 
       if (isString(address)) {
-        exchangeRate = exchangeRates.data[address];
+        exchangeRate = exchangeRates.data[getTokenSlug({ address, id })];
       } else if (name === TEZ_TOKEN_METADATA.name) {
         exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
       }

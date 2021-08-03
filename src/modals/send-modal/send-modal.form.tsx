@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
+import { AnyObjectSchema, boolean, number, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
@@ -12,6 +12,7 @@ export interface SendModalFormValues {
   amount?: BigNumber;
   ownAccount: WalletAccountInterface;
   transferBetweenOwnAccounts: boolean;
+  amountUnitIndex: number;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
@@ -36,5 +37,6 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
     ) as SchemaOf<WalletAccountInterface>,
-  transferBetweenOwnAccounts: boolean().required()
+  transferBetweenOwnAccounts: boolean().required(),
+  amountUnitIndex: number().required()
 });

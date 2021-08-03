@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
+import { useTokenExchangeRate } from '../../../hooks/use-token-exchange-rate.hook';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import { Divider } from '../../divider/divider';
@@ -23,10 +22,8 @@ interface Props {
 export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconName }) => {
   const styles = useTokenDropdownItemStyles();
 
-  const { address, symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
-  const { exchangeRates } = useExchangeRatesSelector();
-  const exchangeRate =
-    name === TEZ_TOKEN_METADATA.name ? exchangeRates.data[TEZ_TOKEN_METADATA.name] : exchangeRates.data[address];
+  const { symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
+  const exchangeRate = useTokenExchangeRate(token);
 
   return (
     <View style={styles.container}>

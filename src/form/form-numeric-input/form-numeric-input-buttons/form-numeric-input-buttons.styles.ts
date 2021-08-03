@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native';
 
 export const FormNumericInputButtonsStyles = StyleSheet.create({
   container: {
-    alignSelf: 'flex-end',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flexGrow: 1,
+    justifyContent: 'flex-end'
   }
 });
