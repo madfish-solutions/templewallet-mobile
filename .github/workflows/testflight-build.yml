@@ -22,6 +22,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
+      - name: Generate Changelog
+        run: echo "CHANGELOG=$(git log --pretty=format:'%s' master..development)" >> $GITHUB_ENV
+
+      - run: echo "${{ env.CHANGELOG }}"
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -44,9 +49,6 @@ jobs:
 
       - name: Install Pods
         run: yarn ios:pods
-
-      - name: Generate Changelog
-        run: echo "CHANGELOG=$(git log --pretty=format:'%s' master..development)" >> $GITHUB_ENV
 
       - name: Build & Distribute to Testflight
         run: |
