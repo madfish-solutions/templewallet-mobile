@@ -50,8 +50,12 @@ export const FormNumericInput: FC<Props> = ({
       />
       <ErrorMessage meta={meta} />
       <View style={conditionalStyle(isDefined(subtitle), styles.buttonsAndSubtitleWrapper, styles.buttonsWrapper)}>
-        {subtitle}
-        {subtitle && <Divider size={formatSize(2)} />}
+        {isDefined(subtitle) && (
+          <>
+            {subtitle}
+            <Divider size={formatSize(2)} />
+          </>
+        )}
         {isDefined(maxValue) && (
           <FormNumericInputButtons
             maxValue={maxValue}

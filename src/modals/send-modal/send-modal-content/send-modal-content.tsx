@@ -138,10 +138,12 @@ export const SendModalContent: FC<Props> = ({
 
         <View style={styles.amountInputHeading}>
           <Label label="Amount" description={`Set ${token.symbol} amount to send.`} />
-          <View style={{ width: switcherWidth }}>
-            <FormTextSegmentControl name="amountUnitIndex" values={[token.symbol, 'USD']} width={switcherWidth} />
-            <Divider size={formatSize(8)} />
-          </View>
+          {isDefined(tokenExchangeRate) && tokenExchangeRate > 0 && (
+            <View>
+              <FormTextSegmentControl name="amountUnitIndex" values={[token.symbol, 'USD']} width={switcherWidth} />
+              <Divider size={formatSize(8)} />
+            </View>
+          )}
         </View>
 
         <FormNumericInput
