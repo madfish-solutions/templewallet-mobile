@@ -6,12 +6,14 @@ export const useSeedPhraseWordInputStyles = createUseStylesConfig(({ colors, typ
     alignItems: 'center'
   },
   wordInput: {
+    ...typography.body15Semibold,
     width: formatSize(108),
     minHeight: formatSize(48),
     height: formatSize(48),
-    paddingRight: formatSize(12),
-    textAlign: 'center',
-    ...typography.body15Semibold
+    paddingRight: formatSize(12)
+  },
+  centeredCursorInput: {
+    textAlign: 'center'
   },
   title: {
     ...typography.caption13Regular,
