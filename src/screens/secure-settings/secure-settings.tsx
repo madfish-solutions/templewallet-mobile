@@ -45,11 +45,11 @@ export const SecureSettings = () => {
       </WhiteContainer>
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(isBalanceHiddenSetting))}>
+        <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
           <WhiteContainerText text="Hide mode on Launch" />
           <Switch
             value={isBalanceHiddenSetting}
-            onChange={() => dispatch(setIsBalanceHidden(isBalanceHiddenSetting))}
+            onChange={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}
           />
         </WhiteContainerAction>
       </WhiteContainer>
