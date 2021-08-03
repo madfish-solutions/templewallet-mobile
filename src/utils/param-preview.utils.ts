@@ -1,8 +1,10 @@
 import { OpKind } from '@taquito/taquito';
+import BigNumber from 'bignumber.js';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
+import { tzToMutez } from './tezos.util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
@@ -57,7 +59,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
         type: ParamPreviewTypeEnum.ContractCall,
         contract: opParam.to,
         entrypoint: opParam.parameter.entrypoint,
-        amount: (opParam.amount * (opParam.mutez ? 1 : 1e6)).toString()
+        amount: (opParam.mutez ? opParam.amount : tzToMutez(new BigNumber(opParam.amount), 6)).toString()
       };
     }
   }
