@@ -38,21 +38,20 @@ export const ImportAccountSeedForm: FC<Props> = ({ setImportAccountStep, importA
     { value: ImportAccountDerivationEnum.CUSTOM_PATH, label: 'Custom derivation path' }
   ];
 
-  const onSubmit = (values: ImportAccountSeedValues) => {
+  const onSubmit = (values: ImportAccountSeedValues) =>
     createImportedAccountWithSeed({
       name: `Account ${accountsLength}`,
       seedPhrase: values.seedPhrase,
       password: values.password,
       derivationPath: values.derivationPath
     });
-  };
 
   return (
     <Formik
       initialValues={importAccountSeedFormInitialValues}
       validationSchema={importAccountSeedFormValidationSchema}
-      onSubmit={onSubmit}
-      enableReinitialize={true}>
+      enableReinitialize={true}
+      onSubmit={onSubmit}>
       {({ values, submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

@@ -12,6 +12,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../../interfaces/import-account-type';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from '../import-account-modal.form';
 
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export const ImportAccountType: FC<Props> = ({ importAccountStep, setImportAccountStep, setImportType }) => {
+  const { goBack } = useNavigation();
   const typeRadioButtons: RadioButton<ImportAccountTypeEnum>[] = [
     { value: ImportAccountTypeEnum.PRIVATE_KEY, label: 'Private key' },
     { value: ImportAccountTypeEnum.SEED_PHRASE, label: 'Seed phrase' }
@@ -46,7 +48,7 @@ export const ImportAccountType: FC<Props> = ({ importAccountStep, setImportAccou
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={() => console.log('test')} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>

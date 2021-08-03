@@ -19,9 +19,9 @@ export const FormMnemonicInput: FC<Props> = ({ name, placeholder = 'e.g. cat, do
       <MnemonicInput
         value={field.value}
         isError={isError}
+        placeholder={placeholder}
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
-        placeholder={placeholder}
       />
       <ErrorMessage meta={meta} />
     </>

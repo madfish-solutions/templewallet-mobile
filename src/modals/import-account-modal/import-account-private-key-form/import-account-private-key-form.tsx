@@ -27,19 +27,18 @@ interface Props {
 export const ImportAccountPrivateKeyForm: FC<Props> = ({ importAccountStep, setImportAccountStep }) => {
   const { createImportedAccountWithPrivateKey } = useShelter();
   const accountLength = useAccountsListSelector().length + 1;
-  const onSubmit = ({ privateKey }: ImportAccountPrivateKeyValues) => {
+  const onSubmit = ({ privateKey }: ImportAccountPrivateKeyValues) =>
     createImportedAccountWithPrivateKey({
       privateKey,
       name: `Account ${accountLength}`
     });
-  };
 
   return (
     <Formik
       initialValues={importAccountPrivateKeyFormInitialValues}
       validationSchema={importAccountPrivateKeyFormValidationSchema}
-      onSubmit={onSubmit}
-      enableReinitialize={true}>
+      enableReinitialize={true}
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode>
           <View>

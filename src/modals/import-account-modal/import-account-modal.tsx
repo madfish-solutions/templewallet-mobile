@@ -9,7 +9,6 @@ import { ImportAccountSeedForm } from './import-account-seed-form/import-account
 import { ImportAccountType } from './import-account-type/import-account-type';
 
 export const ImportAccountModal = () => {
-  // TODO: спросить про useInnerScreenProgress
   useNavigationSetOptions({
     headerLeft: () => <HeaderProgress current={importAccountStep} total={2} />
   });
