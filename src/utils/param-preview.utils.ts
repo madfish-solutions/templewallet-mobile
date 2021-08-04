@@ -1,5 +1,5 @@
 import { OpKind } from '@taquito/taquito';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ParamsWithKind } from '../interfaces/op-params.interface';

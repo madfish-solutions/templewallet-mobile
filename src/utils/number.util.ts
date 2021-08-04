@@ -5,3 +5,5 @@ export const formatAssetAmount = (
   roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
   decimalPlace = 6
 ) => amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+
+export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
