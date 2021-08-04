@@ -15,6 +15,7 @@ import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
+import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
@@ -165,6 +166,13 @@ export const MainStackScreen = () => {
               name={ScreensEnum.SecureSettings}
               component={SecureSettings}
               options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+            />
+
+            {/** Other */}
+            <MainStack.Screen
+              name={ScreensEnum.Debug}
+              component={Debug}
+              options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
             />
           </>
         )}

@@ -59,6 +59,7 @@ export const TabBar: FC = () => {
           iconWidth={formatSize(22)}
           routeName={ScreensEnum.Settings}
           focused={isStackFocused(settingsStackScreens)}
+          shouldOpenDebug={true}
         />
       </View>
       <InsetSubstitute type="bottom" />
