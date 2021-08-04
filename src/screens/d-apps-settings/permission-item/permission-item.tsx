@@ -1,6 +1,6 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AppMetadataIcon } from '../../../components/app-metadata-icon/app-metadata-icon';
@@ -19,6 +19,19 @@ interface Props {
 export const PermissionItem: FC<Props> = ({ permission }) => {
   const styles = usePermissionItemStyles();
   const dispatch = useDispatch();
+  const removePermissionHandler = () => {
+    Alert.alert('Delete connection? ', 'You can reconnect to this DApp later.', [
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => dispatch(removePermissionAction(permission))
+      }
+    ]);
+  };
 
   return (
     <View style={styles.container}>
@@ -35,11 +48,7 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
           <PublicKeyHashText publicKeyHash={permission.publicKey} />
         </View>
       </View>
-      <TouchableIcon
-        name={IconNameEnum.Trash}
-        size={formatSize(16)}
-        onPress={() => dispatch(removePermissionAction(permission))}
-      />
+      <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={removePermissionHandler} />
     </View>
   );
 };
