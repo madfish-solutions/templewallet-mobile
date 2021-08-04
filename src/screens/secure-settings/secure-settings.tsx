@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import GestureHandler from 'react-native-gesture-handler/lib/typescript/web/GestureHandler';
 import { useDispatch } from 'react-redux';
 
 import { openSecuritySettings } from '../../biometry/biometry.utils';
@@ -49,7 +50,9 @@ export const SecureSettings = () => {
           <WhiteContainerText text="Hide mode on Launch" />
           <Switch
             value={isBalanceHiddenSetting}
-            onChange={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}
+            onChange={value => {
+              dispatch(setIsBalanceHidden(!value));
+            }}
           />
         </WhiteContainerAction>
       </WhiteContainer>
