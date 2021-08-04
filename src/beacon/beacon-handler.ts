@@ -17,12 +17,7 @@ export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
 
   static async init(onBeaconRequest: EventFn<BeaconRequestOutputMessage>) {
-    try {
-      await sodium.ready;
-    } catch (e) {
-      console.log({ e });
-    }
-    console.log('start');
+    await sodium.ready;
 
     if (!isDefined(BeaconHandler._walletClient)) {
       BeaconHandler._walletClient = new WalletClient({
@@ -46,7 +41,6 @@ export class BeaconHandler {
         });
       }
     });
-    console.log('end');
   }
 
   public static addPeer = async (peer: PeerInfo, sendPairingResponse?: boolean) => {
