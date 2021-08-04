@@ -36,6 +36,7 @@ interface ContractCallParamPreviewInterface extends ParamPreviewBaseInterface {
   type: ParamPreviewTypeEnum.ContractCall;
   contract: string;
   entrypoint: string;
+  amount: string;
 }
 
 interface OtherParamPreviewInterface extends ParamPreviewBaseInterface {
