@@ -5,6 +5,7 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ActivityGroup, emptyActivity } from '../interfaces/activity.interface';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
+import { invertSign } from './number.util';
 import { getParamPreview } from './param-preview.utils';
 
 const knownActivityTypes: Record<ParamsWithKind['kind'], ActivityTypeEnum> = {
@@ -65,7 +66,7 @@ export const paramsToPendingActions = (
               address: preview.contract
             },
             entrypoint: preview.entrypoint,
-            amount: '0'
+            amount: invertSign(preview.amount)
           }
         ];
         break;
@@ -78,7 +79,7 @@ export const paramsToPendingActions = (
               address: preview.approveTo
             },
             entrypoint: 'approve',
-            amount: preview.amount
+            amount: invertSign(preview.amount)
           }
         ];
         break;
