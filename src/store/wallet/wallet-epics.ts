@@ -82,7 +82,7 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
             map(({ data }) =>
               tokens.map(token => ({
                 ...token,
-                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? token.balance
+                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? 0
               }))
             )
           )
