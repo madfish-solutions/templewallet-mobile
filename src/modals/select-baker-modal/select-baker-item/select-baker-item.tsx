@@ -11,8 +11,8 @@ import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
+import { kFormatter } from '../../../utils/number.util';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
-import {kFormatter} from "../../../utils/number.util";
 
 interface Props {
   baker: BakerInterface;
