@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { IconButton } from '../../components/icon-button/icon-button';
+import { ButtonWithIcon } from '../../components/icon-button/icon-button';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
@@ -39,7 +39,7 @@ export const ManageAssets = () => {
         )}
 
         <Divider />
-        <IconButton icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        <ButtonWithIcon icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
         <Divider />
       </ScreenContainer>
     </>

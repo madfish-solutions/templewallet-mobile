@@ -6,7 +6,7 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { IconButton } from '../../../components/icon-button/icon-button';
+import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
@@ -55,7 +55,7 @@ export const ManageImportedAccounts = () => {
         </Fragment>
       ))}
       <Divider size={formatSize(10)} />
-      <IconButton icon={IconNameEnum.DownloadCloud} text="import" onPress={() => navigate(ModalsEnum.ImportAccount)} />
+      <ButtonWithIcon icon={IconNameEnum.DownloadCloud} text="import" onPress={() => navigate(ModalsEnum.ImportAccount)} />
       {accountsLength === 0 && <DataPlaceholder text="No found accounts" />}
       <BottomSheet
         title="Select what do you want to reveal:"

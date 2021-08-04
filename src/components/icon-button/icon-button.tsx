@@ -13,7 +13,7 @@ interface Props {
   onPress: EmptyFn;
 }
 
-export const IconButton: FC<Props> = ({ text, icon, onPress }) => {
+export const ButtonWithIcon: FC<Props> = ({ text, icon, onPress }) => {
   const styles = usePlusCircleButtonStyles();
 
   return (

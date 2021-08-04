@@ -14,9 +14,9 @@ import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 export const MnemonicInput: FC<MnemonicProps> = ({
   value,
   isError,
-  onChangeText = emptyFn,
   onBlur = emptyFn,
-  placeholder
+  placeholder,
+  onChangeText = emptyFn
 }) => {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
