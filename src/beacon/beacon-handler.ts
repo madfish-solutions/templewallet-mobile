@@ -17,7 +17,12 @@ export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
 
   static async init(onBeaconRequest: EventFn<BeaconRequestOutputMessage>) {
-    await sodium.ready;
+    try {
+      await sodium.ready;
+    } catch (e) {
+      console.log({ e });
+    }
+    console.log('start');
 
     if (!isDefined(BeaconHandler._walletClient)) {
       BeaconHandler._walletClient = new WalletClient({
@@ -29,6 +34,7 @@ export class BeaconHandler {
     }
 
     await BeaconHandler._walletClient.init();
+    console.log('middle');
     await BeaconHandler._walletClient.connect(async message => {
       if (await isNetworkSupported(message)) {
         return onBeaconRequest(message);
@@ -40,6 +46,7 @@ export class BeaconHandler {
         });
       }
     });
+    console.log('end');
   }
 
   public static addPeer = async (peer: PeerInfo, sendPairingResponse?: boolean) => {
@@ -98,6 +105,14 @@ export class BeaconHandler {
   public static removeAllPeers = () => {
     if (isDefined(BeaconHandler._walletClient)) {
       return BeaconHandler._walletClient.removeAllPeers(true);
+    }
+
+    throw new Error('Wallet client not defined!');
+  };
+
+  public static isBeaconConnectedHandler = async () => {
+    if (isDefined(BeaconHandler._walletClient)) {
+      return await BeaconHandler._walletClient.isConnected;
     }
 
     throw new Error('Wallet client not defined!');

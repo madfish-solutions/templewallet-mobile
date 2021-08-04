@@ -6,9 +6,10 @@ import { URL } from 'react-native-url-polyfill';
 import { BeaconHandler, isBeaconMessage } from '../beacon/beacon-handler';
 import { isDefined } from './is-defined';
 
-export const deepLinkHandler = async (url: string) => {
+export const deepLinkHandler = async (url: string | null) => {
+  console.log({ url });
   try {
-    const searchParams = new URL(url).searchParams;
+    const searchParams = new URL(url ?? '').searchParams;
     const type = searchParams.get('type');
     const data = searchParams.get('data');
 
@@ -21,12 +22,14 @@ export const deepLinkHandler = async (url: string) => {
   } catch {}
 };
 
-export const useDeepLink = () => {
+export const useDeepLink = (isBeaconConnected: boolean) => {
   useEffect(() => {
-    const listener = ({ url }: { url: string }) => deepLinkHandler(url);
+    if (isBeaconConnected) {
+      const listener = ({ url }: { url: string | null }) => deepLinkHandler(url ?? '');
+      Linking.getInitialURL().then(url => listener({ url }));
+      Linking.addEventListener('url', listener);
 
-    Linking.addEventListener('url', listener);
-
-    return () => Linking.removeEventListener('url', listener);
-  }, []);
+      return () => Linking.removeEventListener('url', listener);
+    }
+  }, [isBeaconConnected]);
 };
