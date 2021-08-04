@@ -55,7 +55,11 @@ export const ManageImportedAccounts = () => {
         </Fragment>
       ))}
       <Divider size={formatSize(10)} />
-      <ButtonWithIcon icon={IconNameEnum.DownloadCloud} text="import" onPress={() => navigate(ModalsEnum.ImportAccount)} />
+      <ButtonWithIcon
+        icon={IconNameEnum.DownloadCloud}
+        text="import"
+        onPress={() => navigate(ModalsEnum.ImportAccount)}
+      />
       {accountsLength === 0 && <DataPlaceholder text="No found accounts" />}
       <BottomSheet
         title="Select what do you want to reveal:"
