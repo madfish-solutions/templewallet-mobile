@@ -11,6 +11,7 @@ import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
+import { kFormatter } from '../../../utils/number.util';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props {
@@ -56,8 +57,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         </View>
         <Divider size={formatSize(16)} />
         <View>
-          <Text style={styles.cellTitle}>Cycles:</Text>
-          <Text style={styles.cellValueText}>XXX</Text>
+          <Text style={styles.cellTitle}>Staking</Text>
+          <Text style={styles.cellValueText}>{kFormatter(baker.stakingBalance)}</Text>
         </View>
       </View>
     </TouchableOpacity>
