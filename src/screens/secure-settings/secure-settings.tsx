@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import GestureHandler from 'react-native-gesture-handler/lib/typescript/web/GestureHandler';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { openSecuritySettings } from '../../biometry/biometry.utils';
