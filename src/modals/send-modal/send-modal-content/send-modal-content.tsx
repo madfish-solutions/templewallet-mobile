@@ -40,8 +40,8 @@ interface Props extends Pick<FormikProps<SendModalFormValues>, 'values' | 'setFi
   initialAssetSymbol: string;
 }
 
-const ESTIMATED_SWITCHER_CHAR_WIDTH = 11.6;
-const DEFAULT_USD_LABEL_WIDTH = 33.6;
+const ESTIMATED_SWITCHER_CHAR_WIDTH = formatSize(10.533);
+const DEFAULT_USD_LABEL_WIDTH = formatSize(30.556);
 
 export const SendModalContent: FC<Props> = ({
   initialAssetSymbol,
@@ -62,6 +62,7 @@ export const SendModalContent: FC<Props> = ({
     calculationTokenSymbol.length * ESTIMATED_SWITCHER_CHAR_WIDTH
   );
   const { layoutWidth: usdTextWidth, handleLayout: handleUsdTextLayout } = useLayoutSizes(DEFAULT_USD_LABEL_WIDTH);
+
   const maxSwitcherOptionWidth = Math.max(tokenTextWidth, usdTextWidth);
 
   const switcherWidth = (maxSwitcherOptionWidth + formatSize(16) + tileMargin) * 2;
