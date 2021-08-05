@@ -1,6 +1,7 @@
 import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 
+import { DebugTapListener } from '../../components/debug-tap-listener/debug-tap-listener';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { formatSize } from '../../styles/format-size';
@@ -53,14 +54,15 @@ export const TabBar: FC = () => {
           focused={isStackFocused(swapStackScreens)}
           disabled={true}
         />
-        <TabBarButton
-          label="Settings"
-          iconName={IconNameEnum.Settings}
-          iconWidth={formatSize(22)}
-          routeName={ScreensEnum.Settings}
-          focused={isStackFocused(settingsStackScreens)}
-          shouldOpenDebug={true}
-        />
+        <DebugTapListener>
+          <TabBarButton
+            label="Settings"
+            iconName={IconNameEnum.Settings}
+            iconWidth={formatSize(22)}
+            routeName={ScreensEnum.Settings}
+            focused={isStackFocused(settingsStackScreens)}
+          />
+        </DebugTapListener>
       </View>
       <InsetSubstitute type="bottom" />
     </View>
