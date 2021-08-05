@@ -13,7 +13,8 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
     height: formatSize(28),
     borderRadius: formatSize(8),
     backgroundColor: colors.lines,
-    padding: formatSize(2)
+    padding: formatSize(2),
+    marginHorizontal: formatSize(16)
   },
   tile: {
     ...StyleSheet.absoluteFillObject,

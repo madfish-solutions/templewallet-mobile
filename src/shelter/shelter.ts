@@ -4,7 +4,8 @@ import * as Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
-import { AccountInterface, AccountTypeEnum } from '../interfaces/account.interface';
+import { AccountTypeEnum } from '../enums/account-type.enum';
+import { AccountInterface } from '../interfaces/account.interface';
 import { showErrorToast } from '../toast/toast.utils';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
@@ -66,31 +67,6 @@ export class Shelter {
       catchError(() => of(false))
     );
 
-  static createImportedAccountWithPrivateKey$ = (privateKey: string, name: string) => {
-    return getPublicKeyAndHash$(privateKey).pipe(
-      switchMap(([publicKey, publicKeyHash]) =>
-        Shelter.saveSensitiveData$({
-          [publicKeyHash]: privateKey
-        }).pipe(
-          mapTo({
-            name,
-            type: AccountTypeEnum.IMPORTED_ACCOUNT,
-            publicKey,
-            publicKeyHash
-          })
-        )
-      ),
-      catchError(() => {
-        showErrorToast({
-          title: 'Failed to import account.',
-          description: 'This may happen because provided Key is invalid.'
-        });
-
-        return of(undefined);
-      })
-    );
-  };
-
   static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface | undefined> => {
     Shelter._password$.next(password);
 
@@ -116,19 +92,10 @@ export class Shelter {
     );
   };
 
-  static createImportedAccountWithSeed$ = (
-    name: string,
-    password: string | undefined,
-    derivationPath: string,
-    seedPhrase: string
-  ) => {
-    const seed = mnemonicToSeedSync(seedPhrase, password);
-    const privateKey = seedToHDPrivateKey(seed, derivationPath);
-
+  static createImportedAccount$ = (privateKey: string, name: string) => {
     return getPublicKeyAndHash$(privateKey).pipe(
       switchMap(([publicKey, publicKeyHash]) =>
         Shelter.saveSensitiveData$({
-          seedPhrase,
           [publicKeyHash]: privateKey
         }).pipe(
           mapTo({

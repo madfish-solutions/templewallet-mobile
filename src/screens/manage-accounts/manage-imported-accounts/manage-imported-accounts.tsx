@@ -8,6 +8,7 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Divider } from '../../../components/divider/divider';
 import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
@@ -45,29 +46,31 @@ export const ManageImportedAccounts = () => {
 
   return (
     <>
-      <SearchInput onChangeText={debouncedSetSearch} placeholder="Search accounts" />
-      <Divider size={formatSize(12)} />
+      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <Divider size={formatSize(8)} />
       <InfoText />
-      {filteredAccountList.map(account => (
-        <Fragment key={account.publicKeyHash}>
-          <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
-          <Divider size={formatSize(16)} />
-        </Fragment>
-      ))}
-      <Divider size={formatSize(10)} />
-      <ButtonWithIcon
-        icon={IconNameEnum.DownloadCloud}
-        text="import"
-        onPress={() => navigate(ModalsEnum.ImportAccount)}
-      />
-      {accountsLength === 0 && <DataPlaceholder text="No found accounts" />}
-      <BottomSheet
-        title="Select what do you want to reveal:"
-        contentHeight={formatSize(180)}
-        controller={revealSelectBottomSheetController}>
-        <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
-        <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
-      </BottomSheet>
+      <ScreenContainer>
+        {filteredAccountList.map(account => (
+          <Fragment key={account.publicKeyHash}>
+            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <Divider size={formatSize(16)} />
+          </Fragment>
+        ))}
+        <Divider size={formatSize(10)} />
+        <ButtonWithIcon
+          icon={IconNameEnum.DownloadCloud}
+          text="import"
+          onPress={() => navigate(ModalsEnum.ImportAccount)}
+        />
+        {accountsLength === 0 && <DataPlaceholder text="No found accounts" />}
+        <BottomSheet
+          title="Select what do you want to reveal:"
+          contentHeight={formatSize(180)}
+          controller={revealSelectBottomSheetController}>
+          <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
+          <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
+        </BottomSheet>
+      </ScreenContainer>
     </>
   );
 };

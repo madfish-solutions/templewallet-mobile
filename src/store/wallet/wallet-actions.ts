@@ -9,7 +9,7 @@ import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.in
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
-export const addAccountAction = createAction<AccountInterface>('wallet/ADD-HD-ACCOUNT');
+export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-ACCOUNT');
 
 // TODO: extract AssetsState
 export const loadTokenBalancesActions = createActions<string, TokenBalanceInterface[], string>('assets/LOAD_TOKENS');

@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -8,6 +9,9 @@ import { ButtonSmallSecondary } from '../../../components/button/button-small/bu
 import { Divider } from '../../../components/divider/divider';
 import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { SearchInput } from '../../../components/search-input/search-input';
+import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -22,7 +26,11 @@ export const ManageHdAccounts = () => {
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
-  const accounts = useHdAccountListSelector();
+  const hdAccounts = useHdAccountListSelector();
+  const { setSearchValue, filteredAccountList } = useFilteredAccountList(hdAccounts);
+
+  const debouncedSetSearch = debounce(setSearchValue);
+
   const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
 
   const handleRevealButtonPress = (account: WalletAccountInterface) => {
@@ -43,6 +51,8 @@ export const ManageHdAccounts = () => {
 
   return (
     <>
+      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <Divider size={formatSize(8)} />
       <View style={styles.revealSeedPhraseContainer}>
         <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
         <Divider size={formatSize(16)} />
@@ -57,29 +67,30 @@ export const ManageHdAccounts = () => {
       <Divider size={formatSize(16)} />
 
       <InfoText />
+      <ScreenContainer>
+        {filteredAccountList.map(account => (
+          <Fragment key={account.publicKeyHash}>
+            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <Divider size={formatSize(16)} />
+          </Fragment>
+        ))}
 
-      {accounts.map(account => (
-        <Fragment key={account.publicKeyHash}>
-          <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
-          <Divider size={formatSize(16)} />
-        </Fragment>
-      ))}
+        <Divider />
 
-      <Divider />
+        <ButtonWithIcon
+          icon={IconNameEnum.PlusCircle}
+          text="CREATE NEW"
+          onPress={() => navigate(ModalsEnum.CreateHdAccount)}
+        />
 
-      <ButtonWithIcon
-        icon={IconNameEnum.PlusCircle}
-        text="CREATE NEW"
-        onPress={() => navigate(ModalsEnum.CreateHdAccount)}
-      />
-
-      <BottomSheet
-        title="Select what do you want to reveal:"
-        contentHeight={formatSize(180)}
-        controller={revealSelectBottomSheetController}>
-        <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
-        <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
-      </BottomSheet>
+        <BottomSheet
+          title="Select what do you want to reveal:"
+          contentHeight={formatSize(180)}
+          controller={revealSelectBottomSheetController}>
+          <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
+          <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
+        </BottomSheet>
+      </ScreenContainer>
     </>
   );
 };

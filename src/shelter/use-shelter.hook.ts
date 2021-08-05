@@ -7,7 +7,7 @@ import { EventFn } from '../config/general';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
-import { addAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
@@ -22,14 +22,10 @@ export const useShelter = () => {
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject<{ name: string }>(), []);
-  const createImportedAccountWithSeed$ = useMemo(
-    () => new Subject<{ name: string; password: string | undefined; derivationPath: string; seedPhrase: string }>(),
-    []
-  );
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccountWithPrivateKey$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
+  const createImportedAccount$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
 
   useEffect(() => {
     const subscriptions = [
@@ -43,9 +39,10 @@ export const useShelter = () => {
           )
         )
         .subscribe(([publicData, isPasswordSaved]) => {
+          console.log({ publicData });
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addAccountAction(publicData));
+            dispatch(addHdAccountAction(publicData));
 
             isPasswordSaved && dispatch(setIsBiometricsEnabled(true));
           }
@@ -55,30 +52,16 @@ export const useShelter = () => {
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addAccountAction(publicData));
+            dispatch(addHdAccountAction(publicData));
             goBack();
           }
         }),
-      createImportedAccountWithSeed$
-        .pipe(
-          switchMap(({ name, password, derivationPath, seedPhrase }) =>
-            Shelter.createImportedAccountWithSeed$(name, password, derivationPath, seedPhrase)
-          )
-        )
+      createImportedAccount$
+        .pipe(switchMap(({ privateKey, name }) => Shelter.createImportedAccount$(privateKey, name)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addAccountAction(publicData));
-            showSuccessToast({ description: 'Account Imported!' });
-            goBack();
-          }
-        }),
-      createImportedAccountWithPrivateKey$
-        .pipe(switchMap(({ privateKey, name }) => Shelter.createImportedAccountWithPrivateKey$(privateKey, name)))
-        .subscribe(publicData => {
-          if (publicData !== undefined) {
-            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addAccountAction(publicData));
+            dispatch(addHdAccountAction(publicData));
             showSuccessToast({ description: 'Account Imported!' });
             goBack();
           }
@@ -125,19 +108,12 @@ export const useShelter = () => {
   const importWallet = (seedPhrase: string, password: string, useBiometry?: boolean) =>
     importWallet$.next({ seedPhrase, password, useBiometry });
   const createHdAccount = (params: { name: string }) => createHdAccount$.next(params);
-  const createImportedAccountWithSeed = (params: {
-    password: string | undefined;
-    derivationPath: string;
-    name: string;
-    seedPhrase: string;
-  }) => createImportedAccountWithSeed$.next(params);
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccountWithPrivateKey = (params: { privateKey: string; name: string }) =>
-    createImportedAccountWithPrivateKey$.next(params);
+  const createImportedAccount = (params: { privateKey: string; name: string }) => createImportedAccount$.next(params);
 
   return {
     importWallet,
@@ -145,7 +121,6 @@ export const useShelter = () => {
     revealSecretKey,
     revealSeedPhrase,
     enableBiometryPassword,
-    createImportedAccountWithPrivateKey,
-    createImportedAccountWithSeed
+    createImportedAccount
   };
 };

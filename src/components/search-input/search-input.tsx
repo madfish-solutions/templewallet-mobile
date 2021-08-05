@@ -13,14 +13,14 @@ interface Props extends Pick<TextInputProps, 'value' | 'placeholder' | 'onChange
   containerStyle?: ViewStyle;
 }
 
-export const SearchInput: FC<Props> = ({ value, placeholder, containerStyle, onChangeText = emptyFn }) => {
+export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn }) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
 
   const debouncedOnChangeText = debounce(onChangeText);
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container]}>
       <View style={styles.iconContainer}>
         <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>

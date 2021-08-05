@@ -1,3 +1,4 @@
+import { useBackButton } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React, { Dispatch, FC, SetStateAction } from 'react';
 import { View } from 'react-native';
@@ -9,34 +10,34 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { ImportAccountPrivateKeyValues } from '../../../interfaces/import-account-type';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import {
-  importAccountPrivateKeyFormInitialValues,
-  importAccountPrivateKeyFormValidationSchema
-} from '../import-account-modal.form';
+  importAccountPrivateKeyInitialValues,
+  importAccountPrivateKeyValidationSchema
+} from './import-account-private-key.form';
 
 interface Props {
-  importAccountStep: number;
-  setImportAccountStep: Dispatch<SetStateAction<number>>;
+  onBackHandler: EmptyFn;
 }
 
-export const ImportAccountPrivateKeyForm: FC<Props> = ({ importAccountStep, setImportAccountStep }) => {
-  const { createImportedAccountWithPrivateKey } = useShelter();
-  const accountLength = useAccountsListSelector().length + 1;
+export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
+  const { createImportedAccount } = useShelter();
+  const accountIndex = useAccountsListSelector().length + 1;
   const onSubmit = ({ privateKey }: ImportAccountPrivateKeyValues) =>
-    createImportedAccountWithPrivateKey({
+    createImportedAccount({
       privateKey,
-      name: `Account ${accountLength}`
+      name: `Account ${accountIndex}`
     });
 
   return (
     <Formik
-      initialValues={importAccountPrivateKeyFormInitialValues}
-      validationSchema={importAccountPrivateKeyFormValidationSchema}
+      initialValues={importAccountPrivateKeyInitialValues}
+      validationSchema={importAccountPrivateKeyValidationSchema}
       enableReinitialize={true}
       onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
@@ -48,7 +49,7 @@ export const ImportAccountPrivateKeyForm: FC<Props> = ({ importAccountStep, setI
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Back" onPress={() => setImportAccountStep(importAccountStep - 1)} />
+              <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>

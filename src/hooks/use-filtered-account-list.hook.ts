@@ -17,8 +17,12 @@ export const useFilteredAccountList = (accountList: WalletAccountInterface[]) =>
       const lowerCaseSearchValue = searchValue.toLowerCase();
 
       for (const account of accountList) {
-        const { name } = account;
-        if (name.toLowerCase().includes(lowerCaseSearchValue)) {
+        const { name, publicKey, publicKeyHash } = account;
+        if (
+          name.toLowerCase().includes(lowerCaseSearchValue) ||
+          publicKey.toLowerCase().includes(lowerCaseSearchValue) ||
+          publicKeyHash.toLowerCase().includes(lowerCaseSearchValue)
+        ) {
           result.push(account);
         }
       }

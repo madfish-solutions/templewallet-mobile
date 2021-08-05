@@ -10,7 +10,7 @@ interface Props {
   placeholder?: string;
 }
 
-export const FormMnemonicInput: FC<Props> = ({ name, placeholder = 'e.g. cat, dog, coffee, ocean...' }) => {
+export const FormMnemonicInput: FC<Props> = ({ name, placeholder }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 

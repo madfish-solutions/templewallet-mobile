@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -9,42 +9,37 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { EventFn } from '../../../config/general';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../../interfaces/import-account-type';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
-import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from '../import-account-modal.form';
+import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from './import-account-type.form';
 
 interface Props {
-  importAccountStep: number;
-  setImportAccountStep: Dispatch<SetStateAction<number>>;
-  setImportType: Dispatch<SetStateAction<ImportAccountTypeEnum>>;
+  onSubmit: EventFn<ImportAccountTypeValues>;
 }
 
-export const ImportAccountType: FC<Props> = ({ importAccountStep, setImportAccountStep, setImportType }) => {
+export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
   const { goBack } = useNavigation();
-  const typeRadioButtons: RadioButton<ImportAccountTypeEnum>[] = [
-    { value: ImportAccountTypeEnum.PRIVATE_KEY, label: 'Private key' },
-    { value: ImportAccountTypeEnum.SEED_PHRASE, label: 'Seed phrase' }
-  ];
-
-  const submitFormHandler = ({ type }: ImportAccountTypeValues) => {
-    setImportType(type);
-    setImportAccountStep(importAccountStep + 1);
-  };
 
   return (
     <Formik
       validationSchema={importAccountTypeValidationSchema}
       initialValues={importAccountTypeInitialValues}
-      onSubmit={submitFormHandler}>
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Type of import" description="Select how would you like to import account." />
-            <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
+            <FormRadioButtonsGroup
+              name="type"
+              buttons={[
+                { value: ImportAccountTypeEnum.PRIVATE_KEY, label: 'Private key' },
+                { value: ImportAccountTypeEnum.SEED_PHRASE, label: 'Seed phrase' }
+              ]}
+            />
           </View>
           <View>
             <ButtonsContainer>

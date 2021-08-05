@@ -8,7 +8,7 @@ import { getTokenSlug } from '../../token/utils/token.utils';
 import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
-  addAccountAction,
+  addHdAccountAction,
   addPendingOperation,
   addTokenMetadataAction,
   loadActivityGroupsActions,
@@ -31,7 +31,7 @@ import {
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(addAccountAction, (state, { payload: account }) => ({
+  builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
   }));

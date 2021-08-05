@@ -102,11 +102,7 @@ export const SelectBakerModal: FC = () => {
           />
         </View>
         <View style={styles.searchContainer}>
-          <SearchInput
-            containerStyle={styles.searchInputContainer}
-            placeholder="Search baker"
-            onChangeText={debouncedSetSearchValue}
-          />
+          <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>

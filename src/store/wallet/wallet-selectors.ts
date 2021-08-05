@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
-import { AccountTypeEnum } from '../../interfaces/account.interface';
 import {
   initialWalletAccountState,
   WalletAccountStateInterface
@@ -20,26 +20,12 @@ export const useAccountsListSelector = () =>
 
 export const useHdAccountListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
-    const accounts = [];
-    for (const account of wallet.accounts) {
-      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
-        accounts.push(walletAccountStateToWalletAccount(account));
-      }
-    }
-
-    return accounts;
+    return wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);
   });
 
 export const useImportedAccountListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
-    const accounts = [];
-    for (const account of wallet.accounts) {
-      if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
-        accounts.push(walletAccountStateToWalletAccount(account));
-      }
-    }
-
-    return accounts;
+    return wallet.accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT);
   });
 
 export const useIsAuthorisedSelector = () => {

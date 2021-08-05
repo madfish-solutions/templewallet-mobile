@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { HeaderProgress } from '../../components/header/header-progress/header-progress';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { ImportAccountTypeEnum } from '../../interfaces/import-account-type';
-import { ImportAccountPrivateKeyForm } from './import-account-private-key-form/import-account-private-key-form';
-import { ImportAccountSeedForm } from './import-account-seed-form/import-account-seed-form';
+import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../interfaces/import-account-type';
+import { ImportAccountPrivateKey } from './import-account-private-key/import-account-private-key';
+import { ImportAccountSeed } from './import-account-seed/import-account-seed';
 import { ImportAccountType } from './import-account-type/import-account-type';
 
 export const ImportAccountModal = () => {
@@ -15,24 +15,22 @@ export const ImportAccountModal = () => {
   const [importAccountStep, setImportAccountStep] = useState(1);
   const [importType, setImportType] = useState(ImportAccountTypeEnum.SEED_PHRASE);
 
+  const onSubmit = ({ type }: ImportAccountTypeValues) => {
+    setImportType(type);
+    setImportAccountStep(importAccountStep + 1);
+  };
+
+  const onBackHandler = () => setImportAccountStep(importAccountStep - 1);
+
   return (
     <>
       <ModalStatusBar />
-      {importAccountStep === 1 && (
-        <ImportAccountType
-          setImportType={setImportType}
-          importAccountStep={importAccountStep}
-          setImportAccountStep={setImportAccountStep}
-        />
-      )}
+      {importAccountStep === 1 && <ImportAccountType onSubmit={onSubmit} />}
       {importAccountStep === 2 && importType === ImportAccountTypeEnum.SEED_PHRASE && (
-        <ImportAccountSeedForm importAccountStep={importAccountStep} setImportAccountStep={setImportAccountStep} />
+        <ImportAccountSeed onBackHandler={onBackHandler} />
       )}
       {importAccountStep === 2 && importType === ImportAccountTypeEnum.PRIVATE_KEY && (
-        <ImportAccountPrivateKeyForm
-          importAccountStep={importAccountStep}
-          setImportAccountStep={setImportAccountStep}
-        />
+        <ImportAccountPrivateKey onBackHandler={onBackHandler} />
       )}
     </>
   );

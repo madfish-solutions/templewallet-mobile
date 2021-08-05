@@ -11,9 +11,5 @@ export const useManageAssetsStyles = createUseStyles(({ colors, typography }) =>
   contentContainerStyle: {
     paddingRight: 0,
     paddingLeft: formatSize(16)
-  },
-  inputContainer: {
-    marginVertical: formatSize(8),
-    marginHorizontal: formatSize(16)
   }
 }));

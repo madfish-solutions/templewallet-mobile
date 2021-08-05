@@ -15,7 +15,7 @@ export const MnemonicInput: FC<MnemonicProps> = ({
   value,
   isError,
   onBlur = emptyFn,
-  placeholder,
+  placeholder = 'e.g. cat, dog, coffee, ocean...',
   onChangeText = emptyFn
 }) => {
   const inputRef = useRef<TextInput>(null);

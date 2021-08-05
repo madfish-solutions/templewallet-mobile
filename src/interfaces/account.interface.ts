@@ -1,7 +1,4 @@
-export enum AccountTypeEnum {
-  HD_ACCOUNT = 'HD_ACCOUNT',
-  IMPORTED_ACCOUNT = 'IMPORTED_ACCOUNT'
-}
+import { AccountTypeEnum } from '../enums/account-type.enum';
 
 export interface AccountInterface {
   name: string;

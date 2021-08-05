@@ -15,7 +15,7 @@ export type ImportAccountTypeValues = {
 export type ImportAccountSeedValues = {
   seedPhrase: string;
   password?: string;
-  derivation?: string;
+  derivationType: ImportAccountDerivationEnum;
   derivationPath: string;
 };
 
