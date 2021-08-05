@@ -1,9 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { BeaconHandler } from '../beacon/beacon-handler';
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderTitle } from '../components/header/header-title/header-title';
@@ -37,7 +36,6 @@ import {
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { useDeepLink } from '../utils/deep-linking.utils';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
@@ -48,16 +46,13 @@ const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
-  const [isBeaconConnected, setIsBeaconConnected] = useState(false);
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
-  BeaconHandler.isBeaconConnectedHandler().then(isConnected => setIsBeaconConnected(isConnected));
 
   useAppLockTimer();
   useBeaconHandler();
-  useDeepLink(isBeaconConnected);
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));

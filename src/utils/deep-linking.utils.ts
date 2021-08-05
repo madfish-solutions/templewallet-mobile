@@ -6,30 +6,13 @@ import { URL } from 'react-native-url-polyfill';
 import { BeaconHandler, isBeaconMessage } from '../beacon/beacon-handler';
 import { isDefined } from './is-defined';
 
-export const deepLinkHandler = async (url: string | null) => {
-  console.log({ url });
-  try {
-    const searchParams = new URL(url ?? '').searchParams;
-    const type = searchParams.get('type');
-    const data = searchParams.get('data');
 
-    if (type === 'tzip10' && isDefined(data)) {
-      const json = await new Serializer().deserialize(data);
-      if (isBeaconMessage(json)) {
-        await BeaconHandler.addPeer(json);
-      }
-    }
-  } catch {}
-};
 
-export const useDeepLink = (isBeaconConnected: boolean) => {
+export const useDeepLink = () => {
   useEffect(() => {
-    if (isBeaconConnected) {
-      const listener = ({ url }: { url: string | null }) => deepLinkHandler(url ?? '');
-      Linking.getInitialURL().then(url => listener({ url }));
-      Linking.addEventListener('url', listener);
 
-      return () => Linking.removeEventListener('url', listener);
-    }
-  }, [isBeaconConnected]);
+
+
+
+  }, []);
 };
