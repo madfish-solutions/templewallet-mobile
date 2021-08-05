@@ -19,7 +19,7 @@ interface Props {
 export const PermissionItem: FC<Props> = ({ permission }) => {
   const styles = usePermissionItemStyles();
   const dispatch = useDispatch();
-  const removePermissionHandler = () => {
+  const removePermissionHandler = () =>
     Alert.alert('Delete connection? ', 'You can reconnect to this DApp later.', [
       {
         text: 'Cancel',
@@ -31,7 +31,6 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
         onPress: () => dispatch(removePermissionAction(permission))
       }
     ]);
-  };
 
   return (
     <View style={styles.container}>
