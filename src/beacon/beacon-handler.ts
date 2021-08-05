@@ -29,7 +29,6 @@ export class BeaconHandler {
     }
 
     await BeaconHandler._walletClient.init();
-    console.log('middle');
     await BeaconHandler._walletClient.connect(async message => {
       if (await isNetworkSupported(message)) {
         return onBeaconRequest(message);
