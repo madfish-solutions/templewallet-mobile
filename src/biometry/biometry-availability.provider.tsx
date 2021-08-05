@@ -14,7 +14,6 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
   const updateBiometryAvailability = () => {
     ReactNativeBiometrics.isSensorAvailable()
       .then(result => {
-        console.log({ result });
         setIsHardwareAvailable(!errorList.includes(result.error ?? ''));
         setBiometryType(result.biometryType);
       })
