@@ -28,6 +28,7 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
+import {InsetSubstitute} from "../../components/inset-substitute/inset-substitute";
 
 // TODO: replace with translations
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
@@ -146,7 +147,7 @@ export const SelectBakerModal: FC = () => {
 
       <BottomSheet
         title="Sort bakers by:"
-        contentHeight={formatSize(216)}
+        contentHeight={formatSize(260)}
         controller={revealSelectBottomSheetController}>
         {bakersSortFieldsOptions.map(value => (
           <BottomSheetActionButton
