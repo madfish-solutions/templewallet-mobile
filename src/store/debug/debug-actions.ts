@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { RecentActionPayload } from '../../interfaces/action-arrival-payload.interface';
+import { RecentActionPayload } from '../../interfaces/recent-action-payload.interface';
 
 export const PUSH_RECENT_ACTION_NAME = 'debug/PUSH_RECENT_ACTION';
 

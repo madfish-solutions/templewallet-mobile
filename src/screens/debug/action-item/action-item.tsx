@@ -5,7 +5,7 @@ import JSONTree from 'react-native-json-tree';
 
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { RecentActionPayload } from '../../../interfaces/action-arrival-payload.interface';
+import { RecentActionPayload } from '../../../interfaces/recent-action-payload.interface';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { useActionItemStyles } from './action-item.styles';

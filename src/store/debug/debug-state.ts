@@ -1,4 +1,4 @@
-import { RecentActionPayload } from '../../interfaces/action-arrival-payload.interface';
+import { RecentActionPayload } from '../../interfaces/recent-action-payload.interface';
 
 export interface DebugState {
   recentActions: RecentActionPayload[];
