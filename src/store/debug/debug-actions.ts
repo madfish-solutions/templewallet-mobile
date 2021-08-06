@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { ActionArrivalPayload } from '../../interfaces/action-arrival-payload.interface';
+import { RecentActionPayload } from '../../interfaces/action-arrival-payload.interface';
 
-export const PUSH_ACTION_NAME = 'debug/PUSH_ACTION';
+export const PUSH_RECENT_ACTION_NAME = 'debug/PUSH_RECENT_ACTION';
 
-export const pushAction = createAction<ActionArrivalPayload>(PUSH_ACTION_NAME);
+export const pushRecentAction = createAction<RecentActionPayload>(PUSH_RECENT_ACTION_NAME);

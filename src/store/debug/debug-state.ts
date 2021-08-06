@@ -1,7 +1,7 @@
-import { ActionArrivalPayload } from '../../interfaces/action-arrival-payload.interface';
+import { RecentActionPayload } from '../../interfaces/action-arrival-payload.interface';
 
 export interface DebugState {
-  recentActions: ActionArrivalPayload[];
+  recentActions: RecentActionPayload[];
 }
 
 export const debugInitialState: DebugState = {
