@@ -26,8 +26,6 @@ export enum ScreensEnum {
   About = 'About',
   DAppsSettings = 'DAppsSettings',
   SecureSettings = 'SecureSettings',
-
-  /** Other */
   Debug = 'Debug'
 }
 
@@ -57,8 +55,6 @@ export type ScreensParamList = {
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
-
-  /** Other */
   [ScreensEnum.Debug]: undefined;
 };
 

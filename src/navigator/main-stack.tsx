@@ -167,8 +167,6 @@ export const MainStackScreen = () => {
               component={SecureSettings}
               options={generateScreenOptions(<HeaderTitle title="Secure" />)}
             />
-
-            {/** Other */}
             <MainStack.Screen
               name={ScreensEnum.Debug}
               component={Debug}
