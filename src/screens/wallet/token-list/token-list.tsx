@@ -11,11 +11,8 @@ import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hoo
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
-import { getTokenSlug } from '../../../token/utils/token.utils';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -29,7 +26,6 @@ export const TokenList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
-  const { exchangeRates } = useExchangeRatesSelector();
   const [isShowTezos, setIsShowTezos] = useState(true);
 
   const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
@@ -65,7 +61,6 @@ export const TokenList: FC = () => {
               <TokenListItem
                 token={tezosToken}
                 apy={delegationApy}
-                exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}
@@ -75,7 +70,6 @@ export const TokenList: FC = () => {
                 token.isVisible && (
                   <TokenListItem
                     key={token.address + index}
-                    exchangeRate={exchangeRates.data[getTokenSlug(token)]}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />

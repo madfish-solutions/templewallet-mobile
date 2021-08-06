@@ -15,9 +15,8 @@ import {
   useTezosTokenSelector,
   useTokensListSelector
 } from '../../store/wallet/wallet-selectors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
+import { getExchangeRateKey } from '../../utils/exchange-rate.utils';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalContent } from './send-modal-content/send-modal-content';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
@@ -64,7 +63,6 @@ export const SendModal: FC = () => {
     amount,
     amountUnitIndex
   }: SendModalFormValues) => {
-    const exchangeRateKey = token.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_TOKEN_METADATA.name : getTokenSlug(token);
     isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
@@ -72,7 +70,9 @@ export const SendModal: FC = () => {
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: (amountUnitIndex === 0
             ? amount
-            : amount.div(exchangeRates.data[exchangeRateKey]).decimalPlaces(token.decimals, BigNumber.ROUND_FLOOR)
+            : amount
+                .div(exchangeRates.data[getExchangeRateKey(token)])
+                .decimalPlaces(token.decimals, BigNumber.ROUND_FLOOR)
           ).toNumber()
         })
       );

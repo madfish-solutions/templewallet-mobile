@@ -1,11 +1,9 @@
 import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { TokenInterface } from '../token/interfaces/token.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { getExchangeRateKey } from '../utils/exchange-rate.utils';
 
-export const useTokenExchangeRate = (token: TokenInterface) => {
+export const useTokenExchangeRate = (token: AssetMetadataInterface) => {
   const { exchangeRates } = useExchangeRatesSelector();
-  const exchangeRateKey = token.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_TOKEN_METADATA.name : getTokenSlug(token);
 
-  return exchangeRates.data[exchangeRateKey];
+  return exchangeRates.data[getExchangeRateKey(token)];
 };

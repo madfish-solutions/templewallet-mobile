@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "pc-api-7427734422492454891-126",
+  "private_key_id": "628df073bf77aebcb536235cef41980cd6febba3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtXWx8ZwhwBwFy\nDSQVAVE8QfArcFIJpV6vMsnAQvni3bU8Rqd3eYnVEcEJqZVHbCP4KhNwNYs46EvL\njAgcCgyR14lkLhy/WRmMcGPS+jAoneH6rVYpKHvhIGdOfBbd3zdHn42P6UBcWCYW\nkY0O1ygf9dgAy3j8NIaGUWR1doy60CXvCOTBirMtZ7Y8/Y8a83YKeu35H5awPcGd\n00KfORetMhjIYLEraf+Ikkzg1CPg5W+TTlPw0zENitQmRYtDP3/6jk8ukElftLz4\naIOtWor5Ck8BpQ1xm2iCEeeAHK/YN65/2S5sX2qSxo/kz5ck6cprRJcDTQeSgFum\nBJVwYl8hAgMBAAECggEAARGtewzGAK4Mg0y72Fw/c9xW5iMCPn/qsbCMfJx+L9sF\nV8CcleRsPZDJh0jKsaq5LpfIGMVxFr2uX05KJ5Q+Jszhls+gYkn0GfqJC5W/G1h6\nsf7EtWHdmBiZ24zXiv1hhcC+ypkPW1fBabSdZrt+QdmHt5h4jIWX/05xczZh74Nd\nrhyJIdZ55QyyeZr0CrjHckT6rPe6V60om8jIAh4adO87D+dJN0zMAKWKfUWBIXMM\nayN1i/FffvIUyYVDZ1JzPC0/F+5mGtIIG+6ss2ACwAfwL1ClyguDj2AN4XdlxfS3\no66zDE4Dpm46J4AJg76N8IFtQDdP8PNNf3HmC1wLYQKBgQDX2eK1SFZejvYYusBw\nveYxiDqv/owZsjD6D+9YHzQeJOOmtWbX2abiqn6ly+ko+Xkb4/nO19nybF5ps0Un\nUKKIHcSSReP4bbJ385IfabpzKyUtYrs/YYbVJMeS4EZuIbJznFAJ1iAqd3CuiTVy\nCkV9lmvmEVaj2OzdDWthg1VAHQKBgQDNnHy62acyizvyMzU74IstH+wyRb5orUim\nhispyGp4aRXGUrEt6l/OgLL8YQVUlpC6hhs+cetTivmSJQMu9T1YAPhQ0D9sd5+f\nPt9IBds4ds1uG7m5GaS/JJu3Ejs/FPlzZKFXuaOIoUiAvR4FUP2bNw2iIy8hw4PB\nGYee5pNz1QKBgQDStpAbGj++VV8mqwB7ztXt2qg38I0B9LLdGjszUlrFZouZzZJU\n+tNwiLHT1miJqGgy8u2Fn6/SeTn9g5TpmUzhBfZEONggR64mbO9jnQn3rdHAKZbT\ne7htUFdHKYt3rYuQUrLLt211J14n9CfpaN+HhxVT5e8nSfeIn7YI3nWVfQKBgCrT\n5Ls66PPDQspRVk5RmEve8WELW/0L0y00lzsNzvej0/BKezN4NVqbPi0JvIWBE0Z2\n9qfMLNtrAE8rvH0EgjGZih+zMPLT/AC8pN+osKATRvkfd1ESAVn7MyAwAP1Dzi32\nERFnzqOADM0cF2u+EgVJs2JJd+DNi90mBzTXDHG9AoGAT3Img35vQC4I/v0nvWPt\ndiC8VIZcZOO8DZQAz0reYkMoWncl/qZOaPdlCOVXaBIxKDBcBqrsIK+CXKywnO5o\nV5mIFLE8KIE6g9npLDr5v80EQ9Y4bSKASnn50UUgpmZCbNnGylLK+y7lGBeOEhAc\nduKFRsFSqvK79CUYk5KTCfk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "temple-wallet-mobile@pc-api-7427734422492454891-126.iam.gserviceaccount.com",
+  "client_id": "105225147778749471159",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/temple-wallet-mobile%40pc-api-7427734422492454891-126.iam.gserviceaccount.com"
+}

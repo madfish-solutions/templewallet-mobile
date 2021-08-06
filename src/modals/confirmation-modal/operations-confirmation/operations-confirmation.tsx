@@ -10,9 +10,9 @@ import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn, EventFn } from '../../../config/general';
+import { useTezExchangeRate } from '../../../hooks/use-tez-exchange-rate.hook';
 import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
@@ -35,7 +35,6 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
   const styles = useOperationsConfirmationStyles();
 
   const estimations = useEstimations(sender, opParams);
-  const { exchangeRates } = useExchangeRatesSelector();
   const {
     opParamsWithFees,
     basicFees,
@@ -46,6 +45,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
     formValidationSchema,
     formInitialValues
   } = useFeeForm(opParams, estimations.data);
+  const tezExchangeRate = useTezExchangeRate();
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     // Remove revealGasGee from sum
@@ -109,7 +109,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
                   onlyOneOperation={onlyOneOperation}
                   minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
                   setFieldValue={setFieldValue}
-                  exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
+                  exchangeRate={tezExchangeRate}
                 />
               </>
             )}

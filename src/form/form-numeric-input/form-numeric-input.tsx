@@ -49,7 +49,7 @@ export const FormNumericInput: FC<Props> = ({
         onChange={helpers.setValue}
       />
       <ErrorMessage meta={meta} />
-      <View style={conditionalStyle(isDefined(subtitle), styles.buttonsAndSubtitleWrapper, styles.buttonsWrapper)}>
+      <View style={conditionalStyle(isDefined(subtitle), styles.buttonsAndSubtitleWrapper)}>
         {isDefined(subtitle) && (
           <>
             {subtitle}

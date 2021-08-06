@@ -8,15 +8,16 @@ import { TokenContainer } from '../../../../components/token-container/token-con
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EmptyFn } from '../../../../config/general';
+import { useTokenExchangeRate } from '../../../../hooks/use-token-exchange-rate.hook';
 import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props extends TokenContainerProps {
   onPress: EmptyFn;
-  exchangeRate: number;
 }
 
-export const TokenListItem: FC<Props> = ({ token, apy, onPress, exchangeRate }) => {
+export const TokenListItem: FC<Props> = ({ token, apy, onPress }) => {
   const styles = useTokenListItemStyles();
+  const exchangeRate = useTokenExchangeRate(token);
 
   return (
     <TouchableOpacity onPress={onPress}>

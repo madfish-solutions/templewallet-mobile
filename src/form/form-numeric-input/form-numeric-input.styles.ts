@@ -6,7 +6,6 @@ export const useFormNumericInputStyles = createUseStyles(() => ({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  buttonsWrapper: {},
   subtitleWrapper: {
     flexWrap: 'wrap'
   }

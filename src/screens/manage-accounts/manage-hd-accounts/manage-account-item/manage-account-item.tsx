@@ -10,8 +10,8 @@ import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
+import { useTezExchangeRate } from '../../../../hooks/use-tez-exchange-rate.hook';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
-import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
@@ -23,7 +23,7 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
   const styles = useManageAccountItemStyles();
-  const { exchangeRates } = useExchangeRatesSelector();
+  const tezExchangeRate = useTezExchangeRate();
 
   return (
     <View style={styles.container}>
@@ -47,10 +47,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
             <TokenValueText balance={account.tezosBalance.data} tokenSymbol={TEZ_TOKEN_METADATA.symbol} />
           </HideBalance>
           <HideBalance style={styles.equityText}>
-            <DollarValueText
-              balance={account.tezosBalance.data}
-              exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
-            />
+            <DollarValueText balance={account.tezosBalance.data} exchangeRate={tezExchangeRate} />
           </HideBalance>
         </View>
 
