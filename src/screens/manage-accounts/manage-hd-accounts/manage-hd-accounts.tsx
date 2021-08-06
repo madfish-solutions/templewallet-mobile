@@ -1,4 +1,3 @@
-import { debounce } from 'lodash-es';
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -27,9 +26,7 @@ export const ManageHdAccounts = () => {
   const revealSelectBottomSheetController = useBottomSheetController();
 
   const hdAccounts = useHdAccountListSelector();
-  const { setSearchValue, filteredAccountList } = useFilteredAccountList(hdAccounts);
-
-  const debouncedSetSearch = debounce(setSearchValue);
+  const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
   const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
 

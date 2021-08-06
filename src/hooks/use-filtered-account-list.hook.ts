@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
 
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
@@ -33,9 +34,11 @@ export const useFilteredAccountList = (accountList: WalletAccountInterface[]) =>
     }
   }, [searchValue]);
 
+  const debouncedSetSearch = debounce(setSearchValue);
+
   return {
     filteredAccountList,
-    searchValue,
+    debouncedSetSearch,
     setSearchValue
   };
 };

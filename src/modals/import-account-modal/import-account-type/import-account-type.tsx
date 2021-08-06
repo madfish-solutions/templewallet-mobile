@@ -20,6 +20,11 @@ interface Props {
   onSubmit: EventFn<ImportAccountTypeValues>;
 }
 
+const importAccountTypeButtons = [
+  { value: ImportAccountTypeEnum.PRIVATE_KEY, label: 'Private key' },
+  { value: ImportAccountTypeEnum.SEED_PHRASE, label: 'Seed phrase' }
+];
+
 export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
   const { goBack } = useNavigation();
 
@@ -33,13 +38,7 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Type of import" description="Select how would you like to import account." />
-            <FormRadioButtonsGroup
-              name="type"
-              buttons={[
-                { value: ImportAccountTypeEnum.PRIVATE_KEY, label: 'Private key' },
-                { value: ImportAccountTypeEnum.SEED_PHRASE, label: 'Seed phrase' }
-              ]}
-            />
+            <FormRadioButtonsGroup name="type" buttons={importAccountTypeButtons} />
           </View>
           <View>
             <ButtonsContainer>

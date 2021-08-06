@@ -6,7 +6,6 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
-import { showErrorToast } from '../toast/toast.utils';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
@@ -105,15 +104,7 @@ export class Shelter {
             publicKeyHash
           })
         )
-      ),
-      catchError(() => {
-        showErrorToast({
-          title: 'Failed to import account.',
-          description: 'This may happen because provided Key is invalid.'
-        });
-
-        return of(undefined);
-      })
+      )
     );
   };
 

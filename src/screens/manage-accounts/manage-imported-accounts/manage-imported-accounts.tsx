@@ -1,4 +1,3 @@
-import { debounce } from 'lodash-es';
 import React, { Fragment, useState } from 'react';
 
 import { BottomSheet } from '../../../components/bottom-sheet/bottom-sheet';
@@ -23,11 +22,9 @@ export const ManageImportedAccounts = () => {
   const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
   const { navigate } = useNavigation();
   const accounts = useImportedAccountListSelector();
-  const { setSearchValue, filteredAccountList } = useFilteredAccountList(accounts);
+  const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(accounts);
   const accountsLength = accounts.length;
   const revealSelectBottomSheetController = useBottomSheetController();
-
-  const debouncedSetSearch = debounce(setSearchValue);
 
   const handleRevealPrivateKeyButtonPress = () => {
     navigate(ModalsEnum.RevealPrivateKey, { account: managedAccount });

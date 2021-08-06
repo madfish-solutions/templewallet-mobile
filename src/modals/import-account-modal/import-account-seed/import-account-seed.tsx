@@ -1,7 +1,6 @@
 import { mnemonicToSeedSync } from 'bip39';
 import { Formik } from 'formik';
-import { values } from 'lodash-es';
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -11,7 +10,6 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
@@ -28,6 +26,11 @@ import { importAccountSeedInitialValues, importAccountSeedValidationSchema } fro
 interface Props {
   onBackHandler: EmptyFn;
 }
+
+const derivationTypeButtons = [
+  { value: ImportAccountDerivationEnum.DEFAULT, label: 'Default account (the first one)' },
+  { value: ImportAccountDerivationEnum.CUSTOM_PATH, label: 'Custom derivation path' }
+];
 
 export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
   const styles = useImportAccountStyles();
@@ -71,15 +74,9 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             <Label
               label="Derivation"
               isOptional
-              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+              description={"By default derivation isn't used. Click on 'Custom derivation path' to add it."}
             />
-            <FormRadioButtonsGroup
-              name="derivationType"
-              buttons={[
-                { value: ImportAccountDerivationEnum.DEFAULT, label: 'Default account (the first one)' },
-                { value: ImportAccountDerivationEnum.CUSTOM_PATH, label: 'Custom derivation path' }
-              ]}
-            />
+            <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
             {values.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && (
               <>
                 <Label label="Custom derivation path" />

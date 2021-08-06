@@ -9,11 +9,15 @@ import { ImportAccountSeed } from './import-account-seed/import-account-seed';
 import { ImportAccountType } from './import-account-type/import-account-type';
 
 export const ImportAccountModal = () => {
-  useNavigationSetOptions({
-    headerLeft: () => <HeaderProgress current={importAccountStep} total={2} />
-  });
   const [importAccountStep, setImportAccountStep] = useState(1);
   const [importType, setImportType] = useState(ImportAccountTypeEnum.SEED_PHRASE);
+
+  useNavigationSetOptions(
+    {
+      headerLeft: () => <HeaderProgress current={importAccountStep} total={2} />
+    },
+    [importAccountStep]
+  );
 
   const onSubmit = ({ type }: ImportAccountTypeValues) => {
     setImportType(type);

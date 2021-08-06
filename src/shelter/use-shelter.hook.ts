@@ -39,7 +39,6 @@ export const useShelter = () => {
           )
         )
         .subscribe(([publicData, isPasswordSaved]) => {
-          console.log({ publicData });
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
@@ -58,6 +57,16 @@ export const useShelter = () => {
         }),
       createImportedAccount$
         .pipe(switchMap(({ privateKey, name }) => Shelter.createImportedAccount$(privateKey, name)))
+        .pipe(
+          catchError(() => {
+            showErrorToast({
+              title: 'Failed to import account.',
+              description: 'This may happen because provided Key is invalid.'
+            });
+
+            return of(undefined);
+          })
+        )
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
