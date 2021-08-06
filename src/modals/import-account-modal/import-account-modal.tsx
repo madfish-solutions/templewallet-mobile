@@ -19,7 +19,7 @@ export const ImportAccountModal = () => {
     [importAccountStep]
   );
 
-  const onSubmit = ({ type }: { type: ImportAccountTypeEnum }) => {
+  const onSubmit = (type: ImportAccountTypeEnum) => {
     setImportType(type);
     setImportAccountStep(importAccountStep + 1);
   };

@@ -17,9 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from './import-account-type.form';
 
 interface Props {
-  onSubmit: EventFn<{
-    type: ImportAccountTypeEnum;
-  }>;
+  onSubmit: EventFn<ImportAccountTypeEnum>;
 }
 
 const importAccountTypeButtons = [
@@ -34,7 +32,7 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
     <Formik
       validationSchema={importAccountTypeValidationSchema}
       initialValues={importAccountTypeInitialValues}
-      onSubmit={onSubmit}>
+      onSubmit={({ type }) => onSubmit(type)}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
