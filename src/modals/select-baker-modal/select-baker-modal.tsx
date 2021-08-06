@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Text, FlatList, View, TouchableOpacity } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -33,9 +33,15 @@ import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
   [BakersSortFieldEnum.Rank]: 'Rank',
-  [BakersSortFieldEnum.Space]: 'Space'
+  [BakersSortFieldEnum.Space]: 'Space',
+  [BakersSortFieldEnum.Staking]: 'Staking'
 };
-const bakersSortFieldsOptions = [BakersSortFieldEnum.Space, BakersSortFieldEnum.Fee, BakersSortFieldEnum.Rank];
+const bakersSortFieldsOptions = [
+  BakersSortFieldEnum.Space,
+  BakersSortFieldEnum.Fee,
+  BakersSortFieldEnum.Rank,
+  BakersSortFieldEnum.Staking
+];
 
 export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
@@ -84,7 +90,9 @@ export const SelectBakerModal: FC = () => {
       case BakersSortFieldEnum.Rank:
         return filteredBakersList;
       case BakersSortFieldEnum.Fee:
-        return [...filteredBakersList].sort((a, b) => b.fee - a.fee);
+        return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
+      case BakersSortFieldEnum.Staking:
+        return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
       default:
         return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
     }

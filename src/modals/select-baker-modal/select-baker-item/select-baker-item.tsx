@@ -57,7 +57,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         </View>
         <Divider size={formatSize(16)} />
         <View>
-          <Text style={styles.cellTitle}>Staking</Text>
+          <Text style={styles.cellTitle}>Staking:</Text>
           <Text style={styles.cellValueText}>{kFormatter(baker.stakingBalance)}</Text>
         </View>
       </View>
