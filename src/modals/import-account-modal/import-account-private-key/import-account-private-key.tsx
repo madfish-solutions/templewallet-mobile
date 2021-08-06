@@ -11,7 +11,6 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
-import { ImportAccountPrivateKeyValues } from '../../../interfaces/import-account-type';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -27,7 +26,7 @@ interface Props {
 export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
-  const onSubmit = ({ privateKey }: ImportAccountPrivateKeyValues) =>
+  const onSubmit = ({ privateKey }: { privateKey: string }) =>
     createImportedAccount({
       privateKey,
       name: `Account ${accountIndex}`

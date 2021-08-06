@@ -1,8 +1,15 @@
 import { mixed, object, SchemaOf, string } from 'yup';
 
+import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
 import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
-import { ImportAccountDerivationEnum, ImportAccountSeedValues } from '../../../interfaces/import-account-type';
 import { getDerivationPath } from '../../../utils/keys.util';
+
+export type ImportAccountSeedValues = {
+  seedPhrase: string;
+  password?: string;
+  derivationType: ImportAccountDerivationEnum;
+  derivationPath: string;
+};
 
 export const importAccountSeedInitialValues: ImportAccountSeedValues = {
   seedPhrase: '',

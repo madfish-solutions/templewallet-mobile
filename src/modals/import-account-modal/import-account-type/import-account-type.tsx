@@ -10,14 +10,16 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EventFn } from '../../../config/general';
+import { ImportAccountTypeEnum } from '../../../enums/account-type.enum';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../../interfaces/import-account-type';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from './import-account-type.form';
 
 interface Props {
-  onSubmit: EventFn<ImportAccountTypeValues>;
+  onSubmit: EventFn<{
+    type: ImportAccountTypeEnum;
+  }>;
 }
 
 const importAccountTypeButtons = [

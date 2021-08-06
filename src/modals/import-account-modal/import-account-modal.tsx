@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { HeaderProgress } from '../../components/header/header-progress/header-progress';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../interfaces/import-account-type';
+import { ImportAccountTypeEnum } from '../../enums/account-type.enum';
 import { ImportAccountPrivateKey } from './import-account-private-key/import-account-private-key';
 import { ImportAccountSeed } from './import-account-seed/import-account-seed';
 import { ImportAccountType } from './import-account-type/import-account-type';
@@ -19,7 +19,7 @@ export const ImportAccountModal = () => {
     [importAccountStep]
   );
 
-  const onSubmit = ({ type }: ImportAccountTypeValues) => {
+  const onSubmit = ({ type }: { type: ImportAccountTypeEnum }) => {
     setImportType(type);
     setImportAccountStep(importAccountStep + 1);
   };

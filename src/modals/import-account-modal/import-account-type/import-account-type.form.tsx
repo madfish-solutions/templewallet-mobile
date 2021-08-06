@@ -1,11 +1,11 @@
 import { mixed, object, SchemaOf } from 'yup';
 
-import { ImportAccountTypeEnum, ImportAccountTypeValues } from '../../../interfaces/import-account-type';
+import { ImportAccountTypeEnum } from '../../../enums/account-type.enum';
 
-export const importAccountTypeValidationSchema: SchemaOf<ImportAccountTypeValues> = object().shape({
+export const importAccountTypeValidationSchema: SchemaOf<{ type: ImportAccountTypeEnum }> = object().shape({
   type: mixed<ImportAccountTypeEnum>().oneOf(Object.values(ImportAccountTypeEnum)).required()
 });
 
-export const importAccountTypeInitialValues: ImportAccountTypeValues = {
+export const importAccountTypeInitialValues: { type: ImportAccountTypeEnum } = {
   type: ImportAccountTypeEnum.PRIVATE_KEY
 };

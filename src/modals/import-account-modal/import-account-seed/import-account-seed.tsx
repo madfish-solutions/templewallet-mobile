@@ -11,17 +11,21 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
+import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
-import { ImportAccountDerivationEnum, ImportAccountSeedValues } from '../../../interfaces/import-account-type';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
-import { importAccountSeedInitialValues, importAccountSeedValidationSchema } from './import-account-seed.form';
+import {
+  importAccountSeedInitialValues,
+  importAccountSeedValidationSchema,
+  ImportAccountSeedValues
+} from './import-account-seed.form';
 
 interface Props {
   onBackHandler: EmptyFn;
