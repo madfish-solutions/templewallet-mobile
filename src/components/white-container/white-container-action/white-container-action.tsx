@@ -1,6 +1,5 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 import { WhiteContainerActionStyles } from './white-container-action.styles';
 
