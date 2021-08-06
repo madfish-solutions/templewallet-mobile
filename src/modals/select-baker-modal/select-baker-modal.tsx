@@ -28,7 +28,6 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
-import {InsetSubstitute} from "../../components/inset-substitute/inset-substitute";
 
 // TODO: replace with translations
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
