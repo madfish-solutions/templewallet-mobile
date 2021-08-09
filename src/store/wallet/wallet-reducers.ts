@@ -22,7 +22,7 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
-  pushOrUpdateAccountTokensList,
+  pushOrUpdateTokensBalances,
   removeTokenFromTokenList,
   toggleTokenVisibility,
   tokenBalanceMetadata,
@@ -54,33 +54,23 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
-    tokenBalancesList.reduce((prevState, tokenBalance) => {
-      const tokenMetadata = tokenBalanceMetadata(tokenBalance);
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balances, metadataList } }) => {
+    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata) => {
       const slug = getTokenSlug(tokenMetadata);
 
-      const newState: WalletState = {
+      return {
         ...prevState,
-        tokensMetadata: {
-          ...prevState.tokensMetadata,
-          [slug]: {
-            ...prevState.tokensMetadata[slug],
-            ...tokenMetadata
-          }
+        [slug]: {
+          ...prevState[slug],
+          ...tokenMetadata
         }
       };
+    }, state.tokensMetadata);
 
-      const accountToken: AccountTokenInterface = {
-        slug,
-        balance: mutezToTz(new BigNumber(tokenBalance.balance), tokenMetadata.decimals).toString(),
-        isVisible: true
-      };
-
-      return updateCurrentAccountState(newState, currentAccount => ({
-        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, accountToken)
-      }));
-    }, state)
-  );
+    return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balances)
+    }));
+  });
 
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,
@@ -108,11 +98,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
     return {
       ...updateCurrentAccountState(state, currentAccount => ({
-        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, {
-          slug,
-          balance: '0',
-          isVisible: true
-        })
+        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' })
       })),
       tokensMetadata: {
         ...state.tokensMetadata,
