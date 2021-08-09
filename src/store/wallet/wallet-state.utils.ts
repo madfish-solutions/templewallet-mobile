@@ -19,7 +19,7 @@ export const updateAccountState = (
   updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
 ): WalletState => ({
   ...state,
-  hdAccounts: state.hdAccounts.map(account =>
+  accounts: state.accounts.map(account =>
     account.publicKeyHash === accountPublicKeyHash
       ? { ...account, ...updateFn({ ...initialWalletAccountState, ...account }) }
       : account

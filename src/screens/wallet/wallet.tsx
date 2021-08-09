@@ -18,7 +18,7 @@ import {
   setSelectedAccountAction
 } from '../../store/wallet/wallet-actions';
 import {
-  useHdAccountsListSelector,
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
@@ -31,7 +31,7 @@ export const Wallet = () => {
   const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
   const { exchangeRates } = useExchangeRatesSelector();
 
@@ -47,7 +47,7 @@ export const Wallet = () => {
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
-            list={hdAccounts}
+            list={accounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 
