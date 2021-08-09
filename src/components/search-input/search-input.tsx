@@ -9,9 +9,11 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSearchInputStyles } from './search-input.styles';
 
-type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText'>;
-
-export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn }) => {
+export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText'>> = ({
+  value,
+  placeholder,
+  onChangeText = emptyFn
+}) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
 

@@ -4,7 +4,8 @@ import { Text, View } from 'react-native';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
+import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
@@ -85,7 +86,7 @@ export const TokenList: FC = () => {
           </>
         )}
 
-        <PlusCircleButton text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        <ButtonWithIcon icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
         <Divider />
       </ScreenContainer>
     </>
