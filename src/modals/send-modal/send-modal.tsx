@@ -24,7 +24,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
-  useHdAccountsListSelector,
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
   useTokensListSelector
@@ -48,7 +48,7 @@ export const SendModal: FC = () => {
 
   const sender = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const accounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const tokensList = useTokensListSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
   const tezosToken = useTezosTokenSelector();

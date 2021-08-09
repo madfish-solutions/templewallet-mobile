@@ -3,14 +3,13 @@ name: Code quality
 on:
   pull_request:
     branches:
-      - master1
-      - development1
+      - master
+      - development
 
 jobs:
   code-quality:
     name: Checks if ts, lint & unit tests works
     runs-on: macos-latest
-    environment: develop-environment
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
