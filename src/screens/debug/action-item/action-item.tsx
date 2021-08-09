@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 // eslint-disable-next-line import/default
 import JSONTree from 'react-native-json-tree';
 
@@ -42,9 +42,9 @@ export const ActionItem: FC<RecentActionPayload> = ({ timestamp, type, payload }
         />
       </TouchableOpacity>
       {showPayload && (
-        <View style={styles.body}>
+        <ScrollView style={[styles.body]} scrollEnabled={true} horizontal={true}>
           <JSONTree data={payload} />
-        </View>
+        </ScrollView>
       )}
     </View>
   );
