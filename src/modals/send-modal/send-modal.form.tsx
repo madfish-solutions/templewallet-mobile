@@ -3,6 +3,7 @@ import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from
 
 import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
+import { walletAddressValidation } from '../../form/validation/wallet-address';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
@@ -18,7 +19,7 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
   token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
-      value ? schema : schema.required(makeRequiredErrorMessage('To'))
+      value ? schema : walletAddressValidation
     )
     .ensure(),
   amount: bigNumberValidation
