@@ -33,7 +33,7 @@ import {
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    hdAccounts: [...state.hdAccounts, { ...account, ...initialAccountState }]
+    accounts: [...state.accounts, { ...account, ...initialAccountState }]
   }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
@@ -49,7 +49,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(balance, false) }))
   );
   builder.addCase(loadTezosBalanceActions.fail, (state, { payload: error }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity('0', false, error) }))
+    updateCurrentAccountState(state, account => ({
+      tezosBalance: createEntity(account.tezosBalance.data, false, error)
+    }))
   );
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>

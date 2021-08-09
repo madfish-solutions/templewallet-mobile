@@ -7,6 +7,7 @@ import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
+import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
@@ -38,9 +39,9 @@ export const AccountDropdownItem: FC<Props> = ({
           <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
 
           {showFullData && (
-            <Text style={styles.balanceText}>
+            <HideBalance style={styles.balanceText}>
               {account?.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
-            </Text>
+            </HideBalance>
           )}
         </View>
       </View>
