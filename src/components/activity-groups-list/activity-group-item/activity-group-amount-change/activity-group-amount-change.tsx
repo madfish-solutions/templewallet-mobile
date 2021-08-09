@@ -48,10 +48,13 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
         exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
       }
 
-      if (isPositive && isDefined(exchangeRate)) {
-        positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
-      } else if (isDefined(exchangeRate)) {
-        negativeAmountSum += parsedAmount.toNumber() * exchangeRate;
+      if (isDefined(exchangeRate)) {
+        const summand = parsedAmount.toNumber() * exchangeRate;
+        if (isPositive) {
+          positiveAmountSum += summand;
+        } else {
+          negativeAmountSum += summand;
+        }
       }
 
       if (!parsedAmount.isEqualTo(0)) {
