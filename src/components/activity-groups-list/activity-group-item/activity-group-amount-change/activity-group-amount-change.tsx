@@ -20,6 +20,9 @@ interface Props {
   group: ActivityGroup;
 }
 
+const KNOWN_LIQUIDITY_ENTRYPOINTS = ['divestLiquidity', 'investLiquidity', 'addLiquidity', 'removeLiquidity'];
+const TRANSFER_RELATED_ENTRYPOINTS = ['', 'transfer', 'approve'];
+
 export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const styles = useActivityGroupAmountChangeStyles();
 
@@ -66,7 +69,17 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     return { amounts, dollarSum };
   }, [group, getTokenMetadata]);
 
-  const isShowValueText = nonZeroAmounts.amounts.length > 0;
+  const isShowValueText = useMemo(
+    () =>
+      nonZeroAmounts.amounts.length > 0 &&
+      group.every(
+        ({ entrypoint }) =>
+          !isDefined(entrypoint) ||
+          KNOWN_LIQUIDITY_ENTRYPOINTS.includes(entrypoint) ||
+          TRANSFER_RELATED_ENTRYPOINTS.includes(entrypoint)
+      ),
+    [nonZeroAmounts, group]
+  );
 
   return (
     <View style={styles.container}>
