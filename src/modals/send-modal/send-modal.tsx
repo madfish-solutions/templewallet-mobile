@@ -10,7 +10,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
-  useHdAccountsListSelector,
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
   useTokensListSelector
@@ -28,7 +28,7 @@ export const SendModal: FC = () => {
 
   const { exchangeRates } = useExchangeRatesSelector();
   const sender = useSelectedAccountSelector();
-  const accounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const tokensList = useTokensListSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
   const tezosToken = useTezosTokenSelector();
