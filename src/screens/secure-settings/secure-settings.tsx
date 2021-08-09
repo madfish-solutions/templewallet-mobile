@@ -47,10 +47,7 @@ export const SecureSettings = () => {
       <WhiteContainer>
         <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
           <WhiteContainerText text="Hide mode on Launch" />
-          <Switch
-            value={isBalanceHiddenSetting}
-            onChange={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}
-          />
+          <Switch value={isBalanceHiddenSetting} onChange={value => dispatch(setIsBalanceHidden(value))} />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
