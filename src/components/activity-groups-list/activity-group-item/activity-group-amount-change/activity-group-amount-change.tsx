@@ -12,16 +12,13 @@ import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
-import { formatAssetAmount } from '../../../../utils/number.util';
+import { formatAssetAmount, roundFiat } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
 interface Props {
   group: ActivityGroup;
 }
-
-const KNOWN_LIQUIDITY_ENTRYPOINTS = ['divestLiquidity', 'investLiquidity', 'addLiquidity', 'removeLiquidity'];
-const TRANSFER_RELATED_ENTRYPOINTS = ['', 'transfer', 'approve'];
 
 export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const styles = useActivityGroupAmountChangeStyles();
@@ -33,6 +30,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
     let positiveAmountSum = 0;
+    let negativeAmountSum = 0;
 
     for (const { address, id, amount } of group) {
       const { decimals, symbol, name } = getTokenMetadata(getTokenSlug({ address, id }));
@@ -52,6 +50,8 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
       if (isPositive && isDefined(exchangeRate)) {
         positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
+      } else if (isDefined(exchangeRate)) {
+        negativeAmountSum += parsedAmount.toNumber() * exchangeRate;
       }
 
       if (!parsedAmount.isEqualTo(0)) {
@@ -64,22 +64,11 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       }
     }
 
-    const dollarSum = formatAssetAmount(new BigNumber(positiveAmountSum), BigNumber.ROUND_DOWN, 2);
+    const positiveDollarSum = roundFiat(new BigNumber(positiveAmountSum));
+    const negativeDollarSum = roundFiat(new BigNumber(negativeAmountSum));
 
-    return { amounts, dollarSum };
+    return { amounts, dollarSums: [positiveDollarSum, negativeDollarSum].filter(sum => !sum.eq(0)) };
   }, [group, getTokenMetadata]);
-
-  const isShowValueText = useMemo(
-    () =>
-      nonZeroAmounts.amounts.length > 0 &&
-      group.every(
-        ({ entrypoint }) =>
-          !isDefined(entrypoint) ||
-          KNOWN_LIQUIDITY_ENTRYPOINTS.includes(entrypoint) ||
-          TRANSFER_RELATED_ENTRYPOINTS.includes(entrypoint)
-      ),
-    [nonZeroAmounts, group]
-  );
 
   return (
     <View style={styles.container}>
@@ -90,7 +79,18 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
         </Text>
       ))}
 
-      {isShowValueText && <Text style={styles.valueText}>{nonZeroAmounts.dollarSum} $</Text>}
+      {nonZeroAmounts.dollarSums.map((amount, index) => (
+        <Text
+          key={index}
+          style={[
+            styles.valueText,
+            conditionalStyle(amount.isPositive(), styles.positiveAmountText, styles.negativeAmountText)
+          ]}>
+          {amount.isPositive() ? '+ ' : '- '}
+          {amount.abs().toFixed()}
+          {' $'}
+        </Text>
+      ))}
     </View>
   );
 };

@@ -11,8 +11,10 @@ export const useActivityGroupAmountChangeStyles = createUseStyles(({ colors, typ
   positiveAmountText: {
     color: colors.adding
   },
+  negativeAmountText: {
+    color: colors.destructive
+  },
   valueText: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
+    ...typography.numbersRegular11
   }
 }));
