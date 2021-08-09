@@ -102,14 +102,6 @@ export class BeaconHandler {
 
     throw new Error('Wallet client not defined!');
   };
-
-  public static isBeaconConnectedHandler = async () => {
-    if (isDefined(BeaconHandler._walletClient)) {
-      return await BeaconHandler._walletClient.isConnected;
-    }
-
-    throw new Error('Wallet client not defined!');
-  };
 }
 
 async function isNetworkSupported(_message: BeaconRequestOutputMessage) {
