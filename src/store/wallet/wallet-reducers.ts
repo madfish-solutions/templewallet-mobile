@@ -1,11 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { BigNumber } from 'bignumber.js';
 
 import { initialAccountState } from '../../interfaces/account-state.interface';
-import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
@@ -25,9 +22,8 @@ import {
   pushOrUpdateTokensBalances,
   removeTokenFromTokenList,
   toggleTokenVisibility,
-  tokenBalanceMetadata,
-  updateCurrentAccountState,
-  updateAccountState
+  updateAccountState,
+  updateCurrentAccountState
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
