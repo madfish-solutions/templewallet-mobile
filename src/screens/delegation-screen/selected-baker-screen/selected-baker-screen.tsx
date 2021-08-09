@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
+import { kFormatter } from '../../../utils/number.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
 interface Props {
@@ -70,8 +71,8 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           </View>
           <Divider size={formatSize(16)} />
           <View>
-            <Text style={styles.cellTitle}>Cycles:</Text>
-            <Text style={styles.cellValueText}>XXX</Text>
+            <Text style={styles.cellTitle}>Staking:</Text>
+            <Text style={styles.cellValueText}>{kFormatter(baker.stakingBalance)}</Text>
           </View>
         </View>
       </View>
