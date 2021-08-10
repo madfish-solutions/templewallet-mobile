@@ -2,7 +2,7 @@ import { mockAccountCredentials } from '../mocks/account-credentials.mock';
 import { getDerivationPath, seedToHDPrivateKey, getPublicKeyAndHash$, generateSeed } from './keys.util';
 import { rxJsTestingHelper } from './testing.utis';
 
-it('seedToPrivateKey should return derivation path, passing account index', () => {
+it('getDerivationPath should return derivation path, passing account index', () => {
   expect(getDerivationPath(1)).toEqual(mockAccountCredentials.derivationPath);
 });
 
