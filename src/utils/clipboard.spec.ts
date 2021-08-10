@@ -1,6 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import Toast from 'react-native-toast-message';
 
+import { ToastTypeEnum } from '../enums/toast-type.enum';
 import { copyStringToClipboard } from './clipboard.utils';
 
 describe('copyStringToClipboard', () => {
@@ -27,6 +28,6 @@ describe('copyStringToClipboard', () => {
   it("should change clipboard content and show 'Copied' toast if variable is non-empty string", () => {
     copyStringToClipboard('test');
     expect(setString).toBeCalledWith('test');
-    expect(showToast).toBeCalled();
+    expect(showToast).toBeCalledWith({ type: ToastTypeEnum.Copied });
   });
 });
