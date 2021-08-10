@@ -1,6 +1,5 @@
-export const mockSetString = jest.fn();
+export const mockReactNativeClipboard = {
+  setString: jest.fn()
+};
 
-jest.mock('@react-native-clipboard/clipboard', () => ({
-  ...jest.requireActual('@react-native-clipboard/clipboard'),
-  setString: mockSetString
-}));
+jest.mock('@react-native-clipboard/clipboard', () => mockReactNativeClipboard);

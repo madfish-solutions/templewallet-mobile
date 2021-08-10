@@ -1,6 +1,5 @@
-export const mockShowToast = jest.fn();
+export const mockReactNativeToastMessage = {
+  show: jest.fn()
+};
 
-jest.mock('react-native-toast-message', () => ({
-  ...jest.requireActual('react-native-toast-message'),
-  show: mockShowToast
-}));
+jest.mock('react-native-toast-message', () => mockReactNativeToastMessage);
