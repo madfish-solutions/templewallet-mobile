@@ -100,6 +100,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@testing-library/react-hooks": "^7.0.1",
     "@types/jest": "^26.0.20",
     "@types/lodash-es": "^4.17.4",
     "@types/react-native": "^0.64.0",
