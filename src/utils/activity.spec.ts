@@ -3,7 +3,7 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { groupActivitiesByHash } from './activity.utils';
 
-describe('activity', () => {
+describe('groupActivitiesByHash', () => {
   const mockMember = {
     address: 'address2',
     alias: 'alias2'
