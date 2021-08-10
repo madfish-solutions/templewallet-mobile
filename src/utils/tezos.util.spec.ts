@@ -1,6 +1,7 @@
-import { isKTAddress, isValidAddress, mutezToTz, tzToMutez } from './tezos.util';
 import { BigNumber } from 'bignumber.js';
+
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { isKTAddress, isValidAddress, mutezToTz, tzToMutez } from './tezos.util';
 
 const mockNaNBigNumber = new BigNumber(NaN);
 const mockMutezValue = new BigNumber(100000);
