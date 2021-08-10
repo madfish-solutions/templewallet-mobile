@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`activity should push operations and transfers with the same hash into one group and not mutate activities 1`] = `
+exports[`groupActivitiesByHash should push operations and transfers with the same hash into one group and not mutate activities 1`] = `
 Array [
   Array [
     Object {
@@ -93,7 +93,7 @@ Array [
 ]
 `;
 
-exports[`activity should sort operations and transfers by timestamp in descending order 1`] = `
+exports[`groupActivitiesByHash should sort operations and transfers by timestamp in descending order 1`] = `
 Array [
   Array [
     Object {
