@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
-import { useHideBalance } from '../../utils/hide-balance/hide-balance.hook';
 import { DollarValueText } from '../dollar-value-text/dollar-value-text';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
