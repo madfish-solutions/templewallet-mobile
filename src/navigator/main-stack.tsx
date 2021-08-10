@@ -1,6 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -20,6 +21,7 @@ import { DelegationScreen } from '../screens/delegation-screen/delegation-screen
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
+import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
@@ -161,6 +163,11 @@ export const MainStackScreen = () => {
               name={ScreensEnum.DAppsSettings}
               component={DAppsSettings}
               options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.NodeSettings}
+              component={NodeSettings}
+              options={generateScreenOptions(<HeaderTitle title="Secure" />)}
             />
             <MainStack.Screen
               name={ScreensEnum.SecureSettings}

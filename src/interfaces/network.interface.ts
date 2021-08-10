@@ -1,5 +1,8 @@
+import { NetworkEnum } from '../enums/network.enum';
+
 export interface NetworkInterface {
-  id: string;
+  id: NetworkEnum;
+  label: string;
   name: string;
   description: string;
   lambdaContract: string;
@@ -9,3 +12,7 @@ export interface NetworkInterface {
   disabled: boolean;
   nameI18nKey?: string;
 }
+
+export type NetworkRecord = {
+  [key in NetworkEnum]: NetworkInterface;
+};

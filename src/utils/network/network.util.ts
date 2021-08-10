@@ -6,8 +6,9 @@ import memoize from 'mem';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { NetworkInterface } from '../../interfaces/network.interface';
 import { FastRpcClient } from './fast-rpc';
-import { MAINNET_NETWORK } from './networks';
+import { NETWORKS } from './networks';
 
 const michelEncoder = new MichelCodecPacker();
 
@@ -23,7 +24,13 @@ export const createTezosToolkit = (rpc: string) => {
 
 export const getFastRpcClient = memoize((rpc: string) => new FastRpcClient(rpc));
 
-const currentNetwork$ = new BehaviorSubject(MAINNET_NETWORK);
+export const currentNetwork$ = new BehaviorSubject(NETWORKS.TEMPLE_DEFAULT);
 export const currentNetworkId$ = currentNetwork$.pipe(map(({ id }) => id));
 export const currentNetworkRpc$ = currentNetwork$.pipe(map(({ rpcBaseURL }) => rpcBaseURL));
-export const tezos$ = new BehaviorSubject(createTezosToolkit(MAINNET_NETWORK.rpcBaseURL));
+// export const tezos$ = new BehaviorSubject(createTezosToolkit(MAINNET_NETWORK.rpcBaseURL));
+export const tezos$ = currentNetworkRpc$.pipe(map(rpcBaseUrl => createTezosToolkit(rpcBaseUrl)));
+
+export const updateCurrentNetwork = (networkInterface: NetworkInterface) => {
+  currentNetwork$.next(networkInterface);
+  console.log('network changed ', networkInterface);
+};

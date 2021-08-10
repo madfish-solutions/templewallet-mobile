@@ -26,6 +26,7 @@ export enum ScreensEnum {
   About = 'About',
   DAppsSettings = 'DAppsSettings',
   SecureSettings = 'SecureSettings',
+  NodeSettings = 'NodeSettings',
   Debug = 'Debug'
 }
 
@@ -55,6 +56,7 @@ export type ScreensParamList = {
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
+  [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
 
@@ -74,5 +76,6 @@ export const settingsStackScreens = [
   ScreensEnum.ManageAccounts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
+  ScreensEnum.SecureSettings,
   ScreensEnum.SecureSettings
 ];

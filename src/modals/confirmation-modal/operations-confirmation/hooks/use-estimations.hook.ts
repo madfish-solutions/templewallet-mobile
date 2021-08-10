@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { from, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
@@ -13,10 +13,10 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const subscription = from(
-      tezos$.getValue().estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))
-    )
+    const subscription = of(null)
       .pipe(
+        withLatestFrom(tezos$, (_, tezos) => tezos),
+        switchMap(tezos => tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))),
         map(estimates =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
