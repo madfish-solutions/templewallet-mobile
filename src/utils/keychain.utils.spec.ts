@@ -8,5 +8,4 @@ describe('getKeychainOptions', () => {
   it('should return object if we passing empty string', () => {
     expect(getKeychainOptions('')).toEqual({ service: `${APP_IDENTIFIER}/` });
   });
-
 });
