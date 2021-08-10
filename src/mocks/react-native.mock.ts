@@ -12,5 +12,3 @@ jest.mock('react-native', () => ({
   DeviceEventEmitter: mockDeviceEventEmitter,
   Linking: mockLinking
 }));
-
-// jest.mock('react-native/Libraries/Linking/Linking', () => mockLinking);
