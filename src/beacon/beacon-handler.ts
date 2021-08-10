@@ -44,8 +44,8 @@ export class BeaconHandler {
 
   public static addPeer = async (peer: PeerInfo, sendPairingResponse?: boolean) => {
     if (isDefined(BeaconHandler._walletClient)) {
-      await BeaconHandler._walletClient.isConnected;
-      await BeaconHandler._walletClient.addPeer(peer, sendPairingResponse);
+      const isConnected = await BeaconHandler._walletClient.isConnected;
+      isConnected && (await BeaconHandler._walletClient.addPeer(peer, sendPairingResponse));
     }
   };
 

@@ -10,7 +10,7 @@ import { RevealAttention } from '../../components/reveal-attention/reveal-attent
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
   RevealPrivateKeyModalFormValues,
@@ -21,7 +21,7 @@ import { RevealPrivateKeyView } from './reveal-private-key-view/reveal-private-k
 export const RevealPrivateKeyModal = () => {
   const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealPrivateKey>>().params.account;
 
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
 
   const RevealPrivateKeyModalInitialValues: RevealPrivateKeyModalFormValues = { account };
 
@@ -38,7 +38,7 @@ export const RevealPrivateKeyModal = () => {
             label="Account"
             description="If you want to reveal a private key from another account - you should select it in the top-right dropdown."
           />
-          <AccountFormDropdown name="account" list={hdAccounts} />
+          <AccountFormDropdown name="account" list={accounts} />
           <Label label="Private Key" description="Current account key. Keep it in secret." />
           <RevealPrivateKeyView publicKeyHash={values.account.publicKeyHash} />
           <Divider size={formatSize(16)} />
