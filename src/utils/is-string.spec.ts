@@ -1,4 +1,3 @@
-import { isDefined } from './is-defined';
 import { isString } from './is-string';
 
 describe('isString', () => {
