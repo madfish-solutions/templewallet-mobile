@@ -24,4 +24,16 @@ describe('formatOrdinalNumber', () => {
   it('format 0 with suffix', () => {
     expect(formatOrdinalNumber(0)).toEqual('0th');
   });
+
+  it('format 12 with suffix', () => {
+    expect(formatOrdinalNumber(12)).toEqual('12th');
+  });
+
+  it('format 10000 with suffix', () => {
+    expect(formatOrdinalNumber(10000)).toEqual('10000th');
+  });
+
+  it('format 10000000 with suffix', () => {
+    expect(formatOrdinalNumber(10000000)).toEqual('10000000th');
+  });
 });
