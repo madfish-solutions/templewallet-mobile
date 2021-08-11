@@ -48,7 +48,7 @@ export class Shelter {
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
+  static isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
   static lockApp = () => Shelter._password$.next(EMPTY_PASSWORD);
 
