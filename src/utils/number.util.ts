@@ -4,7 +4,13 @@ export const formatAssetAmount = (
   amount: BigNumber,
   roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
   decimalPlace = 6
-) => amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+) => {
+  if (isNaN(amount.toNumber())) {
+    return NaN;
+  }
+
+  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+};
 
 export const roundFiat = (amount: BigNumber, roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN) =>
   amount.decimalPlaces(2, roundingMode);
