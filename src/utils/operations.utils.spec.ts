@@ -13,6 +13,10 @@ describe('mapOperationsToActivities', () => {
   it('map operations to activity with address, which does not maches with target address', () => {
     expect(mapOperationsToActivities('address12', mockOperations)).toEqual(mockActivitiesWithoutMatchedAddress);
   });
+
+  it('map operations to activity with empty address', () => {
+    expect(mapOperationsToActivities('', mockOperations)).toEqual(mockActivitiesWithoutMatchedAddress);
+  });
 });
 
 describe('extractEntrypoint', () => {
