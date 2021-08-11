@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { isNaN } from 'lodash-es';
 
 export const formatAssetAmount = (
   amount: BigNumber,
@@ -17,5 +18,10 @@ export const roundFiat = (amount: BigNumber, roundingMode: BigNumber.RoundingMod
 
 export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
 
-export const kFormatter = (num: number): string =>
-  (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+export const kFormatter = (num: number): string | number => {
+  if (isNaN(num)) {
+    return NaN;
+  }
+
+  return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+};
