@@ -13,7 +13,7 @@ export interface TokenMetadataResponse {
   symbol?: string;
   name?: string;
   thumbnailUri: string;
-};
+}
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>
