@@ -52,13 +52,13 @@ it('encryptString$ should encrypt a message with a given password', done => {
 it('decryptString$ should decrypt a message with correct password', done => {
   decryptString$(expectedEncryptionOutput, 'correctPassword').subscribe(
     rxJsTestingHelper(decryptionOutput => {
+      expect(decryptionOutput).toEqual(mockUnencryptedString);
       expect(mockNativeAes.pbkdf2).toBeCalledWith('correctPassword', expectedEncryptionOutput.salt, 5000, 256);
       expect(mockNativeAes.decrypt).toBeCalledWith(
         expectedEncryptionOutput.cipher,
         mockPbkdf2Key,
         expectedEncryptionOutput.iv
       );
-      expect(decryptionOutput).toEqual(mockUnencryptedString);
     }, done)
   );
 });
