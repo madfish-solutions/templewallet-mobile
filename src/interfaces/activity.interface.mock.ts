@@ -1,6 +1,7 @@
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { ActivityInterface } from './activity.interface';
+import { groupActivitiesByHash } from '../utils/activity.utils';
+import { ActivityGroup, ActivityInterface } from './activity.interface';
 
 const mockMember = {
   address: 'address2',
@@ -79,3 +80,5 @@ export const mockTransfers: ActivityInterface[] = [
     destination: mockMember
   }
 ];
+
+export const mockActivityGroup: ActivityGroup[] = groupActivitiesByHash(mockOperations, mockTransfers);
