@@ -15,5 +15,3 @@ export const mockAppliedTransfer: TransferInterface = {
   to: mockReceiverAddress,
   alias: 'mockAlias'
 };
-
-
