@@ -9,6 +9,7 @@ if (typeof atob === 'undefined') {
   global.atob = decode;
 }
 
+import './src/mocks/mem.mock';
 import './src/mocks/crypto.mock';
 
 import './src/mocks/native-modules.mock';
