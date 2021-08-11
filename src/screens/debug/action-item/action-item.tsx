@@ -42,7 +42,7 @@ export const ActionItem: FC<RecentActionPayload> = ({ timestamp, type, payload }
         />
       </TouchableOpacity>
       {showPayload && (
-        <ScrollView style={[styles.body]} scrollEnabled={true} horizontal={true}>
+        <ScrollView style={styles.body} scrollEnabled={true} horizontal={true}>
           <JSONTree data={payload} />
         </ScrollView>
       )}
