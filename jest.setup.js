@@ -1,9 +1,11 @@
 import { Buffer as ImportedBuffer } from 'buffer';
 import 'react-native-gesture-handler/jestSetup';
 
-global.crypto = {
+export const mockCrypto = {
   getRandomValues: jest.fn()
 };
+
+global.crypto = mockCrypto;
 
 global.Buffer = global.Buffer || ImportedBuffer;
 
