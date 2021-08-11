@@ -13,7 +13,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { FormTextInput } from '../../form/form-text-input';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { useHdAccountsListSelector } from '../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { CreateHdAccountModalFormValues, createHdAccountModalValidationSchema } from './create-hd-account-modal.form';
 
@@ -21,13 +21,13 @@ export const CreateHdAccountModal = () => {
   const { createHdAccount } = useShelter();
   const { goBack } = useNavigation();
 
-  const accountIndex = useHdAccountsListSelector().length + 1;
+  const accountIndex = useAccountsListSelector().length + 1;
 
   const createHdAccountInitialValues: CreateHdAccountModalFormValues = {
     name: `Account ${accountIndex}`
   };
 
-  const onSubmit = ({ name }: CreateHdAccountModalFormValues) => createHdAccount(name);
+  const onSubmit = ({ name }: CreateHdAccountModalFormValues) => createHdAccount({ name });
 
   return (
     <Formik

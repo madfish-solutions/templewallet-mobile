@@ -12,9 +12,9 @@ export const withSelectedAccount =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, WalletAccountInterface] => {
-        const { selectedAccountPublicKeyHash, hdAccounts } = wallet;
+        const { selectedAccountPublicKeyHash, accounts } = wallet;
         const selectedAccount =
-          hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount;
+          accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount;
 
         return [value, selectedAccount];
       })

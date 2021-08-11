@@ -11,7 +11,7 @@ import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { abortRequestAction, approvePermissionRequestAction } from '../../../../store/d-apps/d-apps-actions';
-import { useHdAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
@@ -25,7 +25,7 @@ interface Props {
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const dispatch = useDispatch();
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
   const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
@@ -52,7 +52,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AppMetadataConnectionView appMetadata={message.appMetadata} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={hdAccounts} />
+            <AccountFormDropdown name="approver" list={accounts} />
           </ScreenContainer>
           <ModalButtonsContainer>
             <ButtonLargeSecondary title="Cancel" onPress={() => dispatch(abortRequestAction(message.id))} />
