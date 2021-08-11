@@ -15,5 +15,12 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption13Regular,
     color: colors.gray1,
     marginBottom: formatSize(4)
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline'
+  },
+  isOptionalLabel: {
+    ...typography.caption11Regular
   }
 }));

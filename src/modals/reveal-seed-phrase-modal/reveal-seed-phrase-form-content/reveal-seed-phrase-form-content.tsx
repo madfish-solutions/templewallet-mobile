@@ -8,7 +8,7 @@ import { ModalStatusBar } from '../../../components/modal-status-bar/modal-statu
 import { RevealAttention } from '../../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormTextInput } from '../../../form/form-text-input';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { getDerivationPath } from '../../../utils/keys.util';
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
@@ -18,7 +18,7 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
   values,
   setFieldValue
 }) => {
-  const hdAccounts = useHdAccountsListSelector();
+  const hdAccounts = useHdAccountListSelector();
 
   const derivationPath = useMemo(() => {
     const currentAccountIndex = hdAccounts.findIndex(
