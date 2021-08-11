@@ -1,1 +1,1 @@
-jest.mock('mem', () => (fn, options) => fn);
+jest.mock('mem', () => fn => fn);
