@@ -26,7 +26,7 @@ describe('mapTransfersToActivities', () => {
     expect(result[0].source.address).toEqual(mockAppliedTransferWithoutSender.contract);
     expect(result[0].source.alias).toEqual(mockAppliedTransferWithoutSender.alias);
   });
-  it('should set 0 as default token address', () => {
+  it('should set 0 as default token id', () => {
     const mockAppliedTransferWithoutTokenId: TransferInterface = {
       ...mockAppliedTransfer,
       token_id: undefined
