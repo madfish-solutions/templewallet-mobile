@@ -1,0 +1,48 @@
+import { ActivityStatusEnum } from '../enums/activity-status.enum';
+import { TransferInterface } from '../interfaces/transfer.interface';
+import { mockAppliedTransfer, mockReceiverAddress, mockSenderAddress } from '../interfaces/transfer.interface.mock';
+import { mapTransfersToActivities } from './transfer.utils';
+
+describe('mapTransfersToActivities', () => {
+  it('should map only Applied transfers', () => {
+    const mockPendingTransfer: TransferInterface = {
+      ...mockAppliedTransfer,
+      status: ActivityStatusEnum.Pending
+    };
+
+    const result = mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransfer, mockPendingTransfer]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].status).toEqual(ActivityStatusEnum.Applied);
+  });
+  it('should set contract address & alias as source if there is no sender', () => {
+    const mockAppliedTransferWithoutSender: TransferInterface = {
+      ...mockAppliedTransfer,
+      from: ''
+    };
+
+    const result = mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransferWithoutSender]);
+
+    expect(result[0].source.address).toEqual(mockAppliedTransferWithoutSender.contract);
+    expect(result[0].source.alias).toEqual(mockAppliedTransferWithoutSender.alias);
+  });
+  it('should set 0 as default token address', () => {
+    const mockAppliedTransferWithoutTokenId: TransferInterface = {
+      ...mockAppliedTransfer,
+      token_id: undefined
+    };
+
+    expect(mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransfer])[0].id).toEqual(
+      mockAppliedTransfer.token_id
+    );
+    expect(mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransferWithoutTokenId])[0].id).toEqual(0);
+  });
+  it('should correctly map sent amount sign for sender & receiver', () => {
+    expect(mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransfer])[0].amount).toEqual(
+      mockAppliedTransfer.amount
+    );
+    expect(mapTransfersToActivities(mockSenderAddress, [mockAppliedTransfer])[0].amount).toEqual(
+      `-${mockAppliedTransfer.amount}`
+    );
+  });
+});
