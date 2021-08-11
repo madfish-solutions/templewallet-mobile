@@ -12,6 +12,12 @@ it('seedToHDPrivateKey should return private key, passing seed and derivation pa
   ).toEqual(mockAccountCredentials.privateKey);
 });
 
+it('seedToHDPrivateKey should return error, passing seed without derivation path', () => {
+  expect(() => seedToHDPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), '')).toThrow(
+    new Error('Invalid derivation path')
+  );
+});
+
 it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing privateKey', done => {
   getPublicKeyAndHash$(mockAccountCredentials.privateKey).subscribe(
     rxJsTestingHelper(([publicKey, publicKeyHash]) => {
