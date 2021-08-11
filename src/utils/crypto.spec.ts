@@ -1,4 +1,4 @@
-import { mockCrypto } from '../../jest.setup';
+import { mockCrypto } from '../mocks/crypto.mock';
 import {
   mockPbkdf2Key,
   mockEncryptedString,
