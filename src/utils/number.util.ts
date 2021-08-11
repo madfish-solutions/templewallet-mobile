@@ -7,14 +7,22 @@ export const formatAssetAmount = (
   decimalPlace = 6
 ) => {
   if (isNaN(amount.toNumber())) {
-    return NaN;
+    return '';
   }
 
   return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
 };
 
-export const roundFiat = (amount: BigNumber, roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN) =>
-  amount.decimalPlaces(2, roundingMode);
+export const roundFiat = (
+  amount: BigNumber,
+  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN
+): BigNumber => {
+  if (amount.isNaN()) {
+    return new BigNumber(0);
+  }
+
+  return amount.decimalPlaces(2, roundingMode);
+};
 
 export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
 

@@ -25,8 +25,8 @@ describe('formatAssetAmount', () => {
     expect(formatAssetAmount(new BigNumber(100.255133), BigNumber.ROUND_UP, 1)).toEqual('100.3');
   });
 
-  it('should return NaN if NaN passed into', () => {
-    expect(formatAssetAmount(new BigNumber(NaN), BigNumber.ROUND_UP, 1)).toEqual(NaN);
+  it('should return empty string if NaN passed into', () => {
+    expect(formatAssetAmount(new BigNumber(NaN), BigNumber.ROUND_UP, 1)).toEqual('');
   });
 
   it('should return 0 if 0 passed into', () => {
@@ -42,8 +42,8 @@ describe('roundFiat', () => {
   it('should return exact value passing bignumber with 2 decimals', () => {
     expect(roundFiat(new BigNumber(100.25), BigNumber.ROUND_UP).toNumber()).toEqual(100.25);
   });
-  it('should return NaN if NaN passed', () => {
-    expect(roundFiat(new BigNumber(NaN), BigNumber.ROUND_UP).toNumber()).toEqual(NaN);
+  it('should return 0 if NaN passed', () => {
+    expect(roundFiat(new BigNumber(NaN), BigNumber.ROUND_UP).toNumber()).toEqual(0);
   });
 });
 
