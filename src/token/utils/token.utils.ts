@@ -1,10 +1,11 @@
 import { ContractType } from '../../interfaces/contract.type';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
-import { isDefined } from '../../utils/is-defined';
+import { isString } from '../../utils/is-string';
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
+import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 
 export const getTokenSlug = <T extends { address?: string; id?: number }>({ address, id }: T) =>
-  isDefined(address) ? `${address}_${id}` : '';
+  isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;
 
 // TODO: validate added token address & id on Add Token Modal
 export const validateToken = (tokenType: TokenTypeEnum) => {

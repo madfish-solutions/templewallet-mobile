@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import { CurrencyRootState, ExchangeRatesState } from './currency-state';
+import { CurrencyRootState, ExchangeRateRecord } from './currency-state';
 
 export const useExchangeRatesSelector = () =>
-  useSelector<CurrencyRootState, ExchangeRatesState>(({ currency }) => currency);
+  useSelector<CurrencyRootState, ExchangeRateRecord>(({ currency }) => currency.exchangeRates.data);

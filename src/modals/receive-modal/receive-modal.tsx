@@ -22,9 +22,9 @@ export const ReceiveModal: FC = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
-  const { asset } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
+  const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
 
-  const { name, symbol, iconName = IconNameEnum.NoNameToken } = asset;
+  const { name, symbol, iconName = IconNameEnum.NoNameToken } = token;
 
   const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
 

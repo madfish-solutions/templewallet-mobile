@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -25,7 +25,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
-  const { exchangeRates } = useExchangeRatesSelector();
+  const exchangeRates = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
@@ -33,20 +33,16 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     let negativeAmountSum = 0;
 
     for (const { address, id, amount } of group) {
-      const { decimals, symbol, name } = getTokenMetadata(getTokenSlug({ address, id }));
+      const slug = getTokenSlug({ address, id });
+      const { decimals, symbol, name } = getTokenMetadata(slug);
+      const exchangeRate: number | undefined = exchangeRates[slug];
+
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
       }
 
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
-      let exchangeRate = 0;
-
-      if (isString(address)) {
-        exchangeRate = exchangeRates.data[address];
-      } else if (name === TEZ_TOKEN_METADATA.name) {
-        exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
-      }
 
       if (isDefined(exchangeRate)) {
         const summand = parsedAmount.toNumber() * exchangeRate;
@@ -71,7 +67,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     const negativeDollarSum = roundFiat(new BigNumber(negativeAmountSum));
 
     return { amounts, dollarSums: [positiveDollarSum, negativeDollarSum].filter(sum => !sum.eq(0)) };
-  }, [group, getTokenMetadata]);
+  }, [group, getTokenMetadata, exchangeRates]);
 
   return (
     <View style={styles.container}>

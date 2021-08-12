@@ -13,6 +13,8 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
+import { TokenValueText } from '../../token-value-text/token-value-text';
+import { getTezosToken } from '../../../utils/wallet.utils';
 
 interface Props {
   account?: WalletAccountInterface;
@@ -40,7 +42,7 @@ export const AccountDropdownItem: FC<Props> = ({
 
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              {account?.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
+              <TokenValueText token={getTezosToken(account?.tezosBalance.data)} />
             </HideBalance>
           )}
         </View>

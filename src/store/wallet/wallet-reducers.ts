@@ -50,9 +50,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balances, metadataList } }) => {
-    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata) => {
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesList, metadataList } }) => {
+    const balancesRecord: Record<string, string> = {};
+    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata, index) => {
       const slug = getTokenSlug(tokenMetadata);
+
+      balancesRecord[slug] = balancesList[index] ?? '0';
 
       return {
         ...prevState,
@@ -64,7 +67,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }, state.tokensMetadata);
 
     return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balances)
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
     }));
   });
 

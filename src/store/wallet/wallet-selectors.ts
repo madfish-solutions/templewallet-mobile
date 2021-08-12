@@ -8,9 +8,9 @@ import {
   WalletAccountStateInterface
 } from '../../interfaces/wallet-account-state.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
+import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useAccountsListSelector = () =>
@@ -96,14 +96,7 @@ export const useVisibleTokensListSelector = () => {
 export const useTezosTokenSelector = (): TokenInterface => {
   const balance = useSelectedAccountSelector().tezosBalance.data;
 
-  return useMemo(
-    () => ({
-      ...emptyToken,
-      ...TEZ_TOKEN_METADATA,
-      balance
-    }),
-    [balance]
-  );
+  return useMemo(() => getTezosToken(balance), [balance]);
 };
 
 export const useAddTokenSuggestionSelector = () =>
