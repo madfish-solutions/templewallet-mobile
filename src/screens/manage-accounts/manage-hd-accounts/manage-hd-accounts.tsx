@@ -6,7 +6,7 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
+import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
@@ -74,7 +74,7 @@ export const ManageHdAccounts = () => {
 
         <Divider />
 
-        <ButtonWithIcon
+        <IconTitleNoBg
           icon={IconNameEnum.PlusCircle}
           text="CREATE NEW"
           onPress={() => navigate(ModalsEnum.CreateHdAccount)}
