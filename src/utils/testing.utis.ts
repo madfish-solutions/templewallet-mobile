@@ -3,9 +3,9 @@ import { PartialObserver } from 'rxjs';
 import { EventFn } from '../config/general';
 
 export const rxJsTestingHelper = <T>(callback: EventFn<T>, done: jest.DoneCallback): PartialObserver<T> => ({
-  next: data => {
+  next: async data => {
     try {
-      callback(data);
+      await callback(data);
 
       done();
     } catch (e) {

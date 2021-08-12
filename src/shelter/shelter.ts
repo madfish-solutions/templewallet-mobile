@@ -159,5 +159,6 @@ export class Shelter {
 
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
-  static isPasswordCorrect = (password: string) => password === Shelter._password$.getValue();
+  static isPasswordCorrect = (password: string) =>
+    password !== EMPTY_PASSWORD && password === Shelter._password$.getValue();
 }
