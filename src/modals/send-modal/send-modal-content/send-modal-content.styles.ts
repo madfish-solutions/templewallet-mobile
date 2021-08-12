@@ -7,19 +7,6 @@ export const useSendModalContentStyles = createUseStyles(({ colors, typography }
     color: colors.gray1,
     marginLeft: formatSize(4)
   },
-  amountInputHeading: {
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end'
-  },
-  switcherOptionText: {
-    ...typography.caption13Semibold
-  },
-  measurementTextsContainer: {
-    flexDirection: 'row',
-    height: 0
-  },
   amountDescriptionText: {
     ...typography.caption13Regular
   },

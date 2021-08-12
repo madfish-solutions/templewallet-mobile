@@ -6,7 +6,7 @@ import { StyledTextInputProps } from '../styled-text-input/styled-text-input';
 export interface StyledNumericInputProps
   extends Pick<
     StyledTextInputProps,
-    'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'
+    'containerStyle' | 'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'style' | 'onBlur'
   > {
   value?: BigNumber;
   decimals?: number;

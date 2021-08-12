@@ -1,42 +1,42 @@
 import { BigNumber } from 'bignumber.js';
-import { AnyObjectSchema, boolean, number, object, SchemaOf, string, StringSchema } from 'yup';
+import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
 
-import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
+import { AssetAmountInputValue } from '../../interfaces/asset-amount-input-value.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { isDefined } from '../../utils/is-defined';
 
 export interface SendModalFormValues {
-  token: TokenInterface;
   receiverPublicKeyHash: string;
-  amount?: BigNumber;
+  amount: AssetAmountInputValue;
   ownAccount: WalletAccountInterface;
   transferBetweenOwnAccounts: boolean;
-  amountUnitIndex: number;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
       value ? schema : schema.required(makeRequiredErrorMessage('To'))
     )
     .ensure(),
-  amount: bigNumberValidation
-    .clone()
-    .required(makeRequiredErrorMessage('Amount'))
-    .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-      if (value instanceof BigNumber) {
-        return value.gt(0);
+  amount: object()
+    .shape({})
+    .test('is-valid', value => {
+      if (!isDefined(value?.token) || !isDefined(value?.amount)) {
+        return new ValidationError(makeRequiredErrorMessage('Amount'));
+      }
+      const amount = value.amount as BigNumber;
+      if (amount.lte(0)) {
+        return new ValidationError('Must be positive');
       }
 
-      return false;
-    }),
+      return true;
+    })
+    .required(),
   ownAccount: object()
     .shape({})
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
     ) as SchemaOf<WalletAccountInterface>,
-  transferBetweenOwnAccounts: boolean().required(),
-  amountUnitIndex: number().required()
+  transferBetweenOwnAccounts: boolean().required()
 });

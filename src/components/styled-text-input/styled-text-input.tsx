@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 
 import { EmptyFn, emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
@@ -10,6 +10,7 @@ import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
 
 export interface StyledTextInputProps extends TextInputProps {
+  containerStyle?: ViewStyle;
   isError?: boolean;
   isPasswordInput?: boolean;
   isShowCleanButton?: boolean;
@@ -19,6 +20,7 @@ export interface StyledTextInputProps extends TextInputProps {
 export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
     {
+      containerStyle,
       value,
       style,
       isError = false,
@@ -39,7 +41,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
     };
 
     return (
-      <View style={styles.view}>
+      <View style={[styles.view, containerStyle]}>
         <TextInput
           ref={ref}
           style={[styles.regular, isError && styles.error, isPasswordInput && styles.passwordPadding, style]}
