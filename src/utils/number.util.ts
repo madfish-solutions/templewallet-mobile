@@ -28,7 +28,7 @@ export const invertSign = (amount: string) => new BigNumber(amount).times(-1).to
 
 export const kFormatter = (num: number): string | number => {
   if (isNaN(num)) {
-    return NaN;
+    return '';
   }
 
   return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';

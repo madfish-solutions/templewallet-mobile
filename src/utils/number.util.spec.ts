@@ -67,6 +67,6 @@ describe('kFormatter', () => {
   });
 
   it('should return NaN passing NaN', () => {
-    expect(kFormatter(NaN)).toEqual(NaN);
+    expect(kFormatter(NaN)).toEqual('');
   });
 });
