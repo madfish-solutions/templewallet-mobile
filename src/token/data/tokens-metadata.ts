@@ -1,7 +1,10 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { AssetMetadataInterface, TokenMetadataInterface } from '../interfaces/token-metadata.interface';
+import { emptyTokenMetadata, TokenMetadataInterface } from '../interfaces/token-metadata.interface';
 
-export const TEZ_TOKEN_METADATA: AssetMetadataInterface = {
+export const TEZ_TOKEN_SLUG = 'tez';
+
+export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
+  ...emptyTokenMetadata,
   name: 'Tezos',
   symbol: 'TEZ',
   decimals: 6,

@@ -10,7 +10,6 @@ import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn, EventFn } from '../../../config/general';
-import { useTezExchangeRate } from '../../../hooks/use-tez-exchange-rate.hook';
 import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
@@ -45,7 +44,6 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
     formValidationSchema,
     formInitialValues
   } = useFeeForm(opParams, estimations.data);
-  const tezExchangeRate = useTezExchangeRate();
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     // Remove revealGasGee from sum
@@ -109,7 +107,6 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
                   onlyOneOperation={onlyOneOperation}
                   minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
                   setFieldValue={setFieldValue}
-                  exchangeRate={tezExchangeRate}
                 />
               </>
             )}

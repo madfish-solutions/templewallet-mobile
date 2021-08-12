@@ -3,8 +3,6 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { balancesApi, betterCallDevApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
-import { TokenBalanceInterface } from '../token/interfaces/token-balance.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
 
 const size = 10;
 
@@ -21,9 +19,9 @@ export const loadTokensWithBalance$ = (currentNetworkId: string, accountPublicKe
         const numberOfAdditionalRequests = Math.floor(initialResponse.data.total / size);
 
         return forkJoin(
-          new Array(numberOfAdditionalRequests).map((_, i) =>
-            getTokenBalances(currentNetworkId, accountPublicKeyHash, (i + 1) * size)
-          )
+          new Array(numberOfAdditionalRequests)
+            .fill(0)
+            .map((_, index) => getTokenBalances(currentNetworkId, accountPublicKeyHash, (index + 1) * size))
         ).pipe(
           map(restResponses => [
             ...initialResponse.data.balances,
@@ -37,15 +35,5 @@ export const loadTokensWithBalance$ = (currentNetworkId: string, accountPublicKe
   );
 };
 
-export const loadTokensBalances$ = (accountPublicKeyHash: string, tokensWithBalance: TokenBalanceInterface[]) =>
-  from(
-    balancesApi.post<Record<string, string>>('/', {
-      account: accountPublicKeyHash,
-      assetSlugs: tokensWithBalance.map(tokenWithBalance =>
-        getTokenSlug({
-          address: tokenWithBalance.contract,
-          id: tokenWithBalance.token_id
-        })
-      )
-    })
-  ).pipe(map(response => response.data));
+export const loadTokensBalances$ = (account: string, assetSlugs: string[]) =>
+  from(balancesApi.post<Array<string>>('/', { account, assetSlugs })).pipe(map(response => response.data));

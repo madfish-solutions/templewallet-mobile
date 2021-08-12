@@ -20,7 +20,7 @@ import { SendModalFormValues, sendModalValidationSchema } from './send-modal.for
 
 export const SendModal: FC = () => {
   const dispatch = useDispatch();
-  const { asset: initialAsset, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
+  const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
 
   const sender = useSelectedAccountSelector();
@@ -40,8 +40,8 @@ export const SendModal: FC = () => {
   );
 
   const initialAssetWithBalance = useMemo(
-    () => filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
-    [filteredTokensListWithTez, initialAsset]
+    () => filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
+    [filteredTokensListWithTez, initialToken]
   );
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
@@ -58,7 +58,7 @@ export const SendModal: FC = () => {
     isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
-          asset: amount.token,
+          token: amount.token,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: amount.amount!.toNumber()
         })

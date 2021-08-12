@@ -3,15 +3,16 @@ import { Text, View } from 'react-native';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
+import { getTezosToken } from '../../../utils/wallet.utils';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
+import { TokenValueText } from '../../token-value-text/token-value-text';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
@@ -40,7 +41,7 @@ export const AccountDropdownItem: FC<Props> = ({
 
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              {account?.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
+              <TokenValueText token={getTezosToken(account?.tezosBalance.data)} />
             </HideBalance>
           )}
         </View>

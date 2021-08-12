@@ -27,7 +27,7 @@ export const loadTokenMetadata$ = memoize(
         iconUrl: data.thumbnailUri
       }))
     ),
-  { cacheKey: ([address, tokenId]) => getTokenSlug({ address, id: tokenId }) }
+  { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
 );
 
 export const loadTokensWithBalanceMetadata$ = (tokensWithBalance: TokenBalanceInterface[]) =>

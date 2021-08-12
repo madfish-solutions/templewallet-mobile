@@ -11,7 +11,6 @@ import { PublicKeyHashText } from '../../components/public-key-hash-text/public-
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
-import { useTokenExchangeRate } from '../../hooks/use-token-exchange-rate.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
@@ -27,7 +26,6 @@ export const TokenScreen = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
-  const tokenExchangeRate = useTokenExchangeRate(token);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
@@ -41,7 +39,7 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue token={token} exchangeRate={tokenExchangeRate} />
+        <TokenEquityValue token={token} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

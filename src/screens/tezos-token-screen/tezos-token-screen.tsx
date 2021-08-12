@@ -6,7 +6,6 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { useTezExchangeRate } from '../../hooks/use-tez-exchange-rate.hook';
 import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
@@ -18,7 +17,6 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tezosToken = useTezosTokenSelector();
-  const tezExchangeRate = useTezExchangeRate();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -29,7 +27,7 @@ export const TezosTokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue exchangeRate={tezExchangeRate} token={tezosToken} />
+        <TokenEquityValue token={tezosToken} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 

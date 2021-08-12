@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { useTokenExchangeRate } from '../../../hooks/use-token-exchange-rate.hook';
 import { formatSize } from '../../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
@@ -22,8 +21,7 @@ interface Props {
 export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconName }) => {
   const styles = useTokenDropdownItemStyles();
 
-  const { symbol, name, balance, iconName = IconNameEnum.NoNameToken } = token;
-  const exchangeRate = useTokenExchangeRate(token);
+  const { symbol, name, iconName = IconNameEnum.NoNameToken } = token;
 
   return (
     <View style={styles.container}>
@@ -38,10 +36,10 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
       <View style={styles.rightContainer}>
         <View>
           <HideBalance style={styles.balance}>
-            <TokenValueText balance={balance} tokenSymbol={symbol} />
+            <TokenValueText token={token} />
           </HideBalance>
           <HideBalance style={styles.dollarEquivalent}>
-            <DollarValueText balance={balance} exchangeRate={exchangeRate} />
+            <DollarValueText token={token} />
           </HideBalance>
         </View>
         {isDefined(actionIconName) && (
