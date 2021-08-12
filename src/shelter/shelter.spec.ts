@@ -1,5 +1,8 @@
-import { Shelter } from './shelter';
+import { switchMap } from 'rxjs/operators';
+
+import { mockCorrectUserCredentials, mockKeychain } from '../mocks/react-native-keychain.mock';
 import { rxJsTestingHelper } from '../utils/testing.utis';
+import { Shelter } from './shelter';
 
 describe('Shelter', () => {
   const mockCorrectPassword = 'mockCorrectPassword';
@@ -9,10 +12,13 @@ describe('Shelter', () => {
   });
 
   it('should not unlock app with incorrect password & be unable to decrypt data', () => {
-    Shelter.unlockApp$(mockCorrectPassword);
   });
 
-  it('should unlock app with correct password & be able to decrypt data', () => {
+  it('should unlock app with correct password & be able to decrypt data', done => {
+    mockKeychain.getGenericPassword.mockReturnValue(Promise.resolve(mockCorrectUserCredentials));
+    Shelter.unlockApp$(mockCorrectPassword)
+      .pipe(switchMap(() => Shelter.isLocked$))
+      .subscribe(rxJsTestingHelper(isLocked => expect(isLocked).toEqual(false), done));
   });
 
   it('should lock app & be unable to decrypt data', () => {
