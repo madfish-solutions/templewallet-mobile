@@ -10,11 +10,6 @@ export interface TokenMetadataInterface {
   iconUrl?: string;
 }
 
-export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'id' | 'address'> {
-  id?: number;
-  address?: string;
-}
-
 export const emptyTokenMetadata: TokenMetadataInterface = {
   id: 0,
   address: '',

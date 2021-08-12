@@ -6,10 +6,9 @@ import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rx
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { balancesApi, betterCallDevApi, tzktApi } from '../../api.service';
+import { betterCallDevApi, tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
@@ -22,8 +21,8 @@ import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
-import { mutezToTz } from '../../utils/tezos.util';
-import { loadTokenMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
@@ -48,59 +47,35 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     withLatestFrom(currentNetworkId$),
     switchMap(([accountPublicKeyHash, currentNetworkId]) =>
-      from(
-        betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-          `/account/${currentNetworkId}/${accountPublicKeyHash}/token_balances`,
-          {
-            params: { size: 10, offset: 0 }
-          }
-        )
-      ).pipe(
-        switchMap(({ data }) =>
+      loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
+        switchMap(tokensWithBalance =>
           forkJoin(
-            data.balances.map(balance =>
-              loadTokenMetadata$(balance.contract, balance.token_id).pipe(
-                map(({ decimals, symbol, name, iconUrl }) => ({
-                  ...balance,
-                  decimals,
-                  symbol,
-                  name,
-                  thumbnail_uri: iconUrl
-                })),
-                catchError(() => of(balance))
+            loadTokensBalances$(
+              accountPublicKeyHash,
+              tokensWithBalance.map(tokenWithBalance =>
+                getTokenSlug({
+                  address: tokenWithBalance.contract,
+                  id: tokenWithBalance.token_id
+                })
               )
-            )
+            ),
+            loadTokensWithBalanceMetadata$(tokensWithBalance)
           )
         ),
-        switchMap(tokens =>
-          from(
-            balancesApi.post('/', {
-              account: accountPublicKeyHash,
-              assetSlugs: tokens.map(token => getTokenSlug({ address: token.contract, id: token.token_id }))
-            })
-          ).pipe(
-            map(({ data }) =>
-              tokens.map(token => ({
-                ...token,
-                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? 0
-              }))
-            )
-          )
-        ),
-        map(balances => loadTokenBalancesActions.success(balances)),
+        map(([balancesList, metadataList]) => loadTokenBalancesActions.success({ balancesList, metadataList })),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
   );
 
-const loadTezosAssetsEpic = (action$: Observable<Action>) =>
+const loadTezosBalanceEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([accountPublicKeyHash, tezos]) =>
-      from(tezos.tz.getBalance(accountPublicKeyHash)).pipe(
-        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TEZ_TOKEN_METADATA.decimals).toString())),
+    switchMap(accountPublicKeyHash =>
+      loadTokensBalances$(accountPublicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
+        map(data => data[0] ?? '0'),
+        map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )
@@ -139,8 +114,8 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     toPayload(),
     withLatestFrom(tezos$),
     withSelectedAccount(state$),
-    switchMap(([[{ asset, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
-      getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
+      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -227,7 +202,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   );
 
 export const walletEpics = combineEpics(
-  loadTezosAssetsEpic,
+  loadTezosBalanceEpic,
   loadTokenAssetsEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,

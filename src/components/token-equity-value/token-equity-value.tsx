@@ -15,10 +15,9 @@ const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 
 
 interface Props {
   token: TokenInterface;
-  exchangeRate: number;
 }
 
-export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
+export const TokenEquityValue: FC<Props> = ({ token }) => {
   const styles = useTokenEquityValueStyles();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
@@ -34,10 +33,10 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
       <HideBalance style={styles.tokenValueText}>
-        <TokenValueText balance={token.balance} tokenSymbol={token.symbol} />
+        <TokenValueText token={token} />
       </HideBalance>
       <HideBalance style={styles.equityValueText}>
-        <DollarValueText balance={token.balance} exchangeRate={exchangeRate} />
+        <DollarValueText token={token} />
       </HideBalance>
     </View>
   );

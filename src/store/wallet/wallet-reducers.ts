@@ -1,11 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { BigNumber } from 'bignumber.js';
 
 import { initialAccountState } from '../../interfaces/account-state.interface';
-import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { mutezToTz } from '../../utils/tezos.util';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
@@ -22,12 +19,11 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
-  pushOrUpdateAccountTokensList,
+  pushOrUpdateTokensBalances,
   removeTokenFromTokenList,
   toggleTokenVisibility,
-  tokenBalanceMetadata,
-  updateCurrentAccountState,
-  updateAccountState
+  updateAccountState,
+  updateCurrentAccountState
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
@@ -54,33 +50,26 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: tokenBalancesList }) =>
-    tokenBalancesList.reduce((prevState, tokenBalance) => {
-      const tokenMetadata = tokenBalanceMetadata(tokenBalance);
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesList, metadataList } }) => {
+    const balancesRecord: Record<string, string> = {};
+    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata, index) => {
       const slug = getTokenSlug(tokenMetadata);
 
-      const newState: WalletState = {
+      balancesRecord[slug] = balancesList[index] ?? '0';
+
+      return {
         ...prevState,
-        tokensMetadata: {
-          ...prevState.tokensMetadata,
-          [slug]: {
-            ...prevState.tokensMetadata[slug],
-            ...tokenMetadata
-          }
+        [slug]: {
+          ...prevState[slug],
+          ...tokenMetadata
         }
       };
+    }, state.tokensMetadata);
 
-      const accountToken: AccountTokenInterface = {
-        slug,
-        balance: mutezToTz(new BigNumber(tokenBalance.balance), tokenMetadata.decimals).toString(),
-        isVisible: true
-      };
-
-      return updateCurrentAccountState(newState, currentAccount => ({
-        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, accountToken)
-      }));
-    }, state)
-  );
+    return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
+    }));
+  });
 
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,
@@ -108,11 +97,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
     return {
       ...updateCurrentAccountState(state, currentAccount => ({
-        tokensList: pushOrUpdateAccountTokensList(currentAccount.tokensList, slug, {
-          slug,
-          balance: '0',
-          isVisible: true
-        })
+        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' })
       })),
       tokensMetadata: {
         ...state.tokensMetadata,

@@ -4,7 +4,6 @@ import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
-import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
@@ -12,7 +11,10 @@ export const setSelectedAccountAction = createAction<string | undefined>('wallet
 export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-ACCOUNT');
 
 // TODO: extract AssetsState
-export const loadTokenBalancesActions = createActions<string, TokenBalanceInterface[], string>('assets/LOAD_TOKENS');
+export const loadTokenBalancesActions =
+  createActions<string, { balancesList: Array<string>; metadataList: TokenMetadataInterface[] }, string>(
+    'assets/LOAD_TOKENS'
+  );
 export const loadTezosBalanceActions = createActions<string, string, string>('assets/LOAD_TEZOS');
 
 export const loadTokenSuggestionActions =
