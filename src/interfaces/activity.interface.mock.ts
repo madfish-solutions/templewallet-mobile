@@ -111,7 +111,7 @@ export const mockActivitiesWithoutMatchedAddress: ActivityInterface[] = [
       alias: 'alias1'
     },
     status: ActivityStatusEnum.Applied,
-    timestamp: 1628370000000,
+    timestamp: 1628380800000,
     type: ActivityTypeEnum.Origination
   }
 ];
@@ -124,7 +124,7 @@ export const mockActivitiesWithMatchedAddress: ActivityInterface[] = [
     hash: 'hash',
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
-    timestamp: 1628370000000,
+    timestamp: 1628380800000,
     type: ActivityTypeEnum.Transaction
   },
   {
@@ -134,7 +134,7 @@ export const mockActivitiesWithMatchedAddress: ActivityInterface[] = [
     hash: 'hash',
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
-    timestamp: 1628370000000,
+    timestamp: 1628380800000,
     type: ActivityTypeEnum.Delegation
   },
   {
@@ -144,7 +144,7 @@ export const mockActivitiesWithMatchedAddress: ActivityInterface[] = [
     hash: 'hash',
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
-    timestamp: 1628370000000,
+    timestamp: 1628380800000,
     type: ActivityTypeEnum.Origination
   }
 ];
