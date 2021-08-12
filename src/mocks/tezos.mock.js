@@ -39,9 +39,18 @@ export const mockToolkitMethods = {
 const mockTezosToolkit = {
   contract: {
     at: mockToolkitMethods.contractAt
-  }
+  },
+  setPackerProvider: jest.fn(),
+  setForgerProvider: jest.fn(),
+  setSignerProvider: jest.fn(),
+  getFactory: jest.fn(() => () => ({})),
+  addExtension: jest.fn()
 };
 
 jest.mock('@taquito/taquito', () => ({
-  TezosToolkit: () => mockTezosToolkit
+  ...jest.requireActual('@taquito/taquito'),
+  TezosToolkit: () => mockTezosToolkit,
+  MichelCodecPacker: () => ({}),
+  CompositeForger: () => ({}),
+  RpcForger: () => ({})
 }));
