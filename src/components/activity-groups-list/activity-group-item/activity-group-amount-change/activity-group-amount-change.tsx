@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -7,7 +7,6 @@ import { useTokenMetadataGetter } from '../../../../hooks/use-token-metadata-get
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
-import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';

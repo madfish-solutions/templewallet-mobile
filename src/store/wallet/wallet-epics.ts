@@ -21,7 +21,6 @@ import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
-import { mutezToTz } from '../../utils/tezos.util';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
