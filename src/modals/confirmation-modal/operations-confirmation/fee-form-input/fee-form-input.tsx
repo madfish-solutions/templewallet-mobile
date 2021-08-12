@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikHelpers } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -15,7 +15,8 @@ import { FormNumericInput } from '../../../../form/form-numeric-input/form-numer
 import { formatSize } from '../../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { isDefined } from '../../../../utils/is-defined';
-import { mutezToTz } from '../../../../utils/tezos.util';
+import { mutezToTz, tzToMutez } from '../../../../utils/tezos.util';
+import { getTezosToken } from '../../../../utils/wallet.utils';
 import { FeeFormInputValues } from './fee-form-input.form';
 import { useFeeFormInputStyles } from './fee-form-input.styles';
 
@@ -26,7 +27,6 @@ interface Props {
   onlyOneOperation: boolean;
   minimalFeePerStorageByteMutez: number;
   setFieldValue: FormikHelpers<FeeFormInputValues>['setFieldValue'];
-  exchangeRate: number;
 }
 
 export const FeeFormInput: FC<Props> = ({
@@ -35,8 +35,7 @@ export const FeeFormInput: FC<Props> = ({
   estimationWasSuccessful,
   onlyOneOperation,
   minimalFeePerStorageByteMutez,
-  setFieldValue,
-  exchangeRate
+  setFieldValue
 }) => {
   const styles = useFeeFormInputStyles();
 
@@ -50,6 +49,8 @@ export const FeeFormInput: FC<Props> = ({
     ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_METADATA.decimals)
     : undefined;
 
+  useEffect(() => setIsShowDetailedInput(!estimationWasSuccessful), [estimationWasSuccessful]);
+
   return (
     <>
       <View style={styles.infoContainer}>
@@ -59,7 +60,10 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <DollarValueText balance={values.gasFeeSum} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+            <DollarValueText
+              token={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed())}
+              style={styles.infoFeeValue}
+            />
           )}
         </View>
 
@@ -68,10 +72,13 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Storage fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(storageFee) ? `${storageFee.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
+            {isDefined(storageFee) ? `${storageFee} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
-            <DollarValueText balance={storageFee} style={styles.infoFeeValue} exchangeRate={exchangeRate} />
+            <DollarValueText
+              token={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed())}
+              style={styles.infoFeeValue}
+            />
           )}
         </View>
       </View>
