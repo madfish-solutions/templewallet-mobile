@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 import { EmptyFn } from '../../config/general';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { usePlusCircleButtonStyles } from './icon-button.styles';
+import { useIconTitleNoBgStyles } from './icon-title-no-bg.styles';
 
 interface Props {
   text: string;
@@ -13,8 +13,8 @@ interface Props {
   onPress: EmptyFn;
 }
 
-export const ButtonWithIcon: FC<Props> = ({ text, icon, onPress }) => {
-  const styles = usePlusCircleButtonStyles();
+export const IconTitleNoBg: FC<Props> = ({ text, icon, onPress }) => {
+  const styles = useIconTitleNoBgStyles();
 
   return (
     <TouchableOpacity style={styles.touchableOpacity} onPress={onPress}>

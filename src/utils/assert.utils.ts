@@ -1,6 +1,6 @@
 import { isDefined } from './is-defined';
 
-class AssertionError extends Error {
+export class AssertionError extends Error {
   constructor(message?: string, public actual?: unknown) {
     super(message);
   }

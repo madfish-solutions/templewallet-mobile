@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
+import { walletAddressValidation } from '../../form/validation/wallet-address';
 import { AssetAmountInputValue } from '../../interfaces/asset-amount-input-value.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { isDefined } from '../../utils/is-defined';
@@ -16,7 +17,7 @@ export interface SendModalFormValues {
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
-      value ? schema : schema.required(makeRequiredErrorMessage('To'))
+      value ? schema : walletAddressValidation
     )
     .ensure(),
   amount: object()

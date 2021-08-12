@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import QuickActions, { ShortcutItem } from 'react-native-quick-actions';
 
+import { isDefined } from '../utils/is-defined';
 import { useHideBalance } from './hide-balance/hide-balance.hook';
-import { isDefined } from './is-defined';
 
 interface QuickActionParams {
   data: ShortcutItem;
@@ -22,9 +22,7 @@ export const useQuickActions = () => {
         type: 'Hide balance',
         title: 'Hide balance',
         icon: 'Prohibit',
-        userInfo: {
-          url: ''
-        }
+        userInfo: { url: '' }
       }
     ]);
     DeviceEventEmitter.addListener('quickActionShortcut', quickActionHandler);

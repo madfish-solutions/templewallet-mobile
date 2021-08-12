@@ -5,7 +5,7 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
+import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
@@ -54,7 +54,7 @@ export const ManageImportedAccounts = () => {
           </Fragment>
         ))}
         <Divider size={formatSize(10)} />
-        <ButtonWithIcon
+        <IconTitleNoBg
           icon={IconNameEnum.DownloadCloud}
           text="import"
           onPress={() => navigate(ModalsEnum.ImportAccount)}
