@@ -6,10 +6,9 @@ import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rx
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { balancesApi, betterCallDevApi, tzktApi } from '../../api.service';
+import { betterCallDevApi, tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { GetAccountTokenBalancesResponseInterface } from '../../interfaces/get-account-token-balances-response.interface';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
@@ -17,13 +16,13 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { mutezToTz } from '../../utils/tezos.util';
-import { loadTokenMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
@@ -48,46 +47,14 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     withLatestFrom(currentNetworkId$),
     switchMap(([accountPublicKeyHash, currentNetworkId]) =>
-      from(
-        betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-          `/account/${currentNetworkId}/${accountPublicKeyHash}/token_balances`,
-          {
-            params: { size: 10, offset: 0 }
-          }
-        )
-      ).pipe(
-        switchMap(({ data }) =>
+      loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
+        switchMap(tokensWithBalance =>
           forkJoin(
-            data.balances.map(balance =>
-              loadTokenMetadata$(balance.contract, balance.token_id).pipe(
-                map(({ decimals, symbol, name, iconUrl }) => ({
-                  ...balance,
-                  decimals,
-                  symbol,
-                  name,
-                  thumbnail_uri: iconUrl
-                })),
-                catchError(() => of(balance))
-              )
-            )
+            loadTokensBalances$(accountPublicKeyHash, tokensWithBalance),
+            loadTokensWithBalanceMetadata$(tokensWithBalance)
           )
         ),
-        switchMap(tokens =>
-          from(
-            balancesApi.post('/', {
-              account: accountPublicKeyHash,
-              assetSlugs: tokens.map(token => getTokenSlug({ address: token.contract, id: token.token_id }))
-            })
-          ).pipe(
-            map(({ data }) =>
-              tokens.map(token => ({
-                ...token,
-                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? 0
-              }))
-            )
-          )
-        ),
-        map(balances => loadTokenBalancesActions.success(balances)),
+        map(([balances, metadataList]) => loadTokenBalancesActions.success({ balances, metadataList })),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
