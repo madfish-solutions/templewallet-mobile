@@ -1,7 +1,8 @@
+import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { mockAccount } from '../interfaces/wallet-account.interface.mock';
-import { mockFA1_2Contract, mockFA2Contract, mockTezosToolkit, mockToolkitMethods } from '../mocks/tezos-toolkit.mock';
+import { mockWalletAccount } from '../interfaces/wallet-account.interface.mock';
+import { mockFA1_2Contract, mockFA2Contract, mockToolkitMethods } from '../mocks/tezos.mock';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { mockFA1_2TokenMetadata, mockFA2TokenMetadata } from '../token/interfaces/token-metadata.interface.mock';
 import { rxJsTestingHelper } from './testing.utis';
@@ -12,10 +13,12 @@ beforeEach(() => {
   mockFA2Contract.methods.transfer.mockReset();
 });
 
+const mockTezosToolkit = new TezosToolkit('mockRpcUrl');
+
 it('getTransferParams$ should create params for transferring TEZ', done => {
   getTransferParams$(
     TEZ_TOKEN_METADATA,
-    mockAccount,
+    mockWalletAccount,
     'receiverPublicKeyHash',
     new BigNumber(0.005),
     mockTezosToolkit
@@ -31,14 +34,14 @@ it('getTransferParams$ should create params for transferring FA1.2 tokens', done
   mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA1_2Contract);
   getTransferParams$(
     mockFA1_2TokenMetadata,
-    mockAccount,
+    mockWalletAccount,
     'receiverPublicKeyHash',
     new BigNumber(0.01),
     mockTezosToolkit
   ).subscribe(
     rxJsTestingHelper(() => {
       expect(mockFA1_2Contract.methods.transfer).toBeCalledWith(
-        mockAccount.publicKeyHash,
+        mockWalletAccount.publicKeyHash,
         'receiverPublicKeyHash',
         '10000'
       );
@@ -51,7 +54,7 @@ it('getTransferParams$ should create params for transferring FA2 tokens', done =
   mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA2Contract);
   getTransferParams$(
     mockFA2TokenMetadata,
-    mockAccount,
+    mockWalletAccount,
     'receiverPublicKeyHash',
     new BigNumber(0.001),
     mockTezosToolkit
@@ -59,7 +62,7 @@ it('getTransferParams$ should create params for transferring FA2 tokens', done =
     rxJsTestingHelper(() => {
       expect(mockFA2Contract.methods.transfer).toBeCalledWith([
         {
-          from_: mockAccount.publicKeyHash,
+          from_: mockWalletAccount.publicKeyHash,
           txs: [
             {
               to_: 'receiverPublicKeyHash',

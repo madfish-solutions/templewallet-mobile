@@ -23,3 +23,4 @@ import './src/mocks/react-native-screens.mock';
 import './src/mocks/react-native-reanimated.mock';
 import './src/mocks/react-native-quick-actions.mock';
 import './src/mocks/react-native-toast-message.mock';
+import './src/mocks/tezos.mock';
