@@ -6,19 +6,19 @@ import { map } from 'rxjs/operators';
 
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
-import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
 import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
-  asset: AssetMetadataInterface,
+  token: TokenMetadataInterface,
   sender: WalletAccountInterface,
   receiverPublicKeyHash: string,
   amount: BigNumber,
   tezos: TezosToolkit
 ): Observable<TransferParams> => {
-  const { id, address, decimals } = asset;
+  const { id, address, decimals } = token;
 
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(

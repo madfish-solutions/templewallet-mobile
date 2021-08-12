@@ -7,7 +7,6 @@ import { useTokenMetadataGetter } from '../../../../hooks/use-token-metadata-get
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
-import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
@@ -25,7 +24,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
-  const { exchangeRates } = useExchangeRatesSelector();
+  const exchangeRates = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
@@ -33,20 +32,16 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     let negativeAmountSum = 0;
 
     for (const { address, id, amount } of group) {
-      const { decimals, symbol, name } = getTokenMetadata(getTokenSlug({ address, id }));
+      const slug = getTokenSlug({ address, id });
+      const { decimals, symbol, name } = getTokenMetadata(slug);
+      const exchangeRate: number | undefined = exchangeRates[slug];
+
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
       }
 
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
-      let exchangeRate = 0;
-
-      if (isString(address)) {
-        exchangeRate = exchangeRates.data[address];
-      } else if (name === TEZ_TOKEN_METADATA.name) {
-        exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
-      }
 
       if (isDefined(exchangeRate)) {
         const summand = parsedAmount.toNumber() * exchangeRate;
@@ -71,7 +66,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
     const negativeDollarSum = roundFiat(new BigNumber(negativeAmountSum));
 
     return { amounts, dollarSums: [positiveDollarSum, negativeDollarSum].filter(sum => !sum.eq(0)) };
-  }, [group, getTokenMetadata]);
+  }, [group, getTokenMetadata, exchangeRates]);
 
   return (
     <View style={styles.container}>

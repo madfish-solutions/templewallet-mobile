@@ -1,23 +1,23 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
-import { StyleProp, Text, TextStyle } from 'react-native';
+import { Text } from 'react-native';
 
-import { isDefined } from '../../utils/is-defined';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatAssetAmount } from '../../utils/number.util';
+import { mutezToTz } from '../../utils/tezos.util';
 
 interface Props {
-  balance: string | BigNumber;
-  tokenSymbol?: string;
-  style?: StyleProp<TextStyle>;
+  token: TokenInterface;
+  isShowSymbol?: boolean;
 }
 
-export const TokenValueText: FC<Props> = ({ balance, tokenSymbol, style }) => {
-  const bigNumberBalance = balance instanceof BigNumber ? balance : new BigNumber(balance);
+export const TokenValueText: FC<Props> = ({ token, isShowSymbol = true }) => {
+  const parsedAmount = mutezToTz(new BigNumber(token.balance), token.decimals);
 
   return (
-    <Text style={style}>
-      {formatAssetAmount(bigNumberBalance)}
-      {isDefined(tokenSymbol) ? ` ${tokenSymbol}` : null}
+    <Text>
+      {formatAssetAmount(parsedAmount)}
+      {isShowSymbol ? ` ${token.symbol}` : null}
     </Text>
   );
 };

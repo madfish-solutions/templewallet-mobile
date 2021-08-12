@@ -12,10 +12,9 @@ import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props extends TokenContainerProps {
   onPress: EmptyFn;
-  exchangeRate: number;
 }
 
-export const TokenListItem: FC<Props> = ({ token, apy, onPress, exchangeRate }) => {
+export const TokenListItem: FC<Props> = ({ token, apy, onPress }) => {
   const styles = useTokenListItemStyles();
 
   return (
@@ -23,10 +22,10 @@ export const TokenListItem: FC<Props> = ({ token, apy, onPress, exchangeRate }) 
       <TokenContainer token={token} apy={apy}>
         <View style={styles.rightContainer}>
           <HideBalance style={styles.balanceText}>
-            <TokenValueText balance={token.balance} />
+            <TokenValueText token={token} isShowSymbol={false} />
           </HideBalance>
           <HideBalance style={styles.valueText}>
-            <DollarValueText balance={token.balance} exchangeRate={exchangeRate} />
+            <DollarValueText token={token} />
           </HideBalance>
         </View>
       </TokenContainer>

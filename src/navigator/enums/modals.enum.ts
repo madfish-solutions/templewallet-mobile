@@ -1,6 +1,6 @@
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
-import { AssetMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -16,8 +16,8 @@ export enum ModalsEnum {
 }
 
 export type ModalsParamList = {
-  [ModalsEnum.Receive]: { asset: AssetMetadataInterface };
-  [ModalsEnum.Send]: { asset: AssetMetadataInterface; receiverPublicKeyHash?: string };
+  [ModalsEnum.Receive]: { token: TokenMetadataInterface };
+  [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.CreateHdAccount]: undefined;
   [ModalsEnum.SelectBaker]: undefined;

@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AssetMetadataInterface } from '../../../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from '../../../token/interfaces/token-metadata.interface';
 import { isString } from '../../../utils/is-string';
 import { TokenIcon } from '../../token-icon/token-icon';
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
 interface Props {
-  token: AssetMetadataInterface;
+  token: TokenMetadataInterface;
 }
 
 export const HeaderTokenInfo: FC<Props> = ({ token }) => {

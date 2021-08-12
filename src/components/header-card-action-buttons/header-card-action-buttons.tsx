@@ -36,7 +36,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <ButtonMedium
         title="RECEIVE"
         iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { asset: token })}
+        onPress={() => navigate(ModalsEnum.Receive, { token })}
       />
       <Divider size={formatSize(8)} />
       <View
@@ -48,7 +48,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           title="SEND"
           disabled={disableSendAsset}
           iconName={IconNameEnum.ArrowUp}
-          onPress={() => navigate(ModalsEnum.Send, { asset: token })}
+          onPress={() => navigate(ModalsEnum.Send, { token })}
         />
       </View>
       <Divider size={formatSize(8)} />
