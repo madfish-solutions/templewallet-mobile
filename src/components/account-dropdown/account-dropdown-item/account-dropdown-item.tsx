@@ -41,11 +41,7 @@ export const AccountDropdownItem: FC<Props> = ({
 
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-<<<<<<< HEAD
-              {account?.tezosBalance.data} {TEZ_TOKEN_METADATA.symbol}
-=======
               <TokenValueText token={getTezosToken(account?.tezosBalance.data)} />
->>>>>>> 4a8b805355b38151b514090b8ba56443d278f585
             </HideBalance>
           )}
         </View>

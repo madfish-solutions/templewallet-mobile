@@ -47,20 +47,8 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     toPayload(),
     withLatestFrom(currentNetworkId$),
     switchMap(([accountPublicKeyHash, currentNetworkId]) =>
-<<<<<<< HEAD
-      from(
-        betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-          `/account/${currentNetworkId}/${accountPublicKeyHash}/token_balances`,
-          {
-            params: { size: 10, offset: 0 }
-          }
-        )
-      ).pipe(
-        switchMap(({ data }) =>
-=======
       loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
         switchMap(tokensWithBalance =>
->>>>>>> 4a8b805355b38151b514090b8ba56443d278f585
           forkJoin(
             loadTokensBalances$(
               accountPublicKeyHash,
@@ -74,26 +62,7 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
             loadTokensWithBalanceMetadata$(tokensWithBalance)
           )
         ),
-<<<<<<< HEAD
-        switchMap(tokens =>
-          from(
-            balancesApi.post('/', {
-              account: accountPublicKeyHash,
-              assetSlugs: tokens.map(token => getTokenSlug({ address: token.contract, id: token.token_id }))
-            })
-          ).pipe(
-            map(({ data }) =>
-              tokens.map(token => ({
-                ...token,
-                balance: data[getTokenSlug({ address: token.contract, id: token.token_id })] ?? 0
-              }))
-            )
-          )
-        ),
-        map(balances => loadTokenBalancesActions.success(balances)),
-=======
         map(([balancesList, metadataList]) => loadTokenBalancesActions.success({ balancesList, metadataList })),
->>>>>>> 4a8b805355b38151b514090b8ba56443d278f585
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -103,17 +72,10 @@ const loadTezosBalanceEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     toPayload(),
-<<<<<<< HEAD
-    withLatestFrom(tezos$),
-    switchMap(([accountPublicKeyHash, tezos]) =>
-      from(tezos.tz.getBalance(accountPublicKeyHash)).pipe(
-        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TEZ_TOKEN_METADATA.decimals).toString())),
-=======
     switchMap(accountPublicKeyHash =>
       loadTokensBalances$(accountPublicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
         map(data => data[0] ?? '0'),
         map(balance => loadTezosBalanceActions.success(balance)),
->>>>>>> 4a8b805355b38151b514090b8ba56443d278f585
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )
