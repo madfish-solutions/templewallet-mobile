@@ -1,9 +1,9 @@
 import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
-import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getExchangeRateKey } from '../utils/exchange-rate.utils';
+import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { getTokenSlug } from '../token/utils/token.utils';
 
-export const useTokenExchangeRate = (token: AssetMetadataInterface) => {
-  const { exchangeRates } = useExchangeRatesSelector();
+export const useTokenExchangeRate = (token: TokenMetadataInterface) => {
+  const exchangeRates = useExchangeRatesSelector();
 
-  return exchangeRates.data[getExchangeRateKey(token)];
+  return exchangeRates[getTokenSlug(token)];
 };

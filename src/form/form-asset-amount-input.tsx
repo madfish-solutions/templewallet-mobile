@@ -2,9 +2,7 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 
 import { AssetAmountInput, AssetAmountInputProps } from '../components/asset-amount-input/asset-amount-input';
-import { Divider } from '../components/divider/divider';
 import { AssetAmountInputValue } from '../interfaces/asset-amount-input-value.interface';
-import { formatSize } from '../styles/format-size';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
@@ -32,7 +30,6 @@ export const FormAssetAmountInput: FC<Props> = ({ defaultValue, name, title, tok
         onBlur={() => helpers.setTouched(true)}
         onChange={handleChange}
       />
-      <Divider size={formatSize(16)} />
       <ErrorMessage meta={meta} />
     </>
   );

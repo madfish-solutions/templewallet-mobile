@@ -10,6 +10,8 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { tokenToUsd, usdToToken } from '../../utils/exchange-rate.utils';
 import { isDefined } from '../../utils/is-defined';
+import { formatAssetAmount } from '../../utils/number.util';
+import { mutezToTz } from '../../utils/tezos.util';
 import { Divider } from '../divider/divider';
 import { Dropdown } from '../dropdown/dropdown';
 import { tileMargin } from '../segmented-control/segmented-control.styles';
@@ -41,11 +43,16 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   value = defaultValue ?? { token: tokens[0] },
   onChange
 }) => {
-  const { amount, token } = value;
+  const { amount, token, usdAmount } = value;
+  const balance = useMemo(
+    () => mutezToTz(new BigNumber(token.balance), token.decimals),
+    [token.balance, token.decimals]
+  );
   const styles = useAssetAmountInputStyles();
   const tokenExchangeRate = useTokenExchangeRate(token);
 
   const [switcherIndex, setSwitcherIndex] = useState(0);
+  const inputValue = switcherIndex === 0 ? amount : usdAmount;
 
   const { layoutWidth: tokenTextWidth, handleLayout: handleTokenTextLayout } = useLayoutSizes(
     token.symbol.length * ESTIMATED_SWITCHER_CHAR_WIDTH
@@ -56,53 +63,35 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   const handleTokenChange = (newToken: TokenInterface | undefined) => {
     setSwitcherIndex(0);
-    onChange({ amount: undefined, token: newToken ?? tokens[0] });
+    onChange({ amount: undefined, token: newToken ?? tokens[0], usdAmount: undefined });
   };
   const handleAmountChange = (rawAmount?: BigNumber) => {
     const newAmount =
       switcherIndex === 1 && isDefined(rawAmount)
         ? usdToToken(rawAmount, token.decimals, tokenExchangeRate)
         : rawAmount;
-    onChange({ amount: newAmount, token: value.token });
+    const newUsdAmount =
+      switcherIndex === 0 && isDefined(rawAmount) ? tokenToUsd(rawAmount, tokenExchangeRate) : rawAmount;
+    onChange({ amount: newAmount, token: value.token, usdAmount: newUsdAmount });
   };
-  const handleSwitcherChange = (newIndex: number) => {
-    let newAmount = amount;
-    if (isDefined(amount) && tokenExchangeRate !== 0) {
-      if (newIndex === 1) {
-        newAmount = tokenToUsd(amount, tokenExchangeRate);
-      } else {
-        newAmount = usdToToken(amount, token.decimals, tokenExchangeRate);
-      }
-    }
-    onChange({ amount: newAmount, token: value.token });
-    setSwitcherIndex(newIndex);
-  };
-
-  const usdAmount = useMemo(
-    () =>
-      isDefined(amount) && isDefined(tokenExchangeRate) && tokenExchangeRate !== 0
-        ? tokenToUsd(amount, tokenExchangeRate)
-        : undefined,
-    [amount, tokenExchangeRate]
-  );
 
   const equivalentLabel = useMemo(() => {
     if (switcherIndex === 0) {
       return isDefined(usdAmount) ? `≈ ${usdAmount.toFixed(2)} $` : '';
     }
 
-    return isDefined(amount) ? `≈ ${amount.toFixed()} ${token.symbol}` : '';
+    return isDefined(amount) ? `≈ ${formatAssetAmount(amount)} ${token.symbol}` : '';
   }, [usdAmount, amount, token.symbol, switcherIndex]);
 
   const balanceLabel = useMemo(() => {
     if (switcherIndex === 0) {
-      return `${token.balance} ${token.symbol}`;
+      return `${formatAssetAmount(balance)} ${token.symbol}`;
     }
 
-    const balanceInUsd = tokenToUsd(token.balance, tokenExchangeRate);
+    const balanceInUsd = tokenToUsd(balance, tokenExchangeRate);
 
     return `≈ ${balanceInUsd.toFixed()} $`;
-  }, [token.symbol, token.balance, tokenExchangeRate, switcherIndex]);
+  }, [token.symbol, balance, tokenExchangeRate, switcherIndex]);
 
   return (
     <>
@@ -122,7 +111,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             values={[token.symbol, 'USD']}
             width={switcherWidth}
             selectedIndex={switcherIndex}
-            onChange={handleSwitcherChange}
+            onChange={setSwitcherIndex}
           />
         )}
       </View>
@@ -133,7 +122,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           isShowCleanButton={true}
           placeholder="0.00"
           style={styles.amountInput}
-          value={amount}
+          value={inputValue}
           decimals={token.decimals}
           onChange={handleAmountChange}
           onBlur={onBlur}
@@ -145,7 +134,9 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           equalityFn={tokenEqualityFn}
           renderValue={AssetValue}
           renderListItem={renderTokenListItem}
+          valueContainerStyle={styles.dropdownValueContainer}
           onValueChange={handleTokenChange}
+          value={token}
         />
       </View>
       <Divider size={formatSize(8)} />

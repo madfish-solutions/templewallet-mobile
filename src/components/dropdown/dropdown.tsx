@@ -1,6 +1,6 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { TouchableOpacity, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
@@ -16,6 +16,7 @@ export interface DropdownProps<T> {
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
+  valueContainerStyle?: ViewStyle;
 }
 
 export interface DropdownValueProps<T> {
@@ -47,6 +48,7 @@ export const Dropdown = <T extends unknown>({
   renderValue,
   renderListItem,
   renderActionButtons = emptyComponent,
+  valueContainerStyle,
   onValueChange
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const styles = useDropdownStyles();
@@ -60,7 +62,9 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
+      <TouchableOpacity
+        style={[styles.valueContainer, valueContainerStyle]}
+        onPress={dropdownBottomSheetController.open}>
         {renderValue({ value })}
       </TouchableOpacity>
 

@@ -71,11 +71,10 @@ export const SendModal: FC = () => {
       enableReinitialize={true}
       validationSchema={sendModalValidationSchema}
       onSubmit={onSubmit}>
-      {({ values, setFieldValue, submitForm }) => (
+      {({ values, submitForm }) => (
         <SendModalContent
           values={values}
           initialAsset={initialAssetWithBalance}
-          setFieldValue={setFieldValue}
           submitForm={submitForm}
           tokensList={filteredTokensListWithTez}
           ownAccountsReceivers={ownAccountsReceivers}

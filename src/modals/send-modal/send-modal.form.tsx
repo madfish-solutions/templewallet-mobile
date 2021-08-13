@@ -1,5 +1,4 @@
-import { BigNumber } from 'bignumber.js';
-import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
+import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { walletAddressValidation } from '../../form/validation/wallet-address';
@@ -22,18 +21,17 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
     .ensure(),
   amount: object()
     .shape({})
-    .test('is-valid', value => {
-      if (!isDefined(value?.token) || !isDefined(value?.amount)) {
-        return new ValidationError(makeRequiredErrorMessage('Amount'));
-      }
-      const amount = value.amount as BigNumber;
-      if (amount.lte(0)) {
-        return new ValidationError('Must be positive');
-      }
+    .required(makeRequiredErrorMessage('Amount'))
+    .test(
+      'required',
+      makeRequiredErrorMessage('Amount'),
+      (value?: AssetAmountInputValue) => isDefined(value?.token) && isDefined(value?.amount)
+    )
+    .test('positive', 'Amount must be positive', (value?: AssetAmountInputValue) => {
+      const amount = value?.amount;
 
-      return true;
-    })
-    .required(),
+      return isDefined(amount) && amount.gt(0);
+    }),
   ownAccount: object()
     .shape({})
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>

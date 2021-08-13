@@ -4,12 +4,12 @@ import { formatSize } from '../../styles/format-size';
 export const useAssetAmountInputStyles = createUseStyles(({ typography, colors }) => ({
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center'
   },
   mainInputWrapper: {
     flexDirection: 'row',
-    alignItems: 'stretch',
+    alignItems: 'center',
     borderRadius: formatSize(8),
     backgroundColor: colors.input
   },
@@ -42,6 +42,13 @@ export const useAssetAmountInputStyles = createUseStyles(({ typography, colors }
   },
   amountInput: {},
   amountInputContainer: {
-    flexGrow: 1
+    flexGrow: 1,
+    borderRightColor: colors.lines,
+    borderRightWidth: formatSize(1)
+  },
+  dropdownValueContainer: {
+    flexGrow: 0,
+    borderTopRightRadius: formatSize(8),
+    borderBottomRightRadius: formatSize(8)
   }
 }));

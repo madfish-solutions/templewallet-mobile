@@ -22,7 +22,7 @@ import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { SendModalFormValues } from '../send-modal.form';
 import { useSendModalContentStyles } from './send-modal-content.styles';
 
-interface Props extends Pick<FormikProps<SendModalFormValues>, 'values' | 'setFieldValue' | 'submitForm'> {
+interface Props extends Pick<FormikProps<SendModalFormValues>, 'values' | 'submitForm'> {
   ownAccountsReceivers: WalletAccountInterface[];
   tokensList: TokenInterface[];
   initialAsset: TokenInterface;
@@ -46,7 +46,7 @@ export const SendModalContent: FC<Props> = ({ initialAsset, values, submitForm, 
       <ModalStatusBar />
       <View>
         <FormAssetAmountInput name="amount" title="Amount" tokens={tokensList} defaultValue={defaultValue} />
-        <Divider />
+        <Divider size={formatSize(32)} />
 
         <Label label="To" description={`Address or Tezos domain to send ${values.amount?.token.symbol} funds to.`} />
         {values.transferBetweenOwnAccounts ? (

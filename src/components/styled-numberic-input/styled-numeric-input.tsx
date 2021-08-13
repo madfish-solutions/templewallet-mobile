@@ -13,11 +13,13 @@ const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
+  containerStyle,
   decimals = TEZ_TOKEN_METADATA.decimals,
   editable,
   placeholder,
   isError,
   isShowCleanButton,
+  style,
   onBlur = emptyFn,
   onFocus = emptyFn,
   onChange = emptyFn
@@ -58,12 +60,14 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
 
   return (
     <StyledTextInput
+      containerStyle={containerStyle}
       editable={editable}
       placeholder={placeholder}
       value={stringValue}
       isError={isError}
       isShowCleanButton={isShowCleanButton}
       keyboardType="numeric"
+      style={style}
       onBlur={handleBlur}
       onFocus={handleFocus}
       onChangeText={handleChange}

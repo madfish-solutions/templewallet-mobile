@@ -3,11 +3,11 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useAssetValueStyles = createUseStyles(({ typography, colors }) => ({
   container: {
-    width: formatSize(122),
+    width: formatSize(160),
     height: formatSize(56),
     padding: formatSize(8),
     paddingLeft: formatSize(12),
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
     position: 'relative'
@@ -20,12 +20,16 @@ export const useAssetValueStyles = createUseStyles(({ typography, colors }) => (
   name: {
     ...typography.numbersRegular11,
     color: colors.gray1,
-    flexGrow: 1
+    overflow: 'hidden'
   },
   dropdownTriangleWrapper: {
     height: '100%'
   },
   texts: {
-    flexGrow: 1
+    flexShrink: 1
+  },
+  filler: {
+    flexDirection: 'row',
+    flexShrink: 1
   }
 }));
