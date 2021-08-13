@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { RadioGroup, RadioButtonProps } from 'react-native-radio-buttons-group';
 
 import { EventFn } from '../../config/general';
-import { useRadioButtonsGroupHook } from '../../hooks/use-radio-buttons-group.hook';
 import { useColors } from '../../styles/use-colors';
 import { isDefined } from '../../utils/is-defined';
 import { useStyledRadioButtonsGroupStyles } from './deprecated-styled-radio-buttons-group.styles';
