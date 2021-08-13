@@ -5,6 +5,7 @@ import { RadioGroup, RadioButtonProps } from 'react-native-radio-buttons-group';
 import { EventFn } from '../../config/general';
 import { useRadioButtonsGroupHook } from '../../hooks/use-radio-buttons-group.hook';
 import { useColors } from '../../styles/use-colors';
+import { isDefined } from '../../utils/is-defined';
 import { useStyledRadioButtonsGroupStyles } from './deprecated-styled-radio-buttons-group.styles';
 
 export interface DeprecatedRadioButton<T extends string> {
@@ -38,7 +39,11 @@ export const DeprecatedStyledRadioButtonsGroup = <T extends string>({ value, but
       })),
     [buttons, value, styles, colors]
   );
-  const { onPressRadioButton } = useRadioButtonsGroupHook({ onChange });
+  const onPressRadioButton = (radioButtonsArray: RadioButtonProps[]) => {
+    const selectedButton = radioButtonsArray.find(radioButton => radioButton.selected);
+
+    isDefined(selectedButton) && onChange(selectedButton.value as T);
+  };
 
   return (
     <View style={styles.container}>
