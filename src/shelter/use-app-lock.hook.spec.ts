@@ -36,9 +36,7 @@ describe('useAppLock', () => {
     it('should unlock if a correct password is given', () => {
       const { result } = renderHook(() => useAppLock());
 
-      act(() => {
-        result.current.unlock(mockCorrectPassword);
-      });
+      act(() => result.current.unlock(mockCorrectPassword));
 
       expect(result.current.isLocked).toEqual(false);
     });
@@ -47,9 +45,7 @@ describe('useAppLock', () => {
       mockShelter.unlockApp$.mockImplementationOnce(() => new BehaviorSubject<boolean>(false));
       const { result } = renderHook(() => useAppLock());
 
-      act(() => {
-        result.current.unlock('mockIncorrectPassword');
-      });
+      act(() => result.current.unlock('mockIncorrectPassword'));
 
       expect(result.current.isLocked).toEqual(true);
       expect(mockReactNativeToastMessage.show).toBeCalled();
