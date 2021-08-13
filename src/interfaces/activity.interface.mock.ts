@@ -96,3 +96,55 @@ export const mockPendingActivityGroups: ActivityGroup[] = groupActivitiesByHash(
   [mockPendingOperation],
   [mockPendingTransfer]
 );
+
+export const mockActivitiesWithoutMatchedAddress: ActivityInterface[] = [
+  {
+    amount: 'contractBalance',
+    destination: {
+      address: 'address0',
+      alias: 'alias0'
+    },
+    entrypoint: '',
+    hash: 'hash',
+    source: {
+      address: 'address1',
+      alias: 'alias1'
+    },
+    status: ActivityStatusEnum.Applied,
+    timestamp: 1628380800000,
+    type: ActivityTypeEnum.Origination
+  }
+];
+
+export const mockActivitiesWithMatchedAddress: ActivityInterface[] = [
+  {
+    amount: '-1',
+    destination: { address: 'address4', alias: 'alias4' },
+    entrypoint: '',
+    hash: 'hash',
+    source: { address: 'address1', alias: 'alias1' },
+    status: ActivityStatusEnum.Applied,
+    timestamp: 1628380800000,
+    type: ActivityTypeEnum.Transaction
+  },
+  {
+    amount: '-0',
+    destination: { address: 'address7', alias: 'alias7' },
+    entrypoint: '',
+    hash: 'hash',
+    source: { address: 'address1', alias: 'alias1' },
+    status: ActivityStatusEnum.Applied,
+    timestamp: 1628380800000,
+    type: ActivityTypeEnum.Delegation
+  },
+  {
+    amount: '-contractBalance',
+    destination: { address: 'address0', alias: 'alias0' },
+    entrypoint: '',
+    hash: 'hash',
+    source: { address: 'address1', alias: 'alias1' },
+    status: ActivityStatusEnum.Applied,
+    timestamp: 1628380800000,
+    type: ActivityTypeEnum.Origination
+  }
+];

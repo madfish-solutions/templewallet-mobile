@@ -16,11 +16,11 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
-import { mutezToTz } from '../../utils/tezos.util';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
@@ -50,24 +50,32 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
       loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
         switchMap(tokensWithBalance =>
           forkJoin(
-            loadTokensBalances$(accountPublicKeyHash, tokensWithBalance),
+            loadTokensBalances$(
+              accountPublicKeyHash,
+              tokensWithBalance.map(tokenWithBalance =>
+                getTokenSlug({
+                  address: tokenWithBalance.contract,
+                  id: tokenWithBalance.token_id
+                })
+              )
+            ),
             loadTokensWithBalanceMetadata$(tokensWithBalance)
           )
         ),
-        map(([balances, metadataList]) => loadTokenBalancesActions.success({ balances, metadataList })),
+        map(([balancesList, metadataList]) => loadTokenBalancesActions.success({ balancesList, metadataList })),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
   );
 
-const loadTezosAssetsEpic = (action$: Observable<Action>) =>
+const loadTezosBalanceEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([accountPublicKeyHash, tezos]) =>
-      from(tezos.tz.getBalance(accountPublicKeyHash)).pipe(
-        map(balance => loadTezosBalanceActions.success(mutezToTz(balance, TEZ_TOKEN_METADATA.decimals).toString())),
+    switchMap(accountPublicKeyHash =>
+      loadTokensBalances$(accountPublicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
+        map(data => data[0] ?? '0'),
+        map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )
@@ -106,8 +114,8 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     toPayload(),
     withLatestFrom(tezos$),
     withSelectedAccount(state$),
-    switchMap(([[{ asset, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
-      getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
+      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -194,7 +202,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   );
 
 export const walletEpics = combineEpics(
-  loadTezosAssetsEpic,
+  loadTezosBalanceEpic,
   loadTokenAssetsEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
