@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useAssetValueStyles = createUseStyles(({ typography, colors }) => ({
+export const useTokenValueStyles = createUseStyles(({ typography, colors }) => ({
   container: {
     width: formatSize(160),
     height: formatSize(56),
@@ -28,7 +28,7 @@ export const useAssetValueStyles = createUseStyles(({ typography, colors }) => (
   texts: {
     flexShrink: 1
   },
-  filler: {
+  tokenContainer: {
     flexDirection: 'row',
     flexShrink: 1
   }

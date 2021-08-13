@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
+import { tokenEqualityFn } from '../../components/token-amount-input/token-equality-fn';
 import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';

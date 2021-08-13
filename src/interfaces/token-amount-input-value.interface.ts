@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 
-export interface AssetAmountInputValue {
+export interface TokenAmountInputValue {
   amount?: BigNumber;
   usdAmount?: BigNumber;
   token: TokenInterface;

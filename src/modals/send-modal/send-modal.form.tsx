@@ -2,13 +2,13 @@ import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { walletAddressValidation } from '../../form/validation/wallet-address';
-import { AssetAmountInputValue } from '../../interfaces/asset-amount-input-value.interface';
+import { TokenAmountInputValue } from '../../interfaces/token-amount-input-value.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { isDefined } from '../../utils/is-defined';
 
 export interface SendModalFormValues {
   receiverPublicKeyHash: string;
-  amount: AssetAmountInputValue;
+  amount: TokenAmountInputValue;
   ownAccount: WalletAccountInterface;
   transferBetweenOwnAccounts: boolean;
 }
@@ -25,9 +25,9 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
     .test(
       'required',
       makeRequiredErrorMessage('Amount'),
-      (value?: AssetAmountInputValue) => isDefined(value?.token) && isDefined(value?.amount)
+      (value?: TokenAmountInputValue) => isDefined(value?.token) && isDefined(value?.amount)
     )
-    .test('positive', 'Amount must be positive', (value?: AssetAmountInputValue) => {
+    .test('positive', 'Amount must be positive', (value?: TokenAmountInputValue) => {
       const amount = value?.amount;
 
       return isDefined(amount) && amount.gt(0);

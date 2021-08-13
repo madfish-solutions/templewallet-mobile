@@ -9,20 +9,20 @@ import { Divider } from '../../divider/divider';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
-import { useAssetValueStyles } from './asset-value.styles';
+import { useTokenValueStyles } from './token-value.styles';
 
-interface AssetValueProps {
+interface TokenValueProps {
   value?: TokenInterface;
 }
 
-export const AssetValue: FC<AssetValueProps> = ({ value }) => {
+export const TokenValue: FC<TokenValueProps> = ({ value }) => {
   const colors = useColors();
-  const styles = useAssetValueStyles();
+  const styles = useTokenValueStyles();
 
   return (
     <View style={styles.container}>
       {isDefined(value) ? (
-        <View style={styles.filler}>
+        <View style={styles.tokenContainer}>
           <TokenIcon token={value} />
           <Divider size={formatSize(4)} />
           <View style={styles.texts}>
@@ -35,7 +35,7 @@ export const AssetValue: FC<AssetValueProps> = ({ value }) => {
           </View>
         </View>
       ) : (
-        <View style={styles.filler} />
+        <View style={styles.tokenContainer} />
       )}
       <View style={styles.dropdownTriangleWrapper}>
         <Icon name={IconNameEnum.TriangleDown} size={formatSize(24)} color={colors.orange} />

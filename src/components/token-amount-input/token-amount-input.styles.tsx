@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useAssetAmountInputStyles = createUseStyles(({ typography, colors }) => ({
+export const useTokenAmountInputStyles = createUseStyles(({ typography, colors }) => ({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -40,7 +40,6 @@ export const useAssetAmountInputStyles = createUseStyles(({ typography, colors }
     flexDirection: 'row',
     height: 0
   },
-  amountInput: {},
   amountInputContainer: {
     flexGrow: 1,
     borderRightColor: colors.lines,

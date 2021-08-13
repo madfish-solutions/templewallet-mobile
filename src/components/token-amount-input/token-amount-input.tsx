@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { useTokenExchangeRate } from '../../hooks/use-token-exchange-rate.hook';
-import { AssetAmountInputValue } from '../../interfaces/asset-amount-input-value.interface';
+import { TokenAmountInputValue } from '../../interfaces/token-amount-input-value.interface';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { conditionalStyle } from '../../utils/conditional-style';
@@ -18,23 +18,23 @@ import { tileMargin } from '../segmented-control/segmented-control.styles';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { StyledNumericInput } from '../styled-numberic-input/styled-numeric-input';
 import { StyledNumericInputProps } from '../styled-numberic-input/styled-numeric-input.props';
-import { renderTokenListItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
-import { useAssetAmountInputStyles } from './asset-amount-input.styles';
-import { AssetValue } from './asset-value/asset-value';
+import { useTokenAmountInputStyles } from './token-amount-input.styles';
+import { renderTokenListItem } from './token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from './token-equality-fn';
+import { TokenValue } from './token-value/token-value';
 
-export interface AssetAmountInputProps extends Pick<StyledNumericInputProps, 'onBlur' | 'isError'> {
-  defaultValue?: AssetAmountInputValue;
+export interface TokenAmountInputProps extends Pick<StyledNumericInputProps, 'onBlur' | 'isError'> {
+  defaultValue?: TokenAmountInputValue;
   title: string;
   tokens: TokenInterface[];
-  value?: AssetAmountInputValue;
-  onChange: (newValue: AssetAmountInputValue) => void;
+  value?: TokenAmountInputValue;
+  onChange: (newValue: TokenAmountInputValue) => void;
 }
 
 const ESTIMATED_SWITCHER_CHAR_WIDTH = formatSize(10.533);
 const DEFAULT_USD_LABEL_WIDTH = formatSize(30.556);
 
-export const AssetAmountInput: FC<AssetAmountInputProps> = ({
+export const TokenAmountInput: FC<TokenAmountInputProps> = ({
   defaultValue,
   isError = false,
   onBlur,
@@ -48,7 +48,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     () => mutezToTz(new BigNumber(token.balance), token.decimals),
     [token.balance, token.decimals]
   );
-  const styles = useAssetAmountInputStyles();
+  const styles = useTokenAmountInputStyles();
   const tokenExchangeRate = useTokenExchangeRate(token);
 
   const [switcherIndex, setSwitcherIndex] = useState(0);
@@ -121,7 +121,6 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           containerStyle={styles.amountInputContainer}
           isShowCleanButton={true}
           placeholder="0.00"
-          style={styles.amountInput}
           value={inputValue}
           decimals={token.decimals}
           onChange={handleAmountChange}
@@ -132,7 +131,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           title="Assets"
           list={tokens}
           equalityFn={tokenEqualityFn}
-          renderValue={AssetValue}
+          renderValue={TokenValue}
           renderListItem={renderTokenListItem}
           valueContainerStyle={styles.dropdownValueContainer}
           onValueChange={handleTokenChange}

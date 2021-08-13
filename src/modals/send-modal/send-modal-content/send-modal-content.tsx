@@ -12,8 +12,8 @@ import { Label } from '../../../components/label/label';
 import { ModalStatusBar } from '../../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../../form/form-address-input';
-import { FormAssetAmountInput } from '../../../form/form-asset-amount-input';
 import { FormCheckbox } from '../../../form/form-checkbox';
+import { FormTokenAmountInput } from '../../../form/form-token-amount-input';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
@@ -45,7 +45,7 @@ export const SendModalContent: FC<Props> = ({ initialAsset, values, submitForm, 
     <ScreenContainer isFullScreenMode={true}>
       <ModalStatusBar />
       <View>
-        <FormAssetAmountInput name="amount" title="Amount" tokens={tokensList} defaultValue={defaultValue} />
+        <FormTokenAmountInput name="amount" title="Amount" tokens={tokensList} defaultValue={defaultValue} />
         <Divider size={formatSize(32)} />
 
         <Label label="To" description={`Address or Tezos domain to send ${values.amount?.token.symbol} funds to.`} />
