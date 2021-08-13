@@ -5,6 +5,8 @@ import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { Shelter } from '../shelter/shelter';
 import { WalletRootState } from '../store/wallet/wallet-state';
+import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
 import { createTezosToolkit, currentNetworkRpc$ } from './network/network.util';
 
 export const withSelectedAccount =
@@ -12,9 +14,9 @@ export const withSelectedAccount =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, WalletAccountInterface] => {
-        const { selectedAccountPublicKeyHash, hdAccounts } = wallet;
+        const { selectedAccountPublicKeyHash, accounts } = wallet;
         const selectedAccount =
-          hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount;
+          accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount;
 
         return [value, selectedAccount];
       })
@@ -36,3 +38,9 @@ export const sendTransaction$ = (sender: WalletAccountInterface, opParams: Param
       throw new Error(err.message);
     })
   );
+
+export const getTezosToken = (balance: string): TokenInterface => ({
+  ...emptyToken,
+  ...TEZ_TOKEN_METADATA,
+  balance
+});

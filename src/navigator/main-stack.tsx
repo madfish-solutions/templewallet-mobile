@@ -15,6 +15,7 @@ import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
+import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
@@ -36,7 +37,6 @@ import {
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
-import { useDeepLink } from '../utils/deep-linking.utils';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { TabBar } from './tab-bar/tab-bar';
@@ -54,7 +54,6 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
-  useDeepLink();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -165,6 +164,11 @@ export const MainStackScreen = () => {
               name={ScreensEnum.SecureSettings}
               component={SecureSettings}
               options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+            />
+            <MainStack.Screen
+              name={ScreensEnum.Debug}
+              component={Debug}
+              options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
             />
           </>
         )}

@@ -1,40 +1,49 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import {
   initialWalletAccountState,
   WalletAccountStateInterface
 } from '../../interfaces/wallet-account-state.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
+import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-export const useHdAccountsListSelector = () =>
+export const useAccountsListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) =>
-    wallet.hdAccounts.map(walletAccountStateToWalletAccount)
+    wallet.accounts.map(walletAccountStateToWalletAccount)
   );
 
-export const useIsAuthorisedSelector = () => {
-  const hdAccounts = useHdAccountsListSelector();
+export const useHdAccountListSelector = () =>
+  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
+    return wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);
+  });
 
-  return useMemo(() => hdAccounts.length > 0, [hdAccounts.length]);
+export const useImportedAccountListSelector = () =>
+  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
+    return wallet.accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT);
+  });
+
+export const useIsAuthorisedSelector = () => {
+  const accounts = useAccountsListSelector();
+
+  return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
 const useSelectedAccountStateSelector = (): WalletAccountStateInterface => {
-  const { hdAccounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(
-    ({ wallet }) => wallet
-  );
+  const { accounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
 
   // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
   return useMemo(
     () => ({
       ...initialWalletAccountState,
-      ...hdAccounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
+      ...accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
     }),
-    [hdAccounts, selectedAccountPublicKeyHash]
+    [accounts, selectedAccountPublicKeyHash]
   );
 };
 
@@ -87,14 +96,7 @@ export const useVisibleTokensListSelector = () => {
 export const useTezosTokenSelector = (): TokenInterface => {
   const balance = useSelectedAccountSelector().tezosBalance.data;
 
-  return useMemo(
-    () => ({
-      ...emptyToken,
-      ...TEZ_TOKEN_METADATA,
-      balance
-    }),
-    [balance]
-  );
+  return useMemo(() => getTezosToken(balance), [balance]);
 };
 
 export const useAddTokenSuggestionSelector = () =>

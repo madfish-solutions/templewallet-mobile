@@ -4,10 +4,12 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
+import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -17,7 +19,6 @@ import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
-import { useQuickActions } from '../utils/quick-actions.utils';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -104,6 +105,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.EnableBiometryPassword}
               component={EnableBiometryPasswordModal}
               options={useModalOptions('Approve Password')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ImportAccount}
+              component={ImportAccountModal}
+              options={useModalOptions('Import account')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

@@ -3,6 +3,7 @@ import { StatusBar } from 'react-native';
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
+import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { useBarStyle } from '../../hooks/use-bar-style.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
@@ -11,7 +12,6 @@ import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { useColors } from '../../styles/use-colors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { deepLinkHandler } from '../../utils/deep-linking.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
@@ -26,11 +26,11 @@ export const ScanQrCode = () => {
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();
     if (isValidAddress(data) && Number(tezosToken.balance) > 0) {
-      navigate(ModalsEnum.Send, { asset: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
+      navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
     } else if (isValidAddress(data)) {
       showErrorToast({ description: "Can't send TEZ: the balance is zero" });
     } else {
-      deepLinkHandler(data);
+      beaconDeepLinkHandler(data);
     }
   };
 

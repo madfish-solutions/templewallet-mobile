@@ -12,7 +12,7 @@ import { ModalButtonsContainer } from '../../../../components/modal-buttons-cont
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { abortRequestAction, approveSignPayloadRequestAction } from '../../../../store/d-apps/d-apps-actions';
-import { useHdAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
@@ -24,11 +24,11 @@ interface Props {
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const styles = useSignPayloadRequestConfirmationStyles();
   const dispatch = useDispatch();
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
 
   const approver = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
-    [hdAccounts, message.sourceAddress]
+    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
+    [accounts, message.sourceAddress]
   );
 
   return (

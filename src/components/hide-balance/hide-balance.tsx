@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { useHideBalance } from '../../utils/hide-balance/hide-balance.hook';
+import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
 
 interface Props {
   style: StyleProp<TextStyle>;

@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mapBeaconToTaquitoParams should map origination params correctly 1`] = `
+Object {
+  "balance": "0",
+  "code": "mockCode",
+  "counter": "100000",
+  "fee": "1",
+  "gasLimit": "2",
+  "init": "mockStorage",
+  "kind": "origination",
+  "mutez": true,
+  "source": "account1",
+  "storageLimit": "3",
+}
+`;
+
+exports[`mapBeaconToTaquitoParams should map params of other kinds correctly 1`] = `
+Array [
+  Object {
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "activate_account",
+    "pkh": "account1",
+    "secret": "mockSecret",
+    "storageLimit": "3",
+  },
+  Object {
+    "ballot": "yay",
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "ballot",
+    "period": "4",
+    "proposal": "mockProposal",
+    "source": "account1",
+    "storageLimit": "3",
+  },
+  Object {
+    "delegate": "mockDelegate",
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "delegation",
+    "storageLimit": "3",
+  },
+  Object {
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "endorsement",
+    "level": "666",
+    "storageLimit": "3",
+  },
+  Object {
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "proposals",
+    "period": "4",
+    "proposals": Array [
+      "mockProposal",
+    ],
+    "storageLimit": "3",
+  },
+  Object {
+    "fee": "1",
+    "gasLimit": "2",
+    "kind": "reveal",
+    "public_key": "mockPublicKey",
+    "storageLimit": "3",
+  },
+  Object {
+    "fee": undefined,
+    "gasLimit": undefined,
+    "kind": "seed_nonce_revelation",
+    "level": "666",
+    "nonce": "667",
+    "storageLimit": undefined,
+  },
+]
+`;
+
+exports[`mapBeaconToTaquitoParams should map transaction params correctly 1`] = `
+Object {
+  "amount": "0",
+  "counter": "100000",
+  "fee": "1",
+  "gasLimit": "2",
+  "kind": "transaction",
+  "mutez": true,
+  "parameter": Object {
+    "entrypoint": "mockEntrypoint",
+    "value": Object {
+      "int": "3",
+    },
+  },
+  "source": "account1",
+  "storageLimit": "3",
+  "to": "account1",
+}
+`;

@@ -4,6 +4,7 @@ import * as Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
+import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, EncryptedDataSalt, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
@@ -14,7 +15,7 @@ import {
   PASSWORD_CHECK_KEY,
   PASSWORD_STORAGE_KEY
 } from '../utils/keychain.utils';
-import { getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
+import { getDerivationPath, getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
 
 const EMPTY_PASSWORD = '';
 
@@ -69,7 +70,7 @@ export class Shelter {
     Shelter._password$.next(password);
 
     const seed = mnemonicToSeedSync(seedPhrase);
-    const privateKey = seedToHDPrivateKey(seed, 0);
+    const privateKey = seedToHDPrivateKey(seed, getDerivationPath(0));
 
     return getPublicKeyAndHash$(privateKey).pipe(
       switchMap(([publicKey, publicKeyHash]) =>
@@ -80,6 +81,7 @@ export class Shelter {
         }).pipe(
           mapTo({
             name: 'Account 1',
+            type: AccountTypeEnum.HD_ACCOUNT,
             publicKey,
             publicKeyHash
           })
@@ -89,17 +91,35 @@ export class Shelter {
     );
   };
 
+  static createImportedAccount$ = (privateKey: string, name: string) => {
+    return getPublicKeyAndHash$(privateKey).pipe(
+      switchMap(([publicKey, publicKeyHash]) =>
+        Shelter.saveSensitiveData$({
+          [publicKeyHash]: privateKey
+        }).pipe(
+          mapTo({
+            name,
+            type: AccountTypeEnum.IMPORTED_ACCOUNT,
+            publicKey,
+            publicKeyHash
+          })
+        )
+      )
+    );
+  };
+
   static createHdAccount$ = (name: string, accountIndex: number): Observable<AccountInterface | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
-        const privateKey = seedToHDPrivateKey(seed, accountIndex);
+        const privateKey = seedToHDPrivateKey(seed, getDerivationPath(accountIndex));
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
             Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey }).pipe(
               mapTo({
                 name,
+                type: AccountTypeEnum.HD_ACCOUNT,
                 publicKey,
                 publicKeyHash
               })

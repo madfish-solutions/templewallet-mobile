@@ -6,14 +6,14 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface WalletState {
-  hdAccounts: WalletAccountStateInterface[];
+  accounts: WalletAccountStateInterface[];
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
 }
 
 export const walletInitialState: WalletState = {
-  hdAccounts: [],
+  accounts: [],
   selectedAccountPublicKeyHash: '',
   tokensMetadata: MAINNET_TOKENS_METADATA.reduce(
     (obj, tokenMetadata) => ({

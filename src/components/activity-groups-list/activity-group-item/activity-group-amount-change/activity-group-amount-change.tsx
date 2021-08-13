@@ -7,12 +7,11 @@ import { useTokenMetadataGetter } from '../../../../hooks/use-token-metadata-get
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../../../../store/wallet/wallet-actions';
-import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
-import { formatAssetAmount } from '../../../../utils/number.util';
+import { formatAssetAmount, roundFiat } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
@@ -25,30 +24,32 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
 
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
-  const { exchangeRates } = useExchangeRatesSelector();
+  const exchangeRates = useExchangeRatesSelector();
 
   const nonZeroAmounts = useMemo(() => {
     const amounts = [];
     let positiveAmountSum = 0;
+    let negativeAmountSum = 0;
 
     for (const { address, id, amount } of group) {
-      const { decimals, symbol, name } = getTokenMetadata(getTokenSlug({ address, id }));
+      const slug = getTokenSlug({ address, id });
+      const { decimals, symbol, name } = getTokenMetadata(slug);
+      const exchangeRate: number | undefined = exchangeRates[slug];
+
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
       }
 
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);
       const isPositive = parsedAmount.isPositive();
-      let exchangeRate = 0;
 
-      if (isString(address)) {
-        exchangeRate = exchangeRates.data[address];
-      } else if (name === TEZ_TOKEN_METADATA.name) {
-        exchangeRate = exchangeRates.data[TEZ_TOKEN_METADATA.name];
-      }
-
-      if (isPositive && isDefined(exchangeRate)) {
-        positiveAmountSum += parsedAmount.toNumber() * exchangeRate;
+      if (isDefined(exchangeRate)) {
+        const summand = parsedAmount.toNumber() * exchangeRate;
+        if (isPositive) {
+          positiveAmountSum += summand;
+        } else {
+          negativeAmountSum += summand;
+        }
       }
 
       if (!parsedAmount.isEqualTo(0)) {
@@ -61,12 +62,11 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       }
     }
 
-    const dollarSum = formatAssetAmount(new BigNumber(positiveAmountSum), BigNumber.ROUND_DOWN, 2);
+    const positiveDollarSum = roundFiat(new BigNumber(positiveAmountSum));
+    const negativeDollarSum = roundFiat(new BigNumber(negativeAmountSum));
 
-    return { amounts, dollarSum };
-  }, [group, getTokenMetadata]);
-
-  const isShowValueText = nonZeroAmounts.amounts.length > 0;
+    return { amounts, dollarSums: [positiveDollarSum, negativeDollarSum].filter(sum => !sum.eq(0)) };
+  }, [group, getTokenMetadata, exchangeRates]);
 
   return (
     <View style={styles.container}>
@@ -77,7 +77,18 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
         </Text>
       ))}
 
-      {isShowValueText && <Text style={styles.valueText}>{nonZeroAmounts.dollarSum} $</Text>}
+      {nonZeroAmounts.dollarSums.map((amount, index) => (
+        <Text
+          key={index}
+          style={[
+            styles.valueText,
+            conditionalStyle(amount.isPositive(), styles.positiveAmountText, styles.negativeAmountText)
+          ]}>
+          {amount.isPositive() ? '+ ' : '- '}
+          {amount.abs().toFixed()}
+          {' $'}
+        </Text>
+      ))}
     </View>
   );
 };

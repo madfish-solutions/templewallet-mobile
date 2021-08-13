@@ -19,7 +19,7 @@ export const updateAccountState = (
   updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
 ): WalletState => ({
   ...state,
-  hdAccounts: state.hdAccounts.map(account =>
+  accounts: state.accounts.map(account =>
     account.publicKeyHash === accountPublicKeyHash
       ? { ...account, ...updateFn({ ...initialWalletAccountState, ...account }) }
       : account
@@ -43,25 +43,25 @@ export const tokenBalanceMetadata = ({
   ...(isDefined(decimals) && { decimals })
 });
 
-export const pushOrUpdateAccountTokensList = (
-  tokensList: AccountTokenInterface[],
-  slug: string,
-  accountToken: AccountTokenInterface
+export const pushOrUpdateTokensBalances = (
+  initialTokensList: AccountTokenInterface[],
+  balances: Record<string, string>
 ) => {
+  const localBalances: Record<string, string> = { ...balances };
   const result: AccountTokenInterface[] = [];
-  let didUpdate = false;
 
-  for (const token of tokensList) {
-    if (token.slug === slug) {
-      didUpdate = true;
+  for (const token of initialTokensList) {
+    const balance = localBalances[token.slug];
+    if (isDefined(balance)) {
+      result.push({ ...token, balance });
 
-      result.push(accountToken);
+      delete localBalances[token.slug];
     } else {
       result.push(token);
     }
   }
 
-  !didUpdate && result.push(accountToken);
+  result.push(...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, isVisible: true })));
 
   return result;
 };

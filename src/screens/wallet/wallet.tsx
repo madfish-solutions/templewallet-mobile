@@ -10,7 +10,6 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -18,11 +17,10 @@ import {
   setSelectedAccountAction
 } from '../../store/wallet/wallet-actions';
 import {
-  useHdAccountsListSelector,
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -31,9 +29,8 @@ export const Wallet = () => {
   const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const { exchangeRates } = useExchangeRatesSelector();
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
@@ -47,14 +44,14 @@ export const Wallet = () => {
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
-            list={hdAccounts}
+            list={accounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue token={tezosToken} exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]} />
+        <TokenEquityValue token={tezosToken} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>
