@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Keyboard, Text, View } from 'react-native';
 
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { useTokenExchangeRate } from '../../hooks/use-token-exchange-rate.hook';
@@ -74,6 +74,10 @@ export const TokenAmountInput: FC<TokenAmountInputProps> = ({
       switcherIndex === 0 && isDefined(rawAmount) ? tokenToUsd(rawAmount, tokenExchangeRate) : rawAmount;
     onChange({ amount: newAmount, token: value.token, usdAmount: newUsdAmount });
   };
+  const handleSwitcherChange = (newIndex: number) => {
+    setSwitcherIndex(newIndex);
+    Keyboard.dismiss();
+  };
 
   const equivalentLabel = useMemo(() => {
     if (switcherIndex === 0) {
@@ -111,7 +115,7 @@ export const TokenAmountInput: FC<TokenAmountInputProps> = ({
             values={[token.symbol, 'USD']}
             width={switcherWidth}
             selectedIndex={switcherIndex}
-            onChange={setSwitcherIndex}
+            onChange={handleSwitcherChange}
           />
         )}
       </View>
