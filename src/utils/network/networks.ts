@@ -14,18 +14,6 @@ export const NETWORKS: NetworkRecord = {
     color: '#83b300',
     disabled: false
   },
-  [NetworkEnum.TEZOS_GIGA_NODE]: {
-    id: NetworkEnum.TEZOS_GIGA_NODE,
-    label: 'Tezos Giga Node',
-    name: 'tezosMainnet',
-    nameI18nKey: 'tezosMainnet',
-    description: 'Tezos mainnet',
-    lambdaContract: 'KT1CPuTzwC7h7uLXd5WQmpMFso1HxrLBUtpE',
-    type: 'main',
-    rpcBaseURL: 'https://mainnet-tezos.giganode.io',
-    color: '#83b300',
-    disabled: false
-  },
   [NetworkEnum.SMART_PY_NODE]: {
     id: NetworkEnum.SMART_PY_NODE,
     label: 'SmartPy Node',

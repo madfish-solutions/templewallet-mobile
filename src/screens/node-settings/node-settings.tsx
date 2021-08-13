@@ -6,7 +6,7 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { NetworkEnum } from '../../enums/network.enum';
-import { useNodeInstanceHook } from '../../hooks/node-instance.hook';
+import { updateCurrentNetwork } from '../../utils/network/network.util';
 import { NETWORKS } from '../../utils/network/networks';
 
 const nodesButtons = (Object.keys(NETWORKS) as Array<NetworkEnum>).map((item: NetworkEnum) => {
@@ -14,7 +14,15 @@ const nodesButtons = (Object.keys(NETWORKS) as Array<NetworkEnum>).map((item: Ne
 });
 
 export const NodeSettings = () => {
-  const { node, onChangeNodeHandler } = useNodeInstanceHook();
+  const [node, setNode] = useState<NetworkEnum | string>(NetworkEnum.TEMPLE_DEFAULT);
+
+  const onChangeNodeHandler = (value: NetworkEnum) => {
+    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentNetwork(NETWORKS[value]));
+  };
+
+  useEffect(() => {
+    AsyncStorage.getItem('nodeInstance').then(data => setNode(data ?? NetworkEnum.TEMPLE_DEFAULT));
+  }, []);
 
   useNavigationSetOptions(
     {

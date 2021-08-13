@@ -1,7 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
