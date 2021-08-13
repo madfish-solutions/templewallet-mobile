@@ -1,12 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
-
-export const getExchangeRateKey = (token: TokenMetadataInterface) =>
-  token.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_TOKEN_METADATA.name : getTokenSlug(token);
 
 export const tokenToUsd = (amount: BigNumber.Value, exchangeRate?: number) => {
   if (isDefined(exchangeRate)) {
