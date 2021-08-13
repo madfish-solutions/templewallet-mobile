@@ -1,28 +1,28 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { RadioButtonProps, RadioGroup } from 'react-native-radio-buttons-group';
+import { RadioGroup, RadioButtonProps } from 'react-native-radio-buttons-group';
 
 import { EventFn } from '../../config/general';
+import { useRadioButtonsGroupHook } from '../../hooks/use-radio-buttons-group.hook';
 import { useColors } from '../../styles/use-colors';
-import { isDefined } from '../../utils/is-defined';
-import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.styles';
+import { useStyledRadioButtonsGroupStyles } from './deprecated-styled-radio-buttons-group.styles';
 
-export interface RadioButton<T extends string> {
+export interface DeprecatedRadioButton<T extends string> {
   value: T;
   label: string;
 }
 
-export interface RadioButtonsGroupProps<T extends string> {
-  buttons: RadioButton<T>[];
+export interface DeprecatedRadioButtonsGroupProps<T extends string> {
+  buttons: DeprecatedRadioButton<T>[];
 }
 
-interface Props<T extends string> extends RadioButtonsGroupProps<T> {
+interface Props<T extends string> extends DeprecatedRadioButtonsGroupProps<T> {
   value: T;
   onChange: EventFn<T>;
 }
 
 /*** @deprecated */
-export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange }: Props<T>) => {
+export const DeprecatedStyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange }: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
@@ -38,12 +38,7 @@ export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onCh
       })),
     [buttons, value, styles, colors]
   );
-
-  function onPressRadioButton(radioButtonsArray: RadioButtonProps[]) {
-    const selectedButton = radioButtonsArray.find(radioButton => radioButton.selected);
-
-    isDefined(selectedButton) && onChange(selectedButton.value as T);
-  }
+  const { onPressRadioButton } = useRadioButtonsGroupHook({ onChange });
 
   return (
     <View style={styles.container}>

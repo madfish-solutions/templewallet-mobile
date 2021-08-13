@@ -165,7 +165,7 @@ export const MainStackScreen = () => {
             <MainStack.Screen
               name={ScreensEnum.NodeSettings}
               component={NodeSettings}
-              options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+              options={generateScreenOptions(<HeaderTitle title="Default node (RPC)" />)}
             />
             <MainStack.Screen
               name={ScreensEnum.SecureSettings}
