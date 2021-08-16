@@ -10,7 +10,7 @@ export const mockWalletState: WalletState = {
   selectedAccountPublicKeyHash: mockHdAccount.publicKeyHash,
   tokensMetadata: {
     [getTokenSlug(mockFA1_2TokenMetadata)]: mockFA1_2TokenMetadata,
-    [getTokenSlug(mockFA2TokenMetadata)]: mockFA2TokenMetadata,
+    [getTokenSlug(mockFA2TokenMetadata)]: mockFA2TokenMetadata
   },
   addTokenSuggestion: createEntity(mockFA1_2TokenMetadata)
 };

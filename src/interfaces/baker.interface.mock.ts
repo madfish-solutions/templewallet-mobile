@@ -21,4 +21,4 @@ export const mockBaker: BakerInterface = {
   payoutAccuracy: 'precise',
   audit: 'Mock Audit',
   insuranceCoverage: 44
-}
+};
