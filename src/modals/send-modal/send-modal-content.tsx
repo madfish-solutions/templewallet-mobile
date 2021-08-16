@@ -1,7 +1,6 @@
 import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProps } from 'formik';
-import { isString } from 'lodash-es';
 import React, { FC, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -77,7 +76,7 @@ export const SendModalContent: FC<SendModalContentProps> = ({
   const { data: minimalTezosTransferEstimations } = useEstimations(sender, minimalTezosTransferParams, false);
 
   const additionalFee = useMemo(() => {
-    if (values.token.symbol !== TEZ_TOKEN_METADATA.symbol || !isString(receiverPublicKeyHash)) {
+    if (values.token.symbol !== TEZ_TOKEN_METADATA.symbol) {
       return new BigNumber(0);
     }
 
