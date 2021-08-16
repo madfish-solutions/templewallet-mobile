@@ -17,7 +17,7 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useAccountsListSelector, useImportedAccountListSelector } from '../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
 import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';

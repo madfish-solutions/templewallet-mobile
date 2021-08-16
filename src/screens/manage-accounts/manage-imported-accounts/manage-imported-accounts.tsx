@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';

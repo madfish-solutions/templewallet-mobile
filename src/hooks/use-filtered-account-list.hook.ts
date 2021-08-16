@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { isString } from '../utils/is-string';

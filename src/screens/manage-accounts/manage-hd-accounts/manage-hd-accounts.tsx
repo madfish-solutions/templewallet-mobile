@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { BottomSheet } from '../../../components/bottom-sheet/bottom-sheet';
@@ -45,14 +45,6 @@ export const ManageHdAccounts = () => {
     navigate(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
-
-  useEffect(() => {
-    console.log('filtered list manage hd acc filteredAccountList');
-  }, [filteredAccountList]);
-
-  useEffect(() => {
-    console.log('filtered list manage hd acc hdAccounts');
-  }, [hdAccounts]);
 
   return (
     <>
