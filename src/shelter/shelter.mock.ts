@@ -1,7 +1,7 @@
 import * as Keychain from 'react-native-keychain';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 
-import '../mocks/react-native-keychain.mock';
+import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { biometryKeychainOptions } from '../utils/keychain.utils';
 
 export const mockShelter = {
@@ -10,11 +10,11 @@ export const mockShelter = {
   }),
   getBiometryPassword: jest.fn(() => Keychain.getGenericPassword(biometryKeychainOptions)),
   isLocked$: new BehaviorSubject<boolean>(true),
-  unlockApp$: jest.fn(() => {
-    console.log('unlockApp$');
-    mockShelter.isLocked$.next(false);
+  unlockApp$: jest.fn((password: string) => {
+    const isCorrectPassword = password === mockCorrectPassword;
+    mockShelter.isLocked$.next(!isCorrectPassword);
 
-    return new BehaviorSubject(true);
+    return of(isCorrectPassword);
   })
 };
 

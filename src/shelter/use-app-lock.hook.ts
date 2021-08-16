@@ -27,10 +27,8 @@ export const useAppLock = () => {
   }, [unlock]);
 
   useEffect(() => {
-    console.log('useEffect');
     const subscriptions = [
       Shelter.isLocked$.subscribe(value => {
-        console.log('setIsLocked', value);
         setIsLocked(value);
       }),
       unlock$
