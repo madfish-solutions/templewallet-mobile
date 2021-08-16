@@ -6,3 +6,11 @@ export const mockAccountCredentials = {
   publicKeyHash: 'tz1W311ULA4p9EcEvNyufJgSBNSxg8tPdyei',
   seed: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 };
+
+export const mockHDAccountCredentials = {
+  mockAccountIndex: 77,
+  privateKey: 'edsk4PnmkH1gzBCAWKAagyBG83JeTKRKRZrRejbjunyhdcAqgPiHsL',
+  seedPhrase: mockAccountCredentials.seedPhrase,
+  publicKey: mockAccountCredentials.publicKey,
+  publicKeyHash: mockAccountCredentials.publicKeyHash
+};
