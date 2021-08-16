@@ -27,8 +27,12 @@ export const useAppLock = () => {
   }, [unlock]);
 
   useEffect(() => {
+    console.log('useEffect');
     const subscriptions = [
-      Shelter.isLocked$.subscribe(value => setIsLocked(value)),
+      Shelter.isLocked$.subscribe(value => {
+        console.log('setIsLocked', value);
+        setIsLocked(value);
+      }),
       unlock$
         .pipe(switchMap(password => Shelter.unlockApp$(password)))
         .subscribe(success => !success && showErrorToast({ description: 'Wrong password, please, try again' }))
