@@ -6,10 +6,17 @@ import { map } from 'rxjs/operators';
 
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
+import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
 import { tzToMutez } from './tezos.util';
+
+export const getTezosTransferParams = (receiverPublicKeyHash: string, amount: BigNumber) => ({
+  amount: tzToMutez(amount, TEZ_TOKEN_METADATA.decimals).toNumber(),
+  to: receiverPublicKeyHash,
+  mutez: true
+});
 
 export const getTransferParams$ = (
   token: TokenMetadataInterface,
@@ -44,9 +51,5 @@ export const getTransferParams$ = (
         ),
         map(contractMethod => contractMethod.toTransferParams())
       )
-    : of({
-        amount: tzToMutez(amount, decimals).toNumber(),
-        to: receiverPublicKeyHash,
-        mutez: true
-      });
+    : of(getTezosTransferParams(receiverPublicKeyHash, amount));
 };

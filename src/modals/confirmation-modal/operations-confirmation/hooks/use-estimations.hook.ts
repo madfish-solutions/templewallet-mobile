@@ -8,7 +8,11 @@ import { WalletAccountInterface } from '../../../../interfaces/wallet-account.in
 import { showErrorToast } from '../../../../toast/toast.utils';
 import { tezos$ } from '../../../../utils/network/network.util';
 
-export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) => {
+export const useEstimations = (
+  sender: WalletAccountInterface,
+  opParams: ParamsWithKind[],
+  shouldShowErrorToast = true
+) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,16 +22,21 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
     )
       .pipe(
         map(estimates =>
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
-            suggestedFeeMutez,
-            gasLimit,
-            storageLimit,
-            minimalFeePerStorageByteMutez
-          }))
+          estimates.map(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez, totalCost }: any) => ({
+              suggestedFeeMutez,
+              gasLimit,
+              storageLimit,
+              minimalFeePerStorageByteMutez,
+              totalCost
+            })
+          )
         ),
         catchError(() => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+          if (shouldShowErrorToast) {
+            showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+          }
 
           return of([]);
         })
@@ -38,7 +47,7 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
       });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [sender.publicKeyHash, opParams]);
 
   return { data, isLoading };
 };
