@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { clamp, inRange } from 'lodash-es';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -18,6 +19,9 @@ import { useActivityGroupAmountChangeStyles } from './activity-group-amount-chan
 interface Props {
   group: ActivityGroup;
 }
+
+const MIN_POSITIVE_AMOUNT_VALUE = 0.01;
+const MAX_NEGATIVE_AMOUNT_VALUE = -0.01;
 
 export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   const styles = useActivityGroupAmountChangeStyles();
@@ -81,9 +85,13 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
             styles.valueText,
             conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)
           ]}>
-          {Math.abs(amount) < 0.01 && '≈ '}
+          {inRange(amount, MAX_NEGATIVE_AMOUNT_VALUE, MIN_POSITIVE_AMOUNT_VALUE) && '≈ '}
           {amount > 0 ? '+ ' : '- '}
-          {roundFiat(new BigNumber(amount > 0 ? Math.max(amount, 0.01) : Math.min(amount, -0.01)).abs()).toFixed()}
+          {roundFiat(
+            new BigNumber(
+              amount > 0 ? clamp(amount, MIN_POSITIVE_AMOUNT_VALUE, Infinity) : clamp(amount, MAX_NEGATIVE_AMOUNT_VALUE)
+            ).abs()
+          ).toFixed()}
           {' $'}
         </Text>
       ))}
