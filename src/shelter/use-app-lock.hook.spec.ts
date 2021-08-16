@@ -9,7 +9,7 @@ import { useAppLock } from './use-app-lock.hook';
 
 describe('useAppLock', () => {
   beforeEach(() => {
-    mockShelter._isLocked$.next(true);
+    mockShelter.isLocked$.next(true);
   });
 
   describe('initial state', () => {
@@ -22,7 +22,7 @@ describe('useAppLock', () => {
     it('should be unlocked if shelter is unlocked on start', () => {
       const { result } = renderHook(() => useAppLock());
 
-      act(() => mockShelter._isLocked$.next(false));
+      act(() => mockShelter.isLocked$.next(false));
 
       expect(result.current.isLocked).toEqual(false);
     });

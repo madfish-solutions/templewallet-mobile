@@ -5,12 +5,12 @@ import { biometryKeychainOptions } from '../utils/keychain.utils';
 
 export const mockShelter = {
   lockApp: jest.fn(() => {
-    mockShelter._isLocked$.next(true);
+    mockShelter.isLocked$.next(true);
   }),
   getBiometryPassword: jest.fn(() => Keychain.getGenericPassword(biometryKeychainOptions)),
-  _isLocked$: new BehaviorSubject<boolean>(true),
+  isLocked$: new BehaviorSubject<boolean>(true),
   unlockApp$: jest.fn(() => {
-    mockShelter._isLocked$.next(false);
+    mockShelter.isLocked$.next(false);
 
     return new BehaviorSubject(true);
   })
