@@ -62,10 +62,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       }
     }
 
-    const positiveDollarSum = roundFiat(new BigNumber(positiveAmountSum));
-    const negativeDollarSum = roundFiat(new BigNumber(negativeAmountSum));
-
-    return { amounts, dollarSums: [positiveDollarSum, negativeDollarSum].filter(sum => !sum.eq(0)) };
+    return { amounts, dollarSums: [positiveAmountSum, negativeAmountSum].filter(sum => sum !== 0) };
   }, [group, getTokenMetadata, exchangeRates]);
 
   return (
@@ -82,10 +79,11 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
           key={index}
           style={[
             styles.valueText,
-            conditionalStyle(amount.isPositive(), styles.positiveAmountText, styles.negativeAmountText)
+            conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)
           ]}>
-          {amount.isPositive() ? '+ ' : '- '}
-          {amount.abs().toFixed()}
+          {Math.abs(amount) < 0.01 && '≈ '}
+          {amount > 0 ? '+ ' : '- '}
+          {roundFiat(new BigNumber(amount > 0 ? Math.max(amount, 0.01) : Math.min(amount, -0.01)).abs()).toFixed()}
           {' $'}
         </Text>
       ))}
