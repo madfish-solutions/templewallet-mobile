@@ -13,20 +13,23 @@ import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-st
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-export const useAccountsListSelector = () =>
-  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) =>
-    wallet.accounts.map(walletAccountStateToWalletAccount)
-  );
+export const useAccountsListSelector = () => {
+  const accounts = useSelector<WalletRootState, WalletAccountStateInterface[]>(({ wallet }) => wallet.accounts);
 
-export const useHdAccountListSelector = () =>
-  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
-    return wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);
-  });
+  return useMemo(() => accounts.map(walletAccountStateToWalletAccount), [accounts]);
+};
 
-export const useImportedAccountListSelector = () =>
-  useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => {
-    return wallet.accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT);
-  });
+export const useHdAccountListSelector = () => {
+  const accounts = useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => wallet.accounts);
+
+  return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT), [accounts]);
+};
+
+export const useImportedAccountListSelector = () => {
+  const accounts = useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => wallet.accounts);
+
+  return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT), [accounts]);
+};
 
 export const useIsAuthorisedSelector = () => {
   const accounts = useAccountsListSelector();

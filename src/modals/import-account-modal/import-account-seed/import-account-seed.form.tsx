@@ -8,7 +8,7 @@ export type ImportAccountSeedValues = {
   seedPhrase: string;
   password?: string;
   derivationType: ImportAccountDerivationEnum;
-  derivationPath: string;
+  derivationPath?: string;
 };
 
 export const importAccountSeedInitialValues: ImportAccountSeedValues = {
@@ -22,5 +22,5 @@ export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues
   seedPhrase: seedPhraseValidation,
   password: string(),
   derivationType: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)).required(),
-  derivationPath: string().required()
+  derivationPath: string()
 });

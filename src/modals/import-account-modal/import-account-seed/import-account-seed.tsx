@@ -17,8 +17,9 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector, useImportedAccountListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { isString } from '../../../utils/is-string';
 import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
 import {
@@ -45,7 +46,9 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
     const seed = mnemonicToSeedSync(values.seedPhrase);
     const privateKey = seedToHDPrivateKey(
       seed,
-      values.derivationType === ImportAccountDerivationEnum.DEFAULT ? getDerivationPath(0) : values.derivationPath
+      values.derivationType === ImportAccountDerivationEnum.DEFAULT || !isString(values.derivationPath)
+        ? getDerivationPath(0)
+        : values.derivationPath
     );
     createImportedAccount({
       name: `Account ${accountsIndex}`,
@@ -64,16 +67,9 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
           <View>
             <Divider size={formatSize(12)} />
             <View style={styles.seedPhraseInputContainer}>
-              <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
+              <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
               <FormMnemonicInput name="seedPhrase" />
             </View>
-            <Divider size={formatSize(12)} />
-            <Label
-              label="Password"
-              isOptional
-              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
-            />
-            <FormPasswordInput name="password" />
             <Divider size={formatSize(12)} />
             <Label
               label="Derivation"
@@ -87,6 +83,14 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
                 <FormTextInput name="derivationPath" />
               </>
             )}
+            <Divider size={formatSize(12)} />
+            <Label
+              label="Password"
+              isOptional
+              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
+            />
+            <FormPasswordInput name="password" />
+            <Divider size={formatSize(12)} />
           </View>
           <View>
             <ButtonsContainer>

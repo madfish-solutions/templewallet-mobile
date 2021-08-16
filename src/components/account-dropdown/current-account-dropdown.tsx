@@ -32,9 +32,15 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
     onPress();
   };
 
+  const handleImportAccountButtonPress = () => {
+    navigate(ScreensEnum.ImportAccount);
+    onPress();
+  };
+
   return (
     <>
       <BottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
+      <BottomSheetActionButton title="Import an account" onPress={handleImportAccountButtonPress} />
       <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );

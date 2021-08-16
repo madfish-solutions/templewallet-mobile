@@ -40,7 +40,7 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
       <AccountFormDropdown name="account" list={hdAccounts} />
       <Label
         label="Derivation path"
-        description="for HD acccounts. This is the thing you use to recover all your accounts from your seed phrase."
+        description="for HD accounts. This is the thing you use to recover all your accounts from your seed phrase."
       />
       <FormTextInput name="derivationPath" editable={false} />
       <Label

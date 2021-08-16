@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { forkJoin, merge, of, Subject } from 'rxjs';
+import { EMPTY, forkJoin, merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
@@ -9,7 +9,8 @@ import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
+import { showErrorToast, showSuccessToast, showWarningToast } from '../toast/toast.utils';
+import { getPublicKeyAndHash$ } from '../utils/keys.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
@@ -56,15 +57,32 @@ export const useShelter = () => {
           }
         }),
       createImportedAccount$
-        .pipe(switchMap(({ privateKey, name }) => Shelter.createImportedAccount$(privateKey, name)))
         .pipe(
-          catchError(() => {
-            showErrorToast({
-              title: 'Failed to import account.',
-              description: 'This may happen because provided Key is invalid.'
-            });
+          switchMap(({ privateKey, name }) => {
+            return getPublicKeyAndHash$(privateKey)
+              .pipe(
+                switchMap(([publicKey]) => {
+                  for (const account of accounts) {
+                    if (account.publicKey === publicKey) {
+                      showWarningToast({ description: 'Account already exist' });
 
-            return of(undefined);
+                      return of(undefined);
+                    }
+                  }
+
+                  return Shelter.createImportedAccount$(privateKey, name);
+                })
+              )
+              .pipe(
+                catchError(() => {
+                  showErrorToast({
+                    title: 'Failed to import account.',
+                    description: 'This may happen because provided Key is invalid.'
+                  });
+
+                  return EMPTY;
+                })
+              );
           })
         )
         .subscribe(publicData => {

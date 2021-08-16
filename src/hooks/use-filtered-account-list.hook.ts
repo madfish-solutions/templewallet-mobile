@@ -7,9 +7,7 @@ import { isString } from '../utils/is-string';
 export const useFilteredAccountList = (accountList: WalletAccountInterface[]) => {
   const [searchValue, setSearchValue] = useState<string>();
 
-  const accountListMemo = useMemo(() => accountList, [accountList]);
-
-  const [filteredAccountList, setFilteredAccountList] = useState<WalletAccountInterface[]>(accountListMemo);
+  const [filteredAccountList, setFilteredAccountList] = useState<WalletAccountInterface[]>(accountList);
 
   useEffect(() => {
     const result: WalletAccountInterface[] = [];
@@ -32,13 +30,12 @@ export const useFilteredAccountList = (accountList: WalletAccountInterface[]) =>
     } else {
       setFilteredAccountList(accountList);
     }
-  }, [searchValue]);
+  }, [searchValue, accountList]);
 
   const debouncedSetSearch = debounce(setSearchValue);
 
   return {
     filteredAccountList,
-    debouncedSetSearch,
-    setSearchValue
+    debouncedSetSearch
   };
 };

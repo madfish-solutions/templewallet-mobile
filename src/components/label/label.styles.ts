@@ -21,6 +21,7 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'baseline'
   },
   isOptionalLabel: {
-    ...typography.caption11Regular
+    ...typography.caption11Regular,
+    color: colors.gray1
   }
 }));
