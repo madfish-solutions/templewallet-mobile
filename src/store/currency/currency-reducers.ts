@@ -2,9 +2,9 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
 import { loadExchangeRates } from './currency-actions';
-import { currencyInitialState, ExchangeRatesState } from './currency-state';
+import { currencyInitialState, CurrencyState } from './currency-state';
 
-export const currencyReducers = createReducer<ExchangeRatesState>(currencyInitialState, builder => {
+export const currencyReducers = createReducer<CurrencyState>(currencyInitialState, builder => {
   builder.addCase(loadExchangeRates.submit, state => ({
     ...state,
     exchangeRates: createEntity(state.exchangeRates.data, true)
