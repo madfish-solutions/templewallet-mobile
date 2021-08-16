@@ -6,7 +6,6 @@ import { derivePath } from 'ed25519-hd-key';
 import { forkJoin, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { showErrorToast } from '../toast/toast.utils';
 import { generateRandomValues } from './crypto.util';
 
 const TEZOS_BIP44_COINTYPE = 1729;
@@ -21,7 +20,6 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
 
     return key;
   } catch (_err) {
-    showErrorToast({ description: 'Invalid derivation path' });
     throw new Error('Invalid derivation path');
   }
 };
