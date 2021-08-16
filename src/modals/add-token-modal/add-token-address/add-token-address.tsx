@@ -10,8 +10,8 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
-import { DeprecatedRadioButton } from '../../../deprecated/deprecated-styled-radio-buttons-group/deprecated-styled-radio-buttons-group';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
@@ -29,7 +29,7 @@ interface Props {
   onFormSubmitted: EmptyFn;
 }
 
-const typeRadioButtons: DeprecatedRadioButton<TokenTypeEnum>[] = [
+const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
   { value: TokenTypeEnum.FA_1_2, label: 'FA 1.2' },
   { value: TokenTypeEnum.FA_2, label: 'FA 2' }
 ];

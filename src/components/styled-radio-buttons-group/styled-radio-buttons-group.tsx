@@ -21,7 +21,6 @@ interface Props<T extends string> extends RadioButtonsGroupProps<T> {
   onChange: EventFn<T>;
 }
 
-/*** @deprecated */
 export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange }: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
