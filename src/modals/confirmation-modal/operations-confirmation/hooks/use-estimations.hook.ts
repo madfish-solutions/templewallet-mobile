@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
-import { of } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { from, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
-import { tezos$ } from '../../../../utils/network/network.util';
+import { tezosToolkit$ } from '../../../../utils/network/tezos-toolkit.utils';
 
 export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const subscription = tezos$
+    const subscription = from(
+      tezosToolkit$.getValue().estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))
+    )
       .pipe(
-        withLatestFrom(tezos$, (_, tezos) => tezos),
-        switchMap(tezos => tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))),
         map(estimates =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
@@ -26,7 +26,8 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
             minimalFeePerStorageByteMutez
           }))
         ),
-        catchError(() => {
+        catchError(err => {
+          console.log({ err });
           showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
 
           return of([]);

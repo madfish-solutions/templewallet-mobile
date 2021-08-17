@@ -5,9 +5,5 @@ export interface RpcInterface {
   label: string;
   name: string;
   description: string;
-  rpcBaseURL: string;
+  url: string;
 }
-
-export type RpcRecord = {
-  [key in string]: RpcInterface;
-};

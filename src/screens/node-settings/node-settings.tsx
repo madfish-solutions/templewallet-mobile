@@ -6,8 +6,8 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { RpcEnum } from '../../enums/network.enum';
-import { updateCurrentNetwork } from '../../utils/network/network.util';
-import { RPC } from '../../utils/network/networks';
+import { RPC } from '../../utils/network/rpc-record';
+import { updateCurrentRpc } from '../../utils/network/rpc.utils';
 
 const nodesButtons = Object.keys(RPC).map(item => ({
   ...RPC[item],
@@ -18,7 +18,7 @@ export const NodeSettings = () => {
   const [node, setNode] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
 
   const onChangeNodeHandler = (value: RpcEnum) =>
-    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentNetwork(RPC[value]));
+    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentRpc(RPC[value]));
 
   useEffect(
     () => void AsyncStorage.getItem('nodeInstance').then(data => setNode((data as RpcEnum) ?? RpcEnum.TEMPLE_DEFAULT)),

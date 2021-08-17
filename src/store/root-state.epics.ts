@@ -9,7 +9,7 @@ import { BeaconHandler } from '../beacon/beacon-handler';
 import { emptyWalletAccount } from '../interfaces/wallet-account.interface';
 import { globalNavigationRef } from '../navigator/root-stack';
 import { getKeychainOptions } from '../utils/keychain.utils';
-import { tezos$ } from '../utils/network/network.util';
+import { tezosToolkit$ } from '../utils/network/tezos-toolkit.utils';
 import { ReadOnlySigner } from '../utils/read-only.signer.util';
 import { RootState } from './create-store';
 import { rootStateResetAction, untypedNavigateAction } from './root-state.actions';
@@ -42,13 +42,13 @@ const tezosSignerProviderEpic = (action$: Observable<Action>, state$: Observable
   state$.pipe(
     map(state => ({ selectedAccountPublicKeyHash: state.wallet.selectedAccountPublicKeyHash, state })),
     distinctUntilKeyChanged('selectedAccountPublicKeyHash'),
-    withLatestFrom(tezos$),
-    switchMap(([{ selectedAccountPublicKeyHash, state }, tezos]) => {
+    withLatestFrom(tezosToolkit$),
+    switchMap(([{ selectedAccountPublicKeyHash, state }, tezosToolkit]) => {
       const selectedAccount =
         state.wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ??
         emptyWalletAccount;
 
-      tezos.setSignerProvider(new ReadOnlySigner(selectedAccount.publicKeyHash, selectedAccount.publicKey));
+      tezosToolkit.setSignerProvider(new ReadOnlySigner(selectedAccount.publicKeyHash, selectedAccount.publicKey));
 
       return EMPTY;
     })

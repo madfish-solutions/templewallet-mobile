@@ -7,7 +7,8 @@ import { Shelter } from '../shelter/shelter';
 import { WalletRootState } from '../store/wallet/wallet-state';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
-import { createTezosToolkit, currentNetworkRpc$ } from './network/network.util';
+import { createTezosToolkit } from './network/tezos-toolkit.utils';
+import { currentRpcUrl$ } from './network/rpc.utils';
 
 export const withSelectedAccount =
   <T>(state$: Observable<WalletRootState>) =>
@@ -24,9 +25,9 @@ export const withSelectedAccount =
 
 export const sendTransaction$ = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) =>
   Shelter.getSigner$(sender.publicKeyHash).pipe(
-    withLatestFrom(currentNetworkRpc$),
-    switchMap(([signer, currentNetworkRpc]) => {
-      const tezos = createTezosToolkit(currentNetworkRpc);
+    withLatestFrom(currentRpcUrl$),
+    switchMap(([signer, currentRpcUrl]) => {
+      const tezos = createTezosToolkit(currentRpcUrl);
       tezos.setSignerProvider(signer);
 
       return tezos.contract.batch(opParams).send();

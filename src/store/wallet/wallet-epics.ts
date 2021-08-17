@@ -18,7 +18,7 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
+import { CURRENT_NETWORK_ID, tezosToolkit$ } from '../../utils/network/tezos-toolkit.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
@@ -45,9 +45,8 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
-    withLatestFrom(currentNetworkId$),
-    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
-      loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
+    switchMap(accountPublicKeyHash =>
+      loadTokensWithBalance$(accountPublicKeyHash).pipe(
         switchMap(tokensWithBalance =>
           forkJoin(
             loadTokensBalances$(
@@ -112,10 +111,10 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
-    withLatestFrom(tezos$),
+    withLatestFrom(tezosToolkit$),
     withSelectedAccount(state$),
-    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
-      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezosToolkit], selectedAccount]) =>
+      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezosToolkit).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -155,9 +154,9 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([{ opHash, sender }, tezos]) =>
-      from(tezos.operation.createOperation(opHash)).pipe(
+    withLatestFrom(tezosToolkit$),
+    switchMap(([{ opHash, sender }, tezosToolkit]) =>
+      from(tezosToolkit.operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
@@ -179,8 +178,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     toPayload(),
-    withLatestFrom(currentNetworkId$),
-    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
+    switchMap(accountPublicKeyHash =>
       forkJoin([
         from(
           tzktApi.get<OperationInterface[]>(
@@ -189,7 +187,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
         ).pipe(map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))),
         from(
           betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${currentNetworkId}/transfers/${accountPublicKeyHash}`,
+            `/tokens/${CURRENT_NETWORK_ID}/transfers/${accountPublicKeyHash}`,
             { params: { max: 100, start: 0 } }
           )
         ).pipe(map(({ data }) => mapTransfersToActivities(accountPublicKeyHash, data.transfers)))
