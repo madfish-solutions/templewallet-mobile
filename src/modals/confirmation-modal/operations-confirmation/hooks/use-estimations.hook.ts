@@ -22,15 +22,13 @@ export const useEstimations = (
     )
       .pipe(
         map(estimates =>
-          estimates.map(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
-              suggestedFeeMutez,
-              gasLimit,
-              storageLimit,
-              minimalFeePerStorageByteMutez
-            })
-          )
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          estimates.map(({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
+            suggestedFeeMutez,
+            gasLimit,
+            storageLimit,
+            minimalFeePerStorageByteMutez
+          }))
         ),
         catchError(() => {
           if (shouldShowErrorToast) {
