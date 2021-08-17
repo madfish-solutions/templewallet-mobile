@@ -1,4 +1,4 @@
-export enum NetworkEnum {
+export enum RpcEnum {
   TEMPLE_DEFAULT = 'TEMPLE_DEFAULT',
   SMART_PY_NODE = 'SMART_PY_NODE',
   BLOCK_SCALE_NODE = 'BLOCK_SCALE_NODE',

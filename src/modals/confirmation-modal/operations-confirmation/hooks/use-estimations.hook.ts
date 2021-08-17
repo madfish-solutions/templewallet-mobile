@@ -13,7 +13,7 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const subscription = of(null)
+    const subscription = tezos$
       .pipe(
         withLatestFrom(tezos$, (_, tezos) => tezos),
         switchMap(tezos => tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))),

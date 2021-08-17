@@ -31,7 +31,7 @@ export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onCh
         ...radioButton,
         id: radioButton.value,
         labelStyle: styles.label,
-        containerStyle: [styles.itemContainer],
+        containerStyle: styles.itemContainer,
         color: colors.orange,
         selected: radioButton.value === value
       })),

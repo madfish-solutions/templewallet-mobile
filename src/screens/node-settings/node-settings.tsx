@@ -5,24 +5,25 @@ import { HeaderBackButton } from '../../components/header/header-back-button/hea
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
-import { NetworkEnum } from '../../enums/network.enum';
+import { RpcEnum } from '../../enums/network.enum';
 import { updateCurrentNetwork } from '../../utils/network/network.util';
-import { NETWORKS } from '../../utils/network/networks';
+import { RPC } from '../../utils/network/networks';
 
-const nodesButtons = (Object.keys(NETWORKS) as Array<NetworkEnum>).map((item: NetworkEnum) => {
-  return { ...NETWORKS[item], value: NETWORKS[item].id };
-});
+const nodesButtons = Object.keys(RPC).map(item => ({
+  ...RPC[item],
+  value: RPC[item].id
+}));
 
 export const NodeSettings = () => {
-  const [node, setNode] = useState<NetworkEnum | string>(NetworkEnum.TEMPLE_DEFAULT);
+  const [node, setNode] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
 
-  const onChangeNodeHandler = (value: NetworkEnum) => {
-    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentNetwork(NETWORKS[value]));
-  };
+  const onChangeNodeHandler = (value: RpcEnum) =>
+    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentNetwork(RPC[value]));
 
-  useEffect(() => {
-    AsyncStorage.getItem('nodeInstance').then(data => setNode(data ?? NetworkEnum.TEMPLE_DEFAULT));
-  }, []);
+  useEffect(
+    () => void AsyncStorage.getItem('nodeInstance').then(data => setNode((data as RpcEnum) ?? RpcEnum.TEMPLE_DEFAULT)),
+    []
+  );
 
   useNavigationSetOptions(
     {
@@ -33,7 +34,7 @@ export const NodeSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup onChange={onChangeNodeHandler} value={node as NetworkEnum} buttons={nodesButtons} />
+      <StyledRadioButtonsGroup onChange={onChangeNodeHandler} value={node} buttons={nodesButtons} />
     </ScreenContainer>
   );
 };

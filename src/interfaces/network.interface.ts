@@ -1,14 +1,13 @@
-import { NetworkEnum } from '../enums/network.enum';
+import { RpcEnum } from '../enums/network.enum';
 
-export interface NetworkInterface {
-  id: NetworkEnum;
+export interface RpcInterface {
+  id: RpcEnum;
   label: string;
   name: string;
   description: string;
-  lambdaContract: string;
   rpcBaseURL: string;
 }
 
-export type NetworkRecord = {
-  [key in NetworkEnum]: NetworkInterface;
+export type RpcRecord = {
+  [key in string]: RpcInterface;
 };
