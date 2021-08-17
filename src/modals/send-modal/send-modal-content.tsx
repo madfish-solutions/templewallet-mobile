@@ -30,7 +30,8 @@ import { showWarningToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
-import { mutezToTz } from '../../utils/tezos.util';
+import { isString } from '../../utils/is-string';
+import { isValidAddress, mutezToTz } from '../../utils/tezos.util';
 import { getTezosTransferParams } from '../../utils/transfer-params.utils';
 import { useAccountManagerKey } from '../confirmation-modal/operations-confirmation/hooks/use-account-manager-key';
 import { useEstimations } from '../confirmation-modal/operations-confirmation/hooks/use-estimations.hook';
@@ -63,14 +64,22 @@ export const SendModalContent: FC<SendModalContentProps> = ({
     ? values.ownAccount.publicKeyHash
     : values.receiverPublicKeyHash;
 
+  const minimalTezosTransferReceiverPublicKeyHash =
+    isString(receiverPublicKeyHash) && isValidAddress(receiverPublicKeyHash)
+      ? receiverPublicKeyHash
+      : sender.publicKeyHash;
+
   const minimalTezosTransferParams = useMemo(
     () => [
       {
-        ...getTezosTransferParams(receiverPublicKeyHash, mutezToTz(new BigNumber(1), TEZ_TOKEN_METADATA.decimals)),
+        ...getTezosTransferParams(
+          minimalTezosTransferReceiverPublicKeyHash,
+          mutezToTz(new BigNumber(1), TEZ_TOKEN_METADATA.decimals)
+        ),
         kind: OpKind.TRANSACTION as const
       }
     ],
-    [receiverPublicKeyHash]
+    [minimalTezosTransferReceiverPublicKeyHash]
   );
   const { data: accountManagerKey } = useAccountManagerKey(sender.publicKeyHash);
   const { data: minimalTezosTransferEstimations } = useEstimations(sender, minimalTezosTransferParams, false);
@@ -84,10 +93,12 @@ export const SendModalContent: FC<SendModalContentProps> = ({
       return FALLBACK_TEZ_FEE;
     }
 
-    return mutezToTz(new BigNumber(minimalTezosTransferEstimations[0].totalCost), TEZ_TOKEN_METADATA.decimals).plus(
+    const { gasLimit, storageLimit } = minimalTezosTransferEstimations[0];
+
+    return mutezToTz(new BigNumber(gasLimit).plus(storageLimit), TEZ_TOKEN_METADATA.decimals).plus(
       isDefined(accountManagerKey) ? 0 : REVEAL_DEFAULT_FEE
     );
-  }, [values.token.symbol, accountManagerKey, minimalTezosTransferEstimations, receiverPublicKeyHash]);
+  }, [values.token.symbol, accountManagerKey, minimalTezosTransferEstimations]);
 
   useEffect(() => setFieldValue('amount', undefined), [values.token]);
 

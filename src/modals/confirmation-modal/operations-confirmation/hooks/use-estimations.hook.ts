@@ -24,12 +24,11 @@ export const useEstimations = (
         map(estimates =>
           estimates.map(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez, totalCost }: any) => ({
+            ({ suggestedFeeMutez, gasLimit, storageLimit, minimalFeePerStorageByteMutez }: any) => ({
               suggestedFeeMutez,
               gasLimit,
               storageLimit,
-              minimalFeePerStorageByteMutez,
-              totalCost
+              minimalFeePerStorageByteMutez
             })
           )
         ),
