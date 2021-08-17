@@ -23,7 +23,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     [accounts, message.sourceAddress]
   );
 
-  const opParams = message.operationDetails.map(mapBeaconToTaquitoParams);
+  const opParams = useMemo(() => message.operationDetails.map(mapBeaconToTaquitoParams), [message.operationDetails]);
 
   return (
     <OperationsConfirmation

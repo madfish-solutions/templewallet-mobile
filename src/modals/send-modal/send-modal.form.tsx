@@ -15,27 +15,31 @@ export interface SendModalFormValues {
   transferBetweenOwnAccounts: boolean;
 }
 
-export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
-  receiverPublicKeyHash: string()
-    .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
-      value ? schema : walletAddressValidation
-    )
-    .ensure(),
-  amount: bigNumberValidation
-    .clone()
-    .required(makeRequiredErrorMessage('Amount'))
-    .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-      if (value instanceof BigNumber) {
-        return value.gt(0);
-      }
-
-      return false;
-    }),
-  ownAccount: object()
-    .shape({})
-    .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
-      value ? schema.required(makeRequiredErrorMessage('To')) : schema
-    ) as SchemaOf<WalletAccountInterface>,
-  transferBetweenOwnAccounts: boolean().required()
-});
+export const createSendModalFormValidationSchema = (amountMaxValue: BigNumber) =>
+  object().shape({
+    token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
+    receiverPublicKeyHash: string()
+      .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
+        value ? schema : walletAddressValidation
+      )
+      .ensure(),
+    amount: bigNumberValidation
+      .clone()
+      .required(makeRequiredErrorMessage('Amount'))
+      .test(
+        'is-greater-than',
+        'Should be greater than 0',
+        (value: unknown) => value instanceof BigNumber && value.gt(0)
+      )
+      .test(
+        'max-amount',
+        `Maximal amount is ${amountMaxValue.toFixed()}`,
+        (value: unknown) => value instanceof BigNumber && value.lte(amountMaxValue)
+      ),
+    ownAccount: object()
+      .shape({})
+      .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
+        value ? schema.required(makeRequiredErrorMessage('To')) : schema
+      ) as SchemaOf<WalletAccountInterface>,
+    transferBetweenOwnAccounts: boolean().required()
+  });
