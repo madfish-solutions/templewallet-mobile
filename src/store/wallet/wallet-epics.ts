@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -18,7 +18,7 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { currentNetworkId$, tezos$ } from '../../utils/network/network.util';
+import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/network/tezos-toolkit.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
@@ -45,9 +45,8 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     toPayload(),
-    withLatestFrom(currentNetworkId$),
-    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
-      loadTokensWithBalance$(currentNetworkId, accountPublicKeyHash).pipe(
+    switchMap(accountPublicKeyHash =>
+      loadTokensWithBalance$(accountPublicKeyHash).pipe(
         switchMap(tokensWithBalance =>
           forkJoin(
             loadTokensBalances$(
@@ -112,10 +111,9 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
-    withLatestFrom(tezos$),
     withSelectedAccount(state$),
-    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezos], selectedAccount]) =>
-      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezos).pipe(
+    switchMap(([{ token, receiverPublicKeyHash, amount }, selectedAccount]) =>
+      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -136,7 +134,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash: hash, sender: sender.publicKeyHash }),
+            waitForOperationCompletionAction({ opHash: hash, sender }),
             addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
           ];
         }),
@@ -155,16 +153,15 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
-    withLatestFrom(tezos$),
-    switchMap(([{ opHash, sender }, tezos]) =>
-      from(tezos.operation.createOperation(opHash)).pipe(
+    switchMap(({ opHash, sender }) =>
+      from(createReadOnlyTezosToolkit(sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
-          loadTezosBalanceActions.submit(sender),
-          loadTokenBalancesActions.submit(sender),
-          loadActivityGroupsActions.submit(sender),
-          loadSelectedBakerActions.submit(sender)
+          loadTezosBalanceActions.submit(sender.publicKeyHash),
+          loadTokenBalancesActions.submit(sender.publicKeyHash),
+          loadActivityGroupsActions.submit(sender.publicKeyHash),
+          loadSelectedBakerActions.submit(sender.publicKeyHash)
         ]),
         catchError(err => {
           showErrorToast({ description: err.message });
@@ -179,8 +176,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     toPayload(),
-    withLatestFrom(currentNetworkId$),
-    switchMap(([accountPublicKeyHash, currentNetworkId]) =>
+    switchMap(accountPublicKeyHash =>
       forkJoin([
         from(
           tzktApi.get<OperationInterface[]>(
@@ -189,7 +185,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>) =>
         ).pipe(map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))),
         from(
           betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${currentNetworkId}/transfers/${accountPublicKeyHash}`,
+            `/tokens/${CURRENT_NETWORK_ID}/transfers/${accountPublicKeyHash}`,
             { params: { max: 100, start: 0 } }
           )
         ).pipe(map(({ data }) => mapTransfersToActivities(accountPublicKeyHash, data.transfers)))

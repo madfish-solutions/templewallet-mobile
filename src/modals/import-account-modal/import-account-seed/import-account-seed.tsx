@@ -78,7 +78,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             <Label
               label="Derivation"
               isOptional
-              description={"By default derivation isn't used. Click on 'Custom derivation path' to add it."}
+              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
             />
             <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
             {values.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && (

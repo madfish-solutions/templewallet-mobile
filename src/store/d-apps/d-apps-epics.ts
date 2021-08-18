@@ -147,7 +147,7 @@ const approveOperationRequestEpic = (action$: Observable<Action>) =>
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash, sender: sender.publicKeyHash }),
+            waitForOperationCompletionAction({ opHash, sender }),
             addPendingOperation(paramsToPendingActions(opParams, opHash, sender.publicKeyHash))
           ];
         }),

@@ -3,17 +3,18 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { balancesApi, betterCallDevApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
+import { CURRENT_NETWORK_ID } from './network/tezos-toolkit.utils';
 
 const size = 10;
 
-const getTokenBalances = (currentNetworkId: string, accountPublicKeyHash: string, offset: number) =>
+const getTokenBalances = (accountPublicKeyHash: string, offset: number) =>
   betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-    `/account/${currentNetworkId}/${accountPublicKeyHash}/token_balances`,
+    `/account/${CURRENT_NETWORK_ID}/${accountPublicKeyHash}/token_balances`,
     { params: { size, offset } }
   );
 
-export const loadTokensWithBalance$ = (currentNetworkId: string, accountPublicKeyHash: string) => {
-  return from(getTokenBalances(currentNetworkId, accountPublicKeyHash, 0)).pipe(
+export const loadTokensWithBalance$ = (accountPublicKeyHash: string) => {
+  return from(getTokenBalances(accountPublicKeyHash, 0)).pipe(
     switchMap(initialResponse => {
       if (initialResponse.data.total > size) {
         const numberOfAdditionalRequests = Math.floor(initialResponse.data.total / size);
@@ -21,7 +22,7 @@ export const loadTokensWithBalance$ = (currentNetworkId: string, accountPublicKe
         return forkJoin(
           new Array(numberOfAdditionalRequests)
             .fill(0)
-            .map((_, index) => getTokenBalances(currentNetworkId, accountPublicKeyHash, (index + 1) * size))
+            .map((_, index) => getTokenBalances(accountPublicKeyHash, (index + 1) * size))
         ).pipe(
           map(restResponses => [
             ...initialResponse.data.balances,
