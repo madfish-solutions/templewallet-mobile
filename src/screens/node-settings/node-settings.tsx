@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 
 import { HeaderBackButton } from '../../components/header/header-back-button/header-back-button';
@@ -8,36 +7,26 @@ import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-g
 import { RpcEnum } from '../../enums/rpc.enum';
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { RpcArray } from '../../utils/network/rpc-array';
-import { updateCurrentRpc } from '../../utils/network/rpc.utils';
+import { findRpcById, getRpcFromStorage, setRpcIdToStorage, updateCurrentRpc } from '../../utils/network/rpc.utils';
 
-const nodesButtons = RpcArray.map((item: RpcInterface) => ({
-  label: item.label,
-  value: item.id
+const nodesButtons = RpcArray.map((rpc: RpcInterface) => ({
+  label: rpc.label,
+  value: rpc.id
 }));
 
 export const NodeSettings = () => {
-  const [node, setNode] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
+  const [rpcId, setRpcId] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
 
-  const onChangeNodeHandler = (value: RpcEnum) => {
-    const selectedRpc = RpcArray.filter(item => item.id === value);
-    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentRpc(selectedRpc[0]));
-  };
+  const onChangeNodeHandler = (newRpcId: RpcEnum) =>
+    setRpcIdToStorage(newRpcId).then(() => updateCurrentRpc(findRpcById(newRpcId)));
 
-  useEffect(
-    () => void AsyncStorage.getItem('nodeInstance').then(data => setNode((data as RpcEnum) ?? RpcEnum.TEMPLE_DEFAULT)),
-    []
-  );
+  useEffect(() => void getRpcFromStorage().then(newRpc => setRpcId(newRpc.id)), []);
 
-  useNavigationSetOptions(
-    {
-      headerLeft: () => <HeaderBackButton />
-    },
-    []
-  );
+  useNavigationSetOptions({ headerLeft: () => <HeaderBackButton /> }, []);
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup onChange={onChangeNodeHandler} value={node} buttons={nodesButtons} />
+      <StyledRadioButtonsGroup onChange={onChangeNodeHandler} value={rpcId} buttons={nodesButtons} />
     </ScreenContainer>
   );
 };
