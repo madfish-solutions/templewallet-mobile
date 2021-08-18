@@ -1,6 +1,6 @@
 import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
-import * as Keychain from 'react-native-keychain';
+import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
@@ -48,7 +48,7 @@ export class Shelter {
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static _isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
+  static isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
   static lockApp = () => Shelter._password$.next(EMPTY_PASSWORD);
 
@@ -159,5 +159,6 @@ export class Shelter {
 
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
-  static isPasswordCorrect = (password: string) => password === Shelter._password$.getValue();
+  static isPasswordCorrect = (password: string) =>
+    password !== EMPTY_PASSWORD && password === Shelter._password$.getValue();
 }
