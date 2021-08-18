@@ -1,12 +1,12 @@
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { ScreensEnum } from '../../enums/screens.enum';
-import { useNavigation } from '../../hooks/use-navigation.hook';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { formatSize } from '../../../../styles/format-size';
+import { useColors } from '../../../../styles/use-colors';
+import { ScreensEnum } from '../../../enums/screens.enum';
+import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
 interface Props {
