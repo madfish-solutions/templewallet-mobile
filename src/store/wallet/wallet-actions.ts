@@ -40,5 +40,5 @@ export const approveInternalOperationRequestAction = createAction<ParamsWithKind
 );
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;
-  sender: string;
+  sender: AccountInterface;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');

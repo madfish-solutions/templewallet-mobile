@@ -6,7 +6,7 @@ import { EstimationInterface } from '../../../../interfaces/estimation.interface
 import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
-import { tezosToolkit$ } from '../../../../utils/network/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from '../../../../utils/network/tezos-toolkit.utils';
 
 export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
@@ -14,7 +14,9 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
 
   useEffect(() => {
     const subscription = from(
-      tezosToolkit$.getValue().estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash })))
+      createReadOnlyTezosToolkit(sender).estimate.batch(
+        opParams.map(param => ({ ...param, source: sender.publicKeyHash }))
+      )
     )
       .pipe(
         map(estimates =>

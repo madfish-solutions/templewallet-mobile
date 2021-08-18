@@ -18,7 +18,7 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { CURRENT_NETWORK_ID, tezosToolkit$ } from '../../utils/network/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/network/tezos-toolkit.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
@@ -111,10 +111,9 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
-    withLatestFrom(tezosToolkit$),
     withSelectedAccount(state$),
-    switchMap(([[{ token, receiverPublicKeyHash, amount }, tezosToolkit], selectedAccount]) =>
-      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount), tezosToolkit).pipe(
+    switchMap(([{ token, receiverPublicKeyHash, amount }, selectedAccount]) =>
+      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -135,7 +134,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
 
           return [
             navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash: hash, sender: sender.publicKeyHash }),
+            waitForOperationCompletionAction({ opHash: hash, sender }),
             addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
           ];
         }),
@@ -154,16 +153,15 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
-    withLatestFrom(tezosToolkit$),
-    switchMap(([{ opHash, sender }, tezosToolkit]) =>
-      from(tezosToolkit.operation.createOperation(opHash)).pipe(
+    switchMap(({ opHash, sender }) =>
+      from(createReadOnlyTezosToolkit(sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
-          loadTezosBalanceActions.submit(sender),
-          loadTokenBalancesActions.submit(sender),
-          loadActivityGroupsActions.submit(sender),
-          loadSelectedBakerActions.submit(sender)
+          loadTezosBalanceActions.submit(sender.publicKeyHash),
+          loadTokenBalancesActions.submit(sender.publicKeyHash),
+          loadActivityGroupsActions.submit(sender.publicKeyHash),
+          loadSelectedBakerActions.submit(sender.publicKeyHash)
         ]),
         catchError(err => {
           showErrorToast({ description: err.message });

@@ -1,4 +1,3 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { TransferParams } from '@taquito/taquito/dist/types/operations/types';
 import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
@@ -9,19 +8,19 @@ import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
+import { createReadOnlyTezosToolkit } from './network/tezos-toolkit.utils';
 import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
   token: TokenMetadataInterface,
   sender: WalletAccountInterface,
   receiverPublicKeyHash: string,
-  amount: BigNumber,
-  tezos: TezosToolkit
+  amount: BigNumber
 ): Observable<TransferParams> => {
   const { id, address, decimals } = token;
 
   return isString(address)
-    ? from(tezos.contract.at(address)).pipe(
+    ? from(createReadOnlyTezosToolkit(sender).contract.at(address)).pipe(
         map(contract =>
           getTokenType(contract) === TokenTypeEnum.FA_2
             ? contract.methods.transfer([

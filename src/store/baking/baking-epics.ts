@@ -7,16 +7,17 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { bakingBadApi } from '../../api.service';
 import { BakerInterface } from '../../interfaces/baker.interface';
 import { isDefined } from '../../utils/is-defined';
-import { tezosToolkit$ } from '../../utils/network/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
+import { withSelectedAccount } from '../../utils/wallet.utils';
+import { RootState } from '../create-store';
 import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
-const loadSelectedBakerAddressEpic = (action$: Observable<Action>) =>
+const loadSelectedBakerAddressEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
-    toPayload(),
-    withLatestFrom(tezosToolkit$),
-    switchMap(([address, tezosToolkit]) =>
-      from(tezosToolkit.rpc.getDelegate(address)).pipe(
+    withSelectedAccount(state$),
+    switchMap(([, selectedAccount]) =>
+      from(createReadOnlyTezosToolkit(selectedAccount).rpc.getDelegate(selectedAccount.publicKey)).pipe(
         filter(isDefined),
         switchMap(address => bakingBadApi.get<BakerInterface>(`/bakers/${address}`)),
         map(({ data }) => loadSelectedBakerActions.success(data)),
