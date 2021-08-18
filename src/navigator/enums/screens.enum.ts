@@ -76,6 +76,5 @@ export const settingsStackScreens = [
   ScreensEnum.ManageAccounts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings,
   ScreensEnum.SecureSettings
 ];

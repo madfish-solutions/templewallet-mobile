@@ -1,4 +1,4 @@
-import { RpcEnum } from '../enums/network.enum';
+import { RpcEnum } from '../enums/rpc.enum';
 
 export interface RpcInterface {
   id: RpcEnum;

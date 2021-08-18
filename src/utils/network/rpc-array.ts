@@ -1,7 +1,7 @@
-import { RpcEnum } from '../../enums/network.enum';
-import { RpcInterface } from '../../interfaces/network.interface';
+import { RpcEnum } from '../../enums/rpc.enum';
+import { RpcInterface } from '../../interfaces/rpc.interface';
 
-export const RPC: RpcInterface[] = [
+export const RpcArray: RpcInterface[] = [
   {
     id: RpcEnum.TEMPLE_DEFAULT,
     name: 'tezosMainnet',

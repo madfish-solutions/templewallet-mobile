@@ -26,8 +26,7 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
             minimalFeePerStorageByteMutez
           }))
         ),
-        catchError(err => {
-          console.log({ err });
+        catchError(() => {
           showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
 
           return of([]);

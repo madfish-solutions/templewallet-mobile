@@ -19,7 +19,7 @@ import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { seedToHDPrivateKey } from '../../../utils/keys.util';
+import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
 import {
   importAccountSeedInitialValues,
@@ -43,7 +43,10 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     const seed = mnemonicToSeedSync(values.seedPhrase);
-    const privateKey = seedToHDPrivateKey(seed, values.derivationType);
+    const privateKey = seedToHDPrivateKey(
+      seed,
+      values.derivationType === ImportAccountDerivationEnum.DEFAULT ? getDerivationPath(0) : values.derivationPath
+    );
     createImportedAccount({
       name: `Account ${accountsIndex}`,
       privateKey

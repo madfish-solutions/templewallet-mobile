@@ -6,9 +6,9 @@ import { Tzip16Module } from '@taquito/tzip16';
 import { useEffect } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-import { RpcEnum } from '../../enums/network.enum';
+import { RpcEnum } from '../../enums/rpc.enum';
 import { getFastRpcClient } from './fast-rpc';
-import { RPC } from './rpc-record';
+import { RpcArray } from './rpc-array';
 import { currentRpcUrl$, updateCurrentRpc } from './rpc.utils';
 
 export const CURRENT_NETWORK_ID = 'mainnet';
@@ -25,7 +25,7 @@ export const createTezosToolkit = (rpc: string) => {
 };
 
 export const tezosToolkit$ = new BehaviorSubject(
-  createTezosToolkit(RPC.filter(item => item.id === RpcEnum.TEMPLE_DEFAULT)[0].url)
+  createTezosToolkit(RpcArray.filter(item => item.id === RpcEnum.TEMPLE_DEFAULT)[0].url)
 );
 
 export const useUpdateTezosToolkit = () =>
@@ -34,7 +34,7 @@ export const useUpdateTezosToolkit = () =>
       tezosToolkit$.getValue().setRpcProvider(getFastRpcClient(rpc))
     );
     AsyncStorage.getItem('nodeInstance').then(data =>
-      updateCurrentRpc(RPC.filter(item => item.id === data ?? item.id === RpcEnum.TEMPLE_DEFAULT)[0])
+      updateCurrentRpc(RpcArray.filter(item => item.id === data ?? item.id === RpcEnum.TEMPLE_DEFAULT)[0])
     );
 
     return () => subscription.unsubscribe();

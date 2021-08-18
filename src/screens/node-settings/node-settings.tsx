@@ -5,12 +5,12 @@ import { HeaderBackButton } from '../../components/header/header-back-button/hea
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
-import { RpcEnum } from '../../enums/network.enum';
-import { RpcInterface } from '../../interfaces/network.interface';
-import { RPC } from '../../utils/network/rpc-record';
+import { RpcEnum } from '../../enums/rpc.enum';
+import { RpcInterface } from '../../interfaces/rpc.interface';
+import { RpcArray } from '../../utils/network/rpc-array';
 import { updateCurrentRpc } from '../../utils/network/rpc.utils';
 
-const nodesButtons = RPC.map((item: RpcInterface) => ({
+const nodesButtons = RpcArray.map((item: RpcInterface) => ({
   label: item.label,
   value: item.id
 }));
@@ -19,7 +19,7 @@ export const NodeSettings = () => {
   const [node, setNode] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
 
   const onChangeNodeHandler = (value: RpcEnum) => {
-    const selectedRpc = RPC.filter(item => item.id === value);
+    const selectedRpc = RpcArray.filter(item => item.id === value);
     AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentRpc(selectedRpc[0]));
   };
 
