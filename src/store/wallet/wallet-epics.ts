@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, concatMap, delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 

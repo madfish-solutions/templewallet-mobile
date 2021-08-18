@@ -1,8 +1,8 @@
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
-import { ofType, toPayload } from 'ts-action-operators';
+import { ofType } from 'ts-action-operators';
 
 import { bakingBadApi } from '../../api.service';
 import { BakerInterface } from '../../interfaces/baker.interface';

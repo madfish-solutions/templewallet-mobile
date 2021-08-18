@@ -1,4 +1,3 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { mockWalletAccount } from '../interfaces/wallet-account.interface.mock';
