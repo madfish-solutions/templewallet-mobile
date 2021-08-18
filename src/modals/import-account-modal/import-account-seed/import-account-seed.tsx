@@ -19,8 +19,7 @@ import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { isString } from '../../../utils/is-string';
-import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';
+import { seedToHDPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
 import {
   importAccountSeedInitialValues,
@@ -44,12 +43,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     const seed = mnemonicToSeedSync(values.seedPhrase);
-    const privateKey = seedToHDPrivateKey(
-      seed,
-      values.derivationType === ImportAccountDerivationEnum.DEFAULT || !isString(values.derivationPath)
-        ? getDerivationPath(0)
-        : values.derivationPath
-    );
+    const privateKey = seedToHDPrivateKey(seed, values.derivationType);
     createImportedAccount({
       name: `Account ${accountsIndex}`,
       privateKey
@@ -74,7 +68,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             <Label
               label="Derivation"
               isOptional
-              description={"By default derivation isn't used. Click on 'Custom derivation path' to add it."}
+              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
             />
             <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
             {values.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && (
@@ -87,7 +81,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             <Label
               label="Password"
               isOptional
-              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
+              description="Used for additional mnemonic derivation.\nThat is NOT a wallet password."
             />
             <FormPasswordInput name="password" />
             <Divider size={formatSize(12)} />

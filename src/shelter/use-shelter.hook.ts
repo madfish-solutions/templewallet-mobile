@@ -59,30 +59,19 @@ export const useShelter = () => {
       createImportedAccount$
         .pipe(
           switchMap(({ privateKey, name }) => {
-            return getPublicKeyAndHash$(privateKey)
-              .pipe(
-                switchMap(([publicKey]) => {
-                  for (const account of accounts) {
-                    if (account.publicKey === publicKey) {
-                      showWarningToast({ description: 'Account already exist' });
+            return getPublicKeyAndHash$(privateKey).pipe(
+              switchMap(([publicKey]) => {
+                for (const account of accounts) {
+                  if (account.publicKey === publicKey) {
+                    showWarningToast({ description: 'Account already exist' });
 
-                      return of(undefined);
-                    }
+                    return of(undefined);
                   }
+                }
 
-                  return Shelter.createImportedAccount$(privateKey, name);
-                })
-              )
-              .pipe(
-                catchError(() => {
-                  showErrorToast({
-                    title: 'Failed to import account.',
-                    description: 'This may happen because provided Key is invalid.'
-                  });
-
-                  return EMPTY;
-                })
-              );
+                return Shelter.createImportedAccount$(privateKey, name);
+              })
+            );
           })
         )
         .subscribe(publicData => {
@@ -91,6 +80,11 @@ export const useShelter = () => {
             dispatch(addHdAccountAction(publicData));
             showSuccessToast({ description: 'Account Imported!' });
             goBack();
+          } else {
+            showErrorToast({
+              title: 'Failed to import account.',
+              description: 'This may happen because provided Key is invalid.'
+            });
           }
         }),
 
