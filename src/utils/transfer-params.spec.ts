@@ -13,16 +13,8 @@ beforeEach(() => {
   mockFA2Contract.methods.transfer.mockReset();
 });
 
-const mockTezosToolkit = new TezosToolkit('mockRpcUrl');
-
 it('getTransferParams$ should create params for transferring TEZ', done => {
-  getTransferParams$(
-    TEZ_TOKEN_METADATA,
-    mockWalletAccount,
-    'receiverPublicKeyHash',
-    new BigNumber(0.005),
-    mockTezosToolkit
-  ).subscribe(
+  getTransferParams$(TEZ_TOKEN_METADATA, mockWalletAccount, 'receiverPublicKeyHash', new BigNumber(0.005)).subscribe(
     rxJsTestingHelper(params => {
       expect(params).toEqual({ amount: 5000, to: 'receiverPublicKeyHash', mutez: true });
     }, done)
@@ -32,13 +24,7 @@ it('getTransferParams$ should create params for transferring TEZ', done => {
 it('getTransferParams$ should create params for transferring FA1.2 tokens', done => {
   mockFA1_2Contract.methods.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
   mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA1_2Contract);
-  getTransferParams$(
-    mockFA1_2TokenMetadata,
-    mockWalletAccount,
-    'receiverPublicKeyHash',
-    new BigNumber(0.01),
-    mockTezosToolkit
-  ).subscribe(
+  getTransferParams$(mockFA1_2TokenMetadata, mockWalletAccount, 'receiverPublicKeyHash', new BigNumber(0.01)).subscribe(
     rxJsTestingHelper(() => {
       expect(mockFA1_2Contract.methods.transfer).toBeCalledWith(
         mockWalletAccount.publicKeyHash,
@@ -52,13 +38,7 @@ it('getTransferParams$ should create params for transferring FA1.2 tokens', done
 it('getTransferParams$ should create params for transferring FA2 tokens', done => {
   mockFA2Contract.methods.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
   mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA2Contract);
-  getTransferParams$(
-    mockFA2TokenMetadata,
-    mockWalletAccount,
-    'receiverPublicKeyHash',
-    new BigNumber(0.001),
-    mockTezosToolkit
-  ).subscribe(
+  getTransferParams$(mockFA2TokenMetadata, mockWalletAccount, 'receiverPublicKeyHash', new BigNumber(0.001)).subscribe(
     rxJsTestingHelper(() => {
       expect(mockFA2Contract.methods.transfer).toBeCalledWith([
         {
