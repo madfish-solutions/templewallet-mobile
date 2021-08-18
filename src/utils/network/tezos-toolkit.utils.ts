@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { localForger } from '@taquito/local-forging';
 import { TezosToolkit, MichelCodecPacker, CompositeForger, RpcForger } from '@taquito/taquito';
 import { Tzip12Module } from '@taquito/tzip12';
@@ -5,9 +6,10 @@ import { Tzip16Module } from '@taquito/tzip16';
 import { useEffect } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
+import { RpcEnum } from '../../enums/network.enum';
 import { getFastRpcClient } from './fast-rpc';
 import { RPC } from './rpc-record';
-import { currentRpcUrl$ } from './rpc.utils';
+import { currentRpcUrl$, updateCurrentRpc } from './rpc.utils';
 
 export const CURRENT_NETWORK_ID = 'mainnet';
 const michelEncoder = new MichelCodecPacker();
@@ -22,13 +24,17 @@ export const createTezosToolkit = (rpc: string) => {
   return tezosToolkit;
 };
 
-export const tezosToolkit$ = new BehaviorSubject(createTezosToolkit(RPC.TEMPLE_DEFAULT.url));
+export const tezosToolkit$ = new BehaviorSubject(
+  createTezosToolkit(RPC.filter(item => item.id === RpcEnum.TEMPLE_DEFAULT)[0].url)
+);
 
 export const useUpdateTezosToolkit = () =>
-
   useEffect(() => {
     const subscription = currentRpcUrl$.subscribe(rpc =>
       tezosToolkit$.getValue().setRpcProvider(getFastRpcClient(rpc))
+    );
+    AsyncStorage.getItem('nodeInstance').then(data =>
+      updateCurrentRpc(RPC.filter(item => item.id === data ?? item.id === RpcEnum.TEMPLE_DEFAULT)[0])
     );
 
     return () => subscription.unsubscribe();

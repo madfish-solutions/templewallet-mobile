@@ -6,19 +6,22 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { RpcEnum } from '../../enums/network.enum';
+import { RpcInterface } from '../../interfaces/network.interface';
 import { RPC } from '../../utils/network/rpc-record';
 import { updateCurrentRpc } from '../../utils/network/rpc.utils';
 
-const nodesButtons = Object.keys(RPC).map(item => ({
-  ...RPC[item],
-  value: RPC[item].id
+const nodesButtons = RPC.map((item: RpcInterface) => ({
+  label: item.label,
+  value: item.id
 }));
 
 export const NodeSettings = () => {
   const [node, setNode] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
 
-  const onChangeNodeHandler = (value: RpcEnum) =>
-    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentRpc(RPC[value]));
+  const onChangeNodeHandler = (value: RpcEnum) => {
+    const selectedRpc = RPC.filter(item => item.id === value);
+    AsyncStorage.setItem('nodeInstance', value).then(() => updateCurrentRpc(selectedRpc[0]));
+  };
 
   useEffect(
     () => void AsyncStorage.getItem('nodeInstance').then(data => setNode((data as RpcEnum) ?? RpcEnum.TEMPLE_DEFAULT)),

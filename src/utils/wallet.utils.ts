@@ -7,8 +7,8 @@ import { Shelter } from '../shelter/shelter';
 import { WalletRootState } from '../store/wallet/wallet-state';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
-import { createTezosToolkit } from './network/tezos-toolkit.utils';
 import { currentRpcUrl$ } from './network/rpc.utils';
+import { createTezosToolkit } from './network/tezos-toolkit.utils';
 
 export const withSelectedAccount =
   <T>(state$: Observable<WalletRootState>) =>
