@@ -1,9 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { FC } from 'react';
 
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,

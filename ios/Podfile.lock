@@ -279,6 +279,8 @@ PODS:
     - React-Core
   - react-native-flipper (0.87.0):
     - React-Core
+  - react-native-orientation-locker (1.3.1):
+    - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-safe-area-context (3.2.0):
@@ -359,7 +361,7 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNDeviceInfo (8.1.3):
+  - RNDeviceInfo (8.3.0):
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
@@ -431,6 +433,7 @@ DEPENDENCIES:
   - react-native-biometrics (from `../node_modules/react-native-biometrics`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
+  - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
@@ -521,6 +524,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
+  react-native-orientation-locker:
+    :path: "../node_modules/react-native-orientation-locker"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -618,6 +623,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 9d3306e5d29c3bc4e6a3c912d759a94e76a2f683
   react-native-camera: 7bf59f2728ffb019fa25e60a225d2c57e1a8f0f6
   react-native-flipper: a5770950f79017f17f50b316cb74b66d14192c79
+  react-native-orientation-locker: 998c0744e26624407dac068c04c605b4af7304a2
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
@@ -638,7 +644,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
   RNCClipboard: 245417a78ab585e0d4d83926c28907e7b2bc24bd
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNDeviceInfo: 8d3a29207835f972bce883723882980143270d55
+  RNDeviceInfo: 1c15bd65d0555a4246107dd9b5b9d9095aa6ad76
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027

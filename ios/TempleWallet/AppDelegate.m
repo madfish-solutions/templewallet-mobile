@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "Orientation.h"
 
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
@@ -87,6 +88,10 @@ static void InitializeFlipper(UIApplication *application) {
    options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
   return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+  return [Orientation getOrientation];
 }
 
 @end

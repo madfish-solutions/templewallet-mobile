@@ -1,35 +1,33 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { DebugTapListener } from '../../components/debug-tap-listener/debug-tap-listener';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
-import { CurrentRouteNameContext } from '../current-route-name.context';
+import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
+import { formatSize } from '../../../styles/format-size';
+import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
   ScreensEnum,
   settingsStackScreens,
   swapStackScreens,
   walletStackScreens
-} from '../enums/screens.enum';
+} from '../../enums/screens.enum';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
-const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
+interface Props {
+  currentRouteName: ScreensEnum;
+}
 
-export const TabBar: FC = () => {
+export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
-  const currentRouteName = useContext(CurrentRouteNameContext);
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
-  const isHidden = isDefined(currentRouteName) && screensWithoutTabBar.includes(currentRouteName);
-
-  return isHidden ? null : (
-    <View style={[styles.container]}>
+  return (
+    <View style={styles.container}>
       <View style={styles.buttonsContainer}>
         <TabBarButton
           label="Wallet"
