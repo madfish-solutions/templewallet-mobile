@@ -33,9 +33,9 @@ export const Wallet = () => {
   const tezosToken = useTezosTokenSelector();
 
   useEffect(() => {
-    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadTokenBalancesActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
   }, []);
 
   return (

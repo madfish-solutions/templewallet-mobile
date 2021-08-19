@@ -12,10 +12,10 @@ export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-
 
 // TODO: extract AssetsState
 export const loadTokenBalancesActions =
-  createActions<string, { balancesList: Array<string>; metadataList: TokenMetadataInterface[] }, string>(
+  createActions<void, { balancesList: Array<string>; metadataList: TokenMetadataInterface[] }, string>(
     'assets/LOAD_TOKENS'
   );
-export const loadTezosBalanceActions = createActions<string, string, string>('assets/LOAD_TEZOS');
+export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
 export const loadTokenSuggestionActions =
   createActions<Pick<TokenMetadataInterface, 'id' | 'address'>, TokenMetadataInterface, string>(
@@ -32,7 +32,7 @@ export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_T
 
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
 
-export const loadActivityGroupsActions = createActions<string, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
+export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
 
 export const approveInternalOperationRequestAction = createAction<ParamsWithKind[]>(
