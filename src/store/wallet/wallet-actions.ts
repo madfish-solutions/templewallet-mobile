@@ -12,7 +12,7 @@ export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-
 
 // TODO: extract AssetsState
 export const loadTokenBalancesActions =
-  createActions<void, { balancesList: Array<string>; metadataList: TokenMetadataInterface[] }, string>(
+  createActions<void, { balancesRecord: Record<string, string>; metadataList: TokenMetadataInterface[] }, string>(
     'assets/LOAD_TOKENS'
   );
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');

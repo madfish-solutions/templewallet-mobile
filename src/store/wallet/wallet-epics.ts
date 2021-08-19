@@ -1,5 +1,6 @@
 import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
@@ -15,7 +16,7 @@ import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/network/tezos-toolkit.utils';
@@ -29,7 +30,7 @@ import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils'
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import {
-  addPendingOperation,
+  addPendingOperation, addTokenMetadataAction,
   approveInternalOperationRequestAction,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -47,21 +48,23 @@ const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<Wal
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
-        switchMap(tokensWithBalance =>
-          forkJoin(
-            loadTokensBalances$(
-              selectedAccount.publicKeyHash,
-              tokensWithBalance.map(tokenWithBalance =>
-                getTokenSlug({
-                  address: tokenWithBalance.contract,
-                  id: tokenWithBalance.token_id
-                })
-              )
-            ),
+        switchMap(tokensWithBalance => {
+          const assetSlugs = uniq([
+            ...selectedAccount.tokensList.map(token => token.slug),
+            ...tokensWithBalance.map(tokenWithBalance =>
+              getTokenSlug({
+                address: tokenWithBalance.contract,
+                id: tokenWithBalance.token_id
+              })
+            )
+          ]);
+
+          return forkJoin(
+            loadTokensBalances$(selectedAccount.publicKeyHash, assetSlugs),
             loadTokensWithBalanceMetadata$(tokensWithBalance)
-          )
-        ),
-        map(([balancesList, metadataList]) => loadTokenBalancesActions.success({ balancesList, metadataList })),
+          );
+        }),
+        map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -73,8 +76,7 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Wa
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
       loadTokensBalances$(selectedAccount.publicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
-        map(data => data[0] ?? '0'),
-        map(balance => loadTezosBalanceActions.success(balance)),
+        map(balancesRecord => loadTezosBalanceActions.success(balancesRecord[TEZ_TOKEN_SLUG] ?? '0')),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )
@@ -197,6 +199,17 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
     )
   );
 
+const addTokenMetadataEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(addTokenMetadataAction),
+    concatMap(() => [
+      loadTezosBalanceActions.submit(),
+      loadTokenBalancesActions.submit(),
+      loadActivityGroupsActions.submit(),
+      loadSelectedBakerActions.submit()
+    ])
+  );
+
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
   loadTokenAssetsEpic,
@@ -205,5 +218,6 @@ export const walletEpics = combineEpics(
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
-  approveInternalOperationRequestEpic
+  approveInternalOperationRequestEpic,
+  addTokenMetadataEpic
 );

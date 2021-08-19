@@ -37,4 +37,20 @@ export const loadTokensWithBalance$ = (accountPublicKeyHash: string) => {
 };
 
 export const loadTokensBalances$ = (account: string, assetSlugs: string[]) =>
-  from(balancesApi.post<Array<string>>('/', { account, assetSlugs })).pipe(map(response => response.data));
+  from(
+    balancesApi.post<Array<string>>('/', {
+      account,
+      assetSlugs
+    })
+  ).pipe(
+    map(response => response.data),
+    map(balancesList => {
+      const balancesRecord: Record<string, string> = {};
+
+      for (let index = 0; index < assetSlugs.length; index++) {
+        balancesRecord[assetSlugs[index]] = balancesList[index] ?? '0';
+      }
+
+      return balancesRecord;
+    })
+  );

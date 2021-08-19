@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
@@ -20,9 +20,13 @@ import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const dispatch = useDispatch();
-  const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const tokensList = useTokensListSelector();
-  const updatedToken = tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(token)) ?? token;
+  const token = useMemo(
+    () =>
+      tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
+    [tokensList, initialToken]
+  );
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
@@ -43,7 +47,7 @@ export const TokenScreen = () => {
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons token={updatedToken} />
+        <HeaderCardActionButtons token={token} />
       </HeaderCard>
 
       <TokenScreenContentContainer

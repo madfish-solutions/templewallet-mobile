@@ -50,12 +50,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesList, metadataList } }) => {
-    const balancesRecord: Record<string, string> = {};
-    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata, index) => {
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesRecord, metadataList } }) => {
+    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata) => {
       const slug = getTokenSlug(tokenMetadata);
-
-      balancesRecord[slug] = balancesList[index] ?? '0';
 
       return {
         ...prevState,
