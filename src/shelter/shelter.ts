@@ -91,8 +91,8 @@ export class Shelter {
     );
   };
 
-  static createImportedAccount$ = (privateKey: string, name: string) => {
-    return getPublicKeyAndHash$(privateKey).pipe(
+  static createImportedAccount$ = (privateKey: string, name: string) =>
+    getPublicKeyAndHash$(privateKey).pipe(
       switchMap(([publicKey, publicKeyHash]) =>
         Shelter.saveSensitiveData$({
           [publicKeyHash]: privateKey
@@ -106,7 +106,6 @@ export class Shelter {
         )
       )
     );
-  };
 
   static createHdAccount$ = (name: string, accountIndex: number): Observable<AccountInterface | undefined> =>
     Shelter.revealSeedPhrase$().pipe(

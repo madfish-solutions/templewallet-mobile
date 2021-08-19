@@ -70,6 +70,14 @@ export const useShelter = () => {
                 }
 
                 return Shelter.createImportedAccount$(privateKey, name);
+              }),
+              catchError(() => {
+                showErrorToast({
+                  title: 'Failed to import account.',
+                  description: 'This may happen because provided Key is invalid.'
+                });
+
+                return of(undefined);
               })
             )
           )
@@ -80,11 +88,6 @@ export const useShelter = () => {
             dispatch(addHdAccountAction(publicData));
             showSuccessToast({ description: 'Account Imported!' });
             goBack();
-          } else {
-            showErrorToast({
-              title: 'Failed to import account.',
-              description: 'This may happen because provided Key is invalid.'
-            });
           }
         }),
 

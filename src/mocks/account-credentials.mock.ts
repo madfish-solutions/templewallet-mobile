@@ -15,3 +15,5 @@ export const mockHDAccountCredentials = {
   publicKey: mockAccountCredentials.publicKey,
   publicKeyHash: mockAccountCredentials.publicKeyHash
 };
+
+export const mockInvalidPrivateKey = 'mockInvalidPrivateKey';
