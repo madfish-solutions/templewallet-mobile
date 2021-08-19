@@ -1,3 +1,4 @@
+import './src/mocks/taquito-signer.mock';
 import { decode, encode } from 'base-64';
 import 'react-native-gesture-handler/jestSetup';
 
@@ -11,8 +12,6 @@ if (typeof atob === 'undefined') {
 
 import './src/mocks/mem.mock';
 import './src/mocks/crypto.mock';
-
-import './src/mocks/taquito-signer.mock';
 
 import './src/mocks/native-modules.mock';
 

@@ -59,8 +59,11 @@ export const useShelter = () => {
       createImportedAccount$
         .pipe(
           switchMap(({ privateKey, name }) => {
+            console.log('test good');
+
             return getPublicKeyAndHash$(privateKey).pipe(
               switchMap(([publicKey]) => {
+                console.log('pizda');
                 for (const account of accounts) {
                   if (account.publicKey === publicKey) {
                     showWarningToast({ description: 'Account already exist' });
@@ -70,7 +73,8 @@ export const useShelter = () => {
                 }
 
                 return Shelter.createImportedAccount$(privateKey, name);
-              })
+              }),
+              catchError(e => console.log({ e }))
             );
           })
         )

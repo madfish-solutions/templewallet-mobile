@@ -15,7 +15,7 @@ import {
   PASSWORD_CHECK_KEY,
   PASSWORD_STORAGE_KEY
 } from '../utils/keychain.utils';
-import { getDerivationPath, getPublicKeyAndHash$, seedToHDPrivateKey } from '../utils/keys.util';
+import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 
 const EMPTY_PASSWORD = '';
 
@@ -70,7 +70,7 @@ export class Shelter {
     Shelter._password$.next(password);
 
     const seed = mnemonicToSeedSync(seedPhrase);
-    const privateKey = seedToHDPrivateKey(seed, getDerivationPath(0));
+    const privateKey = seedToPrivateKey(seed, getDerivationPath(0));
 
     return getPublicKeyAndHash$(privateKey).pipe(
       switchMap(([publicKey, publicKeyHash]) =>
@@ -112,7 +112,7 @@ export class Shelter {
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
-        const privateKey = seedToHDPrivateKey(seed, getDerivationPath(accountIndex));
+        const privateKey = seedToPrivateKey(seed, getDerivationPath(accountIndex));
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>

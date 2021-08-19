@@ -1,20 +1,20 @@
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
-import { getDerivationPath, seedToHDPrivateKey, getPublicKeyAndHash$, generateSeed } from './keys.util';
+import { getDerivationPath, seedToPrivateKey, getPublicKeyAndHash$, generateSeed } from './keys.util';
 import { rxJsTestingHelper } from './testing.utis';
 
 it('getDerivationPath should return derivation path, passing account index', () => {
   expect(getDerivationPath(1)).toEqual(mockAccountCredentials.derivationPath);
 });
 
-it('seedToHDPrivateKey should return private key, passing seed and derivation path', () => {
+it('seedToPrivateKey should return private key, passing seed and derivation path', () => {
   expect(
-    seedToHDPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
+    seedToPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
   ).toEqual(mockAccountCredentials.privateKey);
 });
 
 it('seedToHDPrivateKey should return error, passing seed without derivation path', () => {
-  expect(() => seedToHDPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), '')).toThrow(
-    new Error('Invalid derivation path')
+  expect(seedToPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), '')).toEqual(
+    mockAccountCredentials.privateKeyWithoutDerivationPath
   );
 });
 
