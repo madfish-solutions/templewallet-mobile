@@ -122,4 +122,10 @@ describe('useShelter', () => {
     expect(mockShowSuccessToast).toBeCalledWith({ description: 'Account Imported!' });
     expect(mockGoBack).toBeCalled();
   });
+
+  it('should not create account with invalid private key', () => {
+    const { result } = renderHook(() => useShelter());
+    result.current.createImportedAccount({ privateKey: 'invalid privateKey', name: mockHdAccount.name });
+    expect(mockShelter.createImportedAccount$).not.toBeCalled();
+  });
 });

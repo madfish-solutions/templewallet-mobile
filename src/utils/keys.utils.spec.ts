@@ -12,7 +12,7 @@ it('seedToPrivateKey should return private key, passing seed and derivation path
   ).toEqual(mockAccountCredentials.privateKey);
 });
 
-it('seedToHDPrivateKey should return error, passing seed without derivation path', () => {
+it('seedToHDPrivateKey should return private key, passing seed without derivation path', () => {
   expect(seedToPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), '')).toEqual(
     mockAccountCredentials.privateKeyWithoutDerivationPath
   );

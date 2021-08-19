@@ -58,8 +58,8 @@ export const useShelter = () => {
         }),
       createImportedAccount$
         .pipe(
-          switchMap(({ privateKey, name }) => {
-            return getPublicKeyAndHash$(privateKey).pipe(
+          switchMap(({ privateKey, name }) =>
+            getPublicKeyAndHash$(privateKey).pipe(
               switchMap(([publicKey]) => {
                 for (const account of accounts) {
                   if (account.publicKey === publicKey) {
@@ -71,8 +71,8 @@ export const useShelter = () => {
 
                 return Shelter.createImportedAccount$(privateKey, name);
               })
-            );
-          })
+            )
+          )
         )
         .subscribe(publicData => {
           if (publicData !== undefined) {
