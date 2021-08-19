@@ -57,10 +57,10 @@ export const MainStackScreen = () => {
   useBeaconHandler();
 
   const initDataLoading = () => {
-    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadTokenBalancesActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
+    dispatch(loadSelectedBakerActions.submit());
   };
   const initExchangeRateLoading = () => {
     dispatch(loadExchangeRates.submit());

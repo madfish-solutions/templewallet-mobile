@@ -30,8 +30,8 @@ export const TokenScreen = () => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
   useEffect(() => {
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTokenBalancesActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
   }, []);
 
   useEffect(() => setSearchValue(token.address), [token]);

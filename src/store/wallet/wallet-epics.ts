@@ -41,16 +41,16 @@ import {
 } from './wallet-actions';
 import { WalletRootState } from './wallet-state';
 
-const loadTokenAssetsEpic = (action$: Observable<Action>) =>
+const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
-    toPayload(),
-    switchMap(accountPublicKeyHash =>
-      loadTokensWithBalance$(accountPublicKeyHash).pipe(
+    withSelectedAccount(state$),
+    switchMap(([, selectedAccount]) =>
+      loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
         switchMap(tokensWithBalance =>
           forkJoin(
             loadTokensBalances$(
-              accountPublicKeyHash,
+              selectedAccount.publicKeyHash,
               tokensWithBalance.map(tokenWithBalance =>
                 getTokenSlug({
                   address: tokenWithBalance.contract,
@@ -67,12 +67,12 @@ const loadTokenAssetsEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTezosBalanceEpic = (action$: Observable<Action>) =>
+const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
-    toPayload(),
-    switchMap(accountPublicKeyHash =>
-      loadTokensBalances$(accountPublicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
+    withSelectedAccount(state$),
+    switchMap(([, selectedAccount]) =>
+      loadTokensBalances$(selectedAccount.publicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
         map(data => data[0] ?? '0'),
         map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
@@ -158,10 +158,10 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
         switchMap(operation => operation.confirmation(1)),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
-          loadTezosBalanceActions.submit(sender.publicKeyHash),
-          loadTokenBalancesActions.submit(sender.publicKeyHash),
-          loadActivityGroupsActions.submit(sender.publicKeyHash),
-          loadSelectedBakerActions.submit(sender.publicKeyHash)
+          loadTezosBalanceActions.submit(),
+          loadTokenBalancesActions.submit(),
+          loadActivityGroupsActions.submit(),
+          loadSelectedBakerActions.submit()
         ]),
         catchError(err => {
           showErrorToast({ description: err.message });
@@ -172,23 +172,23 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadActivityGroupsEpic = (action$: Observable<Action>) =>
+const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
-    toPayload(),
-    switchMap(accountPublicKeyHash =>
+    withSelectedAccount(state$),
+    switchMap(([, selectedAccount]) =>
       forkJoin([
         from(
           tzktApi.get<OperationInterface[]>(
-            `accounts/${accountPublicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
+            `accounts/${selectedAccount.publicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
           )
-        ).pipe(map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))),
+        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
         from(
           betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${CURRENT_NETWORK_ID}/transfers/${accountPublicKeyHash}`,
+            `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
             { params: { max: 100, start: 0 } }
           )
-        ).pipe(map(({ data }) => mapTransfersToActivities(accountPublicKeyHash, data.transfers)))
+        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),

@@ -19,9 +19,9 @@ export const TezosTokenScreen = () => {
   const tezosToken = useTezosTokenSelector();
 
   useEffect(() => {
-    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadSelectedBakerActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
+    dispatch(loadSelectedBakerActions.submit());
   }, []);
 
   return (
