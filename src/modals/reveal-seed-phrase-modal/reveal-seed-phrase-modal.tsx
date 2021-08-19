@@ -3,8 +3,9 @@ import { Formik } from 'formik';
 import React from 'react';
 
 import { emptyFn } from '../../config/general';
+import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useHdAccountListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
 import {
   RevealSeedPhraseModalFormValues,
@@ -13,7 +14,10 @@ import {
 
 export const RevealSeedPhraseModal = () => {
   const selectedAccount = useSelectedAccountSelector();
-  const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account ?? selectedAccount;
+  const hdAccounts = useHdAccountListSelector();
+  const selectedHdAccount = selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
+  const account =
+    useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account ?? selectedHdAccount;
 
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
     account,

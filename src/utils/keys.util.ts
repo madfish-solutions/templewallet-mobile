@@ -7,12 +7,17 @@ import { forkJoin, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { generateRandomValues } from './crypto.util';
+import { isString } from './is-string';
 
 const TEZOS_BIP44_COINTYPE = 1729;
 
 export const trimSeed = (seed: string) => seed.replace(/\n/g, ' ').trim();
 
-const seedToPrivateKey = (seed: Buffer) => b58cencode(seed.slice(0, 32), prefix.edsk2);
+export const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
+  const derivedSeed = isString(derivationPath) ? deriveSeed(seed, derivationPath) : seed;
+
+  return b58cencode(derivedSeed.slice(0, 32), prefix.edsk2);
+};
 
 const deriveSeed = (seed: Buffer, derivationPath: string) => {
   try {
@@ -25,9 +30,6 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
 };
 
 export const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
-
-export const seedToHDPrivateKey = (seed: Buffer, derivationPath: string) =>
-  seedToPrivateKey(deriveSeed(seed, derivationPath));
 
 export const getPublicKeyAndHash$ = (privateKey: string) =>
   from(InMemorySigner.fromSecretKey(privateKey)).pipe(

@@ -1,15 +1,16 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { mockHdAccount } from '../interfaces/account.interface.mock';
-import { mockAccountCredentials } from '../mocks/account-credentials.mock';
+import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { mockGoBack, mockNavigate } from '../mocks/react-navigation.mock';
 import { mockUseDispatch } from '../mocks/react-redux.mock';
+import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
-import { mockShowErrorToast, mockShowSuccessToast } from '../toast/toast.utils.mock';
+import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
 
@@ -28,6 +29,7 @@ describe('useShelter', () => {
     mockNavigate.mockClear();
     mockShowErrorToast.mockClear();
     mockShowSuccessToast.mockClear();
+    mockShowWarningToast.mockClear();
   });
 
   it('should import wallet', () => {
@@ -108,9 +110,11 @@ describe('useShelter', () => {
   });
 
   it('should create imported account', () => {
+    mockInMemorySigner.publicKey.mockReturnValueOnce(Promise.resolve('another public key'));
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
+    jest.runAllTimers();
 
     expect(mockShelter.createImportedAccount$).toBeCalledWith(mockAccountCredentials.privateKey, mockHdAccount.name);
 
@@ -118,5 +122,30 @@ describe('useShelter', () => {
     expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toBeCalledWith({ description: 'Account Imported!' });
     expect(mockGoBack).toBeCalled();
+  });
+
+  it('should not create account with invalid private key', () => {
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccount({ privateKey: mockInvalidPrivateKey, name: mockHdAccount.name });
+    jest.runAllTimers();
+
+    expect(mockShelter.createImportedAccount$).not.toBeCalled();
+
+    expect(mockShowErrorToast).toBeCalledWith({
+      title: 'Failed to import account.',
+      description: 'This may happen because provided Key is invalid.'
+    });
+  });
+
+  it('should show error toast while creating the same account', () => {
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
+    jest.runAllTimers();
+
+    expect(mockShelter.createImportedAccount$).not.toBeCalled();
+
+    expect(mockShowWarningToast).toBeCalledWith({ description: 'Account already exist' });
   });
 });
