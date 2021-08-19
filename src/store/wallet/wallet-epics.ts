@@ -30,7 +30,8 @@ import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils'
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import {
-  addPendingOperation, addTokenMetadataAction,
+  addPendingOperation,
+  addTokenMetadataAction,
   approveInternalOperationRequestAction,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
