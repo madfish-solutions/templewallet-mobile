@@ -1,6 +1,6 @@
 import { mockAccountCredentials } from './account-credentials.mock';
 
-const mockInMemorySigner = {
+export const mockInMemorySigner = {
   secretKey: jest.fn(() => Promise.resolve(mockAccountCredentials.privateKey)),
   publicKey: jest.fn(() => Promise.resolve(mockAccountCredentials.publicKey)),
   publicKeyHash: jest.fn(() => Promise.resolve(mockAccountCredentials.publicKeyHash))

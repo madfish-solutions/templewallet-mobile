@@ -4,7 +4,7 @@ import { entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import { derivePath } from 'ed25519-hd-key';
 import { forkJoin, from } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { generateRandomValues } from './crypto.util';
 import { isString } from './is-string';
@@ -31,16 +31,10 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
 
 export const getDerivationPath = (accountIndex: number) => `m/44'/${TEZOS_BIP44_COINTYPE}'/${accountIndex}'/0'`;
 
-export const getPublicKeyAndHash$ = async (privateKey: string) => {
-  console.log('getPublicKeyAndHash$')
-  await InMemorySigner.fromSecretKey(privateKey)
-    .then(data => console.log({ data }))
-    .catch(e => console.log({ e }));
-
-  return from(InMemorySigner.fromSecretKey(privateKey)).pipe(
+export const getPublicKeyAndHash$ = (privateKey: string) =>
+  from(InMemorySigner.fromSecretKey(privateKey)).pipe(
     switchMap(signer => forkJoin([signer.publicKey(), signer.publicKeyHash()]))
   );
-};
 
 export const generateSeed = () => {
   const entropy = generateRandomValues();

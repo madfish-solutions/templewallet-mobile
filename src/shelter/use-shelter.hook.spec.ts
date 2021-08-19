@@ -5,6 +5,7 @@ import { mockAccountCredentials } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { mockGoBack, mockNavigate } from '../mocks/react-navigation.mock';
 import { mockUseDispatch } from '../mocks/react-redux.mock';
+import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
@@ -108,10 +109,12 @@ describe('useShelter', () => {
   });
 
   it('should create imported account', () => {
+    mockInMemorySigner.publicKey.mockReturnValue(Promise.resolve('another public key'));
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
 
+    jest.runAllTimers();
     expect(mockShelter.createImportedAccount$).toBeCalledWith(mockAccountCredentials.privateKey, mockHdAccount.name);
 
     expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
