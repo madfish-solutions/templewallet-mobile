@@ -16,7 +16,7 @@ import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-
 import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
+import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
 import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
 import { createReadOnlyTezosToolkit } from '../../../utils/network/tezos-toolkit.utils';
 import {
@@ -48,7 +48,8 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
           dispatch(loadTokenSuggestionActions.submit(token));
           onFormSubmitted();
         }
-      });
+      })
+      .catch(() => showWarningToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' }));
   };
 
   return (
