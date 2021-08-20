@@ -26,8 +26,8 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
-      ? 'You need to have TEZ to pay gas fee'
-      : 'Balance is zero';
+      ? 'you need to have TEZ to pay gas fee'
+      : 'balance is zero';
 
   const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
 

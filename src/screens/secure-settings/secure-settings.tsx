@@ -19,7 +19,7 @@ import { isDefined } from '../../utils/is-defined';
 export const SecureSettings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const { biometryType } = useBiometryAvailability();
+  const { isHardwareAvailable, biometryType } = useBiometryAvailability();
 
   const biometricsEnabled = useBiometricsEnabledSelector();
   const isBalanceHiddenSetting = useBalanceHiddenSelector();
@@ -36,13 +36,17 @@ export const SecureSettings = () => {
 
   return (
     <ScreenContainer>
-      <Divider size={formatSize(8)} />
-      <WhiteContainer>
-        <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
-          <WhiteContainerText text={biometryType ?? 'Biometrics'} />
-          <Switch value={isBiometryAvailable} onChange={handleBiometrySwitch} />
-        </WhiteContainerAction>
-      </WhiteContainer>
+      {isHardwareAvailable && (
+        <>
+          <Divider size={formatSize(8)} />
+          <WhiteContainer>
+            <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
+              <WhiteContainerText text={biometryType ?? 'Biometrics'} />
+              <Switch value={isBiometryAvailable} onChange={handleBiometrySwitch} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+        </>
+      )}
       <Divider size={formatSize(8)} />
       <WhiteContainer>
         <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
