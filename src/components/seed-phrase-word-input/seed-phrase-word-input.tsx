@@ -29,6 +29,7 @@ export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, p
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(inputName)}
         style={styles.wordInput}
+        textAlign="center"
       />
     </View>
   );
