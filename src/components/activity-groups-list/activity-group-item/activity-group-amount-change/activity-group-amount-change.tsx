@@ -13,6 +13,7 @@ import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { isString } from '../../../../utils/is-string';
 import { formatAssetAmount, roundFiat } from '../../../../utils/number.util';
+import { getTruncatedProps } from '../../../../utils/style.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
@@ -72,7 +73,9 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
   return (
     <View style={styles.container}>
       {nonZeroAmounts.amounts.map(({ parsedAmount, isPositive, symbol }, index) => (
-        <Text key={index} style={[styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)]}>
+        <Text
+          key={index}
+          {...getTruncatedProps([styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)])}>
           {isPositive && '+'}
           {formatAssetAmount(parsedAmount)} {symbol}
         </Text>

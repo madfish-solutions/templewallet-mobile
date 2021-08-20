@@ -19,4 +19,4 @@ export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 
-export const isKTAddress = (address: string) => isValidAddress(address) && address.startsWith('KT');
+export const isKTAddress = (address: string) => address.startsWith('KT');

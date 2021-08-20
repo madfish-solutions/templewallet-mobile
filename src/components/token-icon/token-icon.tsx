@@ -5,6 +5,7 @@ import { formatSize } from '../../styles/format-size';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
+import { isString } from '../../utils/is-string';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
@@ -21,7 +22,7 @@ export const TokenIcon: FC<Props> = ({ token }) => {
     <View style={TokenIconStyles.container}>
       {isDefined(iconName) ? (
         <Icon name={iconName} size={size} />
-      ) : isDefined(iconUrl) ? (
+      ) : isString(iconUrl) ? (
         <Image source={{ uri: formatImgUri(iconUrl), width: size, height: size }} />
       ) : (
         <Icon name={IconNameEnum.NoNameToken} size={size} />
