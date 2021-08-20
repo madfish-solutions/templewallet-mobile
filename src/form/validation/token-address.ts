@@ -9,5 +9,5 @@ const invalidKTAddressError = 'Only KT... contract address allowed';
 
 export const tokenAddressValidation = string()
   .required(makeRequiredErrorMessage('Address'))
-  .test('is-valid-address', invalidAddressError, value => (isDefined(value) ? isValidAddress(value) : false))
-  .test('is-kt-address', invalidKTAddressError, value => (isDefined(value) ? isKTAddress(value) : false));
+  .test('is-kt-address', invalidKTAddressError, value => (isDefined(value) ? isKTAddress(value) : false))
+  .test('is-valid-address', invalidAddressError, value => (isDefined(value) ? isValidAddress(value) : false));

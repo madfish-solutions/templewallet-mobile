@@ -81,7 +81,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             <Label
               label="Password"
               isOptional
-              description="Used for additional mnemonic derivation.\nThat is NOT a wallet password."
+              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
             />
             <FormPasswordInput name="password" />
             <Divider size={formatSize(12)} />

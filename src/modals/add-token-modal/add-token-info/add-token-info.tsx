@@ -61,7 +61,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
             />
             <FormNumericInput name="decimals" decimals={0} />
 
-            <Label label="Icon URL" description="Image URL for token logo." />
+            <Label label="Icon URL" description="Image URL for token logo." isOptional={true} />
             <FormTextInput name="iconUrl" />
 
             <Divider />
@@ -69,7 +69,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Cancel" onPress={onCancelButtonPress} />
+              <ButtonLargeSecondary title="Back" onPress={onCancelButtonPress} />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary title="Confirm" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>

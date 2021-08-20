@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { TokenMetadataInterface } from '../../../token/interfaces/token-metadata.interface';
 import { isString } from '../../../utils/is-string';
+import { getTruncatedProps } from '../../../utils/style.util';
 import { TokenIcon } from '../../token-icon/token-icon';
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
@@ -19,7 +20,7 @@ export const HeaderTokenInfo: FC<Props> = ({ token }) => {
   return (
     <View style={styles.container}>
       <TokenIcon token={token} />
-      <Text style={styles.text}>{title}</Text>
+      <Text {...getTruncatedProps(styles.text)}>{title}</Text>
     </View>
   );
 };

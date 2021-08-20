@@ -7,27 +7,26 @@ import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 export const getTokenSlug = <T extends { address?: string; id?: number }>({ address, id }: T) =>
   isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;
 
-// TODO: validate added token address & id on Add Token Modal
-export const validateToken = (tokenType: TokenTypeEnum) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const assertions = TokenMethodsAssertionsMap[tokenType];
-};
-
-export const getTokenType = (contract: ContractType) => {
-  const assertions = TokenMethodsAssertionsMap[TokenTypeEnum.FA_2];
-
+const assertTokenContractType = (contract: ContractType, tokenType: TokenTypeEnum) => {
   try {
-    for (const assertion of assertions) {
+    for (const assertion of TokenMethodsAssertionsMap[tokenType]) {
       const { name, assertionFn } = assertion;
 
       if (typeof contract.methods[name] !== 'function') {
         throw new Error(`'${name}' method isn't defined in contract`);
       }
+
       assertionFn(contract);
     }
 
-    return TokenTypeEnum.FA_2;
+    return true;
   } catch {
-    return TokenTypeEnum.FA_1_2;
+    return false;
   }
 };
+
+export const isValidTokenContract = (contract: ContractType) =>
+  assertTokenContractType(contract, TokenTypeEnum.FA_1_2) || assertTokenContractType(contract, TokenTypeEnum.FA_2);
+
+export const getTokenType = (tokenContract: ContractType) =>
+  assertTokenContractType(tokenContract, TokenTypeEnum.FA_2) ? TokenTypeEnum.FA_2 : TokenTypeEnum.FA_1_2;
