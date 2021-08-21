@@ -1,36 +1,36 @@
-import { BigNumber } from 'bignumber.js';
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
-import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { walletAddressValidation } from '../../form/validation/wallet-address';
+import { TokenAmountInputValue } from '../../interfaces/token-amount-input-value.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { isDefined } from '../../utils/is-defined';
 
 export interface SendModalFormValues {
-  token: TokenInterface;
   receiverPublicKeyHash: string;
-  amount?: BigNumber;
+  amount: TokenAmountInputValue;
   ownAccount: WalletAccountInterface;
   transferBetweenOwnAccounts: boolean;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
       value ? schema : walletAddressValidation
     )
     .ensure(),
-  amount: bigNumberValidation
-    .clone()
+  amount: object()
+    .shape({})
     .required(makeRequiredErrorMessage('Amount'))
-    .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-      if (value instanceof BigNumber) {
-        return value.gt(0);
-      }
+    .test(
+      'required',
+      makeRequiredErrorMessage('Amount'),
+      (value?: TokenAmountInputValue) => isDefined(value?.token) && isDefined(value?.amount)
+    )
+    .test('positive', 'Amount must be positive', (value?: TokenAmountInputValue) => {
+      const amount = value?.amount;
 
-      return false;
+      return isDefined(amount) && amount.gt(0);
     }),
   ownAccount: object()
     .shape({})

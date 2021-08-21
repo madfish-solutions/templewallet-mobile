@@ -1,28 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 
 export const useFilteredTokenList = (tokensList: TokenInterface[], initialIsHideZeroBalance = false) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
-  const [nonZeroBalanceTokenList, setNonZeroBalanceTokenList] = useState<TokenInterface[]>([]);
 
   const [searchValue, setSearchValue] = useState<string>();
-  const [filteredTokensList, setFilteredTokensList] = useState<TokenInterface[]>([]);
 
-  useEffect(() => {
-    const result: TokenInterface[] = [];
+  const nonZeroBalanceTokenList = useMemo(() => tokensList.filter(({ balance }) => balance !== '0'), [tokensList]);
 
-    for (const token of tokensList) {
-      if (token.balance !== '0') {
-        result.push(token);
-      }
-    }
-
-    setNonZeroBalanceTokenList(result);
-  }, [tokensList]);
-
-  useEffect(() => {
+  const filteredTokensList = useMemo(() => {
     const sourceArray = isHideZeroBalance ? nonZeroBalanceTokenList : tokensList;
 
     if (isString(searchValue)) {
@@ -41,10 +29,10 @@ export const useFilteredTokenList = (tokensList: TokenInterface[], initialIsHide
         }
       }
 
-      setFilteredTokensList(result);
-    } else {
-      setFilteredTokensList(sourceArray);
+      return result;
     }
+
+    return sourceArray;
   }, [isHideZeroBalance, searchValue, tokensList, nonZeroBalanceTokenList]);
 
   return {
