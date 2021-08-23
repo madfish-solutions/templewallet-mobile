@@ -56,7 +56,7 @@
     "mem": "^8.1.1",
     "path-browserify": "^0.0.0",
     "react": "17.0.1",
-    "react-native": "0.65.1",
+    "react-native": "0.64.0",
     "react-native-aes-crypto": "^1.3.10",
     "react-native-android-open-settings": "^1.3.0",
     "react-native-biometrics": "^2.1.4",
