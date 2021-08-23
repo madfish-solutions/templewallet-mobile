@@ -38,6 +38,10 @@ export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues
 
     const parts = p.replace('m', '').split('/').filter(Boolean);
 
+    if (parts.length < 4) {
+      return false;
+    }
+
     return parts.every((p: string) => {
       const pNum = +(p.includes("'") ? p.replace("'", '') : p);
 

@@ -36,7 +36,6 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     const seed = mnemonicToSeedSync(values.seedPhrase);
-    console.log({ values });
     const privateKey = seedToPrivateKey(seed, values.derivationPath);
     createImportedAccount({
       name: `Account ${accountsIndex}`,
