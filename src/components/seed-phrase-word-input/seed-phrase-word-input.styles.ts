@@ -9,8 +9,10 @@ export const useSeedPhraseWordInputStyles = createUseStylesConfig(({ colors, typ
     width: formatSize(108),
     minHeight: formatSize(48),
     height: formatSize(48),
-    paddingRight: formatSize(12),
-    textAlign: 'center',
+    paddingRight: formatSize(4),
+    paddingTop: formatSize(8),
+    paddingBottom: formatSize(8),
+    paddingLeft: formatSize(0),
     ...typography.body15Semibold
   },
   title: {
