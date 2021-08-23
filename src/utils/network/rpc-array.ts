@@ -25,9 +25,9 @@ export const RpcArray: RpcInterface[] = [
   },
   {
     id: RpcEnum.BLOCK_SCALE_NODE,
-    label: 'BlockScale Node',
-    name: 'Blockscale',
-    description: 'Blockscale node',
+    label: 'TZ Beta Node',
+    name: 'tzBetaNode',
+    description: 'TZ Beta Node',
     url: 'https://rpc.tzbeta.net/'
   }
 ];
