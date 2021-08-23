@@ -2,7 +2,7 @@ import { createUseStyles } from '../../styles/create-use-styles';
 
 export const useScanQrCodeStyles = createUseStyles(() => ({
   camera: {
-    minHeight: '100%',
-    minWidth: '100%'
+    maxHeight: '100%',
+    maxWidth: '100%'
   }
 }));
