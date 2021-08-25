@@ -1,10 +1,11 @@
 import React from 'react';
 import { Text, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { MadeWithLove } from '../../components/made-with-love/made-with-love';
+import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { WhiteContainer } from '../../components/white-container/white-container';
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
@@ -72,7 +73,8 @@ export const About = () => {
       </View>
 
       <View>
-        <MadeWithLove />
+        {!isTablet && <OctopusWithLove />}
+
         <Divider size={formatSize(16)} />
         <Text style={styles.openSourceText}>
           <Text style={styles.templeWalletText}>Temple Wallet</Text> - Open Source Project
