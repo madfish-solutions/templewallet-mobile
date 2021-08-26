@@ -29,6 +29,7 @@ const navigateEpic = (action$: Observable<Action>) =>
     ofType(untypedNavigateAction),
     toPayload(),
     concatMap(navigationArgs => {
+      // @ts-ignore
       globalNavigationRef.current?.navigate(...navigationArgs);
 
       return EMPTY;

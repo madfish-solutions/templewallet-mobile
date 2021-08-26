@@ -4,11 +4,7 @@ import { formatSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';
 import { useColors } from '../../styles/use-colors';
 
-type StackNavigatorStyleOptions = Required<
-  Pick<StackNavigationOptions, 'headerStyle' | 'headerTitleStyle' | 'cardStyle'>
->;
-
-export const useStackNavigatorStyleOptions = (): StackNavigatorStyleOptions => {
+export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
   const colors = useColors();
 
   return {
