@@ -25,14 +25,14 @@ interface DelegateParamPreviewInterface extends ParamPreviewBaseInterface {
   baker: string;
 }
 
-interface FA1_2ApproveParamPreviewInterface extends ParamPreviewBaseInterface {
+export interface FA1_2ApproveParamPreviewInterface extends ParamPreviewBaseInterface {
   type: ParamPreviewTypeEnum.FA1_2Approve;
   asset: Asset;
   approveTo: string;
   amount: string;
 }
 
-interface ContractCallParamPreviewInterface extends ParamPreviewBaseInterface {
+export interface ContractCallParamPreviewInterface extends ParamPreviewBaseInterface {
   type: ParamPreviewTypeEnum.ContractCall;
   contract: string;
   entrypoint: string;
@@ -45,7 +45,7 @@ interface OtherParamPreviewInterface extends ParamPreviewBaseInterface {
 }
 
 // TODO: replace this type with AssetMetadataInterface
-type Asset = 'tez' | Token;
+export type Asset = 'tez' | Token;
 
 export interface Token {
   contract: string;

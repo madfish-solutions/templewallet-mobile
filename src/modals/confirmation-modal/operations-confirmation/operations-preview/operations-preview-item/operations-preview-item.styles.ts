@@ -6,9 +6,6 @@ import { generateShadow } from '../../../../../styles/generate-shadow';
 export const useOperationsPreviewItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     ...generateShadow(1, black),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     padding: formatSize(8),
     borderRadius: formatSize(10),
     backgroundColor: colors.cardBG
@@ -20,5 +17,21 @@ export const useOperationsPreviewItemStyles = createUseStyles(({ colors, typogra
   description: {
     ...typography.caption13Regular,
     color: colors.black
+  },
+  contentWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  amountToken: {
+    ...typography.numbersRegular17,
+    color: colors.destructive,
+    textAlign: 'right'
+  },
+  amountDollar: {
+    ...typography.numbersRegular11,
+    color: colors.destructive,
+    textAlign: 'right'
   }
+
 }));
