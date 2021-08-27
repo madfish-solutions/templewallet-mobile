@@ -10,6 +10,7 @@ import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
+import { TokenIcon } from '../../token-icon/token-icon';
 import { TokenValueText } from '../../token-value-text/token-value-text';
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
@@ -21,12 +22,12 @@ interface Props {
 export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconName }) => {
   const styles = useTokenDropdownItemStyles();
 
-  const { symbol, name, iconName = IconNameEnum.NoNameToken } = token;
+  const { symbol, name } = token;
 
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        <Icon name={iconName} size={formatSize(40)} />
+        <TokenIcon token={token} size={formatSize(40)} />
         <Divider size={formatSize(8)} />
         <View>
           <Text style={styles.symbol}>{symbol}</Text>

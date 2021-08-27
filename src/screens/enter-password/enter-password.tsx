@@ -13,6 +13,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { isAndroid } from '../../config/system';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
@@ -40,7 +41,10 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
-  useEffect(() => void (isBiometryAvailable && unlockWithBiometry()), [isBiometryAvailable]);
+  useEffect(
+    () => void (isBiometryAvailable && setTimeout(() => unlockWithBiometry(), isAndroid ? 2500 : 0)),
+    [isBiometryAvailable]
+  );
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>

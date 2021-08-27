@@ -7,6 +7,7 @@ import { Portal } from '@gorhom/portal';
 import { max } from 'lodash-es';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { BackHandler, Text, View } from 'react-native';
+import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { emptyComponent } from '../../config/general';
@@ -51,6 +52,8 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
       return () => backHandler.remove();
     }
   }, [isOpened]);
+
+  useOrientationChange(() => controller.close());
 
   return (
     <Portal>

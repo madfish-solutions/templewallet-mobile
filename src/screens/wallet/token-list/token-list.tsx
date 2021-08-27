@@ -53,7 +53,7 @@ export const TokenList: FC = () => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
+      <ScreenContainer isFullScreenMode={true} contentContainerStyle={styles.contentContainerStyle}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (
