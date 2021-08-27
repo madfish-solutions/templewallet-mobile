@@ -116,8 +116,8 @@ export const Settings = () => {
           </TouchableOpacity>
           <Divider />
         </View>
-
-        {!isTablet && <OctopusWithLove />}
+        {console.log(isTablet())}
+        {!isTablet() && <OctopusWithLove />}
       </ScreenContainer>
     </>
   );
