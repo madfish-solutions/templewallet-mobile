@@ -25,14 +25,14 @@ interface DelegateParamPreviewInterface extends ParamPreviewBaseInterface {
   baker: string;
 }
 
-export interface FA1_2ApproveParamPreviewInterface extends ParamPreviewBaseInterface {
+interface FA1_2ApproveParamPreviewInterface extends ParamPreviewBaseInterface {
   type: ParamPreviewTypeEnum.FA1_2Approve;
   asset: Asset;
   approveTo: string;
   amount: string;
 }
 
-export interface ContractCallParamPreviewInterface extends ParamPreviewBaseInterface {
+interface ContractCallParamPreviewInterface extends ParamPreviewBaseInterface {
   type: ParamPreviewTypeEnum.ContractCall;
   contract: string;
   entrypoint: string;

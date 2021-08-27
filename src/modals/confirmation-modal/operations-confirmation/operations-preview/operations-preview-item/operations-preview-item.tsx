@@ -39,7 +39,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
   const exchangeRates = useExchangeRatesSelector();
-  const formatAmount = (params: ParamsPreviewDataInterface) => {
+  const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const contract = () => {
       if (params.contract && params.type !== ParamPreviewTypeEnum.ContractCall) {
         return params.contract;
@@ -80,7 +80,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             iconSeed: paramPreview.approveTo,
             description: 'Approve to',
             hash: paramPreview.approveTo,
-            amount: formatAmount(paramPreview)
+            amount: formattedAmount(paramPreview)
           }
         ];
       case ParamPreviewTypeEnum.ContractCall:
@@ -89,7 +89,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             iconSeed: paramPreview.contract,
             description: `${paramPreview.entrypoint} method call`,
             hash: paramPreview.contract,
-            amount: formatAmount(paramPreview)
+            amount: formattedAmount(paramPreview)
           }
         ];
       case ParamPreviewTypeEnum.Other:
