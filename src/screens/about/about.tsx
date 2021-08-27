@@ -73,7 +73,7 @@ export const About = () => {
       </View>
 
       <View>
-        {!isTablet && <OctopusWithLove />}
+        {!isTablet() && <OctopusWithLove />}
 
         <Divider size={formatSize(16)} />
         <Text style={styles.openSourceText}>
