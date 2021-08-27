@@ -7,12 +7,7 @@ import { PublicKeyHashText } from '../../../../../components/public-key-hash-tex
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
-import {
-  ContractCallParamPreviewInterface,
-  FA1_2ApproveParamPreviewInterface,
-  ParamPreviewInterface,
-  Token
-} from '../../../../../interfaces/param-preview.interface';
+import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { useExchangeRatesSelector } from '../../../../../store/currency/currency-selectors';
 import { formatSize } from '../../../../../styles/format-size';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
@@ -30,13 +25,14 @@ interface PreviewDataInterface {
   description: string;
   hash?: string;
   contract?: string;
+  amount?: { tokenAmount: number | string; symbol: string; dollarAmount: string };
 }
 
 interface ParamsPreviewDataInterface {
   type: ParamPreviewTypeEnum;
   contract?: string;
-  asset: any;
-  amount: number;
+  asset?: { contract: string } | Asset | string;
+  amount: string;
 }
 
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
@@ -48,7 +44,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
       if (params.contract && params.type !== ParamPreviewTypeEnum.ContractCall) {
         return params.contract;
       }
-      if (params.asset) {
+      if (typeof params.asset === 'object') {
         return params.asset.contract;
       }
 

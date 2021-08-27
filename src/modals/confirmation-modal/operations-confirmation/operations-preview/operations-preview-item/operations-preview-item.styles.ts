@@ -33,5 +33,4 @@ export const useOperationsPreviewItemStyles = createUseStyles(({ colors, typogra
     color: colors.destructive,
     textAlign: 'right'
   }
-
 }));
