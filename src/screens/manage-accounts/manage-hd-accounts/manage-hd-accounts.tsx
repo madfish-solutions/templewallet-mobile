@@ -32,8 +32,7 @@ export const ManageHdAccounts = () => {
 
   const handleRevealButtonPress = (account: WalletAccountInterface) => {
     setManagedAccount(account);
-    // TODO: check if this needed for @gorhom/bottom-sheet v3+ (children rerender causes BottomSheet closing)
-    setTimeout(() => revealSelectBottomSheetController.open());
+    revealSelectBottomSheetController.open();
   };
 
   const handleRevealPrivateKeyButtonPress = () => {

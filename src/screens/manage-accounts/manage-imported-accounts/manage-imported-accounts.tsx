@@ -7,7 +7,6 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
-import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useImportedAccountListSelector } from '../../../store/wallet/wallet-selectors';
@@ -21,10 +20,6 @@ export const ManageImportedAccounts = () => {
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
   const accountsLength = importedAccounts.length;
 
-  const handleRevealButtonPress = (account: WalletAccountInterface) => {
-    setTimeout(() => navigate(ModalsEnum.RevealPrivateKey, { account }));
-  };
-
   return (
     <>
       <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
@@ -33,7 +28,10 @@ export const ManageImportedAccounts = () => {
       <ScreenContainer>
         {filteredAccountList.map(account => (
           <Fragment key={account.publicKeyHash}>
-            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <ManageAccountItem
+              account={account}
+              onRevealButtonPress={() => navigate(ModalsEnum.RevealPrivateKey, { account })}
+            />
             <Divider size={formatSize(16)} />
           </Fragment>
         ))}

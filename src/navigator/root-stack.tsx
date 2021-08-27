@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
@@ -25,7 +25,7 @@ import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
 import { MainStackScreen } from './main-stack';
 
-export const globalNavigationRef = createRef<NavigationContainerRef>();
+export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
 type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
@@ -43,8 +43,9 @@ export const RootStackScreen = () => {
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
-  const screenOptions = useMemo(
+  const screenOptions: StackNavigationOptions = useMemo(
     () => ({
+      presentation: 'modal',
       cardOverlayEnabled: true,
       gestureEnabled: true,
       ...TransitionPresets.ModalPresentationIOS,
@@ -55,14 +56,26 @@ export const RootStackScreen = () => {
     [colors.pageBG]
   );
 
+  const theme: Theme = useMemo(
+    () => ({
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        background: colors.navigation
+      }
+    }),
+    [colors.navigation]
+  );
+
   return (
     <NavigationContainer
       ref={globalNavigationRef}
+      theme={theme}
       onReady={handleNavigationContainerStateChange}
       onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
         <CurrentRouteNameContext.Provider value={currentRouteName}>
-          <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
+          <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
