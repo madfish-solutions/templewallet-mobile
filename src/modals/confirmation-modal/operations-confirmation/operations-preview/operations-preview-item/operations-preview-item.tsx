@@ -1,31 +1,32 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC, Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from '../../../../../components/divider/divider';
+import { DollarValueText } from '../../../../../components/dollar-value-text/dollar-value-text';
 import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
+import { TokenValueText } from '../../../../../components/token-value-text/token-value-text';
 import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
-import { useExchangeRatesSelector } from '../../../../../store/currency/currency-selectors';
 import { formatSize } from '../../../../../styles/format-size';
+import { TokenInterface } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
-import { formatAssetAmount } from '../../../../../utils/number.util';
-import { mutezToTz } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
   paramPreview: ParamPreviewInterface;
 }
 
+type TokenPreviewType = Omit<TokenInterface, 'isVisible' | 'balance'>;
+
 interface PreviewDataInterface {
   iconSeed: string;
   description: string;
   hash?: string;
   contract?: string;
-  amount?: { tokenAmount: number | string; symbol: string; dollarAmount: string };
+  token?: { tokenData: TokenPreviewType; amount: string };
 }
 
 interface ParamsPreviewDataInterface {
@@ -38,7 +39,6 @@ interface ParamsPreviewDataInterface {
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
-  const exchangeRates = useExchangeRatesSelector();
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const contract = () => {
       if (params.contract && params.type !== ParamPreviewTypeEnum.ContractCall) {
@@ -51,15 +51,10 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
       return;
     };
     const slug = getTokenSlug(isDefined(contract()) ? { address: contract() } : {});
-    const { decimals, symbol } = getTokenMetadata(slug);
-    const tokenAmount = formatAssetAmount(mutezToTz(new BigNumber(params.amount), decimals));
-    const dollarAmount = formatAssetAmount(
-      new BigNumber(exchangeRates[slug] * Number(tokenAmount)),
-      BigNumber.ROUND_DOWN,
-      2
-    );
+    const tokenData = getTokenMetadata(slug);
+    const amount = params.amount;
 
-    return { tokenAmount, symbol, dollarAmount };
+    return { tokenData, amount };
   };
 
   const previewData = useMemo<PreviewDataInterface[]>(() => {
@@ -80,7 +75,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             iconSeed: paramPreview.approveTo,
             description: 'Approve to',
             hash: paramPreview.approveTo,
-            amount: formattedAmount(paramPreview)
+            token: formattedAmount(paramPreview)
           }
         ];
       case ParamPreviewTypeEnum.ContractCall:
@@ -89,7 +84,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             iconSeed: paramPreview.contract,
             description: `${paramPreview.entrypoint} method call`,
             hash: paramPreview.contract,
-            amount: formattedAmount(paramPreview)
+            token: formattedAmount(paramPreview)
           }
         ];
       case ParamPreviewTypeEnum.Other:
@@ -99,22 +94,22 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
 
   return (
     <>
-      {previewData.map(({ iconSeed, description, hash, amount }, index) => (
+      {previewData.map(({ iconSeed, description, hash, token }, index) => (
         <Fragment key={iconSeed + index}>
           <View style={styles.container}>
             <View style={styles.contentWrapper}>
               <View style={styles.infoContainer}>
-                <RobotIcon seed={iconSeed} size={formatSize(33)} />
+                <RobotIcon seed={iconSeed} size={formatSize(32)} />
                 <Divider size={formatSize(10)} />
                 <Text style={styles.description}>{description}</Text>
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {amount && amount.tokenAmount > 0 && (
+            {isDefined(token) && Number(token.amount) > 0 && (
               <View>
-                <Text style={styles.amountToken}>{`-${amount.tokenAmount} ${amount.symbol}`}</Text>
+                <TokenValueText amount={token.amount} token={token.tokenData} style={styles.amountToken} />
                 <Divider size={formatSize(8)} />
-                <Text style={styles.amountDollar}>{`-${amount.dollarAmount}`}</Text>
+                <DollarValueText amount={token.amount} token={token.tokenData} style={styles.amountDollar} />
               </View>
             )}
           </View>

@@ -63,6 +63,7 @@ export const FeeFormInput: FC<Props> = ({
             <DollarValueText
               token={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed())}
               style={styles.infoFeeValue}
+              amount={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed()).balance}
             />
           )}
         </View>
@@ -78,6 +79,7 @@ export const FeeFormInput: FC<Props> = ({
             <DollarValueText
               token={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed())}
               style={styles.infoFeeValue}
+              amount={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed()).balance}
             />
           )}
         </View>

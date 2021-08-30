@@ -36,10 +36,10 @@ export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconNam
       <View style={styles.rightContainer}>
         <View>
           <HideBalance style={styles.balance}>
-            <TokenValueText token={token} />
+            <TokenValueText token={token} amount={token?.balance} />
           </HideBalance>
           <HideBalance style={styles.dollarEquivalent}>
-            <DollarValueText token={token} />
+            <DollarValueText token={token} amount={token?.balance} />
           </HideBalance>
         </View>
         {isDefined(actionIconName) && (
