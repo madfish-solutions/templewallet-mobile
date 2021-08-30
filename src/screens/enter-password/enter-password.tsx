@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
@@ -14,7 +14,6 @@ import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
@@ -41,7 +40,7 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
-  useDelayedEffect(() => void (isBiometryAvailable && unlockWithBiometry()), [isBiometryAvailable]);
+  useEffect(() => void (isBiometryAvailable && unlockWithBiometry()), [isBiometryAvailable]);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>

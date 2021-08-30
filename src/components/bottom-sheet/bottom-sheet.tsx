@@ -14,6 +14,7 @@ import { emptyComponent } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
+import { useAppLock } from '../../shelter/use-app-lock.hook';
 
 interface Props extends BottomSheetControllerProps {
   title: string;
@@ -21,6 +22,10 @@ interface Props extends BottomSheetControllerProps {
 }
 
 export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, children }) => {
+  // hack that prevents rendering of GorhomBottomSheet component for locked app state,
+  // as it loads heavy Reanimated 2 modules and application do not respond on gestures
+  // TODO: try to remove this with @gorhom/bottom-sheet > 4.0.0
+  const { isLocked } = useAppLock();
   const styles = useDropdownBottomSheetStyles();
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
@@ -57,28 +62,30 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
 
   return (
     <Portal>
-      <GorhomBottomSheet
-        ref={controller.ref}
-        index={-1}
-        snapPoints={[contentHeight]}
-        enablePanDownToClose={true}
-        bottomInset={bottomInset}
-        handleComponent={emptyComponent}
-        backgroundComponent={emptyComponent}
-        backdropComponent={renderBackdropComponent}
-        onChange={handleChange}>
-        <View style={styles.root}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.title}>{title}</Text>
+      {!isLocked && (
+        <GorhomBottomSheet
+          ref={controller.ref}
+          index={-1}
+          snapPoints={[contentHeight]}
+          enablePanDownToClose={true}
+          bottomInset={bottomInset}
+          handleComponent={emptyComponent}
+          backgroundComponent={emptyComponent}
+          backdropComponent={renderBackdropComponent}
+          onChange={handleChange}>
+          <View style={styles.root}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.title}>{title}</Text>
+            </View>
+
+            {children}
+
+            <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
-
-          {children}
-
-          <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </GorhomBottomSheet>
+        </GorhomBottomSheet>
+      )}
     </Portal>
   );
 };
