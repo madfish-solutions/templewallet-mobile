@@ -26,6 +26,7 @@ import {
   enterPasswordValidationSchema
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
+import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
@@ -41,10 +42,7 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
-  useEffect(
-    () => void (isBiometryAvailable && setTimeout(() => unlockWithBiometry(), isAndroid ? 2500 : 0)),
-    [isBiometryAvailable]
-  );
+  useDelayedEffect(() => void (isBiometryAvailable && unlockWithBiometry()), [isBiometryAvailable]);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
