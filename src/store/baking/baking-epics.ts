@@ -17,7 +17,7 @@ const loadSelectedBakerAddressEpic = (action$: Observable<Action>, state$: Obser
     ofType(loadSelectedBakerActions.submit),
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
-      from(createReadOnlyTezosToolkit(selectedAccount).rpc.getDelegate(selectedAccount.publicKey)).pipe(
+      from(createReadOnlyTezosToolkit(selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
         filter(isDefined),
         switchMap(address => bakingBadApi.get<BakerInterface>(`/bakers/${address}`)),
         map(({ data }) => loadSelectedBakerActions.success(data)),
