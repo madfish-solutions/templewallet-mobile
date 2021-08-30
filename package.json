@@ -23,7 +23,7 @@
     "@airgap/beacon-sdk": "2.2.9",
     "@dicebear/avatars": "4.6.4",
     "@dicebear/avatars-bottts-sprites": "4.6.4",
-    "@gorhom/bottom-sheet": "^4.0.0-alpha.30",
+    "@gorhom/bottom-sheet": "4.0.0",
     "@gorhom/portal": "^1.0.8",
     "@react-native-async-storage/async-storage": "^1.15.2",
     "@react-native-clipboard/clipboard": "^1.7.0",

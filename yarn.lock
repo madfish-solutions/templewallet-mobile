@@ -776,10 +776,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@gorhom/bottom-sheet@^4.0.0-alpha.30":
-  version "4.0.0-alpha.30"
-  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-4.0.0-alpha.30.tgz#0b35036110bc83d262231d4ce46e48b4daf258eb"
-  integrity sha512-uq4dI+P3cDfWWsf5ReiLxOXr2iFoyupaOPJiZFKm6Cvbf/WOp+bh0sJcomF7SWM65zqx16rtiBLcGkZZFfnlRw==
+"@gorhom/bottom-sheet@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-4.0.0.tgz#524ccc3cffd6c3c0f6ef994cf5d01a5df02f5e02"
+  integrity sha512-iG4ZY16co3KsVl6zPrfG6VJuGGv4ml+dDduK9EtudWxTnZMMkFQxc5shGvu2Hbv+N15EhwelyLqZmxFzGXYZqQ==
   dependencies:
     "@gorhom/portal" "^1.0.7"
     invariant "^2.2.4"
@@ -8105,9 +8105,9 @@ react-native-reanimated@^2.2.0:
     string-hash-64 "^1.0.3"
 
 react-native-redash@^16.1.1:
-  version "16.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-redash/-/react-native-redash-16.2.0.tgz#72204bdcdc5c48ccd8bd630e3a954ae5174809b3"
-  integrity sha512-4xRWT6sUTjTM7i7Yd6fEiuylzIPmjYl9XlhL7Tz/NJOPBs+ib6ku7ptF5PRgQIshbQ6kIFwXJWoQ9H71zOMwvA==
+  version "16.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-redash/-/react-native-redash-16.2.1.tgz#9e7c1ff7cc0fe0b61619463d212e98b9d5556941"
+  integrity sha512-0j9lGVqed08ZZ5fYtQKag7JHAigls/pHHaRbcEsvgkK4aFXTTwJ+vzNCm8hakrwD0j0WazQ6NVSoqcFp2PFZOw==
   dependencies:
     abs-svg-path "^0.1.1"
     normalize-svg-path "^1.0.1"
