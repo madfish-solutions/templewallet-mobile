@@ -26,8 +26,8 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
-      ? 'you need to have TEZ to pay gas fee'
-      : 'balance is zero';
+      ? 'You need to have TEZ to pay gas fee'
+      : 'Balance is zero';
 
   const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
 
@@ -41,9 +41,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
-        onTouchStart={() =>
-          void (disableSendAsset && showErrorToast({ description: `Can't send ${token.symbol}, ${errorMessage}` }))
-        }>
+        onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}>
         <ButtonMedium
           title="SEND"
           disabled={disableSendAsset}
