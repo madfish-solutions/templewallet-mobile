@@ -11,10 +11,10 @@ import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { emptyComponent } from '../../config/general';
+import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { formatSize } from '../../styles/format-size';
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
-import { useAppLock } from '../../shelter/use-app-lock.hook';
 
 interface Props extends BottomSheetControllerProps {
   title: string;
