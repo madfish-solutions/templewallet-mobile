@@ -33,10 +33,10 @@ export const TokenEquityValue: FC<Props> = ({ token }) => {
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
       <HideBalance style={styles.tokenValueText}>
-        <TokenValueText token={token} />
+        <TokenValueText token={token} amount={token.balance} />
       </HideBalance>
       <HideBalance style={styles.equityValueText}>
-        <DollarValueText token={token} />
+        <DollarValueText token={token} amount={token.balance} />
       </HideBalance>
     </View>
   );

@@ -40,7 +40,6 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       const slug = getTokenSlug({ address, id });
       const { decimals, symbol, name } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];
-
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
       }
