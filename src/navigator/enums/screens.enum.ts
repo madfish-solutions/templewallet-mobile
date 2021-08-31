@@ -25,7 +25,9 @@ export enum ScreensEnum {
   ManageAccounts = 'ManageAccounts',
   About = 'About',
   DAppsSettings = 'DAppsSettings',
-  SecureSettings = 'SecureSettings'
+  SecureSettings = 'SecureSettings',
+  NodeSettings = 'NodeSettings',
+  Debug = 'Debug'
 }
 
 export type ScreensParamList = {
@@ -54,6 +56,8 @@ export type ScreensParamList = {
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
+  [ScreensEnum.NodeSettings]: undefined;
+  [ScreensEnum.Debug]: undefined;
 };
 
 export const walletStackScreens = [

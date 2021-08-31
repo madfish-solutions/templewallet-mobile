@@ -2,7 +2,8 @@ import { createUseStyles } from '../../../../styles/create-use-styles';
 
 export const useActivityGroupAmountChangeStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    flexShrink: 1
   },
   amountText: {
     ...typography.numbersRegular17,
@@ -11,8 +12,10 @@ export const useActivityGroupAmountChangeStyles = createUseStyles(({ colors, typ
   positiveAmountText: {
     color: colors.adding
   },
+  negativeAmountText: {
+    color: colors.destructive
+  },
   valueText: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
+    ...typography.numbersRegular11
   }
 }));

@@ -12,11 +12,12 @@ export const useTokenContainerStyles = createUseStyles(({ colors, typography }) 
     borderColor: colors.lines
   },
   leftContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flexShrink: 1
   },
   infoContainer: {
     justifyContent: 'center',
-    marginLeft: formatSize(8)
+    flexShrink: 1
   },
   symbolContainer: {
     flexDirection: 'row',

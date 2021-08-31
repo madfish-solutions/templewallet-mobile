@@ -1,14 +1,22 @@
-const ordinalFormatter = new Intl.PluralRules('en-US', {
-  type: 'ordinal'
-});
+import { isNaN } from 'lodash-es';
 
-const suffixes: Record<Intl.LDMLPluralRule, string> = {
-  one: 'st',
-  two: 'nd',
-  few: 'rd',
-  other: 'th',
-  zero: 'th',
-  many: 'th'
+export const formatOrdinalNumber = (n: number) => {
+  if (isNaN(n)) {
+    return '';
+  }
+
+  const j = n % 10;
+  const k = n % 100;
+
+  if (j === 1 && k !== 11) {
+    return n + 'st';
+  }
+  if (j === 2 && k !== 12) {
+    return n + 'nd';
+  }
+  if (j === 3 && k !== 13) {
+    return n + 'rd';
+  }
+
+  return n + 'th';
 };
-
-export const formatOrdinalNumber = (n: number) => `${n}${suffixes[ordinalFormatter.select(n)]}`;

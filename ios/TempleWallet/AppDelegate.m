@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "Orientation.h"
 
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
@@ -39,11 +40,8 @@ static void InitializeFlipper(UIApplication *application) {
     InitializeFlipper(application);
   #endif
 
-  NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.js" fallbackResource:nil];
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
-  RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation
-                                              moduleProvider:nil
-                                               launchOptions:launchOptions];
   #if RCT_DEV
    [bridge moduleForClass:[RCTDevLoadingView class]];
   #endif
@@ -87,6 +85,10 @@ static void InitializeFlipper(UIApplication *application) {
    options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
   return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+  return [Orientation getOrientation];
 }
 
 @end

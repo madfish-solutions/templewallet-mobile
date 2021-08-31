@@ -6,7 +6,7 @@ import { ofType } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
 import { ExchangeRateInterface } from '../../interfaces/token-exchange-rate.interface';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { loadExchangeRates } from './currency-actions';
 import { ExchangeRateRecord } from './currency-state';
 
@@ -17,8 +17,9 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
       from(templeWalletApi.get<ExchangeRateInterface[]>('exchange-rates')).pipe(
         switchMap(({ data }) => {
           const mappedRates: ExchangeRateRecord = {};
-          for (const { tokenAddress, exchangeRate } of data) {
-            mappedRates[tokenAddress ?? TEZ_TOKEN_METADATA.name] = Number(exchangeRate);
+
+          for (const { tokenAddress, tokenId, exchangeRate } of data) {
+            mappedRates[getTokenSlug({ address: tokenAddress, id: tokenId })] = +exchangeRate;
           }
 
           return [loadExchangeRates.success(mappedRates)];

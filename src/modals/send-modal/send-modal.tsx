@@ -24,7 +24,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
-  useHdAccountsListSelector,
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
   useTokensListSelector
@@ -34,6 +34,7 @@ import { showWarningToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
+import { mutezToTz } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -42,13 +43,13 @@ const TEZ_MAX_FEE = 0.1;
 
 export const SendModal: FC = () => {
   const dispatch = useDispatch();
-  const { asset: initialAsset, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
+  const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
   const sender = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const accounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
   const tokensList = useTokensListSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
   const tezosToken = useTezosTokenSelector();
@@ -66,7 +67,7 @@ export const SendModal: FC = () => {
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
-      token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialAsset)) ?? emptyToken,
+      token: filteredTokensListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
       amount: undefined,
       ownAccount: ownAccountsReceivers[0],
@@ -86,7 +87,7 @@ export const SendModal: FC = () => {
       isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
-          asset: token,
+          token,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
@@ -104,7 +105,7 @@ export const SendModal: FC = () => {
         useEffect(() => setFieldValue('amount', undefined), [values.token]);
 
         const amountMaxValue = BigNumber.max(
-          new BigNumber(values.token.balance).minus(
+          mutezToTz(new BigNumber(values.token.balance), values.token.decimals).minus(
             values.token.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_MAX_FEE : 0
           ),
           0

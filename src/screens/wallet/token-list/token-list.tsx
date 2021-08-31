@@ -4,17 +4,16 @@ import { Text, View } from 'react-native';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
+import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
 import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useExchangeRatesSelector } from '../../../store/currency/currency-selectors';
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -28,7 +27,6 @@ export const TokenList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
-  const { exchangeRates } = useExchangeRatesSelector();
   const [isShowTezos, setIsShowTezos] = useState(true);
 
   const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
@@ -55,7 +53,7 @@ export const TokenList: FC = () => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
+      <ScreenContainer isFullScreenMode={true} contentContainerStyle={styles.contentContainerStyle}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (
@@ -64,7 +62,6 @@ export const TokenList: FC = () => {
               <TokenListItem
                 token={tezosToken}
                 apy={delegationApy}
-                exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
                 onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
               />
             )}
@@ -74,7 +71,6 @@ export const TokenList: FC = () => {
                 token.isVisible && (
                   <TokenListItem
                     key={token.address + index}
-                    exchangeRate={exchangeRates.data[token.address]}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
@@ -85,7 +81,7 @@ export const TokenList: FC = () => {
           </>
         )}
 
-        <PlusCircleButton text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
         <Divider />
       </ScreenContainer>
     </>

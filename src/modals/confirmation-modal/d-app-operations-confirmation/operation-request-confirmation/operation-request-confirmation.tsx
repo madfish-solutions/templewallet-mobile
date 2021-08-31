@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Divider } from '../../../../components/divider/divider';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { abortRequestAction, approveOperationRequestAction } from '../../../../store/d-apps/d-apps-actions';
-import { useHdAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
+import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { mapBeaconToTaquitoParams } from '../../../../utils/beacon.utils';
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
@@ -16,11 +16,11 @@ interface Props {
 
 export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const dispatch = useDispatch();
-  const hdAccounts = useHdAccountsListSelector();
+  const accounts = useAccountsListSelector();
 
   const sender = useMemo(
-    () => hdAccounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
-    [hdAccounts, message.sourceAddress]
+    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
+    [accounts, message.sourceAddress]
   );
 
   const opParams = message.operationDetails.map(mapBeaconToTaquitoParams);

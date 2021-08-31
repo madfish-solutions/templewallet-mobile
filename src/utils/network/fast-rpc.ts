@@ -6,7 +6,7 @@ interface RPCOptions {
   block: string;
 }
 
-export class FastRpcClient extends RpcClient {
+class FastRpcClient extends RpcClient {
   refreshInterval = 10000; // 10 sec
   memoizeMaxAge = 180000; // 3 min
 
@@ -228,3 +228,5 @@ function onlyOncePerExec<T>(factory: () => Promise<T>) {
       worker = null;
     }));
 }
+
+export const getFastRpcClient = memoize((rpc: string) => new FastRpcClient(rpc));

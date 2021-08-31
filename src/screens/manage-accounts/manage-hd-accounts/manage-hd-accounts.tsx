@@ -6,11 +6,15 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { PlusCircleButton } from '../../../components/plus-circle-button/plus-circle-button';
+import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { SearchInput } from '../../../components/search-input/search-input';
+import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountsListSelector } from '../../../store/wallet/wallet-selectors';
+import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
@@ -21,13 +25,14 @@ export const ManageHdAccounts = () => {
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
-  const hdAccounts = useHdAccountsListSelector();
+  const hdAccounts = useHdAccountListSelector();
+  const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
+
   const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
 
   const handleRevealButtonPress = (account: WalletAccountInterface) => {
     setManagedAccount(account);
-    // TODO: check if this needed for @gorhom/bottom-sheet v3+ (children rerender causes BottomSheet closing)
-    setTimeout(() => revealSelectBottomSheetController.open());
+    revealSelectBottomSheetController.open();
   };
 
   const handleRevealPrivateKeyButtonPress = () => {
@@ -42,6 +47,8 @@ export const ManageHdAccounts = () => {
 
   return (
     <>
+      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <Divider size={formatSize(8)} />
       <View style={styles.revealSeedPhraseContainer}>
         <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
         <Divider size={formatSize(16)} />
@@ -56,25 +63,30 @@ export const ManageHdAccounts = () => {
       <Divider size={formatSize(16)} />
 
       <InfoText />
+      <ScreenContainer>
+        {filteredAccountList.map(account => (
+          <Fragment key={account.publicKeyHash}>
+            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <Divider size={formatSize(16)} />
+          </Fragment>
+        ))}
 
-      {hdAccounts.map(account => (
-        <Fragment key={account.publicKeyHash}>
-          <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
-          <Divider size={formatSize(16)} />
-        </Fragment>
-      ))}
+        <Divider />
 
-      <Divider />
+        <IconTitleNoBg
+          icon={IconNameEnum.PlusCircle}
+          text="CREATE NEW"
+          onPress={() => navigate(ModalsEnum.CreateHdAccount)}
+        />
 
-      <PlusCircleButton text="CREATE NEW" onPress={() => navigate(ModalsEnum.CreateHdAccount)} />
-
-      <BottomSheet
-        title="Select what do you want to reveal:"
-        contentHeight={formatSize(180)}
-        controller={revealSelectBottomSheetController}>
-        <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
-        <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
-      </BottomSheet>
+        <BottomSheet
+          title="Select what do you want to reveal:"
+          contentHeight={formatSize(180)}
+          controller={revealSelectBottomSheetController}>
+          <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
+          <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
+        </BottomSheet>
+      </ScreenContainer>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { noop } from 'lodash';
+import { noop } from 'lodash-es';
 import React, { FC, useState } from 'react';
 import ReactNativeBiometrics, { BiometryType } from 'react-native-biometrics';
 
