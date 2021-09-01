@@ -27,15 +27,15 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
 
     const opParamsWithFees = estimationWasSuccessful
       ? opParams.map((opParam, i) => {
-          const estimation = estimationsList[withReveal ? i + 1 : i];
-          const {
-            fee = estimation.suggestedFeeMutez,
-            gasLimit = estimation.gasLimit,
-            storageLimit = estimation.storageLimit
-          } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
+        const estimation = estimationsList[withReveal ? i + 1 : i];
+        const {
+          fee = estimation.suggestedFeeMutez,
+          gasLimit = estimation.gasLimit,
+          storageLimit = estimation.storageLimit
+        } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
 
-          return { ...opParam, fee, gasLimit, storageLimit };
-        })
+        return { ...opParam, fee, gasLimit, storageLimit };
+      })
       : opParams;
 
     const basicFees = opParamsWithFees.reduce(
@@ -53,10 +53,10 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
       }
     );
 
-    const revealGasFee = withReveal ? estimationsList[0].suggestedFeeMutez : 0;
+    const revealGasFee = mutezToTz(new BigNumber(withReveal ? estimationsList[0].suggestedFeeMutez : 0), 6);
 
     if (withReveal) {
-      basicFees.gasFeeSum = basicFees.gasFeeSum.plus(estimationsList[0].suggestedFeeMutez);
+      basicFees.gasFeeSum = basicFees.gasFeeSum.plus(revealGasFee);
       basicFees.storageLimitSum = basicFees.storageLimitSum.plus(estimationsList[0].storageLimit);
     }
 
