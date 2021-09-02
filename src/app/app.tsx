@@ -16,7 +16,7 @@ initSentry();
 enableScreens();
 
 export const App = () => {
-  useEffect(() => void hide(), []);
+  useEffect(() => void hide({ fade: true }), []);
 
   return (
     <Provider store={store}>

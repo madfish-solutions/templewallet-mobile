@@ -28,7 +28,7 @@ export const ScanQrCode = () => {
     if (isValidAddress(data) && Number(tezosToken.balance) > 0) {
       navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
     } else if (isValidAddress(data)) {
-      showErrorToast({ description: "Can't send TEZ: the balance is zero" });
+      showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
     } else {
       beaconDeepLinkHandler(data);
     }

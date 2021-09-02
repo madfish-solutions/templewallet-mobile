@@ -1,12 +1,13 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { MadeWithLove } from '../../components/made-with-love/made-with-love';
+import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
 import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -115,8 +116,7 @@ export const Settings = () => {
           </TouchableOpacity>
           <Divider />
         </View>
-
-        <MadeWithLove />
+        {!isTablet() && <OctopusWithLove />}
       </ScreenContainer>
     </>
   );

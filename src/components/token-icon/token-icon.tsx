@@ -12,11 +12,11 @@ import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
   token: TokenMetadataInterface;
+  size?: number;
 }
 
-export const TokenIcon: FC<Props> = ({ token }) => {
+export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
   const { iconName, iconUrl } = token;
-  const size = formatSize(32);
 
   return (
     <View style={TokenIconStyles.container}>

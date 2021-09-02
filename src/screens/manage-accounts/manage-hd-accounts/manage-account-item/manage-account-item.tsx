@@ -12,6 +12,7 @@ import { TokenValueText } from '../../../../components/token-value-text/token-va
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../../styles/format-size';
+import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
@@ -36,7 +37,15 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           </View>
         </View>
 
-        <Switch value={true} disabled={true} />
+        <View
+          onTouchStart={() =>
+            void showWarningToast({
+              title: 'Work in progress...',
+              description: 'You will be available to hide account soon.'
+            })
+          }>
+          <Switch value={true} disabled={true} />
+        </View>
       </View>
 
       <Divider size={formatSize(16)} />

@@ -29,5 +29,8 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     ...typography.body17Semibold,
     color: colors.orange,
     paddingBottom: formatSize(4)
+  },
+  backdrop: {
+    backgroundColor: colors.black
   }
 }));
