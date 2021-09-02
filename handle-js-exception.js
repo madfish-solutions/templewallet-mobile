@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react-native';
 import { Alert } from 'react-native';
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 
-const allowInDevMode = true;
+const allowInDevMode = false;
 
 setJSExceptionHandler((error, isFatal) => {
   Sentry.captureException(error);
