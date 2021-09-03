@@ -16,17 +16,30 @@ import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actio
 import { formatSize } from '../../../../styles/format-size';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
+import { showWarningToast } from '../../../../toast/toast.utils';
 
 interface Props {
   account: WalletAccountInterface;
+  selectedAccount: WalletAccountInterface;
   onRevealButtonPress: EventFn<WalletAccountInterface>;
 }
 
-export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
+export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
   const styles = useManageAccountItemStyles();
 
   const tezosToken = getTezosToken(account.tezosBalance.data);
+
+  const handleVisibleSwitchChange = (isVisible: boolean) => {
+    if (account.publicKeyHash === selectedAccount.publicKeyHash) {
+      showWarningToast({
+        title: 'Could not hide your selected account',
+        description: 'Switch to another account and try again'
+      });
+    } else {
+      dispatch(updateWalletAccountAction({ ...account, isVisible }));
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -39,10 +52,7 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           </View>
         </View>
 
-        <Switch
-          value={account.isVisible}
-          onChange={isVisible => dispatch(updateWalletAccountAction({ ...account, isVisible }))}
-        />
+        <Switch value={account.isVisible} onChange={handleVisibleSwitchChange} />
       </View>
 
       <Divider size={formatSize(16)} />
