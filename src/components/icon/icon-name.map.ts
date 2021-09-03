@@ -97,6 +97,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  /** TODO: delete this before release */
   [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,
   [IconNameEnum.EthTzToken]: EthTzTokenIcon,
   [IconNameEnum.KUsdToken]: KUsdTokenIcon,
@@ -104,6 +105,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.UsdSToken]: UsdSTokenIcon,
   [IconNameEnum.BlndToken]: BlndTokenIcon,
   [IconNameEnum.StkrToken]: StkrTokenIcon,
+  /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
