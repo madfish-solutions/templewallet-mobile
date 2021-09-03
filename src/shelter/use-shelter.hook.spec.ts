@@ -56,13 +56,15 @@ describe('useShelter', () => {
   it('should create HD account', () => {
     const { result } = renderHook(() => useShelter());
 
-    result.current.createHdAccount({ name: mockHdAccount.name });
+    result.current.createHdAccount();
 
-    expect(mockShelter.createHdAccount$).toBeCalledWith(mockHdAccount.name, mockRootState.wallet.accounts.length);
+    expect(mockShelter.createHdAccount$).toBeCalledWith(
+      `Account ${mockRootState.wallet.accounts.length + 1}`,
+      mockRootState.wallet.accounts.length
+    );
 
     expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
     expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
-    expect(mockGoBack).toBeCalled();
   });
 
   it('should reveal secret key', () => {

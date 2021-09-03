@@ -1,6 +1,8 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -11,35 +13,37 @@ import { Label } from '../../components/label/label';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
-import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
+import { updateWalletAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
-import { CreateHdAccountModalFormValues, createHdAccountModalValidationSchema } from './create-hd-account-modal.form';
+import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 
-export const CreateHdAccountModal = () => {
-  const { createHdAccount } = useShelter();
+export const RenameAccountModal = () => {
+  const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RenameAccount>>().params.account;
+  const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
-  const accountIndex = useAccountsListSelector().length + 1;
-
-  const createHdAccountInitialValues: CreateHdAccountModalFormValues = {
-    name: `Account ${accountIndex}`
+  const createHdAccountInitialValues: RenameAccountModalFormValues = {
+    name: account.name
   };
 
-  const onSubmit = ({ name }: CreateHdAccountModalFormValues) => createHdAccount({ name });
+  const onSubmit = ({ name }: RenameAccountModalFormValues) => {
+    dispatch(updateWalletAccountAction({ ...account, name }));
+    goBack();
+  };
 
   return (
     <Formik
       enableReinitialize={true}
       initialValues={createHdAccountInitialValues}
-      validationSchema={createHdAccountModalValidationSchema}
+      validationSchema={renameAccountModalValidationSchema}
       onSubmit={onSubmit}>
       {({ submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />
           <View>
-            <Label label="Name" description="Call your account by any name you wish." />
+            <Label label="Name" description="Rename your account by any name you wish." />
             <FormTextInput name="name" />
 
             <Divider />

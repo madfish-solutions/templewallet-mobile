@@ -9,15 +9,18 @@ import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useImportedAccountListSelector } from '../../../store/wallet/wallet-selectors';
+import { useImportedAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
 
 export const ManageImportedAccounts = () => {
   const { navigate } = useNavigation();
+
+  const selectedAccount = useSelectedAccountSelector();
   const importedAccounts = useImportedAccountListSelector();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
+
   const accountsLength = importedAccounts.length;
 
   return (
@@ -30,6 +33,7 @@ export const ManageImportedAccounts = () => {
           <Fragment key={account.publicKeyHash}>
             <ManageAccountItem
               account={account}
+              selectedAccount={selectedAccount}
               onRevealButtonPress={() => navigate(ModalsEnum.RevealPrivateKey, { account })}
             />
             <Divider size={formatSize(16)} />

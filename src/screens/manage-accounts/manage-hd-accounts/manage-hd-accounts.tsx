@@ -14,7 +14,8 @@ import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
@@ -22,9 +23,11 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
   const { navigate } = useNavigation();
+  const { createHdAccount } = useShelter();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
+  const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountListSelector();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
@@ -66,18 +69,18 @@ export const ManageHdAccounts = () => {
       <ScreenContainer>
         {filteredAccountList.map(account => (
           <Fragment key={account.publicKeyHash}>
-            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <ManageAccountItem
+              account={account}
+              selectedAccount={selectedAccount}
+              onRevealButtonPress={handleRevealButtonPress}
+            />
             <Divider size={formatSize(16)} />
           </Fragment>
         ))}
 
         <Divider />
 
-        <IconTitleNoBg
-          icon={IconNameEnum.PlusCircle}
-          text="CREATE NEW"
-          onPress={() => navigate(ModalsEnum.CreateHdAccount)}
-        />
+        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="CREATE NEW" onPress={createHdAccount} />
 
         <BottomSheet
           title="Select what do you want to reveal:"
