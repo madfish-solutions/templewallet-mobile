@@ -111,7 +111,7 @@ export const Settings = () => {
           <Divider />
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButtonPress}>
-            <Text style={styles.logoutButtonText}>LOG OUT</Text>
+            <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
           </TouchableOpacity>
           <Divider />
