@@ -19,9 +19,9 @@ import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../../styles/format-size';
 import { showWarningToast } from '../../../../toast/toast.utils';
+import { getTruncatedProps } from '../../../../utils/style.util';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
-import { getTruncatedProps } from '../../../../utils/style.util';
 
 interface Props {
   account: WalletAccountInterface;

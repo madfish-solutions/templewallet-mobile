@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
+import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -23,8 +24,6 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
-import { Divider } from '../../components/divider/divider';
-import { formatSize } from '../../styles/format-size';
 
 export const Wallet = () => {
   const dispatch = useDispatch();
