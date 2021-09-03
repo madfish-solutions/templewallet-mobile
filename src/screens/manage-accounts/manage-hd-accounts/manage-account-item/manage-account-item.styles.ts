@@ -30,6 +30,10 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     color: colors.black,
     marginBottom: formatSize(2)
   },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   lowerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between'

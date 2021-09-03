@@ -6,17 +6,21 @@ import { ButtonSmallSecondary } from '../../../../components/button/button-small
 import { Divider } from '../../../../components/divider/divider';
 import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
+import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../../styles/format-size';
+import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
-import { showWarningToast } from '../../../../toast/toast.utils';
 
 interface Props {
   account: WalletAccountInterface;
@@ -26,20 +30,11 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
   const styles = useManageAccountItemStyles();
 
   const tezosToken = getTezosToken(account.tezosBalance.data);
-
-  const handleVisibleSwitchChange = (isVisible: boolean) => {
-    if (account.publicKeyHash === selectedAccount.publicKeyHash) {
-      showWarningToast({
-        title: 'Could not hide your selected account',
-        description: 'Switch to another account and try again'
-      });
-    } else {
-      dispatch(updateWalletAccountAction({ ...account, isVisible }));
-    }
-  };
+  const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 
   return (
     <View style={styles.container}>
@@ -52,7 +47,32 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           </View>
         </View>
 
-        <Switch value={account.isVisible} onChange={handleVisibleSwitchChange} />
+        <View style={styles.actionsContainer}>
+          <TouchableIcon
+            name={IconNameEnum.Edit}
+            size={formatSize(16)}
+            onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+          />
+
+          <Divider size={formatSize(16)} />
+
+          <View
+            onTouchStart={() =>
+              void (
+                isVisibilitySwitchDisabled &&
+                showWarningToast({
+                  title: 'Could not hide your selected account',
+                  description: 'Switch to another account and try again'
+                })
+              )
+            }>
+            <Switch
+              value={account.isVisible}
+              disabled={isVisibilitySwitchDisabled}
+              onChange={isVisible => dispatch(updateWalletAccountAction({ ...account, isVisible }))}
+            />
+          </View>
+        </View>
       </View>
 
       <Divider size={formatSize(16)} />

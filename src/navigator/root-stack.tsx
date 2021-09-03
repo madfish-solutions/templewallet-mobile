@@ -7,7 +7,7 @@ import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
-import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
+import { RenameAccountModal } from '../modals/rename-account-modal/rename-account-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
@@ -90,9 +90,9 @@ export const RootStackScreen = () => {
               options={useModalOptions('Add Token')}
             />
             <RootStack.Screen
-              name={ModalsEnum.CreateHdAccount}
-              component={CreateHdAccountModal}
-              options={useModalOptions('Create account')}
+              name={ModalsEnum.RenameAccount}
+              component={RenameAccountModal}
+              options={useModalOptions('Rename account')}
             />
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}

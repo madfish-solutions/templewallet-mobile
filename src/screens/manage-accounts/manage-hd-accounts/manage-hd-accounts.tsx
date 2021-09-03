@@ -14,6 +14,7 @@ import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
@@ -22,6 +23,7 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
   const { navigate } = useNavigation();
+  const { createHdAccount } = useShelter();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
@@ -78,11 +80,7 @@ export const ManageHdAccounts = () => {
 
         <Divider />
 
-        <IconTitleNoBg
-          icon={IconNameEnum.PlusCircle}
-          text="CREATE NEW"
-          onPress={() => navigate(ModalsEnum.CreateHdAccount)}
-        />
+        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="CREATE NEW" onPress={createHdAccount} />
 
         <BottomSheet
           title="Select what do you want to reveal:"
