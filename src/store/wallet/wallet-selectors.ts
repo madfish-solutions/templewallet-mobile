@@ -20,13 +20,13 @@ export const useAccountsListSelector = () => {
 };
 
 export const useHdAccountListSelector = () => {
-  const accounts = useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => wallet.accounts);
+  const accounts = useAccountsListSelector();
 
   return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT), [accounts]);
 };
 
 export const useImportedAccountListSelector = () => {
-  const accounts = useSelector<WalletRootState, WalletAccountInterface[]>(({ wallet }) => wallet.accounts);
+  const accounts = useAccountsListSelector();
 
   return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT), [accounts]);
 };

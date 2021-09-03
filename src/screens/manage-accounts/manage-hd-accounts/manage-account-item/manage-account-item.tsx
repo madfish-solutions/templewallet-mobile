@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../../components/divider/divider';
@@ -11,8 +12,8 @@ import { Switch } from '../../../../components/switch/switch';
 import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../../styles/format-size';
-import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
+  const dispatch = useDispatch();
   const styles = useManageAccountItemStyles();
 
   const tezosToken = getTezosToken(account.tezosBalance.data);
@@ -37,15 +39,10 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
           </View>
         </View>
 
-        <View
-          onTouchStart={() =>
-            void showWarningToast({
-              title: 'Work in progress...',
-              description: 'You will be available to hide account soon.'
-            })
-          }>
-          <Switch value={true} disabled={true} />
-        </View>
+        <Switch
+          value={account.isVisible}
+          onChange={isVisible => dispatch(updateWalletAccountAction({ ...account, isVisible }))}
+        />
       </View>
 
       <Divider size={formatSize(16)} />
