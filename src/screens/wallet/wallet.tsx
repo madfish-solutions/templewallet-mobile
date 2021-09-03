@@ -23,6 +23,8 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
+import { Divider } from '../../components/divider/divider';
+import { formatSize } from '../../styles/format-size';
 
 export const Wallet = () => {
   const dispatch = useDispatch();
@@ -47,6 +49,8 @@ export const Wallet = () => {
             list={visibleAccounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
+
+          <Divider />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>

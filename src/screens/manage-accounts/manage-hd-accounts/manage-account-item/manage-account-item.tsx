@@ -21,6 +21,7 @@ import { formatSize } from '../../../../styles/format-size';
 import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
+import { getTruncatedProps } from '../../../../utils/style.util';
 
 interface Props {
   account: WalletAccountInterface;
@@ -42,18 +43,18 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
         <View style={styles.accountContainer}>
           <RobotIcon seed={account.publicKeyHash} />
           <View style={styles.accountContainerData}>
-            <Text style={styles.accountText}>{account.name}</Text>
+            <Text {...getTruncatedProps(styles.accountText)}>{account.name}</Text>
             <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
           </View>
         </View>
 
         <View style={styles.actionsContainer}>
+          <Divider size={formatSize(16)} />
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
             onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
           />
-
           <Divider size={formatSize(16)} />
 
           <View
