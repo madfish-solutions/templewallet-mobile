@@ -22,6 +22,8 @@ import {
   useTezosTokenSelector,
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
+import { formatSize } from '../../styles/format-size';
+import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -57,6 +59,10 @@ export const Wallet = () => {
         <TokenEquityValue token={tezosToken} />
 
         <HeaderCardActionButtons token={tezosToken} />
+
+        <Divider size={formatSize(16)} />
+
+        <CollectiblesHomeSwipeButton />
       </HeaderCard>
 
       <TokenList />
