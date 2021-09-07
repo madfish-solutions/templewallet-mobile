@@ -26,6 +26,7 @@ import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
+import HummerIcon from './assets/hummer.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
@@ -139,5 +140,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Link]: LinkIcon,
   [IconNameEnum.AlertShield]: AlertShield,
   [IconNameEnum.Success]: SuccessIcon,
-  [IconNameEnum.Navigation]: NavigationIcon
+  [IconNameEnum.Navigation]: NavigationIcon,
+  [IconNameEnum.Hummer]: HummerIcon
 };
