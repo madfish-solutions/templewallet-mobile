@@ -36,10 +36,12 @@ export const CollectiblesHome = () => {
           <View style={styles.actionsContainer}>
             <TouchableIcon
               name={isSearchMode ? IconNameEnum.XSearch : IconNameEnum.Search}
+              disabled={true}
+              color={colors.disabled}
               onPress={() => setIsSearchMode(!isSearchMode)}
             />
             <Divider size={formatSize(16)} />
-            <TouchableIcon name={IconNameEnum.Hummer} color={colors.disabled} onPress={emptyFn} />
+            <TouchableIcon name={IconNameEnum.Hummer} disabled={true} color={colors.disabled} onPress={emptyFn} />
           </View>
 
           <TouchableOpacity style={styles.walletNavigationButton} onPress={() => navigate(ScreensEnum.Wallet)}>
