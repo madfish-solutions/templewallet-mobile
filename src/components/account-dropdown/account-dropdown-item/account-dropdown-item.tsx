@@ -5,6 +5,7 @@ import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
+import { getTruncatedProps } from '../../../utils/style.util';
 import { getTezosToken } from '../../../utils/wallet.utils';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
@@ -33,7 +34,7 @@ export const AccountDropdownItem: FC<Props> = ({
       <RobotIcon seed={account.publicKeyHash} />
       <View style={styles.infoContainer}>
         <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <Text style={styles.name}>{account.name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>

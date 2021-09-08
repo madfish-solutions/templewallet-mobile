@@ -24,10 +24,10 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
-  useAccountsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
-  useTokensListSelector
+  useTokensListSelector,
+  useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast } from '../../toast/toast.utils';
@@ -49,7 +49,7 @@ export const SendModal: FC = () => {
 
   const sender = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const accounts = useAccountsListSelector();
+  const visibleAccounts = useVisibleAccountsListSelector();
   const tokensList = useTokensListSelector();
   const { filteredTokensList } = useFilteredTokenList(tokensList, true);
   const tezosToken = useTezosTokenSelector();
@@ -60,8 +60,8 @@ export const SendModal: FC = () => {
   );
 
   const ownAccountsReceivers = useMemo(
-    () => accounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
-    [accounts, sender.publicKeyHash]
+    () => visibleAccounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
+    [visibleAccounts, sender.publicKeyHash]
   );
   const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
 
@@ -121,7 +121,7 @@ export const SendModal: FC = () => {
 
               <Label label="To" description={`Address or Tezos domain to send ${values.token.symbol} funds to.`} />
               {values.transferBetweenOwnAccounts ? (
-                <AccountFormDropdown name="ownAccount" list={accounts} />
+                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
               ) : (
                 <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
               )}

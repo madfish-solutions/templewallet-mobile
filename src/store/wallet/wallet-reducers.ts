@@ -15,7 +15,8 @@ import {
   loadTokenSuggestionActions,
   removeTokenAction,
   setSelectedAccountAction,
-  toggleTokenVisibilityAction
+  toggleTokenVisibilityAction,
+  updateWalletAccountAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -30,6 +31,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
+  }));
+  builder.addCase(updateWalletAccountAction, (state, { payload: updatedAccount }) => ({
+    ...state,
+    accounts: state.accounts.map(item =>
+      item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
+    )
   }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,

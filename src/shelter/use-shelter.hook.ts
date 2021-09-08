@@ -22,7 +22,7 @@ export const useShelter = () => {
   const { navigate, goBack } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
-  const createHdAccount$ = useMemo(() => new Subject<{ name: string }>(), []);
+  const createHdAccount$ = useMemo(() => new Subject(), []);
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
@@ -48,12 +48,11 @@ export const useShelter = () => {
           }
         }),
       createHdAccount$
-        .pipe(switchMap(({ name }) => Shelter.createHdAccount$(name, accounts.length)))
+        .pipe(switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
-            goBack();
           }
         }),
       createImportedAccount$
@@ -131,7 +130,7 @@ export const useShelter = () => {
 
   const importWallet = (seedPhrase: string, password: string, useBiometry?: boolean) =>
     importWallet$.next({ seedPhrase, password, useBiometry });
-  const createHdAccount = (params: { name: string }) => createHdAccount$.next(params);
+  const createHdAccount = () => createHdAccount$.next();
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 
