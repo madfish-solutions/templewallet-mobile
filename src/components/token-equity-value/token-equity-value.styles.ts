@@ -14,11 +14,11 @@ export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }
     color: colors.gray3,
     marginLeft: formatSize(2)
   },
-  tokenValueText: {
+  mainValueText: {
     ...typography.numbersMedium20,
     color: colors.black
   },
-  equityValueText: {
+  additionalValueText: {
     ...typography.numbersRegular15,
     color: colors.gray1
   }

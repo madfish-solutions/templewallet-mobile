@@ -55,6 +55,7 @@ export enum IconNameEnum {
   ExternalLink = 'ExternalLink',
   IosSearch = 'IosSearch',
   Search = 'Search',
+  XSearch = 'XSearch',
   Alert = 'Alert',
   Edit = 'Edit',
   Trash = 'Trash',

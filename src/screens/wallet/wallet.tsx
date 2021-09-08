@@ -56,7 +56,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue token={tezosToken} />
+        <TokenEquityValue token={tezosToken} showTokenValue={false} />
 
         <HeaderCardActionButtons token={tezosToken} />
 

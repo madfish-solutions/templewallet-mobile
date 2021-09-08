@@ -68,6 +68,7 @@ import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
+import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -129,6 +130,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,

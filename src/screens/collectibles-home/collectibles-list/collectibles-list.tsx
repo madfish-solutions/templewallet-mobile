@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
-import { useVisibleCollectiblesListSelector } from '../../../store/wallet/wallet-selectors';
+import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
-export const CollectiblesList = () => {
-  const visibleCollectiblesList = useVisibleCollectiblesListSelector();
+interface Props {
+  collectiblesList: TokenInterface[];
+}
+
+export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const { layoutWidth, handleLayout } = useLayoutSizes();
 
   const smallCardSize = (1 / 3) * layoutWidth - 0.1;
   const bigCardSize = (2 / 3) * layoutWidth - 0.1;
 
-  const [first, second, third, ...rest] = visibleCollectiblesList;
+  const [first, second, third, ...rest] = collectiblesList;
 
-  return visibleCollectiblesList.length === 0 ? (
+  return collectiblesList.length === 0 ? (
     <DataPlaceholder text="Not found any NFT" />
   ) : (
     <>

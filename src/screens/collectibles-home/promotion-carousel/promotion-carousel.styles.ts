@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const usePromotionCarouselStyles = createUseStyles(({ colors, typography }) => ({
+export const usePromotionCarouselStyles = createUseStyles(({ colors }) => ({
   paginationContainer: {
     paddingVertical: formatSize(2)
   },
@@ -13,19 +13,5 @@ export const usePromotionCarouselStyles = createUseStyles(({ colors, typography 
   },
   paginationInactiveDot: {
     backgroundColor: colors.lines
-  },
-  footer: {
-    position: 'relative'
-  },
-  walletNavigationButton: {
-    position: 'absolute',
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  walletNavigationButtonText: {
-    ...typography.numbersStatus8,
-    color: colors.peach,
-    textTransform: 'uppercase'
   }
 }));
