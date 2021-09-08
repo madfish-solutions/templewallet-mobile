@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
 import { HeaderCard } from '../../components/header-card/header-card';
@@ -10,6 +10,7 @@ import { emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { CollectiblesHomeStyles } from './collectibles-home.styles';
+import { CollectiblesList } from './collectibles-list/collectibles-list';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
 export const CollectiblesHome = () => {
@@ -26,12 +27,7 @@ export const CollectiblesHome = () => {
         <PromotionCarousel />
       </HeaderCard>
       <ScreenContainer>
-        <Text>item</Text>
-        <Text>item</Text>
-        <Text>item</Text>
-        <Text>item</Text>
-        <Text>item</Text>
-        <Text>item</Text>
+        <CollectiblesList />
       </ScreenContainer>
     </>
   );

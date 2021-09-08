@@ -8,7 +8,7 @@ import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-n
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
-import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
+import { useFilteredTokenList } from '../../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -25,11 +25,11 @@ export const TokenList: FC = () => {
 
   const tezosToken = useTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
+  const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredTokenList(visibleTokensList);
   const [isShowTezos, setIsShowTezos] = useState(true);
 
-  const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
+  const isShowPlaceholder = !isShowTezos && filteredAssetsList.length === 0;
 
   useEffect(
     () => setIsShowTezos(filterTezos(tezosToken.balance, isHideZeroBalance, searchValue)),
@@ -66,7 +66,7 @@ export const TokenList: FC = () => {
               />
             )}
 
-            {filteredTokensList.map(
+            {filteredAssetsList.map(
               (token, index) =>
                 token.isVisible && (
                   <TokenListItem

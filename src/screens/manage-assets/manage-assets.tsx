@@ -7,7 +7,7 @@ import { IconTitleNoBg } from '../../components/icon-title-no-bg/icon-title-no-b
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
-import { useFilteredTokenList } from '../../hooks/use-filtered-token-list.hook';
+import { useFilteredTokenList } from '../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTokensListSelector } from '../../store/wallet/wallet-selectors';
@@ -20,7 +20,7 @@ export const ManageAssets = () => {
   const { navigate } = useNavigation();
 
   const tokensList = useTokensListSelector();
-  const { filteredTokensList, setSearchValue } = useFilteredTokenList(tokensList);
+  const { filteredAssetsList, setSearchValue } = useFilteredTokenList(tokensList);
 
   return (
     <>
@@ -28,10 +28,10 @@ export const ManageAssets = () => {
       <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
         <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
 
-        {filteredTokensList.length === 0 ? (
+        {filteredAssetsList.length === 0 ? (
           <DataPlaceholder text="No tokens matching search criteria were found" />
         ) : (
-          filteredTokensList.map(token => <ManageAssetsItem key={getTokenSlug(token)} token={token} />)
+          filteredAssetsList.map(token => <ManageAssetsItem key={getTokenSlug(token)} token={token} />)
         )}
 
         <Divider />

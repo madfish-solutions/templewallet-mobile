@@ -16,14 +16,14 @@ interface Props {
 }
 
 export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
-  const { iconName, iconUrl } = token;
+  const { iconName, thumbnailUri } = token;
 
   return (
     <View style={TokenIconStyles.container}>
       {isDefined(iconName) ? (
         <Icon name={iconName} size={size} />
-      ) : isString(iconUrl) ? (
-        <Image source={{ uri: formatImgUri(iconUrl), width: size, height: size }} />
+      ) : isString(thumbnailUri) ? (
+        <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
       ) : (
         <Icon name={IconNameEnum.NoNameToken} size={size} />
       )}

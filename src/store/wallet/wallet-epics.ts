@@ -115,8 +115,8 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     ofType(sendAssetActions.submit),
     toPayload(),
     withSelectedAccount(state$),
-    switchMap(([{ token, receiverPublicKeyHash, amount }, selectedAccount]) =>
-      getTransferParams$(token, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
+    switchMap(([{ asset, receiverPublicKeyHash, amount }, selectedAccount]) =>
+      getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })

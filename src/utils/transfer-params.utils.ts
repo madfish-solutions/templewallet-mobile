@@ -12,12 +12,12 @@ import { createReadOnlyTezosToolkit } from './network/tezos-toolkit.utils';
 import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
-  token: TokenMetadataInterface,
+  asset: TokenMetadataInterface,
   sender: WalletAccountInterface,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> => {
-  const { id, address, decimals } = token;
+  const { id, address, decimals } = asset;
 
   return isString(address)
     ? from(createReadOnlyTezosToolkit(sender).contract.at(address)).pipe(
