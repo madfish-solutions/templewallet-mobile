@@ -1,43 +1,35 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { IconTitleNoBg } from '../../components/icon-title-no-bg/icon-title-no-bg';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { SearchInput } from '../../components/search-input/search-input';
-import { useFilteredTokenList } from '../../hooks/use-filtered-assets-list.hook';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTokensListSelector } from '../../store/wallet/wallet-selectors';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { ManageAssetsItem } from './manage-assets-item/manage-assets-item';
+import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { formatSize } from '../../styles/format-size';
 import { useManageAssetsStyles } from './manage-assets.styles';
+import { ManageCollectibles } from './manage-collectibles/manage-collectibles';
+import { ManageTokens } from './manage-tokens/manage-tokens';
+
+const manageTokensIndex = 0;
 
 export const ManageAssets = () => {
   const styles = useManageAssetsStyles();
-  const { navigate } = useNavigation();
 
-  const tokensList = useTokensListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredTokenList(tokensList);
+  const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
+  const showManageTokens = segmentedControlIndex === manageTokensIndex;
 
   return (
     <>
-      <SearchInput placeholder="Search by address" onChangeText={setSearchValue} />
-      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
-        <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
+      <Divider size={formatSize(8)} />
+      <View style={styles.segmentControlContainer}>
+        <TextSegmentControl
+          selectedIndex={segmentedControlIndex}
+          values={['Tokens', 'Collectibles']}
+          onChange={setSegmentedControlIndex}
+        />
+      </View>
 
-        {filteredAssetsList.length === 0 ? (
-          <DataPlaceholder text="No tokens matching search criteria were found" />
-        ) : (
-          filteredAssetsList.map(token => <ManageAssetsItem key={getTokenSlug(token)} token={token} />)
-        )}
+      <Divider size={formatSize(8)} />
 
-        <Divider />
-        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
-        <Divider />
-      </ScreenContainer>
+      {showManageTokens ? <ManageTokens /> : <ManageCollectibles />}
     </>
   );
 };

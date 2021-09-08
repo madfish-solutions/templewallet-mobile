@@ -19,7 +19,7 @@ import { TokenFormDropdown } from '../../components/token-dropdown/token-form-dr
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormNumericInput } from '../../form/form-numeric-input/form-numeric-input';
-import { useFilteredTokenList } from '../../hooks/use-filtered-assets-list.hook';
+import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
@@ -51,7 +51,7 @@ export const SendModal: FC = () => {
   const styles = useSendModalStyles();
   const visibleAccounts = useVisibleAccountsListSelector();
   const assetsList = useAssetsListSelector();
-  const { filteredAssetsList } = useFilteredTokenList(assetsList, true);
+  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(

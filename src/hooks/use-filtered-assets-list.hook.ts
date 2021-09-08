@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 
-export const useFilteredTokenList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
+export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
   const [nonZeroBalanceAssetsList, setNonZeroBalanceAssetsList] = useState<TokenInterface[]>([]);
 
