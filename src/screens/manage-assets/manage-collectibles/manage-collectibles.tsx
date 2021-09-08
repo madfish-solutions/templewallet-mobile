@@ -32,7 +32,7 @@ export const ManageCollectibles = () => {
           <DataPlaceholder text="No collectibles matching search criteria were found" />
         ) : (
           filteredAssetsList.map(collectible => (
-            <ManageAssetsItem key={getTokenSlug(collectible)} token={collectible} />
+            <ManageAssetsItem key={getTokenSlug(collectible)} asset={collectible} />
           ))
         )}
 

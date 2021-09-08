@@ -31,7 +31,7 @@ export const ManageTokens = () => {
         {filteredAssetsList.length === 0 ? (
           <DataPlaceholder text="No tokens matching search criteria were found" />
         ) : (
-          filteredAssetsList.map(token => <ManageAssetsItem key={getTokenSlug(token)} token={token} />)
+          filteredAssetsList.map(token => <ManageAssetsItem key={getTokenSlug(token)} asset={token} />)
         )}
 
         <Divider />
