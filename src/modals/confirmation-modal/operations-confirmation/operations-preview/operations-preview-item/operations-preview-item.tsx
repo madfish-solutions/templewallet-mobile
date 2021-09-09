@@ -30,7 +30,7 @@ interface PreviewDataInterface {
 }
 
 interface ParamsPreviewDataInterface {
-  type: ParamPreviewTypeEnum;
+  type?: ParamPreviewTypeEnum;
   contract?: string;
   asset?: { contract: string } | Asset | string;
   amount: string;
@@ -64,7 +64,8 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
           return {
             iconSeed: transfer.recipient,
             description: 'Transfer to',
-            hash: transfer.recipient
+            hash: transfer.recipient,
+            token: formattedAmount(transfer)
           };
         });
       case ParamPreviewTypeEnum.Delegate:
@@ -107,9 +108,19 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             </View>
             {isDefined(token) && Number(token.amount) > 0 && (
               <View>
-                <TokenValueText amount={token.amount} token={token.tokenData} style={styles.amountToken} />
+                <TokenValueText
+                  amount={token.amount}
+                  token={token.tokenData}
+                  style={styles.amountToken}
+                  isNegativeAmount={true}
+                />
                 <Divider size={formatSize(8)} />
-                <DollarValueText amount={token.amount} token={token.tokenData} style={styles.amountDollar} />
+                <DollarValueText
+                  amount={token.amount}
+                  token={token.tokenData}
+                  style={styles.amountDollar}
+                  isNegativeAmount={true}
+                />
               </View>
             )}
           </View>
