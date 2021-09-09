@@ -9,6 +9,7 @@ import {
 } from '../../interfaces/wallet-account-state.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { isDefined } from '../../utils/is-defined';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
@@ -75,15 +76,15 @@ export const useActivityGroupsSelector = () => {
 export const useTokensMetadataSelector = () =>
   useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
 
-export const useTokensListSelector = (): TokenInterface[] => {
+export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
   const getTokenMetadata = useTokenMetadataGetter();
 
-  const [tokensList, setTokensList] = useState<TokenInterface[]>([]);
+  const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
 
   useEffect(
     () =>
-      setTokensList(
+      setAssetsList(
         selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
           balance,
           isVisible,
@@ -93,13 +94,31 @@ export const useTokensListSelector = (): TokenInterface[] => {
     [selectedAccountTokensList, getTokenMetadata]
   );
 
-  return tokensList;
+  return assetsList;
+};
+
+export const useTokensListSelector = () => {
+  const assetsList = useAssetsListSelector();
+
+  return useMemo(() => assetsList.filter(({ artifactUri }) => !isDefined(artifactUri)), [assetsList]);
 };
 
 export const useVisibleTokensListSelector = () => {
   const tokensList = useTokensListSelector();
 
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
+};
+
+export const useCollectiblesListSelector = () => {
+  const assetsList = useAssetsListSelector();
+
+  return useMemo(() => assetsList.filter(({ artifactUri }) => isDefined(artifactUri)), [assetsList]);
+};
+
+export const useVisibleCollectiblesListSelector = () => {
+  const collectiblesList = useCollectiblesListSelector();
+
+  return useMemo(() => collectiblesList.filter(({ isVisible }) => isVisible), [collectiblesList]);
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {

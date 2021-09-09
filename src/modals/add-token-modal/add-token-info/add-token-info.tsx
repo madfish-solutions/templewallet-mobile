@@ -62,7 +62,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
             <FormNumericInput name="decimals" decimals={0} />
 
             <Label label="Icon URL" description="Image URL for token logo." isOptional={true} />
-            <FormTextInput name="iconUrl" />
+            <FormTextInput name="thumbnailUri" />
 
             <Divider />
           </View>

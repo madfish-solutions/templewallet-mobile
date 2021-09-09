@@ -6,7 +6,7 @@ export const mockFA1_2TokenMetadata: TokenMetadataInterface = {
   name: 'Mock FA1.2 token',
   symbol: 'MOCK12',
   decimals: 6,
-  iconUrl: 'https://fakeurl.com/img.png'
+  thumbnailUri: 'https://fakeurl.com/img.png'
 };
 
 export const mockFA2TokenMetadata: TokenMetadataInterface = {
@@ -15,5 +15,5 @@ export const mockFA2TokenMetadata: TokenMetadataInterface = {
   name: 'Mock FA2 token',
   symbol: 'MOCK2',
   decimals: 8,
-  iconUrl: 'https://fakeurl.com/img2.png'
+  thumbnailUri: 'https://fakeurl.com/img2.png'
 };

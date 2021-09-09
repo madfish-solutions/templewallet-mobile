@@ -13,15 +13,15 @@ import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 
 interface Props {
-  token: TokenInterface;
+  asset: TokenInterface;
 }
 
-export const ManageAssetsItem: FC<Props> = ({ token }) => {
+export const ManageAssetsItem: FC<Props> = ({ asset }) => {
   const dispatch = useDispatch();
-  const slug = getTokenSlug(token);
+  const slug = getTokenSlug(asset);
 
   const handleTrashIconPress = () =>
-    Alert.alert('Delete token?', 'You can add this token again in the same menu in the "Add token" section.', [
+    Alert.alert('Delete asset?', 'You can add this asset again in the same menu in the "Add asset" section.', [
       {
         text: 'Cancel',
         style: 'cancel'
@@ -34,10 +34,10 @@ export const ManageAssetsItem: FC<Props> = ({ token }) => {
     ]);
 
   return (
-    <TokenContainer token={token}>
+    <TokenContainer token={asset}>
       <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={handleTrashIconPress} />
       <Divider size={formatSize(16)} />
-      <Switch value={token.isVisible} onChange={() => dispatch(toggleTokenVisibilityAction(slug))} />
+      <Switch value={asset.isVisible} onChange={() => dispatch(toggleTokenVisibilityAction(slug))} />
     </TokenContainer>
   );
 };

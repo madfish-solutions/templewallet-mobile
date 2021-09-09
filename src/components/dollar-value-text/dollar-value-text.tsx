@@ -22,6 +22,6 @@ export const DollarValueText: FC<Props> = ({ token, style, amount }) => {
   const parsedAmount = mutezToTz(new BigNumber(amount), token.decimals).multipliedBy(exchangeRate);
 
   return isDefined(exchangeRate) ? (
-    <Text style={style}>{formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN, 2)} $</Text>
+    <Text style={style}>≈ {formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN, 2)} $</Text>
   ) : null;
 };

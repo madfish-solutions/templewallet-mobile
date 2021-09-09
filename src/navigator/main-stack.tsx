@@ -13,6 +13,7 @@ import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-authorized-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
+import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { Debug } from '../screens/debug/debug';
@@ -96,6 +97,14 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Wallet}
                 component={Wallet}
                 options={{ animationEnabled: false, headerShown: false }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.CollectiblesHome}
+                component={CollectiblesHome}
+                options={{
+                  headerShown: false,
+                  gestureDirection: 'horizontal-inverted'
+                }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}

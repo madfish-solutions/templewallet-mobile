@@ -37,7 +37,7 @@ export const tokenBalanceMetadata = ({
   ...emptyTokenMetadata,
   id: token_id,
   address: contract,
-  iconUrl: thumbnail_uri,
+  thumbnailUri: thumbnail_uri,
   ...(isDefined(name) && { name }),
   ...(isDefined(symbol) && { symbol }),
   ...(isDefined(decimals) && { decimals })

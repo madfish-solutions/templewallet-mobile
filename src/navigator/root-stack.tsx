@@ -6,6 +6,7 @@ import React, { createRef, useMemo, useState } from 'react';
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
@@ -123,6 +124,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.ImportAccount}
               component={ImportAccountModal}
               options={useModalOptions('Import account')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.CollectibleModal}
+              component={CollectibleModal}
+              options={useModalOptions('NFT Name')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
