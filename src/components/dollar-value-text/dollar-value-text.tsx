@@ -24,7 +24,7 @@ export const DollarValueText: FC<Props> = ({ token, style, amount, isNegativeAmo
 
   return isDefined(exchangeRate) ? (
     <Text style={style}>
-      {isNegativeAmount && '- '}
+      ≈ {isNegativeAmount && '- '}
       {formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN, 2)} $
     </Text>
   ) : null;

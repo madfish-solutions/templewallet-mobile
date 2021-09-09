@@ -18,7 +18,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Quipuswap governance token',
     symbol: 'QUIPU',
     decimals: 6,
-    iconUrl: 'https://quipuswap.com/tokens/quipu.png'
+    thumbnailUri: 'https://quipuswap.com/tokens/quipu.png'
   },
   {
     id: 0,
@@ -34,7 +34,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Wrapped WBTC',
     symbol: 'wWBTC',
     decimals: 8,
-    iconUrl: 'ipfs://Qmdj6n9T48LDWex8NkBMKUQJfZgardxZVdtRRibYQVzLCJ'
+    thumbnailUri: 'ipfs://Qmdj6n9T48LDWex8NkBMKUQJfZgardxZVdtRRibYQVzLCJ'
   },
   {
     id: 0,
@@ -42,7 +42,7 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Kolibri',
     symbol: 'kUSD',
     decimals: 18,
-    iconUrl: 'https://kolibri-data.s3.amazonaws.com/logo.png'
+    thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png'
   },
   {
     id: 0,
@@ -50,6 +50,6 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'youves uUSD',
     symbol: 'uUSD',
     decimals: 12,
-    iconUrl: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd'
+    thumbnailUri: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd'
   }
 ];

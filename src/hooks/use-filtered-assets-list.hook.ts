@@ -3,52 +3,52 @@ import { useEffect, useState } from 'react';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 
-export const useFilteredTokenList = (tokensList: TokenInterface[], initialIsHideZeroBalance = false) => {
+export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
-  const [nonZeroBalanceTokenList, setNonZeroBalanceTokenList] = useState<TokenInterface[]>([]);
+  const [nonZeroBalanceAssetsList, setNonZeroBalanceAssetsList] = useState<TokenInterface[]>([]);
 
   const [searchValue, setSearchValue] = useState<string>();
-  const [filteredTokensList, setFilteredTokensList] = useState<TokenInterface[]>([]);
+  const [filteredAssetsList, setFilteredAssetsList] = useState<TokenInterface[]>([]);
 
   useEffect(() => {
     const result: TokenInterface[] = [];
 
-    for (const token of tokensList) {
-      if (token.balance !== '0') {
-        result.push(token);
+    for (const asset of assetsList) {
+      if (asset.balance !== '0') {
+        result.push(asset);
       }
     }
 
-    setNonZeroBalanceTokenList(result);
-  }, [tokensList]);
+    setNonZeroBalanceAssetsList(result);
+  }, [assetsList]);
 
   useEffect(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceTokenList : tokensList;
+    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: TokenInterface[] = [];
 
-      for (const token of sourceArray) {
-        const { name, symbol, address } = token;
+      for (const asset of sourceArray) {
+        const { name, symbol, address } = asset;
 
         if (
           name.toLowerCase().includes(lowerCaseSearchValue) ||
           symbol.toLowerCase().includes(lowerCaseSearchValue) ||
           address.toLowerCase().includes(lowerCaseSearchValue)
         ) {
-          result.push(token);
+          result.push(asset);
         }
       }
 
-      setFilteredTokensList(result);
+      setFilteredAssetsList(result);
     } else {
-      setFilteredTokensList(sourceArray);
+      setFilteredAssetsList(sourceArray);
     }
-  }, [isHideZeroBalance, searchValue, tokensList, nonZeroBalanceTokenList]);
+  }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
 
   return {
-    filteredTokensList,
+    filteredAssetsList,
     isHideZeroBalance,
     setIsHideZeroBalance,
     searchValue,

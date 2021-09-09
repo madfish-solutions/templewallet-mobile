@@ -7,7 +7,8 @@ export interface TokenMetadataInterface {
   symbol: string;
   decimals: number;
   iconName?: IconNameEnum;
-  iconUrl?: string;
+  thumbnailUri?: string;
+  artifactUri?: string;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

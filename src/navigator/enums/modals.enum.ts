@@ -1,6 +1,7 @@
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -12,7 +13,8 @@ export enum ModalsEnum {
   RevealSeedPhrase = 'RevealSeedPhrase',
   RevealPrivateKey = 'RevealPrivateKey',
   EnableBiometryPassword = 'EnableBiometryPassword',
-  ImportAccount = 'ImportAccount'
+  ImportAccount = 'ImportAccount',
+  CollectibleModal = 'CollectibleModal'
 }
 
 export type ModalsParamList = {
@@ -26,4 +28,5 @@ export type ModalsParamList = {
   [ModalsEnum.RevealPrivateKey]: { account: WalletAccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.ImportAccount]: undefined;
+  [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
 };

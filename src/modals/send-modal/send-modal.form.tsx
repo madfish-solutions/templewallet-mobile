@@ -8,7 +8,7 @@ import { WalletAccountInterface } from '../../interfaces/wallet-account.interfac
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export interface SendModalFormValues {
-  token: TokenInterface;
+  asset: TokenInterface;
   receiverPublicKeyHash: string;
   amount?: BigNumber;
   ownAccount: WalletAccountInterface;
@@ -16,7 +16,7 @@ export interface SendModalFormValues {
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
-  token: object().shape({}).required(makeRequiredErrorMessage('Asset')),
+  asset: object().shape({}).required(makeRequiredErrorMessage('Asset')),
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
       value ? schema : walletAddressValidation
