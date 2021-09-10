@@ -13,15 +13,19 @@ interface Props {
   token: TokenMetadataInterface;
   amount: string;
   style?: StyleProp<TextStyle>;
+  isNegativeAmount?: boolean;
 }
 
-export const DollarValueText: FC<Props> = ({ token, style, amount }) => {
+export const DollarValueText: FC<Props> = ({ token, style, amount, isNegativeAmount = false }) => {
   const exchangeRates = useExchangeRatesSelector();
 
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)];
   const parsedAmount = mutezToTz(new BigNumber(amount), token.decimals).multipliedBy(exchangeRate);
 
   return isDefined(exchangeRate) ? (
-    <Text style={style}>≈ {formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN, 2)} $</Text>
+    <Text style={style}>
+      ≈ {isNegativeAmount && '- '}
+      {formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN, 2)} $
+    </Text>
   ) : null;
 };

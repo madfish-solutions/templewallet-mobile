@@ -11,13 +11,15 @@ interface Props {
   amount: string;
   isShowSymbol?: boolean;
   style?: StyleProp<TextStyle>;
+  isNegativeAmount?: boolean;
 }
 
-export const TokenValueText: FC<Props> = ({ style, token, isShowSymbol = true, amount }) => {
+export const TokenValueText: FC<Props> = ({ style, token, isShowSymbol = true, amount, isNegativeAmount = false }) => {
   const parsedAmount = mutezToTz(new BigNumber(amount), token.decimals);
 
   return (
     <Text style={style}>
+      {isNegativeAmount && '- '}
       {formatAssetAmount(parsedAmount)}
       {isShowSymbol ? ` ${token.symbol}` : null}
     </Text>
