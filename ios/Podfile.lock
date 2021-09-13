@@ -277,6 +277,8 @@ PODS:
     - React-Core
   - react-native-camera/RN (3.44.3):
     - React-Core
+  - react-native-document-picker (5.2.0):
+    - React-Core
   - react-native-flipper (0.87.0):
     - React-Core
   - react-native-orientation-locker (1.3.1):
@@ -354,6 +356,8 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - ReactNativeExceptionHandler (2.10.10):
+    - React-Core
+  - rn-fetch-blob (0.12.0):
     - React-Core
   - RNBootSplash (3.2.4):
     - React-Core
@@ -462,6 +466,7 @@ DEPENDENCIES:
   - react-native-aes (from `../node_modules/react-native-aes-crypto`)
   - react-native-biometrics (from `../node_modules/react-native-biometrics`)
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -481,6 +486,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
@@ -553,6 +559,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-biometrics"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
   react-native-orientation-locker:
@@ -591,6 +599,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeExceptionHandler:
     :path: "../node_modules/react-native-exception-handler"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNBootSplash:
     :path: "../node_modules/react-native-bootsplash"
   RNCAsyncStorage:
@@ -655,6 +665,7 @@ SPEC CHECKSUMS:
   react-native-aes: c6e4e3ffcff410535e31e161fca95d50e608d4ee
   react-native-biometrics: 9d3306e5d29c3bc4e6a3c912d759a94e76a2f683
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
+  react-native-document-picker: f1b5398801b332c77bc62ae0eae2116f49bdff26
   react-native-flipper: a5770950f79017f17f50b316cb74b66d14192c79
   react-native-orientation-locker: 998c0744e26624407dac068c04c605b4af7304a2
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
@@ -674,6 +685,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: a9904c6d0218fb9f8b19d6dd88607225927668f9
   ReactCommon: 149906e01aa51142707a10665185db879898e966
   ReactNativeExceptionHandler: b11ff67c78802b2f62eed0e10e75cb1ef7947c60
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNBootSplash: 4844706cbb56a3270556c9b94e59dedadccd47e4
   RNCAsyncStorage: 7102fe8985f889579a3ae148d957bbb3f308122b
   RNCClipboard: ddd4d291537f1667209c9c405aaa4307297e252e
@@ -693,6 +705,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 750c276a7a8a05bc408efa7b74e27ce786f8069b
+PODFILE CHECKSUM: 4c4887c3190317c496092c16843319dbdfa83c9e
 
 COCOAPODS: 1.10.1
