@@ -10,14 +10,15 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { RadioButton } from '../../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { EmptyFn } from '../../../config/general';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
-import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
+import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
+import { createReadOnlyTezosToolkit } from '../../../utils/network/tezos-toolkit.utils';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
@@ -29,17 +30,26 @@ interface Props {
   onFormSubmitted: EmptyFn;
 }
 
-const typeRadioButtons: RadioButton<TokenTypeEnum>[] = [
-  { value: TokenTypeEnum.FA_1_2, label: 'FA 1.2' },
-  { value: TokenTypeEnum.FA_2, label: 'FA 2' }
-];
-
 export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
+  const selectedAccount = useSelectedAccountSelector();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
-    dispatch(loadTokenSuggestionActions.submit({ id: id.toNumber(), address }));
-    onFormSubmitted();
+    const token = { address, id: id?.toNumber() ?? 0 };
+
+    createReadOnlyTezosToolkit(selectedAccount)
+      .contract.at(address)
+      .then(contract => {
+        if (!isValidTokenContract(contract)) {
+          showErrorToast({ description: 'Invalid token address' });
+        } else if (selectedAccount.tokensList.find(item => item.slug === getTokenSlug(token)) !== undefined) {
+          showErrorToast({ description: 'Token with this address already added to this account.' });
+        } else {
+          dispatch(loadTokenSuggestionActions.submit(token));
+          onFormSubmitted();
+        }
+      })
+      .catch(() => showWarningToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' }));
   };
 
   return (
@@ -47,24 +57,18 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
       initialValues={addTokenAddressFormInitialValues}
       validationSchema={addTokenAddressFormValidationSchema}
       onSubmit={onSubmit}>
-      {({ values, submitForm, isValid }) => (
+      {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
-            <Label label="Token type" />
-            <FormRadioButtonsGroup name="type" buttons={typeRadioButtons} />
-
             <Label label="Address" description="Address of deployed token contract." />
             <FormAddressInput name="address" />
 
-            {values.type === TokenTypeEnum.FA_2 && (
-              <>
-                <Label
-                  label="Token ID"
-                  description="A non negative integer number that identifies the token inside FA2 contract"
-                />
-                <FormNumericInput name="id" decimals={0} />
-              </>
-            )}
+            <Label
+              label="Token ID"
+              description="A non negative integer number that identifies the token inside FA2 contract"
+              isOptional={true}
+            />
+            <FormNumericInput name="id" decimals={0} />
 
             <Divider />
           </View>

@@ -1,13 +1,13 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
-import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { MadeWithLove } from '../../components/made-with-love/made-with-love';
+import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
 import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -32,7 +32,6 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
-  const { isHardwareAvailable } = useBiometryAvailability();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -76,24 +75,28 @@ export const Settings = () => {
               />
             </WhiteContainerAction>
 
-            {isHardwareAvailable && (
-              <>
-                <WhiteContainerDivider />
+            <WhiteContainerDivider />
 
-                <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
-                  <View style={styles.actionsContainer}>
-                    <WhiteContainerText text="Secure" />
-                  </View>
-                  <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
-                </WhiteContainerAction>
-              </>
-            )}
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+              <View style={styles.actionsContainer}>
+                <WhiteContainerText text="Secure" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.DAppsSettings)}>
               <WhiteContainerText text="DApps" />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.NodeSettings)}>
+              <WhiteContainerText text="Default node (RPC)" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
@@ -108,13 +111,12 @@ export const Settings = () => {
           <Divider />
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButtonPress}>
-            <Text style={styles.logoutButtonText}>LOG OUT</Text>
+            <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
           </TouchableOpacity>
           <Divider />
         </View>
-
-        <MadeWithLove />
+        {!isTablet() && <OctopusWithLove />}
       </ScreenContainer>
     </>
   );

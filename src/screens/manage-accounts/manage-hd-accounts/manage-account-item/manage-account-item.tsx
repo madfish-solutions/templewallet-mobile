@@ -1,29 +1,41 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../../components/divider/divider';
 import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
-import { useExchangeRatesSelector } from '../../../../store/currency/currency-selectors';
+import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
+import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../../token/data/tokens-metadata';
+import { showWarningToast } from '../../../../toast/toast.utils';
+import { getTruncatedProps } from '../../../../utils/style.util';
+import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
   account: WalletAccountInterface;
+  selectedAccount: WalletAccountInterface;
   onRevealButtonPress: EventFn<WalletAccountInterface>;
 }
 
-export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) => {
+export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
+  const dispatch = useDispatch();
+  const { navigate } = useNavigation();
   const styles = useManageAccountItemStyles();
-  const { exchangeRates } = useExchangeRatesSelector();
+
+  const tezosToken = getTezosToken(account.tezosBalance.data);
+  const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 
   return (
     <View style={styles.container}>
@@ -31,12 +43,37 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
         <View style={styles.accountContainer}>
           <RobotIcon seed={account.publicKeyHash} />
           <View style={styles.accountContainerData}>
-            <Text style={styles.accountText}>{account.name}</Text>
+            <Text {...getTruncatedProps(styles.accountText)}>{account.name}</Text>
             <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
           </View>
         </View>
 
-        <Switch value={true} disabled={true} />
+        <View style={styles.actionsContainer}>
+          <Divider size={formatSize(16)} />
+          <TouchableIcon
+            name={IconNameEnum.Edit}
+            size={formatSize(16)}
+            onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+          />
+          <Divider size={formatSize(16)} />
+
+          <View
+            onTouchStart={() =>
+              void (
+                isVisibilitySwitchDisabled &&
+                showWarningToast({
+                  title: 'Could not hide your selected account',
+                  description: 'Switch to another account and try again'
+                })
+              )
+            }>
+            <Switch
+              value={account.isVisible}
+              disabled={isVisibilitySwitchDisabled}
+              onChange={isVisible => dispatch(updateWalletAccountAction({ ...account, isVisible }))}
+            />
+          </View>
+        </View>
       </View>
 
       <Divider size={formatSize(16)} />
@@ -44,13 +81,10 @@ export const ManageAccountItem: FC<Props> = ({ account, onRevealButtonPress }) =
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
           <HideBalance style={styles.balanceText}>
-            <TokenValueText balance={account.tezosBalance.data} tokenSymbol={TEZ_TOKEN_METADATA.symbol} />
+            <TokenValueText token={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
           <HideBalance style={styles.equityText}>
-            <DollarValueText
-              balance={account.tezosBalance.data}
-              exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]}
-            />
+            <DollarValueText token={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
         </View>
 

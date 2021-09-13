@@ -9,7 +9,8 @@ import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast } from '../toast/toast.utils';
+import { showErrorToast, showSuccessToast, showWarningToast } from '../toast/toast.utils';
+import { getPublicKeyAndHash$ } from '../utils/keys.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
@@ -21,7 +22,7 @@ export const useShelter = () => {
   const { navigate, goBack } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
-  const createHdAccount$ = useMemo(() => new Subject<{ name: string }>(), []);
+  const createHdAccount$ = useMemo(() => new Subject(), []);
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
@@ -47,25 +48,38 @@ export const useShelter = () => {
           }
         }),
       createHdAccount$
-        .pipe(switchMap(({ name }) => Shelter.createHdAccount$(name, accounts.length)))
+        .pipe(switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)))
         .subscribe(publicData => {
           if (publicData !== undefined) {
             dispatch(setSelectedAccountAction(publicData.publicKeyHash));
             dispatch(addHdAccountAction(publicData));
-            goBack();
           }
         }),
       createImportedAccount$
-        .pipe(switchMap(({ privateKey, name }) => Shelter.createImportedAccount$(privateKey, name)))
         .pipe(
-          catchError(() => {
-            showErrorToast({
-              title: 'Failed to import account.',
-              description: 'This may happen because provided Key is invalid.'
-            });
+          switchMap(({ privateKey, name }) =>
+            getPublicKeyAndHash$(privateKey).pipe(
+              switchMap(([publicKey]) => {
+                for (const account of accounts) {
+                  if (account.publicKey === publicKey) {
+                    showWarningToast({ description: 'Account already exist' });
 
-            return of(undefined);
-          })
+                    return of(undefined);
+                  }
+                }
+
+                return Shelter.createImportedAccount$(privateKey, name);
+              }),
+              catchError(() => {
+                showErrorToast({
+                  title: 'Failed to import account.',
+                  description: 'This may happen because provided Key is invalid.'
+                });
+
+                return of(undefined);
+              })
+            )
+          )
         )
         .subscribe(publicData => {
           if (publicData !== undefined) {
@@ -116,7 +130,7 @@ export const useShelter = () => {
 
   const importWallet = (seedPhrase: string, password: string, useBiometry?: boolean) =>
     importWallet$.next({ seedPhrase, password, useBiometry });
-  const createHdAccount = (params: { name: string }) => createHdAccount$.next(params);
+  const createHdAccount = () => createHdAccount$.next();
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 

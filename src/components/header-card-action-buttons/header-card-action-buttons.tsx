@@ -6,7 +6,7 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { showErrorToast } from '../../toast/toast.utils';
+import { showErrorToast, showWarningToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { ButtonMedium } from '../button/button-medium/button-medium';
@@ -36,23 +36,30 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <ButtonMedium
         title="RECEIVE"
         iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { asset: token })}
+        onPress={() => navigate(ModalsEnum.Receive, { token })}
       />
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
-        onTouchStart={() =>
-          void (disableSendAsset && showErrorToast({ description: `Can't send ${token.symbol}, ${errorMessage}` }))
-        }>
+        onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}>
         <ButtonMedium
           title="SEND"
           disabled={disableSendAsset}
           iconName={IconNameEnum.ArrowUp}
-          onPress={() => navigate(ModalsEnum.Send, { asset: token })}
+          onPress={() => navigate(ModalsEnum.Send, { token })}
         />
       </View>
       <Divider size={formatSize(8)} />
-      <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
+      <View
+        style={styles.buttonContainer}
+        onTouchStart={() =>
+          void showWarningToast({
+            title: 'Work in progress...',
+            description: 'You will be available to buy crypto soon.'
+          })
+        }>
+        <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
+      </View>
     </ButtonsContainer>
   );
 };

@@ -1,16 +1,15 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf } from 'yup';
 
-import { makeRequiredErrorMessage } from './messages';
+import { isDefined } from '../../utils/is-defined';
 
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})
   .test('non-negative', 'Should be non-negative integer', value => {
-    if (value instanceof BigNumber) {
+    if (isDefined(value) && value instanceof BigNumber) {
       return value.integerValue().eq(value) && value.gte(0);
     }
 
-    return false;
+    return true;
   })
-  .default(new BigNumber(0))
-  .required(makeRequiredErrorMessage('Token ID'));
+  .default(undefined);

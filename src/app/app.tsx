@@ -6,17 +6,17 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { BiometryAvailabilityProvider } from '../biometry/biometry-availability.provider';
+import { HideBalanceProvider } from '../hooks/hide-balance/hide-balance.provider';
 import { RootStackScreen } from '../navigator/root-stack';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
-import { HideBalanceProvider } from '../utils/hide-balance/hide-balance.provider';
 import { initSentry } from '../utils/sentry.utils';
 
 initSentry();
 enableScreens();
 
 export const App = () => {
-  useEffect(() => void hide(), []);
+  useEffect(() => void hide({ fade: true }), []);
 
   return (
     <Provider store={store}>

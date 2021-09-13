@@ -51,7 +51,7 @@ export const Dropdown = <T extends unknown>({
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const contentHeight = 0.5 * useWindowDimensions().height;
+  const contentHeight = 0.7 * useWindowDimensions().height;
 
   const createDropdownItemPressHandler = (item: T) => () => {
     onValueChange(item);

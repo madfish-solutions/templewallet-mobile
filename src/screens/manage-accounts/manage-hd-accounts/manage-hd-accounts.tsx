@@ -6,7 +6,7 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { ButtonWithIcon } from '../../../components/icon-button/icon-button';
+import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
@@ -14,7 +14,8 @@ import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
@@ -22,9 +23,11 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
   const { navigate } = useNavigation();
+  const { createHdAccount } = useShelter();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
+  const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountListSelector();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
@@ -32,8 +35,7 @@ export const ManageHdAccounts = () => {
 
   const handleRevealButtonPress = (account: WalletAccountInterface) => {
     setManagedAccount(account);
-    // TODO: check if this needed for @gorhom/bottom-sheet v3+ (children rerender causes BottomSheet closing)
-    setTimeout(() => revealSelectBottomSheetController.open());
+    revealSelectBottomSheetController.open();
   };
 
   const handleRevealPrivateKeyButtonPress = () => {
@@ -67,18 +69,18 @@ export const ManageHdAccounts = () => {
       <ScreenContainer>
         {filteredAccountList.map(account => (
           <Fragment key={account.publicKeyHash}>
-            <ManageAccountItem account={account} onRevealButtonPress={handleRevealButtonPress} />
+            <ManageAccountItem
+              account={account}
+              selectedAccount={selectedAccount}
+              onRevealButtonPress={handleRevealButtonPress}
+            />
             <Divider size={formatSize(16)} />
           </Fragment>
         ))}
 
         <Divider />
 
-        <ButtonWithIcon
-          icon={IconNameEnum.PlusCircle}
-          text="CREATE NEW"
-          onPress={() => navigate(ModalsEnum.CreateHdAccount)}
-        />
+        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="CREATE NEW" onPress={createHdAccount} />
 
         <BottomSheet
           title="Select what do you want to reveal:"

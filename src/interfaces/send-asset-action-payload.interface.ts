@@ -1,7 +1,7 @@
-import { AssetMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 
 export interface SendAssetActionPayloadInterface {
-  asset: AssetMetadataInterface;
+  asset: TokenMetadataInterface;
   receiverPublicKeyHash: string;
   amount: number;
 }

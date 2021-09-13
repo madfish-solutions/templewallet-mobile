@@ -3,13 +3,18 @@ import { formatSize } from '../../styles/format-size';
 
 export const useStyledRadioButtonsGroupStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    alignSelf: 'flex-start'
+    alignSelf: 'stretch',
+    flex: 1
   },
   itemContainer: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-around',
+    width: '100%',
     paddingVertical: formatSize(6)
   },
   label: {
     ...typography.body15Semibold,
-    color: colors.black
+    color: colors.black,
+    flex: 1
   }
 }));

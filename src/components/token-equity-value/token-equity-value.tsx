@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
-import { useHideBalance } from '../../utils/hide-balance/hide-balance.hook';
 import { DollarValueText } from '../dollar-value-text/dollar-value-text';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -15,10 +15,10 @@ const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 
 
 interface Props {
   token: TokenInterface;
-  exchangeRate: number;
+  showTokenValue?: boolean;
 }
 
-export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
+export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) => {
   const styles = useTokenEquityValueStyles();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
@@ -33,12 +33,20 @@ export const TokenEquityValue: FC<Props> = ({ token, exchangeRate }) => {
         />
         <Text style={styles.dateText}>Equity Value {currentDate}</Text>
       </View>
-      <HideBalance style={styles.tokenValueText}>
-        <TokenValueText balance={token.balance} tokenSymbol={token.symbol} />
-      </HideBalance>
-      <HideBalance style={styles.equityValueText}>
-        <DollarValueText balance={token.balance} exchangeRate={exchangeRate} />
-      </HideBalance>
+      {showTokenValue ? (
+        <>
+          <HideBalance style={styles.mainValueText}>
+            <TokenValueText token={token} amount={token.balance} />
+          </HideBalance>
+          <HideBalance style={styles.additionalValueText}>
+            <DollarValueText token={token} amount={token.balance} />
+          </HideBalance>
+        </>
+      ) : (
+        <HideBalance style={styles.mainValueText}>
+          <DollarValueText token={token} amount={token.balance} />
+        </HideBalance>
+      )}
     </View>
   );
 };

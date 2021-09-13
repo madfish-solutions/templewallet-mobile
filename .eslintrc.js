@@ -39,7 +39,9 @@ module.exports = {
         'newlines-between': 'always'
       }
     ],
-    '@typescript-eslint/explicit-module-boundary-types': 'off'
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    'jest/no-done-callback': 'off'
   },
   globals: {
     localStorage: true,

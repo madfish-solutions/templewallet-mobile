@@ -1,9 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { FC } from 'react';
 
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useShelter } from '../../shelter/use-shelter.hook';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,
@@ -21,9 +21,10 @@ const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ va
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
+  const { createHdAccount } = useShelter();
 
   const handleCreateNewAccountButtonPress = () => {
-    navigate(ModalsEnum.CreateHdAccount);
+    createHdAccount();
     onPress();
   };
 
@@ -32,9 +33,15 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
     onPress();
   };
 
+  const handleImportAccountButtonPress = () => {
+    navigate(ScreensEnum.ImportAccount);
+    onPress();
+  };
+
   return (
     <>
       <BottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
+      <BottomSheetActionButton title="Import an account" onPress={handleImportAccountButtonPress} />
       <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );

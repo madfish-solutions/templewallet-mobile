@@ -7,12 +7,12 @@ export type AddTokenInfoFormValues = {
   symbol: string;
   name: string;
   decimals: BigNumber;
-  iconUrl?: string;
+  thumbnailUri?: string;
 };
 
 export const addTokenInfoFormValidationSchema: SchemaOf<AddTokenInfoFormValues> = object().shape({
   symbol: string().required(makeRequiredErrorMessage('Symbol')),
   name: string().required(makeRequiredErrorMessage('Name')),
   decimals: object().shape({}).nullable(false).required(makeRequiredErrorMessage('Decimals')),
-  iconUrl: string()
+  thumbnailUri: string()
 });

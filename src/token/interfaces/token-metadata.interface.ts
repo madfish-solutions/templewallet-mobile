@@ -7,12 +7,8 @@ export interface TokenMetadataInterface {
   symbol: string;
   decimals: number;
   iconName?: IconNameEnum;
-  iconUrl?: string;
-}
-
-export interface AssetMetadataInterface extends Omit<TokenMetadataInterface, 'id' | 'address'> {
-  id?: number;
-  address?: string;
+  thumbnailUri?: string;
+  artifactUri?: string;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

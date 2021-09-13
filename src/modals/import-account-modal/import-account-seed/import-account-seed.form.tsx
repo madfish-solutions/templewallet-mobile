@@ -1,3 +1,4 @@
+import { isValidPath } from 'ed25519-hd-key';
 import { mixed, object, SchemaOf, string } from 'yup';
 
 import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
@@ -8,7 +9,7 @@ export type ImportAccountSeedValues = {
   seedPhrase: string;
   password?: string;
   derivationType: ImportAccountDerivationEnum;
-  derivationPath: string;
+  derivationPath?: string;
 };
 
 export const importAccountSeedInitialValues: ImportAccountSeedValues = {
@@ -22,5 +23,5 @@ export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues
   seedPhrase: seedPhraseValidation,
   password: string(),
   derivationType: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)).required(),
-  derivationPath: string().required()
+  derivationPath: string().test('validateDerivationPath', 'Invalid derivation path', p => (p ? isValidPath(p) : false))
 });

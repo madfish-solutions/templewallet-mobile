@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
+import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -10,7 +11,6 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -18,11 +18,12 @@ import {
   setSelectedAccountAction
 } from '../../store/wallet/wallet-actions';
 import {
-  useAccountsListSelector,
   useSelectedAccountSelector,
-  useTezosTokenSelector
+  useTezosTokenSelector,
+  useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { formatSize } from '../../styles/format-size';
+import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -31,14 +32,13 @@ export const Wallet = () => {
   const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
-  const accounts = useAccountsListSelector();
+  const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const { exchangeRates } = useExchangeRatesSelector();
 
   useEffect(() => {
-    dispatch(loadTezosBalanceActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadTokenBalancesActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
   }, []);
 
   return (
@@ -47,16 +47,22 @@ export const Wallet = () => {
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
-            list={accounts}
+            list={visibleAccounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
+
+          <Divider />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
-        <TokenEquityValue token={tezosToken} exchangeRate={exchangeRates.data[TEZ_TOKEN_METADATA.name]} />
+        <TokenEquityValue token={tezosToken} showTokenValue={false} />
 
         <HeaderCardActionButtons token={tezosToken} />
+
+        <Divider size={formatSize(16)} />
+
+        <CollectiblesHomeSwipeButton />
       </HeaderCard>
 
       <TokenList />

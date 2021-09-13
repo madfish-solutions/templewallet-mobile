@@ -1,15 +1,17 @@
 import { PortalProvider } from '@gorhom/portal';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
-import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
+import { RenameAccountModal } from '../modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
@@ -18,14 +20,13 @@ import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
-import { useQuickActions } from '../utils/quick-actions.utils';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
 import { MainStackScreen } from './main-stack';
 
-export const globalNavigationRef = createRef<NavigationContainerRef>();
+export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
 type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
@@ -43,8 +44,9 @@ export const RootStackScreen = () => {
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
-  const screenOptions = useMemo(
+  const screenOptions: StackNavigationOptions = useMemo(
     () => ({
+      presentation: 'modal',
       cardOverlayEnabled: true,
       gestureEnabled: true,
       ...TransitionPresets.ModalPresentationIOS,
@@ -55,14 +57,26 @@ export const RootStackScreen = () => {
     [colors.pageBG]
   );
 
+  const theme: Theme = useMemo(
+    () => ({
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        background: colors.navigation
+      }
+    }),
+    [colors.navigation]
+  );
+
   return (
     <NavigationContainer
       ref={globalNavigationRef}
+      theme={theme}
       onReady={handleNavigationContainerStateChange}
       onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
         <CurrentRouteNameContext.Provider value={currentRouteName}>
-          <RootStack.Navigator mode="modal" screenOptions={screenOptions}>
+          <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
@@ -77,9 +91,9 @@ export const RootStackScreen = () => {
               options={useModalOptions('Add Token')}
             />
             <RootStack.Screen
-              name={ModalsEnum.CreateHdAccount}
-              component={CreateHdAccountModal}
-              options={useModalOptions('Create account')}
+              name={ModalsEnum.RenameAccount}
+              component={RenameAccountModal}
+              options={useModalOptions('Rename account')}
             />
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
@@ -110,6 +124,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.ImportAccount}
               component={ImportAccountModal}
               options={useModalOptions('Import account')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.CollectibleModal}
+              component={CollectibleModal}
+              options={useModalOptions('NFT Name')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

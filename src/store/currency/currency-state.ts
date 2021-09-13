@@ -3,14 +3,14 @@ import { LoadableEntityState } from '../types';
 
 export type ExchangeRateRecord = Record<string, number>;
 
-export interface ExchangeRatesState {
+export interface CurrencyState {
   exchangeRates: LoadableEntityState<ExchangeRateRecord>;
 }
 
-export const currencyInitialState: ExchangeRatesState = {
+export const currencyInitialState: CurrencyState = {
   exchangeRates: createEntity({})
 };
 
 export interface CurrencyRootState {
-  currency: ExchangeRatesState;
+  currency: CurrencyState;
 }

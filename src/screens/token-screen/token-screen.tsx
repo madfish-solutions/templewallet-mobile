@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
@@ -12,7 +12,6 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -21,19 +20,22 @@ import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const dispatch = useDispatch();
-  const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const tokensList = useTokensListSelector();
-  const updatedToken = tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(token)) ?? token;
+  const token = useMemo(
+    () =>
+      tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
+    [tokensList, initialToken]
+  );
 
   const selectedAccount = useSelectedAccountSelector();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
-  const { exchangeRates } = useExchangeRatesSelector();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
   useEffect(() => {
-    dispatch(loadTokenBalancesActions.submit(selectedAccount.publicKeyHash));
-    dispatch(loadActivityGroupsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTokenBalancesActions.submit());
+    dispatch(loadActivityGroupsActions.submit());
   }, []);
 
   useEffect(() => setSearchValue(token.address), [token]);
@@ -41,11 +43,11 @@ export const TokenScreen = () => {
   return (
     <>
       <HeaderCard>
-        <TokenEquityValue token={token} exchangeRate={exchangeRates.data[token.address]} />
+        <TokenEquityValue token={token} />
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
-        <HeaderCardActionButtons token={updatedToken} />
+        <HeaderCardActionButtons token={token} />
       </HeaderCard>
 
       <TokenScreenContentContainer

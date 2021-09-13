@@ -7,6 +7,7 @@ export enum ScreensEnum {
 
   /** Wallet stack **/
   Wallet = 'Wallet',
+  CollectiblesHome = 'CollectiblesHome',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
@@ -26,6 +27,7 @@ export enum ScreensEnum {
   About = 'About',
   DAppsSettings = 'DAppsSettings',
   SecureSettings = 'SecureSettings',
+  NodeSettings = 'NodeSettings',
   Debug = 'Debug'
 }
 
@@ -39,6 +41,7 @@ export type ScreensParamList = {
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
+  [ScreensEnum.CollectiblesHome]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
@@ -55,11 +58,13 @@ export type ScreensParamList = {
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
+  [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
 
 export const walletStackScreens = [
   ScreensEnum.Wallet,
+  ScreensEnum.CollectiblesHome,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
   ScreensEnum.Delegation,

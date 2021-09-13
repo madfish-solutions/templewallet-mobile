@@ -11,16 +11,14 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
-import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
-import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { FormTextInput } from '../../../form/form-text-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { getDerivationPath, seedToHDPrivateKey } from '../../../utils/keys.util';
+import { seedToPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
+import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,
   importAccountSeedValidationSchema,
@@ -31,11 +29,6 @@ interface Props {
   onBackHandler: EmptyFn;
 }
 
-const derivationTypeButtons = [
-  { value: ImportAccountDerivationEnum.DEFAULT, label: 'Default account (the first one)' },
-  { value: ImportAccountDerivationEnum.CUSTOM_PATH, label: 'Custom derivation path' }
-];
-
 export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
   const styles = useImportAccountStyles();
   const { createImportedAccount } = useShelter();
@@ -43,10 +36,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     const seed = mnemonicToSeedSync(values.seedPhrase);
-    const privateKey = seedToHDPrivateKey(
-      seed,
-      values.derivationType === ImportAccountDerivationEnum.DEFAULT ? getDerivationPath(0) : values.derivationPath
-    );
+    const privateKey = seedToPrivateKey(seed, values.derivationPath);
     createImportedAccount({
       name: `Account ${accountsIndex}`,
       privateKey
@@ -64,9 +54,16 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
           <View>
             <Divider size={formatSize(12)} />
             <View style={styles.seedPhraseInputContainer}>
-              <Label label="Seed phrase" description="Mnemonic. Your secret 12 or more words." />
+              <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
               <FormMnemonicInput name="seedPhrase" />
             </View>
+            <Divider size={formatSize(12)} />
+            <Label
+              label="Derivation"
+              isOptional
+              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+            />
+            <ImportAccountSeedDerivationPathForm formValues={values} />
             <Divider size={formatSize(12)} />
             <Label
               label="Password"
@@ -75,18 +72,6 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             />
             <FormPasswordInput name="password" />
             <Divider size={formatSize(12)} />
-            <Label
-              label="Derivation"
-              isOptional
-              description={"By default derivation isn't used. Click on 'Custom derivation path' to add it."}
-            />
-            <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
-            {values.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && (
-              <>
-                <Label label="Custom derivation path" />
-                <FormTextInput name="derivationPath" />
-              </>
-            )}
           </View>
           <View>
             <ButtonsContainer>

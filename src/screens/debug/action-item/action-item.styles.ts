@@ -21,6 +21,6 @@ export const useActionItemStyles = createUseStyles(({ typography, colors }) => (
     flexShrink: 1
   },
   body: {
-    padding: formatSize(4)
+    margin: formatSize(4)
   }
 }));
