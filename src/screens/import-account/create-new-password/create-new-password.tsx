@@ -49,7 +49,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   useEffect(() => {
     if (isString(initialPassword)) {
       showWarningToast({
-        description: 'The password from the previous screen was used. Remember, it will be used to enter the Wallet.'
+        description: 'The password from the previous screen was used'
       });
     }
   }, []);

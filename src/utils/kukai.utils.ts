@@ -5,7 +5,7 @@ import scrypt from 'react-native-scrypt';
 
 import { isDefined } from './is-defined';
 
-async function decrypt(chiphertext: string, password: string, salt: string, version: number) {
+const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
   if (version === 1) {
     return decrypt_v1(chiphertext, password, salt);
   } else if (version === 2 || version === 3) {
@@ -13,9 +13,9 @@ async function decrypt(chiphertext: string, password: string, salt: string, vers
   } else {
     throw new Error('Unrecognized encryption format');
   }
-}
+};
 
-async function decrypt_v1(ciphertext: string, password: string, salt: string | null) {
+const decrypt_v1 = async (ciphertext: string, password: string, salt: string | null) => {
   try {
     if (!password || !salt) {
       throw new Error('Missing password or salt');
@@ -27,9 +27,9 @@ async function decrypt_v1(ciphertext: string, password: string, salt: string | n
   } catch (e) {
     return null;
   }
-}
+};
 
-async function decrypt_v2(chipher: string, password: string, salt: string) {
+const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
   try {
     if (!password || !salt) {
       throw new Error('Missing password or salt');
@@ -53,9 +53,9 @@ async function decrypt_v2(chipher: string, password: string, salt: string) {
   } catch (err) {
     return null;
   }
-}
+};
 
-function bumpIV(salt: string, bumps: number) {
+const bumpIV = (salt: string, bumps: number) => {
   if (bumps > 255) {
     throw new Error('Invalid incremention');
   }
@@ -63,9 +63,9 @@ function bumpIV(salt: string, bumps: number) {
   buf[13] = (buf[13] + 1) % 256;
 
   return buf.toString('hex');
-}
+};
 
-export async function decryptSeedPhrase(json: string, pwd: string) {
+export const decryptSeedPhrase = async (json: string, pwd: string) => {
   const walletData = JSON.parse(json);
   if (
     (walletData.walletType === 4 && walletData.version === 3) ||
@@ -80,4 +80,4 @@ export async function decryptSeedPhrase(json: string, pwd: string) {
     return entropyToMnemonic(entropy);
   }
   throw new Error('Cannot reveal seed phrase for this wallet type');
-}
+};
