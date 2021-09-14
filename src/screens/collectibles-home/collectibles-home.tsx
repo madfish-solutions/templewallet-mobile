@@ -23,7 +23,7 @@ export const CollectiblesHome = () => {
   const visibleCollectiblesList = useVisibleCollectiblesListSelector();
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);
 
-  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [isSearchMode] = useState(false);
 
   return (
     <>

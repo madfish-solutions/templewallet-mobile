@@ -64,3 +64,6 @@ api-*.json
 
 # Jest
 coverage/
+
+#VSCode
+.vscode
