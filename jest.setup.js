@@ -27,5 +27,4 @@ import './src/mocks/react-native-quick-actions.mock';
 import './src/mocks/react-native-toast-message.mock';
 import './src/mocks/react-navigation.mock';
 import './src/mocks/tezos.mock';
-import './src/mocks/react-native-clipboard.mock';
 import './src/mocks/rn-fetch-blob.mock';
