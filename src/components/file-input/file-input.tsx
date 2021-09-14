@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import DocumentPicker, { DocumentPickerOptions, DocumentPickerResponse } from 'react-native-document-picker';
+import { pickSingle } from 'react-native-document-picker';
 
 import { EventFn } from '../../config/general';
-import { isAndroid } from '../../config/system';
+import { isAndroid, isIOS } from '../../config/system';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { showErrorToast } from '../../toast/toast.utils';
@@ -20,17 +20,25 @@ export interface FileInputValue {
 
 export interface FileInputProps {
   value?: FileInputValue;
-  mimeTypes?: string[];
-  utisTypes?: string[];
   onChange: EventFn<FileInputValue>;
 }
 
-export const FileInput: FC<FileInputProps> = ({
-  value,
-  mimeTypes = ['*/*'],
-  utisTypes = ['public.item'],
-  onChange
-}) => {
+const normalize = (path: string) => {
+  if (isIOS || isAndroid) {
+    const filePrefix = 'file://';
+
+    if (path.startsWith(filePrefix)) {
+      path = path.substring(filePrefix.length);
+      try {
+        path = decodeURI(path);
+      } catch {}
+    }
+  }
+
+  return path;
+};
+
+export const FileInput: FC<FileInputProps> = ({ value, onChange }) => {
   const styles = useFileInputStyles();
   const colors = useColors();
 
@@ -40,14 +48,13 @@ export const FileInput: FC<FileInputProps> = ({
 
   const selectFile = async () => {
     try {
-      let pickResult: DocumentPickerResponse;
-      if (isAndroid) {
-        pickResult = await DocumentPicker.pick({ type: mimeTypes } as DocumentPickerOptions<'android'>);
-      } else {
-        pickResult = await DocumentPicker.pick({ type: utisTypes } as DocumentPickerOptions<'ios'>);
-      }
-      onChange({ fileName: pickResult.name, uri: pickResult.uri });
-    } catch (e) {
+      const pickResult = await pickSingle({ copyTo: 'cachesDirectory' });
+
+      console.log(normalize(pickResult.uri));
+
+      onChange({ fileName: pickResult.name, uri: normalize(pickResult.uri) });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       if (e.message !== 'User canceled document picker') {
         showErrorToast(e.message);
       }

@@ -20,11 +20,11 @@ import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { decryptSeedPhrase } from '../../../utils/kukai.utils';
 import {
-  importWalletInitialValues,
-  importWalletValidationSchema,
+  ImportKukaiWalletFormValues,
   importKukaiWalletInitialValues,
   importKukaiWalletValidationSchema,
-  ImportKukaiWalletFormValues
+  importWalletInitialValues,
+  importWalletValidationSchema
 } from './import-wallet.form';
 import { useImportWalletStyles } from './import-wallet.styles';
 
@@ -60,8 +60,11 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension ? values.password : undefined
       });
-    } catch (e) {
-      showErrorToast({ description: 'Wrong file, please select another one' });
+    } catch {
+      showErrorToast({
+        title: 'Wrong file or password',
+        description: 'Please change one of them and try again'
+      });
     }
   };
 
@@ -105,7 +108,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
                 <View>
                   <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
                   <Divider size={formatSize(20)} />
-                  <FormFileInput name="keystoreFile" mimeTypes={['application/octet-stream']} />
+                  <FormFileInput name="keystoreFile" />
                   <Divider size={formatSize(12)} />
                   <Label label="File password" description="Please enter a password for keystore file" />
                   <FormPasswordInput name="password" />

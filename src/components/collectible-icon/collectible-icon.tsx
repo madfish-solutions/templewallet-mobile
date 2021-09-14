@@ -6,6 +6,7 @@ import { useColors } from '../../styles/use-colors';
 import { formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { CollectibleIconProps } from './collectible-icon.props';
+import { CollectibleIconStyles } from './collectible-icon.styles';
 
 export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
   const colors = useColors();
@@ -20,12 +21,13 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
       }}>
       {isDefined(collectible.artifactUri) ? (
         <Image
-          style={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: colors.blue10,
-            borderRadius: formatSize(8 * scale)
-          }}
+          style={[
+            CollectibleIconStyles.image,
+            {
+              backgroundColor: colors.blue10,
+              borderRadius: formatSize(8 * scale)
+            }
+          ]}
           source={{ uri: formatImgUri(collectible.artifactUri), width: size, height: size }}
         />
       ) : null}

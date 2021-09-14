@@ -8,7 +8,7 @@ interface Props extends Omit<FileInputProps, 'value' | 'onChange'> {
   name: string;
 }
 
-export const FormFileInput: FC<Props> = ({ name, mimeTypes, utisTypes }) => {
+export const FormFileInput: FC<Props> = ({ name }) => {
   const [field, meta, helpers] = useField<FileInputValue>(name);
 
   const handleChange = (value: FileInputValue) => {
@@ -18,7 +18,7 @@ export const FormFileInput: FC<Props> = ({ name, mimeTypes, utisTypes }) => {
 
   return (
     <>
-      <FileInput value={field.value} mimeTypes={mimeTypes} utisTypes={utisTypes} onChange={handleChange} />
+      <FileInput value={field.value} onChange={handleChange} />
       <ErrorMessage meta={meta} />
     </>
   );

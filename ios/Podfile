@@ -12,8 +12,6 @@ target 'TempleWallet' do
     :hermes_enabled => false
   )
 
-  pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
-
   target 'TempleWalletTests' do
     inherit! :complete
     # Pods for testing

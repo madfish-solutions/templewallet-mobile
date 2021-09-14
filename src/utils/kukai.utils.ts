@@ -1,16 +1,9 @@
 import { entropyToMnemonic } from 'bip39';
 import * as forge from 'node-forge';
 import { NativeModules } from 'react-native';
-import scrypt from 'scryptsy';
+import scrypt from 'react-native-scrypt';
 
 import { isDefined } from './is-defined';
-
-export interface AccountCredentials {
-  sk: string | null;
-  pk: string | null;
-  pkh: string;
-  seedPhrase: string;
-}
 
 async function decrypt(chiphertext: string, password: string, salt: string, version: number) {
   if (version === 1) {
@@ -21,6 +14,7 @@ async function decrypt(chiphertext: string, password: string, salt: string, vers
     throw new Error('Unrecognized encryption format');
   }
 }
+
 async function decrypt_v1(ciphertext: string, password: string, salt: string | null) {
   try {
     if (!password || !salt) {
@@ -34,6 +28,7 @@ async function decrypt_v1(ciphertext: string, password: string, salt: string | n
     return null;
   }
 }
+
 async function decrypt_v2(chipher: string, password: string, salt: string) {
   try {
     if (!password || !salt) {
@@ -42,7 +37,7 @@ async function decrypt_v2(chipher: string, password: string, salt: string) {
     const parts = chipher.split('==');
     const chiphertext = parts[0];
     const tag = parts[1];
-    const key = await scrypt.async(password, Buffer.from(salt, 'hex'), 65536, 8, 1, 32);
+    const key = await scrypt(Buffer.from(password), Buffer.from(salt, 'hex'), 65536, 8, 1, 32, 'buffer');
     const decipher = forge.cipher.createDecipher('AES-GCM', key.toString('binary'));
     decipher.start({
       iv: Buffer.from(salt, 'hex'),
