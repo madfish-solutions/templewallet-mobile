@@ -11,3 +11,5 @@ declare const crypto: {
 
 declare function atob(input: string): string;
 declare function btoa(input: string): string;
+
+declare module 'node-forge';
