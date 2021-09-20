@@ -6,7 +6,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { DAppOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationRequestConfirmation } from './operation-request-confirmation/operation-request-confirmation';
 import { PermissionRequestConfirmation } from './permission-request-confirmation/permission-request-confirmation';
-import { SignPayloadRequestConfirmation } from './sign-payload-request-confirmation /sign-payload-request-confirmation';
+import { SignPayloadRequestConfirmation } from './sign-payload-request-confirmation/sign-payload-request-confirmation';
 
 type Props = Omit<DAppOperationsConfirmationModalParams, 'type'>;
 
