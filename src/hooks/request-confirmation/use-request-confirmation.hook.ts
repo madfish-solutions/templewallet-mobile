@@ -1,9 +1,8 @@
 import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { Subject } from 'rxjs';
+import { ObservableInput, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ObservableInput } from 'rxjs/src/internal/types';
 
 import { Action } from '../../interfaces/action.interface';
 import { abortRequestAction } from '../../store/d-apps/d-apps-actions';

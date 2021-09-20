@@ -81,8 +81,4 @@ const abortRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const dAppsEpics = combineEpics(
-  loadPermissionsEpic,
-  removePermissionEpic,
-  abortRequestEpic
-);
+export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic);
