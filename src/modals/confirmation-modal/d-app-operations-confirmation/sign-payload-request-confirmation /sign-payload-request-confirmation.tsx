@@ -21,7 +21,6 @@ interface Props {
   message: SignPayloadRequestOutput;
 }
 
-// test commit
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const styles = useSignPayloadRequestConfirmationStyles();
   const dispatch = useDispatch();
