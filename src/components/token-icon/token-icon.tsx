@@ -19,7 +19,7 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
   const { iconName, thumbnailUri } = token;
 
   return (
-    <View style={TokenIconStyles.container}>
+    <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
       {isDefined(iconName) ? (
         <Icon name={iconName} size={size} />
       ) : isString(thumbnailUri) ? (
