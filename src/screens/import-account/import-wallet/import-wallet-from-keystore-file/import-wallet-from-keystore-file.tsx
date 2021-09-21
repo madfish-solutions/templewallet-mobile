@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
+import RNFS from 'react-native-fs';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
@@ -23,16 +23,19 @@ import { useImportWalletFromKeystoreFileStyles } from './import-wallet-from-keys
 
 export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }) => {
   const styles = useImportWalletFromKeystoreFileStyles();
+  // @ts-ignore
+  let error: any;
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
     try {
-      const content = await RNFetchBlob.fs.readFile(values.keystoreFile.uri, 'utf8');
+      const content = await RNFS.readFile(values.keystoreFile.uri, 'utf8');
       const seedPhrase = await decryptSeedPhrase(content, values.password);
       onSubmit({
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension ? values.password : undefined
       });
-    } catch {
+    } catch (e) {
+      error = e;
       showErrorToast({
         title: 'Wrong file or password',
         description: 'Please change one of them and try again'
@@ -49,6 +52,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
         <>
           <View style={styles.seedPhraseInputContainer}>
             <View>
+              <Text>{JSON.stringify(error)}</Text>
               <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
               <Divider size={formatSize(20)} />
               <FormFileInput name="keystoreFile" />
