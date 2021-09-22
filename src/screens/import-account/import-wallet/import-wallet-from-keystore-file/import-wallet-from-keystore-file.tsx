@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
+import { readFile } from 'react-native-fs';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
@@ -26,7 +26,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
     try {
-      const content = await RNFetchBlob.fs.readFile(values.keystoreFile.uri, 'utf8');
+      const content = await readFile(values.keystoreFile.uri, 'utf8');
       const seedPhrase = await decryptSeedPhrase(content, values.password);
       onSubmit({
         seedPhrase,
