@@ -22,7 +22,7 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, co
     <KeyboardAvoidingView
       style={[styles.scrollView, style]}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      behavior="padding">
+      behavior="height">
       <ScrollView
         contentContainerStyle={[
           styles.scrollViewContentContainer,
