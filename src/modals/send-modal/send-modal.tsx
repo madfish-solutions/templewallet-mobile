@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
+import { AssetAmountInput } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -115,6 +116,7 @@ export const SendModal: FC = () => {
           <ScreenContainer isFullScreenMode={true}>
             <ModalStatusBar />
             <View>
+              <AssetAmountInput />
               <Label label="Asset" description="Select asset or token." />
               <TokenFormDropdown name="asset" list={filteredAssetsListWithTez} />
               <Divider />
