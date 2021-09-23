@@ -15,18 +15,17 @@ import { Label } from '../../components/label/label';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
-import { TokenFormDropdown } from '../../components/token-dropdown/token-form-dropdown';
 import { FormAddressInput } from '../../form/form-address-input';
+import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from '../../form/form-checkbox';
-import { FormNumericInput } from '../../form/form-numeric-input/form-numeric-input';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
+  useAssetsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
-  useAssetsListSelector,
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -37,7 +36,6 @@ import { isDefined } from '../../utils/is-defined';
 import { mutezToTz } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
-import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 
 // TODO: load real fee instead
 const TEZ_MAX_FEE = 0.1;
@@ -72,9 +70,7 @@ export const SendModal: FC = () => {
         asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
         amount: undefined
       },
-      asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      amount: undefined,
       ownAccount: ownAccountsReceivers[0],
       transferBetweenOwnAccounts: false
     }),
@@ -82,11 +78,10 @@ export const SendModal: FC = () => {
   );
 
   const onSubmit = ({
-    asset,
+    assetAmount: { asset, amount },
     receiverPublicKeyHash,
     ownAccount,
-    transferBetweenOwnAccounts,
-    amount
+    transferBetweenOwnAccounts
   }: SendModalFormValues) =>
     void (
       isDefined(amount) &&
@@ -107,11 +102,11 @@ export const SendModal: FC = () => {
       onSubmit={onSubmit}>
       {({ values, setFieldValue, submitForm }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        useEffect(() => setFieldValue('amount', undefined), [values.asset]);
+        useEffect(() => setFieldValue('amount', undefined), [values.assetAmount.asset]);
 
         const amountMaxValue = BigNumber.max(
-          mutezToTz(new BigNumber(values.asset.balance), values.asset.decimals).minus(
-            values.asset.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_MAX_FEE : 0
+          mutezToTz(new BigNumber(values.assetAmount.asset.balance), values.assetAmount.asset.decimals).minus(
+            values.assetAmount.asset.symbol === TEZ_TOKEN_METADATA.symbol ? TEZ_MAX_FEE : 0
           ),
           0
         );
@@ -120,14 +115,19 @@ export const SendModal: FC = () => {
           <ScreenContainer isFullScreenMode={true}>
             <ModalStatusBar />
             <View>
-              <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} frozenBalance={'10000'} />
-              <Label label="Asset" description="Select asset or token." />
-              <TokenFormDropdown name="asset" list={filteredAssetsListWithTez} />
+              <Divider size={formatSize(8)} />
+              <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
               <Divider />
 
-              <Label label="To" description={`Address or Tezos domain to send ${values.asset.symbol} funds to.`} />
+              <Label
+                label="To"
+                description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
+              />
               {values.transferBetweenOwnAccounts ? (
-                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+                <>
+                  <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+                  <Divider size={formatSize(10)} />
+                </>
               ) : (
                 <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
               )}
@@ -144,15 +144,7 @@ export const SendModal: FC = () => {
                   <Text style={styles.checkboxText}>Transfer between my accounts</Text>
                 </FormCheckbox>
               </View>
-              <Divider size={formatSize(12)} />
 
-              <Label label="Amount" description={`Set ${values.asset.symbol} amount to send.`} />
-              <FormNumericInput
-                name="amount"
-                maxValue={amountMaxValue}
-                decimals={values.asset.decimals}
-                placeholder="0.00"
-              />
               <Divider />
             </View>
 

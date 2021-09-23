@@ -1,12 +1,13 @@
+import { transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
-import { transparent } from '../../config/styles';
 
 export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }) => ({
   headerContainer: {
+    height: formatSize(28),
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   inputContainer: {
     flexDirection: 'row',
