@@ -16,6 +16,7 @@ interface Props {
   isNegativeAmount?: boolean;
 }
 
+// TODO: Replace with AssetValueText
 export const DollarValueText: FC<Props> = ({ token, style, amount = '0', isNegativeAmount = false }) => {
   const exchangeRates = useExchangeRatesSelector();
 

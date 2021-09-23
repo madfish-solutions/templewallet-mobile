@@ -14,6 +14,7 @@ interface Props {
   isNegativeAmount?: boolean;
 }
 
+// TODO: Replace with AssetValueText
 export const TokenValueText: FC<Props> = ({ style, token, isShowSymbol = true, amount, isNegativeAmount = false }) => {
   const parsedAmount = mutezToTz(new BigNumber(amount), token.decimals);
 
