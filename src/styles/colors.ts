@@ -52,6 +52,7 @@ const backgroundLightColors = {
   pageBG: '#FBFBFB',
   cardBG: '#ffffff',
   lines: '#e4e4e4',
+  progressLine: '#e4e4e4',
   disabled: '#cbcbcb',
   input: '#f0f0f0'
 };
@@ -61,6 +62,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   pageBG: '#171717',
   cardBG: '#202020',
   lines: '#000000',
+  progressLine: '#2D2D2D',
   disabled: '#6F6F6F',
   input: '#2D2D2D'
 };

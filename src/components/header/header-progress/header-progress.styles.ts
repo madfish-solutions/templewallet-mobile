@@ -16,7 +16,7 @@ export const useHeaderProgressStyles = createUseStyles(({ colors, typography }) 
     position: 'relative',
     height: formatSize(4),
     borderRadius: formatSize(4),
-    backgroundColor: colors.lines
+    backgroundColor: colors.progressLine
   },
   progressLine: {
     ...StyleSheet.absoluteFillObject,
