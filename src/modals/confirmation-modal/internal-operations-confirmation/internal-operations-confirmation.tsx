@@ -1,3 +1,4 @@
+import { OpKind } from '@taquito/taquito';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -15,21 +16,17 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
 
   const selectedAccount = useSelectedAccountSelector();
 
-  let title = 'Confirm Operation';
-
   useNavigationSetOptions(
     {
       headerTitle: () => {
         switch (opParams[0].kind) {
-          case 'delegation':
-            title = 'Confirm Delegate';
-            break;
-          case 'transaction':
-            title = 'Confirm Send';
-            break;
+          case OpKind.DELEGATION:
+            return <HeaderTitle title="Confirm Delegate" />;
+          case OpKind.TRANSACTION:
+            return <HeaderTitle title="Confirm Send" />;
+          default:
+            return <HeaderTitle title="Confirm Operation" />;
         }
-
-        return <HeaderTitle title={title} />;
       }
     },
     []
