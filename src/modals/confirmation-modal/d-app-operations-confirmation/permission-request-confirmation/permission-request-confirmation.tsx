@@ -11,6 +11,7 @@ import { ButtonLargePrimary } from '../../../../components/button/button-large/b
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../../../../components/divider/divider';
 import { HeaderTitle } from '../../../../components/header/header-title/header-title';
+import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
@@ -27,7 +28,6 @@ import {
   PermissionRequestConfirmationFormValues,
   permissionRequestConfirmationModalValidationSchema
 } from './permission-request-confirmation.form';
-import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 
 interface Props {
   message: PermissionRequestOutput;
