@@ -6,7 +6,6 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
-import { AssetAmountInput } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -38,6 +37,7 @@ import { isDefined } from '../../utils/is-defined';
 import { mutezToTz } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
+import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 
 // TODO: load real fee instead
 const TEZ_MAX_FEE = 0.1;
@@ -68,6 +68,10 @@ export const SendModal: FC = () => {
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
+      assetAmount: {
+        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
+        amount: undefined
+      },
       asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
       amount: undefined,
@@ -116,7 +120,7 @@ export const SendModal: FC = () => {
           <ScreenContainer isFullScreenMode={true}>
             <ModalStatusBar />
             <View>
-              <AssetAmountInput />
+              <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} frozenBalance={'10000'} />
               <Label label="Asset" description="Select asset or token." />
               <TokenFormDropdown name="asset" list={filteredAssetsListWithTez} />
               <Divider />
