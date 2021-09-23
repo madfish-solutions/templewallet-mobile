@@ -11,13 +11,13 @@ import { mutezToTz } from '../../utils/tezos.util';
 
 interface Props {
   token: TokenMetadataInterface;
-  amount?: string;
+  amount: string;
   style?: StyleProp<TextStyle>;
   isNegativeAmount?: boolean;
 }
 
 // TODO: Replace with AssetValueText
-export const DollarValueText: FC<Props> = ({ token, style, amount = '0', isNegativeAmount = false }) => {
+export const DollarValueText: FC<Props> = ({ token, style, amount, isNegativeAmount = false }) => {
   const exchangeRates = useExchangeRatesSelector();
 
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)];
