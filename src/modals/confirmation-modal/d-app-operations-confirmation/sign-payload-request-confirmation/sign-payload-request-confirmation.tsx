@@ -65,7 +65,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
     [accounts, message.sourceAddress]
   );
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={'Confirm Sign'} /> }, []);
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Sign" /> }, []);
 
   return (
     <>

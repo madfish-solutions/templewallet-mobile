@@ -74,7 +74,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
       publicKey: approver.publicKey
     });
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={'Confirm Connection'} /> }, []);
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
 
   return (
     <Formik

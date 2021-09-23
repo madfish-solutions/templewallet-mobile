@@ -15,7 +15,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
 
   const selectedAccount = useSelectedAccountSelector();
 
-  let title: string;
+  let title = 'Confirm Operation';
 
   useNavigationSetOptions(
     {
