@@ -10,6 +10,7 @@ import { AccountDropdownItem } from '../../../../components/account-dropdown/acc
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../../../../components/divider/divider';
+import { HeaderTitle } from '../../../../components/header/header-title/header-title';
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
@@ -24,6 +25,7 @@ import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
+import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 
 interface Props {
   message: SignPayloadRequestOutput;
@@ -62,6 +64,8 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
     () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
     [accounts, message.sourceAddress]
   );
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={'Confirm Sign'} /> }, []);
 
   return (
     <>
