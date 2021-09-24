@@ -60,7 +60,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   navigation: '#0d0d0d',
   pageBG: '#171717',
   cardBG: '#202020',
-  lines: '#000000',
+  lines: '#2D2D2D',
   disabled: '#6F6F6F',
   input: '#2D2D2D'
 };
