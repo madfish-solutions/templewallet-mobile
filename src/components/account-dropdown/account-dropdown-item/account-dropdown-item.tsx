@@ -1,10 +1,13 @@
-import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
+import { isTezosDomainsSupported } from '../../../utils/dns.utils';
 import { isDefined } from '../../../utils/is-defined';
+import { createReadOnlyTezosToolkit } from '../../../utils/network/tezos-toolkit.utils';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { getTezosToken } from '../../../utils/wallet.utils';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
@@ -28,6 +31,18 @@ export const AccountDropdownItem: FC<Props> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
+  const [domainName, setDomainName] = useState('');
+  const selectedAccount = useSelectedAccountSelector();
+  const tezos = createReadOnlyTezosToolkit(selectedAccount);
+  const { resolver: domainsResolver, isSupported } = isTezosDomainsSupported(tezos);
+
+  const updateDomainReverseName = async (pkh: string) => {
+    setDomainName((await domainsResolver.resolveAddressToName(pkh)) ?? '');
+  };
+
+  useEffect(() => {
+    updateDomainReverseName(account.publicKeyHash);
+  }, [account.publicKeyHash]);
 
   return (
     <View style={styles.root}>
@@ -38,8 +53,17 @@ export const AccountDropdownItem: FC<Props> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
-
+          <View style={styles.pkhWrapper}>
+            <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={e => {
+                e.stopPropagation();
+                console.log('test');
+              }}>
+              <Icon name={IconNameEnum.Diez} />
+            </TouchableOpacity>
+          </View>
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <TokenValueText
