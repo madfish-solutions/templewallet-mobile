@@ -16,7 +16,7 @@ const position = Platform.OS === 'ios' ? 'top' : 'bottom';
 export const showErrorToast = ({ description, title, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Error,
-    position: Platform.OS === 'ios' ? 'top' : 'bottom',
+    position,
     text1: title,
     text2: description,
     onPress
