@@ -34,7 +34,6 @@ import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
-
 export const SendModal: FC = () => {
   const dispatch = useDispatch();
   const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
