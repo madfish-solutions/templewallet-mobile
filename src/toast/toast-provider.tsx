@@ -1,9 +1,11 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 import { EmptyFn } from '../config/general';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
+import { formatSize } from '../styles/format-size';
 import { CopiedToast } from './copied-toast/copied-toast';
 import { ToastProviderStyles } from './toast-provider.styles';
 import { CustomToast } from './toast/custom-toast';
@@ -41,6 +43,9 @@ const config = {
 
 export const ToastProvider = () => {
   const { top } = useSafeAreaInsets();
+  const topOffset = Platform.OS === 'ios' ? top : top + formatSize(2);
 
-  return <Toast ref={ref => Toast.setRef(ref)} config={config} topOffset={top} style={ToastProviderStyles.toast} />;
+  return (
+    <Toast ref={ref => Toast.setRef(ref)} config={config} topOffset={topOffset} style={ToastProviderStyles.toast} />
+  );
 };
