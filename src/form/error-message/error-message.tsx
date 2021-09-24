@@ -11,7 +11,8 @@ interface Props<T> {
 
 export const ErrorMessage = <T extends unknown>({ meta }: Props<T>) => {
   const isError = hasError(meta);
-  const error = (meta.touched && meta.error) || ' ';
+  const error: string | Record<string, string> = (meta.touched && meta.error) || {};
+  const errorStr = (typeof error === 'string' ? error : error[Object.keys(error)[0]]) || ' ';
 
-  return <Text style={[ErrorMessageStyles.root, isError && ErrorMessageStyles.rootVisible]}>{error}</Text>;
+  return <Text style={[ErrorMessageStyles.root, isError && ErrorMessageStyles.rootVisible]}>{errorStr}</Text>;
 };
