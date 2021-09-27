@@ -37,8 +37,5 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     paddingVertical: formatSize(2),
     backgroundColor: colors.blue10,
     borderRadius: formatSize(4)
-  },
-  pkhWrapper: {
-    flexDirection: 'row',
   }
 }));

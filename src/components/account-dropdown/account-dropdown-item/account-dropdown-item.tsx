@@ -17,6 +17,7 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { TokenValueText } from '../../token-value-text/token-value-text';
+import { WalletAddress } from '../../wallet-address/wallet-address';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
@@ -31,18 +32,6 @@ export const AccountDropdownItem: FC<Props> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const [domainName, setDomainName] = useState('');
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = createReadOnlyTezosToolkit(selectedAccount);
-  const { resolver: domainsResolver, isSupported } = isTezosDomainsSupported(tezos);
-
-  const updateDomainReverseName = async (pkh: string) => {
-    setDomainName((await domainsResolver.resolveAddressToName(pkh)) ?? '');
-  };
-
-  useEffect(() => {
-    updateDomainReverseName(account.publicKeyHash);
-  }, [account.publicKeyHash]);
 
   return (
     <View style={styles.root}>
@@ -53,17 +42,7 @@ export const AccountDropdownItem: FC<Props> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <View style={styles.pkhWrapper}>
-            <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
-            <TouchableOpacity
-              style={styles.iconContainer}
-              onPress={e => {
-                e.stopPropagation();
-                console.log('test');
-              }}>
-              <Icon name={IconNameEnum.Diez} />
-            </TouchableOpacity>
-          </View>
+          <WalletAddress publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <TokenValueText
