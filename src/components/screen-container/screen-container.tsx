@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar, Platform } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar } from 'react-native';
 
 import { isAndroid } from '../../config/system';
 import { useHeaderHeight } from '../../hooks/use-header-height.hook';
@@ -22,7 +22,7 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, co
     <KeyboardAvoidingView
       style={[styles.scrollView, style]}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      behavior={isAndroid ? 'height' : 'padding'}>
       <ScrollView
         contentContainerStyle={[
           styles.scrollViewContentContainer,
