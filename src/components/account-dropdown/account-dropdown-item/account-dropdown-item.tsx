@@ -1,20 +1,16 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { FC } from 'react';
+import { Text, View } from 'react-native';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
-import { isTezosDomainsSupported } from '../../../utils/dns.utils';
 import { isDefined } from '../../../utils/is-defined';
-import { createReadOnlyTezosToolkit } from '../../../utils/network/tezos-toolkit.utils';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { getTezosToken } from '../../../utils/wallet.utils';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
-import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { TokenValueText } from '../../token-value-text/token-value-text';
 import { WalletAddress } from '../../wallet-address/wallet-address';

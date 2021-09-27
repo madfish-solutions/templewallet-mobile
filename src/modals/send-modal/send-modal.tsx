@@ -93,11 +93,12 @@ export const SendModal: FC = () => {
       setIsLoading(true);
       const address = await domainsResolver.resolveNameToAddress(receiverPublicKeyHash);
       if (address !== null) {
-        receiverPublicKeyHash = address
+        receiverPublicKeyHash = address;
         setIsLoading(false);
       } else {
-        showErrorToast({ title: 'Error!', description: 'Your address has been expired' })
+        showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
         setIsLoading(false);
+
         return;
       }
     }
@@ -111,7 +112,7 @@ export const SendModal: FC = () => {
           amount: amount.toNumber()
         })
       )
-    )
+    );
   };
 
   return (
