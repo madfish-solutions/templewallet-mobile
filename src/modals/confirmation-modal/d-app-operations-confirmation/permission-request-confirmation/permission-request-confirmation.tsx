@@ -10,6 +10,8 @@ import { AccountFormDropdown } from '../../../../components/account-dropdown/acc
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../../../../components/divider/divider';
+import { HeaderTitle } from '../../../../components/header/header-title/header-title';
+import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
@@ -71,6 +73,8 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
       message,
       publicKey: approver.publicKey
     });
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
 
   return (
     <Formik
