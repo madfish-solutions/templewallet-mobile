@@ -26,7 +26,6 @@ export const RevealSeedPhraseModal = () => {
 
   return (
     <Formik
-      enableReinitialize={true}
       initialValues={RevealPrivateKeyModalInitialValues}
       validationSchema={revealSeedPhraseModalValidationSchema}
       onSubmit={emptyFn}>
