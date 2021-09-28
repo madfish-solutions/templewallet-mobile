@@ -21,7 +21,9 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   },
   numericInput: {
     ...typography.numbersMedium22,
+    color: colors.black,
     flexGrow: 1,
+    flexShrink: 1,
     paddingLeft: formatSize(12),
     paddingVertical: formatSize(12),
     borderColor: colors.lines,

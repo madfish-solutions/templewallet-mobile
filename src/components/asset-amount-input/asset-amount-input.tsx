@@ -51,6 +51,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
+  const [inputValue, setInputValue] = useState(value.amount);
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
@@ -62,19 +63,22 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
   const hasExchangeRate = isDefined(exchangeRate);
 
-  const { stringValue, handleBlur, handleFocus, handleChange, updateValue } = useNumericInput(
-    value.amount,
+  const { handleBlur, handleFocus, handleChange } = useNumericInput(
+    inputValue,
     asset.decimals,
     onBlur,
     onFocus,
-    newAmount =>
-      onValueChange({
-        ...value,
-        amount: isTokenInputType ? newAmount : newAmount?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
-      })
+    newAmount => setInputValue(newAmount)
   );
 
-  useEffect(() => void updateValue(), [value.asset, isTokenInputType]);
+  useEffect(
+    () =>
+      onValueChange({
+        ...value,
+        amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
+      }),
+    [inputValue, value.asset, isTokenInputType]
+  );
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
   return (
@@ -94,7 +98,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
         <TextInput
-          value={stringValue}
+          value={inputValue?.toFixed() ?? ''}
           placeholder="0.00"
           style={styles.numericInput}
           placeholderTextColor={colors.gray3}
