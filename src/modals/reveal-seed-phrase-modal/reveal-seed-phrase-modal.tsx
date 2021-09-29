@@ -15,13 +15,16 @@ import {
 export const RevealSeedPhraseModal = () => {
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountListSelector();
-  const selectedHdAccount = selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
-  const account =
-    useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account ?? selectedHdAccount;
+  const accountFromRouteProps = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account;
 
-  const memoizedAccount = useMemo(() => account, []);
+  const account = useMemo(() => {
+    const selectedHdAccount =
+      selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
+
+    return accountFromRouteProps ?? selectedHdAccount;
+  }, []);
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
-    account: memoizedAccount,
+    account,
     derivationPath: ''
   };
 
