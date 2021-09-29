@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { emptyFn } from '../../config/general';
 import { AccountTypeEnum } from '../../enums/account-type.enum';
@@ -19,8 +19,9 @@ export const RevealSeedPhraseModal = () => {
   const account =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account ?? selectedHdAccount;
 
+  const memoizedAccount = useMemo(() => account, []);
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
-    account,
+    account: memoizedAccount,
     derivationPath: ''
   };
 
