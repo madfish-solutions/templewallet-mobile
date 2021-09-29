@@ -50,10 +50,11 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   },
   balanceRow: {
     flexDirection: 'row',
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    justifyContent: 'center'
   },
   balanceDescription: {
-    ...typography.caption11Regular,
+    ...typography.numbersRegular11,
     color: colors.gray1
   },
   balanceValueText: {
