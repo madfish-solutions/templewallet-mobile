@@ -1,4 +1,3 @@
-import memoize from 'mem';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 
