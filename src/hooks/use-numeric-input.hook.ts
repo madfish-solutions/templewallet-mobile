@@ -49,9 +49,5 @@ export const useNumericInput = (
     onBlur();
   };
 
-  const updateValue = () => {
-    handleChange(stringValue);
-  };
-
-  return { stringValue, handleBlur, handleFocus, handleChange, updateValue };
+  return { stringValue, handleBlur, handleFocus, handleChange };
 };
