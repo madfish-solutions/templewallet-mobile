@@ -1,17 +1,17 @@
 import memoize from 'mem';
 import React, { FC, useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { formatSize } from '../../styles/format-size';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isTezosDomainsSupported } from '../../utils/dns.utils';
 import { isString } from '../../utils/is-string';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
-import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { useWalletAddressStyles } from './wallet-address.styles';
-import { formatSize } from '../../styles/format-size';
 
 interface Props {
   publicKeyHash: string;
@@ -45,9 +45,14 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
   return (
     <View style={styles.pkhWrapper}>
       {isShownDomainName ? (
-        <View style={styles.domainNameContainer}>
+        <TouchableOpacity
+          style={styles.domainNameContainer}
+          onPress={e => {
+            e.stopPropagation();
+            copyStringToClipboard(domainName);
+          }}>
           <Text style={styles.domainNameText}>{domainName}</Text>
-        </View>
+        </TouchableOpacity>
       ) : (
         <PublicKeyHashText publicKeyHash={publicKeyHash} />
       )}
