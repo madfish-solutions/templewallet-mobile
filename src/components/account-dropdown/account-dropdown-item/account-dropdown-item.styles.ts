@@ -30,12 +30,5 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
   balanceText: {
     ...typography.numbersRegular13,
     color: colors.black
-  },
-  iconContainer: {
-    marginLeft: formatSize(2),
-    paddingHorizontal: formatSize(4),
-    paddingVertical: formatSize(2),
-    backgroundColor: colors.blue10,
-    borderRadius: formatSize(4)
   }
 }));

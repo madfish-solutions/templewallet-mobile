@@ -3,6 +3,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const useWalletAddressStyles = createUseStyles(({ colors, typography }) => ({
   iconContainer: {
+    width: formatSize(22),
+    height: formatSize(22),
     marginLeft: formatSize(2),
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),

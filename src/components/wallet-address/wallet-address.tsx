@@ -8,8 +8,10 @@ import { isString } from '../../utils/is-string';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { useWalletAddressStyles } from './wallet-address.styles';
+import { formatSize } from '../../styles/format-size';
 
 interface Props {
   publicKeyHash: string;
@@ -50,14 +52,15 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
         <PublicKeyHashText publicKeyHash={publicKeyHash} />
       )}
       {isString(domainName) ? (
-        <TouchableOpacity
+        <TouchableIcon
+          size={formatSize(16)}
           style={styles.iconContainer}
+          name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           onPress={e => {
             e.stopPropagation();
             setIsShownDomainName(!isShownDomainName);
-          }}>
-          <Icon name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe} />
-        </TouchableOpacity>
+          }}
+        />
       ) : null}
     </View>
   );
