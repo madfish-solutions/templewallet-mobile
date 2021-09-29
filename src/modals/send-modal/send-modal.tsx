@@ -30,7 +30,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { isTezosDomainNameValid, isTezosDomainsSupported } from '../../utils/dns.utils';
+import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
@@ -51,7 +51,7 @@ export const SendModal: FC = () => {
   const tezosToken = useTezosTokenSelector();
 
   const tezos = createReadOnlyTezosToolkit(sender);
-  const { resolver: domainsResolver } = isTezosDomainsSupported(tezos);
+  const resolver = tezosDomainsResolver(tezos);
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -85,13 +85,12 @@ export const SendModal: FC = () => {
   }: SendModalFormValues) => {
     if (isTezosDomainNameValid(receiverPublicKeyHash)) {
       setIsLoading(true);
-      const address = await domainsResolver.resolveNameToAddress(receiverPublicKeyHash);
+      const address = await resolver.resolveNameToAddress(receiverPublicKeyHash);
+      setIsLoading(false);
       if (address !== null) {
         receiverPublicKeyHash = address;
-        setIsLoading(false);
       } else {
         showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
-        setIsLoading(false);
 
         return;
       }

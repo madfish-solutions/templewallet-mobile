@@ -5,7 +5,7 @@ import { Text, View, TouchableOpacity } from 'react-native';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { isTezosDomainsSupported } from '../../utils/dns.utils';
+import { tezosDomainsResolver } from '../../utils/dns.utils';
 import { isString } from '../../utils/is-string';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -23,18 +23,10 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
   const [isShownDomainName, setIsShownDomainName] = useState(false);
   const selectedAccount = useSelectedAccountSelector();
   const tezos = createReadOnlyTezosToolkit(selectedAccount);
-  const { resolver: domainsResolver } = isTezosDomainsSupported(tezos);
+  const resolver = tezosDomainsResolver(tezos);
 
   const updateDomainReverseName = async (pkh: string) => {
-    const memoizedDomainName = memoize(
-      async () => {
-        return await domainsResolver.resolveAddressToName(pkh);
-      },
-      {
-        cacheKey: () => pkh
-      }
-    );
-    setDomainName((await memoizedDomainName()) ?? '');
+    setDomainName((await resolver.resolveAddressToName(pkh)) ?? '');
   };
 
   useEffect(() => {
