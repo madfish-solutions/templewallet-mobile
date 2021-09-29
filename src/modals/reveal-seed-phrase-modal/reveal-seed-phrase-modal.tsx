@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { emptyFn } from '../../config/general';
 import { AccountTypeEnum } from '../../enums/account-type.enum';
@@ -15,10 +15,14 @@ import {
 export const RevealSeedPhraseModal = () => {
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountListSelector();
-  const selectedHdAccount = selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
-  const account =
-    useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account ?? selectedHdAccount;
+  const accountFromRouteProps = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account;
 
+  const account = useMemo(() => {
+    const selectedHdAccount =
+      selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
+
+    return accountFromRouteProps ?? selectedHdAccount;
+  }, []);
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
     account,
     derivationPath: ''
@@ -26,7 +30,6 @@ export const RevealSeedPhraseModal = () => {
 
   return (
     <Formik
-      enableReinitialize={true}
       initialValues={RevealPrivateKeyModalInitialValues}
       validationSchema={revealSeedPhraseModalValidationSchema}
       onSubmit={emptyFn}>
