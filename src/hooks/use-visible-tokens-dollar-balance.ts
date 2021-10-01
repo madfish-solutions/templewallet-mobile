@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { useEffect, useState } from 'react';
 
 import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
