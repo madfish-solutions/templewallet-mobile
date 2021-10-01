@@ -15,7 +15,9 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "ts": "tsc --pretty",
-    "e2e": "npx wdio run ./e2e/wdio.conf.ts",
+    "e2e": "./node_modules/.bin/wdio ./e2e/wdio.conf.ts",
+    "e2e:android": "ANDROID=true npm run e2e",
+    "e2e:ios": "IOS=true npm run e2e",
     "clear:android": "cd android && ./gradlew clean",
     "clear:ios": "rm -rf ios/Pods",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true"

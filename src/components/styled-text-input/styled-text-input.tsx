@@ -1,20 +1,15 @@
 import React, { forwardRef } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
-import { EmptyFn, emptyFn } from '../../config/general';
+import { emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { isString } from '../../utils/is-string';
+import { setTestID } from '../../utils/test-id.utils';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+import { StyledTextInputProps } from './styled-text-input.props';
 import { useStyledTextInputStyles } from './styled-text-input.styles';
-
-export interface StyledTextInputProps extends TextInputProps {
-  isError?: boolean;
-  isPasswordInput?: boolean;
-  isShowCleanButton?: boolean;
-  onBlur?: EmptyFn;
-}
 
 export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
   (
@@ -26,6 +21,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
       isShowCleanButton = false,
       onChangeText = emptyFn,
       onBlur = emptyFn,
+      testID,
       ...props
     },
     ref
@@ -49,6 +45,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
           onChangeText={onChangeText}
           onBlur={onBlur}
           {...props}
+          {...setTestID(testID)}
         />
         {isShowCleanButton && isString(value) && (
           <View style={styles.cleanButton}>

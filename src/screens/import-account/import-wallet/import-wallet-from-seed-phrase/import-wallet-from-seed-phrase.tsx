@@ -12,6 +12,7 @@ import {
   importWalletFromSeedPhraseInitialValues,
   importWalletFromSeedPhraseValidationSchema
 } from './import-wallet-from-seed-phrase.form';
+import { ImportWalletFromSeedPhraseSelectors } from './import-wallet-from-seed-phrase.selectors';
 import { ImportWalletFromSeedPhraseStyles } from './import-wallet-from-seed-phrase.styles';
 
 export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) => (
@@ -23,12 +24,17 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
       <>
         <View style={ImportWalletFromSeedPhraseStyles.seedPhraseInputContainer}>
           <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
-          <FormMnemonicInput name="seedPhrase" />
+          <FormMnemonicInput name="seedPhrase" testID={ImportWalletFromSeedPhraseSelectors.SeedPhraseInput} />
         </View>
         <Divider />
 
         <View>
-          <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+          <ButtonLargePrimary
+            title="Next"
+            disabled={!isValid}
+            onPress={submitForm}
+            testID={ImportWalletFromSeedPhraseSelectors.NextButton}
+          />
           <InsetSubstitute type="bottom" />
         </View>
       </>

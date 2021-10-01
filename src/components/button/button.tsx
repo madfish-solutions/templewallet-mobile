@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
+import { setTestID } from '../../utils/test-id.utils';
 import { Icon } from '../icon/icon';
 import { ButtonSharedProps } from './button-shared.props';
 import { ButtonStyleConfig } from './button-style.config';
@@ -27,7 +28,9 @@ export const Button: FC<Props> = ({
   marginBottom,
   marginLeft,
 
-  onPress
+  onPress,
+
+  testID
 }) => {
   const {
     containerStyle,
@@ -53,7 +56,8 @@ export const Button: FC<Props> = ({
           { backgroundColor, borderColor },
           { marginTop, marginRight, marginBottom, marginLeft }
         ]}
-        onPress={onPress}>
+        onPress={onPress}
+        {...setTestID(testID)}>
         {isDefined(iconName) && (
           <Icon
             name={iconName}
