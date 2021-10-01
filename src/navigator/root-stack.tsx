@@ -6,11 +6,12 @@ import React, { createRef, useMemo, useState } from 'react';
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
+import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
-import { CreateHdAccountModal } from '../modals/create-hd-account-modal/create-hd-account-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
+import { RenameAccountModal } from '../modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
@@ -90,9 +91,9 @@ export const RootStackScreen = () => {
               options={useModalOptions('Add Token')}
             />
             <RootStack.Screen
-              name={ModalsEnum.CreateHdAccount}
-              component={CreateHdAccountModal}
-              options={useModalOptions('Create account')}
+              name={ModalsEnum.RenameAccount}
+              component={RenameAccountModal}
+              options={useModalOptions('Rename account')}
             />
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
@@ -123,6 +124,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.ImportAccount}
               component={ImportAccountModal}
               options={useModalOptions('Import account')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.CollectibleModal}
+              component={CollectibleModal}
+              options={useModalOptions('NFT Name')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

@@ -42,7 +42,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
   const isShowPlaceholder = activityGroups.length === 0;
 
   return isShowPlaceholder ? (
-    <DataPlaceholder text="No Activity records where found" />
+    <DataPlaceholder text="No Activity records were found" />
   ) : (
     <SectionList
       sections={sections}

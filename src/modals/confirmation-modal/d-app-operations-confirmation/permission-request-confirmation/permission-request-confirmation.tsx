@@ -1,18 +1,28 @@
+import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { PermissionRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { EMPTY, from } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
+import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { AccountFormDropdown } from '../../../../components/account-dropdown/account-form-dropdown';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../../../../components/divider/divider';
+import { HeaderTitle } from '../../../../components/header/header-title/header-title';
+import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { abortRequestAction, approvePermissionRequestAction } from '../../../../store/d-apps/d-apps-actions';
+import { ApprovePermissionRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-permission-request-action-payload.interface';
+import { useRequestConfirmation } from '../../../../hooks/request-confirmation/use-request-confirmation.hook';
+import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
+import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+import { navigateAction } from '../../../../store/root-state.actions';
 import { useAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
+import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
   PermissionRequestConfirmationFormValues,
@@ -24,9 +34,34 @@ interface Props {
 }
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
-  const dispatch = useDispatch();
+  const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
+
+  const confirmRequest = useRequestConfirmation(
+    message,
+    ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
+      from(
+        BeaconHandler.respond({
+          type: BeaconMessageType.PermissionResponse,
+          network: message.network,
+          scopes: message.scopes,
+          id: message.id,
+          publicKey
+        })
+      ).pipe(
+        map(() => {
+          showSuccessToast({ description: 'Successfully approved!' });
+
+          return navigateAction(StacksEnum.MainStack);
+        }),
+        catchError(err => {
+          showErrorToast({ description: err.message });
+
+          return EMPTY;
+        })
+      )
+  );
 
   const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
     () => ({ approver: selectedAccount }),
@@ -34,12 +69,12 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   );
 
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) =>
-    void dispatch(
-      approvePermissionRequestAction({
-        message,
-        publicKey: approver.publicKey
-      })
-    );
+    void confirmRequest({
+      message,
+      publicKey: approver.publicKey
+    });
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
 
   return (
     <Formik
@@ -55,7 +90,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AccountFormDropdown name="approver" list={accounts} />
           </ScreenContainer>
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Cancel" onPress={() => dispatch(abortRequestAction(message.id))} />
+            <ButtonLargeSecondary title="Cancel" onPress={goBack} />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary title="Confirm" onPress={submitForm} />
           </ModalButtonsContainer>

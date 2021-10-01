@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { CreateNewPassword } from './create-new-password/create-new-password';
-import { ImportWallet } from './import-wallet/import-wallet';
-import { ImportWalletFormValues } from './import-wallet/import-wallet.form';
+import { ImportWallet, ImportWalletCredentials } from './import-wallet/import-wallet';
 
 export const ImportAccount = () => {
   const { innerScreenIndex, setInnerScreenIndex } = useInnerScreenProgress(2);
   const [seedPhrase, setSeedPhrase] = useState('');
+  const [initialPassword, setInitialPassword] = useState<string>();
 
-  const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase }: ImportWalletFormValues) => {
+  const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase, password }: ImportWalletCredentials) => {
     setSeedPhrase(newSeedPhrase);
+    setInitialPassword(password);
     setInnerScreenIndex(1);
   };
 
@@ -18,7 +19,11 @@ export const ImportAccount = () => {
     <>
       {innerScreenIndex === 0 && <ImportWallet onSubmit={handleImportWalletFormSubmit} />}
       {innerScreenIndex === 1 && (
-        <CreateNewPassword seedPhrase={seedPhrase} onGoBackPress={() => setInnerScreenIndex(0)} />
+        <CreateNewPassword
+          initialPassword={initialPassword}
+          seedPhrase={seedPhrase}
+          onGoBackPress={() => setInnerScreenIndex(0)}
+        />
       )}
     </>
   );

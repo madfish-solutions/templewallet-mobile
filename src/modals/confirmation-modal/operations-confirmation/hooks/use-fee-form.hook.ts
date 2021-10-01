@@ -53,10 +53,10 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
       }
     );
 
-    const revealGasFee = withReveal ? estimationsList[0].suggestedFeeMutez : 0;
+    const revealGasFee = mutezToTz(new BigNumber(withReveal ? estimationsList[0].suggestedFeeMutez : 0), 6);
 
     if (withReveal) {
-      basicFees.gasFeeSum = basicFees.gasFeeSum.plus(estimationsList[0].suggestedFeeMutez);
+      basicFees.gasFeeSum = basicFees.gasFeeSum.plus(revealGasFee);
       basicFees.storageLimitSum = basicFees.storageLimitSum.plus(estimationsList[0].storageLimit);
     }
 

@@ -18,10 +18,12 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center'
   },
   accountContainer: {
+    flexShrink: 1,
     flexDirection: 'row',
     alignItems: 'center'
   },
   accountContainerData: {
+    flexShrink: 1,
     marginLeft: formatSize(10),
     justifyContent: 'space-between'
   },
@@ -29,6 +31,10 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     ...typography.caption13Semibold,
     color: colors.black,
     marginBottom: formatSize(2)
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   lowerContainer: {
     flexDirection: 'row',

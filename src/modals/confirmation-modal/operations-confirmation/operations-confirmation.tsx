@@ -9,9 +9,10 @@ import { ButtonLargeSecondary } from '../../../components/button/button-large/bu
 import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EmptyFn, EventFn } from '../../../config/general';
+import { EventFn } from '../../../config/general';
 import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
@@ -27,11 +28,11 @@ interface Props {
   sender: WalletAccountInterface;
   opParams: ParamsWithKind[];
   onSubmit: EventFn<ParamsWithKind[]>;
-  onBackButtonPress: EmptyFn;
 }
 
-export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, onBackButtonPress, children }) => {
+export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, children }) => {
   const styles = useOperationsConfirmationStyles();
+  const { goBack } = useNavigation();
 
   const estimations = useEstimations(sender, opParams);
   const {
@@ -114,7 +115,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={onBackButtonPress} />
+            <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={goBack} />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary
               title="Confirm"

@@ -1,7 +1,6 @@
-export interface RecentActionPayload {
+import { Action } from './action.interface';
+
+export interface RecentActionPayload extends Action {
   id: string;
   timestamp: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload?: any;
-  type: string;
 }

@@ -24,7 +24,7 @@ describe('loadTokenMetadata$', () => {
         expect(tokenMetadata.decimals).toEqual(mockApiResponse.decimals);
         expect(tokenMetadata.symbol).toEqual(mockApiResponse.symbol);
         expect(tokenMetadata.name).toEqual(mockApiResponse.name);
-        expect(tokenMetadata.iconUrl).toEqual(mockApiResponse.thumbnailUri);
+        expect(tokenMetadata.thumbnailUri).toEqual(mockApiResponse.thumbnailUri);
       }, done)
     ));
 

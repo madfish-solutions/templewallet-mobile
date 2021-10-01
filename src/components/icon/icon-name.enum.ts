@@ -6,8 +6,10 @@ export enum IconNameEnum {
   Terminal = 'Terminal',
   ArrowLeft = 'ArrowLeft',
   Download = 'Download',
+  Diez = 'Diez',
   FaceId = 'FaceId',
   Gear = 'Gear',
+  Globe = 'Globe',
   GLow = 'GLow',
   GMid = 'GMid',
   GHigh = 'GHigh',
@@ -55,6 +57,7 @@ export enum IconNameEnum {
   ExternalLink = 'ExternalLink',
   IosSearch = 'IosSearch',
   Search = 'Search',
+  XSearch = 'XSearch',
   Alert = 'Alert',
   Edit = 'Edit',
   Trash = 'Trash',
@@ -65,5 +68,6 @@ export enum IconNameEnum {
   Link = 'Link',
   AlertShield = 'AlertShield',
   Success = 'Success',
-  Navigation = 'navigation'
+  Navigation = 'Navigation',
+  Hummer = 'Hummer'
 }

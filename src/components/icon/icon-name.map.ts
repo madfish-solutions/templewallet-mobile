@@ -15,6 +15,7 @@ import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CopyIcon from './assets/copy.svg';
 import DealIcon from './assets/deal.svg';
+import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
@@ -26,6 +27,8 @@ import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
+import GlobeIcon from './assets/globe.svg';
+import HummerIcon from './assets/hummer.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
@@ -67,6 +70,7 @@ import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
+import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -78,10 +82,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Terminal]: TerminalIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Download]: DownloadIcon,
+  [IconNameEnum.Diez]: DiezIcon,
   [IconNameEnum.FaceId]: FaceIdIcon,
   [IconNameEnum.GLow]: GLowIcon,
   [IconNameEnum.GMid]: GMidIcon,
   [IconNameEnum.GHigh]: GHighIcon,
+  [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
@@ -97,6 +103,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  /** TODO: delete this before release */
   [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,
   [IconNameEnum.EthTzToken]: EthTzTokenIcon,
   [IconNameEnum.KUsdToken]: KUsdTokenIcon,
@@ -104,6 +111,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.UsdSToken]: UsdSTokenIcon,
   [IconNameEnum.BlndToken]: BlndTokenIcon,
   [IconNameEnum.StkrToken]: StkrTokenIcon,
+  /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
@@ -126,6 +134,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
@@ -137,5 +146,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Link]: LinkIcon,
   [IconNameEnum.AlertShield]: AlertShield,
   [IconNameEnum.Success]: SuccessIcon,
-  [IconNameEnum.Navigation]: NavigationIcon
+  [IconNameEnum.Navigation]: NavigationIcon,
+  [IconNameEnum.Hummer]: HummerIcon
 };

@@ -4,11 +4,13 @@ import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
+import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
-export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD-HD-ACCOUNT');
+export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
+export const updateWalletAccountAction = createAction<WalletAccountInterface>('wallet/UPDATE_WALLET_ACCOUNT');
 
 // TODO: extract AssetsState
 export const loadTokenBalancesActions = createActions<

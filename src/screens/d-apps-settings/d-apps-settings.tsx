@@ -18,7 +18,7 @@ export const DAppsSettings = () => {
     <ScreenContainer>
       <Label label="Authorized DApps" description="Click on the Trash icon to reset permissions." />
       {permissions.data.length === 0 ? (
-        <DataPlaceholder text="No connected DApps where found" />
+        <DataPlaceholder text="No connected DApps were found" />
       ) : (
         permissions.data.map(permission => (
           <PermissionItem key={permission.accountIdentifier} permission={permission} />
