@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -12,7 +11,6 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -22,13 +20,9 @@ import {
 import {
   useSelectedAccountSelector,
   useTezosTokenSelector,
-  useVisibleAccountsListSelector,
-  useVisibleTokensListSelector
+  useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { formatAssetAmount } from '../../utils/number.util';
-import { mutezToTz } from '../../utils/tezos.util';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
@@ -40,27 +34,6 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const visibleTokens = useVisibleTokensListSelector();
-  const exchangeRates = useExchangeRatesSelector();
-
-  const allTokensDollarValue = () => {
-    let dollarVal = 0;
-    for (const token of visibleTokens) {
-      const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)];
-      const parsedAmount = mutezToTz(new BigNumber(token.balance), token.decimals).multipliedBy(exchangeRate);
-      dollarVal += Number(formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN));
-      console.log({ formattedAmount: Number(formatAssetAmount(parsedAmount, BigNumber.ROUND_DOWN)) });
-    }
-    const tezosParsedAmount = mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).multipliedBy(
-      exchangeRates.tez
-    );
-    dollarVal += Number(formatAssetAmount(tezosParsedAmount, BigNumber.ROUND_DOWN));
-    console.log(dollarVal);
-  };
-
-  useEffect(() => {
-    allTokensDollarValue();
-  }, [exchangeRates, visibleTokens]);
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit());
