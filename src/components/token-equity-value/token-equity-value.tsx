@@ -44,7 +44,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
         </>
       ) : (
         <HideBalance style={styles.mainValueText}>
-          <DollarValueText token={token} amount={token.balance} />
+          <DollarValueText isSummaryEquityValue={true} token={token} amount={token.balance} />
         </HideBalance>
       )}
     </View>
