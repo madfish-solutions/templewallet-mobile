@@ -1,11 +1,13 @@
 {
-    "compilerOptions": {
-        "types": [
-            "node",
-            "webdriverio/async",
-            "@wdio/cucumber-framework",
-            "expect-webdriverio"
-        ],
-        "target": "ES5"
-    }
+  "extends": "../tsconfig.json",
+  "exclude": [],
+  "compilerOptions": {
+    "types": [
+      "node",
+      "webdriverio/async",
+      "@wdio/cucumber-framework",
+      "expect-webdriverio"
+    ],
+    "target": "ES5"
+  }
 }

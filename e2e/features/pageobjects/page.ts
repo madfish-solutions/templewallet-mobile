@@ -1,3 +1,3 @@
 export abstract class Page {
-  abstract isVisible();
+  abstract isVisible(): void;
 }

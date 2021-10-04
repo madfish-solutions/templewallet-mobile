@@ -15,6 +15,7 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "ts": "tsc --pretty",
+    "ts:e2e": "cd e2e && tsc --pretty",
     "e2e": "./node_modules/.bin/wdio ./e2e/wdio.conf.ts",
     "e2e:android": "ANDROID=true npm run e2e",
     "e2e:ios": "IOS=true npm run e2e",

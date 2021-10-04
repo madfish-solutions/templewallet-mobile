@@ -4,6 +4,8 @@ import { CreateNewPasswordPage } from '../pageobjects/create-new-password.page';
 import { ImportExistingWalletPage } from '../pageobjects/import-existing-wallet.page';
 import { WalletPage } from '../pageobjects/wallet.page';
 import { WelcomePage } from '../pageobjects/welcome.page';
+import { ScreensEnum } from '../../../src/navigator/enums/screens.enum';
+import { Page } from '../pageobjects/page';
 
 const seedPhrase = 'amused drop during trial random swap crumble perfect hair flag thumb hazard';
 const appPassword = 'Aa123456';
@@ -15,7 +17,7 @@ const pages = {
   wallet: new WalletPage()
 };
 
-Given(/^I am on the (\w+) page$/, async page => {
+Given(/^I am on the (\w+) page$/, async (page: keyof typeof pages) => {
   await pages[page].isVisible();
 });
 
