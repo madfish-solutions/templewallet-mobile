@@ -43,6 +43,8 @@
     "@taquito/tzip12": "^9.2.0",
     "@taquito/tzip16": "^9.2.0",
     "@taquito/utils": "^9.2.0",
+    "@tezos-domains/core": "^1.7.0",
+    "@tezos-domains/taquito-client": "^1.7.0",
     "@tradle/react-native-http": "^2.0.1",
     "asyncstorage-down": "^4.2.0",
     "axios": "^0.21.1",
@@ -110,7 +112,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
+    "@babel/runtime": "^7.15.4",
     "@react-native-community/eslint-config": "^2.0.0",
     "@testing-library/react-hooks": "^7.0.1",
     "@types/jest": "^26.0.20",

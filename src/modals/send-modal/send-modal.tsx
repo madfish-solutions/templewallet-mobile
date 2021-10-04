@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -28,13 +28,16 @@ import {
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { showWarningToast } from '../../toast/toast.utils';
+import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
+import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
 export const SendModal: FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
@@ -46,6 +49,9 @@ export const SendModal: FC = () => {
   const assetsList = useAssetsListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
+
+  const tezos = createReadOnlyTezosToolkit(sender);
+  const resolver = tezosDomainsResolver(tezos);
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -71,12 +77,25 @@ export const SendModal: FC = () => {
     [filteredAssetsListWithTez, ownAccountsReceivers]
   );
 
-  const onSubmit = ({
+  const onSubmit = async ({
     assetAmount: { asset, amount },
     receiverPublicKeyHash,
     ownAccount,
     transferBetweenOwnAccounts
-  }: SendModalFormValues) =>
+  }: SendModalFormValues) => {
+    if (isTezosDomainNameValid(receiverPublicKeyHash)) {
+      setIsLoading(true);
+      const address = await resolver.resolveNameToAddress(receiverPublicKeyHash);
+      setIsLoading(false);
+      if (address !== null) {
+        receiverPublicKeyHash = address;
+      } else {
+        showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
+
+        return;
+      }
+    }
+
     void (
       isDefined(amount) &&
       dispatch(
@@ -87,6 +106,7 @@ export const SendModal: FC = () => {
         })
       )
     );
+  };
 
   return (
     <Formik
@@ -133,9 +153,9 @@ export const SendModal: FC = () => {
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Send" onPress={submitForm} />
+              <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />
