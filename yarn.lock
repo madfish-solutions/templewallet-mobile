@@ -711,7 +711,7 @@
     core-js-pure "^3.16.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.4.3", "@babel/runtime@^7.6.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.4.3", "@babel/runtime@^7.6.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.15.4"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.15.4.tgz"
   integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
@@ -2396,6 +2396,53 @@
     "@types/react-test-renderer" ">=16.9.0"
     react-error-boundary "^3.1.0"
 
+"@tezos-domains/core@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/core/-/core-1.7.0.tgz#21001eb1bde41f7957bd5851c107f3627f352334"
+  integrity sha512-WmzVVBaN+Yvuo3RpdH0B3wjWBD81uoX9E10POqmPPXYjzykD8lDiFOSdrlHs8uKIj0AKYD3gfhDo+f7pJXa6Vg==
+  dependencies:
+    idna-uts46-hx "^3.3.0"
+
+"@tezos-domains/manager@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/manager/-/manager-1.7.0.tgz#4f125ca5b88848336fb8622962512305cc8bb03b"
+  integrity sha512-8H9ZuLbqAJR/9bwmPUvhhrpBY/aWybmE2TiwMPikHkrI/ICE4By5DVHgAw8LyPPXvVQ7v34aNxUkShWL/ydFMg==
+  dependencies:
+    "@tezos-domains/core" "^1.7.0"
+    "@tezos-domains/taquito" "^1.7.0"
+    "@types/sha.js" "^2.4.0"
+    bignumber.js "^9.0.1"
+    sha.js "^2.4.11"
+
+"@tezos-domains/resolver@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/resolver/-/resolver-1.7.0.tgz#a40877500288cf30dbdaaf8c8da167458ee27f98"
+  integrity sha512-E7/LUP4EV+nR9oZ/c6aOSLQwXgQSRRic5wr9cgB7yNwO3ZLX9iXI4PL7jg1DCQrEfURHYyF+9ovoVOtyQPA+QQ==
+  dependencies:
+    "@tezos-domains/core" "^1.7.0"
+    node-cache "^5.1.2"
+
+"@tezos-domains/taquito-client@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito-client/-/taquito-client-1.7.0.tgz#7b18cf7c5bdc1ab61385a66503101a4c3988c71b"
+  integrity sha512-dFnsWAxqFpf9iCCLwOhpswZJWa0ecg3AmHKW44jnf1AiugXG7Dpdvox6q86rTWmflWwAYiJC4pr/mgd1JeZNJg==
+  dependencies:
+    "@tezos-domains/core" "^1.7.0"
+    "@tezos-domains/manager" "^1.7.0"
+    "@tezos-domains/resolver" "^1.7.0"
+    "@tezos-domains/taquito" "^1.7.0"
+    bignumber.js "^9.0.1"
+    node-cache "^5.1.2"
+
+"@tezos-domains/taquito@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito/-/taquito-1.7.0.tgz#9de4e69546e9500cf518c444097da4decead70e7"
+  integrity sha512-jQFYAFryZUU5wlbvsPZUo5gvvdL2SUAmqykxIMZLmt1LENXB3r3YTSN+620kPX5E7E7lusBYUvSO0xEJWpyRKw==
+  dependencies:
+    "@tezos-domains/core" "^1.7.0"
+    bignumber.js "^9.0.1"
+    node-cache "^5.1.2"
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-1.1.2.tgz"
@@ -2825,6 +2872,13 @@
   version "0.16.2"
   resolved "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz"
   integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
+
+"@types/sha.js@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@types/sha.js/-/sha.js-2.4.0.tgz#bce682ef860b40f419d024fa08600c3b8d24bb01"
+  integrity sha512-amxKgPy6WJTKuw8mpUwjX2BSxuBtBmZfRwIUDIuPJKNwGN8CWDli8JTg5ONTWOtcTkHIstvT7oAhhYXqEjStHQ==
+  dependencies:
+    "@types/node" "*"
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
@@ -5352,6 +5406,11 @@ clone-response@^1.0.2:
   integrity sha1-0dyXOSAxTfZ/vrlCI7TuNQI56Ws=
   dependencies:
     mimic-response "^1.0.0"
+
+clone@2.x:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
+  integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
 
 clone@^1.0.2:
   version "1.0.4"
@@ -7956,6 +8015,13 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
+idna-uts46-hx@^3.3.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/idna-uts46-hx/-/idna-uts46-hx-3.4.0.tgz#aa380e7c04d6bce4f5e26da742c613ea2996f470"
+  integrity sha512-b1I4qYTcJcX1TANn8OhOGrQUIWOfZUWrLKWDeKbV6posVLjp7OTqFKX3N20efrIMzQM1KhiphOEazBEEUFR9bg==
+  dependencies:
+    punycode "^2.1.1"
+
 ieee754@^1.1.13, ieee754@^1.1.4, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz"
@@ -10482,6 +10548,13 @@ nocache@^2.1.0:
   resolved "https://registry.npmjs.org/nocache/-/nocache-2.1.0.tgz"
   integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
 
+node-cache@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/node-cache/-/node-cache-5.1.2.tgz#f264dc2ccad0a780e76253a694e9fd0ed19c398d"
+  integrity sha512-t1QzWwnk4sjLWaQAS8CHgOJ+RAfmHpxFWmc36IWTiWHQfs0w5JDMBS1b1ZxQteo0vVVuWJvIUKHDkkeK7vIGCg==
+  dependencies:
+    clone "2.x"
+
 node-dir@^0.1.17:
   version "0.1.17"
   resolved "https://registry.npmjs.org/node-dir/-/node-dir-0.1.17.tgz"
@@ -12844,7 +12917,7 @@ setprototypeof@1.1.1:
   resolved "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.1.1.tgz"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
-sha.js@^2.4.0, sha.js@^2.4.8:
+sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
   version "2.4.11"
   resolved "https://registry.npmjs.org/sha.js/-/sha.js-2.4.11.tgz"
   integrity sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==
