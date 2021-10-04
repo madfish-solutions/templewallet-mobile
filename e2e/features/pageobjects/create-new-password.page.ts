@@ -1,11 +1,12 @@
 import { CreateNewPasswordSelectors } from '../../../src/screens/import-account/create-new-password/create-new-password.selectors';
+import { findElement } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class CreateNewPasswordPage extends Page {
-  passwordInput = browser.$(`~${CreateNewPasswordSelectors.PasswordInput}`);
-  repeatPasswordInput = browser.$(`~${CreateNewPasswordSelectors.RepeatPasswordInput}`);
-  acceptTermsCheckbox = browser.$(`~${CreateNewPasswordSelectors.AcceptTermsCheckbox}`);
-  importButton = browser.$(`~${CreateNewPasswordSelectors.ImportButton}`);
+  passwordInput = findElement(CreateNewPasswordSelectors.PasswordInput);
+  repeatPasswordInput = findElement(CreateNewPasswordSelectors.RepeatPasswordInput);
+  acceptTermsCheckbox = findElement(CreateNewPasswordSelectors.AcceptTermsCheckbox);
+  importButton = findElement(CreateNewPasswordSelectors.ImportButton);
 
   async isVisible() {
     await this.passwordInput.waitForDisplayed();
