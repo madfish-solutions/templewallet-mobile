@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 
 import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
 import { useVisibleTokensListSelector, useTezosTokenSelector } from '../store/wallet/wallet-selectors';
+import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { formatAssetAmount } from '../utils/number.util';
-import { mutezToTz } from '../utils/tezos.util';
+import { mutezToTz, tzToMutez } from '../utils/tezos.util';
 
-export const useVisibleTokensDollarBalance = () => {
-  const [summaryDollarValue, setSummearyDollarValue] = useState(0);
+export const useSummaryBalance = () => {
+  const [summaryValue, setSummaryValue] = useState(new BigNumber(0));
   const exchangeRates = useExchangeRatesSelector();
   const visibleTokens = useVisibleTokensListSelector();
   const tezosToken = useTezosTokenSelector();
@@ -24,8 +25,8 @@ export const useVisibleTokensDollarBalance = () => {
       exchangeRates.tez
     );
     dollarVal += Number(formatAssetAmount(tezosParsedAmount, BigNumber.ROUND_DOWN, 2));
-    setSummearyDollarValue(dollarVal);
+    setSummaryValue(tzToMutez(new BigNumber(dollarVal / exchangeRates.tez), TEZ_TOKEN_METADATA.decimals));
   }, [visibleTokens, exchangeRates]);
 
-  return summaryDollarValue;
+  return { summaryValue, summaryAsset: TEZ_TOKEN_METADATA };
 };

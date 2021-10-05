@@ -4,8 +4,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { Divider } from '../../../../components/divider/divider';
-import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
@@ -60,8 +60,9 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(values.gasFeeSum) && (
-            <DollarValueText
-              token={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed())}
+            <AssetValueText
+              convertToDollar
+              asset={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed())}
               style={styles.infoFeeValue}
               amount={getTezosToken(tzToMutez(values.gasFeeSum, TEZ_TOKEN_METADATA.decimals).toFixed()).balance}
             />
@@ -76,8 +77,9 @@ export const FeeFormInput: FC<Props> = ({
             {isDefined(storageFee) ? `${storageFee} ${TEZ_TOKEN_METADATA.symbol}` : 'Not defined'}
           </Text>
           {isDefined(storageFee) && (
-            <DollarValueText
-              token={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed())}
+            <AssetValueText
+              convertToDollar
+              asset={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed())}
               style={styles.infoFeeValue}
               amount={getTezosToken(tzToMutez(storageFee, TEZ_TOKEN_METADATA.decimals).toFixed()).balance}
             />

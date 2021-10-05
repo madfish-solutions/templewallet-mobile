@@ -1,11 +1,10 @@
 import React, { FC, Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
+import { AssetValueText } from '../../../../../components/asset-value-text/asset-value-text';
 import { Divider } from '../../../../../components/divider/divider';
-import { DollarValueText } from '../../../../../components/dollar-value-text/dollar-value-text';
 import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
-import { TokenValueText } from '../../../../../components/token-value-text/token-value-text';
 import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
@@ -108,18 +107,19 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
             </View>
             {isDefined(token) && Number(token.amount) > 0 && (
               <View>
-                <TokenValueText
+                <AssetValueText
                   amount={token.amount}
-                  token={token.tokenData}
+                  asset={token.tokenData}
                   style={styles.amountToken}
-                  isNegativeAmount={true}
+                  showMinusSign
                 />
                 <Divider size={formatSize(8)} />
-                <DollarValueText
+                <AssetValueText
+                  convertToDollar
                   amount={token.amount}
-                  token={token.tokenData}
+                  asset={token.tokenData}
                   style={styles.amountDollar}
-                  isNegativeAmount={true}
+                  showMinusSign
                 />
               </View>
             )}
