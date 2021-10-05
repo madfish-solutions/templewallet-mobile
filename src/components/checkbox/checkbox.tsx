@@ -1,28 +1,22 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Svg, Path, Rect } from 'react-native-svg';
+import { Path, Rect, Svg } from 'react-native-svg';
 
-import { EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { generateHitSlop } from '../../styles/generate-hit-slop';
 import { useColors } from '../../styles/use-colors';
+import { setTestID } from '../../utils/test-id.utils';
+import { CheckboxProps } from './checkbox.props';
 import { CheckboxStyles } from './checkbox.styles';
 
-interface Props {
-  disabled?: boolean;
-  value: boolean;
-  size?: number;
-  strokeWidth?: number;
-  onChange: EventFn<boolean>;
-}
-
-export const Checkbox: FC<Props> = ({
+export const Checkbox: FC<CheckboxProps> = ({
   disabled,
   value,
   size = formatSize(24),
   strokeWidth = formatSize(1.5),
   children,
-  onChange
+  onChange,
+  testID
 }) => {
   const colors = useColors();
 
@@ -32,7 +26,8 @@ export const Checkbox: FC<Props> = ({
       style={CheckboxStyles.container}
       activeOpacity={1}
       hitSlop={generateHitSlop(formatSize(4))}
-      onPress={() => onChange(!value)}>
+      onPress={() => onChange(!value)}
+      {...setTestID(testID)}>
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Rect
           x="2.75"

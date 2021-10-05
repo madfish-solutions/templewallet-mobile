@@ -15,6 +15,7 @@ import com.reactNativeQuickActions.AppShortcutsPackage;
 import org.wonday.orientation.OrientationActivityLifecycle;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

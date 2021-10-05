@@ -11,9 +11,9 @@ import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
-import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { TokenValueText } from '../../token-value-text/token-value-text';
+import { WalletAddress } from '../../wallet-address/wallet-address';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 interface Props {
@@ -38,8 +38,7 @@ export const AccountDropdownItem: FC<Props> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
-
+          <WalletAddress publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <TokenValueText
