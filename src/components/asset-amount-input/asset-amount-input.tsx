@@ -21,6 +21,7 @@ import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
+import {isAndroid} from "../../config/system";
 
 export interface AssetAmountInterface {
   asset: TokenInterface;
@@ -99,7 +100,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           style={styles.numericInput}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
-          keyboardType="numeric"
+          autoCapitalize={isAndroid ? 'words' : undefined}
+          keyboardType={isAndroid ? 'decimal-pad' : 'numeric'}
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
