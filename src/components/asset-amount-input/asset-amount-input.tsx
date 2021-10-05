@@ -103,6 +103,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           style={styles.numericInput}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
+          autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}
           onFocus={handleFocus}
