@@ -1,3 +1,7 @@
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig();
+
 const waitforTimeout = 30 * 60 * 1000;
 const commandTimeout = 30 * 60 * 1000;
 const newCommandTimeout = 30 * 60 * 1000;

@@ -1,12 +1,13 @@
 import { Given } from '@wdio/cucumber-framework';
 
+import { getEnv } from '../../utils/env.utils';
 import { CreateNewPasswordPage } from '../pageobjects/create-new-password.page';
 import { ImportExistingWalletPage } from '../pageobjects/import-existing-wallet.page';
 import { WalletPage } from '../pageobjects/wallet.page';
 import { WelcomePage } from '../pageobjects/welcome.page';
 
-const seedPhrase = 'amused drop during trial random swap crumble perfect hair flag thumb hazard';
-const appPassword = 'Aa123456';
+const seedPhrase = getEnv('E2E_SEED_PHRASE');
+const appPassword = getEnv('E2E_APP_PASSWORD');
 
 const pages = {
   welcome: new WelcomePage(),
