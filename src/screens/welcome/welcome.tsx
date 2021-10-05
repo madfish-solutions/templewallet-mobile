@@ -12,6 +12,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
@@ -35,6 +36,7 @@ export const Welcome = () => {
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}
           onPress={() => navigate(ScreensEnum.CreateAccount)}
+          testID={WelcomeSelectors.CreateNewWalletButton}
         />
         <Divider size={formatSize(24)} />
 
@@ -42,6 +44,7 @@ export const Welcome = () => {
           title="Import existing Wallet"
           iconName={IconNameEnum.DownloadCloud}
           onPress={() => navigate(ScreensEnum.ImportAccount)}
+          testID={WelcomeSelectors.ImportExistingWalletButton}
         />
         <Divider size={formatSize(43)} />
         <InsetSubstitute type="bottom" />

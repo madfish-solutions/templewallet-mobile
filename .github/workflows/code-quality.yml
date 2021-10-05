@@ -35,7 +35,7 @@ jobs:
         run: yarn install
 
       - name: Check TypeScript
-        run: yarn ts
+        run: yarn ts && yarn ts:e2e
 
       - name: Check ESLint
         run: yarn lint
