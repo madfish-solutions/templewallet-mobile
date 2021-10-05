@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { isAndroid } from '../../config/system';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
