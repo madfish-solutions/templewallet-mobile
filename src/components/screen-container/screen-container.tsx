@@ -30,7 +30,8 @@ export const ScreenContainer: FC<Props> = ({
     <KeyboardAvoidingView
       style={[styles.scrollView, style]}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      behavior={isAndroid ? 'height' : 'padding'}>
+      behavior={isAndroid ? 'height' : 'padding'}
+    >
       <ScrollView
         contentContainerStyle={[
           styles.scrollViewContentContainer,
@@ -38,7 +39,8 @@ export const ScreenContainer: FC<Props> = ({
           contentContainerStyle
         ]}
         keyboardShouldPersistTaps="handled"
-        {...setTestID(testID)}>
+        {...setTestID(testID)}
+      >
         {children}
       </ScrollView>
     </KeyboardAvoidingView>

@@ -68,7 +68,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     <Formik
       initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

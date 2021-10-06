@@ -41,7 +41,8 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
-        onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}>
+        onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}
+      >
         <ButtonMedium
           title="SEND"
           disabled={disableSendAsset}
@@ -57,7 +58,8 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
             title: 'Work in progress...',
             description: 'You will be available to buy crypto soon.'
           })
-        }>
+        }
+      >
         <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
       </View>
     </ButtonsContainer>

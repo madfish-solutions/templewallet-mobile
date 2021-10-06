@@ -55,7 +55,8 @@ export const SegmentedControl = <T extends unknown>({
           <TouchableOpacity
             key={index}
             style={[styles.itemContainer, { width: tileWidth }]}
-            onPress={() => onChange(index)}>
+            onPress={() => onChange(index)}
+          >
             {renderValue({ item, isSelected: index === selectedIndex })}
           </TouchableOpacity>
         ))}

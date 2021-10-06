@@ -15,7 +15,8 @@ export const CollectiblesHomeSwipeButton = () => {
     <TouchableOpacity
       style={CollectiblesHomeSwipeButtonStyle.root}
       hitSlop={generateHitSlop(formatSize(8))}
-      onPress={() => navigate(ScreensEnum.CollectiblesHome)}>
+      onPress={() => navigate(ScreensEnum.CollectiblesHome)}
+    >
       <CollectiblesSvg height={formatSize(13)} />
     </TouchableOpacity>
   );

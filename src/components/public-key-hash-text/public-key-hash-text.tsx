@@ -21,7 +21,8 @@ export const PublicKeyHashText: FC<Props> = ({ publicKeyHash, marginTop, marginR
   return (
     <TouchableOpacity
       style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
-      onPress={handlePress}>
+      onPress={handlePress}
+    >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}
       </Text>

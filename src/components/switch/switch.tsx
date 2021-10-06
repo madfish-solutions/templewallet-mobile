@@ -53,7 +53,8 @@ export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
         e.stopPropagation();
         onChange(!value);
       }}
-      onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}>
+      onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}
+    >
       <Animated.View style={[styles.toggle, { transform: [{ translateX }], backgroundColor: toggleColor }]} />
     </AnimatedTouchableOpacity>
   );
