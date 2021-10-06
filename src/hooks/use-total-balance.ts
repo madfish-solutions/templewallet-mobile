@@ -7,7 +7,7 @@ import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { mutezToTz, tzToMutez } from '../utils/tezos.util';
 
-export const useSummaryBalance = () => {
+export const useTotalBalance = () => {
   const [totalBalance, setTotalBalance] = useState(new BigNumber(0));
   const exchangeRates = useExchangeRatesSelector();
   const visibleTokens = useVisibleTokensListSelector();

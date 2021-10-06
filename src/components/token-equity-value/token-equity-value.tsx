@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
-import { useSummaryBalance } from '../../hooks/use-visible-tokens-dollar-balance';
+import { useTotalBalance } from '../../hooks/use-total-balance';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
@@ -22,7 +22,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
   const styles = useTokenEquityValueStyles();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
-  const { summaryAsset, totalBalance } = useSummaryBalance();
+  const { summaryAsset, totalBalance } = useTotalBalance();
 
   return (
     <View style={styles.container}>
