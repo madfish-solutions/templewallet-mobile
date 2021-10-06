@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "rn-nodeify --install 'crypto,buffer,react-native-randombytes,vm,stream,http,https,os,url,path,fs' --hack",
+    "postinstall": "rn-nodeify --install 'react-native-randombytes' --hack",
     "android": "react-native run-android",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew assembleRelease",
@@ -137,6 +137,7 @@
     "eslint-plugin-jest": "^24.3.2",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.64.0",
+    "node-libs-react-native": "^1.2.1",
     "react-native-flipper": "^0.87.0",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "17.0.1",
@@ -160,35 +161,5 @@
       "json",
       "node"
     ]
-  },
-  "react-native": {
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify",
-    "path": "path-browserify",
-    "crypto": "react-native-crypto",
-    "http": "@tradle/react-native-http",
-    "https": "https-browserify",
-    "os": "react-native-os",
-    "vm": "vm-browserify",
-    "fs": "react-native-level-fs"
-  },
-  "browser": {
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify",
-    "path": "path-browserify",
-    "crypto": "react-native-crypto",
-    "http": "@tradle/react-native-http",
-    "https": "https-browserify",
-    "os": "react-native-os",
-    "vm": "vm-browserify",
-    "fs": "react-native-level-fs"
   }
 }
