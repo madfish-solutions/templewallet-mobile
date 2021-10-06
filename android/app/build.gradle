@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -197,11 +198,11 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation project(':react-native-android-open-settings')
-
     implementation project(':react-native-quick-actions')
 
+    implementation project(':react-native-android-open-settings')
     implementation project(':react-native-fs')
+    implementation project(':react-native-config')
 
 //     // If your app supports Android versions before Ice Cream Sandwich (API level 14)
 //     implementation 'com.facebook.fresco:animated-base-support:1.3.0'

@@ -1,7 +1,8 @@
 import { useField } from 'formik';
 import React, { FC } from 'react';
 
-import { StyledTextInput, StyledTextInputProps } from '../components/styled-text-input/styled-text-input';
+import { StyledTextInput } from '../components/styled-text-input/styled-text-input';
+import { StyledTextInputProps } from '../components/styled-text-input/styled-text-input.props';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 

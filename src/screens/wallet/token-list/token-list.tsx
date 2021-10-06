@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
+import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
 export const TokenList: FC = () => {
@@ -53,7 +54,10 @@ export const TokenList: FC = () => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <ScreenContainer isFullScreenMode={true} contentContainerStyle={styles.contentContainerStyle}>
+      <ScreenContainer
+        isFullScreenMode={true}
+        contentContainerStyle={styles.contentContainerStyle}
+        testID={TokenListSelectors.TokenList}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (
