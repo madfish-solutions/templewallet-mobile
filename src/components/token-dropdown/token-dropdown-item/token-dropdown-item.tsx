@@ -6,14 +6,13 @@ import { emptyToken, TokenInterface } from '../../../token/interfaces/token.inte
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { getTruncatedProps } from '../../../utils/style.util';
+import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { Divider } from '../../divider/divider';
-import { DollarValueText } from '../../dollar-value-text/dollar-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
-import { TokenValueText } from '../../token-value-text/token-value-text';
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
 interface Props {
@@ -45,7 +44,7 @@ export const TokenDropdownItem: FC<Props> = ({
             <Divider size={formatSize(4)} />
             {isShowBalance && (
               <HideBalance style={styles.balance}>
-                <TokenValueText token={token} amount={token?.balance} />
+                <AssetValueText asset={token} amount={token?.balance} />
               </HideBalance>
             )}
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
@@ -63,7 +62,7 @@ export const TokenDropdownItem: FC<Props> = ({
                   styles.dollarEquivalent,
                   conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                 ]}>
-                <DollarValueText token={token} amount={token?.balance} />
+                <AssetValueText asset={token} convertToDollar amount={token?.balance} />
               </HideBalance>
             )}
           </View>

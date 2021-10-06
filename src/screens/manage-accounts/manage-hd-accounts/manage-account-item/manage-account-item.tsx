@@ -2,16 +2,15 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { ButtonSmallSecondary } from '../../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../../components/divider/divider';
-import { DollarValueText } from '../../../../components/dollar-value-text/dollar-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
-import { TokenValueText } from '../../../../components/token-value-text/token-value-text';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
@@ -81,10 +80,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
           <HideBalance style={styles.balanceText}>
-            <TokenValueText token={tezosToken} amount={tezosToken.balance} />
+            <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
           <HideBalance style={styles.equityText}>
-            <DollarValueText token={tezosToken} amount={tezosToken.balance} />
+            <AssetValueText convertToDollar asset={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
         </View>
 
