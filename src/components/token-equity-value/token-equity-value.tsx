@@ -22,7 +22,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
   const styles = useTokenEquityValueStyles();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
-  const { summaryAsset, summaryValue } = useSummaryBalance();
+  const { summaryAsset, totalBalance } = useSummaryBalance();
 
   return (
     <View style={styles.container}>
@@ -45,7 +45,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
         </>
       ) : (
         <HideBalance style={styles.mainValueText}>
-          <AssetValueText convertToDollar asset={summaryAsset} amount={summaryValue.toFixed()} />
+          <AssetValueText convertToDollar asset={summaryAsset} amount={totalBalance.toFixed()} />
         </HideBalance>
       )}
     </View>
