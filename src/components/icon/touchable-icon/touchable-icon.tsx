@@ -1,6 +1,5 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent, TouchableOpacity } from 'react-native';
 
 import { EmptyFn, EventFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
