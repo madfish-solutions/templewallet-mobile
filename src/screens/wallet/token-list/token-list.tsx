@@ -45,8 +45,7 @@ export const TokenList: FC = () => {
             value={isHideZeroBalance}
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
-            onChange={setIsHideZeroBalance}
-          >
+            onChange={setIsHideZeroBalance}>
             <Divider size={formatSize(4)} />
             <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
           </Checkbox>
@@ -58,8 +57,7 @@ export const TokenList: FC = () => {
       <ScreenContainer
         isFullScreenMode={true}
         contentContainerStyle={styles.contentContainerStyle}
-        testID={TokenListSelectors.TokenList}
-      >
+        testID={TokenListSelectors.TokenList}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (

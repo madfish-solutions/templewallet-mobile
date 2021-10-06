@@ -27,8 +27,7 @@ export const Checkbox: FC<CheckboxProps> = ({
       activeOpacity={1}
       hitSlop={generateHitSlop(formatSize(4))}
       onPress={() => onChange(!value)}
-      {...setTestID(testID)}
-    >
+      {...setTestID(testID)}>
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Rect
           x="2.75"

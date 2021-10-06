@@ -58,8 +58,7 @@ export const EnterPassword = () => {
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}
-          onSubmit={onSubmit}
-        >
+          onSubmit={onSubmit}>
           {({ submitForm, isValid }) => (
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />

@@ -32,8 +32,7 @@ export const NavigationBar: FC = ({ children }) => {
       style={[
         NavigationBarStyles.container,
         conditionalStyle(isShowTabletNavigation, NavigationBarStyles.tabletContainer)
-      ]}
-    >
+      ]}>
       {isShowNavigationBar && isShowTabletNavigation && <SideBar currentRouteName={currentRouteName} />}
       {children}
       {isShowNavigationBar && !isShowTabletNavigation && <TabBar currentRouteName={currentRouteName} />}

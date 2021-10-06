@@ -72,8 +72,7 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
           handleComponent={emptyComponent}
           backgroundComponent={emptyComponent}
           backdropComponent={renderBackdropComponent}
-          onChange={handleChange}
-        >
+          onChange={handleChange}>
           <View style={styles.root}>
             <View style={styles.headerContainer}>
               <Text style={styles.title}>{title}</Text>

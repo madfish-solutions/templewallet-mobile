@@ -30,8 +30,7 @@ export const RevealPrivateKeyModal = () => {
       enableReinitialize={true}
       initialValues={RevealPrivateKeyModalInitialValues}
       validationSchema={revealPrivateKeyModalValidationSchema}
-      onSubmit={emptyFn}
-    >
+      onSubmit={emptyFn}>
       {({ values }) => (
         <ScreenContainer>
           <ModalStatusBar />
