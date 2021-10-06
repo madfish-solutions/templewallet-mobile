@@ -85,7 +85,8 @@ export const ManageHdAccounts = () => {
         <BottomSheet
           title="Select what do you want to reveal:"
           contentHeight={formatSize(180)}
-          controller={revealSelectBottomSheetController}>
+          controller={revealSelectBottomSheetController}
+        >
           <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
           <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
         </BottomSheet>

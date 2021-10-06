@@ -95,7 +95,8 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
       initialValues={initialValues}
       validationSchema={validationSchema}
       validateOnMount={true}
-      onSubmit={onVerify}>
+      onSubmit={onVerify}
+    >
       {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View style={styles.content}>
@@ -122,7 +123,8 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
             ))}
           </View>
           <View
-            onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}>
+            onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}
+          >
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </View>
           <InsetSubstitute type="bottom" />

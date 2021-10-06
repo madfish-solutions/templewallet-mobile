@@ -77,7 +77,8 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
       enableReinitialize={true}
       initialValues={formInitialValues}
       validationSchema={formValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ values, isValid, isSubmitting, setFieldValue, submitForm }) => (
         <>
           <ScreenContainer>

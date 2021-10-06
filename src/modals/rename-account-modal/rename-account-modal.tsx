@@ -38,7 +38,8 @@ export const RenameAccountModal = () => {
       enableReinitialize={true}
       initialValues={createHdAccountInitialValues}
       validationSchema={renameAccountModalValidationSchema}
-      onSubmit={onSubmit}>
+      onSubmit={onSubmit}
+    >
       {({ submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />

@@ -57,7 +57,8 @@ export const Button: FC<Props> = ({
           { marginTop, marginRight, marginBottom, marginLeft }
         ]}
         onPress={onPress}
-        {...setTestID(testID)}>
+        {...setTestID(testID)}
+      >
         {isDefined(iconName) && (
           <Icon
             name={iconName}

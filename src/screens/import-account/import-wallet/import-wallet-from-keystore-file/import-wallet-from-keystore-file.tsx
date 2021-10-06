@@ -44,7 +44,8 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
     <Formik
       initialValues={importWalletFromKeystoreFileInitialValues}
       validationSchema={importWalletFromKeystoreFileValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ isValid, submitForm, isSubmitting }) => (
         <>
           <View style={styles.seedPhraseInputContainer}>

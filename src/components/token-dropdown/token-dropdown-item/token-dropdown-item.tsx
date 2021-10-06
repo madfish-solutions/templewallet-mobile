@@ -61,7 +61,8 @@ export const TokenDropdownItem: FC<Props> = ({
                 style={[
                   styles.dollarEquivalent,
                   conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
-                ]}>
+                ]}
+              >
                 <AssetValueText asset={token} convertToDollar amount={token?.balance} />
               </HideBalance>
             )}

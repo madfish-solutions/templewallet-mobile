@@ -24,7 +24,8 @@ export const EnableBiometryPasswordModal = () => {
     <Formik
       initialValues={enableBiometryPasswordModalInitialValues}
       validationSchema={enableBiometryPasswordModalValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

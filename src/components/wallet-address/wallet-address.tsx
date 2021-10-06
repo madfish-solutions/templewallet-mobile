@@ -41,7 +41,8 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
           onPress={e => {
             e.stopPropagation();
             copyStringToClipboard(domainName);
-          }}>
+          }}
+        >
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>
       ) : (

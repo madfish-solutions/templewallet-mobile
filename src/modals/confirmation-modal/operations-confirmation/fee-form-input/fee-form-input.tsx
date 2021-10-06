@@ -124,7 +124,8 @@ export const FeeFormInput: FC<Props> = ({
             <Divider size={formatSize(8)} />
             <TouchableOpacity
               style={styles.toggleViewButton}
-              onPress={() => setIsShowDetailedInput(!isShowDetailedInput)}>
+              onPress={() => setIsShowDetailedInput(!isShowDetailedInput)}
+            >
               <Icon name={isShowDetailedInput ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
             </TouchableOpacity>
           </>
