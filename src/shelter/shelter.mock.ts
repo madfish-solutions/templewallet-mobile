@@ -14,6 +14,7 @@ export const mockShelter = {
   }),
   getBiometryPassword: jest.fn(() => Keychain.getGenericPassword(biometryKeychainOptions)),
   isLocked$: new BehaviorSubject<boolean>(true),
+  getIsLocked: () => true,
   unlockApp$: jest.fn((password: string) => {
     const isCorrectPassword = password === mockCorrectPassword;
     mockShelter.isLocked$.next(!isCorrectPassword);
