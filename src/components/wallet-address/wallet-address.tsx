@@ -53,7 +53,6 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
         <TouchableIcon
           size={formatSize(16)}
           style={styles.iconContainer}
-          {...(isAndroid && { disallowInterruption: true })}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           onPress={() => {
             setIsShownDomainName(!isShownDomainName);
