@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -50,21 +49,19 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
         <PublicKeyHashText publicKeyHash={publicKeyHash} />
       )}
       {isString(domainName) ? (
-        <NativeViewGestureHandler disallowInterruption={true}>
-          <View>
-            <TouchableIcon
-              size={formatSize(16)}
-              style={styles.iconContainer}
-              name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-              onPress={e => {
-                if (isDefined(e)) {
-                  // e.stopPropagation();
-                }
-                setIsShownDomainName(!isShownDomainName);
-              }}
-            />
-          </View>
-        </NativeViewGestureHandler>
+        <TouchableIcon
+          size={formatSize(16)}
+          style={styles.iconContainer}
+          name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
+          onPress={e => {
+            console.log(e);
+            
+            if (isDefined(e)) {
+              e.stopPropagation();
+            }
+            setIsShownDomainName(!isShownDomainName);
+          }}
+        />
       ) : null}
     </View>
   );
