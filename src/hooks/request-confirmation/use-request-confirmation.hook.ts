@@ -31,7 +31,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
     });
 
     return () => subscription.unsubscribe();
-  }, [confirmRequest$]);
+  }, [confirmRequest$, project]);
 
   return (value: T) => confirmRequest$.next(value);
 };
