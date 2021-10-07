@@ -68,6 +68,7 @@ export enum IconNameEnum {
   Link = 'Link',
   AlertShield = 'AlertShield',
   Success = 'Success',
+  Swap = 'Swap',
   Navigation = 'Navigation',
   Hummer = 'Hummer'
 }

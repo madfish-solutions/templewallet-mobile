@@ -25,6 +25,7 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { Swap } from '../screens/swap/swap';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
@@ -143,12 +144,11 @@ export const MainStackScreen = () => {
                 component={emptyComponent}
                 options={{ animationEnabled: false }}
               />
-
               {/** Swap stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Swap}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
+                component={Swap}
+                options={{ animationEnabled: false, headerShown: false }}
               />
 
               {/** Settings stack **/}

@@ -51,6 +51,7 @@ import TwitterIcon from './assets/socials/twitter.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SuccessIcon from './assets/success.svg';
+import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
@@ -147,5 +148,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.AlertShield]: AlertShield,
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.Navigation]: NavigationIcon,
-  [IconNameEnum.Hummer]: HummerIcon
+  [IconNameEnum.Hummer]: HummerIcon,
+  [IconNameEnum.Swap]: SwapIcon
 };

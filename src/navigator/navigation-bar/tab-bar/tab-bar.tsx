@@ -46,11 +46,10 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         />
         <TabBarButton
           label="Swap"
-          iconName={IconNameEnum.SoonBadge}
+          iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.Swap}
           focused={isStackFocused(swapStackScreens)}
-          disabled={true}
         />
         <DebugTapListener>
           <TabBarButton
