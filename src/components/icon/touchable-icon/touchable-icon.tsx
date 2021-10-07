@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { GestureResponderEvent, TouchableOpacity } from 'react-native';
 
 import { EmptyFn, EventFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';

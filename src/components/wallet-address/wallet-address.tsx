@@ -55,7 +55,6 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           onPress={e => {
             console.log(e);
-            
             if (isDefined(e)) {
               e.stopPropagation();
             }
