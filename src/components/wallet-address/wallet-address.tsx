@@ -5,6 +5,7 @@ import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors'
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { tezosDomainsResolver } from '../../utils/dns.utils';
+import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -54,7 +55,9 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
           style={styles.iconContainer}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           onPress={e => {
-            e.stopPropagation();
+            if (isDefined(e)) {
+              e.stopPropagation();
+            }
             setIsShownDomainName(!isShownDomainName);
           }}
         />
