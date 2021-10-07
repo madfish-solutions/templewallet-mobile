@@ -18,8 +18,7 @@ export const TouchableIcon: FC<Props> = ({ size = formatSize(24), name, color, s
     style={[TouchableIconStyles.container, { width: size, height: size }, style]}
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}
-    onPress={onPress}
-  >
+    onPress={onPress}>
     <Icon name={name} size={size} color={color} />
   </TouchableOpacity>
 );

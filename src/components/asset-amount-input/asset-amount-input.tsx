@@ -112,8 +112,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
         <Divider size={formatSize(8)} />
 
         <View
-          style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
-        >
+          style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}>
           <Dropdown
             title="Assets"
             value={value.asset}

@@ -56,8 +56,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
     <Formik
       initialValues={addTokenAddressFormInitialValues}
       validationSchema={addTokenAddressFormValidationSchema}
-      onSubmit={onSubmit}
-    >
+      onSubmit={onSubmit}>
       {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

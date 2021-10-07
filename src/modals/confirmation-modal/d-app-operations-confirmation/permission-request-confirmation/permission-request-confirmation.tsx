@@ -80,8 +80,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
     <Formik
       initialValues={formInitialValues}
       validationSchema={permissionRequestConfirmationModalValidationSchema}
-      onSubmit={onSubmit}
-    >
+      onSubmit={onSubmit}>
       {({ submitForm }) => (
         <>
           <ScreenContainer>

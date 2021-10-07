@@ -47,8 +47,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
     <Formik
       initialValues={createNewWalletInitialValues}
       validationSchema={createNewWalletValidationSchema}
-      onSubmit={onSubmit}
-    >
+      onSubmit={onSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <Divider size={formatSize(12)} />
