@@ -1,11 +1,12 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { isAndroid } from '../../config/system';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { tezosDomainsResolver } from '../../utils/dns.utils';
-import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -38,8 +39,8 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
       {isShownDomainName ? (
         <TouchableOpacity
           style={styles.domainNameContainer}
-          onPress={e => {
-            e.stopPropagation();
+          {...(isAndroid && { disallowInterruption: true })}
+          onPress={() => {
             copyStringToClipboard(domainName);
           }}
         >
@@ -52,12 +53,9 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
         <TouchableIcon
           size={formatSize(16)}
           style={styles.iconContainer}
+          {...(isAndroid && { disallowInterruption: true })}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-          onPress={e => {
-            console.log(e);
-            if (isDefined(e)) {
-              e.stopPropagation();
-            }
+          onPress={() => {
             setIsShownDomainName(!isShownDomainName);
           }}
         />
