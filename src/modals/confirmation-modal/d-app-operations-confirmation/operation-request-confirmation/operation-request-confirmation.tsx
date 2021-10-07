@@ -10,6 +10,7 @@ import { useRequestConfirmation } from '../../../../hooks/request-confirmation/u
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { navigateAction } from '../../../../store/root-state.actions';
+import { useSelectedRpcUrlSelector } from '../../../../store/settings/settings-selectors';
 import { addPendingOperation, waitForOperationCompletionAction } from '../../../../store/wallet/wallet-actions';
 import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
@@ -25,11 +26,12 @@ interface Props {
 
 export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const accounts = useAccountsListSelector();
+  const rpcUrl = useSelectedRpcUrlSelector();
 
   const confirmRequest = useRequestConfirmation(
     message,
     ({ message, sender, opParams }: ApproveOperationRequestActionPayloadInterface) =>
-      sendTransaction$(sender, opParams).pipe(
+      sendTransaction$(rpcUrl, sender, opParams).pipe(
         switchMap(({ hash }) =>
           from(
             BeaconHandler.respond({

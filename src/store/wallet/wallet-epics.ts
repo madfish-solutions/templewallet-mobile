@@ -19,15 +19,16 @@ import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/network/tezos-toolkit.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
+import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { sendTransaction$, withSelectedAccount } from '../../utils/wallet.utils';
+import { sendTransaction$, withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
+import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
 import {
   addPendingOperation,
@@ -110,13 +111,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
     withSelectedAccount(state$),
-    switchMap(([{ asset, receiverPublicKeyHash, amount }, selectedAccount]) =>
-      getTransferParams$(asset, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
+    withSelectedRpcUrl(state$),
+    switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) =>
+      getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
@@ -125,13 +127,14 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<WalletRoo
     )
   );
 
-const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(approveInternalOperationRequestAction),
     toPayload(),
     withSelectedAccount(state$),
-    switchMap(([opParams, sender]) =>
-      sendTransaction$(sender, opParams).pipe(
+    withSelectedRpcUrl(state$),
+    switchMap(([[opParams, sender], rpcUrl]) =>
+      sendTransaction$(rpcUrl, sender, opParams).pipe(
         switchMap(({ hash }) => {
           showSuccessToast({ description: 'Successfully sent!' });
 
@@ -152,12 +155,13 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
 
 const BCD_INDEXING_DELAY = 15000;
 
-const waitForOperationCompletionEpic = (action$: Observable<Action>) =>
+const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
-    switchMap(({ opHash, sender }) =>
-      from(createReadOnlyTezosToolkit(sender).operation.createOperation(opHash)).pipe(
+    withSelectedRpcUrl(state$),
+    switchMap(([{ opHash, sender }, rpcUrl]) =>
+      from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [

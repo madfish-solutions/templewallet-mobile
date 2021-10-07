@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 
+import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { SettingsRootState } from './settings-state';
 
@@ -10,3 +11,8 @@ export const useBiometricsEnabledSelector = () =>
 
 export const useBalanceHiddenSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenSetting);
+
+export const useRpcListSelector = () =>
+  useSelector<SettingsRootState, RpcInterface[]>(({ settings }) => settings.rpcList);
+export const useSelectedRpcUrlSelector = () =>
+  useSelector<SettingsRootState, string>(({ settings }) => settings.selectedRpcUrl);

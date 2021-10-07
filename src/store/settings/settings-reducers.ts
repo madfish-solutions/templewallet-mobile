@@ -1,6 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { changeTheme, setIsBalanceHidden, setIsBiometricsEnabled } from './settings-actions';
+import {
+  addCustomRpc,
+  changeTheme,
+  setIsBalanceHidden,
+  setIsBiometricsEnabled,
+  setSelectedRpcUrl
+} from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
@@ -14,5 +20,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsBalanceHidden, (state, { payload: isBalanceHiddenSetting }) => ({
     ...state,
     isBalanceHiddenSetting
+  }));
+
+  builder.addCase(addCustomRpc, (state, { payload: customRpc }) => ({
+    ...state,
+    rpcList: [...state.rpcList, customRpc]
+  }));
+  builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
+    ...state,
+    selectedRpcUrl
   }));
 });
