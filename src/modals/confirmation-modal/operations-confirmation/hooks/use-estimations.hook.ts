@@ -2,22 +2,19 @@ import { useEffect, useState } from 'react';
 import { from, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-toolkit.hook';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
-import { createReadOnlyTezosToolkit } from '../../../../utils/network/tezos-toolkit.utils';
 
 export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const tezos = useReadOnlyTezosToolkit(sender);
 
   useEffect(() => {
-    const subscription = from(
-      createReadOnlyTezosToolkit(sender).estimate.batch(
-        opParams.map(param => ({ ...param, source: sender.publicKeyHash }))
-      )
-    )
+    const subscription = from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash }))))
       .pipe(
         map(estimates =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

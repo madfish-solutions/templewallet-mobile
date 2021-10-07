@@ -1,32 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { HeaderBackButton } from '../../components/header/header-back-button/header-back-button';
-import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
+import { Divider } from '../../components/divider/divider';
+import { IconTitleNoBg } from '../../components/icon-title-no-bg/icon-title-no-bg';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
-import { RpcEnum } from '../../enums/rpc.enum';
-import { RpcInterface } from '../../interfaces/rpc.interface';
-import { RpcArray } from '../../utils/network/rpc-array';
-import { findRpcById, getRpcFromStorage, setRpcIdToStorage, updateCurrentRpc } from '../../utils/network/rpc.utils';
-
-const nodesButtons = RpcArray.map((rpc: RpcInterface) => ({
-  label: rpc.label,
-  value: rpc.id
-}));
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { setSelectedRpcUrl } from '../../store/settings/settings-actions';
+import { useRpcListSelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 
 export const NodeSettings = () => {
-  const [rpcId, setRpcId] = useState<RpcEnum>(RpcEnum.TEMPLE_DEFAULT);
+  const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
-  const onChangeNodeHandler = (newRpcId: RpcEnum) =>
-    setRpcIdToStorage(newRpcId).then(() => updateCurrentRpc(findRpcById(newRpcId)));
+  const rpcList = useRpcListSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  useEffect(() => void getRpcFromStorage().then(newRpc => setRpcId(newRpc.id)), []);
+  const radioButtons = useMemo(() => rpcList.map(rpc => ({ label: rpc.name, value: rpc.url })), [rpcList]);
 
-  useNavigationSetOptions({ headerLeft: () => <HeaderBackButton /> }, []);
+  const handleChange = (newRpcUrl: string) => dispatch(setSelectedRpcUrl(newRpcUrl));
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup onChange={onChangeNodeHandler} value={rpcId} buttons={nodesButtons} />
+      <StyledRadioButtonsGroup value={selectedRpcUrl} buttons={radioButtons} onChange={handleChange} />
+      <Divider />
+
+      <IconTitleNoBg
+        icon={IconNameEnum.PlusCircle}
+        text="ADD CUSTOM RPC"
+        onPress={() => navigate(ModalsEnum.AddCustomRpc)}
+      />
+      <Divider />
     </ScreenContainer>
   );
 };

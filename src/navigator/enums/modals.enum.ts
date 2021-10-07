@@ -14,7 +14,8 @@ export enum ModalsEnum {
   RevealPrivateKey = 'RevealPrivateKey',
   EnableBiometryPassword = 'EnableBiometryPassword',
   ImportAccount = 'ImportAccount',
-  CollectibleModal = 'CollectibleModal'
+  CollectibleModal = 'CollectibleModal',
+  AddCustomRpc = 'AddCustomRpc'
 }
 
 export type ModalsParamList = {
@@ -29,4 +30,5 @@ export type ModalsParamList = {
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
+  [ModalsEnum.AddCustomRpc]: undefined;
 };

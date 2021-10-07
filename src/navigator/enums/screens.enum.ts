@@ -35,9 +35,6 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.CreateAccount]: undefined;
-  [ScreensEnum.ManageAssets]: undefined;
-  [ScreensEnum.Activity]: undefined;
-  [ScreensEnum.ScanQrCode]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -45,6 +42,9 @@ export type ScreensParamList = {
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
+  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.Activity]: undefined;
+  [ScreensEnum.ScanQrCode]: undefined;
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -79,5 +79,6 @@ export const settingsStackScreens = [
   ScreensEnum.ManageAccounts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings
+  ScreensEnum.SecureSettings,
+  ScreensEnum.NodeSettings
 ];

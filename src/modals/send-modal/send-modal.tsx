@@ -18,6 +18,7 @@ import { FormAddressInput } from '../../form/form-address-input';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
+import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
@@ -32,7 +33,6 @@ import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
-import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -43,14 +43,14 @@ export const SendModal: FC = () => {
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
-  const sender = useSelectedAccountSelector();
+  const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const visibleAccounts = useVisibleAccountsListSelector();
   const assetsList = useAssetsListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
 
-  const tezos = createReadOnlyTezosToolkit(sender);
+  const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
@@ -59,8 +59,8 @@ export const SendModal: FC = () => {
   );
 
   const ownAccountsReceivers = useMemo(
-    () => visibleAccounts.filter(({ publicKeyHash }) => publicKeyHash !== sender.publicKeyHash),
-    [visibleAccounts, sender.publicKeyHash]
+    () => visibleAccounts.filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash),
+    [visibleAccounts, selectedAccount.publicKeyHash]
   );
   const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
 
