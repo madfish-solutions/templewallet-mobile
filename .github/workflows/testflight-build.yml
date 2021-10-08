@@ -65,6 +65,8 @@ jobs:
           yarn android:test-flight
         env:
           BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          READ_ONLY_SIGNER_PUBLIC_KEY: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
+          READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
@@ -83,6 +85,8 @@ jobs:
           yarn ios:test-flight
         env:
           BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          READ_ONLY_SIGNER_PUBLIC_KEY: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
+          READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           CHANGELOG: ${{ steps.changelog.outputs.log }}
