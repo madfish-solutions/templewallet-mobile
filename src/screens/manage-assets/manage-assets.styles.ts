@@ -2,11 +2,15 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useManageAssetsStyles = createUseStyles(({ colors, typography }) => ({
+  segmentControlContainer: {
+    padding: formatSize(2),
+    marginHorizontal: formatSize(16)
+  },
   descriptionText: {
     ...typography.caption13Regular,
     color: colors.gray1,
     paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(4)
+    marginHorizontal: formatSize(16)
   },
   contentContainerStyle: {
     paddingRight: 0,

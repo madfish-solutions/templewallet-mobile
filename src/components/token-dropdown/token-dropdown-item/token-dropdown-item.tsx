@@ -3,52 +3,70 @@ import { Text, View } from 'react-native';
 
 import { formatSize } from '../../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
+import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
+import { getTruncatedProps } from '../../../utils/style.util';
+import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { Divider } from '../../divider/divider';
-import { DollarValueText } from '../../dollar-value-text/dollar-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
-import { TokenValueText } from '../../token-value-text/token-value-text';
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
 interface Props {
   token?: TokenInterface;
   actionIconName?: IconNameEnum;
+  isShowBalance?: boolean;
+  iconSize?: number;
 }
 
-export const TokenDropdownItem: FC<Props> = ({ token = emptyToken, actionIconName }) => {
+export const TokenDropdownItem: FC<Props> = ({
+  token = emptyToken,
+  actionIconName,
+  isShowBalance = true,
+  iconSize = formatSize(40)
+}) => {
   const styles = useTokenDropdownItemStyles();
 
   const { symbol, name } = token;
 
   return (
     <View style={styles.container}>
-      <View style={styles.leftContainer}>
-        <TokenIcon token={token} size={formatSize(40)} />
-        <Divider size={formatSize(8)} />
-        <View>
-          <Text style={styles.symbol}>{symbol}</Text>
-          <Text style={styles.name}>{name}</Text>
+      <TokenIcon token={token} size={iconSize} />
+      <Divider size={formatSize(8)} />
+
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <Text {...getTruncatedProps(styles.symbol)}>{symbol}</Text>
+          <View style={styles.rightContainer}>
+            <Divider size={formatSize(4)} />
+            {isShowBalance && (
+              <HideBalance style={styles.balance}>
+                <AssetValueText asset={token} amount={token?.balance} />
+              </HideBalance>
+            )}
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+          </View>
         </View>
-      </View>
-      <View style={styles.rightContainer}>
-        <View>
-          <HideBalance style={styles.balance}>
-            <TokenValueText token={token} />
-          </HideBalance>
-          <HideBalance style={styles.dollarEquivalent}>
-            <DollarValueText token={token} />
-          </HideBalance>
+
+        <View style={styles.infoRow}>
+          <Text {...getTruncatedProps(styles.name)}>{name}</Text>
+
+          <View style={styles.rightContainer}>
+            <Divider size={formatSize(4)} />
+            {isShowBalance && (
+              <HideBalance
+                style={[
+                  styles.dollarEquivalent,
+                  conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
+                ]}>
+                <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+              </HideBalance>
+            )}
+          </View>
         </View>
-        {isDefined(actionIconName) && (
-          <>
-            <Divider size={formatSize(8)} />
-            <Icon name={actionIconName} size={formatSize(24)} />
-          </>
-        )}
       </View>
     </View>
   );

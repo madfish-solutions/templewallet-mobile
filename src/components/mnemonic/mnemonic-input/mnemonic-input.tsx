@@ -16,7 +16,8 @@ export const MnemonicInput: FC<MnemonicProps> = ({
   isError,
   onBlur = emptyFn,
   placeholder = 'e.g. cat, dog, coffee, ocean...',
-  onChangeText = emptyFn
+  onChangeText = emptyFn,
+  testID
 }) => {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -46,6 +47,7 @@ export const MnemonicInput: FC<MnemonicProps> = ({
         onBlur={handleBlur}
         onFocus={() => setIsFocused(true)}
         onChangeText={onChangeText}
+        testID={testID}
       />
       <View style={MnemonicStyles.buttonsContainer}>
         <ButtonSmallSecondary title="Paste" onPress={handlePasteButtonPress} />

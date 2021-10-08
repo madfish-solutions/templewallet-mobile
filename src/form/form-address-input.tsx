@@ -2,7 +2,7 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 
 import { AddressInput } from '../components/address-input/address-input';
-import { StyledTextInputProps } from '../components/styled-text-input/styled-text-input';
+import { StyledTextInputProps } from '../components/styled-text-input/styled-text-input.props';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 

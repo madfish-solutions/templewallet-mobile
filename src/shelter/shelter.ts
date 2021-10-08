@@ -50,6 +50,8 @@ export class Shelter {
 
   static isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
 
+  static getIsLocked = () => Shelter._password$.getValue() === EMPTY_PASSWORD;
+
   static lockApp = () => Shelter._password$.next(EMPTY_PASSWORD);
 
   static unlockApp$ = (password: string) =>

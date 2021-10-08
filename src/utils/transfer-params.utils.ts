@@ -8,19 +8,20 @@ import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
-import { createReadOnlyTezosToolkit } from './network/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
-  token: TokenMetadataInterface,
+  asset: TokenMetadataInterface,
+  rpcUrl: string,
   sender: WalletAccountInterface,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> => {
-  const { id, address, decimals } = token;
+  const { id, address, decimals } = asset;
 
   return isString(address)
-    ? from(createReadOnlyTezosToolkit(sender).contract.at(address)).pipe(
+    ? from(createReadOnlyTezosToolkit(rpcUrl, sender).contract.at(address)).pipe(
         map(contract =>
           getTokenType(contract) === TokenTypeEnum.FA_2
             ? contract.methods.transfer([

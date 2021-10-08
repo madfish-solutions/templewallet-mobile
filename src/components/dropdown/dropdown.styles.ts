@@ -3,7 +3,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const useDropdownStyles = createUseStyles(({ colors }) => ({
   valueContainer: {
-    flexGrow: 1
+    flexGrow: 1,
+    flexShrink: 1
   },
   scrollView: {
     backgroundColor: colors.pageBG

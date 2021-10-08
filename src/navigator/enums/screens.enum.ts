@@ -7,6 +7,7 @@ export enum ScreensEnum {
 
   /** Wallet stack **/
   Wallet = 'Wallet',
+  CollectiblesHome = 'CollectiblesHome',
   TezosTokenScreen = 'TezosTokenScreen',
   TokenScreen = 'TokenScreen',
   Delegation = 'Delegation',
@@ -34,15 +35,16 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.CreateAccount]: undefined;
-  [ScreensEnum.ManageAssets]: undefined;
-  [ScreensEnum.Activity]: undefined;
-  [ScreensEnum.ScanQrCode]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
+  [ScreensEnum.CollectiblesHome]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
+  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.Activity]: undefined;
+  [ScreensEnum.ScanQrCode]: undefined;
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -62,6 +64,7 @@ export type ScreensParamList = {
 
 export const walletStackScreens = [
   ScreensEnum.Wallet,
+  ScreensEnum.CollectiblesHome,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
   ScreensEnum.Delegation,
@@ -76,5 +79,6 @@ export const settingsStackScreens = [
   ScreensEnum.ManageAccounts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings
+  ScreensEnum.SecureSettings,
+  ScreensEnum.NodeSettings
 ];

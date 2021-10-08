@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -20,19 +20,19 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { formatSize } from '../../../styles/format-size';
-import {
-  createNewPasswordInitialValues,
-  createNewPasswordValidationSchema,
-  CreateNewPasswordFormValues
-} from './create-new-password.form';
+import { showWarningToast } from '../../../toast/toast.utils';
+import { isString } from '../../../utils/is-string';
+import { createNewPasswordValidationSchema, CreateNewPasswordFormValues } from './create-new-password.form';
+import { CreateNewPasswordSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
-type CreateNewPasswordProps = {
+interface CreateNewPasswordProps {
+  initialPassword?: string;
   onGoBackPress: EmptyFn;
   seedPhrase: string;
-};
+}
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
@@ -47,6 +47,23 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     [onGoBackPress]
   );
 
+  useEffect(() => {
+    if (isString(initialPassword)) {
+      showWarningToast({
+        description: 'The password from the previous screen was used'
+      });
+    }
+  }, []);
+
+  const createNewPasswordInitialValues = useMemo(
+    () => ({
+      password: initialPassword,
+      passwordConfirmation: initialPassword,
+      acceptTerms: false
+    }),
+    [initialPassword]
+  );
+
   return (
     <Formik
       initialValues={createNewPasswordInitialValues}
@@ -57,10 +74,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput name="password" testID={CreateNewPasswordSelectors.PasswordInput} />
 
             <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
+            <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.RepeatPasswordInput} />
 
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
@@ -70,7 +87,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
           <View>
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms">
+              <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.AcceptTermsCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
@@ -81,7 +98,12 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             </CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Import"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordSelectors.ImportButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

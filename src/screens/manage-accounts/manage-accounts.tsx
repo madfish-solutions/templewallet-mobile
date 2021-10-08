@@ -12,6 +12,7 @@ const manageHdAccountsIndex = 0;
 
 export const ManageAccounts = () => {
   const styles = useManageAccountsStyles();
+
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageHdAccounts = segmentedControlIndex === manageHdAccountsIndex;
 

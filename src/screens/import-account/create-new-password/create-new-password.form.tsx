@@ -17,9 +17,3 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   useBiometry: useBiometryValidation,
   acceptTerms: acceptTermsValidation
 });
-
-export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
-  password: '',
-  passwordConfirmation: '',
-  acceptTerms: false
-};

@@ -8,7 +8,7 @@ import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-n
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
-import { useFilteredTokenList } from '../../../hooks/use-filtered-token-list.hook';
+import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
 import { TokenListItem } from './token-list-item/token-list-item';
+import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
 export const TokenList: FC = () => {
@@ -25,11 +26,11 @@ export const TokenList: FC = () => {
 
   const tezosToken = useTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const { filteredTokensList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
-    useFilteredTokenList(visibleTokensList);
+  const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
+    useFilteredAssetsList(visibleTokensList);
   const [isShowTezos, setIsShowTezos] = useState(true);
 
-  const isShowPlaceholder = !isShowTezos && filteredTokensList.length === 0;
+  const isShowPlaceholder = !isShowTezos && filteredAssetsList.length === 0;
 
   useEffect(
     () => setIsShowTezos(filterTezos(tezosToken.balance, isHideZeroBalance, searchValue)),
@@ -53,7 +54,7 @@ export const TokenList: FC = () => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <ScreenContainer isFullScreenMode={true} contentContainerStyle={styles.contentContainerStyle}>
+      <ScreenContainer contentContainerStyle={styles.contentContainerStyle} testID={TokenListSelectors.TokenList}>
         {isShowPlaceholder ? (
           <DataPlaceholder text="No records found." />
         ) : (
@@ -66,7 +67,7 @@ export const TokenList: FC = () => {
               />
             )}
 
-            {filteredTokensList.map(
+            {filteredAssetsList.map(
               (token, index) =>
                 token.isVisible && (
                   <TokenListItem

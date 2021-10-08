@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { hide } from 'react-native-bootsplash';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
@@ -14,9 +15,14 @@ import { initSentry } from '../utils/sentry.utils';
 
 initSentry();
 enableScreens();
+LogBox.ignoreAllLogs();
 
 export const App = () => {
-  useEffect(() => void hide({ fade: true }), []);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => void hide({ fade: true }), 100);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <Provider store={store}>

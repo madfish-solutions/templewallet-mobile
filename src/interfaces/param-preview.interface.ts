@@ -45,7 +45,7 @@ interface OtherParamPreviewInterface extends ParamPreviewBaseInterface {
 }
 
 // TODO: replace this type with AssetMetadataInterface
-type Asset = 'tez' | Token;
+export type Asset = 'tez' | Token;
 
 export interface Token {
   contract: string;
