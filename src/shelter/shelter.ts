@@ -1,6 +1,6 @@
 import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
-import { range } from 'lodash';
+import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
