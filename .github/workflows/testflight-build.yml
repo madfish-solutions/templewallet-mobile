@@ -51,15 +51,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Create .env file
         run: |
           cat << EOF > .env
           READ_ONLY_SIGNER_PUBLIC_KEY=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           EOF
-
-      - name: Install dependencies
-        run: yarn install
 
       - name: Install Android Gemfile dependencies
         run: cd android && bundle install
