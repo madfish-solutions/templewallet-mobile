@@ -37,7 +37,11 @@ describe('useShelter', () => {
 
     result.current.importWallet({ seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword });
 
-    expect(mockShelter.importHdAccount$).toBeCalledWith(mockAccountCredentials.seedPhrase, mockCorrectPassword);
+    expect(mockShelter.importHdAccount$).toBeCalledWith(
+      mockAccountCredentials.seedPhrase,
+      mockCorrectPassword,
+      undefined
+    );
     expect(mockShelter.enableBiometryPassword$).not.toBeCalled();
 
     expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
@@ -53,7 +57,11 @@ describe('useShelter', () => {
       useBiometry: true
     });
 
-    expect(mockShelter.importHdAccount$).toBeCalledWith(mockAccountCredentials.seedPhrase, mockCorrectPassword);
+    expect(mockShelter.importHdAccount$).toBeCalledWith(
+      mockAccountCredentials.seedPhrase,
+      mockCorrectPassword,
+      undefined
+    );
     expect(mockShelter.enableBiometryPassword$).toBeCalledWith(mockCorrectPassword);
   });
 
