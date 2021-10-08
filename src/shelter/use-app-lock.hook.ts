@@ -7,7 +7,7 @@ import { isDefined } from '../utils/is-defined';
 import { Shelter } from './shelter';
 
 export const useAppLock = () => {
-  const [isLocked, setIsLocked] = useState(true);
+  const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
   const unlock$ = useMemo(() => new Subject<string>(), []);
 
   const lock = useCallback(() => Shelter.lockApp(), []);
