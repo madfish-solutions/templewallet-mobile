@@ -59,7 +59,7 @@ const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug
         return contract.views.getBalance(publicKeyHash).read();
       }
     }),
-    map((balance: BigNumber) => balance.toFixed()),
+    map((balance: BigNumber) => (balance.isNaN() ? '0' : balance.toFixed())),
     catchError(() => '0')
   );
 };

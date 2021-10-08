@@ -5,7 +5,8 @@ import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
 import { useVisibleTokensListSelector, useTezosTokenSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
-import { mutezToTz, tzToMutez } from '../utils/tezos.util';
+import { getDollarValue } from '../utils/balance.utils';
+import { tzToMutez } from '../utils/tezos.util';
 
 export const useTotalBalance = () => {
   const [totalBalance, setTotalBalance] = useState(new BigNumber(0));
@@ -15,15 +16,16 @@ export const useTotalBalance = () => {
 
   useEffect(() => {
     let dollarValue = new BigNumber(0);
+
     for (const token of visibleTokens) {
-      const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)] ?? 0;
-      const parsedAmount = mutezToTz(new BigNumber(token.balance), token.decimals).multipliedBy(exchangeRate);
-      dollarValue = dollarValue.plus(parsedAmount);
+      const exchangeRate = exchangeRates[getTokenSlug(token)];
+      const tokenDollarValue = getDollarValue(token.balance, token.decimals, exchangeRate);
+      dollarValue = dollarValue.plus(tokenDollarValue);
     }
-    const tezosParsedAmount = mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).multipliedBy(
-      exchangeRates.tez
-    );
-    dollarValue = dollarValue.plus(tezosParsedAmount);
+
+    const tezosDollarValue = getDollarValue(tezosToken.balance, tezosToken.decimals, exchangeRates.tez);
+    dollarValue = dollarValue.plus(tezosDollarValue);
+
     setTotalBalance(tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_METADATA.decimals));
   }, [visibleTokens, exchangeRates]);
 
