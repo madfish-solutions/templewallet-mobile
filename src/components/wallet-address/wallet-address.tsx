@@ -1,6 +1,8 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { isAndroid } from '../../config/system';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -11,7 +13,6 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { useWalletAddressStyles } from './wallet-address.styles';
-
 interface Props {
   publicKeyHash: string;
 }
@@ -38,10 +39,8 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
       {isShownDomainName ? (
         <TouchableOpacity
           style={styles.domainNameContainer}
-          onPress={e => {
-            e.stopPropagation();
-            copyStringToClipboard(domainName);
-          }}>
+          {...(isAndroid && { disallowInterruption: true })}
+          onPress={() => copyStringToClipboard(domainName)}>
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>
       ) : (
@@ -52,10 +51,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
           size={formatSize(16)}
           style={styles.iconContainer}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-          onPress={e => {
-            e.stopPropagation();
-            setIsShownDomainName(!isShownDomainName);
-          }}
+          onPress={() => setIsShownDomainName(!isShownDomainName)}
         />
       ) : null}
     </View>

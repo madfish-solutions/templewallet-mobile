@@ -16,7 +16,7 @@ export const useTotalBalance = () => {
   useEffect(() => {
     let dollarValue = new BigNumber(0);
     for (const token of visibleTokens) {
-      const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)];
+      const exchangeRate: number | undefined = exchangeRates[getTokenSlug(token)] ?? 0;
       const parsedAmount = mutezToTz(new BigNumber(token.balance), token.decimals).multipliedBy(exchangeRate);
       dollarValue = dollarValue.plus(parsedAmount);
     }
