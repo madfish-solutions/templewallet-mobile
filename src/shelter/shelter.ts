@@ -81,6 +81,7 @@ export class Shelter {
     return forkJoin(
       range(0, hdAccountsLength).map(hdAccountIndex => {
         const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+        const name = `Account ${hdAccountIndex + 1}`;
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
@@ -90,8 +91,8 @@ export class Shelter {
               [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
             }).pipe(
               mapTo({
-                name: 'Account 1',
                 type: AccountTypeEnum.HD_ACCOUNT,
+                name,
                 publicKey,
                 publicKeyHash
               })
