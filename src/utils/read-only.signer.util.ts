@@ -1,5 +1,9 @@
 import { Signer } from '@taquito/taquito';
 
+import { AccountTypeEnum } from '../enums/account-type.enum';
+import { AccountInterface } from '../interfaces/account.interface';
+import { getEnv } from './env.utils';
+
 export class ReadOnlySigner implements Signer {
   constructor(private pkh: string, private pk: string) {}
 
@@ -21,3 +25,10 @@ export class ReadOnlySigner implements Signer {
     throw new Error('Cannot sign');
   }
 }
+
+export const readOnlySignerAccount: AccountInterface = {
+  name: 'Read-only account',
+  type: AccountTypeEnum.IMPORTED_ACCOUNT,
+  publicKey: getEnv('READ_ONLY_SIGNER_PUBLIC_KEY'),
+  publicKeyHash: getEnv('READ_ONLY_SIGNER_PUBLIC_KEY_HASH')
+};

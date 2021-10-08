@@ -16,13 +16,12 @@ import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
-import { loadTokensBalances$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
@@ -44,11 +43,12 @@ import {
 } from './wallet-actions';
 import { WalletRootState } from './wallet-state';
 
-const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) =>
+    withSelectedRpcUrl(state$),
+    switchMap(([[, selectedAccount], rpcUrl]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
         switchMap(tokensWithBalance => {
           const assetSlugs = uniq([
@@ -61,10 +61,10 @@ const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<Wal
             )
           ]);
 
-          return forkJoin(
-            loadTokensBalances$(selectedAccount.publicKeyHash, assetSlugs),
+          return forkJoin([
+            loadAssetsBalances$(rpcUrl, selectedAccount.publicKeyHash, assetSlugs),
             loadTokensWithBalanceMetadata$(tokensWithBalance)
-          );
+          ]);
         }),
         map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
@@ -72,13 +72,14 @@ const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<Wal
     )
   );
 
-const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) =>
-      loadTokensBalances$(selectedAccount.publicKeyHash, [getTokenSlug(TEZ_TOKEN_METADATA)]).pipe(
-        map(balancesRecord => loadTezosBalanceActions.success(balancesRecord[TEZ_TOKEN_SLUG] ?? '0')),
+    withSelectedRpcUrl(state$),
+    switchMap(([[, selectedAccount], rpcUrl]) =>
+      loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
+        map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )
