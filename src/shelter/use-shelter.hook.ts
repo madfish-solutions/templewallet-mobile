@@ -32,17 +32,19 @@ export const useShelter = () => {
     const subscriptions = [
       importWallet$
         .pipe(
-          switchMap(({ seedPhrase, password, useBiometry }) =>
+          switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
             forkJoin([
-              Shelter.importHdAccount$(seedPhrase, password),
+              Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
               useBiometry ? Shelter.enableBiometryPassword$(password) : of(false)
             ])
           )
         )
-        .subscribe(([publicData, isPasswordSaved]) => {
-          if (publicData !== undefined) {
-            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addHdAccountAction(publicData));
+        .subscribe(([accounts, isPasswordSaved]) => {
+          if (accounts !== undefined) {
+            const firstAccount = accounts[0];
+
+            dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
+            dispatch(addHdAccountAction(firstAccount));
 
             isPasswordSaved && dispatch(setIsBiometricsEnabled(true));
           }
@@ -128,8 +130,7 @@ export const useShelter = () => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
 
-  const importWallet = (seedPhrase: string, password: string, useBiometry?: boolean) =>
-    importWallet$.next({ seedPhrase, password, useBiometry });
+  const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
   const createHdAccount = () => createHdAccount$.next();
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);

@@ -1,5 +1,6 @@
 import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
+import { range } from 'lodash';
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
@@ -68,29 +69,37 @@ export class Shelter {
       catchError(() => of(false))
     );
 
-  static importHdAccount$ = (seedPhrase: string, password: string): Observable<AccountInterface | undefined> => {
+  static importHdAccount$ = (
+    seedPhrase: string,
+    password: string,
+    hdAccountsLength = 1
+  ): Observable<AccountInterface[] | undefined> => {
     Shelter._password$.next(password);
 
     const seed = mnemonicToSeedSync(seedPhrase);
-    const privateKey = seedToPrivateKey(seed, getDerivationPath(0));
 
-    return getPublicKeyAndHash$(privateKey).pipe(
-      switchMap(([publicKey, publicKeyHash]) =>
-        Shelter.saveSensitiveData$({
-          seedPhrase,
-          [publicKeyHash]: privateKey,
-          [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
-        }).pipe(
-          mapTo({
-            name: 'Account 1',
-            type: AccountTypeEnum.HD_ACCOUNT,
-            publicKey,
-            publicKeyHash
-          })
-        )
-      ),
-      catchError(() => of(undefined))
-    );
+    return forkJoin(
+      range(0, hdAccountsLength).map(hdAccountIndex => {
+        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+
+        return getPublicKeyAndHash$(privateKey).pipe(
+          switchMap(([publicKey, publicKeyHash]) =>
+            Shelter.saveSensitiveData$({
+              seedPhrase,
+              [publicKeyHash]: privateKey,
+              [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
+            }).pipe(
+              mapTo({
+                name: 'Account 1',
+                type: AccountTypeEnum.HD_ACCOUNT,
+                publicKey,
+                publicKeyHash
+              })
+            )
+          )
+        );
+      })
+    ).pipe(catchError(() => of(undefined)));
   };
 
   static createImportedAccount$ = (privateKey: string, name: string) =>
