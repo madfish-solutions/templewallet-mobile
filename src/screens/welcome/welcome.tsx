@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -37,12 +38,19 @@ export const Welcome = () => {
           onPress={() => navigate(ScreensEnum.CreateAccount)}
         />
         <Divider size={formatSize(24)} />
-
-        <ButtonLargeSecondary
-          title="Import existing Wallet"
-          iconName={IconNameEnum.DownloadCloud}
-          onPress={() => navigate(ScreensEnum.ImportAccount)}
-        />
+        <ButtonsContainer>
+          <ButtonLargeSecondary
+            title="Import"
+            iconName={IconNameEnum.DownloadCloud}
+            onPress={() => navigate(ScreensEnum.ImportAccount)}
+          />
+          <Divider size={formatSize(15)} />
+          <ButtonLargeSecondary
+            title="Sync"
+            iconName={IconNameEnum.Link}
+            onPress={() => navigate(ScreensEnum.SyncAccount)}
+          />
+        </ButtonsContainer>
         <Divider size={formatSize(43)} />
         <InsetSubstitute type="bottom" />
       </View>
