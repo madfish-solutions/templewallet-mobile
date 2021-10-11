@@ -37,7 +37,7 @@ export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.SyncAccount]: undefined;
-  [ScreensEnum.ConfirmSync]: undefined;
+  [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: undefined;
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;

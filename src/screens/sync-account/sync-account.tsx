@@ -3,8 +3,8 @@ import { View, Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { HeaderBackButton } from '../../components/header/header-back-button/header-back-button';
-import { HeaderTitle } from '../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
+import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -45,8 +45,9 @@ export const SyncAccount = () => {
           marginLeft={formatSize(16)}
           marginRight={formatSize(16)}
           title="Scan QR"
-          onPress={() => navigate(ScreensEnum.ConfirmSync)}
+          onPress={() => navigate(ScreensEnum.ScanQrCode)}
         />
+        <InsetSubstitute type="bottom" />
       </View>
     </>
   );

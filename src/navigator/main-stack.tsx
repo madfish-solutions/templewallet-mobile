@@ -25,7 +25,9 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
-import { ConfirmSync } from '../screens/sync-account/confirm-sync/confirm-sync';
+import { AfterSyncQRScan } from '../screens/sync-account/after-scan/after-scan';
+import { ConfirmSync } from '../screens/sync-account/after-scan/confirm-sync/confirm-sync';
+import { WalletImported } from '../screens/sync-account/after-scan/wallet-imported/wallet-imported';
 import { SyncAccount } from '../screens/sync-account/sync-account';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
@@ -93,7 +95,7 @@ export const MainStackScreen = () => {
               />
               <MainStack.Screen
                 name={ScreensEnum.ConfirmSync}
-                component={ConfirmSync}
+                component={AfterSyncQRScan}
                 options={generateScreenOptions(<HeaderTitle title="Confirm Sync" />)}
               />
               <MainStack.Screen
@@ -142,11 +144,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Activity}
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.ScanQrCode}
-                component={ScanQrCode}
-                options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
               />
 
               {/** DApps stack **/}
@@ -201,6 +198,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+          <MainStack.Screen
+            name={ScreensEnum.ScanQrCode}
+            component={ScanQrCode}
+            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
+          />
         </MainStack.Navigator>
       </NavigationBar>
     </PortalProvider>
