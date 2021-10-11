@@ -13,12 +13,12 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
+import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
 import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
 import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
-import { createReadOnlyTezosToolkit } from '../../../utils/network/tezos-toolkit.utils';
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
@@ -33,12 +33,13 @@ interface Props {
 export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
+  const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
     const token = { address, id: id?.toNumber() ?? 0 };
 
-    createReadOnlyTezosToolkit(selectedAccount)
-      .contract.at(address)
+    tezos.contract
+      .at(address)
       .then(contract => {
         if (!isValidTokenContract(contract)) {
           showErrorToast({ description: 'Invalid token address' });

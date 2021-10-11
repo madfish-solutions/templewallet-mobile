@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { EventFn } from '../../config/general';
-import { StyledTextInputProps } from '../styled-text-input/styled-text-input';
+import { StyledTextInputProps } from '../styled-text-input/styled-text-input.props';
 
 export interface StyledNumericInputProps
   extends Pick<

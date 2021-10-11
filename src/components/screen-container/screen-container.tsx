@@ -3,16 +3,24 @@ import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar } fro
 
 import { isAndroid } from '../../config/system';
 import { useHeaderHeight } from '../../hooks/use-header-height.hook';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { conditionalStyle } from '../../utils/conditional-style';
+import { setTestID } from '../../utils/test-id.utils';
 import { useScreenContainerStyles } from './screen-container.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   isFullScreenMode?: boolean;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
-export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, contentContainerStyle, children }) => {
+export const ScreenContainer: FC<Props> = ({
+  isFullScreenMode = false,
+  style,
+  contentContainerStyle,
+  children,
+  testID
+}) => {
   const styles = useScreenContainerStyles();
   const headerHeight = useHeaderHeight();
   const statusBarHeight = isAndroid ? StatusBar.currentHeight : 0;
@@ -29,7 +37,8 @@ export const ScreenContainer: FC<Props> = ({ isFullScreenMode = false, style, co
           conditionalStyle(isFullScreenMode, styles.fullScreenMode),
           contentContainerStyle
         ]}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        {...setTestID(testID)}>
         {children}
       </ScrollView>
     </KeyboardAvoidingView>

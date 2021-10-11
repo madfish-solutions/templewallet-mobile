@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { hide } from 'react-native-bootsplash';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
@@ -14,6 +15,7 @@ import { initSentry } from '../utils/sentry.utils';
 
 initSentry();
 enableScreens();
+LogBox.ignoreAllLogs();
 
 export const App = () => {
   useEffect(() => {

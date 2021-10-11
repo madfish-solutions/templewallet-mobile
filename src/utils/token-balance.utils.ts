@@ -3,7 +3,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { balancesApi, betterCallDevApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
-import { CURRENT_NETWORK_ID } from './network/tezos-toolkit.utils';
+import { CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
 
 const size = 10;
 

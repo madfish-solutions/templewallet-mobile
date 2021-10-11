@@ -23,6 +23,7 @@ import { formatSize } from '../../../styles/format-size';
 import { showWarningToast } from '../../../toast/toast.utils';
 import { isString } from '../../../utils/is-string';
 import { createNewPasswordValidationSchema, CreateNewPasswordFormValues } from './create-new-password.form';
+import { CreateNewPasswordSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
@@ -36,7 +37,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
-    importWallet(seedPhrase, password, useBiometry);
+    importWallet({ seedPhrase, password, useBiometry });
 
   useNavigationSetOptions(
     {
@@ -73,10 +74,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput name="password" testID={CreateNewPasswordSelectors.PasswordInput} />
 
             <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
+            <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.RepeatPasswordInput} />
 
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
@@ -86,7 +87,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
           <View>
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms">
+              <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.AcceptTermsCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
@@ -97,7 +98,12 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             </CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Import"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordSelectors.ImportButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

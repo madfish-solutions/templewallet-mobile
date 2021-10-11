@@ -14,13 +14,14 @@ export const mockShelter = {
   }),
   getBiometryPassword: jest.fn(() => Keychain.getGenericPassword(biometryKeychainOptions)),
   isLocked$: new BehaviorSubject<boolean>(true),
+  getIsLocked: () => true,
   unlockApp$: jest.fn((password: string) => {
     const isCorrectPassword = password === mockCorrectPassword;
     mockShelter.isLocked$.next(!isCorrectPassword);
 
     return of(isCorrectPassword);
   }),
-  importHdAccount$: jest.fn(() => of(mockHdAccount)),
+  importHdAccount$: jest.fn(() => of([mockHdAccount])),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createHdAccount$: jest.fn(() => of(mockHdAccount)),
   revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),

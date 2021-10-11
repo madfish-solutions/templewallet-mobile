@@ -5,7 +5,8 @@ import { TextInput, View } from 'react-native';
 import { emptyFn } from '../../config/general';
 import { isString } from '../../utils/is-string';
 import { ButtonSmallSecondary } from '../button/button-small/button-small-secondary/button-small-secondary';
-import { StyledTextInput, StyledTextInputProps } from '../styled-text-input/styled-text-input';
+import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { StyledTextInputProps } from '../styled-text-input/styled-text-input.props';
 import { StyledTextInputStyles } from '../styled-text-input/styled-text-input.styles';
 import { AddressInputStyles } from './address-input.styles';
 
