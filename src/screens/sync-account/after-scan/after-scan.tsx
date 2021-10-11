@@ -12,6 +12,7 @@ export const AfterSyncQRScan = () => {
   const [seedPhrase, setSeedPhrase] = useState('');
   const [password, setPassword] = useState('');
   const [useBiometry, setUseBiometry] = useState<boolean | undefined>(undefined);
+  const [hdAccountsLength, setHdAccountsLength] = useState(0);
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
@@ -20,7 +21,10 @@ export const AfterSyncQRScan = () => {
     setUseBiometry(useBiometry);
 
     parseSyncPayload(payload, password)
-      .then(res => setSeedPhrase(res.mnemonic))
+      .then(res => {
+        setSeedPhrase(res.mnemonic);
+        setHdAccountsLength(res.hdAccountsLength);
+      })
       .catch(error => console.log(error));
 
     if (usePrevPassword) {
@@ -38,6 +42,7 @@ export const AfterSyncQRScan = () => {
           seedPhrase={seedPhrase}
           password={password}
           useBiometry={useBiometry}
+          hdAccountsLength={hdAccountsLength}
           onGoBackPress={() => setInnerScreenIndex(0)}
         />
       )}
@@ -46,6 +51,7 @@ export const AfterSyncQRScan = () => {
           seedPhrase={seedPhrase}
           password={password}
           useBiometry={useBiometry}
+          hdAccountsLength={hdAccountsLength}
           onGoBackPress={() => setInnerScreenIndex(0)}
         />
       )}

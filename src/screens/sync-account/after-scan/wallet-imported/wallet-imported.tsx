@@ -19,10 +19,17 @@ interface WalletImportedProps {
   seedPhrase: string;
   password: string;
   useBiometry?: boolean;
+  hdAccountsLength?: number;
   onGoBackPress: () => void;
 }
 
-export const WalletImported: FC<WalletImportedProps> = ({ seedPhrase, password, useBiometry, onGoBackPress }) => {
+export const WalletImported: FC<WalletImportedProps> = ({
+  seedPhrase,
+  password,
+  useBiometry,
+  hdAccountsLength,
+  onGoBackPress
+}) => {
   const styles = useWalletImportedStyles();
   const { importWallet } = useShelter();
 
@@ -35,7 +42,8 @@ export const WalletImported: FC<WalletImportedProps> = ({ seedPhrase, password, 
   );
 
   const handlePress = () => {
-    importWallet(seedPhrase, password, useBiometry);
+    console.log(hdAccountsLength);
+    importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
   };
 
   return (

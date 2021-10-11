@@ -22,14 +22,24 @@ interface CreateNewPasswordProps {
   seedPhrase: string;
   password: string;
   useBiometry?: boolean;
+  hdAccountsLength?: number;
   onGoBackPress: () => void;
 }
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, password, useBiometry, onGoBackPress }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
+  seedPhrase,
+  password,
+  useBiometry,
+  hdAccountsLength,
+  onGoBackPress
+}) => {
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => importWallet(seedPhrase, password, useBiometry);
+  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
+    console.log(hdAccountsLength);
+    importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
+  };
 
   useNavigationSetOptions(
     {
@@ -46,7 +56,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, pass
         passwordConfirmation: password
       }}
       validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
