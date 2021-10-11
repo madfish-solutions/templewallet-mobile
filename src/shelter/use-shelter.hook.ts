@@ -44,7 +44,9 @@ export const useShelter = () => {
             const firstAccount = accounts[0];
 
             dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
-            dispatch(addHdAccountAction(firstAccount));
+            for (const account of accounts) {
+              dispatch(addHdAccountAction(account));
+            }
 
             isPasswordSaved && dispatch(setIsBiometricsEnabled(true));
           }
