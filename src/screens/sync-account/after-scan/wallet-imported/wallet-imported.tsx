@@ -41,10 +41,7 @@ export const WalletImported: FC<WalletImportedProps> = ({
     []
   );
 
-  const handlePress = () => {
-    console.log(hdAccountsLength);
-    importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
-  };
+  const handlePress = () => importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
 
   return (
     <ScreenContainer isFullScreenMode={true}>
