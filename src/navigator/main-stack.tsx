@@ -26,8 +26,6 @@ import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
 import { AfterSyncQRScan } from '../screens/sync-account/after-scan/after-scan';
-import { ConfirmSync } from '../screens/sync-account/after-scan/confirm-sync/confirm-sync';
-import { WalletImported } from '../screens/sync-account/after-scan/wallet-imported/wallet-imported';
 import { SyncAccount } from '../screens/sync-account/sync-account';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
