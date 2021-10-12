@@ -18,7 +18,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         width: size,
         height: size,
         padding: formatSize(4)
-      }}>
+      }}
+    >
       {isDefined(collectible.artifactUri) ? (
         <Image
           style={[

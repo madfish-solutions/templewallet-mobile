@@ -32,7 +32,8 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
     <Formik
       validationSchema={importAccountTypeValidationSchema}
       initialValues={importAccountTypeInitialValues}
-      onSubmit={({ type }) => onSubmit(type)}>
+      onSubmit={({ type }) => onSubmit(type)}
+    >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
