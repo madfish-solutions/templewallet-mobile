@@ -51,7 +51,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
-  const [inputValue, setInputValue] = useState(value.amount);
+  const [inputValue, setInputValue] = useState(value.amount ?? new BigNumber(0));
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
@@ -68,7 +68,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     asset.decimals,
     onBlur,
     onFocus,
-    newAmount => setInputValue(newAmount)
+    newAmount => setInputValue(newAmount ?? new BigNumber(0))
   );
 
   useEffect(

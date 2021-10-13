@@ -11,3 +11,5 @@ export const templeWalletApi = axios.create({ baseURL: 'https://api.templewallet
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
 
 export const balancesApi = axios.create({ baseURL: 'https://balance.templewallet.com' });
+
+export const quipuSwapApi = axios.create({ baseURL: 'https://quipuswap.com/' });

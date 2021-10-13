@@ -53,7 +53,7 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   onValueChange
 }) => (
   <Dropdown
-    title="Accounts"
+    title="test"
     value={value}
     list={list}
     equalityFn={accountEqualityFn}

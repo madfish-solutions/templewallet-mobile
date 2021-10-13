@@ -46,6 +46,7 @@ export enum IconNameEnum {
   Clock = 'Clock',
   Info = 'Info',
   ChevronRight = 'ChevronRight',
+  ChevronUp = 'ChevronUp',
   NoResult = 'NoResult',
   TempleLogo = 'TempleLogo',
   TempleLogoWithText = 'TempleLogoWithText',
@@ -69,6 +70,9 @@ export enum IconNameEnum {
   AlertShield = 'AlertShield',
   Success = 'Success',
   Swap = 'Swap',
+  SwapAction = 'SwapAction',
   Navigation = 'Navigation',
-  Hummer = 'Hummer'
+  Hummer = 'Hummer',
+  QuipuswapNewLogoBlack = 'QuipuswapNewLogoBlack',
+  QuipuswapNewLogoWhite = 'QuipuswapNewLogoWhite'
 }

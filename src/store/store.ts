@@ -5,6 +5,7 @@ import { dAppsEpics } from './d-apps/d-apps-epics';
 import { debugEpics } from './debug/debug-epics';
 import { rootStateEpics } from './root-state.epics';
 import { settingsEpic } from './settings/settings-epic';
+import { swapEpics } from './swap/swap-epics';
 import { walletEpics } from './wallet/wallet-epics';
 
 export const { store, persistor } = createStore(
@@ -14,5 +15,6 @@ export const { store, persistor } = createStore(
   dAppsEpics,
   debugEpics,
   settingsEpic,
-  currencyEpics
+  currencyEpics,
+  swapEpics
 );

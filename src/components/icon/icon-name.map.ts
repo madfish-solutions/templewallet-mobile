@@ -10,6 +10,7 @@ import ArrowUpIcon from './assets/arrow-up.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
@@ -40,6 +41,8 @@ import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import QuipuswapNewLogoBlack from './assets/quipuswap-logo-new-black.svg';
+import QuipuswapNewLogoWhite from './assets/quipuswap-logo-new-white.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -51,6 +54,7 @@ import TwitterIcon from './assets/socials/twitter.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SuccessIcon from './assets/success.svg';
+import SwapActionIcon from './assets/swap-action.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
@@ -149,5 +153,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.Navigation]: NavigationIcon,
   [IconNameEnum.Hummer]: HummerIcon,
-  [IconNameEnum.Swap]: SwapIcon
+  [IconNameEnum.Swap]: SwapIcon,
+  [IconNameEnum.SwapAction]: SwapActionIcon,
+  [IconNameEnum.ChevronUp]: ChevronUpIcon,
+  [IconNameEnum.QuipuswapNewLogoBlack]: QuipuswapNewLogoBlack,
+  [IconNameEnum.QuipuswapNewLogoWhite]: QuipuswapNewLogoWhite
 };
