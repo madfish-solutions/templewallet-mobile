@@ -1,6 +1,7 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
+import { urlValidation } from '../../form/validation/url';
 
 export type AddCustomRpcFormValues = {
   name: string;
@@ -14,5 +15,5 @@ export const addCustomRpcFormInitialValues: AddCustomRpcFormValues = {
 
 export const addCustomRpcFormValidationSchema: SchemaOf<AddCustomRpcFormValues> = object().shape({
   name: string().required(makeRequiredErrorMessage('Name')),
-  url: string().required(makeRequiredErrorMessage('URL'))
+  url: urlValidation
 });

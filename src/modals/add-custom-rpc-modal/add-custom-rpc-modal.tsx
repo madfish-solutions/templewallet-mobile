@@ -53,7 +53,7 @@ export const AddCustomRpcModal: FC = () => {
             <FormTextInput name="name" placeholder="My custom network" />
 
             <Label label="URL" />
-            <FormTextInput name="url" placeholder="http://localhost:4444" />
+            <FormTextInput name="url" placeholder="http://localhost:4444" autoCapitalize="none" />
           </View>
 
           <View>
