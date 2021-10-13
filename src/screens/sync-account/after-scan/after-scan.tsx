@@ -2,6 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
+import { showErrorToast } from '../../../toast/toast.utils';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
@@ -17,21 +18,20 @@ export const AfterSyncQRScan = () => {
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
   const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
-    setPassword(password);
-    setUseBiometry(useBiometry);
-
     parseSyncPayload(payload, password)
       .then(res => {
         setSeedPhrase(res.mnemonic);
+        setPassword(password);
+        setUseBiometry(useBiometry);
         setHdAccountsLength(res.hdAccountsLength);
-      })
-      .catch(error => console.log(error));
 
-    if (usePrevPassword) {
-      setInnerScreenIndex(1);
-    } else {
-      setInnerScreenIndex(2);
-    }
+        if (usePrevPassword) {
+          setInnerScreenIndex(1);
+        } else {
+          setInnerScreenIndex(2);
+        }
+      })
+      .catch(e => showErrorToast({ description: e.message }));
   };
 
   return (
