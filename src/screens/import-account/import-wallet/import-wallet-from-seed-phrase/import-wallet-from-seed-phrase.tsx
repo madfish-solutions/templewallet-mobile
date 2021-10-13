@@ -19,7 +19,8 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
   <Formik
     initialValues={importWalletFromSeedPhraseInitialValues}
     validationSchema={importWalletFromSeedPhraseValidationSchema}
-    onSubmit={onSubmit}>
+    onSubmit={onSubmit}
+  >
     {({ submitForm, isValid }) => (
       <>
         <View style={ImportWalletFromSeedPhraseStyles.seedPhraseInputContainer}>

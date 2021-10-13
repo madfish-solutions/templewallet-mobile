@@ -25,6 +25,8 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { AfterSyncQRScan } from '../screens/sync-account/after-scan/after-scan';
+import { SyncAccount } from '../screens/sync-account/sync-account';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
@@ -85,6 +87,16 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
               />
               <MainStack.Screen
+                name={ScreensEnum.SyncAccount}
+                component={SyncAccount}
+                options={generateScreenOptions(<HeaderTitle title="Sync" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ConfirmSync}
+                component={AfterSyncQRScan}
+                options={generateScreenOptions(<HeaderTitle title="Confirm Sync" />)}
+              />
+              <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
                 component={CreateAccount}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
@@ -130,11 +142,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Activity}
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.ScanQrCode}
-                component={ScanQrCode}
-                options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
               />
 
               {/** DApps stack **/}
@@ -189,6 +196,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+          <MainStack.Screen
+            name={ScreensEnum.ScanQrCode}
+            component={ScanQrCode}
+            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
+          />
         </MainStack.Navigator>
       </NavigationBar>
     </PortalProvider>
