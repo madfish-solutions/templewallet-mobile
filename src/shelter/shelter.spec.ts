@@ -97,11 +97,11 @@ describe('Shelter', () => {
       Shelter.importHdAccount$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
-          rxJsTestingHelper(([account, isLocked]) => {
-            expect(account?.name).toEqual('Account 1');
-            expect(account?.type).toEqual(AccountTypeEnum.HD_ACCOUNT);
-            expect(account?.publicKey).toEqual(mockAccountCredentials.publicKey);
-            expect(account?.publicKeyHash).toEqual(mockAccountCredentials.publicKeyHash);
+          rxJsTestingHelper(([accounts, isLocked]) => {
+            expect(accounts?.[0].name).toEqual('Account 1');
+            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD_ACCOUNT);
+            expect(accounts?.[0].publicKey).toEqual(mockAccountCredentials.publicKey);
+            expect(accounts?.[0].publicKeyHash).toEqual(mockAccountCredentials.publicKeyHash);
 
             expect(mockCryptoUtil.encryptString$).toBeCalledWith(
               mockAccountCredentials.seedPhrase,

@@ -37,7 +37,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
-    importWallet(seedPhrase, password, useBiometry);
+    importWallet({ seedPhrase, password, useBiometry });
 
   useNavigationSetOptions(
     {
