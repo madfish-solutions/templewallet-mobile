@@ -62,7 +62,6 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
           </View>
           <Divider />
-
           <View>
             <View style={styles.checkboxContainer}>
               <FormCheckbox name="acceptTerms">

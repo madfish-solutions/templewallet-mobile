@@ -1,8 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
 import { HeaderButton } from '../../../../components/header/header-button/header-button';

@@ -9,7 +9,6 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../styles/format-size';
 import { useSyncAccountStyles } from './sync-instructions.styles';
 
 const syncSteps = [

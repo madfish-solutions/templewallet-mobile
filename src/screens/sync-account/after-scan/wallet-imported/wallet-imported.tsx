@@ -3,7 +3,6 @@ import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
-import { HeaderTitle } from '../../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -26,7 +25,7 @@ export const WalletImported: FC<WalletImportedProps> = ({ seedPhrase, password, 
 
   useNavigationSetOptions(
     {
-       headerShown: false
+      headerShown: false
     },
     []
   );
