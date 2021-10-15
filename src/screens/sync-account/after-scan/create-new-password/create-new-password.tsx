@@ -14,13 +14,10 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { formatSize } from '../../../../styles/format-size';
 import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
-import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
-  password: string;
   useBiometry?: boolean;
   hdAccountsLength?: number;
   onGoBackPress: () => void;
@@ -28,12 +25,10 @@ interface CreateNewPasswordProps {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   seedPhrase,
-  password,
   useBiometry,
   hdAccountsLength,
   onGoBackPress
 }) => {
-  const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
@@ -50,24 +45,14 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   return (
     <Formik
       initialValues={{
-        password: password,
-        passwordConfirmation: password
+        password: '',
+        passwordConfirmation: ''
       }}
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <AttentionMessage>
-              <View>
-                <Text style={styles.alertDescription}>
-                  The password was used from the previous screen. Remember, it will be used to enter the Wallet.
-                </Text>
-              </View>
-            </AttentionMessage>
-          </View>
           <Divider />
           <View>
             <Label label="Password" description="A password is used to protect the wallet." />
@@ -76,10 +61,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
           </View>
-          <View style={styles.buttonContainer}>
+          <View style={{ marginTop: 'auto' }}>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
-            <InsetSubstitute type="bottom" />
           </View>
+          <InsetSubstitute type="bottom" />
         </ScreenContainer>
       )}
     </Formik>

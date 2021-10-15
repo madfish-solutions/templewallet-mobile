@@ -76,7 +76,6 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </CheckboxLabel>
             <Divider />
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
-            <Divider size={formatSize(43)} />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

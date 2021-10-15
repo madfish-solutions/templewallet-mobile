@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
-import { HeaderButton } from '../../../../components/header/header-button/header-button';
 import { HeaderTitle } from '../../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
 import { Icon } from '../../../../components/icon/icon';
@@ -20,23 +18,15 @@ interface WalletImportedProps {
   password: string;
   useBiometry?: boolean;
   hdAccountsLength?: number;
-  onGoBackPress: () => void;
 }
 
-export const WalletImported: FC<WalletImportedProps> = ({
-  seedPhrase,
-  password,
-  useBiometry,
-  hdAccountsLength,
-  onGoBackPress
-}) => {
+export const WalletImported: FC<WalletImportedProps> = ({ seedPhrase, password, useBiometry, hdAccountsLength }) => {
   const styles = useWalletImportedStyles();
   const { importWallet } = useShelter();
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
-      headerTitle: () => <HeaderTitle title="" />
+      headerShown: false
     },
     []
   );
@@ -59,16 +49,8 @@ export const WalletImported: FC<WalletImportedProps> = ({
       </View>
       <Divider />
       <View>
-        <AttentionMessage>
-          <View>
-            <Text style={styles.alertDescription}>
-              The password to unlock your mobile temple wallet is the same you set for the extension.
-            </Text>
-          </View>
-        </AttentionMessage>
         <Divider />
         <ButtonLargePrimary title="Done" onPress={handlePress} />
-        <Divider size={formatSize(43)} />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

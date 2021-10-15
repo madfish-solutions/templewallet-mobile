@@ -43,13 +43,11 @@ export const AfterSyncQRScan = () => {
           password={password}
           useBiometry={useBiometry}
           hdAccountsLength={hdAccountsLength}
-          onGoBackPress={() => setInnerScreenIndex(0)}
         />
       )}
       {innerScreenIndex === 2 && (
         <CreateNewPassword
           seedPhrase={seedPhrase}
-          password={password}
           useBiometry={useBiometry}
           hdAccountsLength={hdAccountsLength}
           onGoBackPress={() => setInnerScreenIndex(0)}
