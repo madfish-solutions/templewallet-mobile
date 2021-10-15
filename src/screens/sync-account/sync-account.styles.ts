@@ -6,14 +6,6 @@ export const useSyncAccountStyles = createUseStyles(({ colors, typography }) => 
     marginTop: formatSize(38),
     marginBottom: formatSize(28)
   },
-  buttonContainer: {
-    marginTop: 'auto',
-    borderTopColor: colors.lines,
-    borderTopWidth: formatSize(0.5),
-    borderStyle: 'solid',
-    paddingTop: formatSize(8),
-    paddingBottom: formatSize(46)
-  },
   title: {
     ...typography.body15Semibold,
     color: colors.black,
