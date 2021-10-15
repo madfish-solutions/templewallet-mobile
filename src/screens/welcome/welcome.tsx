@@ -55,7 +55,6 @@ export const Welcome = () => {
             onPress={() => navigate(ScreensEnum.SyncAccount)}
           />
         </ButtonsContainer>
-        <Divider size={formatSize(43)} />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>
