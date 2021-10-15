@@ -41,7 +41,7 @@ export const Welcome = () => {
         />
         <Divider size={formatSize(24)} />
 
-        <View style={styles.buttonsContainer}>
+      <View style={styles.buttonsContainer}>
           <View style={styles.buttonBox}>
             <ButtonLargeSecondary
               title="Import"

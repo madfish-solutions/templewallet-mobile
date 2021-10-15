@@ -26,7 +26,7 @@ export const WalletImported: FC<WalletImportedProps> = ({ seedPhrase, password, 
 
   useNavigationSetOptions(
     {
-      headerShown: false
+       headerShown: false
     },
     []
   );
