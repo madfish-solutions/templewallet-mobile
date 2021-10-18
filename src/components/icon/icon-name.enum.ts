@@ -24,6 +24,8 @@ export enum IconNameEnum {
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',
   Settings = 'Settings',
+  DApps = 'DApps',
+  Swap = 'Swap',
   SoonBadge = 'SoonBadge',
   Close = 'Close',
   TezToken = 'TezToken',

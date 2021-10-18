@@ -38,7 +38,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         />
         <TabBarButton
           label="DApps"
-          iconName={IconNameEnum.SoonBadge}
+          iconName={IconNameEnum.DApps}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.DApps}
           focused={isStackFocused(dAppsStackScreens)}
@@ -46,7 +46,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         />
         <TabBarButton
           label="Swap"
-          iconName={IconNameEnum.SoonBadge}
+          iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.Swap}
           focused={isStackFocused(swapStackScreens)}
@@ -56,7 +56,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           <TabBarButton
             label="Settings"
             iconName={IconNameEnum.Settings}
-            iconWidth={formatSize(22)}
+            iconWidth={formatSize(32)}
             routeName={ScreensEnum.Settings}
             focused={isStackFocused(settingsStackScreens)}
           />
