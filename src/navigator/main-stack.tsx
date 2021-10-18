@@ -16,6 +16,7 @@ import { Activity } from '../screens/activity/activity';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
+import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
@@ -147,8 +148,8 @@ export const MainStackScreen = () => {
               {/** DApps stack **/}
               <MainStack.Screen
                 name={ScreensEnum.DApps}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
+                component={DApps}
+                options={{ animationEnabled: false, headerShown: false }}
               />
 
               {/** Swap stack **/}

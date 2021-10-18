@@ -45,11 +45,10 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocused(dAppsStackScreens)}
-            disabled={true}
           />
           <SideBarButton
             label="Swap"
-            iconName={IconNameEnum.Swap}
+            iconName={IconNameEnum.SoonBadge}
             routeName={ScreensEnum.Swap}
             focused={isStackFocused(swapStackScreens)}
             disabled={true}

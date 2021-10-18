@@ -41,6 +41,7 @@ import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import QuipuSwapIcon from './assets/quipuswap.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -52,7 +53,6 @@ import TwitterIcon from './assets/socials/twitter.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SuccessIcon from './assets/success.svg';
-import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
@@ -101,8 +101,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
+  [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
   [IconNameEnum.DApps]: DAppsIcon,
-  [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
