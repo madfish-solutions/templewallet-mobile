@@ -5,14 +5,14 @@ import { Divider } from '../../../components/divider/divider';
 import { CustomDAppInfo } from '../../../interfaces/dapps.interface';
 import { formatSize } from '../../../styles/format-size';
 import { openUrl } from '../../../utils/linking.util';
-import { useIntegratedDAppStyles } from './others.styles';
+import { useOthersDAppStyles } from './others.styles';
 
 interface Props {
   item: ListRenderItemInfo<CustomDAppInfo>;
 }
 
 export const OthersDApp: FC<Props> = ({ item }) => {
-  const styles = useIntegratedDAppStyles();
+  const styles = useOthersDAppStyles();
 
   return (
     <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.website)}>
