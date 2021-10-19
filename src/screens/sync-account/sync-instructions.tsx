@@ -9,7 +9,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useSyncAccountStyles } from './sync-instructions.styles';
+import { useSyncInstructionsStyles } from './sync-instructions.styles';
 
 const syncSteps = [
   'Open the extension on desktop',
@@ -20,7 +20,7 @@ const syncSteps = [
 
 export const SyncInstructions = () => {
   const { navigate } = useNavigation();
-  const styles = useSyncAccountStyles();
+  const styles = useSyncInstructionsStyles();
 
   useNavigationSetOptions(
     {
@@ -42,7 +42,7 @@ export const SyncInstructions = () => {
         ))}
       </View>
       <Divider />
-      <View style={{ marginTop: 'auto' }}>
+      <View style={styles.buttonContainer}>
         <ButtonLargePrimary title="Scan QR" onPress={() => navigate(ScreensEnum.ScanQrCode)} />
       </View>
       <InsetSubstitute type="bottom" />

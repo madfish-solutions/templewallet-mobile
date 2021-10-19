@@ -87,7 +87,7 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
               />
               <MainStack.Screen
-                name={ScreensEnum.SyncAccount}
+                name={ScreensEnum.SyncInstructions}
                 component={SyncInstructions}
                 options={generateScreenOptions(<HeaderTitle title="Sync" />)}
               />

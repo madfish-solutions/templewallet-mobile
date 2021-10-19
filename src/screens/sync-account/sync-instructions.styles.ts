@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useSyncAccountStyles = createUseStyles(({ colors, typography }) => ({
+export const useSyncInstructionsStyles = createUseStyles(({ colors, typography }) => ({
   titleContainer: {
     marginVertical: formatSize(28)
   },
@@ -14,5 +14,8 @@ export const useSyncAccountStyles = createUseStyles(({ colors, typography }) => 
     ...typography.body15Semibold,
     color: colors.gray1,
     marginBottom: formatSize(24)
+  },
+  buttonContainer: {
+    marginTop: 'auto'
   }
 }));

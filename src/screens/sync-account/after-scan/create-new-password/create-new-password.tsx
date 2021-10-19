@@ -14,6 +14,7 @@ import { ScreenContainer } from '../../../../components/screen-container/screen-
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
 import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
+import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
@@ -29,6 +30,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   onGoBackPress
 }) => {
   const { importWallet } = useShelter();
+  const styles = useCreateNewPasswordStyles();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
@@ -60,7 +62,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" />
           </View>
-          <View style={{ marginTop: 'auto' }}>
+          <View style={styles.buttonContainer}>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
           </View>
           <InsetSubstitute type="bottom" />
