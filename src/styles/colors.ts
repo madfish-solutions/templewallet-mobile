@@ -51,6 +51,7 @@ const backgroundLightColors = {
   navigation: '#ffffff',
   pageBG: '#FBFBFB',
   cardBG: '#ffffff',
+  accentBG: '#1373E4',
   lines: '#e4e4e4',
   disabled: '#cbcbcb',
   input: '#f0f0f0'
@@ -60,6 +61,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   navigation: '#0d0d0d',
   pageBG: '#171717',
   cardBG: '#202020',
+  accentBG: '#FF6B00',
   lines: '#2D2D2D',
   disabled: '#6F6F6F',
   input: '#2D2D2D'

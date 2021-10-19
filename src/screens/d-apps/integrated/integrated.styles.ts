@@ -8,14 +8,14 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
     borderRadius: formatSize(10),
     paddingHorizontal: formatSize(24),
     paddingVertical: formatSize(20),
-    backgroundColor: colors.blue
+    backgroundColor: colors.accentBG
   },
   title: {
     ...typography.body15Semibold,
-    color: colors.white
+    color: '#ffffff'
   },
   description: {
     ...typography.caption11Regular,
-    color: colors.gray4
+    color: '#F4F4F4'
   }
 }));

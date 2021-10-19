@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { SearchInput } from '../../components/search-input/search-input';
+import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
@@ -288,20 +289,28 @@ const data = [
 ];
 
 export const DApps = () => {
-  // const data = useDApps();
-
+  const theme = useThemeSelector();
   const styles = useDAppsStyles();
-  const [searchValue, setSearchValue] = useState<string>();
+
+  const [searchQuery, setSearchQuery] = useState<string>();
+
+  const sortedData = useMemo(() => {
+    if (searchQuery) {
+      return data.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+
+    return data;
+  }, [searchQuery, data]);
 
   return (
     <>
-      <SearchInput placeholder="Search token" onChangeText={setSearchValue} />
+      <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
       <Divider size={formatSize(28)} />
       <View style={styles.container}>
         <Text style={styles.title}>Integrated</Text>
         <Divider size={formatSize(12)} />
         <IntegratedDApp
-          iconName={IconNameEnum.QuipuSwap}
+          iconName={theme === 'dark' ? IconNameEnum.QuipuSwapDark : IconNameEnum.QuipuSwap}
           title="QuipuSwap"
           description="The most efficient DApp for Tezos"
           url="https://quipuswap.com"
@@ -312,12 +321,16 @@ export const DApps = () => {
         <Text style={styles.title}>Others</Text>
         <Divider size={formatSize(12)} />
         <View style={styles.list}>
-          <FlatList
-            data={data}
-            renderItem={item => <OthersDApp item={item} />}
-            keyExtractor={item => item.name}
-            numColumns={2}
-          />
+          {sortedData.length ? (
+            <FlatList
+              data={sortedData}
+              renderItem={item => <OthersDApp item={item} />}
+              keyExtractor={item => item.name}
+              numColumns={2}
+            />
+          ) : (
+            <Text style={styles.title}>Not found</Text>
+          )}
         </View>
       </View>
     </>

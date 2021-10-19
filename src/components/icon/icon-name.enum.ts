@@ -27,6 +27,7 @@ export enum IconNameEnum {
   DApps = 'DApps',
   SoonBadge = 'SoonBadge',
   QuipuSwap = 'QuipuSwap',
+  QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',
   TezToken = 'TezToken',
   TzBtcToken = 'TzBtcToken',
