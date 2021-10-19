@@ -53,7 +53,7 @@ export const Welcome = () => {
             <ButtonLargeSecondary
               title="Sync"
               iconName={IconNameEnum.Link}
-              onPress={() => navigate(ScreensEnum.SyncAccount)}
+              onPress={() => navigate(ScreensEnum.SyncInstructions)}
             />
           </View>
         </View>
