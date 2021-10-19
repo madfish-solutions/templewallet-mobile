@@ -1,14 +1,17 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 
+import { CustomDAppInfo } from '../../interfaces/dapps.interface';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface DAppsState {
   permissions: LoadableEntityState<PermissionInfo[]>;
+  dappsList: LoadableEntityState<CustomDAppInfo[]>;
 }
 
 export const dAppsInitialState: DAppsState = {
-  permissions: createEntity([])
+  permissions: createEntity([]),
+  dappsList: createEntity([])
 };
 
 export interface DAppsRootState {

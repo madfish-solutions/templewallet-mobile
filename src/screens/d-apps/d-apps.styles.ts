@@ -5,6 +5,9 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     marginHorizontal: formatSize(16)
   },
+  marginLeft: {
+    marginLeft: formatSize(16)
+  },
   title: {
     ...typography.body15Semibold,
     color: colors.black,

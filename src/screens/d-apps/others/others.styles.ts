@@ -10,16 +10,17 @@ export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => (
     backgroundColor: colors.cardBG,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: formatSize(16),
-    marginRight: formatSize(15),
-    marginBottom: formatSize(15),
+    paddingVertical: formatSize(16),
+    paddingLeft: formatSize(16),
+    paddingRight: formatSize(4),
+    marginRight: formatSize(16),
+    marginBottom: formatSize(16),
     flexWrap: 'wrap',
     flex: 0.5
   },
   title: {
     ...typography.caption13Semibold,
-    color: colors.black,
-    maxWidth: formatSize(100)
+    color: colors.black
   },
   logo: {
     width: formatSize(24),
