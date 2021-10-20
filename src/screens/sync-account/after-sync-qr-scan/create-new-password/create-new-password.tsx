@@ -1,8 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
 import { HeaderButton } from '../../../../components/header/header-button/header-button';
@@ -14,13 +13,11 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { formatSize } from '../../../../styles/format-size';
 import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
-  password: string;
   useBiometry?: boolean;
   hdAccountsLength?: number;
   onGoBackPress: () => void;
@@ -28,13 +25,12 @@ interface CreateNewPasswordProps {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   seedPhrase,
-  password,
   useBiometry,
   hdAccountsLength,
   onGoBackPress
 }) => {
-  const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
+  const styles = useCreateNewPasswordStyles();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
@@ -50,24 +46,14 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   return (
     <Formik
       initialValues={{
-        password: password,
-        passwordConfirmation: password
+        password: '',
+        passwordConfirmation: ''
       }}
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <AttentionMessage>
-              <View>
-                <Text style={styles.alertDescription}>
-                  The password was used from the previous screen. Remember, it will be used to enter the Wallet.
-                </Text>
-              </View>
-            </AttentionMessage>
-          </View>
           <Divider />
           <View>
             <Label label="Password" description="A password is used to protect the wallet." />
