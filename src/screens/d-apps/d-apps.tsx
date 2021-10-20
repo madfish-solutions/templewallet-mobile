@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
