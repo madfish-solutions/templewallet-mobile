@@ -1,6 +1,6 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 
-import { CustomDAppInfo } from '../../interfaces/dapps.interface';
+import { CustomDAppInfo } from '../../interfaces/custom-dapps-info.interface';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 

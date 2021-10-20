@@ -1,4 +1,4 @@
-import { CustomDAppInfo } from './dapps.interface';
+import { CustomDAppInfo } from './custom-dapps-info.interface';
 
 export const mockDApp: CustomDAppInfo = {
   name: 'Plenty DeFi',

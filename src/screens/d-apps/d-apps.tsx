@@ -8,6 +8,7 @@ import { SearchInput } from '../../components/search-input/search-input';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
 import { formatSize } from '../../styles/format-size';
+import { isDefined } from '../../utils/is-defined';
 import { useDAppsStyles } from './d-apps.styles';
 import { OthersDApp } from './others/others';
 
@@ -22,7 +23,7 @@ export const DApps = () => {
   const [searchQuery, setSearchQuery] = useState<string>();
 
   const sortedDAppsList = useMemo(() => {
-    if (searchQuery) {
+    if (isDefined(searchQuery)) {
       return DAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 

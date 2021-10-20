@@ -1,4 +1,4 @@
-export interface BcdDAppScreenshot {
+interface BcdDAppScreenshot {
   type: string;
   link: string;
 }

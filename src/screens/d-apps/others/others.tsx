@@ -4,7 +4,7 @@ import { Image, ListRenderItemInfo, Text, TouchableOpacity } from 'react-native'
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { CustomDAppInfo } from '../../../interfaces/dapps.interface';
+import { CustomDAppInfo } from '../../../interfaces/custom-dapps-info.interface';
 import { formatSize } from '../../../styles/format-size';
 import { openUrl } from '../../../utils/linking.util';
 import { useOthersDAppStyles } from './others.styles';

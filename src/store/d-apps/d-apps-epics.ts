@@ -7,7 +7,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
 import { BeaconHandler } from '../../beacon/beacon-handler';
-import { CustomDAppsInfo } from '../../interfaces/dapps.interface';
+import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { navigateAction } from '../root-state.actions';
