@@ -33,18 +33,17 @@ export const DApps = () => {
     <>
       <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
       <Divider size={formatSize(28)} />
-      <View style={styles.container}>
-        {sortedDAppsList.length ? (
-          <FlatList
-            data={sortedDAppsList}
-            renderItem={item => <OthersDApp item={item} />}
-            keyExtractor={item => item.name}
-            numColumns={2}
-          />
-        ) : (
-          <DataPlaceholder text="No records found." />
-        )}
-      </View>
+      {sortedDAppsList.length ? (
+        <FlatList
+          data={sortedDAppsList}
+          renderItem={item => <OthersDApp item={item} />}
+          keyExtractor={item => item.name}
+          numColumns={2}
+          contentContainerStyle={styles.container}
+        />
+      ) : (
+        <DataPlaceholder text="No records found." />
+      )}
     </>
   );
 };
