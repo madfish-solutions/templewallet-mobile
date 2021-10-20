@@ -64,8 +64,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
           </View>
           <View style={styles.buttonContainer}>
             <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            <InsetSubstitute type="bottom" />
           </View>
-          <InsetSubstitute type="bottom" />
         </ScreenContainer>
       )}
     </Formik>
