@@ -6,14 +6,14 @@ import memoize from 'mem';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ReadOnlySigner } from '../read-only.signer.util';
-import { getFastRpcClient } from './fast-rpc';
+// import { getFastRpcClient } from './fast-rpc';
 import { currentRpc$ } from './rpc.utils';
 
 export const CURRENT_NETWORK_ID = 'mainnet';
 const michelEncoder = new MichelCodecPacker();
 
 export const createTezosToolkit = (rpcUrl = currentRpc$.getValue().url) => {
-  const tezosToolkit = new TezosToolkit(getFastRpcClient(rpcUrl));
+  const tezosToolkit = new TezosToolkit(rpcUrl);
   tezosToolkit.setPackerProvider(michelEncoder);
   tezosToolkit.setForgerProvider(new CompositeForger([tezosToolkit.getFactory(RpcForger)(), localForger]));
   tezosToolkit.addExtension(new Tzip16Module());

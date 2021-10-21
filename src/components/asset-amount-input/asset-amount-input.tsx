@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
@@ -64,21 +64,19 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    inputValue,
+    value.amount ?? new BigNumber(0),
     asset.decimals,
     onBlur,
     onFocus,
     newAmount => setInputValue(newAmount ?? new BigNumber(0))
   );
 
-  useEffect(
-    () =>
-      onValueChange({
-        ...value,
-        amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
-      }),
-    [inputValue, asset, isTokenInputType, exchangeRate]
-  );
+  useEffect(() => {
+    onValueChange({
+      ...value,
+      amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
+    });
+  }, [inputValue, asset, isTokenInputType, exchangeRate]);
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
   return (

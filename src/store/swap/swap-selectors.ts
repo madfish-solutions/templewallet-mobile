@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
 
-import { SwapRootState, tokenWhitelistEntry } from './swap-state';
+import { TokenMetadataResponse } from '../../utils/token-metadata.utils';
+import { LoadableEntityState } from '../types';
+import { SwapRootState } from './swap-state';
 export const useSwapTokensWhitelist = () =>
-  useSelector<SwapRootState, tokenWhitelistEntry[]>(({ swap }) => swap.tokenWhitelist.data);
+  useSelector<SwapRootState, LoadableEntityState<TokenMetadataResponse[]>>(({ swap }) => swap.tokenWhitelist);

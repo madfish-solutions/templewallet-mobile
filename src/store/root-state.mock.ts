@@ -4,6 +4,7 @@ import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
 import { mockDebugState } from './debug/debug-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
+import { mockSwapState } from './swap/swap-state.mock';
 import { mockWalletState } from './wallet/wallet-state.mock';
 
 export const mockRootState: RootState = {
@@ -12,5 +13,6 @@ export const mockRootState: RootState = {
   settings: mockSettingsState,
   dApps: mockDAppsState,
   currency: mockCurrencyState,
-  debug: mockDebugState
+  debug: mockDebugState,
+  swap: mockSwapState
 };

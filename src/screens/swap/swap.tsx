@@ -1,21 +1,22 @@
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useMemo } from 'react';
+import { View } from 'react-native';
 import { SchemaOf, object } from 'yup';
 
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
-import { loadTokenWhitelist } from '../../store/swap/swap-actions';
+import { useSwapTokensWhitelist } from '../../store/swap/swap-selectors';
 import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { TokenInterface, emptyToken } from '../../token/interfaces/token.interface';
 import { SwapForm, SwapFormValues } from './swap-form';
 
 export const Swap = () => {
-  const dispatch = useDispatch();
+  const { data: tokenWhiteList, isLoading } = useSwapTokensWhitelist();
   const assetsList = useAssetsListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
@@ -24,10 +25,6 @@ export const Swap = () => {
     () => [tezosToken, ...filteredAssetsList],
     [tezosToken, filteredAssetsList]
   );
-
-  useEffect(() => {
-    dispatch(loadTokenWhitelist.submit());
-  }, []);
 
   // TODO: move to separate file
   const swapFormInitialValues = useMemo<SwapFormValues>(
@@ -71,11 +68,17 @@ export const Swap = () => {
       validationSchema={swapFormValidationSchema}
       onSubmit={() => console.log('test')}
     >
-      {() => (
-        <ScreenContainer>
-          <InsetSubstitute />
-          <SwapForm />
-        </ScreenContainer>
+      {({ submitForm }) => (
+        <>
+          <ScreenContainer>
+            <InsetSubstitute />
+
+            <SwapForm tokenWhiteList={tokenWhiteList} tokenWhiteListIsLoading={isLoading} />
+          </ScreenContainer>
+          <View>
+            <ButtonLargePrimary title="Swap" onPress={submitForm} />
+          </View>
+        </>
       )}
     </Formik>
   );

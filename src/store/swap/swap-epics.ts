@@ -5,6 +5,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { quipuSwapApi } from '../../api.service';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import { loadTokenWhitelist } from './swap-actions';
@@ -22,7 +23,7 @@ export const loadTokenWhitelistEpic = (action$: Observable<Action>) =>
             return item.network === MAINNET_CHAIN_ID;
           });
 
-          const whitelabelSlugsArray = [];
+          const whitelabelSlugsArray: string[] = [];
 
           for (const { contractAddress, fa2TokenId } of mappedWhitelist) {
             whitelabelSlugsArray.push(getTokenSlug({ address: contractAddress, id: fa2TokenId }));
@@ -30,7 +31,13 @@ export const loadTokenWhitelistEpic = (action$: Observable<Action>) =>
 
           return loadTokensMetadata$(whitelabelSlugsArray).pipe(
             map(tokensMetadata => {
-              return loadTokenWhitelist.success(tokensMetadata);
+              const parsedMetadata = whitelabelSlugsArray.map((slug, index) => {
+                const [address, id] = slug.split('_');
+
+                return { ...tokensMetadata[index], address, id: Number(id) ?? 0 };
+              });
+
+              return loadTokenWhitelist.success([TEZ_TOKEN_METADATA, ...parsedMetadata]);
             }),
             catchError(err => of(loadTokenWhitelist.fail(err.message)))
           );

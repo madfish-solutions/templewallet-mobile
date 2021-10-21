@@ -32,6 +32,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { loadTokenWhitelist } from '../store/swap/swap-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -63,6 +64,7 @@ export const MainStackScreen = () => {
     dispatch(loadTokenBalancesActions.submit());
     dispatch(loadActivityGroupsActions.submit());
     dispatch(loadSelectedBakerActions.submit());
+    dispatch(loadTokenWhitelist.submit());
   };
   const initExchangeRateLoading = () => {
     dispatch(loadExchangeRates.submit());

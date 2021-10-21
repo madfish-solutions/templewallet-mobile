@@ -3,7 +3,6 @@ import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { tokenMetadataApi } from '../api.service';
-import { tokenWhitelistEntry } from '../store/swap/swap-state';
 import { tokenBalanceMetadata } from '../store/wallet/wallet-state.utils';
 import { TokenBalanceInterface } from '../token/interfaces/token-balance.interface';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
@@ -35,13 +34,7 @@ export const loadTokenMetadata$ = memoize(
 
 export const loadTokensMetadata$ = memoize(
   (tokensArray = []): Observable<TokenMetadataResponse[]> =>
-    from(tokenMetadataApi.post<TokenMetadataResponse[]>('/', tokensArray)).pipe(
-      map(({ data }) => {
-        console.log({ data });
-
-        return data;
-      })
-    ),
+    from(tokenMetadataApi.post<TokenMetadataResponse[]>('/', tokensArray)).pipe(map(({ data }) => data)),
   { cacheKey: ([tokensArray]) => tokensArray }
 );
 
