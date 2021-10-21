@@ -25,7 +25,7 @@ export const AfterSyncQRScan = () => {
         setUseBiometry(useBiometry);
         setHdAccountsLength(res.hdAccountsLength);
 
-        if (usePrevPassword) {
+        if (usePrevPassword === true) {
           setInnerScreenIndex(1);
         } else {
           setInnerScreenIndex(2);

@@ -3,6 +3,7 @@ import { mixed, object, SchemaOf, string } from 'yup';
 
 import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
 import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
+import { isDefined } from '../../../utils/is-defined';
 import { getDerivationPath } from '../../../utils/keys.util';
 
 export type ImportAccountSeedValues = {
@@ -23,5 +24,7 @@ export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues
   seedPhrase: seedPhraseValidation,
   password: string(),
   derivationType: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)).required(),
-  derivationPath: string().test('validateDerivationPath', 'Invalid derivation path', p => (p ? isValidPath(p) : false))
+  derivationPath: string().test('validateDerivationPath', 'Invalid derivation path', p =>
+    isDefined(p) ? isValidPath(p) : false
+  )
 });
