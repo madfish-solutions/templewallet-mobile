@@ -8,7 +8,6 @@ import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 import { WalletImported } from './wallet-imported/wallet-imported';
-
 export const AfterSyncQRScan = () => {
   const [seedPhrase, setSeedPhrase] = useState('');
   const [password, setPassword] = useState('');
@@ -43,13 +42,11 @@ export const AfterSyncQRScan = () => {
           password={password}
           useBiometry={useBiometry}
           hdAccountsLength={hdAccountsLength}
-          onGoBackPress={() => setInnerScreenIndex(0)}
         />
       )}
       {innerScreenIndex === 2 && (
         <CreateNewPassword
           seedPhrase={seedPhrase}
-          password={password}
           useBiometry={useBiometry}
           hdAccountsLength={hdAccountsLength}
           onGoBackPress={() => setInnerScreenIndex(0)}
