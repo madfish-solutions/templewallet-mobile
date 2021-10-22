@@ -20,12 +20,14 @@ export const OthersDApp: FC<Props> = ({ item }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.website)}>
       {imageLoadError ? (
-        <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} />
+        <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
       ) : (
         <Image style={styles.logo} source={{ uri: item.item.logo }} onError={() => setImageLoadError(true)} />
       )}
       <Divider size={formatSize(8)} />
-      <Text style={styles.title}>{item.item.name}</Text>
+      <Text numberOfLines={1} style={styles.title}>
+        {item.item.name}
+      </Text>
     </TouchableOpacity>
   );
 };
