@@ -13,7 +13,7 @@ export const AfterSyncQRScan = () => {
   const { importWallet } = useShelter();
 
   const [seedPhrase, setSeedPhrase] = useState('');
-  const [useBiometry, setUseBiometry] = useState<boolean | undefined>(undefined);
+  const [useBiometry, setUseBiometry] = useState(false);
   const [hdAccountsLength, setHdAccountsLength] = useState(0);
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
@@ -21,13 +21,12 @@ export const AfterSyncQRScan = () => {
   const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
     parseSyncPayload(payload, password)
       .then(res => {
+        setUseBiometry(useBiometry === true);
         setSeedPhrase(res.mnemonic);
-        setUseBiometry(useBiometry);
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword) {
-          console.log('import');
-          importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
+          importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
         } else {
           setInnerScreenIndex(1);
         }
