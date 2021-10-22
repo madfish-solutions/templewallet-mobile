@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -45,7 +45,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
       validationSchema={ConfirmSyncValidationSchema}
       onSubmit={onSubmit}
     >
-{({ submitForm, isValid, values }) => (
+      {({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Divider size={formatSize(12)} />
