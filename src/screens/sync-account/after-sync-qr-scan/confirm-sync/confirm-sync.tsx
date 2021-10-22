@@ -63,7 +63,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
           </View>
           <Divider />
-          {values.usePrevPassword && (
+          {values.usePrevPassword === true && (
             <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
           )}
           <View>
@@ -79,7 +79,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </CheckboxLabel>
             <Divider />
             <ButtonLargePrimary
-              title={values.usePrevPassword ? 'Sync' : 'Next'}
+              title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid}
               onPress={submitForm}
             />

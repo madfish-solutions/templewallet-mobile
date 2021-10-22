@@ -17,7 +17,7 @@ const decrypt = async (chiphertext: string, password: string, salt: string, vers
 
 const decrypt_v1 = async (ciphertext: string, password: string, salt: string | null) => {
   try {
-    if (!password || !salt) {
+    if (!isDefined(password) || !isDefined(salt)) {
       throw new Error('Missing password or salt');
     }
     const key = await NativeModules.Aes.pbkdf2(password, salt, 10000, 32, 512);
@@ -45,7 +45,7 @@ const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
     });
     decipher.update(forge.util.createBuffer(Buffer.from(chiphertext, 'hex').toString('binary'), 'utf-8'));
     const pass = decipher.finish();
-    if (pass) {
+    if (isDefined(pass)) {
       return Buffer.from(decipher.output.toHex(), 'hex');
     } else {
       return null;

@@ -66,7 +66,7 @@ export class BeaconHandler {
   };
 
   public static getPeers = () => {
-    if (isDefined(BeaconHandler._walletClient)) {
+    if (BeaconHandler._walletClient) {
       return BeaconHandler._walletClient.getPeers();
     }
 
