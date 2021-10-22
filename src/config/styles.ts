@@ -7,6 +7,7 @@ export const layoutScale = clamp(Dimensions.get('screen').width / basicScreenWid
 
 export const greyLight = '#707070';
 export const greyLight200 = '#E5E5EA';
+export const greyLight400 = '#F4F4F4';
 export const blue = '#007AFF';
 export const black = '#000000';
 export const orange = '#FF5B00';

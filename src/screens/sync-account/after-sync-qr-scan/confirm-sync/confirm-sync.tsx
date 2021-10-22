@@ -45,7 +45,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
       validationSchema={ConfirmSyncValidationSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, values }) => (
+{({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Divider size={formatSize(12)} />

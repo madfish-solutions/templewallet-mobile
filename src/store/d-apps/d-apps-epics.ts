@@ -5,11 +5,18 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { templeWalletApi } from '../../api.service';
 import { BeaconHandler } from '../../beacon/beacon-handler';
+import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { navigateAction } from '../root-state.actions';
-import { abortRequestAction, loadPermissionsActions, removePermissionAction } from './d-apps-actions';
+import {
+  abortRequestAction,
+  loadDAppsListActions,
+  loadPermissionsActions,
+  removePermissionAction
+} from './d-apps-actions';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -81,4 +88,15 @@ const abortRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic);
+const loadDAppsListEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadDAppsListActions.submit),
+    switchMap(() =>
+      from(templeWalletApi.get<CustomDAppsInfo>('/dapps')).pipe(
+        map(({ data }) => loadDAppsListActions.success(data.dApps)),
+        catchError(err => of(loadDAppsListActions.fail(err.message)))
+      )
+    )
+  );
+
+export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic, loadDAppsListEpic);
