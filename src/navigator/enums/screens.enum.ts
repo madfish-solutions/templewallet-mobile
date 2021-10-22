@@ -3,7 +3,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
-  SyncAccount = 'SyncAccount',
+  SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
 
@@ -36,7 +36,7 @@ export enum ScreensEnum {
 export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.ImportAccount]: undefined;
-  [ScreensEnum.SyncAccount]: undefined;
+  [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: undefined;
 

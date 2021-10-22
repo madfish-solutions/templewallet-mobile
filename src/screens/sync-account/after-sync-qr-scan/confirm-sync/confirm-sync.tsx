@@ -1,7 +1,8 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../../components/divider/divider';
@@ -44,7 +45,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
       validationSchema={ConfirmSyncValidationSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid }) => (
+      {({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Divider size={formatSize(12)} />
@@ -62,7 +63,9 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
           </View>
           <Divider />
-
+          {values.usePrevPassword === true && (
+            <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
+          )}
           <View>
             <View style={styles.checkboxContainer}>
               <FormCheckbox name="acceptTerms">
@@ -75,8 +78,11 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
             </CheckboxLabel>
             <Divider />
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
-            <Divider size={formatSize(43)} />
+            <ButtonLargePrimary
+              title={values.usePrevPassword === true ? 'Sync' : 'Next'}
+              disabled={!isValid}
+              onPress={submitForm}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

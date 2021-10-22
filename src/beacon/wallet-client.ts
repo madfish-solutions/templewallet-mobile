@@ -28,6 +28,8 @@ import { OutgoingResponseInterceptor } from '@airgap/beacon-sdk/dist/cjs/interce
 import { ExposedPromise } from '@airgap/beacon-sdk/dist/cjs/utils/exposed-promise';
 import { Logger } from '@airgap/beacon-sdk/dist/cjs/utils/Logger';
 
+import { isDefined } from '../utils/is-defined';
+
 const logger = new Logger('WalletClient');
 
 /**
@@ -287,7 +289,7 @@ export class WalletClient extends Client {
    */
   private async respondToMessage(response: BeaconMessage, connectionContext: ConnectionContext): Promise<void> {
     const serializedMessage: string = await new Serializer().serialize(response);
-    if (connectionContext) {
+    if (isDefined(connectionContext)) {
       const peerInfos = await this.getPeers();
       const peer = peerInfos.find(peerInfo => peerInfo.publicKey === connectionContext.id);
       await (await this.transport).send(serializedMessage, peer);

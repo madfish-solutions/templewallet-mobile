@@ -1,12 +1,13 @@
 import { NativeModules } from 'react-native';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
+import { isDefined } from './is-defined';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
 export const parseSyncPayload = async (payload: string, password: string): Promise<SyncPayloadInterface> => {
   let index = 0;
-  const pick = (length?: number) => payload.slice(index, length && (index += length));
+  const pick = (length?: number) => payload.slice(index, isDefined(length) ? (index += length) : undefined);
 
   const prefix = Buffer.from(pick(16), 'base64').toString('utf8');
   if (prefix !== TEMPLE_SYNC_PREFIX) {

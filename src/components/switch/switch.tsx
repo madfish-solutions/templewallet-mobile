@@ -22,7 +22,7 @@ interface Props {
   onChange?: EventFn<boolean>;
 }
 
-export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
+export const Switch: FC<Props> = ({ value, disabled = false, onChange = emptyFn }) => {
   const colors = useColors();
   const styles = useSwitchStyles();
   const animation = useAnimationRef(value);

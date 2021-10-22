@@ -18,7 +18,7 @@ interface Props extends ButtonSharedProps {
 export const Button: FC<Props> = ({
   title,
   iconName,
-  disabled,
+  disabled = false,
   styleConfig,
 
   isFullWidth = false,

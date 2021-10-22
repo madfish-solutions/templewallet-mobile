@@ -23,7 +23,7 @@ export const mapOperationsToActivities = (address: string, operations: Operation
       originatedContract
     } = operation;
 
-    if (!(hasInternals && address === target.address) && status === ActivityStatusEnum.Applied) {
+    if (!(hasInternals === true && address === target.address) && status === ActivityStatusEnum.Applied) {
       const source = sender;
       let destination: MemberInterface = { address: '' };
       let amount = '0';

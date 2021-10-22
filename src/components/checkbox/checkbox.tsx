@@ -10,7 +10,7 @@ import { CheckboxProps } from './checkbox.props';
 import { CheckboxStyles } from './checkbox.styles';
 
 export const Checkbox: FC<CheckboxProps> = ({
-  disabled,
+  disabled = false,
   value,
   size = formatSize(24),
   strokeWidth = formatSize(1.5),

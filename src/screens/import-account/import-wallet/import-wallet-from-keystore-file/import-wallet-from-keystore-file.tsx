@@ -30,7 +30,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       const seedPhrase = await decryptSeedPhrase(content, values.password);
       onSubmit({
         seedPhrase,
-        password: values.shouldUseFilePasswordForExtension ? values.password : undefined
+        password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
       });
     } catch {
       showErrorToast({

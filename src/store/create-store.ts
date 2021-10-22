@@ -8,6 +8,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
 import { catchError } from 'rxjs/operators';
 
+import { isDefined } from '../utils/is-defined';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -33,7 +34,7 @@ const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
 const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
 
-if (__DEV__ && !process.env.JEST_WORKER_ID) {
+if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
   middlewares.push(createDebugger());
 }
 

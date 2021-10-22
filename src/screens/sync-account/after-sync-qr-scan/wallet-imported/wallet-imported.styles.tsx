@@ -3,7 +3,7 @@ import { formatSize } from '../../../../styles/format-size';
 
 export const useWalletImportedStyles = createUseStyles(({ colors, typography }) => ({
   imageView: {
-    marginTop: formatSize(72),
+    marginTop: formatSize(108),
     alignItems: 'center'
   },
   title: {
