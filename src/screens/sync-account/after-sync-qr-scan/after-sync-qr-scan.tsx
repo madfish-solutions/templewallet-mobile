@@ -2,16 +2,18 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
+import { useShelter } from '../../../shelter/use-shelter.hook';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';
-import { WalletImported } from './wallet-imported/wallet-imported';
+
 export const AfterSyncQRScan = () => {
+  const { importWallet } = useShelter();
+
   const [seedPhrase, setSeedPhrase] = useState('');
-  const [password, setPassword] = useState('');
-  const [useBiometry, setUseBiometry] = useState<boolean | undefined>(undefined);
+  const [useBiometry, setUseBiometry] = useState(false);
   const [hdAccountsLength, setHdAccountsLength] = useState(0);
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
@@ -19,15 +21,14 @@ export const AfterSyncQRScan = () => {
   const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
     parseSyncPayload(payload, password)
       .then(res => {
+        setUseBiometry(useBiometry === true);
         setSeedPhrase(res.mnemonic);
-        setPassword(password);
-        setUseBiometry(useBiometry);
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword) {
-          setInnerScreenIndex(1);
+          importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
         } else {
-          setInnerScreenIndex(2);
+          setInnerScreenIndex(1);
         }
       })
       .catch(e => showErrorToast({ description: e.message }));
@@ -37,14 +38,6 @@ export const AfterSyncQRScan = () => {
     <>
       {innerScreenIndex === 0 && <ConfirmSync onSubmit={handleConfirmSyncFormSubmit} />}
       {innerScreenIndex === 1 && (
-        <WalletImported
-          seedPhrase={seedPhrase}
-          password={password}
-          useBiometry={useBiometry}
-          hdAccountsLength={hdAccountsLength}
-        />
-      )}
-      {innerScreenIndex === 2 && (
         <CreateNewPassword
           seedPhrase={seedPhrase}
           useBiometry={useBiometry}

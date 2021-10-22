@@ -129,7 +129,7 @@ export const useShelter = () => {
         })
     ];
 
-    return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
+    return () => subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
 
   const importWallet = (params: ImportWalletParams) => importWallet$.next(params);

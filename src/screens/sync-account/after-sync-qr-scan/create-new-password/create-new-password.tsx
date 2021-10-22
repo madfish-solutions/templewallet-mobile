@@ -63,7 +63,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
             <FormPasswordInput name="passwordConfirmation" />
           </View>
           <View style={styles.buttonContainer}>
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary title="Sync" disabled={!isValid} onPress={submitForm} />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>
