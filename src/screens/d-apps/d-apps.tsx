@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
+import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { SearchInput } from '../../components/search-input/search-input';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
@@ -32,8 +33,9 @@ export const DApps = () => {
 
   return (
     <>
+      <InsetSubstitute type="top" />
       <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
-      <Divider size={formatSize(28)} />
+      <Divider size={formatSize(20)} />
       {sortedDAppsList.length ? (
         <FlatList
           data={sortedDAppsList}
