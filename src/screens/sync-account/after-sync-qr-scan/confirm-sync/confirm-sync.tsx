@@ -58,14 +58,15 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
                 <Text style={styles.checkboxText}>Use as App Password</Text>
               </FormCheckbox>
             </View>
+
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
             </View>
+
+            {values.usePrevPassword === true && (
+              <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
+            )}
           </View>
-          <Divider />
-          {values.usePrevPassword === true && (
-            <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
-          )}
           <View>
             <View style={styles.checkboxContainer}>
               <FormCheckbox name="acceptTerms">
