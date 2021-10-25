@@ -7,6 +7,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { CustomDAppInfo } from '../../../interfaces/custom-dapps-info.interface';
 import { formatSize } from '../../../styles/format-size';
 import { openUrl } from '../../../utils/linking.util';
+import { getTruncatedProps } from '../../../utils/style.util';
 import { useOthersDAppStyles } from './others.styles';
 
 interface Props {
@@ -25,9 +26,7 @@ export const OthersDApp: FC<Props> = ({ item }) => {
         <Image style={styles.logo} source={{ uri: item.item.logo }} onError={() => setImageLoadError(true)} />
       )}
       <Divider size={formatSize(8)} />
-      <Text numberOfLines={1} style={styles.title}>
-        {item.item.name}
-      </Text>
+      <Text {...getTruncatedProps(styles.text)}>{item.item.name}</Text>
     </TouchableOpacity>
   );
 };

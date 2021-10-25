@@ -15,10 +15,9 @@ export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => (
     marginBottom: formatSize(16),
     flex: 0.5
   },
-  title: {
+  text: {
     ...typography.caption13Semibold,
-    color: colors.black,
-    flexShrink: 1
+    color: colors.black
   },
   logo: {
     width: formatSize(24),
