@@ -63,7 +63,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               <FormBiometryCheckbox name="useBiometry" />
             </View>
 
-            {values.usePrevPassword && (
+            {values.usePrevPassword === true && (
               <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
             )}
           </View>
