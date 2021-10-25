@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RpcClient } from '@taquito/rpc';
 import memoize from 'mem';
 
+import { isDefined } from '../is-defined';
+
 interface RPCOptions {
   block: string;
 }
@@ -84,7 +86,7 @@ class FastRpcClient extends RpcClient {
     const cacheKey = `tez_entrypoints_${this.getRpcUrl()}_${contract}`;
     try {
       const cached = await AsyncStorage.getItem(cacheKey);
-      if (cached) {
+      if (isDefined(cached)) {
         return JSON.parse(cached);
       }
     } catch {}
@@ -212,7 +214,7 @@ class FastRpcClient extends RpcClient {
 }
 
 function wantsHead(opts?: RPCOptions) {
-  return !opts?.block || opts.block === 'head';
+  return !isDefined(opts) || !isDefined(opts.block) || opts.block === 'head';
 }
 
 function toOptsKey(opts?: RPCOptions) {

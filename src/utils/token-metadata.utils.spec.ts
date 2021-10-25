@@ -17,7 +17,7 @@ describe('loadTokenMetadata$', () => {
   });
 
   it('should return correct TokenMetadataInterface structure', done =>
-    loadTokenMetadata$(mockAddress, mockId).subscribe(
+    void loadTokenMetadata$(mockAddress, mockId).subscribe(
       rxJsTestingHelper(tokenMetadata => {
         expect(tokenMetadata.id).toEqual(mockId);
         expect(tokenMetadata.address).toEqual(mockAddress);
@@ -29,7 +29,7 @@ describe('loadTokenMetadata$', () => {
     ));
 
   it('should set default id if it was not provided', done =>
-    loadTokenMetadata$(mockAddress).subscribe(
+    void loadTokenMetadata$(mockAddress).subscribe(
       rxJsTestingHelper(tokenMetadata => {
         expect(tokenMetadata.id).toEqual(0);
       }, done)

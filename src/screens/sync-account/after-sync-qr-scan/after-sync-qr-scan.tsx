@@ -25,7 +25,7 @@ export const AfterSyncQRScan = () => {
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
 
-        if (usePrevPassword) {
+        if (usePrevPassword === true) {
           importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
         } else {
           setInnerScreenIndex(1);

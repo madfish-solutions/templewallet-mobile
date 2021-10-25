@@ -4,6 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
+import { isDefined } from './is-defined';
 import { tzToMutez } from './tezos.util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -59,7 +60,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
         type: ParamPreviewTypeEnum.ContractCall,
         contract: opParam.to,
         entrypoint: opParam.parameter.entrypoint,
-        amount: (opParam.mutez ? opParam.amount : tzToMutez(new BigNumber(opParam.amount), 6)).toString()
+        amount: (opParam.mutez === true ? opParam.amount : tzToMutez(new BigNumber(opParam.amount), 6)).toString()
       };
     }
   }
@@ -103,7 +104,7 @@ const tryParseTokenTransfers = (parameters: any, destination: string): TokenTran
         amount = y[1].int;
       }
 
-      if (from && to && amount) {
+      if (isDefined(from) && isDefined(to) && isDefined(amount)) {
         tokenTransfers.push({
           token: { contract: destination },
           from,
@@ -141,7 +142,7 @@ const tryParseTokenTransfers = (parameters: any, destination: string): TokenTran
             amount = y[1].args[1].int;
           }
 
-          if (from && to && token && amount) {
+          if (isDefined(from) && isDefined(to) && token && isDefined(amount)) {
             tokenTransfers.push({ token, from, to, amount });
           }
         }
@@ -177,7 +178,7 @@ const tryParseFA1_2Approve = (parameters: any, destination: string): FA1_2Approv
         amount = x[1].int;
       }
 
-      if (to && amount) {
+      if (isDefined(to) && isDefined(amount)) {
         return {
           token: { contract: destination },
           to,

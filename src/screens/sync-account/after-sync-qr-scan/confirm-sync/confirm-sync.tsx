@@ -80,7 +80,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </CheckboxLabel>
             <Divider />
             <ButtonLargePrimary
-              title={values.usePrevPassword ? 'Sync' : 'Next'}
+              title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid}
               onPress={submitForm}
             />

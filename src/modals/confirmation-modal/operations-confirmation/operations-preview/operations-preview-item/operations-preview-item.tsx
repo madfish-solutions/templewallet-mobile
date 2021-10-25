@@ -40,7 +40,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const getTokenMetadata = useTokenMetadataGetter();
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const contract = () => {
-      if (params.contract && params.type !== ParamPreviewTypeEnum.ContractCall) {
+      if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {
         return params.contract;
       }
       if (typeof params.asset === 'object') {
