@@ -1,28 +1,29 @@
-import React, { useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import { Divider } from '../../../components/divider/divider';
+import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../../styles/format-size';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { promotionCarouselData } from './promotion-carousel.data';
 import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
-const windowSize = Dimensions.get('screen').width;
-const sliderWidth = windowSize - 2 * formatSize(16);
-
 export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
+
+  const { layoutWidth, handleLayout } = useLayoutSizes();
+  const itemWidth = useMemo(() => layoutWidth - 2 * formatSize(16), [layoutWidth]);
 
   const [activeDotIndex, setActiveDotIndex] = useState(0);
 
   return (
-    <View>
+    <View onLayout={handleLayout}>
       <Carousel
         data={promotionCarouselData}
-        windowSize={windowSize}
-        sliderWidth={windowSize}
-        itemWidth={sliderWidth}
+        windowSize={layoutWidth}
+        sliderWidth={layoutWidth}
+        itemWidth={itemWidth}
         loop={true}
         autoplay={true}
         renderItem={item => (
