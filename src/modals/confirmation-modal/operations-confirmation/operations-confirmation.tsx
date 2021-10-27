@@ -79,7 +79,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
       validationSchema={formValidationSchema}
       onSubmit={handleSubmit}
     >
-      {({ values, isValid, isSubmitting, setFieldValue, submitForm }) => (
+      {({ values, isValid, setFieldValue, submitForm }) => (
         <>
           <ScreenContainer>
             {children}
