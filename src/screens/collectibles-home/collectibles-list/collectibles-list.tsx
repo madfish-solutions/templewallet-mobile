@@ -3,11 +3,11 @@ import { View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
+import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
-import { formatSize } from '../../../styles/format-size';
 
 interface Props {
   collectiblesList: TokenInterface[];
