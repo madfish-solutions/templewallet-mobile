@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -7,6 +7,7 @@ import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
+import { formatSize } from '../../../styles/format-size';
 
 interface Props {
   collectiblesList: TokenInterface[];
@@ -15,8 +16,8 @@ interface Props {
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const { layoutWidth, handleLayout } = useLayoutSizes();
 
-  const smallCardSize = (1 / 3) * layoutWidth - 0.1;
-  const bigCardSize = (2 / 3) * layoutWidth - 0.1;
+  const smallCardSize = (1 / 3) * layoutWidth - formatSize(0.5);
+  const bigCardSize = (2 / 3) * layoutWidth - formatSize(0.5);
 
   const [first, second, third, ...rest] = collectiblesList;
 
