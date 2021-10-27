@@ -116,13 +116,9 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={goBack} />
+            <ButtonLargeSecondary title="Back" onPress={goBack} />
             <Divider size={formatSize(16)} />
-            <ButtonLargePrimary
-              title="Confirm"
-              disabled={estimations.isLoading || isSubmitting || !isValid}
-              onPress={submitForm}
-            />
+            <ButtonLargePrimary title="Confirm" disabled={estimations.isLoading || !isValid} onPress={submitForm} />
           </ModalButtonsContainer>
         </>
       )}
