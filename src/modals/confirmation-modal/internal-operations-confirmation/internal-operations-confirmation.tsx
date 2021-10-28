@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { approveInternalOperationRequestAction } from '../../../store/wallet/wallet-actions';
+import { approveInternalOperationRequestActions } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
@@ -36,7 +36,10 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
     <OperationsConfirmation
       sender={selectedAccount}
       opParams={opParams}
-      onSubmit={opParams => dispatch(approveInternalOperationRequestAction(opParams))}
+      onSubmit={opParams => {
+        dispatch(approveInternalOperationRequestActions.success(false));
+        dispatch(approveInternalOperationRequestActions.submit(opParams));
+      }}
     />
   );
 };

@@ -32,7 +32,7 @@ import { navigateAction } from '../root-state.actions';
 import {
   addPendingOperation,
   addTokenMetadataAction,
-  approveInternalOperationRequestAction,
+  approveInternalOperationRequestActions,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -130,7 +130,7 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
 
 const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(approveInternalOperationRequestAction),
+    ofType(approveInternalOperationRequestActions.submit),
     toPayload(),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
@@ -140,6 +140,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
           showSuccessToast({ description: 'Successfully sent!' });
 
           return [
+            approveInternalOperationRequestActions.success(true),
             navigateAction(StacksEnum.MainStack),
             waitForOperationCompletionAction({ opHash: hash, sender }),
             addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
@@ -148,7 +149,7 @@ const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$
         catchError(err => {
           showErrorToast({ description: err.message });
 
-          return EMPTY;
+          return [approveInternalOperationRequestActions.success(true)];
         })
       )
     )

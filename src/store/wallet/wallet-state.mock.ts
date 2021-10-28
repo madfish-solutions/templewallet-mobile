@@ -12,5 +12,6 @@ export const mockWalletState: WalletState = {
     [getTokenSlug(mockFA1_2TokenMetadata)]: mockFA1_2TokenMetadata,
     [getTokenSlug(mockFA2TokenMetadata)]: mockFA2TokenMetadata
   },
-  addTokenSuggestion: createEntity(mockFA1_2TokenMetadata)
+  addTokenSuggestion: createEntity(mockFA1_2TokenMetadata),
+  isInternalOperationApproved: undefined
 };

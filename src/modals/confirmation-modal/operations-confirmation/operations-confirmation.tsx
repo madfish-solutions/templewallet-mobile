@@ -13,6 +13,7 @@ import { EventFn } from '../../../config/general';
 import { ParamsWithKind } from '../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { useIsInternalOperationApprovedSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
@@ -33,6 +34,8 @@ interface Props {
 export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, children }) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
+
+  const isApproved = useIsInternalOperationApprovedSelector();
 
   const estimations = useEstimations(sender, opParams);
   const {
@@ -116,9 +119,13 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" onPress={goBack} />
+            <ButtonLargeSecondary title="Back" disabled={isApproved === false} onPress={goBack} />
             <Divider size={formatSize(16)} />
-            <ButtonLargePrimary title="Confirm" disabled={estimations.isLoading || !isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Confirm"
+              disabled={estimations.isLoading || isApproved === false || !isValid}
+              onPress={submitForm}
+            />
           </ModalButtonsContainer>
         </>
       )}

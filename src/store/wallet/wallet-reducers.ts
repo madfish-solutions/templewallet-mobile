@@ -8,6 +8,7 @@ import {
   addHdAccountAction,
   addPendingOperation,
   addTokenMetadataAction,
+  approveInternalOperationRequestActions,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -151,4 +152,11 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       activityGroups: createEntity(account.activityGroups.data, false, error)
     }))
   );
+
+  builder.addCase(approveInternalOperationRequestActions.success, (state, { payload }) => {
+    return {
+      ...state,
+      isInternalOperationApproved: payload
+    };
+  });
 });
