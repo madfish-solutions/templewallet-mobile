@@ -36,6 +36,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
     <OperationsConfirmation
       sender={selectedAccount}
       opParams={opParams}
+      isLoading={false}
       onSubmit={opParams => dispatch(approveInternalOperationRequestAction(opParams))}
     />
   );

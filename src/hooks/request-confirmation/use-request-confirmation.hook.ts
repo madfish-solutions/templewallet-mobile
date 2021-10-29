@@ -1,8 +1,8 @@
 import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ObservableInput, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { Action } from '../../interfaces/action.interface';
 import { abortRequestAction } from '../../store/d-apps/d-apps-actions';
@@ -13,6 +13,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
 ) => {
   const dispatch = useDispatch();
 
+  const [isLoading, setIsLoading] = useState(false);
   const isConfirmed = useRef(false);
   const confirmRequest$ = useMemo(() => new Subject<T>(), []);
 
@@ -25,13 +26,30 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   }, []);
 
   useEffect(() => {
-    const subscription = confirmRequest$.pipe(switchMap(project)).subscribe(action => {
-      isConfirmed.current = true;
-      dispatch(action);
-    });
+    const subscription = confirmRequest$
+      .pipe(
+        tap(() => setIsLoading(true)),
+        switchMap(project)
+      )
+      .subscribe(
+        action => {
+          setIsLoading(false);
+          isConfirmed.current = true;
+
+          dispatch(action);
+        },
+        () => {
+          setIsLoading(false);
+        }
+      );
 
     return () => subscription.unsubscribe();
   }, [confirmRequest$, project]);
 
-  return (value: T) => confirmRequest$.next(value);
+  const confirmRequest = (value: T) => confirmRequest$.next(value);
+
+  return {
+    confirmRequest,
+    isLoading
+  };
 };

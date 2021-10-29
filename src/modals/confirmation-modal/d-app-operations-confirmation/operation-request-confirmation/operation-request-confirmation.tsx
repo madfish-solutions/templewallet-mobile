@@ -28,7 +28,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const accounts = useAccountsListSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
 
-  const confirmRequest = useRequestConfirmation(
+  const { confirmRequest, isLoading } = useRequestConfirmation(
     message,
     ({ message, sender, opParams }: ApproveOperationRequestActionPayloadInterface) =>
       sendTransaction$(rpcUrl, sender, opParams).pipe(
@@ -73,6 +73,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     <OperationsConfirmation
       sender={sender}
       opParams={opParams}
+      isLoading={isLoading}
       onSubmit={newOpParams => confirmRequest({ message, sender, opParams: newOpParams })}
     >
       <AppMetadataView appMetadata={message.appMetadata} />

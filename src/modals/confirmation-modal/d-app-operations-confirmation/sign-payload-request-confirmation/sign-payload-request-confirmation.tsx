@@ -36,7 +36,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
 
-  const confirmRequest = useRequestConfirmation(message, (message: SignPayloadRequestOutput) =>
+  const { confirmRequest, isLoading } = useRequestConfirmation(message, (message: SignPayloadRequestOutput) =>
     Shelter.getSigner$(message.sourceAddress).pipe(
       switchMap(signer => signer.sign(message.payload)),
       switchMap(({ prefixSig }) =>
@@ -85,9 +85,9 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         <Text style={styles.payloadText}>{message.payload}</Text>
       </ScreenContainer>
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" onPress={goBack} />
+        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Sign" onPress={() => confirmRequest(message)} />
+        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={() => confirmRequest(message)} />
       </ModalButtonsContainer>
     </>
   );

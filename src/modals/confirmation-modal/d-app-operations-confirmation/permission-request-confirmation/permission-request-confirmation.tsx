@@ -2,7 +2,7 @@ import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { PermissionRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
-import { EMPTY, from } from 'rxjs';
+import { EMPTY, from, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
@@ -28,6 +28,7 @@ import {
   PermissionRequestConfirmationFormValues,
   permissionRequestConfirmationModalValidationSchema
 } from './permission-request-confirmation.form';
+import { Action } from 'ts-action';
 
 interface Props {
   message: PermissionRequestOutput;
@@ -38,7 +39,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const confirmRequest = useRequestConfirmation(
+  const { confirmRequest, isLoading } = useRequestConfirmation(
     message,
     ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
       from(
@@ -91,9 +92,9 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AccountFormDropdown name="approver" list={accounts} />
           </ScreenContainer>
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Cancel" onPress={goBack} />
+            <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
             <Divider size={formatSize(16)} />
-            <ButtonLargePrimary title="Confirm" onPress={submitForm} />
+            <ButtonLargePrimary title="Confirm" disabled={isLoading} onPress={submitForm} />
           </ModalButtonsContainer>
         </>
       )}
