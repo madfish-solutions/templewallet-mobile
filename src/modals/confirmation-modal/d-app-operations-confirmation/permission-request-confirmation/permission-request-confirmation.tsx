@@ -2,8 +2,8 @@ import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { PermissionRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
-import { EMPTY, from, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { AccountFormDropdown } from '../../../../components/account-dropdown/account-form-dropdown';
@@ -16,53 +16,46 @@ import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { ApprovePermissionRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-permission-request-action-payload.interface';
-import { useRequestConfirmation } from '../../../../hooks/request-confirmation/use-request-confirmation.hook';
+import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { navigateAction } from '../../../../store/root-state.actions';
 import { useAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
+import { showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
   PermissionRequestConfirmationFormValues,
   permissionRequestConfirmationModalValidationSchema
 } from './permission-request-confirmation.form';
-import { Action } from 'ts-action';
 
 interface Props {
   message: PermissionRequestOutput;
 }
+
+const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
+  from(
+    BeaconHandler.respond({
+      type: BeaconMessageType.PermissionResponse,
+      network: message.network,
+      scopes: message.scopes,
+      id: message.id,
+      publicKey
+    })
+  ).pipe(
+    map(() => {
+      showSuccessToast({ description: 'Successfully approved!' });
+
+      return navigateAction(StacksEnum.MainStack);
+    })
+  );
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const { confirmRequest, isLoading } = useRequestConfirmation(
-    message,
-    ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
-      from(
-        BeaconHandler.respond({
-          type: BeaconMessageType.PermissionResponse,
-          network: message.network,
-          scopes: message.scopes,
-          id: message.id,
-          publicKey
-        })
-      ).pipe(
-        map(() => {
-          showSuccessToast({ description: 'Successfully approved!' });
-
-          return navigateAction(StacksEnum.MainStack);
-        }),
-        catchError(err => {
-          showErrorToast({ description: err.message });
-
-          return EMPTY;
-        })
-      )
-  );
+  const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
 
   const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
     () => ({ approver: selectedAccount }),

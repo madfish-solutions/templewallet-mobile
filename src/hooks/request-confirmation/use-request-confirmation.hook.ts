@@ -1,55 +1,50 @@
-import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { ObservableInput, Subject } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { EMPTY, ObservableInput, of, Subject } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
 import { Action } from '../../interfaces/action.interface';
-import { abortRequestAction } from '../../store/d-apps/d-apps-actions';
+import { showErrorToast } from '../../toast/toast.utils';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
-  message: BeaconRequestOutputMessage,
   project: (value: T, index: number) => O
 ) => {
   const dispatch = useDispatch();
 
-  const [isLoading, setIsLoading] = useState(false);
   const isConfirmed = useRef(false);
-  const confirmRequest$ = useMemo(() => new Subject<T>(), []);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    return () => {
-      if (!isConfirmed.current) {
-        dispatch(abortRequestAction(message.id));
-      }
-    };
-  }, []);
+  const confirmRequest$ = useMemo(() => new Subject<T>(), []);
 
   useEffect(() => {
     const subscription = confirmRequest$
       .pipe(
         tap(() => setIsLoading(true)),
-        switchMap(project)
-      )
-      .subscribe(
-        action => {
-          setIsLoading(false);
-          isConfirmed.current = true;
+        switchMap(value =>
+          of(value).pipe(
+            switchMap(project),
+            tap(() => setIsLoading(false)),
+            catchError(err => {
+              setIsLoading(false);
+              showErrorToast({ description: err.message });
 
-          dispatch(action);
-        },
-        () => {
-          setIsLoading(false);
-        }
-      );
+              return EMPTY;
+            })
+          )
+        )
+      )
+      .subscribe(action => {
+        isConfirmed.current = true;
+
+        dispatch(action);
+      });
 
     return () => subscription.unsubscribe();
   }, [confirmRequest$, project]);
 
-  const confirmRequest = (value: T) => confirmRequest$.next(value);
-
   return {
-    confirmRequest,
-    isLoading
+    confirmRequest: (value: T) => confirmRequest$.next(value),
+    isLoading,
+    isConfirmed
   };
 };
