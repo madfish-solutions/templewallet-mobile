@@ -1,19 +1,15 @@
 import { BigNumber } from 'bignumber.js';
-import { clamp, inRange } from 'lodash-es';
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
 import { conditionalStyle } from '../../../../utils/conditional-style';
-import { roundFiat } from '../../../../utils/number.util';
-import { NonZeroAmounts } from '../activity-group-item';
+import { FormattedAmount } from '../../../formatted-amount';
 import { useActivityGroupDollarAmountChangeStyles } from './activity-group-dollar-amount-change.styles';
 
 interface Props {
   nonZeroAmounts: NonZeroAmounts;
 }
-
-const MIN_POSITIVE_AMOUNT_VALUE = 0.01;
-const MAX_NEGATIVE_AMOUNT_VALUE = -0.01;
 
 export const ActivityGroupDollarAmountChange: FC<Props> = ({ nonZeroAmounts }) => {
   const styles = useActivityGroupDollarAmountChangeStyles();
@@ -21,19 +17,14 @@ export const ActivityGroupDollarAmountChange: FC<Props> = ({ nonZeroAmounts }) =
   return (
     <View style={styles.container}>
       {nonZeroAmounts.dollarSums.map((amount, index) => (
-        <Text
+        <FormattedAmount
           key={index}
+          amount={new BigNumber(amount)}
+          isDollarValue={true}
+          showMinusSign={amount < 0}
+          showPlusSign={amount > 0}
           style={[styles.valueText, conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)]}
-        >
-          {inRange(amount, MAX_NEGATIVE_AMOUNT_VALUE, MIN_POSITIVE_AMOUNT_VALUE) && '≈ '}
-          {amount > 0 ? '+ ' : '- '}
-          {roundFiat(
-            new BigNumber(
-              amount > 0 ? clamp(amount, MIN_POSITIVE_AMOUNT_VALUE, Infinity) : clamp(amount, MAX_NEGATIVE_AMOUNT_VALUE)
-            ).abs()
-          ).toFixed()}
-          {' $'}
-        </Text>
+        />
       ))}
     </View>
   );

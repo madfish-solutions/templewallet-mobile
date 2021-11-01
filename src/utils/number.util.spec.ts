@@ -22,15 +22,15 @@ describe('formatAssetAmount', () => {
   });
 
   it('should format positive bignumber less than 1000 value and return string with 1 decimal using rounding mode up', () => {
-    expect(formatAssetAmount(new BigNumber(100.255133), BigNumber.ROUND_UP, 1)).toEqual('100.3');
+    expect(formatAssetAmount(new BigNumber(100.255133), 1)).toEqual('100.3');
   });
 
   it('should return empty string if NaN passed into', () => {
-    expect(formatAssetAmount(new BigNumber(NaN), BigNumber.ROUND_UP, 1)).toEqual('');
+    expect(formatAssetAmount(new BigNumber(NaN), 1)).toEqual('');
   });
 
   it('should return 0 if 0 passed into', () => {
-    expect(formatAssetAmount(new BigNumber(0), BigNumber.ROUND_UP, 1)).toEqual('0');
+    expect(formatAssetAmount(new BigNumber(0), 1)).toEqual('0');
   });
 });
 

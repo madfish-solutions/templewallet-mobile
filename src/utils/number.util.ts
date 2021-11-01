@@ -1,16 +1,12 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
-export const formatAssetAmount = (
-  amount: BigNumber,
-  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
-  decimalPlace = 6
-) => {
+export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
   if (isNaN(amount.toNumber())) {
     return '';
   }
 
-  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2).toFixed();
 };
 
 export const roundFiat = (
