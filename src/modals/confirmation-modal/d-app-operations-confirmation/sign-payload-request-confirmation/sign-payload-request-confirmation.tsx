@@ -26,6 +26,7 @@ import { useAccountsListSelector } from '../../../../store/wallet/wallet-selecto
 import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
+import { parseToRawPayload } from './parse-to-raw-payload';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {
@@ -41,6 +42,9 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
 
   const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
   const isRawPayloadType = payloadTypeIndex === RAW_PAYLOAD_TYPE_INDEX;
+
+  const rawPayload = parseToRawPayload(message);
+  console.log(rawPayload);
 
   const confirmRequest = useRequestConfirmation(message, (message: SignPayloadRequestOutput) =>
     Shelter.getSigner$(message.sourceAddress).pipe(
