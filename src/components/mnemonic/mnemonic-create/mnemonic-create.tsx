@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { emptyFn } from '../../../config/general';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
+import { CreateNewWalletSelectors } from '../../../screens/create-account/create-new-wallet/create-new-wallet.selectors';
 import { formatSize } from '../../../styles/format-size';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
@@ -16,7 +17,7 @@ import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 
-export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur }) => {
+export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur, testID }) => {
   const { activeTimer, clearActiveTimer } = useActiveTimer();
 
   const [isShowOverlay, setIsShowOverlay] = useState(isString(value));
@@ -43,13 +44,22 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
         style={StyledTextInputStyles.mnemonicInput}
         onBlur={onBlur}
         onChangeText={onChangeText}
+        testID={testID}
       />
       <View style={MnemonicStyles.buttonsContainer}>
-        <ButtonSmallSecondary title="GEN NEW" onPress={handleGenerateNewButtonPress} />
+        <ButtonSmallSecondary
+          title="GEN NEW"
+          onPress={handleGenerateNewButtonPress}
+          testID={CreateNewWalletSelectors.GenNewSeedButton}
+        />
         {isString(value) ? (
           <>
             <Divider size={formatSize(8)} />
-            <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
+            <ButtonSmallSecondary
+              title="COPY"
+              onPress={() => copyStringToClipboard(value)}
+              testID={CreateNewWalletSelectors.CopyButton}
+            />
           </>
         ) : null}
       </View>

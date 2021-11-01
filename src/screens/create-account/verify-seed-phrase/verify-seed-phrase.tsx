@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
+import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
 interface VerifySeedPhraseProps {
@@ -125,7 +126,12 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
           <View
             onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}
           >
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Next"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={VerifySeedPhraseSelectors.NextButton}
+            />
           </View>
           <InsetSubstitute type="bottom" />
         </ScreenContainer>
