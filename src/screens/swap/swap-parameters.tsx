@@ -1,10 +1,13 @@
-import { findDex, FoundDex, estimateTezToToken } from '@quipuswap/sdk';
+import { findDex, FoundDex } from '@quipuswap/sdk';
+import { ContractAbstraction, ContractProvider } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FieldHelperProps, useField } from 'formik';
+import { toString } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { NativeSyntheticEvent, Text, TextInputChangeEventData, TouchableOpacity, View } from 'react-native';
+import { NativeSyntheticEvent, Text, TextInputKeyPressEventData, TouchableOpacity, View } from 'react-native';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
+import { DropdownEqualityFn } from '../../components/dropdown/dropdown';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { SelectPercentageButton } from '../../components/select-percentage-button/select-percentage-button';
@@ -14,6 +17,7 @@ import { SwapAssetAmoutInput } from '../../form/swap-asset-amount-input/swap-ass
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { TokenTypeEnum } from '../../interfaces/token-type.enum';
 import { useThemeSelector } from '../../store/settings/settings-selectors';
+import { useLiquidityBakingAsset } from '../../store/swap/swap-selectors';
 import {
   useAssetsListSelector,
   useSelectedAccountSelector,
@@ -21,9 +25,22 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface, emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenType } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
 import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
+import {
+  estimateAssetToAsset,
+  estimateAssetToAssetInverse,
+  ExchangeTypeEnum,
+  FEE,
+  getAssetInput,
+  getAssetOutput,
+  numbersAndDotRegExp,
+  QS_FACTORIES,
+  SLIPPAGE_TOLERANCE_PRESETS,
+  minimumReceived
+} from '../../utils/swap.utils';
 import { tzToMutez, mutezToTz } from '../../utils/tezos.util';
 import { TokenMetadataResponse } from '../../utils/token-metadata.utils';
 import { SwapProviderDropdown } from './swap-provider-dropdown';
@@ -31,49 +48,43 @@ import { useSwapStyles } from './swap.styles';
 
 export interface SwapFormValues {
   swapFromAmount: AssetAmountInterface;
+  swapToAmount: AssetAmountInterface;
 }
-
-const slippageTolerancePresets = [0.5, 1, 3];
-const FEE = 997;
-export const QS_FACTORIES = {
-  fa1_2Factory: ['KT1FWHLMk5tHbwuSsp31S4Jum4dTVmkXpfJw', 'KT1Lw8hCoaBrHeTeMXbqHPG4sS4K1xn7yKcD'],
-  fa2Factory: ['KT1PvEyN1xCFCgorN92QCfYjw3axS6jawCiJ', 'KT1SwH9P1Tx8a58Mm6qBExQFTcy2rwZyZiXS']
-};
 
 interface Props {
   tokenWhiteList: TokenMetadataResponse[];
   tokenWhiteListIsLoading: boolean;
+  swapProvider: string;
+  slippageTolerance: string;
+  liquidityProviderDex: ContractAbstraction<ContractProvider> | undefined;
+  setSwapProvider: React.Dispatch<React.SetStateAction<string>>;
+  setSlippageTolerance: React.Dispatch<React.SetStateAction<string>>;
 }
 
-enum ExchangeTypeEnum {
-  TEZ_TO_TOKEN = 'TEZ_TO_TOKEN',
-  TOKEN_TO_TEZ = 'TOKEN_TO_TEZ',
-  TOKEN_TO_TOKEN = 'TOKEN_TO_TOKEN'
-}
-
-const dexesInitialState = {
-  outputDex: undefined,
-  inputDex: undefined
-};
-
-export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading }) => {
+export const SwapForm: FC<Props> = ({
+  tokenWhiteList,
+  tokenWhiteListIsLoading,
+  swapProvider,
+  slippageTolerance,
+  liquidityProviderDex,
+  setSwapProvider,
+  setSlippageTolerance
+}) => {
   const theme = useThemeSelector();
-  const [inputDexState, setInputDexState] = useState<FoundDex>();
+  const [inputDexState, setInputDexState] = useState<FoundDex | ContractAbstraction<ContractProvider>>();
   const [outputDexState, setOutputDexState] = useState<FoundDex>();
   const [isDexLoaded, setIsDexLoaded] = useState<boolean>(false);
-  const [swapProvider, setSwapProvider] = useState('provider1');
-  const [swapFromField, , swapFromFieldHelper] = useField<AssetAmountInterface>('swapFromAmount');
-  const [swapToField, , swapToFieldHelper] = useField<AssetAmountInterface>('swapToAmount');
+  const [swapFromField, , swapFromFieldHelper] = useField<AssetAmountInterface>('swapFromField');
+  const [swapToField, , swapToFieldHelper] = useField<AssetAmountInterface>('swapToField');
   const [lastChangedInput, setLastChangedInput] = useState<string>('');
   const [isAdvancedParamsShown, setIsAdvancedParamsShown] = useState(false);
-  const [slippageTolerance, setSlippageTolerance] = useState(0.5);
-  const [estimatedAssetAmountState, setEstimatedAssetAmountState] = useState<BigNumber>(new BigNumber(0));
   const styles = useSwapStyles();
   const assetsList = useAssetsListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = createReadOnlyTezosToolkit(selectedAccount);
+  const liquidityBakingAsset = useLiquidityBakingAsset();
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -114,77 +125,19 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
     return { base, value: prettifiedExchangeRate };
   }, [swapFromField.value.amount, swapToField.value.amount, swapFromField.value.asset]);
 
-  const minimumReceived = useMemo(() => {
-    if ([swapFromField.value.amount, swapToField.value.amount, swapToField.value.asset].includes(undefined)) {
-      return undefined;
-    }
-    const tokensParts = new BigNumber(10).pow(swapToField.value.asset.decimals);
-
-    const outputAssetAmount = swapToField.value.amount ?? new BigNumber(0);
-
-    return new BigNumber(outputAssetAmount)
-      .multipliedBy(tokensParts)
-      .multipliedBy(100 - slippageTolerance)
-      .idiv(100)
-      .dividedBy(tokensParts)
-      .toFixed();
-  }, [swapToField.value.amount, swapToField.value.asset, slippageTolerance]);
-
   const onFocusHandler = (fieldName: string) => {
     setLastChangedInput(fieldName);
   };
 
-  const estimateAssetToAsset = (dexStorage: FoundDex['storage'], value: BigNumber, exchangeType: ExchangeTypeEnum) => {
-    const valueBN = new BigNumber(value);
-    if (valueBN.isZero()) {
-      return new BigNumber(0);
-    }
-    const tezInWithFee = new BigNumber(valueBN).times(FEE);
-    const numerator = tezInWithFee.times(
-      exchangeType === ExchangeTypeEnum.TEZ_TO_TOKEN ? dexStorage.storage.token_pool : dexStorage.storage.tez_pool
-    );
-    const denominator = new BigNumber(
-      exchangeType === ExchangeTypeEnum.TEZ_TO_TOKEN ? dexStorage.storage.tez_pool : dexStorage.storage.token_pool
-    )
-      .times(1000)
-      .plus(tezInWithFee);
-
-    return numerator.idiv(denominator);
+  const equalityFn: DropdownEqualityFn<string> = (item, value) => {
+    return item === value;
   };
 
-  const estimateAssetToAssetInverse = (
-    dexStorage: FoundDex['storage'],
-    value: BigNumber,
-    exchangeType: ExchangeTypeEnum
-  ) => {
-    const tokenValueBN = new BigNumber(value);
-    if (tokenValueBN.isZero()) {
-      return new BigNumber(0);
-    }
-
-    const numerator = new BigNumber(
-      exchangeType === ExchangeTypeEnum.TOKEN_TO_TEZ ? dexStorage.storage.tez_pool : dexStorage.storage.token_pool
-    )
-      .times(1000)
-      .times(tokenValueBN);
-    const denominator = new BigNumber(
-      exchangeType === ExchangeTypeEnum.TOKEN_TO_TEZ ? dexStorage.storage.token_pool : dexStorage.storage.tez_pool
-    )
-      .minus(tokenValueBN)
-      .times(FEE);
-
-    return numerator.idiv(denominator);
-  };
-
-  const onChangeHandler = (
-    value: AssetAmountInterface,
-    name: string,
-    helpers: FieldHelperProps<AssetAmountInterface>
-  ) => {
+  const quipuswapProviderHandler = (value: AssetAmountInterface) => {
     const tokenToToken =
       swapFromField.value.asset.name !== TEZ_TOKEN_METADATA.name &&
       swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name;
-    if (lastChangedInput === 'swapFromAmount') {
+    if (lastChangedInput === 'swapFromField') {
       if (tokenToToken) {
         if (isDexLoaded) {
           const intermediateTezValue = estimateAssetToAsset(
@@ -192,7 +145,6 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
             tzToMutez(new BigNumber(value.amount ?? 0), value.asset.decimals),
             ExchangeTypeEnum.TOKEN_TO_TEZ
           );
-          console.log(intermediateTezValue);
           const estimatedValue = estimateAssetToAsset(
             outputDexState?.storage,
             intermediateTezValue,
@@ -200,12 +152,13 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           );
 
           const tzEstimatedVal = mutezToTz(new BigNumber(estimatedValue), swapToField.value.asset.decimals);
-          setEstimatedAssetAmountState(tzEstimatedVal);
 
           swapToFieldHelper.setValue({
             ...swapToField.value,
             amount: tzEstimatedVal
           });
+          console.log(tzEstimatedVal);
+          swapToFieldHelper.setTouched(true);
         }
       } else {
         const tokenToTez =
@@ -220,7 +173,6 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           );
 
           const tzEstimatedVal = mutezToTz(new BigNumber(estimatedValue), swapToField.value.asset.decimals);
-          setEstimatedAssetAmountState(tzEstimatedVal);
 
           swapToFieldHelper.setValue({
             ...swapToField.value,
@@ -228,7 +180,7 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           });
         }
       }
-    } else if (lastChangedInput === 'swapToAmount') {
+    } else if (lastChangedInput === 'swapToField') {
       const tokenToTez =
         swapFromField.value.asset.name === TEZ_TOKEN_METADATA.name &&
         swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name;
@@ -245,7 +197,6 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
         );
 
         const tzEstimatedVal = mutezToTz(new BigNumber(estimatedValue), swapToField.value.asset.decimals);
-        setEstimatedAssetAmountState(swapToField.value.amount ?? new BigNumber(0));
 
         swapFromFieldHelper.setValue({
           ...swapFromField.value,
@@ -260,7 +211,6 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           );
 
           const tzEstimatedVal = mutezToTz(new BigNumber(estimatedValue), swapToField.value.asset.decimals);
-          setEstimatedAssetAmountState(swapToField.value.amount ?? new BigNumber(0));
 
           swapFromFieldHelper.setValue({
             ...swapFromField.value,
@@ -274,7 +224,6 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           );
 
           const tzEstimatedVal = mutezToTz(new BigNumber(estimatedValue), swapToField.value.asset.decimals);
-          setEstimatedAssetAmountState(swapToField.value.amount ?? new BigNumber(0));
 
           swapFromFieldHelper.setValue({
             ...swapFromField.value,
@@ -283,6 +232,74 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
         }
       }
     }
+  };
+
+  const liquidityBakingProviderHandler = async (value: AssetAmountInterface) => {
+    const tezToToken =
+      swapFromField.value.asset.name === TEZ_TOKEN_METADATA.name &&
+      swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name;
+    if (isDexLoaded) {
+      if (tezToToken) {
+        if (lastChangedInput === 'swapFromField') {
+          const estimatedValue = getAssetOutput(
+            tzToMutez(value.amount ?? new BigNumber(0), value.asset.decimals),
+            ExchangeTypeEnum.TEZ_TO_TOKEN,
+            inputDexState as ContractAbstraction<ContractProvider>
+          );
+
+          swapToFieldHelper.setValue({
+            ...swapToField.value,
+            amount: mutezToTz(estimatedValue, swapToField.value.asset.decimals)
+          });
+        } else {
+          const estimatedValue = getAssetInput(
+            tzToMutez(value.amount ?? new BigNumber(0), value.asset.decimals),
+            ExchangeTypeEnum.TOKEN_TO_TEZ,
+            inputDexState as ContractAbstraction<ContractProvider>
+          );
+
+          swapFromFieldHelper.setValue({
+            ...swapFromField.value,
+            amount: mutezToTz(estimatedValue, swapFromField.value.asset.decimals)
+          });
+        }
+      } else {
+        if (lastChangedInput === 'swapFromField') {
+          const estimatedValue = getAssetOutput(
+            tzToMutez(value.amount ?? new BigNumber(0), value.asset.decimals),
+            ExchangeTypeEnum.TOKEN_TO_TEZ,
+            inputDexState as ContractAbstraction<ContractProvider>
+          );
+
+          swapToFieldHelper.setValue({
+            ...swapToField.value,
+            amount: mutezToTz(estimatedValue, swapToField.value.asset.decimals)
+          });
+        } else {
+          const estimatedValue = getAssetInput(
+            tzToMutez(value.amount ?? new BigNumber(0), value.asset.decimals),
+            ExchangeTypeEnum.TEZ_TO_TOKEN,
+            inputDexState as ContractAbstraction<ContractProvider>
+          );
+
+          swapFromFieldHelper.setValue({
+            ...swapFromField.value,
+            amount: mutezToTz(estimatedValue, swapFromField.value.asset.decimals)
+          });
+        }
+      }
+    }
+  };
+
+  const onChangeHandler = (value: AssetAmountInterface, helpers: FieldHelperProps<AssetAmountInterface>) => {
+    if (swapProvider === 'quipuswap') {
+      quipuswapProviderHandler(value);
+    } else if (swapProvider === 'liquidity-baking') {
+      liquidityBakingProviderHandler(value);
+    }
+
+    console.log({onChangeHandlerValue: value.amount});
+    
     helpers.setValue({
       ...value,
       amount: value.amount
@@ -290,50 +307,76 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
   };
 
   useEffect(() => {
-    console.log('test', estimatedAssetAmountState.toFixed());
-    console.log(exchangeRate);
-  }, [swapToField.value.amount, swapFromField.value.amount]);
-
-  // refactor into separate function findDex
-  useEffect(() => {
     setIsDexLoaded(false);
-    (async () => {
-      if (
-        swapFromField.value.asset.name === TEZ_TOKEN_METADATA.name &&
-        swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name
-      ) {
-        try {
+    if (swapProvider === 'quipuswap') {
+      (async () => {
+        if (
+          swapFromField.value.asset.name === TEZ_TOKEN_METADATA.name &&
+          swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name
+        ) {
           if (swapToField.value.asset.address !== '') {
             setInputDexState(await findDexHandler(swapToField.value.asset.address));
             setIsDexLoaded(true);
           }
-        } catch (e) {
-          console.log({ e });
-        }
-      } else if (
-        swapFromField.value.asset.name !== TEZ_TOKEN_METADATA.name &&
-        swapToField.value.asset.name === TEZ_TOKEN_METADATA.name
-      ) {
-        try {
+        } else if (
+          swapFromField.value.asset.name !== TEZ_TOKEN_METADATA.name &&
+          swapToField.value.asset.name === TEZ_TOKEN_METADATA.name
+        ) {
           setOutputDexState(await findDexHandler(swapFromField.value.asset.address));
           setIsDexLoaded(true);
-        } catch (e) {
-          console.log({ e });
-        }
-      } else if (
-        swapFromField.value.asset.name !== TEZ_TOKEN_METADATA.name &&
-        swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name
-      ) {
-        try {
+        } else if (
+          swapFromField.value.asset.name !== TEZ_TOKEN_METADATA.name &&
+          swapToField.value.asset.name !== TEZ_TOKEN_METADATA.name
+        ) {
           setInputDexState(await findDexHandler(swapFromField.value.asset.address));
           setOutputDexState(await findDexHandler(swapToField.value.asset.address));
           setIsDexLoaded(true);
-        } catch (e) {
-          console.log({ e });
         }
-      }
-    })();
-  }, [swapFromField.value.asset, swapToField.value.asset]);
+      })();
+    } else if (swapProvider === 'liquidity-baking') {
+      setInputDexState(undefined);
+      setOutputDexState(undefined);
+      (async () => {
+        setInputDexState(liquidityProviderDex);
+        setIsDexLoaded(true);
+      })();
+    }
+  }, [swapFromField.value.asset, swapToField.value.asset, swapProvider]);
+
+  useEffect(() => {
+    if (swapProvider === 'liquidity-baking') {
+      swapFromFieldHelper.setValue({
+        asset: tezosToken,
+        amount: new BigNumber(0)
+      });
+      swapToFieldHelper.setValue({
+        asset: liquidityBakingAsset[0] as TokenInterface,
+        amount: new BigNumber(0)
+      });
+    } else if (swapProvider === 'quipuswap') {
+      swapFromFieldHelper.setValue({
+        asset: tezosToken,
+        amount: new BigNumber(0)
+      });
+      swapToFieldHelper.setValue({
+        asset: emptyToken,
+        amount: new BigNumber(0)
+      });
+    }
+  }, [swapProvider]);
+
+  const minimumReceivedValue = useMemo(
+    () => minimumReceived(swapFromField.value, swapToField.value, slippageTolerance),
+    [swapToField.value.amount, swapToField.value.asset, slippageTolerance]
+  );
+
+  const getTokenWhiteList = useMemo(() => {
+    if (swapProvider === 'quipuswap') {
+      return !tokenWhiteListIsLoading ? (tokenWhiteList as unknown as TokenInterface[]) : [];
+    } else if (swapProvider === 'liquidity-baking') {
+      return liquidityBakingAsset;
+    }
+  }, [swapProvider]);
 
   const swapAssetsHandler = () => {
     swapToFieldHelper.setValue({
@@ -346,36 +389,74 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
     });
   };
 
-  const onSlippageButtonPressHandler = (value: number) => {
+  const onSlippageButtonPressHandler = (value: string) => {
     setSlippageTolerance(value);
   };
 
-  const onChangeSlippageHandler = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    setSlippageTolerance(0);
-    console.log({ e });
+  const onKeyPressSlippageHandler = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    const value = slippageTolerance;
+    if (isDefined(value) && value !== '') {
+      if (value.indexOf('0') !== -1 && value.length === 1 && e.nativeEvent.key === '0') {
+        e.preventDefault();
+
+        return false;
+      }
+      if (value.indexOf('.') !== -1 && e.nativeEvent.key === '.') {
+        e.preventDefault();
+
+        return false;
+      }
+      if (!numbersAndDotRegExp.test(e.nativeEvent.key)) {
+        e.preventDefault();
+
+        return false;
+      }
+    }
+  };
+
+  const onChangeSlippageTolerance = (text: string) => {
+    setSlippageTolerance(text);
   };
 
   const renderDropdownValue = () => (
     <View style={[styles.horizontalWrapper, styles.verticalMargin]}>
       <Text style={styles.regularText}>Swap provider</Text>
       <View style={styles.rightSideWrapper}>
-        <Icon
-          name={theme === 'light' ? IconNameEnum.QuipuswapNewLogoBlack : IconNameEnum.QuipuswapNewLogoWhite}
-          width={formatSize(128)}
-          height={formatSize(24)}
-        />
+        {swapProvider === 'quipuswap' ? (
+          <Icon
+            name={theme === 'light' ? IconNameEnum.QuipuswapNewLogoBlack : IconNameEnum.QuipuswapNewLogoWhite}
+            width={formatSize(128)}
+            height={formatSize(24)}
+          />
+        ) : null}
+        {swapProvider === 'liquidity-baking' ? (
+          <Icon
+            name={theme === 'light' ? IconNameEnum.LbLogoBlack : IconNameEnum.LbLogoWhite}
+            width={formatSize(128)}
+            height={formatSize(24)}
+          />
+        ) : null}
         <Icon name={IconNameEnum.TriangleDown} size={formatSize(24)} />
       </View>
     </View>
   );
 
-  const listItem = () => (
+  const listItem = ({ item }: { item: string }) => (
     <View style={styles.horizontalWrapper}>
-      <Icon
-        name={theme === 'light' ? IconNameEnum.QuipuswapNewLogoBlack : IconNameEnum.QuipuswapNewLogoWhite}
-        width={formatSize(128)}
-        height={formatSize(24)}
-      />
+      {item === 'quipuswap' ? (
+        <Icon
+          name={theme === 'light' ? IconNameEnum.QuipuswapNewLogoBlack : IconNameEnum.QuipuswapNewLogoWhite}
+          width={formatSize(128)}
+          height={formatSize(24)}
+        />
+      ) : null}
+      {item === 'liquidity-baking' ? (
+        <Icon
+          name={theme === 'light' ? IconNameEnum.LbLogoBlack : IconNameEnum.LbLogoWhite}
+          width={formatSize(128)}
+          height={formatSize(24)}
+        />
+      ) : null}
       <Text style={styles.regularNumbers}>1.0 TOKEN = 2.000000 TMPL</Text>
     </View>
   );
@@ -383,7 +464,7 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
   return (
     <>
       <SwapAssetAmoutInput
-        name="swapFromAmount"
+        name="swapFromField"
         label="From"
         assetsList={filteredAssetsListWithTez}
         onChangeHandler={onChangeHandler}
@@ -393,11 +474,9 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
         <Icon name={IconNameEnum.SwapAction} size={formatSize(24)} />
       </TouchableOpacity>
       <SwapAssetAmoutInput
-        name="swapToAmount"
+        name="swapToField"
         label="To"
-        assetsList={
-          !tokenWhiteListIsLoading && tokenWhiteList !== [] ? (tokenWhiteList as unknown as TokenInterface[]) : []
-        }
+        assetsList={getTokenWhiteList as unknown as TokenInterface[]}
         onChangeHandler={onChangeHandler}
         onFocusHandler={onFocusHandler}
       />
@@ -416,10 +495,13 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
         <View>
           <View style={[styles.horizontalWrapper, styles.verticalMargin]}>
             <SwapProviderDropdown
+              title={'Select provider to swap'}
               value={swapProvider}
+              list={['quipuswap', 'liquidity-baking']}
               renderValue={renderDropdownValue}
-              listItem={listItem}
+              renderListItem={listItem}
               setValueHandler={setSwapProvider}
+              equalityFn={equalityFn}
             />
           </View>
           <View style={[styles.horizontalWrapper, styles.verticalMargin]}>
@@ -437,7 +519,7 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
           <View style={[styles.horizontalWrapper, styles.verticalMargin]}>
             <Text style={styles.regularText}>Slippage tolerance:</Text>
             <View style={styles.rightSideWrapper}>
-              {slippageTolerancePresets.map(preset => (
+              {SLIPPAGE_TOLERANCE_PRESETS.map(preset => (
                 <SelectPercentageButton
                   active={preset === slippageTolerance}
                   value={preset}
@@ -447,10 +529,16 @@ export const SwapForm: FC<Props> = ({ tokenWhiteList, tokenWhiteListIsLoading })
               ))}
             </View>
           </View>
-          <StyledTextInput onChange={onChangeSlippageHandler} placeholder="Customize %" />
+          <StyledTextInput
+            keyboardType="numeric"
+            value={toString(slippageTolerance)}
+            onChangeText={onChangeSlippageTolerance}
+            onKeyPress={onKeyPressSlippageHandler}
+            placeholder="Customize %"
+          />
           <View style={[styles.horizontalWrapper, styles.verticalMargin]}>
             <Text style={styles.regularText}>Minimum received:</Text>
-            <Text style={styles.regularNumbers}>{minimumReceived}</Text>
+            <Text style={styles.regularNumbers}>{minimumReceivedValue}</Text>
           </View>
           <WarningBlock />
         </View>

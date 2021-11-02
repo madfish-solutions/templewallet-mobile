@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
@@ -50,6 +50,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
+  console.log({valueInComponentTop: value.amount});
 
   const [inputValue, setInputValue] = useState(value.amount ?? new BigNumber(0));
   const [inputTypeIndex, setInputTypeIndex] = useState(0);

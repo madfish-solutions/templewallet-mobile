@@ -74,5 +74,7 @@ export enum IconNameEnum {
   Navigation = 'Navigation',
   Hummer = 'Hummer',
   QuipuswapNewLogoBlack = 'QuipuswapNewLogoBlack',
-  QuipuswapNewLogoWhite = 'QuipuswapNewLogoWhite'
+  QuipuswapNewLogoWhite = 'QuipuswapNewLogoWhite',
+  LbLogoBlack = 'LbLogoBlack',
+  LbLogoWhite = 'LbLogoWhite'
 }

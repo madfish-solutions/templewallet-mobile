@@ -4,11 +4,12 @@ import { BigNumber } from 'bignumber.js';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
+import { isDefined } from './is-defined';
 import { tzToMutez } from './tezos.util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
-  if (opParam.kind === OpKind.DELEGATION) {
+  if (opParam.kind === OpKind.DELEGATION && isDefined(opParam.delegate)) {
     // Delegate
     return {
       type: ParamPreviewTypeEnum.Delegate,

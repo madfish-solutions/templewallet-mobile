@@ -40,5 +40,11 @@ export const useSwapStyles = createUseStyles(({ colors, typography }) => ({
   },
   verticalMargin: {
     marginVertical: formatSize(6)
+  },
+  swapButton: {
+    paddingTop: formatSize(8),
+    paddingBottom: formatSize(16),
+    paddingHorizontal: formatSize(8),
+    backgroundColor: colors.white
   }
 }));

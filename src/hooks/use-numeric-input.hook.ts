@@ -24,6 +24,8 @@ export const useNumericInput = (
   );
 
   const handleChange = (newStringValue: string) => {
+    console.log({newStringValue});
+    
     let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
     const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
 

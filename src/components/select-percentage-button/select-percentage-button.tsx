@@ -6,9 +6,9 @@ import { EventFn } from '../../config/general';
 import { useSelectPercentageButtonStyles } from './select-percentage-button.styles';
 
 interface Props {
-  value: number;
+  value: string;
   active: boolean;
-  onPress: EventFn<number, void>;
+  onPress: EventFn<string, void>;
 }
 
 export const SelectPercentageButton: FC<Props> = ({ value, active, onPress }) => {

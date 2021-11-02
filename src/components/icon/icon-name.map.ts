@@ -33,6 +33,8 @@ import HummerIcon from './assets/hummer.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import LbLogoBlack from './assets/lb-logo-black.svg';
+import LbLogoWhite from './assets/lb-logo-white.svg';
 import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
@@ -157,5 +159,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapAction]: SwapActionIcon,
   [IconNameEnum.ChevronUp]: ChevronUpIcon,
   [IconNameEnum.QuipuswapNewLogoBlack]: QuipuswapNewLogoBlack,
-  [IconNameEnum.QuipuswapNewLogoWhite]: QuipuswapNewLogoWhite
+  [IconNameEnum.QuipuswapNewLogoWhite]: QuipuswapNewLogoWhite,
+  [IconNameEnum.LbLogoBlack]: LbLogoBlack,
+  [IconNameEnum.LbLogoWhite]: LbLogoWhite
 };

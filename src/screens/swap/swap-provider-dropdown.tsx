@@ -1,22 +1,28 @@
 import React from 'react';
-import { Text } from 'react-native';
 
-import { Dropdown } from '../../components/dropdown/dropdown';
+import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown';
+import { EventFn } from '../../config/general';
 
-export const SwapProviderDropdown = ({ value, renderValue, listItem, setValueHandler }) => {
-  const equalityFunction = (item, value) => {
-    return item === value;
-  };
+interface Props<T> extends DropdownProps<T> {
+  value: T;
+  setValueHandler?: React.Dispatch<React.SetStateAction<string>>;
+}
 
-  return (
-    <Dropdown
-      title={'Select provider for swap'}
-      value={value}
-      list={['provider1', 'provider2']}
-      equalityFn={equalityFunction}
-      renderValue={renderValue}
-      renderListItem={listItem}
-      onValueChange={setValueHandler}
-    />
-  );
-};
+export const SwapProviderDropdown = <T extends unknown>({
+  value,
+  list,
+  renderValue,
+  renderListItem,
+  equalityFn,
+  setValueHandler
+}: Props<T>) => (
+  <Dropdown<T>
+    title={'Select provider for swap'}
+    value={value}
+    list={list}
+    equalityFn={equalityFn}
+    renderValue={renderValue}
+    renderListItem={renderListItem}
+    onValueChange={setValueHandler as EventFn<T | undefined, void>}
+  />
+);

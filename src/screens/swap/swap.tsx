@@ -1,81 +1,165 @@
+import { swap, withTokenApprove } from '@quipuswap/sdk';
+import { ContractAbstraction, ContractProvider, OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { SchemaOf, object } from 'yup';
 
+import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { bigNumberValidation } from '../../form/validation/big-number';
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
+import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSwapTokensWhitelist } from '../../store/swap/swap-selectors';
-import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
-import { TokenInterface, emptyToken } from '../../token/interfaces/token.interface';
-import { SwapForm, SwapFormValues } from './swap-form';
+import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { TokenInterface } from '../../token/interfaces/token.interface';
+import { isDefined } from '../../utils/is-defined';
+import { createReadOnlyTezosToolkit } from '../../utils/network/tezos-toolkit.utils';
+import { deadline, LIQUIDITY_BAKING_CONTRACT, minimumReceived, QS_FACTORIES } from '../../utils/swap.utils';
+import { tzToMutez } from '../../utils/tezos.util';
+import { SwapForm } from './swap-parameters';
+import { swapFormInitialValues, swapFormValidationSchema } from './swap-parameters.form';
+import { useSwapStyles } from './swap.styles';
 
 export const Swap = () => {
   const { data: tokenWhiteList, isLoading } = useSwapTokensWhitelist();
-  const assetsList = useAssetsListSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
+  const styles = useSwapStyles();
+  const { navigate } = useNavigation();
+  const selectedAccount = useSelectedAccountSelector();
+  const tezos = createReadOnlyTezosToolkit(selectedAccount);
+  const [slippageTolerance, setSlippageTolerance] = useState<string>('0.5');
+  const [swapProvider, setSwapProvider] = useState('quipuswap');
+  const [liquidityProviderDexStorage, setLiquidityProviderDexStorage] =
+    useState<ContractAbstraction<ContractProvider>>();
+  const [liquidityProviderDex, setLiquidityProviderDex] = useState<ContractAbstraction<ContractProvider>>();
 
-  const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...filteredAssetsList],
-    [tezosToken, filteredAssetsList]
-  );
+  useEffect(() => {
+    (async () => {
+      const dex = await tezos.contract.at(LIQUIDITY_BAKING_CONTRACT);
+      setLiquidityProviderDex(dex);
+      setLiquidityProviderDexStorage(await dex.storage());
+    })();
+  }, []);
 
-  // TODO: move to separate file
-  const swapFormInitialValues = useMemo<SwapFormValues>(
-    () => ({
-      swapFromAmount: {
-        asset: tezosToken,
-        amount: new BigNumber(0)
-      },
-      swapToAmount: {
-        asset: emptyToken,
-        amount: new BigNumber(0)
+  const onSwapSubmitHandler = async ({
+    swapFromField,
+    swapToField
+  }: {
+    swapFromField: AssetAmountInterface;
+    swapToField: AssetAmountInterface;
+  }) => {
+    if (swapProvider === 'quipuswap') {
+      const formatAssetForSwap = (asset: TokenInterface) => {
+        return asset.name !== TEZ_TOKEN_METADATA.name
+          ? Object.assign({}, { contract: asset.address, id: asset.id })
+          : 'tez';
+      };
+
+      const inputValue = tzToMutez(swapFromField.amount ?? new BigNumber(0), swapFromField.asset.decimals);
+      const fromAsset = formatAssetForSwap(swapFromField.asset);
+      const toAsset = formatAssetForSwap(swapToField.asset);
+
+      try {
+        const transferParamsArray = await swap(
+          tezos,
+          QS_FACTORIES,
+          fromAsset,
+          toAsset,
+          inputValue,
+          Number(slippageTolerance)
+        );
+        const opParams: ParamsWithKind[] = transferParamsArray.map(item => ({ ...item, kind: OpKind.TRANSACTION }));
+
+        navigate(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams
+        });
+      } catch (e) {
+        console.log({ e });
       }
-    }),
-    [filteredAssetsListWithTez]
-  );
+    } else if (swapProvider === 'liquidity-baking') {
+      if (swapFromField.asset.name !== TEZ_TOKEN_METADATA.name && isDefined(liquidityProviderDex)) {
+        const transferParams = liquidityProviderDex.methods
+          .tokenToXtz(
+            selectedAccount.publicKeyHash,
+            tzToMutez(swapFromField.amount ?? new BigNumber(0), swapFromField.asset.decimals),
+            tzToMutez(
+              new BigNumber(minimumReceived(swapFromField, swapToField, slippageTolerance) ?? 0) ?? new BigNumber(0),
+              swapToField.asset.decimals
+            ),
+            deadline().toString()
+          )
+          .toTransferParams();
 
-  const swapFormValidationSchema: SchemaOf<SwapFormValues> = object().shape({
-    // TODO: move validation in separate file (also reuse in send modal form)
-    swapFromAmount: object().shape({
-      asset: object().shape({}).required(makeRequiredErrorMessage('Asset')),
-      amount: bigNumberValidation
-        .clone()
-        .required(makeRequiredErrorMessage('Amount'))
-        .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-          if (value instanceof BigNumber) {
-            return value.gt(0);
-          }
+        const params = await withTokenApprove(
+          tezos,
+          { contract: swapFromField.asset.address }, // asset in SDK format (send {contract: 'contract_address'})
+          selectedAccount.publicKeyHash,
+          liquidityProviderDex.address,
+          tzToMutez(swapFromField.amount ?? new BigNumber(0), swapFromField.asset.decimals),
+          [transferParams]
+        );
 
-          return false;
-        })
-    }),
-    swapToAmount: object().shape({
-      asset: object().shape({}).required(makeRequiredErrorMessage('Asset'))
-    })
-  });
+        const opParams: ParamsWithKind[] = params.map(item => ({ ...item, kind: OpKind.TRANSACTION }));
+
+        navigate(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams
+        });
+      } else {
+        if (isDefined(liquidityProviderDex)) {
+          const transferParams = liquidityProviderDex.methods
+            .xtzToToken(
+              selectedAccount.publicKeyHash,
+              tzToMutez(swapToField.amount ?? new BigNumber(0), swapToField.asset.decimals),
+              deadline.toString()
+            )
+            .toTransferParams({
+              amount: tzToMutez(swapFromField.amount ?? new BigNumber(0), swapFromField.asset.decimals).toNumber(),
+              mutez: true
+            });
+
+          const opParams: ParamsWithKind[] = [transferParams].map(item => ({
+            ...item,
+            kind: OpKind.TRANSACTION
+          }));
+
+          navigate(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          });
+        }
+      }
+    }
+  };
 
   return (
     <Formik
-      initialValues={swapFormInitialValues}
+      initialValues={swapFormInitialValues(tezosToken)}
       enableReinitialize={true}
       validationSchema={swapFormValidationSchema}
-      onSubmit={() => console.log('test')}
+      onSubmit={onSwapSubmitHandler}
+      validateOnChange={true}
     >
       {({ submitForm }) => (
         <>
           <ScreenContainer>
             <InsetSubstitute />
-
-            <SwapForm tokenWhiteList={tokenWhiteList} tokenWhiteListIsLoading={isLoading} />
+            <SwapForm
+              tokenWhiteList={tokenWhiteList}
+              tokenWhiteListIsLoading={isLoading}
+              swapProvider={swapProvider}
+              slippageTolerance={slippageTolerance}
+              liquidityProviderDex={liquidityProviderDexStorage}
+              setSwapProvider={setSwapProvider}
+              setSlippageTolerance={setSlippageTolerance}
+            />
           </ScreenContainer>
-          <View>
+          <View style={styles.swapButton}>
             <ButtonLargePrimary title="Swap" onPress={submitForm} />
           </View>
         </>
