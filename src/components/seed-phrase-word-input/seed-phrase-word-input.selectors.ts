@@ -1,3 +1,4 @@
 export enum SeedPhraseWordInputSelectors {
-  Title = 'SeedPhraseWordInputSelectors.Title'
+  Title = 'SeedPhraseWordInputSelectors.Title',
+  Input = 'SeedPhraseWordInputSelectors.Input'
 }
