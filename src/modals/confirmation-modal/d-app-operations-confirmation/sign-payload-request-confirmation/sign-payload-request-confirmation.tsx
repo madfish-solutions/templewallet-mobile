@@ -53,6 +53,7 @@ const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
 const RAW_PAYLOAD_TYPE_INDEX = 0;
 
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
+  console.log('df');
   const styles = useSignPayloadRequestConfirmationStyles();
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
