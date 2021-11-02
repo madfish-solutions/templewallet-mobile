@@ -16,6 +16,7 @@ import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
+import { useParseSignPayload } from '../../../../hooks/parse-sign-payload/parse-sign-payload';
 import { useRequestConfirmation } from '../../../../hooks/request-confirmation/use-request-confirmation.hook';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
@@ -26,7 +27,6 @@ import { useAccountsListSelector } from '../../../../store/wallet/wallet-selecto
 import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
-import { parseToRawPayload } from './parse-to-raw-payload';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {
@@ -43,8 +43,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
   const isRawPayloadType = payloadTypeIndex === RAW_PAYLOAD_TYPE_INDEX;
 
-  const rawPayload = parseToRawPayload(message);
-  console.log(rawPayload);
+  const rawPayload = useParseSignPayload(message);
 
   const confirmRequest = useRequestConfirmation(message, (message: SignPayloadRequestOutput) =>
     Shelter.getSigner$(message.sourceAddress).pipe(
@@ -96,7 +95,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
           />
         </View>
         <Divider size={formatSize(16)} />
-        <Text style={styles.payloadText}>{message.payload}</Text>
+        <Text style={styles.payloadText}>{isRawPayloadType ? rawPayload : message.payload}</Text>
       </ScreenContainer>
       <ModalButtonsContainer>
         <ButtonLargeSecondary title="Cancel" onPress={goBack} />
