@@ -25,6 +25,7 @@ const MIN_POSITIVE_AMOUNT_VALUE = 0.01;
 const MAX_NEGATIVE_AMOUNT_VALUE = -0.01;
 
 export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
+  console.log('asd');
   const styles = useActivityGroupAmountChangeStyles();
 
   const dispatch = useDispatch();
