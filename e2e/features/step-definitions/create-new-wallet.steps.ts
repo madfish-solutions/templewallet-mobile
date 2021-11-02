@@ -2,8 +2,9 @@ import { Given } from '@wdio/cucumber-framework';
 
 import { Pages } from './pages';
 
-const { welcome, createNewWallet } = Pages;
-let seed = '';
+const { welcome, createNewWallet, verifyYourSeed } = Pages;
+
+let seedPhrase = '';
 
 Given(/^I press CREATE NEW WALLET button$/, async () => {
   await welcome.createNewWalletButton.click();
@@ -21,13 +22,26 @@ Given(/^I press COPY button in SEED PHRASE output$/, async () => {
   await createNewWallet.copySeedButton.click();
 });
 
-Given(/^I save seed$/, async () => {
-  seed = await createNewWallet.seedPhraseOut.getValue();
-  const words = seed.split(' ');
-  console.log(seed);
-  console.log(words[3]);
+Given(/^I save seed phrase$/, async () => {
+  seedPhrase = await createNewWallet.seedPhraseOut.getValue();
 });
 
-Given(/^I am confirming seed phrase$/, async () => {
-  const position = ;
+Given(/^I enter correct seed words$/, async () => {
+  const confirmationTitles = await verifyYourSeed.getConfirmationTitles();
+  const confirmationInputs = await verifyYourSeed.getConfirmationInputs();
+
+  const seedPhraseWords = seedPhrase.split(' ');
+
+  for (let i = 0; i < confirmationTitles.length; i++) {
+    const title = confirmationTitles[i];
+    const input = confirmationInputs[i];
+
+    const titleText = await title.getValue();
+
+    const [, wordNumber] = titleText.split(' ');
+    const wordIndex = +wordNumber - 1;
+    const confirmationWord = seedPhraseWords[wordIndex];
+
+    await input.setValue(confirmationWord);
+  }
 });
