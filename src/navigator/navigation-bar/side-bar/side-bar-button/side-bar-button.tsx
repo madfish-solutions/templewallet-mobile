@@ -36,8 +36,7 @@ export const SideBarButton: FC<Props> = ({ label, iconName, routeName, focused, 
     <TouchableOpacity
       style={[styles.container, conditionalStyle(focused, { borderLeftColor: color })]}
       disabled={disabled}
-      onPress={() => navigate(routeName)}
-    >
+      onPress={() => navigate(routeName)}>
       <Icon name={iconName} size={formatSize(28)} color={color} />
       <Divider size={formatSize(8)} />
       <Text style={[styles.label, { color }]}>{label}</Text>

@@ -146,8 +146,7 @@ export const SelectBakerModal: FC = () => {
       <BottomSheet
         title="Sort bakers by:"
         contentHeight={formatSize(260)}
-        controller={revealSelectBottomSheetController}
-      >
+        controller={revealSelectBottomSheetController}>
         {bakersSortFieldsOptions.map(value => (
           <BottomSheetActionButton
             key={value}

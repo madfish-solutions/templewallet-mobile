@@ -113,8 +113,7 @@ export const SendModal: FC = () => {
       initialValues={sendModalInitialValues}
       enableReinitialize={true}
       validationSchema={sendModalValidationSchema}
-      onSubmit={onSubmit}
-    >
+      onSubmit={onSubmit}>
       {({ values, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />
@@ -140,13 +139,11 @@ export const SendModal: FC = () => {
                 void (
                   transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
                 )
-              }
-            >
+              }>
               <FormCheckbox
                 disabled={transferBetweenOwnAccountsDisabled}
                 name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-              >
+                size={formatSize(16)}>
                 <Text style={styles.checkboxText}>Transfer between my accounts</Text>
               </FormCheckbox>
             </View>

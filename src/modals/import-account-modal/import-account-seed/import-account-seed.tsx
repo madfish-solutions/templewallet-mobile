@@ -48,8 +48,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
       initialValues={importAccountSeedInitialValues}
       validationSchema={importAccountSeedValidationSchema}
       enableReinitialize={true}
-      onSubmit={onSubmit}
-    >
+      onSubmit={onSubmit}>
       {({ values, submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

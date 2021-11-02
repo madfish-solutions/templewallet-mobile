@@ -73,8 +73,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender, opParams: newOpParams, message })}
-    >
+      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender, opParams: newOpParams, message })}>
       <AppMetadataView appMetadata={message.appMetadata} />
       <Divider />
     </OperationsConfirmation>
