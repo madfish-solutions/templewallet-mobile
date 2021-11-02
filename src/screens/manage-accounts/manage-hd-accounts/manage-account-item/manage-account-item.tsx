@@ -65,8 +65,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
                   description: 'Switch to another account and try again'
                 })
               )
-            }
-          >
+            }>
             <Switch
               value={account.isVisible}
               disabled={isVisibilitySwitchDisabled}

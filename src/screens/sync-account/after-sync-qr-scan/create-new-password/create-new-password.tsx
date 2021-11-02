@@ -50,8 +50,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
         passwordConfirmation: ''
       }}
       validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}
-    >
+      onSubmit={handleSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <Divider />

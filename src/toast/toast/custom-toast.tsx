@@ -54,15 +54,16 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
           <View style={styles.textWrapper}>
             {isString(title) && (
               <Text
-                style={[styles.title, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}
-              >
+                style={[styles.title, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}>
                 {title}
               </Text>
             )}
             <Text
               numberOfLines={!isString(title) ? 2 : 1}
-              style={[styles.description, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}
-            >
+              style={[
+                styles.description,
+                { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }
+              ]}>
               {description}
             </Text>
             {isDefined(operationHash) && (

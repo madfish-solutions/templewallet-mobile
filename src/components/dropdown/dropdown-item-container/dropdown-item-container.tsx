@@ -18,8 +18,7 @@ export const DropdownItemContainer: FC<Props> = ({ hasMargin = false, isSelected
         styles.root,
         conditionalStyle(hasMargin, styles.rootMargin),
         conditionalStyle(isSelected, styles.rootSelected)
-      ]}
-    >
+      ]}>
       {children}
     </View>
   );

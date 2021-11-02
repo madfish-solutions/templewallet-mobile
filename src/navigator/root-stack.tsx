@@ -74,8 +74,7 @@ export const RootStackScreen = () => {
       ref={globalNavigationRef}
       theme={theme}
       onReady={handleNavigationContainerStateChange}
-      onStateChange={handleNavigationContainerStateChange}
-    >
+      onStateChange={handleNavigationContainerStateChange}>
       <PortalProvider>
         <CurrentRouteNameContext.Provider value={currentRouteName}>
           <RootStack.Navigator screenOptions={screenOptions}>
