@@ -2,8 +2,7 @@ import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { EMPTY } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { AccountDropdownItem } from '../../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -25,7 +24,7 @@ import { Shelter } from '../../../../shelter/shelter';
 import { navigateAction } from '../../../../store/root-state.actions';
 import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
+import { showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
@@ -40,7 +39,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
 
-  const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
+const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
   const isRawPayloadType = payloadTypeIndex === RAW_PAYLOAD_TYPE_INDEX;
 
   const rawPayload = useParseSignPayload(message);
@@ -98,9 +97,9 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         <Text style={styles.payloadText}>{isRawPayloadType ? rawPayload : message.payload}</Text>
       </ScreenContainer>
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" onPress={goBack} />
+        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Sign" onPress={() => confirmRequest(message)} />
+        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={() => confirmRequest(message)} />
       </ModalButtonsContainer>
     </>
   );
