@@ -2,8 +2,7 @@ import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { EMPTY } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { AccountDropdownItem } from '../../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -17,7 +16,7 @@ import { ModalButtonsContainer } from '../../../../components/modal-buttons-cont
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
 import { useParseSignPayload } from '../../../../hooks/parse-sign-payload/parse-sign-payload';
-import { useRequestConfirmation } from '../../../../hooks/request-confirmation/use-request-confirmation.hook';
+import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
@@ -25,13 +24,31 @@ import { Shelter } from '../../../../shelter/shelter';
 import { navigateAction } from '../../../../store/root-state.actions';
 import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { showErrorToast, showSuccessToast } from '../../../../toast/toast.utils';
+import { showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {
   message: SignPayloadRequestOutput;
 }
+
+const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
+  Shelter.getSigner$(message.sourceAddress).pipe(
+    switchMap(signer => signer.sign(message.payload)),
+    switchMap(({ prefixSig }) =>
+      BeaconHandler.respond({
+        type: BeaconMessageType.SignPayloadResponse,
+        id: message.id,
+        signingType: message.signingType,
+        signature: prefixSig
+      })
+    ),
+    map(() => {
+      showSuccessToast({ description: 'Successfully signed!' });
+
+      return navigateAction(StacksEnum.MainStack);
+    })
+  );
 
 const RAW_PAYLOAD_TYPE_INDEX = 0;
 
@@ -45,29 +62,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
 
   const rawPayload = useParseSignPayload(message);
 
-  const confirmRequest = useRequestConfirmation(message, (message: SignPayloadRequestOutput) =>
-    Shelter.getSigner$(message.sourceAddress).pipe(
-      switchMap(signer => signer.sign(message.payload)),
-      switchMap(({ prefixSig }) =>
-        BeaconHandler.respond({
-          type: BeaconMessageType.SignPayloadResponse,
-          id: message.id,
-          signingType: message.signingType,
-          signature: prefixSig
-        })
-      ),
-      map(() => {
-        showSuccessToast({ description: 'Successfully signed!' });
-
-        return navigateAction(StacksEnum.MainStack);
-      }),
-      catchError(err => {
-        showErrorToast({ description: err.message });
-
-        return EMPTY;
-      })
-    )
-  );
+  const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
   const approver = useMemo(
     () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
@@ -98,9 +93,9 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         <Text style={styles.payloadText}>{isRawPayloadType ? rawPayload : message.payload}</Text>
       </ScreenContainer>
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" onPress={goBack} />
+        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Sign" onPress={() => confirmRequest(message)} />
+        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={() => confirmRequest(message)} />
       </ModalButtonsContainer>
     </>
   );
