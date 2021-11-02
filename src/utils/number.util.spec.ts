@@ -6,7 +6,7 @@ const bigNumberMoreThanThousand = new BigNumber(10000.255);
 
 describe('formatAssetAmount', () => {
   it('should format positive bignumber value and return string with 6 decimals', () => {
-    expect(formatAssetAmount(new BigNumber(100.255555555))).toEqual('100.255555');
+    expect(formatAssetAmount(new BigNumber(100.255555555))).toEqual('100.255556');
   });
 
   it('should format positive bignumber less than 1000 value and return string with 3 decimals', () => {
@@ -14,7 +14,7 @@ describe('formatAssetAmount', () => {
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals', () => {
-    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10000.25');
+    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10000.26');
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals using rounding mode up', () => {
