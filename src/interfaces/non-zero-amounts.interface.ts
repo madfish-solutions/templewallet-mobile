@@ -7,5 +7,5 @@ export interface NonZeroAmounts {
     symbol: string;
     exchangeRate: number;
   }[];
-  dollarSums: number[];
+  dollarSums: BigNumber[];
 }

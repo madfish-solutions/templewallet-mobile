@@ -18,8 +18,8 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
 
   return useMemo(() => {
     const amounts = [];
-    let positiveAmountSum = 0;
-    let negativeAmountSum = 0;
+    let positiveAmountSum = new BigNumber(0);
+    let negativeAmountSum = new BigNumber(0);
 
     for (const { address, id, amount } of group) {
       const slug = getTokenSlug({ address, id });
@@ -33,12 +33,11 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
       const isPositive = parsedAmount.isPositive();
 
       if (isDefined(exchangeRate)) {
-        //todo rewrite using BigNumber
-        const summand = parsedAmount.toNumber() * exchangeRate;
+        const summand = parsedAmount.multipliedBy(exchangeRate);
         if (isPositive) {
-          positiveAmountSum += summand;
+          positiveAmountSum = positiveAmountSum.plus(summand);
         } else {
-          negativeAmountSum += summand;
+          negativeAmountSum = negativeAmountSum.plus(summand);
         }
       }
 
@@ -56,6 +55,6 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
       }
     }
 
-    return { amounts, dollarSums: [negativeAmountSum, positiveAmountSum].filter(sum => sum !== 0) };
+    return { amounts, dollarSums: [negativeAmountSum, positiveAmountSum].filter(sum => !sum.isZero()) };
   }, [group, getTokenMetadata, exchangeRates]);
 };

@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
@@ -19,11 +18,14 @@ export const ActivityGroupDollarAmountChange: FC<Props> = ({ nonZeroAmounts }) =
       {nonZeroAmounts.dollarSums.map((amount, index) => (
         <FormattedAmount
           key={index}
-          amount={new BigNumber(amount)}
+          amount={amount}
           isDollarValue={true}
-          showMinusSign={amount < 0}
-          showPlusSign={amount > 0}
-          style={[styles.valueText, conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)]}
+          showMinusSign={amount.isLessThan(0)}
+          showPlusSign={amount.isGreaterThan(0)}
+          style={[
+            styles.valueText,
+            conditionalStyle(amount.isGreaterThan(0), styles.positiveAmountText, styles.negativeAmountText)
+          ]}
         />
       ))}
     </View>
