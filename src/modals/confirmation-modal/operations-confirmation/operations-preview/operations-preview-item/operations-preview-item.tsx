@@ -9,6 +9,7 @@ import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.en
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
+import { emptyTokenMetadata } from '../../../../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
@@ -105,7 +106,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {isDefined(token) && Number(token.amount) > 0 && (
+            {isDefined(token) && Number(token.amount) > 0 && token.tokenData !== emptyTokenMetadata && (
               <View>
                 <AssetValueText
                   amount={token.amount}
