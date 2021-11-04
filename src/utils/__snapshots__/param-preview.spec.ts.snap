@@ -51,14 +51,8 @@ Object {
 
 exports[`getParamPreview should parse transfer of TEZ 1`] = `
 Object {
-  "transfers": Array [
-    Object {
-      "amount": "10",
-      "asset": "tez",
-      "recipient": "address2",
-    },
-  ],
-  "type": "Send",
+  "opKind": "transaction",
+  "type": "Other",
 }
 `;
 
