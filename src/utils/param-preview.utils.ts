@@ -9,7 +9,7 @@ import { tzToMutez } from './tezos.util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
-  if (opParam.kind === OpKind.DELEGATION && isDefined(opParam.delegate)) {
+  if (opParam.kind === OpKind.DELEGATION) {
     // Delegate
     return {
       type: ParamPreviewTypeEnum.Delegate,
@@ -17,7 +17,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
     };
   } else if (opParam.kind === OpKind.TRANSACTION) {
     // Tezos send
-    if (isDefined(opParam.parameter) && opParam.amount > 0) {
+    if (opParam.amount > 0) {
       return {
         type: ParamPreviewTypeEnum.Send,
         transfers: [
@@ -30,7 +30,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
       };
     }
 
-    if (isDefined(opParam.parameter)) {
+    if (opParam.parameter) {
       // Tokens send
       const tokenTransfers = tryParseTokenTransfers(opParam.parameter, opParam.to);
       if (tokenTransfers.length > 0) {
