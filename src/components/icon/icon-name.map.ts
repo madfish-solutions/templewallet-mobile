@@ -43,6 +43,7 @@ import MinusIcon from './assets/minus-icon.svg';
 import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
+import PlusIcon from './assets/plus-icon.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
@@ -163,5 +164,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LbTokenIcon]: LbTokenIcon,
   [IconNameEnum.RefreshIcon]: RefreshIcon,
   [IconNameEnum.ChartIcon]: ChartIcon,
-  [IconNameEnum.MinusIcon]: MinusIcon
+  [IconNameEnum.MinusIcon]: MinusIcon,
+  [IconNameEnum.PlusIcon]: PlusIcon
 };

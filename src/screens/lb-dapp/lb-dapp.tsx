@@ -1,3 +1,4 @@
+import { stubArray } from 'lodash-es';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -11,6 +12,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { formatSize } from '../../styles/format-size';
 import { useLbDappStyles } from './lb-dapp.styles';
+import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container'
 
 export const LbDapp = () => {
   const styles = useLbDappStyles();
@@ -22,6 +24,10 @@ export const LbDapp = () => {
   const onRemoveLiquidityHandler = () => {
     console.log('remove liquidity');
   };
+
+  const onAddLiquidityHandler = () => {
+
+  }
 
   return (
     <ScreenContainer>
@@ -45,9 +51,13 @@ export const LbDapp = () => {
       </View>
       <Divider size={formatSize(8)} />
       <View style={styles.lineDivider} />
-      <View style={styles.buttonWrapper}>
-        <ButtonLargePrimary title={'test'} iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
-      </View>
+      <Divider size={formatSize(16)} />
+      <ButtonsContainer>
+        <ButtonLargePrimary title={'REMOVE'} iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+        <Divider size={formatSize(16)} />
+        <ButtonLargePrimary title={'ADD'} iconName={IconNameEnum.PlusIcon} onPress={onAddLiquidityHandler} />
+      </ButtonsContainer>
+        
     </ScreenContainer>
   );
 };

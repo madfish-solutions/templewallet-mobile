@@ -77,5 +77,6 @@ export enum IconNameEnum {
   LbTokenIcon = 'LbTokenIcon',
   RefreshIcon = 'RefreshIcon',
   ChartIcon = 'ChartIcon',
-  MinusIcon = 'MinusIcon'
+  MinusIcon = 'MinusIcon',
+  PlusIcon = 'PlusIcon'
 }
