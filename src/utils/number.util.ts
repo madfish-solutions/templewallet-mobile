@@ -34,7 +34,7 @@ export const kFormatter = (num: number): string | number => {
   return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
 };
 
-export const numberWithSpaces = (amount: string) => {
+const numberWithSpaces = (amount: string) => {
   const parts = amount.split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
