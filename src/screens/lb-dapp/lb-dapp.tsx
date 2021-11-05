@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 
+import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -11,7 +11,6 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { formatSize } from '../../styles/format-size';
 import { useLbDappStyles } from './lb-dapp.styles';
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 
 export const LbDapp = () => {
   const styles = useLbDappStyles();
@@ -46,7 +45,9 @@ export const LbDapp = () => {
       </View>
       <Divider size={formatSize(8)} />
       <View style={styles.lineDivider} />
-      <ButtonLargePrimary title={'test'} iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+      <View style={styles.buttonWrapper}>
+        <ButtonLargePrimary title={'test'} iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+      </View>
     </ScreenContainer>
   );
 };
