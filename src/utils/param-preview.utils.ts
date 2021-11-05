@@ -17,7 +17,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
     };
   } else if (opParam.kind === OpKind.TRANSACTION) {
     // Tezos send
-    if (opParam.amount > 0) {
+    if (!opParam.parameter && opParam.amount > 0) {
       return {
         type: ParamPreviewTypeEnum.Send,
         transfers: [
