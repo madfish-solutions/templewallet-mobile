@@ -20,7 +20,7 @@ export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
   return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
-export const isCollectible = (asset: TokenInterface | TokenPreviewType) => isDefined(asset.artifactUri);
+export const isCollectible = <T extends TokenPreviewType>(asset: T) => isDefined(asset.artifactUri);
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 

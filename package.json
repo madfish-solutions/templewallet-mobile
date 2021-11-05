@@ -41,7 +41,6 @@
     "@sentry/react-native": "^2.6.0",
     "@taquito/local-forging": "^9.2.0",
     "@taquito/signer": "^9.2.0",
-    "@taquito/taquito": "^9.2.0",
     "@taquito/tzip12": "^9.2.0",
     "@taquito/tzip16": "^9.2.0",
     "@taquito/utils": "^9.2.0",
