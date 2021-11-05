@@ -20,6 +20,7 @@ import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
+import { LbDapp } from '../screens/lb-dapp/lb-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
@@ -150,6 +151,13 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.DApps}
                 component={DApps}
                 options={{ animationEnabled: false, headerShown: false }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.LbDapp}
+                component={LbDapp}
+                options={{
+                  headerShown: false
+                }}
               />
 
               {/** Swap stack **/}

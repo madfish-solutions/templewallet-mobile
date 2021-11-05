@@ -1,16 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { SearchInput } from '../../components/search-input/search-input';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { useDAppsStyles } from './d-apps.styles';
+import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
 
 export const DApps = () => {
@@ -36,6 +39,19 @@ export const DApps = () => {
       <InsetSubstitute type="top" />
       <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
       <Divider size={formatSize(20)} />
+      <Text style={styles.text}>Integrated</Text>
+      <Divider size={formatSize(20)} />
+      <View style={styles.dappBlockWrapper}>
+        <IntegratedDApp
+          screenName={ScreensEnum.LbDapp}
+          iconName={IconNameEnum.LbDappIcon}
+          title={'Liquidity Baking'}
+          description={'Create XTZ/tzBTC & earn XTZ'}
+        />
+      </View>
+      <Divider size={formatSize(20)} />
+      <Text style={styles.text}>Others</Text>
+      <Divider size={formatSize(16)} />
       {sortedDAppsList.length ? (
         <FlatList
           data={sortedDAppsList}

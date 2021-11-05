@@ -8,6 +8,7 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import ChartIcon from './assets/chart-icon.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClipboardIcon from './assets/clipboard.svg';
@@ -33,9 +34,12 @@ import HummerIcon from './assets/hummer.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import LbDappIcon from './assets/lb-dapp-icon.svg';
+import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import MinusIcon from './assets/minus-icon.svg';
 import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -43,6 +47,7 @@ import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
+import RefreshIcon from './assets/refresh-icon.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -153,5 +158,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.AlertShield]: AlertShield,
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.Navigation]: NavigationIcon,
-  [IconNameEnum.Hummer]: HummerIcon
+  [IconNameEnum.Hummer]: HummerIcon,
+  [IconNameEnum.LbDappIcon]: LbDappIcon,
+  [IconNameEnum.LbTokenIcon]: LbTokenIcon,
+  [IconNameEnum.RefreshIcon]: RefreshIcon,
+  [IconNameEnum.ChartIcon]: ChartIcon,
+  [IconNameEnum.MinusIcon]: MinusIcon
 };
