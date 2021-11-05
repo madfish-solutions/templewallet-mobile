@@ -13,6 +13,7 @@ import { isDefined } from '../../utils/is-defined';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
+import { isCollectible } from '../../utils/tezos.util';
 
 export const useAccountsListSelector = () => {
   const accounts = useSelector<WalletRootState, WalletAccountStateInterface[]>(({ wallet }) => wallet.accounts);
@@ -112,7 +113,7 @@ export const useVisibleTokensListSelector = () => {
 export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 
-  return useMemo(() => assetsList.filter(({ artifactUri }) => isDefined(artifactUri)), [assetsList]);
+  return useMemo(() => assetsList.filter(asset => isCollectible(asset)), [assetsList]);
 };
 
 export const useVisibleCollectiblesListSelector = () => {
