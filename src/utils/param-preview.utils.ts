@@ -30,7 +30,7 @@ export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface 
       };
     }
 
-    if (!opParam.parameter && opParam.amount > 0) {
+    if (opParam.parameter) {
       // Tokens send
       const tokenTransfers = tryParseTokenTransfers(opParam.parameter, opParam.to);
       if (tokenTransfers.length > 0) {
