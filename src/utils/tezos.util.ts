@@ -1,7 +1,7 @@
 import { validateAddress, ValidationResult } from '@taquito/utils';
 import { BigNumber } from 'bignumber.js';
 
-import { TokenInterface, TokenPreviewType } from '../token/interfaces/token.interface';
+import { TokenPreviewType } from '../token/interfaces/token.interface';
 import { isDefined } from './is-defined';
 
 export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
