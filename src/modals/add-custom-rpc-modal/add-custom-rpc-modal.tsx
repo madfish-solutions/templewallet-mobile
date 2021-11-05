@@ -42,7 +42,8 @@ export const AddCustomRpcModal: FC = () => {
     <Formik
       initialValues={addCustomRpcFormInitialValues}
       validationSchema={addCustomRpcFormValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />

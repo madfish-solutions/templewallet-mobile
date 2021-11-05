@@ -37,7 +37,8 @@ export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
       initialValues={importAccountPrivateKeyInitialValues}
       validationSchema={importAccountPrivateKeyValidationSchema}
       enableReinitialize={true}
-      onSubmit={onSubmit}>
+      onSubmit={onSubmit}
+    >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode>
           <View>

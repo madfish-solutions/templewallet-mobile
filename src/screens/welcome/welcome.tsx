@@ -40,13 +40,23 @@ export const Welcome = () => {
         />
         <Divider size={formatSize(24)} />
 
-        <ButtonLargeSecondary
-          title="Import existing Wallet"
-          iconName={IconNameEnum.DownloadCloud}
-          onPress={() => navigate(ScreensEnum.ImportAccount)}
-          testID={WelcomeSelectors.ImportExistingWalletButton}
-        />
-        <Divider size={formatSize(43)} />
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonBox}>
+            <ButtonLargeSecondary
+              title="Import"
+              iconName={IconNameEnum.DownloadCloud}
+              onPress={() => navigate(ScreensEnum.ImportAccount)}
+              testID={WelcomeSelectors.ImportExistingWalletButton}
+            />
+          </View>
+          <View style={styles.buttonBox}>
+            <ButtonLargeSecondary
+              title="Sync"
+              iconName={IconNameEnum.Link}
+              onPress={() => navigate(ScreensEnum.SyncInstructions)}
+            />
+          </View>
+        </View>
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

@@ -20,6 +20,7 @@ export const FormPasswordInput: FC<Props> = ({ name, testID }) => {
         value={field.value}
         isError={isError}
         isShowCleanButton={true}
+        autoCapitalize="none"
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
         testID={testID}

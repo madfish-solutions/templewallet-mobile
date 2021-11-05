@@ -16,6 +16,7 @@ import { Activity } from '../screens/activity/activity';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
+import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
@@ -25,6 +26,8 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { AfterSyncQRScan } from '../screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
+import { SyncInstructions } from '../screens/sync-account/sync-instructions/sync-instructions';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
@@ -85,6 +88,16 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
               />
               <MainStack.Screen
+                name={ScreensEnum.SyncInstructions}
+                component={SyncInstructions}
+                options={generateScreenOptions(<HeaderTitle title="Sync" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ConfirmSync}
+                component={AfterSyncQRScan}
+                options={generateScreenOptions(<HeaderTitle title="Confirm Sync" />)}
+              />
+              <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
                 component={CreateAccount}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
@@ -131,17 +144,12 @@ export const MainStackScreen = () => {
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
               />
-              <MainStack.Screen
-                name={ScreensEnum.ScanQrCode}
-                component={ScanQrCode}
-                options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
-              />
 
               {/** DApps stack **/}
               <MainStack.Screen
                 name={ScreensEnum.DApps}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
+                component={DApps}
+                options={{ animationEnabled: false, headerShown: false }}
               />
 
               {/** Swap stack **/}
@@ -189,6 +197,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+          <MainStack.Screen
+            name={ScreensEnum.ScanQrCode}
+            component={ScanQrCode}
+            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
+          />
         </MainStack.Navigator>
       </NavigationBar>
     </PortalProvider>

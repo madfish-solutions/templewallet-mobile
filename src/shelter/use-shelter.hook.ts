@@ -32,19 +32,23 @@ export const useShelter = () => {
     const subscriptions = [
       importWallet$
         .pipe(
-          switchMap(({ seedPhrase, password, useBiometry }) =>
+          switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
             forkJoin([
-              Shelter.importHdAccount$(seedPhrase, password),
-              useBiometry ? Shelter.enableBiometryPassword$(password) : of(false)
+              Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
+              useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
             ])
           )
         )
-        .subscribe(([publicData, isPasswordSaved]) => {
-          if (publicData !== undefined) {
-            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addHdAccountAction(publicData));
+        .subscribe(([accounts, isPasswordSaved]) => {
+          if (accounts !== undefined) {
+            const firstAccount = accounts[0];
+            dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
 
-            isPasswordSaved && dispatch(setIsBiometricsEnabled(true));
+            for (const account of accounts) {
+              dispatch(addHdAccountAction(account));
+            }
+
+            isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
           }
         }),
       createHdAccount$
@@ -114,22 +118,21 @@ export const useShelter = () => {
           )
         )
         .subscribe(isPasswordSaved => {
-          if (isPasswordSaved) {
+          if (isPasswordSaved === false) {
+            showErrorToast({ description: 'Wrong password, please, try again' });
+          } else {
             showSuccessToast({ description: 'Successfully enabled!' });
 
             dispatch(setIsBiometricsEnabled(true));
             navigate(StacksEnum.MainStack);
-          } else {
-            showErrorToast({ description: 'Wrong password, please, try again' });
           }
         })
     ];
 
-    return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
+    return () => subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
 
-  const importWallet = (seedPhrase: string, password: string, useBiometry?: boolean) =>
-    importWallet$.next({ seedPhrase, password, useBiometry });
+  const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
   const createHdAccount = () => createHdAccount$.next();
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);

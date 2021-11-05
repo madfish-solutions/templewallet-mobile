@@ -29,7 +29,6 @@ import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
-// TODO: replace with translations
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
   [BakersSortFieldEnum.Rank]: 'Rank',
@@ -147,7 +146,8 @@ export const SelectBakerModal: FC = () => {
       <BottomSheet
         title="Sort bakers by:"
         contentHeight={formatSize(260)}
-        controller={revealSelectBottomSheetController}>
+        controller={revealSelectBottomSheetController}
+      >
         {bakersSortFieldsOptions.map(value => (
           <BottomSheetActionButton
             key={value}

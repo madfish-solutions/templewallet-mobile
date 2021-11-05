@@ -27,10 +27,11 @@ import { OperationsPreview } from './operations-preview/operations-preview';
 interface Props {
   sender: WalletAccountInterface;
   opParams: ParamsWithKind[];
+  isLoading: boolean;
   onSubmit: EventFn<ParamsWithKind[]>;
 }
 
-export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, children }) => {
+export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading, onSubmit, children }) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
@@ -77,8 +78,9 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
       enableReinitialize={true}
       initialValues={formInitialValues}
       validationSchema={formValidationSchema}
-      onSubmit={handleSubmit}>
-      {({ values, isValid, isSubmitting, setFieldValue, submitForm }) => (
+      onSubmit={handleSubmit}
+    >
+      {({ values, isValid, setFieldValue, submitForm }) => (
         <>
           <ScreenContainer>
             {children}
@@ -115,11 +117,11 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, onSubmit, 
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={goBack} />
+            <ButtonLargeSecondary title="Back" disabled={isLoading} onPress={goBack} />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary
               title="Confirm"
-              disabled={estimations.isLoading || isSubmitting || !isValid}
+              disabled={estimations.isLoading || isLoading || !isValid}
               onPress={submitForm}
             />
           </ModalButtonsContainer>

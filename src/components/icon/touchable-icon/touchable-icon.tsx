@@ -20,7 +20,8 @@ export const TouchableIcon: FC<Props> = ({ size = formatSize(24), name, color, s
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}
     {...(isAndroid && { disallowInterruption: true })}
-    onPress={onPress}>
+    onPress={onPress}
+  >
     <Icon name={name} size={size} color={color} />
   </TouchableOpacity>
 );

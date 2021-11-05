@@ -26,7 +26,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   return (
     <TouchableOpacity
       style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
           <AvatarImage uri={baker.logo} />

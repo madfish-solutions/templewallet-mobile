@@ -22,7 +22,7 @@ interface Props {
   onChange?: EventFn<boolean>;
 }
 
-export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
+export const Switch: FC<Props> = ({ value, disabled = false, onChange = emptyFn }) => {
   const colors = useColors();
   const styles = useSwitchStyles();
   const animation = useAnimationRef(value);
@@ -53,7 +53,8 @@ export const Switch: FC<Props> = ({ value, disabled, onChange = emptyFn }) => {
         e.stopPropagation();
         onChange(!value);
       }}
-      onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}>
+      onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}
+    >
       <Animated.View style={[styles.toggle, { transform: [{ translateX }], backgroundColor: toggleColor }]} />
     </AnimatedTouchableOpacity>
   );

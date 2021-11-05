@@ -30,7 +30,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       const seedPhrase = await decryptSeedPhrase(content, values.password);
       onSubmit({
         seedPhrase,
-        password: values.shouldUseFilePasswordForExtension ? values.password : undefined
+        password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
       });
     } catch {
       showErrorToast({
@@ -44,7 +44,8 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
     <Formik
       initialValues={importWalletFromKeystoreFileInitialValues}
       validationSchema={importWalletFromKeystoreFileValidationSchema}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       {({ isValid, submitForm, isSubmitting }) => (
         <>
           <View style={styles.seedPhraseInputContainer}>

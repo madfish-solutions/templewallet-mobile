@@ -73,7 +73,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   useEffect(
     () =>
-      onValueChange({
+      void onValueChange({
         ...value,
         amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
       }),
@@ -112,7 +112,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
         <Divider size={formatSize(8)} />
 
         <View
-          style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}>
+          style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
+        >
           <Dropdown
             title="Assets"
             value={value.asset}

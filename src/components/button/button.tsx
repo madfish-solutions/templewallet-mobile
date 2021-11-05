@@ -18,7 +18,7 @@ interface Props extends ButtonSharedProps {
 export const Button: FC<Props> = ({
   title,
   iconName,
-  disabled,
+  disabled = false,
   styleConfig,
 
   isFullWidth = false,
@@ -57,7 +57,8 @@ export const Button: FC<Props> = ({
           { marginTop, marginRight, marginBottom, marginLeft }
         ]}
         onPress={onPress}
-        {...setTestID(testID)}>
+        {...setTestID(testID)}
+      >
         {isDefined(iconName) && (
           <Icon
             name={iconName}

@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { decode, encode } from 'base-64';
 
+import { isDefined } from './src/utils/is-defined';
+
 require('text-encoding');
 
 XMLHttpRequest.prototype.overrideMimeType = () => null;
 
-if (!global.localStorage) {
+if (!isDefined(global.localStorage)) {
   global.localStorage = {
     getItem: () => null
   };
 }
 
-if (!global.btoa) {
+if (!isDefined(global.btoa)) {
   global.btoa = encode;
 }
 
-if (!global.atob) {
+if (!isDefined(global.atob)) {
   global.atob = decode;
 }
 
-if (!global.document) {
+if (!isDefined(global.document)) {
   global.document = {
     addEventListener: () => null
   };
