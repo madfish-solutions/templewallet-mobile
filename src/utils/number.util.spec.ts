@@ -14,11 +14,11 @@ describe('formatAssetAmount', () => {
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals', () => {
-    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10000.25');
+    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10 000.25');
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals using rounding mode up', () => {
-    expect(formatAssetAmount(bigNumberMoreThanThousand, BigNumber.ROUND_UP)).toEqual('10000.26');
+    expect(formatAssetAmount(bigNumberMoreThanThousand, BigNumber.ROUND_UP)).toEqual('10 000.26');
   });
 
   it('should format positive bignumber less than 1000 value and return string with 1 decimal using rounding mode up', () => {
