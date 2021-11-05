@@ -74,7 +74,8 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       {nonZeroAmounts.amounts.map(({ parsedAmount, isPositive, symbol }, index) => (
         <Text
           key={index}
-          {...getTruncatedProps([styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)])}>
+          {...getTruncatedProps([styles.amountText, conditionalStyle(isPositive, styles.positiveAmountText)])}
+        >
           {isPositive && '+'}
           {formatAssetAmount(parsedAmount)} {symbol}
         </Text>
