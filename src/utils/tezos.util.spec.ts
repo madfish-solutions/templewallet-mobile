@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { isKTAddress, isValidAddress, mutezToTz, tzToMutez } from './tezos.util';
+import { isKTAddress, isValidAddress, mutezToTz, tzToMutez, isCollectible } from './tezos.util';
 
 const mockNaNBigNumber = new BigNumber(NaN);
 const mockMutezValue = new BigNumber(100000);
@@ -11,6 +11,21 @@ const mockKtAddress = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn';
 const mockTzAddress = 'tz1XFDgWRqHBbFJmgXqVshnBzVg2SRBZGuXi';
 const mockNonAddress = 'mockStrng';
 const mockEmptyAddress = '';
+const mockCollectibleAsset = {
+  address: '',
+  decimals: 0,
+  id: 0,
+  name: '',
+  symbol: '',
+  artifactUri: 'mocked artifactUri'
+};
+const mockTokenAsset = {
+  address: '',
+  decimals: 0,
+  id: 0,
+  name: '',
+  symbol: ''
+};
 
 describe('mutezToTz', () => {
   it('should not map NaN value', () => {
@@ -48,6 +63,15 @@ describe('isValidAddress', () => {
   });
   it('should return false for empty address', () => {
     expect(isValidAddress(mockEmptyAddress)).toEqual(false);
+  });
+});
+
+describe('isCollectible', () => {
+  it('should return true for collectible asset', () => {
+    expect(isCollectible(mockCollectibleAsset)).toEqual(true);
+  });
+  it('should return false for collectible asset', () => {
+    expect(isCollectible(mockTokenAsset)).toEqual(false);
   });
 });
 

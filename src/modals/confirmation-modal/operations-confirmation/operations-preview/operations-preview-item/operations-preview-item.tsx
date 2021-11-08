@@ -9,16 +9,15 @@ import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.en
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
-import { TokenInterface } from '../../../../../token/interfaces/token.interface';
+import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
+import { isCollectible } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
   paramPreview: ParamPreviewInterface;
 }
-
-type TokenPreviewType = Omit<TokenInterface, 'isVisible' | 'balance'>;
 
 interface PreviewDataInterface {
   iconSeed: string;
@@ -105,7 +104,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {isDefined(token) && Number(token.amount) > 0 && (
+            {isDefined(token) && Number(token.amount) > 0 && !isCollectible(token.tokenData) && (
               <View>
                 <AssetValueText
                   amount={token.amount}
