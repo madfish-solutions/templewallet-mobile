@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* TempleWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TempleWalletTests.m */; };
-		01AD54FB843648E3AEEC746C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837E4C106B944958BF934709 /* Rubik-Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		141C9588260B4A3F00216256 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 141C9587260B4A3F00216256 /* BootSplash.storyboard */; };
-		23AB5168B4324CCFBDB0EEF6 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */; };
-		2747330AC01F4018879FF2FD /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */; };
-		59BC05C256BF41F5B06FF55A /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */; };
-		5EFFBF78BFC0CD7A9EBFAFBB /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */; };
-		AF2A1A77EB0444ACBEA2CCAF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */; };
-		B0613B222ACF573DCE9A9534 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */; };
-		B143BA925CF840C88D2FA38A /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */; };
+		147833BB2734253800B1F789 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 147833BA2734253800B1F789 /* BootSplash.storyboard */; };
+		23B2DA6B3BF0422F9865D51C /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED1D3E783F444FCEB3D94065 /* Inter-SemiBold.ttf */; };
+		332FA4B0549749D09B28A57D /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */; };
+		6354AC6457E34CC999F84EAE /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */; };
+		97759125A527465C91F8E13C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */; };
+		9781A88F03FBB4011C7EF81B /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57F3A6BC4E85427EE22F19B0 /* libPods-TempleWallet-TempleWalletTests.a */; };
+		C19F41B0F81D32E224884C80 /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5773989854E949CFF87E6B44 /* libPods-TempleWallet.a */; };
+		C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
+		EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,26 +36,26 @@
 		00E356EE1AD99517003FC87E /* TempleWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TempleWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* TempleWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TempleWalletTests.m; sourceTree = "<group>"; };
-		105DBA022C2DCE48ABC03E44 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TempleWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TempleWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = TempleWallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = TempleWallet/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TempleWallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TempleWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TempleWallet/main.m; sourceTree = "<group>"; };
-		141C9587260B4A3F00216256 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
-		15063DC76160EF7BB6DAD79D /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
-		48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
-		59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-SemiBold.ttf"; path = "../src/assets/fonts/Rubik-SemiBold.ttf"; sourceTree = "<group>"; };
-		6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
-		74C9F42DB989030B1FBB875F /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
-		7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet-TempleWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		837E4C106B944958BF934709 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
-		B3D4B6750B96C2C94A5024FD /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
-		DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
+		147833BA2734253800B1F789 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
+		2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
+		4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
+		50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-SemiBold.ttf"; path = "../src/assets/fonts/Rubik-SemiBold.ttf"; sourceTree = "<group>"; };
+		5773989854E949CFF87E6B44 /* libPods-TempleWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		57F3A6BC4E85427EE22F19B0 /* libPods-TempleWallet-TempleWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet-TempleWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
+		98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		C3B9AD5375956C7D75A5D466 /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		C990F6C4CAEDB1CD8BFEBD6D /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
+		DB3DA71D057206653C0F4CC6 /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
+		E11FCCE84B0F0BEFEF900889 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
+		ED1D3E783F444FCEB3D94065 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0613B222ACF573DCE9A9534 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */,
+				9781A88F03FBB4011C7EF81B /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EFFBF78BFC0CD7A9EBFAFBB /* libPods-TempleWallet.a in Frameworks */,
+				C19F41B0F81D32E224884C80 /* libPods-TempleWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,9 +98,9 @@
 		13B07FAE1A68108700A75B9A /* TempleWallet */ = {
 			isa = PBXGroup;
 			children = (
-				141C9587260B4A3F00216256 /* BootSplash.storyboard */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				147833BA2734253800B1F789 /* BootSplash.storyboard */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -112,21 +112,23 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				59358076E2A8B48BAE1CAF34 /* libPods-TempleWallet.a */,
-				7E4C7B031AAACE805A1060DA /* libPods-TempleWallet-TempleWalletTests.a */,
+				5773989854E949CFF87E6B44 /* libPods-TempleWallet.a */,
+				57F3A6BC4E85427EE22F19B0 /* libPods-TempleWallet-TempleWalletTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		767608A5DB11BB4B845B8799 /* Pods */ = {
+		6DD603F0840C43CFA6CC41CB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B3D4B6750B96C2C94A5024FD /* Pods-TempleWallet.debug.xcconfig */,
-				74C9F42DB989030B1FBB875F /* Pods-TempleWallet.release.xcconfig */,
-				105DBA022C2DCE48ABC03E44 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */,
-				15063DC76160EF7BB6DAD79D /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */,
+				2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */,
+				4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */,
+				ED1D3E783F444FCEB3D94065 /* Inter-SemiBold.ttf */,
+				9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */,
+				98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */,
+				50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */,
 			);
-			path = Pods;
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -144,8 +146,8 @@
 				00E356EF1AD99517003FC87E /* TempleWalletTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				767608A5DB11BB4B845B8799 /* Pods */,
-				8FD0E227F7BC4044B28EA471 /* Resources */,
+				C0D6C0781A4281792A2164FB /* Pods */,
+				6DD603F0840C43CFA6CC41CB /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -161,17 +163,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8FD0E227F7BC4044B28EA471 /* Resources */ = {
+		C0D6C0781A4281792A2164FB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6AD1D9FBF72C415FBAF0AC32 /* Inter-Bold.ttf */,
-				FF8272F25B7545D4A047F931 /* Inter-Regular.ttf */,
-				48EE407A68714907AFE2A0AE /* Inter-SemiBold.ttf */,
-				DAD522F477D54B86BC13DA87 /* Rubik-Medium.ttf */,
-				837E4C106B944958BF934709 /* Rubik-Regular.ttf */,
-				5AB59B7F168743DE878F43F5 /* Rubik-SemiBold.ttf */,
+				C3B9AD5375956C7D75A5D466 /* Pods-TempleWallet.debug.xcconfig */,
+				C990F6C4CAEDB1CD8BFEBD6D /* Pods-TempleWallet.release.xcconfig */,
+				E11FCCE84B0F0BEFEF900889 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */,
+				DB3DA71D057206653C0F4CC6 /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */,
 			);
-			name = Resources;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,12 +181,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TempleWalletTests" */;
 			buildPhases = (
-				6172A16722C743A7FC9F6991 /* [CP] Check Pods Manifest.lock */,
+				50E41679514D39ED58229C67 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				A96E2539EBD0607893B75349 /* [CP] Embed Pods Frameworks */,
-				D9CA867F6EC88DC043720F79 /* [CP] Copy Pods Resources */,
+				2CB274421924714C50A2FE74 /* [CP] Embed Pods Frameworks */,
+				1FD7373CD739030ED8D2F240 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -202,14 +202,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TempleWallet" */;
 			buildPhases = (
-				822BB9DCAEBC0179E2394C09 /* [CP] Check Pods Manifest.lock */,
+				051C0E2EBD5C13CFAA0152C0 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				835E2F3B8BF5B517AC9BB532 /* [CP] Embed Pods Frameworks */,
-				850E2DA9E421785576AF4276 /* [CP] Copy Pods Resources */,
+				D16D896665364EE9BA4BEFCC /* [CP] Embed Pods Frameworks */,
+				E3B482160AC4739560787DE3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -268,14 +268,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				141C9588260B4A3F00216256 /* BootSplash.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				2747330AC01F4018879FF2FD /* Inter-Bold.ttf in Resources */,
-				AF2A1A77EB0444ACBEA2CCAF /* Inter-Regular.ttf in Resources */,
-				23AB5168B4324CCFBDB0EEF6 /* Inter-SemiBold.ttf in Resources */,
-				B143BA925CF840C88D2FA38A /* Rubik-Medium.ttf in Resources */,
-				01AD54FB843648E3AEEC746C /* Rubik-Regular.ttf in Resources */,
-				59BC05C256BF41F5B06FF55A /* Rubik-SemiBold.ttf in Resources */,
+				332FA4B0549749D09B28A57D /* Inter-Bold.ttf in Resources */,
+				EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */,
+				147833BB2734253800B1F789 /* BootSplash.storyboard in Resources */,
+				23B2DA6B3BF0422F9865D51C /* Inter-SemiBold.ttf in Resources */,
+				6354AC6457E34CC999F84EAE /* Rubik-Medium.ttf in Resources */,
+				97759125A527465C91F8E13C /* Rubik-Regular.ttf in Resources */,
+				C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,29 +296,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		6172A16722C743A7FC9F6991 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TempleWallet-TempleWalletTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		822BB9DCAEBC0179E2394C09 /* [CP] Check Pods Manifest.lock */ = {
+		051C0E2EBD5C13CFAA0152C0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -340,41 +318,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		835E2F3B8BF5B517AC9BB532 /* [CP] Embed Pods Frameworks */ = {
+		1FD7373CD739030ED8D2F240 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		850E2DA9E421785576AF4276 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A96E2539EBD0607893B75349 /* [CP] Embed Pods Frameworks */ = {
+		2CB274421924714C50A2FE74 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -391,21 +352,60 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D9CA867F6EC88DC043720F79 /* [CP] Copy Pods Resources */ = {
+		50E41679514D39ED58229C67 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TempleWallet-TempleWalletTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D16D896665364EE9BA4BEFCC /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E3B482160AC4739560787DE3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TempleWallet/Pods-TempleWallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -460,7 +460,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 105DBA022C2DCE48ABC03E44 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */;
+			baseConfigurationReference = E11FCCE84B0F0BEFEF900889 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -468,7 +468,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = TempleWalletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -487,12 +487,12 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 15063DC76160EF7BB6DAD79D /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */;
+			baseConfigurationReference = DB3DA71D057206653C0F4CC6 /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = TempleWalletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -511,7 +511,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3D4B6750B96C2C94A5024FD /* Pods-TempleWallet.debug.xcconfig */;
+			baseConfigurationReference = C3B9AD5375956C7D75A5D466 /* Pods-TempleWallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -542,7 +542,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 74C9F42DB989030B1FBB875F /* Pods-TempleWallet.release.xcconfig */;
+			baseConfigurationReference = C990F6C4CAEDB1CD8BFEBD6D /* Pods-TempleWallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -618,12 +618,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",
@@ -676,12 +677,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",

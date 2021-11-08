@@ -6,7 +6,7 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
     return '';
   }
 
-  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed();
+  return numberWithSpaces(amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed());
 };
 
 export const roundFiat = (
@@ -28,4 +28,11 @@ export const kFormatter = (num: number): string | number => {
   }
 
   return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+};
+
+const numberWithSpaces = (amount: string) => {
+  const parts = amount.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+  return parts.join('.');
 };
