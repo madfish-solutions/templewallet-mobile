@@ -11,10 +11,12 @@ import { tzToMutez } from './tezos.util';
 export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
   if (opParam.kind === OpKind.DELEGATION) {
     // Delegate
-    return {
-      type: ParamPreviewTypeEnum.Delegate,
-      baker: opParam.delegate
-    };
+    if (isDefined(opParam.delegate)) {
+      return {
+        type: ParamPreviewTypeEnum.Delegate,
+        baker: opParam.delegate
+      };
+    }
   } else if (opParam.kind === OpKind.TRANSACTION) {
     // Tezos send
     if (!opParam.parameter && opParam.amount > 0) {
