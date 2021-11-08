@@ -5,7 +5,7 @@ import { emitMicheline } from '@taquito/michel-codec';
 
 const TEZ_MSG_SIGN_PATTERN = /^0501[a-f0-9]{8}54657a6f73205369676e6564204d6573736167653a20[a-f0-9]*$/;
 
-export const parseSignPayload = async (message: SignPayloadRequestOutput) => {
+export const getParsedSignPayload = async (message: SignPayloadRequestOutput) => {
   let parsedPayload = '';
   if (message.payload.match(TEZ_MSG_SIGN_PATTERN)) {
     parsedPayload = emitMicheline(valueDecoder(Uint8ArrayConsumer.fromHexString(message.payload.slice(2))), {

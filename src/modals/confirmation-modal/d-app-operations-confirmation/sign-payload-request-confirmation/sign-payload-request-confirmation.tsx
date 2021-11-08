@@ -16,7 +16,7 @@ import { ModalButtonsContainer } from '../../../../components/modal-buttons-cont
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
 import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { useParseSignPayloadHook } from '../../../../hooks/use-parse-sign-payload.hook';
+import { useParseSignPayload } from '../../../../hooks/use-parse-sign-payload.hook';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
@@ -25,7 +25,6 @@ import { navigateAction } from '../../../../store/root-state.actions';
 import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { showSuccessToast } from '../../../../toast/toast.utils';
-import { isString } from '../../../../utils/is-string';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
@@ -58,8 +57,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
 
-  const payloadPreview = useParseSignPayloadHook(message);
-  const isPayloadParsed = isString(payloadPreview);
+  const { payloadPreview, isPayloadParsed } = useParseSignPayload(message);
 
   const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
   const isPayloadPreviewType = payloadTypeIndex === PAYLOAD_PREVIEW_TYPE_INDEX;
