@@ -84,10 +84,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ group }) => {
       {nonZeroAmounts.dollarSums.map((amount, index) => (
         <Text
           key={index}
-          style={[
-            styles.valueText,
-            conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)
-          ]}
+          style={[styles.valueText, conditionalStyle(amount > 0, styles.positiveAmountText, styles.negativeAmountText)]}
         >
           {inRange(amount, MAX_NEGATIVE_AMOUNT_VALUE, MIN_POSITIVE_AMOUNT_VALUE) && '≈ '}
           {amount > 0 ? '+ ' : '- '}
