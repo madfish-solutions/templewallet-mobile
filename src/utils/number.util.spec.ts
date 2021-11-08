@@ -21,10 +21,6 @@ describe('formatAssetAmount', () => {
     expect(formatAssetAmount(new BigNumber(10123456))).toEqual('10 123 456');
   });
 
-  it('should format positive bignumber more than 1 000 000 value and return string with 2 decimals', () => {
-    expect(formatAssetAmount(new BigNumber('123456789.25456'), BigNumber.ROUND_UP)).toEqual('123 456 789.26');
-  });
-
   it('should return empty string if NaN passed into', () => {
     expect(formatAssetAmount(new BigNumber(NaN), 1)).toEqual('');
   });
