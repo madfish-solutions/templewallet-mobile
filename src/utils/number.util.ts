@@ -10,7 +10,7 @@ export const formatAssetAmount = (
     return '';
   }
 
-  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+  return numberWithSpaces(amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed());
 };
 
 export const roundFiat = (
@@ -32,4 +32,11 @@ export const kFormatter = (num: number): string | number => {
   }
 
   return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+};
+
+const numberWithSpaces = (amount: string) => {
+  const parts = amount.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+  return parts.join('.');
 };

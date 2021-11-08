@@ -73,7 +73,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   useEffect(
     () =>
-      onValueChange({
+      void onValueChange({
         ...value,
         amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
       }),
