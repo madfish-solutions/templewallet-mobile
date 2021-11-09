@@ -22,6 +22,8 @@ import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 
+const lpTokensContracts = ['KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo'];
+
 export interface AssetAmountInterface {
   asset: TokenInterface;
   amount?: BigNumber;
@@ -51,20 +53,21 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
-  const [inputValue, setInputValue] = useState(value.amount);
+  const [inputValue, setInputValue] = useState<BigNumber>();
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
   const asset = value.asset;
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
+  const isLpToken = lpTokensContracts.includes(asset.address);
 
   const exchangeRates = useExchangeRatesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    inputValue,
+    value.amount,
     asset.decimals,
     onBlur,
     onFocus,
@@ -75,7 +78,9 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     () =>
       onValueChange({
         ...value,
-        amount: isTokenInputType ? inputValue : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
+        amount: isTokenInputType
+          ? tzToMutez(inputValue ?? new BigNumber(0), value.asset.decimals)
+          : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
   );
@@ -129,7 +134,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <AssetValueText
-          amount={tzToMutez(amount, asset.decimals).toFixed()}
+          amount={amount}
           asset={asset}
           style={styles.equivalentValueText}
           convertToDollar={isTokenInputType}

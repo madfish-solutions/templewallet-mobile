@@ -4,6 +4,7 @@ import { NativeSyntheticEvent, TextInputFocusEventData, TextInputProps } from 'r
 
 import { emptyFn, EmptyFn, EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
+import { tzToMutez, mutezToTz } from '../utils/tezos.util';
 
 const DEFAULT_MIN_VALUE = new BigNumber(0);
 const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
@@ -19,12 +20,16 @@ export const useNumericInput = (
   const [focused, setFocused] = useState(false);
 
   useEffect(
-    () => void (!focused && setStringValue(isDefined(value) ? new BigNumber(value).toFixed() : '')),
+    () =>
+      void (
+        !focused && setStringValue(isDefined(value) ? mutezToTz(value ?? new BigNumber(0), decimals).toFixed() : '')
+      ),
     [setStringValue, focused, value]
   );
 
   const handleChange = (newStringValue: string) => {
     let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
+
     const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
 
     const indexOfDot = normalizedStringValue.indexOf('.');

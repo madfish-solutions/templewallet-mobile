@@ -31,21 +31,17 @@ export const getTransferParams$ = (
                     {
                       to_: receiverPublicKeyHash,
                       token_id: id,
-                      amount: tzToMutez(amount, decimals).toFixed()
+                      amount
                     }
                   ]
                 }
               ])
-            : contract.methods.transfer(
-                sender.publicKeyHash,
-                receiverPublicKeyHash,
-                tzToMutez(amount, decimals).toFixed()
-              )
+            : contract.methods.transfer(sender.publicKeyHash, receiverPublicKeyHash, amount)
         ),
         map(contractMethod => contractMethod.toTransferParams())
       )
     : of({
-        amount: tzToMutez(amount, decimals).toNumber(),
+        amount: amount.toNumber(),
         to: receiverPublicKeyHash,
         mutez: true
       });
