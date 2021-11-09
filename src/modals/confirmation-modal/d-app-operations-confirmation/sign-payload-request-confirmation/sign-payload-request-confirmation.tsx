@@ -84,7 +84,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
           <Text style={styles.descriptionText}>Payload to sign</Text>
           {isPayloadParsed && (
             <TextSegmentControl
-              width={formatSize(138)}
+              width={formatSize(181)}
               selectedIndex={payloadTypeIndex}
               values={['Preview', 'Bytes']}
               onChange={setPayloadTypeIndex}
