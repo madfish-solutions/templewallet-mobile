@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
@@ -50,6 +50,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   onFocus,
   onValueChange
 }) => {
+  const amountInputRef = useRef<TextInput>(null);
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
@@ -74,13 +75,20 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     newAmount => setInputValue(newAmount)
   );
 
+  const onTokenInputTypeChangeHandler = (tokenTypeIndex: number) => {
+    if (isDefined(amountInputRef.current)) {
+      amountInputRef.current.focus();
+    }
+    setInputTypeIndex(tokenTypeIndex);
+  };
+
   useEffect(
     () =>
       onValueChange({
         ...value,
         amount: isTokenInputType
-          ? tzToMutez(inputValue ?? new BigNumber(0), value.asset.decimals)
-          : inputValue?.dividedBy(exchangeRate).decimalPlaces(asset.decimals)
+          ? tzToMutez(inputValue, value.asset.decimals)
+          : tzToMutez(inputValue, value.asset.decimals)?.dividedBy(exchangeRate).decimalPlaces(0)
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
   );
@@ -95,7 +103,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             width={formatSize(138)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', 'USD']}
-            onChange={setInputTypeIndex}
+            onChange={onTokenInputTypeChangeHandler}
           />
         )}
       </View>
@@ -110,6 +118,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           selectionColor={colors.orange}
           autoCapitalize="words"
           keyboardType="numeric"
+          ref={amountInputRef}
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
@@ -134,7 +143,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <AssetValueText
-          amount={amount}
+          amount={amount.toFixed()}
           asset={asset}
           style={styles.equivalentValueText}
           convertToDollar={isTokenInputType}

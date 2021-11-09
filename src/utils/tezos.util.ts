@@ -1,7 +1,12 @@
 import { validateAddress, ValidationResult } from '@taquito/utils';
 import { BigNumber } from 'bignumber.js';
 
-export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
+import { isDefined } from './is-defined';
+
+export const mutezToTz = (bigNum: BigNumber | undefined, decimals: number) => {
+  if (!isDefined(bigNum)) {
+    return undefined;
+  }
   if (bigNum.isNaN()) {
     return bigNum;
   }
@@ -9,12 +14,15 @@ export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
   return bigNum.integerValue().div(new BigNumber(10).pow(decimals));
 };
 
-export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
+export const tzToMutez = (bigNum: BigNumber | undefined, decimals: number) => {
+  if (!isDefined(bigNum)) {
+    return undefined;
+  }
   if (bigNum.isNaN()) {
     return bigNum;
   }
 
-  return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
+  return bigNum?.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;

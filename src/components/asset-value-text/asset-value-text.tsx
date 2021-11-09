@@ -33,7 +33,7 @@ export const AssetValueText: FC<Props> = ({
 
   const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
   const formattedAmount = convertToDollar
-    ? formatAssetAmount(parsedAmount.multipliedBy(exchangeRate), BigNumber.ROUND_DOWN, 2)
+    ? formatAssetAmount(parsedAmount?.multipliedBy(exchangeRate), BigNumber.ROUND_DOWN, 2)
     : formatAssetAmount(parsedAmount);
   const symbol = convertToDollar ? '$' : asset.symbol;
 

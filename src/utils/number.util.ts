@@ -1,16 +1,21 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
+import { isDefined } from './is-defined';
+
 export const formatAssetAmount = (
-  amount: BigNumber,
+  amount: BigNumber | undefined,
   roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
   decimalPlace = 6
 ) => {
-  if (isNaN(amount.toNumber())) {
+  if (isDefined(amount) && isNaN(amount.toNumber())) {
     return '';
   }
+  if (isDefined(amount)) {
+    return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+  }
 
-  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+  return '';
 };
 
 export const roundFiat = (
