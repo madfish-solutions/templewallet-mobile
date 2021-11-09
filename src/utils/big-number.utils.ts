@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 
-//Math.max and Math.min analogs
 const bigIntMax = (...args: BigNumber[]) => args.reduce((m, e) => (e.isGreaterThan(m) ? e : m));
 const bigIntMin = (...args: BigNumber[]) => args.reduce((m, e) => (e.isLessThan(m) ? e : m));
 

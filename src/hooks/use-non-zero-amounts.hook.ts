@@ -48,10 +48,6 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
           symbol,
           exchangeRate
         });
-
-        if (amounts.length === 2 && amounts[0].isPositive) {
-          [amounts[0], amounts[1]] = [amounts[1], amounts[0]];
-        }
       }
     }
 
