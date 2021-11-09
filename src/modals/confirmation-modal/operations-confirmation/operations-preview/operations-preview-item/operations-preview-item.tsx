@@ -51,7 +51,6 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
 
     const slug = getTokenSlug(isDefined(contract().address) ? contract() : {});
     const tokenData = getTokenMetadata(slug);
-    console.log({ tokenData });
 
     const amount = params.amount;
 
