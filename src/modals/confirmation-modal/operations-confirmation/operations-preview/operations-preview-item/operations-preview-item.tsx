@@ -13,7 +13,7 @@ import { formatSize } from '../../../../../styles/format-size';
 import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
-import { isCollectible, isEmptyTokenMetadata } from '../../../../../utils/tezos.util';
+import { isCollectible } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
@@ -31,7 +31,7 @@ interface PreviewDataInterface {
 interface ParamsPreviewDataInterface {
   type?: ParamPreviewTypeEnum;
   contract?: string;
-  asset?: { contract: string } | Asset | string;
+  asset?: { contract: string; id?: number } | Asset | string;
   amount: string;
 }
 
@@ -41,16 +41,19 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const contract = () => {
       if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {
-        return params.contract;
+        return { address: params.contract, id: undefined };
       }
       if (typeof params.asset === 'object') {
-        return params.asset.contract;
+        return { address: params.asset.contract, id: params.asset.id ?? undefined };
       }
 
-      return;
+      return { address: undefined, id: undefined };
     };
-    const slug = getTokenSlug(isDefined(contract()) ? { address: contract() } : {});
+
+    const slug = getTokenSlug(isDefined(contract().address) ? contract() : {});
     const tokenData = getTokenMetadata(slug);
+    console.log({ tokenData });
+
     const amount = params.amount;
 
     return { tokenData, amount };
@@ -105,29 +108,24 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {console.log(isCollectible(token.tokenData))}
-            {console.log({ token })}
-            {isDefined(token) &&
-              Number(token.amount) > 0 &&
-              !isCollectible(token.tokenData) &&
-              !isEmptyTokenMetadata(token.tokenData) && (
-                <View>
-                  <AssetValueText
-                    amount={token.amount}
-                    asset={token.tokenData}
-                    style={styles.amountToken}
-                    showMinusSign
-                  />
-                  <Divider size={formatSize(8)} />
-                  <AssetValueText
-                    convertToDollar
-                    amount={token.amount}
-                    asset={token.tokenData}
-                    style={styles.amountDollar}
-                    showMinusSign
-                  />
-                </View>
-              )}
+            {isDefined(token) && Number(token.amount) > 0 && !isCollectible(token.tokenData) && (
+              <View>
+                <AssetValueText
+                  amount={token.amount}
+                  asset={token.tokenData}
+                  style={styles.amountToken}
+                  showMinusSign
+                />
+                <Divider size={formatSize(8)} />
+                <AssetValueText
+                  convertToDollar
+                  amount={token.amount}
+                  asset={token.tokenData}
+                  style={styles.amountDollar}
+                  showMinusSign
+                />
+              </View>
+            )}
           </View>
           <Divider size={formatSize(8)} />
         </Fragment>
