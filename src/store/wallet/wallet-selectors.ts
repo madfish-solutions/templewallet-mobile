@@ -98,6 +98,12 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   return assetsList;
 };
 
+export const useVisibleAssetListSelector = () => {
+  const tokensList = useAssetsListSelector();
+
+  return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
+};
+
 export const useTokensListSelector = () => {
   const assetsList = useAssetsListSelector();
 
