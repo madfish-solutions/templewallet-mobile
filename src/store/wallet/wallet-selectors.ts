@@ -10,7 +10,7 @@ import {
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
-import { isCollectible } from '../../utils/tezos.util';
+import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
@@ -125,7 +125,10 @@ export const useCollectiblesListSelector = () => {
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();
 
-  return useMemo(() => collectiblesList.filter(({ isVisible }) => isVisible), [collectiblesList]);
+  return useMemo(
+    () => collectiblesList.filter(({ isVisible }) => isVisible).filter(asset => isNonZeroBalance(asset)),
+    [collectiblesList]
+  );
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {
