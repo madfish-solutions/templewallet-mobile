@@ -14,12 +14,6 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
   useEffect(() => {
     const result: TokenInterface[] = assetsList.filter(asset => isNonZeroBalance(asset));
 
-    for (const asset of assetsList) {
-      if (asset.balance !== '0') {
-        result.push(asset);
-      }
-    }
-
     setNonZeroBalanceAssetsList(result);
   }, [assetsList]);
 
