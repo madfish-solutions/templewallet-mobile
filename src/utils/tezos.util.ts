@@ -24,6 +24,6 @@ export const isCollectible = <T extends TokenPreviewType>(asset: T) => isDefined
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 
-export const isZeroBalance = (asset: TokenInterface) => asset.balance === '0';
+export const isNonZeroBalance = (asset: TokenInterface) => asset.balance !== '0';
 
 export const isKTAddress = (address: string) => address.startsWith('KT');

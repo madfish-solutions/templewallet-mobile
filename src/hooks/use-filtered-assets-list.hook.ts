@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
+import { isNonZeroBalance } from '../utils/tezos.util';
 
 export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
@@ -11,7 +12,7 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
   const [filteredAssetsList, setFilteredAssetsList] = useState<TokenInterface[]>([]);
 
   useEffect(() => {
-    const result: TokenInterface[] = [];
+    const result: TokenInterface[] = assetsList.filter(asset => isNonZeroBalance(asset));
 
     for (const asset of assetsList) {
       if (asset.balance !== '0') {
