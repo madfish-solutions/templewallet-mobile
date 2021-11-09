@@ -1,6 +1,5 @@
 import React, { FC, Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { boolean } from 'yup';
 
 import { AssetValueText } from '../../../../../components/asset-value-text/asset-value-text';
 import { Divider } from '../../../../../components/divider/divider';
