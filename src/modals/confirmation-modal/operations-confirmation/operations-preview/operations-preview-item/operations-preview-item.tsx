@@ -1,5 +1,6 @@
 import React, { FC, Fragment, useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { boolean } from 'yup';
 
 import { AssetValueText } from '../../../../../components/asset-value-text/asset-value-text';
 import { Divider } from '../../../../../components/divider/divider';
@@ -12,7 +13,7 @@ import { formatSize } from '../../../../../styles/format-size';
 import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
-import { isCollectible } from '../../../../../utils/tezos.util';
+import { isCollectible, isEmptyTokenMetadata } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
@@ -104,24 +105,29 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {isDefined(token) && Number(token.amount) > 0 && !isCollectible(token.tokenData) && (
-              <View>
-                <AssetValueText
-                  amount={token.amount}
-                  asset={token.tokenData}
-                  style={styles.amountToken}
-                  showMinusSign
-                />
-                <Divider size={formatSize(8)} />
-                <AssetValueText
-                  convertToDollar
-                  amount={token.amount}
-                  asset={token.tokenData}
-                  style={styles.amountDollar}
-                  showMinusSign
-                />
-              </View>
-            )}
+            {console.log(isCollectible(token.tokenData))}
+            {console.log({ token })}
+            {isDefined(token) &&
+              Number(token.amount) > 0 &&
+              !isCollectible(token.tokenData) &&
+              !isEmptyTokenMetadata(token.tokenData) && (
+                <View>
+                  <AssetValueText
+                    amount={token.amount}
+                    asset={token.tokenData}
+                    style={styles.amountToken}
+                    showMinusSign
+                  />
+                  <Divider size={formatSize(8)} />
+                  <AssetValueText
+                    convertToDollar
+                    amount={token.amount}
+                    asset={token.tokenData}
+                    style={styles.amountDollar}
+                    showMinusSign
+                  />
+                </View>
+              )}
           </View>
           <Divider size={formatSize(8)} />
         </Fragment>
