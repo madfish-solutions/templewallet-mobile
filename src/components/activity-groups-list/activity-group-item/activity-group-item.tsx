@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
 import { formatSize } from '../../../styles/format-size';
 import { tzktUrl } from '../../../utils/linking.util';
@@ -8,6 +9,7 @@ import { Divider } from '../../divider/divider';
 import { ExternalLinkButton } from '../../icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
 import { ActivityGroupAmountChange } from './activity-group-amount-change/activity-group-amount-change';
+import { ActivityGroupDollarAmountChange } from './activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import { useActivityGroupItemStyles } from './activity-group-item.styles';
 import { ActivityGroupType } from './activity-group-type/activity-group-type';
 import { ActivityStatusBadge } from './activity-status-badge/activity-status-badge';
@@ -19,6 +21,7 @@ interface Props {
 
 export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
+  const nonZeroAmounts = useNonZeroAmounts(group);
 
   const firstActivity = group[0] ?? emptyActivity;
 
@@ -35,6 +38,8 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
         </View>
       </View>
       <Divider size={formatSize(8)} />
+      <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} />
+      <Divider size={formatSize(4)} />
       <View style={styles.lowerContainer}>
         <View style={styles.statusContainer}>
           <ActivityStatusBadge status={firstActivity.status} />
@@ -42,7 +47,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
           <ActivityTime timestamp={firstActivity.timestamp} />
         </View>
 
-        <ActivityGroupAmountChange group={group} />
+        <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
       </View>
       <Divider size={formatSize(16)} />
     </View>
