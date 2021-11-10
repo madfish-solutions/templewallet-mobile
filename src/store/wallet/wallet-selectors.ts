@@ -119,16 +119,13 @@ export const useVisibleTokensListSelector = () => {
 export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 
-  return useMemo(() => assetsList.filter(asset => isCollectible(asset)), [assetsList]);
+  return useMemo(() => assetsList.filter(asset => isCollectible(asset) && isNonZeroBalance(asset)), [assetsList]);
 };
 
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();
 
-  return useMemo(
-    () => collectiblesList.filter(({ isVisible }) => isVisible).filter(asset => isNonZeroBalance(asset)),
-    [collectiblesList]
-  );
+  return useMemo(() => collectiblesList.filter(({ isVisible }) => isVisible), [collectiblesList]);
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {
