@@ -12,15 +12,12 @@ export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
   return bigNum.integerValue().div(new BigNumber(10).pow(decimals));
 };
 
-export const tzToMutez = (bigNum: BigNumber | undefined, decimals: number) => {
-  if (!isDefined(bigNum)) {
-    return undefined;
-  }
+export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
   if (bigNum.isNaN()) {
     return bigNum;
   }
 
-  return bigNum?.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
+  return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
 export const isCollectible = <T extends TokenPreviewType>(asset: T) => isDefined(asset.artifactUri);

@@ -11,3 +11,5 @@ export const findTokenToLpInput = (
   lpTokenTotalSupply: BigNumber,
   outputTokenPool: BigNumber
 ) => outputTokenAmount.multipliedBy(lpTokenTotalSupply).dividedToIntegerBy(outputTokenPool);
+
+export const findExchangeRate = (aToken: BigNumber, bToken: BigNumber) => aToken.dividedBy(bToken);
