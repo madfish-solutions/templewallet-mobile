@@ -34,7 +34,10 @@ export const RemoveLiquidityModal = () => {
     LIQUIDITY_BAKING_DEX_ADDRESS,
     liquidityBakingStorageInitialValue
   );
-  console.log({ storage });
+
+  const aTokenPool = storage.xtzPool;
+  const bTokenPool = storage.tokenPool;
+  const lpTotalSupply = storage.lqtTotal;
 
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
@@ -92,8 +95,8 @@ export const RemoveLiquidityModal = () => {
         onSubmit={onSubmitHandler}
       >
         {({ values, setTouched, setValues, submitForm }) => {
-          const aToBExchangeRate = findExchangeRate(storage.xtzPool, storage.tokenPool);
-          const bToAExchangeRate = findExchangeRate(storage.tokenPool, storage.xtzPool);
+          const aToBExchangeRate = findExchangeRate(values.aToken.asset, aTokenPool, values.bToken.asset, bTokenPool);
+          const bToAExchangeRate = findExchangeRate(values.bToken.asset, bTokenPool, values.aToken.asset, aTokenPool);
 
           const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
@@ -144,6 +147,7 @@ export const RemoveLiquidityModal = () => {
 
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
           };
+          console.log(values.aToken.asset.decimals, values.bToken.asset.decimals);
 
           return (
             <>
@@ -172,15 +176,19 @@ export const RemoveLiquidityModal = () => {
                 <Text style={styles.sectionNameText}>Remove Liquidity Details</Text>
                 <View style={styles.lineDivider} />
                 <View style={styles.detailsItemWrapper}>
-                  <Text style={styles.detailsDescription}>Rate XTZ/tzBTC</Text>
+                  <Text style={styles.detailsDescription}>
+                    Rate {values.aToken.asset.symbol}/{values.bToken.asset.symbol}
+                  </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(aToBExchangeRate, )}
+                    {formatAssetAmount(aToBExchangeRate)}
                   </Text>
                 </View>
                 <View style={styles.lineDivider} />
                 <View style={styles.detailsItemWrapper}>
-                  <Text style={styles.detailsDescription}>Rate tzBTC/XTZ</Text>
+                  <Text style={styles.detailsDescription}>
+                    Rate {values.bToken.asset.symbol}/{values.aToken.asset.symbol}
+                  </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
                     {formatAssetAmount(bToAExchangeRate)}

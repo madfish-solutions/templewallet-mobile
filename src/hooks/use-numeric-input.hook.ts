@@ -20,10 +20,7 @@ export const useNumericInput = (
   const [focused, setFocused] = useState(false);
 
   useEffect(
-    () =>
-      void (
-        !focused && setStringValue(isDefined(value) ? mutezToTz(value ?? new BigNumber(0), decimals).toFixed() : '')
-      ),
+    () => void (!focused && setStringValue(isDefined(value) ? value.toFixed() : '')),
     [setStringValue, focused, value]
   );
 

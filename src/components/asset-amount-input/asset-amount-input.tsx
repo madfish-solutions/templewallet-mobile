@@ -10,7 +10,7 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
-import { tzToMutez } from '../../utils/tezos.util';
+import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
@@ -21,8 +21,6 @@ import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
-
-const lpTokensContracts = ['KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo'];
 
 export interface AssetAmountInterface {
   asset: TokenInterface;
@@ -68,7 +66,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    value.amount,
+    isDefined(value.amount) ? mutezToTz(value.amount, value.asset.decimals) : undefined,
     asset.decimals,
     onBlur,
     onFocus,
@@ -86,9 +84,11 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     () =>
       void onValueChange({
         ...value,
-        amount: isTokenInputType
-          ? tzToMutez(inputValue, value.asset.decimals)
-          : tzToMutez(inputValue, value.asset.decimals)?.dividedBy(exchangeRate).decimalPlaces(0)
+        amount: isDefined(inputValue)
+          ? isTokenInputType
+            ? tzToMutez(inputValue, value.asset.decimals)
+            : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate).decimalPlaces(0)
+          : undefined
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
   );

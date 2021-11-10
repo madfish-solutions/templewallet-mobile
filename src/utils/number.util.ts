@@ -3,19 +3,12 @@ import { isNaN } from 'lodash-es';
 
 import { isDefined } from './is-defined';
 
-export const formatAssetAmount = (
-  amount: BigNumber | undefined,
-  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
-  decimalPlace = 6
-) => {
-  if (isDefined(amount) && isNaN(amount.toNumber())) {
+export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
+  if (isNaN(amount.toNumber())) {
     return '';
   }
-  if (isDefined(amount)) {
-    return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
-  }
 
-  return '';
+  return numberWithSpaces(amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2).toFixed());
 };
 
 export const roundFiat = (
