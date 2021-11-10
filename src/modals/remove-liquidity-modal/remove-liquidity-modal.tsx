@@ -63,8 +63,6 @@ export const RemoveLiquidityModal = () => {
           getTransactionTimeoutDate()
         )
         .toTransferParams({ mutez: true });
-
-      console.log(JSON.stringify(result));
     }
   };
 
@@ -90,7 +88,7 @@ export const RemoveLiquidityModal = () => {
     <>
       <Formik
         initialValues={removeLiquidityModalInitialValues}
-        enableReinitialize={true}
+        // enableReinitialize={true}
         validationSchema={removeLiquidityModalValidationSchema}
         onSubmit={onSubmitHandler}
       >
@@ -99,6 +97,8 @@ export const RemoveLiquidityModal = () => {
           const bToAExchangeRate = findExchangeRate(values.bToken.asset, bTokenPool, values.aToken.asset, aTokenPool);
 
           const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
+            console.log('test updateForm');
+            
             setValues({
               ...values,
               lpToken: { ...values.lpToken, amount: lpTokenAmount },
@@ -147,7 +147,6 @@ export const RemoveLiquidityModal = () => {
 
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
           };
-          console.log(values.aToken.asset.decimals, values.bToken.asset.decimals);
 
           return (
             <>

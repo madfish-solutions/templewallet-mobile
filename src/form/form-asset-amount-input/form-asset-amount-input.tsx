@@ -24,8 +24,11 @@ export const FormAssetAmountInput: FC<Props> = ({
   const isError = hasError(meta);
 
   const handleValueChange: EventFn<AssetAmountInterface, void> = newValue => {
-    onValueChange(newValue);
-    helpers.setValue(newValue);
+    const isSameValue = JSON.stringify(newValue) === JSON.stringify(field.value);
+    if (!isSameValue) {
+      onValueChange(newValue);
+      helpers.setValue(newValue);
+    }
   };
 
   return (
