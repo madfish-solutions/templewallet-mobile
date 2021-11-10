@@ -61,7 +61,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const asset = value.asset;
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
-  const isLpToken = lpTokensContracts.includes(asset.address);
+  // const isLpToken = lpTokensContracts.includes(asset.address);
 
   const exchangeRates = useExchangeRatesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
