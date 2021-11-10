@@ -9,11 +9,7 @@ const allowInDevMode = false;
 setJSExceptionHandler((error, isFatal) => {
   Sentry.captureException(error.originalError ?? error);
 
-  // TODO: remove this when taquito will fix this issue https://github.com/ecadlabs/taquito/issues/1040
-  const isTaquitoMissedBlockError = error.name === 'MissedBlockDuringConfirmationError';
-
   isFatal &&
-    !isTaquitoMissedBlockError &&
     Alert.alert(
       'Ooops, something went wrong',
       'We have reported this to our team! \nRestart the app and try again. \nIf this continues - please Reset the wallet.',

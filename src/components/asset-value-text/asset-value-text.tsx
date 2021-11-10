@@ -6,8 +6,8 @@ import { useExchangeRatesSelector } from '../../store/currency/currency-selector
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
-import { formatAssetAmount } from '../../utils/number.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { FormattedAmount } from '../formatted-amount';
 
 interface Props {
   amount: string;
@@ -32,22 +32,23 @@ export const AssetValueText: FC<Props> = ({
   const hideText = convertToDollar && !isDefined(exchangeRate);
 
   const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
-  const formattedAmount = convertToDollar
-    ? formatAssetAmount(parsedAmount?.multipliedBy(exchangeRate), BigNumber.ROUND_DOWN, 2)
-    : formatAssetAmount(parsedAmount);
-  const symbol = convertToDollar ? '$' : asset.symbol;
+  const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
+
+  const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
   return (
     <Text style={style}>
       {hideText ? (
         ''
       ) : (
-        <>
-          {convertToDollar && '≈ '}
-          {showMinusSign && '- '}
-          {formattedAmount}
-          {showSymbol ? ` ${symbol}` : null}
-        </>
+        <FormattedAmount
+          amount={visibleAmount}
+          isDollarValue={convertToDollar}
+          showMinusSign={showMinusSign}
+          showPlusSign={false}
+          symbol={visibleSymbol}
+          style={style}
+        />
       )}
     </Text>
   );

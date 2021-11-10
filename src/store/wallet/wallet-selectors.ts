@@ -10,6 +10,7 @@ import {
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
+import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
@@ -103,6 +104,12 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   return assetsList;
 };
 
+export const useVisibleAssetListSelector = () => {
+  const tokensList = useAssetsListSelector();
+
+  return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
+};
+
 export const useTokensListSelector = () => {
   const assetsList = useAssetsListSelector();
 
@@ -118,13 +125,16 @@ export const useVisibleTokensListSelector = () => {
 export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 
-  return useMemo(() => assetsList.filter(({ artifactUri }) => isDefined(artifactUri)), [assetsList]);
+  return useMemo(() => assetsList.filter(asset => isCollectible(asset)), [assetsList]);
 };
 
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();
 
-  return useMemo(() => collectiblesList.filter(({ isVisible }) => isVisible), [collectiblesList]);
+  return useMemo(
+    () => collectiblesList.filter(({ isVisible }) => isVisible).filter(asset => isNonZeroBalance(asset)),
+    [collectiblesList]
+  );
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {

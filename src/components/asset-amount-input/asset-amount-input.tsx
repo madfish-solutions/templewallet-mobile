@@ -84,7 +84,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   useEffect(
     () =>
-      onValueChange({
+      void onValueChange({
         ...value,
         amount: isTokenInputType
           ? tzToMutez(inputValue, value.asset.decimals)

@@ -1,6 +1,6 @@
 import { BeaconMessageType } from '@airgap/beacon-sdk';
 import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -14,7 +14,9 @@ import { useNavigationSetOptions } from '../../../../components/header/use-navig
 import { Label } from '../../../../components/label/label';
 import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
+import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
 import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
+import { useParseSignPayload } from '../../../../hooks/use-parse-sign-payload.hook';
 import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
@@ -48,10 +50,17 @@ const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
     })
   );
 
+const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
+
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const styles = useSignPayloadRequestConfirmationStyles();
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
+
+  const { payloadPreview, isPayloadParsed } = useParseSignPayload(message);
+
+  const [payloadTypeIndex, setPayloadTypeIndex] = useState(0);
+  const isPayloadPreviewType = payloadTypeIndex === PAYLOAD_PREVIEW_TYPE_INDEX;
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
@@ -72,12 +81,20 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         <AccountDropdownItem account={approver} />
         <Divider />
         <View style={styles.descriptionContainer}>
-          <Divider size={formatSize(12)} />
           <Text style={styles.descriptionText}>Payload to sign</Text>
-          <Divider size={formatSize(12)} />
+          {isPayloadParsed && (
+            <TextSegmentControl
+              width={formatSize(181)}
+              selectedIndex={payloadTypeIndex}
+              values={['Preview', 'Bytes']}
+              onChange={setPayloadTypeIndex}
+            />
+          )}
         </View>
         <Divider size={formatSize(16)} />
-        <Text style={styles.payloadText}>{message.payload}</Text>
+        <Text style={styles.payloadText}>
+          {isPayloadParsed ? (isPayloadPreviewType ? payloadPreview : message.payload) : message.payload}
+        </Text>
       </ScreenContainer>
       <ModalButtonsContainer>
         <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
