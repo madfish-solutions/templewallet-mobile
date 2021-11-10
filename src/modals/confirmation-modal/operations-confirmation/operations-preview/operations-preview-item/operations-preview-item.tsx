@@ -30,7 +30,7 @@ interface PreviewDataInterface {
 interface ParamsPreviewDataInterface {
   type?: ParamPreviewTypeEnum;
   contract?: string;
-  asset?: { contract: string } | Asset | string;
+  asset?: Asset;
   amount: string;
 }
 
@@ -38,18 +38,22 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
-    const contract = () => {
+    const getContract = () => {
       if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {
-        return params.contract;
+        return { address: params.contract };
       }
       if (typeof params.asset === 'object') {
-        return params.asset.contract;
+        return { address: params.asset.contract, id: params.asset.id };
       }
 
-      return;
+      return undefined;
     };
-    const slug = getTokenSlug(isDefined(contract()) ? { address: contract() } : {});
+
+    const contract = getContract();
+
+    const slug = getTokenSlug(contract ?? {});
     const tokenData = getTokenMetadata(slug);
+
     const amount = params.amount;
 
     return { tokenData, amount };
