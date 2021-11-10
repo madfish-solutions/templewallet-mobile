@@ -10,6 +10,9 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
+import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, useContract } from '../../op-params/liquidity-baking/contracts';
 import {
   LiquidityBakingStorage,
@@ -26,10 +29,12 @@ import { formatSize } from '../../styles/format-size';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
+import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
 import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } from './remove-liquidity-modal.form';
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
+  const { navigate } = useNavigation();
   const { contract, storage } = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
     LIQUIDITY_BAKING_DEX_ADDRESS,
     liquidityBakingStorageInitialValue
@@ -54,7 +59,7 @@ export const RemoveLiquidityModal = () => {
       isDefined(values.bToken.amount) &&
       isDefined(contract)
     ) {
-      const result = contract.methods
+      const transferParams = contract.methods
         .removeLiquidity(
           publicKeyHash,
           values.lpToken.amount,
@@ -63,6 +68,10 @@ export const RemoveLiquidityModal = () => {
           getTransactionTimeoutDate()
         )
         .toTransferParams({ mutez: true });
+
+      const opParams = parseTransferParamsToParamsWithKind(transferParams);
+
+      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams });
     }
   };
 
@@ -97,8 +106,6 @@ export const RemoveLiquidityModal = () => {
           const bToAExchangeRate = findExchangeRate(values.bToken.asset, bTokenPool, values.aToken.asset, aTokenPool);
 
           const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
-            console.log('test updateForm');
-            
             setValues({
               ...values,
               lpToken: { ...values.lpToken, amount: lpTokenAmount },
@@ -118,8 +125,8 @@ export const RemoveLiquidityModal = () => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
             if (isDefined(lpToken.amount)) {
               lpTokenAmount = lpToken.amount;
-              aTokenAmount = findLpToTokenOutput(lpTokenAmount, storage.lqtTotal, storage.xtzPool);
-              bTokenAmount = findLpToTokenOutput(lpTokenAmount, storage.lqtTotal, storage.tokenPool);
+              aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
+              bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
             }
 
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
@@ -129,8 +136,8 @@ export const RemoveLiquidityModal = () => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
-              lpTokenAmount = findTokenToLpInput(aTokenAmount, storage.lqtTotal, storage.xtzPool);
-              bTokenAmount = findLpToTokenOutput(lpTokenAmount, storage.lqtTotal, storage.tokenPool);
+              lpTokenAmount = findTokenToLpInput(aTokenAmount, lpTotalSupply, aTokenPool);
+              bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
             }
 
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
