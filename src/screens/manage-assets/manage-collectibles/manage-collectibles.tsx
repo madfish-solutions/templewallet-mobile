@@ -10,7 +10,7 @@ import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useCollectiblesListSelector, } from '../../../store/wallet/wallet-selectors';
+import { useCollectiblesListSelector } from '../../../store/wallet/wallet-selectors';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
