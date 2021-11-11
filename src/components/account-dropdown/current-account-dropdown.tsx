@@ -4,6 +4,7 @@ import { WalletAccountInterface } from '../../interfaces/wallet-account.interfac
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,
@@ -51,16 +52,20 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   value,
   list,
   onValueChange
-}) => (
-  <Dropdown
-    title="Accounts"
-    value={value}
-    publicKeyHash={value?.publicKeyHash}
-    list={list}
-    equalityFn={accountEqualityFn}
-    renderValue={renderAccountValue}
-    renderListItem={renderAccountListItem}
-    renderActionButtons={ActionButtons}
-    onValueChange={onValueChange}
-  />
-);
+}) => {
+  const onLongPressHandler = () => copyStringToClipboard(value?.publicKeyHash);
+
+  return (
+    <Dropdown
+      title="Accounts"
+      value={value}
+      list={list}
+      equalityFn={accountEqualityFn}
+      renderValue={renderAccountValue}
+      renderListItem={renderAccountListItem}
+      renderActionButtons={ActionButtons}
+      onValueChange={onValueChange}
+      onLongPress={onLongPressHandler}
+    />
+  );
+};

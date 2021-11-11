@@ -4,7 +4,6 @@ import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
@@ -17,11 +16,11 @@ export interface DropdownProps<T> {
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
+  onLongPress?: () => void;
 }
 
 export interface DropdownValueProps<T> {
   value?: T;
-  publicKeyHash?: string;
   list: T[];
   onValueChange: EventFn<T | undefined>;
 }
@@ -43,14 +42,14 @@ export type DropdownActionButtonsComponent = FC<{
 
 export const Dropdown = <T extends unknown>({
   value,
-  publicKeyHash,
   list,
   title,
   equalityFn,
   renderValue,
   renderListItem,
   renderActionButtons = emptyComponent,
-  onValueChange
+  onValueChange,
+  onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -66,7 +65,7 @@ export const Dropdown = <T extends unknown>({
       <TouchableOpacity
         style={styles.valueContainer}
         onPress={dropdownBottomSheetController.open}
-        onLongPress={() => copyStringToClipboard(publicKeyHash)}
+        onLongPress={onLongPress}
       >
         {renderValue({ value })}
       </TouchableOpacity>
