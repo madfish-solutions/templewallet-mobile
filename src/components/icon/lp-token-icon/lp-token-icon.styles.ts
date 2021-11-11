@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useLpTokenIconStyles = createUseStyles(({ colors, typography }) => ({
+export const useLpTokenIconStyles = createUseStyles(() => ({
   container: {
     position: 'relative'
   },

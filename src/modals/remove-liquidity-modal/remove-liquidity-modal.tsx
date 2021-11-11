@@ -6,6 +6,8 @@ import { Text, View } from 'react-native';
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
+import { Icon } from '../../components/icon/icon';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -166,6 +168,10 @@ export const RemoveLiquidityModal = () => {
                   onValueChange={handleLpTokenChange}
                 />
                 <Divider size={formatSize(16)} />
+                <View style={styles.iconCentered}>
+                  <Icon size={formatSize(24)} name={IconNameEnum.ArrowDown} />
+                </View>
+                <Divider size={formatSize(24)} />
                 <FormAssetAmountInput
                   name="aToken"
                   label="Output"
@@ -173,6 +179,10 @@ export const RemoveLiquidityModal = () => {
                   onValueChange={handleATokenChange}
                 />
                 <Divider size={formatSize(16)} />
+                <View style={styles.iconCentered}>
+                  <Icon size={formatSize(24)} name={IconNameEnum.PlusIconOrange} />
+                </View>
+                <Divider size={formatSize(24)} />
                 <FormAssetAmountInput
                   name="bToken"
                   label="Output"

@@ -29,11 +29,12 @@ export interface AssetAmountInterface {
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 
-const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => (
+const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value, isDisabledDropdown }) => (
   <TokenDropdownItem
     token={value}
     actionIconName={IconNameEnum.TriangleDown}
     isShowBalance={false}
+    isDisabledDropdown={isDisabledDropdown}
     iconSize={formatSize(32)}
   />
 );
@@ -59,6 +60,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const asset = value.asset;
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
+  const isDisabledDropdown = assetsList.length === 1;
   // const isLpToken = lpTokensContracts.includes(asset.address);
 
   const exchangeRates = useExchangeRatesSelector();
@@ -135,6 +137,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
+            isDisabledDropdown={isDisabledDropdown}
             onValueChange={newAsset => onValueChange({ ...value, asset: newAsset ?? emptyToken })}
           />
         </View>

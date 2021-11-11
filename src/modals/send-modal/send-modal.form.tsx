@@ -1,9 +1,7 @@
-import { BigNumber } from 'bignumber.js';
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { assetAmountValidation } from '../../form/validation/asset-amount';
-import { bigNumberValidation } from '../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { walletAddressValidation } from '../../form/validation/wallet-address';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';

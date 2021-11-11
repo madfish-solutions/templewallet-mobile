@@ -11,7 +11,6 @@ import { TokenMetadataInterface } from '../token/interfaces/token-metadata.inter
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
-import { tzToMutez } from './tezos.util';
 
 export const getTransferParams$ = (
   asset: TokenMetadataInterface,
@@ -20,7 +19,7 @@ export const getTransferParams$ = (
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> => {
-  const { id, address, decimals } = asset;
+  const { id, address } = asset;
 
   return isString(address)
     ? from(createReadOnlyTezosToolkit(rpcUrl, sender).contract.at(address)).pipe(

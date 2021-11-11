@@ -1,8 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
-import { isDefined } from './is-defined';
-
 export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
   if (isNaN(amount.toNumber())) {
     return '';

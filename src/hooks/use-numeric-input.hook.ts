@@ -4,7 +4,6 @@ import { NativeSyntheticEvent, TextInputFocusEventData, TextInputProps } from 'r
 
 import { emptyFn, EmptyFn, EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
-import { tzToMutez, mutezToTz } from '../utils/tezos.util';
 
 const DEFAULT_MIN_VALUE = new BigNumber(0);
 const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);

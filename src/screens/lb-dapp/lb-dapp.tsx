@@ -1,5 +1,3 @@
-import { style } from '@dicebear/avatars/lib/utils';
-import { stubArray } from 'lodash-es';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 

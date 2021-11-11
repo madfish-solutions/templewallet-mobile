@@ -21,6 +21,7 @@ export interface DropdownProps<T> {
 export interface DropdownValueProps<T> {
   value?: T;
   list: T[];
+  isDisabledDropdown?: boolean;
   onValueChange: EventFn<T | undefined>;
 }
 
@@ -28,6 +29,7 @@ export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
 export type DropdownValueComponent<T> = FC<{
   value?: T;
+  isDisabledDropdown?: boolean;
 }>;
 
 export type DropdownListItemComponent<T> = FC<{
@@ -43,6 +45,7 @@ export const Dropdown = <T extends unknown>({
   value,
   list,
   title,
+  isDisabledDropdown = false,
   equalityFn,
   renderValue,
   renderListItem,
@@ -60,8 +63,12 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
-        {renderValue({ value })}
+      <TouchableOpacity
+        disabled={isDisabledDropdown}
+        style={styles.valueContainer}
+        onPress={dropdownBottomSheetController.open}
+      >
+        {renderValue({ value, isDisabledDropdown })}
       </TouchableOpacity>
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>

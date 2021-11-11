@@ -23,7 +23,7 @@ it('getTransferParams$ should create params for transferring TEZ', done => {
     new BigNumber(0.005)
   ).subscribe(
     rxJsTestingHelper(params => {
-      expect(params).toEqual({ amount: 5000, to: 'receiverPublicKeyHash', mutez: true });
+      expect(params).toEqual({ amount: 0.005, to: 'receiverPublicKeyHash', mutez: true });
     }, done)
   );
 });
@@ -42,7 +42,7 @@ it('getTransferParams$ should create params for transferring FA1.2 tokens', done
       expect(mockFA1_2Contract.methods.transfer).toBeCalledWith(
         mockWalletAccount.publicKeyHash,
         'receiverPublicKeyHash',
-        '10000'
+        new BigNumber(0.01)
       );
     }, done)
   );
@@ -66,7 +66,7 @@ it('getTransferParams$ should create params for transferring FA2 tokens', done =
             {
               to_: 'receiverPublicKeyHash',
               token_id: mockFA2TokenMetadata.id,
-              amount: '100000'
+              amount: new BigNumber(0.001)
             }
           ]
         }

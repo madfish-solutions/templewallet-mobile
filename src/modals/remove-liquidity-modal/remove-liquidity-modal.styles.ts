@@ -37,5 +37,9 @@ export const useRemoveLiquidityModalStyles = createUseStyles(({ colors, typograp
     paddingBottom: formatSize(16),
     paddingHorizontal: formatSize(8),
     backgroundColor: colors.white
+  },
+  iconCentered: {
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }));
