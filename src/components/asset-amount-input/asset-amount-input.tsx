@@ -29,12 +29,12 @@ export interface AssetAmountInterface {
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 
-const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value, isDisabledDropdown }) => (
+const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value, disabled }) => (
   <TokenDropdownItem
     token={value}
     actionIconName={IconNameEnum.TriangleDown}
     isShowBalance={false}
-    isDisabledDropdown={isDisabledDropdown}
+    disabled={disabled}
     iconSize={formatSize(32)}
   />
 );
@@ -60,8 +60,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const asset = value.asset;
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
-  const isDisabledDropdown = assetsList.length === 1;
-  // const isLpToken = lpTokensContracts.includes(asset.address);
+  const isDropdownDisabled = assetsList.length === 1;
 
   const exchangeRates = useExchangeRatesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
@@ -75,7 +74,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     newAmount => setInputValue(newAmount)
   );
 
-  const onTokenInputTypeChangeHandler = (tokenTypeIndex: number) => {
+  const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
     if (isDefined(amountInputRef.current)) {
       amountInputRef.current.focus();
     }
@@ -105,7 +104,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             width={formatSize(138)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', 'USD']}
-            onChange={onTokenInputTypeChangeHandler}
+            onChange={handleTokenInputTypeChange}
           />
         )}
       </View>
@@ -137,7 +136,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            isDisabledDropdown={isDisabledDropdown}
+            disabled={isDropdownDisabled}
             onValueChange={newAsset => onValueChange({ ...value, asset: newAsset ?? emptyToken })}
           />
         </View>

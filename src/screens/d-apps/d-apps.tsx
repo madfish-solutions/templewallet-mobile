@@ -43,7 +43,7 @@ export const DApps = () => {
       <Divider size={formatSize(20)} />
       <View style={styles.dappBlockWrapper}>
         <IntegratedDApp
-          screenName={ScreensEnum.LbDapp}
+          screenName={ScreensEnum.LiquidityBakingDapp}
           iconName={IconNameEnum.LbDappIcon}
           title={'Liquidity Baking'}
           description={'Create XTZ/tzBTC & earn XTZ'}

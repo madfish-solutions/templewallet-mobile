@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const LpTokenIcon: FC<Props> = ({ firstTokenIcon, secondTokenIcon, containerStyles }) => {
-  const styles = useLpTokenIconStyles();
+  const styles = useLpTokenIconStyles;
 
   return (
     <View style={[styles.container, containerStyles]}>

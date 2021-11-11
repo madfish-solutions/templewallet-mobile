@@ -1,7 +1,8 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
+import { StyleSheet } from 'react-native';
+
 import { formatSize } from '../../../styles/format-size';
 
-export const useLpTokenIconStyles = createUseStyles(() => ({
+export const useLpTokenIconStyles = StyleSheet.create({
   container: {
     position: 'relative'
   },
@@ -12,4 +13,4 @@ export const useLpTokenIconStyles = createUseStyles(() => ({
     position: 'absolute',
     left: formatSize(16)
   }
-}));
+});

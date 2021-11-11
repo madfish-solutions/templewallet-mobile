@@ -99,7 +99,6 @@ export const RemoveLiquidityModal = () => {
     <>
       <Formik
         initialValues={removeLiquidityModalInitialValues}
-        // enableReinitialize={true}
         validationSchema={removeLiquidityModalValidationSchema}
         onSubmit={onSubmitHandler}
       >
