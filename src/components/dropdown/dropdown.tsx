@@ -16,6 +16,7 @@ export interface DropdownProps<T> {
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
+  onLongPress?: EmptyFn;
 }
 
 export interface DropdownValueProps<T> {
@@ -47,7 +48,8 @@ export const Dropdown = <T extends unknown>({
   renderValue,
   renderListItem,
   renderActionButtons = emptyComponent,
-  onValueChange
+  onValueChange,
+  onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -60,7 +62,11 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
+      <TouchableOpacity
+        style={styles.valueContainer}
+        onPress={dropdownBottomSheetController.open}
+        onLongPress={onLongPress}
+      >
         {renderValue({ value })}
       </TouchableOpacity>
 
