@@ -54,11 +54,7 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   list,
   onValueChange
 }) => {
-  const onLongPressHandler = () => {
-    if (isDefined(value)) {
-      copyStringToClipboard(value.publicKeyHash);
-    }
-  };
+  const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
   return (
     <Dropdown
