@@ -7,7 +7,7 @@ import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
-import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
+// import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
@@ -19,9 +19,9 @@ export const LbDapp = () => {
   const { navigate } = useNavigation();
   const styles = useLbDappStyles();
 
-  const onRefreshPressHandler = () => {
-    console.log('refresh pressed');
-  };
+  // const onRefreshPressHandler = () => {
+  //   console.log('refresh pressed');
+  // };
 
   const onRemoveLiquidityHandler = () => {
     navigate(ModalsEnum.RemoveLiquidity);
