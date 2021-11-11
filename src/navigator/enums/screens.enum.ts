@@ -19,7 +19,7 @@ export enum ScreensEnum {
 
   /** DApps stack **/
   DApps = 'DApps',
-  LbDapp = 'LbDapp',
+  LiquidityBakingDapp = 'LiquidityBakingDapp',
 
   /** Swap stack **/
   Swap = 'Swap',
@@ -53,7 +53,7 @@ export type ScreensParamList = {
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
-  [ScreensEnum.LbDapp]: undefined;
+  [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
   [ScreensEnum.Swap]: undefined;
