@@ -3,7 +3,7 @@ import { Dimensions, Image, View } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { formatImgUri } from '../../utils/image.utils';
+import { formatNftUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { CollectibleIconProps } from './collectible-icon.props';
 import { CollectibleIconStyles } from './collectible-icon.styles';
@@ -29,7 +29,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
               borderRadius: formatSize(8 * scale)
             }
           ]}
-          source={{ uri: formatImgUri(collectible.artifactUri), width: size, height: size }}
+          source={{ uri: formatNftUri(collectible.address, `${collectible.id}`), width: size, height: size }}
         />
       ) : null}
     </View>

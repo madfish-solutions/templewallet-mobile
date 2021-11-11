@@ -25,6 +25,8 @@ export const CollectiblesHome = () => {
 
   const [isSearchMode] = useState(false);
 
+  console.log(filteredAssetsList);
+
   return (
     <>
       <HeaderCard hasInsetTop={true} style={styles.headerCard}>
