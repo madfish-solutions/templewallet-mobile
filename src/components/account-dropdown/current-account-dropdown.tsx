@@ -55,6 +55,7 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   <Dropdown
     title="Accounts"
     value={value}
+    publicKeyHash={value?.publicKeyHash}
     list={list}
     equalityFn={accountEqualityFn}
     renderValue={renderAccountValue}

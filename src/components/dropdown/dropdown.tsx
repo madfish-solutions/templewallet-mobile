@@ -4,6 +4,7 @@ import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
@@ -20,6 +21,7 @@ export interface DropdownProps<T> {
 
 export interface DropdownValueProps<T> {
   value?: T;
+  publicKeyHash?: string;
   list: T[];
   onValueChange: EventFn<T | undefined>;
 }
@@ -41,6 +43,7 @@ export type DropdownActionButtonsComponent = FC<{
 
 export const Dropdown = <T extends unknown>({
   value,
+  publicKeyHash,
   list,
   title,
   equalityFn,
@@ -60,7 +63,11 @@ export const Dropdown = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity style={styles.valueContainer} onPress={dropdownBottomSheetController.open}>
+      <TouchableOpacity
+        style={styles.valueContainer}
+        onPress={dropdownBottomSheetController.open}
+        onLongPress={() => copyStringToClipboard(publicKeyHash)}
+      >
         {renderValue({ value })}
       </TouchableOpacity>
 
