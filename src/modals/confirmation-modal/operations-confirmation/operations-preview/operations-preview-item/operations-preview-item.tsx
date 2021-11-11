@@ -9,16 +9,15 @@ import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.en
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
-import { TokenInterface } from '../../../../../token/interfaces/token.interface';
+import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
+import { isCollectible } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
   paramPreview: ParamPreviewInterface;
 }
-
-type TokenPreviewType = Omit<TokenInterface, 'isVisible' | 'balance'>;
 
 interface PreviewDataInterface {
   iconSeed: string;
@@ -31,7 +30,7 @@ interface PreviewDataInterface {
 interface ParamsPreviewDataInterface {
   type?: ParamPreviewTypeEnum;
   contract?: string;
-  asset?: { contract: string } | Asset | string;
+  asset?: Asset;
   amount: string;
 }
 
@@ -39,18 +38,22 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
-    const contract = () => {
+    const getContract = () => {
       if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {
-        return params.contract;
+        return { address: params.contract };
       }
       if (typeof params.asset === 'object') {
-        return params.asset.contract;
+        return { address: params.asset.contract, id: params.asset.id };
       }
 
-      return;
+      return undefined;
     };
-    const slug = getTokenSlug(isDefined(contract()) ? { address: contract() } : {});
+
+    const contract = getContract();
+
+    const slug = getTokenSlug(contract ?? {});
     const tokenData = getTokenMetadata(slug);
+
     const amount = params.amount;
 
     return { tokenData, amount };
@@ -105,7 +108,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {isDefined(token) && Number(token.amount) > 0 && (
+            {isDefined(token) && Number(token.amount) > 0 && !isCollectible(token.tokenData) && (
               <View>
                 <AssetValueText
                   amount={token.amount}
