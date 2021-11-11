@@ -5,6 +5,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
+import { isDefined } from '../../utils/is-defined';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import {
   Dropdown,
@@ -53,7 +54,11 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   list,
   onValueChange
 }) => {
-  const onLongPressHandler = () => copyStringToClipboard(value?.publicKeyHash);
+  const onLongPressHandler = () => {
+    if (isDefined(value)) {
+      copyStringToClipboard(value.publicKeyHash);
+    }
+  };
 
   return (
     <Dropdown
