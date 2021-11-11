@@ -16,7 +16,7 @@ export interface DropdownProps<T> {
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
-  onLongPress?: () => void;
+  onLongPress?: EmptyFn;
 }
 
 export interface DropdownValueProps<T> {
