@@ -20,7 +20,7 @@ export const Button: FC<Props> = ({
   iconName,
   disabled = false,
   styleConfig,
-
+  style,
   isFullWidth = false,
 
   marginTop,
@@ -47,7 +47,7 @@ export const Button: FC<Props> = ({
   } = disabled ? disabledColorConfig : activeColorConfig;
 
   return (
-    <View style={conditionalStyle(isFullWidth, ButtonStyles.container)}>
+    <View style={[conditionalStyle(isFullWidth, ButtonStyles.container), style]}>
       <TouchableOpacity
         disabled={disabled}
         style={[

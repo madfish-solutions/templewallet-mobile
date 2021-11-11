@@ -1,3 +1,4 @@
+import { style } from '@dicebear/avatars/lib/utils';
 import { stubArray } from 'lodash-es';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -56,9 +57,19 @@ export const LbDapp = () => {
       <View style={styles.lineDivider} />
       <Divider size={formatSize(16)} />
       <ButtonsContainer>
-        <ButtonLargePrimary title={'REMOVE'} iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+        <ButtonLargePrimary
+          style={styles.buttonStyles}
+          title={'REMOVE'}
+          iconName={IconNameEnum.MinusIcon}
+          onPress={onRemoveLiquidityHandler}
+        />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title={'ADD'} iconName={IconNameEnum.PlusIcon} onPress={onAddLiquidityHandler} />
+        <ButtonLargePrimary
+          style={styles.buttonStyles}
+          title={'ADD'}
+          iconName={IconNameEnum.PlusIcon}
+          onPress={onAddLiquidityHandler}
+        />
       </ButtonsContainer>
     </ScreenContainer>
   );
