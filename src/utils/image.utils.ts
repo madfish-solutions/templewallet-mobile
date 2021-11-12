@@ -5,3 +5,5 @@ export const formatImgUri = (origin: string) =>
   origin.startsWith(IPFS_PROTOCOL_PREFIX)
     ? `https://${IPFS_GATEWAY}/ipfs/${origin.substring(IPFS_PROTOCOL_PREFIX.length)}/`
     : origin;
+
+export const isImgUriSvg = (url: string) => url.endsWith('.svg');
