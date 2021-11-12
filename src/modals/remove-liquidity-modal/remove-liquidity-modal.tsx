@@ -15,11 +15,7 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import {
-  LIQUIDITY_BAKING_DEX_ADDRESS,
-  LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
-  useContract
-} from '../../op-params/liquidity-baking/contracts';
+import { useContract } from '../../op-params/liquidity-baking/contracts';
 import {
   LiquidityBakingStorage,
   liquidityBakingStorageInitialValue
@@ -32,7 +28,11 @@ import {
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { TZ_BTC_TOKEN_SLUG, LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
+import {
+  TZ_BTC_TOKEN_SLUG,
+  LIQUIDITY_BAKING_LP_SLUG,
+  LIQUIDITY_BAKING_DEX_ADDRESS
+} from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
@@ -56,14 +56,10 @@ export const RemoveLiquidityModal = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
-  const tokenA = useTezosTokenSelector();
 
-  const lpList = assetsList.find(
-    token => getTokenSlug({ address: token.address, id: token.id }) === LIQUIDITY_BAKING_LP_SLUG
-  );
-  const tokenB = assetsList.find(token => getTokenSlug({ address: token.address, id: token.id }) === TZ_BTC_TOKEN_SLUG);
-
-  console.log({ tokenB });
+  const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken;
+  const aToken = useTezosTokenSelector() ?? emptyToken;
+  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
@@ -90,20 +86,11 @@ export const RemoveLiquidityModal = () => {
 
   const removeLiquidityModalInitialValues = useMemo<RemoveLiquidityModalFormValues>(
     () => ({
-      lpToken: {
-        asset: lpList ?? emptyToken,
-        amount: undefined
-      },
-      aToken: {
-        asset: tokenA,
-        amount: undefined
-      },
-      bToken: {
-        asset: tokenB ?? emptyToken,
-        amount: undefined
-      }
+      lpToken: { asset: lpToken, amount: undefined },
+      aToken: { asset: aToken, amount: undefined },
+      bToken: { asset: bToken, amount: undefined }
     }),
-    [lpList, tokenA, tokenB]
+    [lpToken, aToken, bToken]
   );
 
   return (
@@ -127,15 +114,12 @@ export const RemoveLiquidityModal = () => {
             });
 
             setTimeout(() => {
-              setTouched({
-                lpToken: { amount: true },
-                aToken: { amount: true },
-                bToken: { amount: true }
-              });
+              setTouched({ lpToken: { amount: true }, aToken: { amount: true }, bToken: { amount: true } });
             });
           };
           const handleLpTokenChange = (lpToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
+
             if (isDefined(lpToken.amount)) {
               lpTokenAmount = lpToken.amount;
               aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
@@ -147,6 +131,7 @@ export const RemoveLiquidityModal = () => {
 
           const handleATokenChange = (aToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
+
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
               lpTokenAmount = findTokenToLpInput(aTokenAmount, lpTotalSupply, aTokenPool);
