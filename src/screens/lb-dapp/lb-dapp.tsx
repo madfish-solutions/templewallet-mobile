@@ -50,9 +50,13 @@ export const LbDapp = () => {
       <View style={styles.lineDivider} />
       <Divider size={formatSize(16)} />
       <ButtonsContainer>
-        <ButtonLargePrimary title="REMOVE" iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+        <View style={styles.buttonContainer}>
+          <ButtonLargePrimary title="REMOVE" iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
+        </View>
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="ADD" iconName={IconNameEnum.PlusIcon} onPress={onAddLiquidityHandler} />
+        <View style={styles.buttonContainer}>
+          <ButtonLargePrimary title="ADD" iconName={IconNameEnum.PlusIcon} onPress={onAddLiquidityHandler} />
+        </View>
       </ButtonsContainer>
     </ScreenContainer>
   );
