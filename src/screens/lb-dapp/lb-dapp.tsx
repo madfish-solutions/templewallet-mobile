@@ -24,7 +24,7 @@ export const LbDapp = () => {
   };
 
   const onAddLiquidityHandler = () => {
-    navigate(ModalsEnum.AddLiquidity);
+    console.log('add liquidity');
   };
 
   return (

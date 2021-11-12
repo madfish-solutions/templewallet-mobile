@@ -153,11 +153,9 @@ export const MainStackScreen = () => {
                 options={{ animationEnabled: false, headerShown: false }}
               />
               <MainStack.Screen
-                name={ScreensEnum.LbDapp}
+                name={ScreensEnum.LiquidityBakingDapp}
                 component={LbDapp}
-                options={{
-                  headerShown: false
-                }}
+                options={{ headerShown: false }}
               />
 
               {/** Swap stack **/}
