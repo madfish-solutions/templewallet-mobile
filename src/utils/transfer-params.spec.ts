@@ -15,15 +15,17 @@ beforeEach(() => {
 const rpcUrlMock = 'https://rpc-url.mock/mainnet';
 
 it('getTransferParams$ should create params for transferring TEZ', done => {
+  const mockInputAmount = new BigNumber(0.005);
+
   getTransferParams$(
     TEZ_TOKEN_METADATA,
     rpcUrlMock,
     mockWalletAccount,
     'receiverPublicKeyHash',
-    new BigNumber(0.005)
+    mockInputAmount
   ).subscribe(
     rxJsTestingHelper(params => {
-      expect(params).toEqual({ amount: 0.005, to: 'receiverPublicKeyHash', mutez: true });
+      expect(params).toEqual({ amount: mockInputAmount.toFixed(), to: 'receiverPublicKeyHash', mutez: true });
     }, done)
   );
 });
