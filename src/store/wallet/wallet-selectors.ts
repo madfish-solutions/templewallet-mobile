@@ -81,13 +81,7 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
   const getTokenMetadata = useTokenMetadataGetter();
 
-  const [assetsList, setAssetsList] = useState<TokenInterface[]>(
-    selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
-      balance,
-      isVisible,
-      ...getTokenMetadata(slug)
-    }))
-  );
+  const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
 
   useEffect(
     () =>
