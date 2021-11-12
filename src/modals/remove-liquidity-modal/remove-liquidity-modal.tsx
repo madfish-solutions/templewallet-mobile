@@ -15,7 +15,13 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, LIQUIDITY_BAKING_LP_TOKEN_ADDRESS, useContract } from '../../op-params/liquidity-baking/contracts';
+import {
+  LIQUIDITY_BAKING_DEX_ADDRESS,
+  LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
+  LIQUIDITY_BAKING_TOKEN_ADDRESS,
+  LIQUIDITY_BAKING_TOKEN_ID,
+  useContract
+} from '../../op-params/liquidity-baking/contracts';
 import {
   LiquidityBakingStorage,
   liquidityBakingStorageInitialValue
@@ -28,6 +34,7 @@ import {
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { emptyToken } from '../../token/interfaces/token.interface';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -51,8 +58,10 @@ export const RemoveLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
   const tokenA = useTezosTokenSelector();
 
-  const lpList = assetsList.filter(token => token.address === LIQUIDITY_BAKING_LP_TOKEN_ADDRESS);
-  const tokenB = assetsList.filter(token => token.name === 'tzBTC')[0];
+  const lpList = assetsList.find(token => token.address === LIQUIDITY_BAKING_LP_TOKEN_ADDRESS);
+  const tokenB = assetsList.find(
+    token => token.address === LIQUIDITY_BAKING_TOKEN_ADDRESS && token.id === LIQUIDITY_BAKING_TOKEN_ID
+  );
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
@@ -80,7 +89,7 @@ export const RemoveLiquidityModal = () => {
   const removeLiquidityModalInitialValues = useMemo<RemoveLiquidityModalFormValues>(
     () => ({
       lpToken: {
-        asset: lpList[0],
+        asset: lpList ?? emptyToken,
         amount: undefined
       },
       aToken: {
@@ -88,7 +97,7 @@ export const RemoveLiquidityModal = () => {
         amount: undefined
       },
       bToken: {
-        asset: tokenB,
+        asset: tokenB ?? emptyToken,
         amount: undefined
       }
     }),
@@ -100,6 +109,7 @@ export const RemoveLiquidityModal = () => {
       <Formik
         initialValues={removeLiquidityModalInitialValues}
         validationSchema={removeLiquidityModalValidationSchema}
+        enableReinitialize={true}
         onSubmit={onSubmitHandler}
       >
         {({ values, setTouched, setValues, submitForm }) => {
