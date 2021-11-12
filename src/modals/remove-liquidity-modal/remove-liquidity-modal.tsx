@@ -18,8 +18,6 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import {
   LIQUIDITY_BAKING_DEX_ADDRESS,
   LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
-  LIQUIDITY_BAKING_TOKEN_ADDRESS,
-  LIQUIDITY_BAKING_TOKEN_ID,
   useContract
 } from '../../op-params/liquidity-baking/contracts';
 import {
@@ -34,7 +32,9 @@ import {
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { TZ_BTC_TOKEN_SLUG, LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -58,10 +58,12 @@ export const RemoveLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
   const tokenA = useTezosTokenSelector();
 
-  const lpList = assetsList.find(token => token.address === LIQUIDITY_BAKING_LP_TOKEN_ADDRESS);
-  const tokenB = assetsList.find(
-    token => token.address === LIQUIDITY_BAKING_TOKEN_ADDRESS && token.id === LIQUIDITY_BAKING_TOKEN_ID
+  const lpList = assetsList.find(
+    token => getTokenSlug({ address: token.address, id: token.id }) === LIQUIDITY_BAKING_LP_SLUG
   );
+  const tokenB = assetsList.find(token => getTokenSlug({ address: token.address, id: token.id }) === TZ_BTC_TOKEN_SLUG);
+
+  console.log({ tokenB });
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
