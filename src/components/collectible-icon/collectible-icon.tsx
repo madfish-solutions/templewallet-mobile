@@ -29,7 +29,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
               borderRadius: formatSize(8 * scale)
             }
           ]}
-          source={{ uri: formatNftUri(collectible.address, `${collectible.id}`), width: size, height: size }}
+          source={{ uri: formatNftUri(collectible.address, `${collectible.id}`, size), width: size, height: size }}
         />
       ) : null}
     </View>
