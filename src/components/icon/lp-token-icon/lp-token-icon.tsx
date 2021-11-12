@@ -4,7 +4,7 @@ import { StyleProp, View, ViewStyle } from 'react-native';
 import { formatSize } from '../../../styles/format-size';
 import { Icon } from '../icon';
 import { IconNameEnum } from '../icon-name.enum';
-import { lpTokenIconStyles } from './lp-token-icon.styles';
+import { LpTokenIconStyles } from './lp-token-icon.styles';
 
 interface Props {
   firstTokenIcon: IconNameEnum;
@@ -12,13 +12,9 @@ interface Props {
   containerStyles?: StyleProp<ViewStyle>;
 }
 
-export const LpTokenIcon: FC<Props> = ({ firstTokenIcon, secondTokenIcon, containerStyles }) => {
-  const styles = lpTokenIconStyles;
-
-  return (
-    <View style={[styles.container, containerStyles]}>
-      <Icon size={formatSize(24)} style={styles.firstIcon} name={firstTokenIcon} />
-      <Icon size={formatSize(24)} style={styles.secondIcon} name={secondTokenIcon} />
-    </View>
-  );
-};
+export const LpTokenIcon: FC<Props> = ({ firstTokenIcon, secondTokenIcon, containerStyles }) => (
+  <View style={[LpTokenIconStyles.container, containerStyles]}>
+    <Icon size={formatSize(24)} style={LpTokenIconStyles.firstIcon} name={firstTokenIcon} />
+    <Icon size={formatSize(24)} style={LpTokenIconStyles.secondIcon} name={secondTokenIcon} />
+  </View>
+);
