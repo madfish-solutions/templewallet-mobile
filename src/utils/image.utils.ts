@@ -9,4 +9,4 @@ export const formatImgUri = (origin: string) =>
 export const formatNftUri = (address: string, id: string) =>
   `https://assets.objkt.com/file/assets-001/${address}/${id.length > 1 ? id[id.length - 2] : 0}/${
     id[id.length - 1]
-  }/${id}/thumb200`;
+  }/${id}/thumb288`;
