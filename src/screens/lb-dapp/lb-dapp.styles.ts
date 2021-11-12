@@ -38,8 +38,5 @@ export const useLbDappStyles = createUseStyles(({ colors, typography }) => ({
     borderRadius: formatSize(10),
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  buttonStyles: {
-    width: '25%'
   }
 }));

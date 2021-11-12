@@ -19,10 +19,6 @@ export const LbDapp = () => {
   const { navigate } = useNavigation();
   const styles = useLbDappStyles();
 
-  // const onRefreshPressHandler = () => {
-  //   console.log('refresh pressed');
-  // };
-
   const onRemoveLiquidityHandler = () => {
     navigate(ModalsEnum.RemoveLiquidity);
   };
@@ -40,7 +36,6 @@ export const LbDapp = () => {
         <LpTokenIcon firstTokenIcon={IconNameEnum.LbTokenIcon} secondTokenIcon={IconNameEnum.LbTokenIcon} />
         <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
         <Divider size={formatSize(8)} />
-        {/* <TouchableIcon name={IconNameEnum.RefreshIcon} size={formatSize(24)} onPress={onRefreshPressHandler} /> */}
       </View>
       <View style={styles.bottomLbContainer}>
         <View>
@@ -55,19 +50,9 @@ export const LbDapp = () => {
       <View style={styles.lineDivider} />
       <Divider size={formatSize(16)} />
       <ButtonsContainer>
-        <ButtonLargePrimary
-          style={styles.buttonStyles}
-          title="REMOVE"
-          iconName={IconNameEnum.MinusIcon}
-          onPress={onRemoveLiquidityHandler}
-        />
+        <ButtonLargePrimary title="REMOVE" iconName={IconNameEnum.MinusIcon} onPress={onRemoveLiquidityHandler} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary
-          style={styles.buttonStyles}
-          title="ADD"
-          iconName={IconNameEnum.PlusIcon}
-          onPress={onAddLiquidityHandler}
-        />
+        <ButtonLargePrimary title="ADD" iconName={IconNameEnum.PlusIcon} onPress={onAddLiquidityHandler} />
       </ButtonsContainer>
     </ScreenContainer>
   );

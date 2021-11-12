@@ -45,8 +45,8 @@ export const DApps = () => {
         <IntegratedDApp
           screenName={ScreensEnum.LiquidityBakingDapp}
           iconName={IconNameEnum.LbDappIcon}
-          title={'Liquidity Baking'}
-          description={'Create XTZ/tzBTC & earn XTZ'}
+          title="Liquidity Baking"
+          description="Create XTZ/tzBTC & earn XTZ"
         />
       </View>
       <Divider size={formatSize(20)} />

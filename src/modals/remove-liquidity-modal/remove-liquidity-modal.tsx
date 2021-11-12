@@ -15,7 +15,7 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, useContract } from '../../op-params/liquidity-baking/contracts';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, LIQUIDITY_BAKING_LP_TOKEN_ADDRESS, useContract } from '../../op-params/liquidity-baking/contracts';
 import {
   LiquidityBakingStorage,
   liquidityBakingStorageInitialValue
@@ -51,7 +51,7 @@ export const RemoveLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
   const tokenA = useTezosTokenSelector();
 
-  const lpList = assetsList.filter(token => token.address === 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo');
+  const lpList = assetsList.filter(token => token.address === LIQUIDITY_BAKING_LP_TOKEN_ADDRESS);
   const tokenB = assetsList.filter(token => token.name === 'tzBTC')[0];
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
