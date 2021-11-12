@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useLbDappStyles = createUseStyles(({ colors, typography }) => ({
+export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typography }) => ({
   lineDivider: {
     width: '100%',
     borderBottomWidth: formatSize(0.5),
