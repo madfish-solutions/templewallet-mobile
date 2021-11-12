@@ -20,7 +20,7 @@ import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
-import { LbDapp } from '../screens/lb-dapp/lb-dapp';
+import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
@@ -154,7 +154,7 @@ export const MainStackScreen = () => {
               />
               <MainStack.Screen
                 name={ScreensEnum.LiquidityBakingDapp}
-                component={LbDapp}
+                component={LiquidityBakingDapp}
                 options={{ headerShown: false }}
               />
 
