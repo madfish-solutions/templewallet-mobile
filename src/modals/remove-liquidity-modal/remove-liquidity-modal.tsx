@@ -113,9 +113,9 @@ export const RemoveLiquidityModal = () => {
               bToken: { ...values.bToken, amount: bTokenAmount }
             });
 
-            setTimeout(() => {
-              setTouched({ lpToken: { amount: true }, aToken: { amount: true }, bToken: { amount: true } });
-            });
+            setTimeout(() =>
+              setTouched({ lpToken: { amount: true }, aToken: { amount: true }, bToken: { amount: true } })
+            );
           };
           const handleLpTokenChange = (lpToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
