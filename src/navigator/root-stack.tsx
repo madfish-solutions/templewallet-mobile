@@ -12,6 +12,7 @@ import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-mod
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
+import { RemoveLiquidityModal } from '../modals/remove-liquidity-modal/remove-liquidity-modal';
 import { RenameAccountModal } from '../modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -132,6 +133,12 @@ export const RootStackScreen = () => {
               component={CollectibleModal}
               options={useModalOptions('NFT Name')}
             />
+            <RootStack.Screen
+              name={ModalsEnum.RemoveLiquidity}
+              component={RemoveLiquidityModal}
+              options={useModalOptions('Remove Liquidity')}
+            />
+
             <RootStack.Screen
               name={ModalsEnum.AddCustomRpc}
               component={AddCustomRpcModal}

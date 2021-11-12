@@ -19,12 +19,13 @@ export const useNumericInput = (
   const [focused, setFocused] = useState(false);
 
   useEffect(
-    () => void (!focused && setStringValue(isDefined(value) ? new BigNumber(value).toFixed() : '')),
+    () => void (!focused && setStringValue(isDefined(value) ? value.toFixed() : '')),
     [setStringValue, focused, value]
   );
 
   const handleChange = (newStringValue: string) => {
     let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
+
     const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
 
     const indexOfDot = normalizedStringValue.indexOf('.');

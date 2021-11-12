@@ -72,5 +72,12 @@ export enum IconNameEnum {
   AlertShield = 'AlertShield',
   Success = 'Success',
   Navigation = 'Navigation',
-  Hummer = 'Hummer'
+  Hummer = 'Hummer',
+  LbDappIcon = 'LbDappIcon',
+  LbTokenIcon = 'LbTokenIcon',
+  RefreshIcon = 'RefreshIcon',
+  ChartIcon = 'ChartIcon',
+  MinusIcon = 'MinusIcon',
+  PlusIcon = 'PlusIcon',
+  PlusIconOrange = 'PlusIconOrange'
 }
