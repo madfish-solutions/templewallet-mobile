@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { formatSize } from '../../../styles/format-size';
 
-export const useLpTokenIconStyles = StyleSheet.create({
+export const lpTokenIconStyles = StyleSheet.create({
   container: {
     position: 'relative'
   },
