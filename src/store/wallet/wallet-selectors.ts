@@ -79,6 +79,8 @@ export const useTokensMetadataSelector = () =>
 
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
+  const selectedAccountRemovedTokensList = useSelectedAccountSelector().removedTokensList;
+
   const getTokenMetadata = useTokenMetadataGetter();
 
   const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
@@ -86,13 +88,15 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   useEffect(
     () =>
       setAssetsList(
-        selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
-          balance,
-          isVisible,
-          ...getTokenMetadata(slug)
-        }))
+        selectedAccountTokensList
+          .filter(item => selectedAccountRemovedTokensList.indexOf(item.slug) === -1)
+          .map(({ slug, balance, isVisible }) => ({
+            balance,
+            isVisible,
+            ...getTokenMetadata(slug)
+          }))
       ),
-    [selectedAccountTokensList, getTokenMetadata]
+    [selectedAccountTokensList, getTokenMetadata, selectedAccountRemovedTokensList]
   );
 
   return assetsList;

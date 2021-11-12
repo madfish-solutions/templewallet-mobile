@@ -21,7 +21,6 @@ import {
 import { walletInitialState, WalletState } from './wallet-state';
 import {
   pushOrUpdateTokensBalances,
-  removeTokenFromTokenList,
   toggleTokenVisibility,
   updateAccountState,
   updateCurrentAccountState
@@ -101,7 +100,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
     return {
       ...updateCurrentAccountState(state, currentAccount => ({
-        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' })
+        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
+        removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
       })),
       tokensMetadata: {
         ...state.tokensMetadata,
@@ -111,7 +111,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   });
   builder.addCase(removeTokenAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
-      tokensList: removeTokenFromTokenList(currentAccount.tokensList, slug)
+      removedTokensList: [...currentAccount.removedTokensList, slug]
     }))
   );
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
