@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
@@ -41,9 +40,6 @@ export const LiquidityBakingDapp = () => {
           <Text style={styles.priceTitle}>price</Text>
           <Text style={styles.priceValue}>$ 188,000,000.00</Text>
         </View>
-        <TouchableOpacity style={styles.chartIconWrapper}>
-          <Icon name={IconNameEnum.ChartIcon} size={formatSize(16)} />
-        </TouchableOpacity>
       </View>
       <Divider size={formatSize(8)} />
       <View style={styles.lineDivider} />
