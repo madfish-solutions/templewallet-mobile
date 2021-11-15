@@ -21,3 +21,8 @@ export const findExchangeRate = (
   bToken: TokenInterface,
   bTokenPool: BigNumber
 ) => mutezToTz(aTokenPool, aToken.decimals).dividedBy(mutezToTz(bTokenPool, bToken.decimals));
+
+export const findTokenInput = (exchangeRate: BigNumber, tokenAmount: BigNumber) =>
+  exchangeRate.multipliedBy(tokenAmount);
+
+export const findLpTokenAmount = (xtzAmountIn: BigNumber, lqtTotal: BigNumber, xtzPool: BigNumber) => new BigNumber(xtzAmountIn).times(lqtTotal).idiv(xtzPool);

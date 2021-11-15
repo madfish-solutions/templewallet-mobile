@@ -22,7 +22,7 @@ export const LiquidityBakingDapp = () => {
   };
 
   const onAddLiquidityHandler = () => {
-    console.log('add liquidity');
+    navigate(ModalsEnum.AddLiquidity);
   };
 
   return (
