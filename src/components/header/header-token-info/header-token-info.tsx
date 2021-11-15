@@ -15,12 +15,17 @@ export const HeaderTokenInfo: FC<Props> = ({ token }) => {
   const styles = useHeaderTokenInfoStyles();
 
   const { name, symbol } = token;
-  const title = isString(name) ? name : symbol;
+  const title = symbol;
+  const subtitle = isString(name) ? name : symbol;
+  console.log(token);
 
   return (
     <View style={styles.container}>
       <TokenIcon token={token} />
-      <Text {...getTruncatedProps(styles.text)}>{title}</Text>
+      <View style={styles.textContainer}>
+        <Text {...getTruncatedProps(styles.title)}>{title}</Text>
+        <Text {...getTruncatedProps(styles.subtitle)}>{subtitle}</Text>
+      </View>
     </View>
   );
 };
