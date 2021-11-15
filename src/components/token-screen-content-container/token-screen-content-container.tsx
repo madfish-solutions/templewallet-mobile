@@ -7,9 +7,6 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
-import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ScreenContainer } from '../screen-container/screen-container';
 import { IconSegmentControl } from '../segmented-control/icon-segment-control/icon-segment-control';
@@ -33,7 +30,6 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        {/* <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text> */}
         <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
           {!isBakerSelected ? (
             <Text style={styles.delegateText}>Rewards & Redelegate</Text>
