@@ -79,7 +79,6 @@ export const useTokensMetadataSelector = () =>
 
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccount = useSelectedAccountSelector();
-
   const getTokenMetadata = useTokenMetadataGetter();
 
   const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
