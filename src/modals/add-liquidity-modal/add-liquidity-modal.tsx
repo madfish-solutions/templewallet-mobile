@@ -89,8 +89,6 @@ export const AddLiquidityModal = () => {
         ...parseTransferParamsToParamsWithKind(zeroApproveOpParams)
       ];
 
-      console.log(JSON.stringify(opParams));
-
       navigate(ModalsEnum.Confirmation, {
         type: ConfirmationTypeEnum.InternalOperations,
         opParams
