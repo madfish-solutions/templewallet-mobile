@@ -30,7 +30,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
             }
           ]}
           source={{
-            uri: formatCollectibleUri(collectible, size),
+            uri: formatCollectibleUri(collectible),
             width: size,
             height: size
           }}
