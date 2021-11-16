@@ -43,7 +43,6 @@ export const AddLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
   const { publicKeyHash } = useSelectedAccountSelector();
 
-
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
@@ -61,8 +60,6 @@ export const AddLiquidityModal = () => {
       isDefined(tzBtcLpContract.contract)
     ) {
       const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
-      console.log({ lpTokensOutput });
-      
 
       const zeroApproveOpParams = tzBtcTokenContract.contract.methods
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, new BigNumber(0))
