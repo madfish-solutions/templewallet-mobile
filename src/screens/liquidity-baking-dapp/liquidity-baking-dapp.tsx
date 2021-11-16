@@ -61,7 +61,7 @@ export const LiquidityBakingDapp = () => {
       <View style={styles.lineDivider} />
       <Divider size={formatSize(8)} />
       <View style={styles.lbCoinContainer}>
-        <LpTokenIcon firstTokenIcon={IconNameEnum.TezosTokenIcon} secondTokenIcon={IconNameEnum.LbTokenIcon} />
+        <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
         <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
         <Divider size={formatSize(8)} />
       </View>

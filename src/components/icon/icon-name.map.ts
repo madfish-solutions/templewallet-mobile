@@ -66,7 +66,6 @@ import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
-import TezosTokenIcon from './assets/tezos-token-icon.svg';
 import BlndTokenIcon from './assets/tokens/blnd.svg';
 import EthTzTokenIcon from './assets/tokens/ethTz.svg';
 import KUsdTokenIcon from './assets/tokens/kUsd.svg';
@@ -168,6 +167,5 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ChartIcon]: ChartIcon,
   [IconNameEnum.MinusIcon]: MinusIcon,
   [IconNameEnum.PlusIcon]: PlusIcon,
-  [IconNameEnum.PlusIconOrange]: PlusIconOrange,
-  [IconNameEnum.TezosTokenIcon]: TezosTokenIcon
+  [IconNameEnum.PlusIconOrange]: PlusIconOrange
 };

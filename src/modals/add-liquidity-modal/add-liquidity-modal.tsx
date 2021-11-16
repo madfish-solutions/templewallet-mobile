@@ -28,7 +28,7 @@ import {
   useTezosTokenSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG, TZ_BTC_TOKEN_ADDRESS } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils/dex.utils';
@@ -44,7 +44,7 @@ export const AddLiquidityModal = () => {
   const styles = useAddLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
   const { publicKeyHash } = useSelectedAccountSelector();
-  const [tzBtcAddress] = TZ_BTC_TOKEN_SLUG.split('_');
+
 
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
@@ -57,7 +57,7 @@ export const AddLiquidityModal = () => {
   const bTokenPool = storage.tokenPool;
   const lpTotalSupply = storage.lqtTotal;
 
-  const { contract: tzBtcTokenContract } = useContract(tzBtcAddress, undefined);
+  const { contract: tzBtcTokenContract } = useContract(TZ_BTC_TOKEN_ADDRESS, undefined);
 
   const onSubmitHandler = (values: AddLiquidityModalFormValues) => {
     if (
@@ -67,6 +67,8 @@ export const AddLiquidityModal = () => {
       isDefined(contract)
     ) {
       const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
+      console.log({ lpTokensOutput });
+      
 
       const zeroApproveOpParams = tzBtcTokenContract.methods
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, new BigNumber(0))
@@ -80,12 +82,10 @@ export const AddLiquidityModal = () => {
         .addLiquidity(publicKeyHash, lpTokensOutput, values.bToken.amount, getTransactionTimeoutDate())
         .toTransferParams({ mutez: true, amount: values.aToken.amount.toNumber() });
 
-      const addLiquidityOpParams = parseTransferParamsToParamsWithKind(transferParams);
-
       const opParams = [
         ...parseTransferParamsToParamsWithKind(zeroApproveOpParams),
         ...parseTransferParamsToParamsWithKind(bTokenApproveOpParams),
-        ...addLiquidityOpParams,
+        ...parseTransferParamsToParamsWithKind(transferParams),
         ...parseTransferParamsToParamsWithKind(zeroApproveOpParams)
       ];
 
