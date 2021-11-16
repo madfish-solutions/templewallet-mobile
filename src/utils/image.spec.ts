@@ -32,20 +32,14 @@ describe('image utils', () => {
   describe('formatCollectibleUri', () => {
     it('should convert asset KT and id to objkt.com URL for that asset', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 } as TokenInterface;
-      expect(formatCollectibleUri(collectible, 120)).toEqual(
-        `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/1/7/464017/thumb288`
-      );
-    });
-    it('should convert asset KT and id to objkt.com URL for that asset with big size thumb', () => {
-      const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 } as TokenInterface;
-      expect(formatCollectibleUri(collectible, 320)).toEqual(
+      expect(formatCollectibleUri(collectible)).toEqual(
         `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/1/7/464017/thumb400`
       );
     });
     it('should convert asset KT and id with id < 10 to objkt.com URL for that asset', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 9 } as TokenInterface;
-      expect(formatCollectibleUri(collectible, 120)).toEqual(
-        `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/0/9/9/thumb288`
+      expect(formatCollectibleUri(collectible)).toEqual(
+        `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/0/9/9/thumb400`
       );
     });
   });
