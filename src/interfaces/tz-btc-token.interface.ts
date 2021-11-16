@@ -3,6 +3,6 @@ import { BigNumber } from 'bignumber.js';
 
 export interface TzBtcTokenContractAbstraction extends ContractAbstraction<ContractProvider> {
   methods: {
-    approve: (address: string, amount: BigNumber) => ContractMethod<ContractProvider>;
+    approve: (receiverAddress: string, amount: BigNumber) => ContractMethod<ContractProvider>;
   };
 }
