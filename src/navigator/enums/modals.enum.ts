@@ -15,7 +15,8 @@ export enum ModalsEnum {
   EnableBiometryPassword = 'EnableBiometryPassword',
   ImportAccount = 'ImportAccount',
   CollectibleModal = 'CollectibleModal',
-  AddCustomRpc = 'AddCustomRpc'
+  AddCustomRpc = 'AddCustomRpc',
+  RemoveLiquidity = 'RemoveLiquidity'
 }
 
 export type ModalsParamList = {
@@ -31,4 +32,5 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
+  [ModalsEnum.RemoveLiquidity]: undefined;
 };

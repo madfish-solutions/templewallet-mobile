@@ -78,7 +78,7 @@ export const useTokensMetadataSelector = () =>
   useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
 
 export const useAssetsListSelector = (): TokenInterface[] => {
-  const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
+  const selectedAccount = useSelectedAccountSelector();
   const getTokenMetadata = useTokenMetadataGetter();
 
   const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
@@ -86,13 +86,15 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   useEffect(
     () =>
       setAssetsList(
-        selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
-          balance,
-          isVisible,
-          ...getTokenMetadata(slug)
-        }))
+        selectedAccount.tokensList
+          .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
+          .map(({ slug, balance, isVisible }) => ({
+            balance,
+            isVisible,
+            ...getTokenMetadata(slug)
+          }))
       ),
-    [selectedAccountTokensList, getTokenMetadata]
+    [selectedAccount.tokensList, getTokenMetadata, selectedAccount.removedTokensList]
   );
 
   return assetsList;

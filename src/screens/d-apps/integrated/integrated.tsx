@@ -4,22 +4,24 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { ScreensEnum } from '../../../navigator/enums/screens.enum';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
-import { openUrl } from '../../../utils/linking.util';
 import { useIntegratedDAppStyles } from './integrated.styles';
 
 interface Props {
-  url: string;
+  screenName: ScreensEnum;
   iconName: IconNameEnum;
   title: string;
   description?: string;
 }
 
-export const IntegratedDApp: FC<Props> = ({ url, iconName, title, description }) => {
+export const IntegratedDApp: FC<Props> = ({ screenName, iconName, title, description }) => {
+  const { navigate } = useNavigation();
   const styles = useIntegratedDAppStyles();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => openUrl(url)}>
+    <TouchableOpacity style={styles.container} onPress={() => navigate(screenName)}>
       <Icon name={iconName} width={formatSize(46)} height={formatSize(46)} />
       <Divider size={formatSize(16)} />
       <View>
