@@ -14,6 +14,7 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { TzBtcTokenContractAbstraction } from '../../interfaces/tz-btc-token.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
@@ -36,7 +37,7 @@ import { addLiquidityModalValidationSchema, AddLiquidityModalFormValues } from '
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
-  const { contract, storage } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const tzBtcLpContract = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
   const { navigate } = useNavigation();
   const styles = useAddLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
@@ -46,32 +47,32 @@ export const AddLiquidityModal = () => {
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
-  const aTokenPool = storage.xtzPool;
-  const bTokenPool = storage.tokenPool;
-  const lpTotalSupply = storage.lqtTotal;
+  const aTokenPool = tzBtcLpContract.storage.xtzPool;
+  const bTokenPool = tzBtcLpContract.storage.tokenPool;
+  const lpTotalSupply = tzBtcLpContract.storage.lqtTotal;
 
-  const { contract: tzBtcTokenContract } = useContract(TZ_BTC_TOKEN_ADDRESS, undefined);
+  const tzBtcTokenContract = useContract<TzBtcTokenContractAbstraction, undefined>(TZ_BTC_TOKEN_ADDRESS, undefined);
 
   const onSubmitHandler = (values: AddLiquidityModalFormValues) => {
     if (
       isDefined(values.aToken.amount) &&
       isDefined(values.bToken.amount) &&
-      isDefined(tzBtcTokenContract) &&
-      isDefined(contract)
+      isDefined(tzBtcTokenContract.contract) &&
+      isDefined(tzBtcLpContract.contract)
     ) {
       const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
       console.log({ lpTokensOutput });
       
 
-      const zeroApproveOpParams = tzBtcTokenContract.methods
+      const zeroApproveOpParams = tzBtcTokenContract.contract.methods
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, new BigNumber(0))
         .toTransferParams({ mutez: true });
 
-      const bTokenApproveOpParams = tzBtcTokenContract.methods
+      const bTokenApproveOpParams = tzBtcTokenContract.contract.methods
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, values.bToken.amount)
         .toTransferParams({ mutez: true });
 
-      const transferParams = contract.methods
+      const transferParams = tzBtcLpContract.contract.methods
         .addLiquidity(publicKeyHash, lpTokensOutput, values.bToken.amount, getTransactionTimeoutDate())
         .toTransferParams({ mutez: true, amount: values.aToken.amount.toNumber() });
 

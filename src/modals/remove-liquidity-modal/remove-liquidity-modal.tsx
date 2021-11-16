@@ -3,7 +3,6 @@ import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
-import storage from 'redux-persist/es/storage';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -35,13 +34,13 @@ import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } 
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
-  const { contract, storage } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const tzBtcLpContract = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
 
   const { navigate } = useNavigation();
 
-  const aTokenPool = storage.xtzPool;
-  const bTokenPool = storage.tokenPool;
-  const lpTotalSupply = storage.lqtTotal;
+  const aTokenPool = tzBtcLpContract.storage.xtzPool;
+  const bTokenPool = tzBtcLpContract.storage.tokenPool;
+  const lpTotalSupply = tzBtcLpContract.storage.lqtTotal;
 
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
@@ -56,9 +55,9 @@ export const RemoveLiquidityModal = () => {
       isDefined(values.lpToken.amount) &&
       isDefined(values.aToken.amount) &&
       isDefined(values.bToken.amount) &&
-      isDefined(contract)
+      isDefined(tzBtcLpContract.contract)
     ) {
-      const transferParams = contract.methods
+      const transferParams = tzBtcLpContract.contract.methods
         .removeLiquidity(
           publicKeyHash,
           values.lpToken.amount,
@@ -136,8 +135,8 @@ export const RemoveLiquidityModal = () => {
 
             if (isDefined(bToken.amount)) {
               bTokenAmount = bToken.amount;
-              lpTokenAmount = findTokenToLpInput(bTokenAmount, storage.lqtTotal, storage.tokenPool);
-              aTokenAmount = findLpToTokenOutput(lpTokenAmount, storage.lqtTotal, storage.xtzPool);
+              lpTokenAmount = findTokenToLpInput(bTokenAmount, lpTotalSupply, bTokenPool);
+              aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
             }
 
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
