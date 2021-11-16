@@ -32,14 +32,16 @@ export const FormattedAmount: FC<Props> = ({
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
 
   const formattedAmount = isDollarValue ? formatAssetAmount(dollarAmount, 2) : formatAssetAmount(amount);
+  const isZeroAmount = amount.eq(0);
+  const visibleAmount = isZeroAmount ? '- - - -' : formattedAmount;
 
   return (
     <Text style={style}>
-      {isDollarValue && '≈ '}
+      {!isZeroAmount && isDollarValue && '≈ '}
       {showMinusSign && '- '}
       {showPlusSign && '+ '}
-      {formattedAmount}
-      {isDollarValue ? ' $' : ` ${symbol}`}
+      {visibleAmount}
+      {isDollarValue ? ' $' : isZeroAmount ? '' : ` ${symbol}`}
     </Text>
   );
 };
