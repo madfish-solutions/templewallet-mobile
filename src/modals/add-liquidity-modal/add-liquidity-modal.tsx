@@ -1,3 +1,4 @@
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
@@ -13,14 +14,9 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
-import {
-  LiquidityBakingStorage,
-  liquidityBakingStorageInitialValue
-} from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
-import { LiquidityBakingContractAbstraction } from '../../op-params/liquidity-baking/liquidity-baking.contract-abstraction.interface';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import {
   useAssetsListSelector,
@@ -40,6 +36,7 @@ import { addLiquidityModalValidationSchema, AddLiquidityModalFormValues } from '
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
+  const { contract, storage } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
   const { navigate } = useNavigation();
   const styles = useAddLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
@@ -49,10 +46,6 @@ export const AddLiquidityModal = () => {
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
-  const { storage, contract } = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
-    LIQUIDITY_BAKING_DEX_ADDRESS,
-    liquidityBakingStorageInitialValue
-  );
   const aTokenPool = storage.xtzPool;
   const bTokenPool = storage.tokenPool;
   const lpTotalSupply = storage.lqtTotal;

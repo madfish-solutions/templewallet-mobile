@@ -33,7 +33,7 @@ export const LiquidityBakingDapp = () => {
   const assetsList = useAssetsListSelector();
   const exchangeRates = useExchangeRatesSelector();
 
-  const { storage } = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
+  const liquidityBakingContract = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
     LIQUIDITY_BAKING_DEX_ADDRESS,
     liquidityBakingStorageInitialValue
   );
@@ -41,8 +41,8 @@ export const LiquidityBakingDapp = () => {
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
-  const aTokenPool = storage.xtzPool;
-  const bTokenPool = storage.tokenPool;
+  const aTokenPool = liquidityBakingContract.storage.xtzPool;
+  const bTokenPool = liquidityBakingContract.storage.tokenPool;
 
   const volumePrice = useMemo(() => {
     const tezosPoolInTz = mutezToTz(aTokenPool, aToken.decimals);
@@ -79,7 +79,7 @@ export const LiquidityBakingDapp = () => {
           <ButtonLargePrimary
             title="REMOVE"
             iconName={IconNameEnum.MinusIcon}
-            onPress={() => navigate(ModalsEnum.RemoveLiquidity)}
+            onPress={() => navigate(ModalsEnum.RemoveLiquidity, liquidityBakingContract)}
           />
         </View>
         <Divider size={formatSize(16)} />
@@ -87,7 +87,7 @@ export const LiquidityBakingDapp = () => {
           <ButtonLargePrimary
             title="ADD"
             iconName={IconNameEnum.PlusIcon}
-            onPress={() => navigate(ModalsEnum.AddLiquidity)}
+            onPress={() => navigate(ModalsEnum.AddLiquidity, liquidityBakingContract)}
           />
         </View>
       </ButtonsContainer>
