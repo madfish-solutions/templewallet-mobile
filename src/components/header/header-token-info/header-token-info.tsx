@@ -17,7 +17,6 @@ export const HeaderTokenInfo: FC<Props> = ({ token }) => {
   const { name, symbol } = token;
   const title = symbol;
   const subtitle = isString(name) ? name : symbol;
-  console.log(token);
 
   return (
     <View style={styles.container}>

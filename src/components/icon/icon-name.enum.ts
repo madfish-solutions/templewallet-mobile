@@ -20,6 +20,7 @@ export enum IconNameEnum {
   X = 'X',
   XCircle = 'XCircle',
   ShoppingCard = 'ShoppingCard',
+  SwapArrow = 'SwapArrow',
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',

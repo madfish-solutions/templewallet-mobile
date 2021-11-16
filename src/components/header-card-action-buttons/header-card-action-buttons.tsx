@@ -60,7 +60,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           })
         }
       >
-        <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
+        <ButtonMedium title="Swap" iconName={IconNameEnum.SwapArrow} disabled={true} onPress={emptyFn} />
       </View>
     </ButtonsContainer>
   );
