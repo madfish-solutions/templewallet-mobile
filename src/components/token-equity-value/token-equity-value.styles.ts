@@ -9,6 +9,11 @@ export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     alignItems: 'center'
   },
+  equityContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   dateText: {
     ...typography.tagline11Tag,
     color: colors.gray3,
