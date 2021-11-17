@@ -17,5 +17,5 @@ export const findExchangeRate = (aTokenPool: BigNumber, bTokenPool: BigNumber) =
 export const findTokenInput = (exchangeRate: BigNumber, tokenAmount: BigNumber) =>
   exchangeRate.multipliedBy(tokenAmount);
 
-export const findLpTokenAmount = (xtzAmountIn: BigNumber, lqtTotal: BigNumber, xtzPool: BigNumber): BigNumber =>
-  xtzAmountIn.multipliedBy(lqtTotal).dividedToIntegerBy(xtzPool);
+export const findLpTokenAmount = (tokenAmountIn: BigNumber, lqtTotal: BigNumber, tokenPool: BigNumber): BigNumber =>
+  tokenAmountIn.multipliedBy(lqtTotal).dividedToIntegerBy(tokenPool);
