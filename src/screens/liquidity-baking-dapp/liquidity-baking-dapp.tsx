@@ -48,7 +48,7 @@ export const LiquidityBakingDapp = () => {
     const tezosPoolInTz = mutezToTz(aTokenPool, aToken.decimals);
     const tezVolumePriceInDollar = tezosPoolInTz.multipliedBy(exchangeRates.tez);
     const tzBtcPoolInTz = mutezToTz(bTokenPool, bToken.decimals);
-    const tzBtcVolumePriceInDollar = tzBtcPoolInTz.multipliedBy(exchangeRates[`${bToken.address}_${bToken.id}`]);
+    const tzBtcVolumePriceInDollar = tzBtcPoolInTz.multipliedBy(exchangeRates[getTokenSlug(bToken)]);
 
     const result = tezVolumePriceInDollar.plus(tzBtcVolumePriceInDollar);
 
@@ -79,7 +79,9 @@ export const LiquidityBakingDapp = () => {
           <ButtonLargePrimary
             title="REMOVE"
             iconName={IconNameEnum.MinusIcon}
-            onPress={() => navigate(ModalsEnum.RemoveLiquidity, liquidityBakingContract)}
+            onPress={() =>
+              navigate(ModalsEnum.RemoveLiquidity, { lpContract: liquidityBakingContract, aToken, bToken })
+            }
           />
         </View>
         <Divider size={formatSize(16)} />
@@ -87,7 +89,7 @@ export const LiquidityBakingDapp = () => {
           <ButtonLargePrimary
             title="ADD"
             iconName={IconNameEnum.PlusIcon}
-            onPress={() => navigate(ModalsEnum.AddLiquidity, liquidityBakingContract)}
+            onPress={() => navigate(ModalsEnum.AddLiquidity, { lpContract: liquidityBakingContract, aToken, bToken })}
           />
         </View>
       </ButtonsContainer>

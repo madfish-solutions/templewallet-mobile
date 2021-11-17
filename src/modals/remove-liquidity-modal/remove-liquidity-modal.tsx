@@ -17,13 +17,9 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
-import {
-  useAssetsListSelector,
-  useSelectedAccountSelector,
-  useTezosTokenSelector
-} from '../../store/wallet/wallet-selectors';
+import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { TZ_BTC_TOKEN_SLUG, LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
@@ -34,7 +30,11 @@ import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } 
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
-  const tzBtcLpContract = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const {
+    lpContract: tzBtcLpContract,
+    aToken,
+    bToken
+  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
 
   const { navigate } = useNavigation();
 
@@ -47,8 +47,6 @@ export const RemoveLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
 
   const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken;
-  const aToken = useTezosTokenSelector() ?? emptyToken;
-  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
