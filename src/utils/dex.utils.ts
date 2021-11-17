@@ -1,8 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 
-import { TokenInterface } from '../token/interfaces/token.interface';
-import { mutezToTz } from './tezos.util';
-
 export const findLpToTokenOutput = (
   inputLpTokenAmount: BigNumber,
   lpTokenTotalSupply: BigNumber,

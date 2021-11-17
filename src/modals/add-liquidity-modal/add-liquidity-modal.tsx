@@ -21,21 +21,16 @@ import { useContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_ADDRESS } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../../token/data/token-slugs';
 import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
-import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
 import { addLiquidityModalValidationSchema, AddLiquidityModalFormValues } from './add-liquidity-modal.form';
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
-  const {
-    lpContract,
-    aToken,
-    bToken
-  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
   const { navigate } = useNavigation();
   const styles = useAddLiquidityModalStyles();
   const { publicKeyHash } = useSelectedAccountSelector();
