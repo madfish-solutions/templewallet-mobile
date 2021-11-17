@@ -98,8 +98,8 @@ export const AddLiquidityModal = () => {
         onSubmit={onSubmitHandler}
       >
         {({ values, setValues, setTouched, submitForm }) => {
-          const aToBExchangeRate = findExchangeRate(values.aToken.asset, aTokenPool, values.bToken.asset, bTokenPool);
-          const bToAExchangeRate = findExchangeRate(values.bToken.asset, bTokenPool, values.aToken.asset, aTokenPool);
+          const aToBExchangeRate = findExchangeRate(aTokenPool, bTokenPool);
+          const bToAExchangeRate = findExchangeRate(bTokenPool, aTokenPool);
 
           const updateForm = (aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
@@ -118,10 +118,10 @@ export const AddLiquidityModal = () => {
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
 
-              bTokenAmount = findTokenInput(bToAExchangeRate, mutezToTz(aTokenAmount, aToken.asset.decimals));
+              bTokenAmount = findTokenInput(bToAExchangeRate, aTokenAmount);
             }
 
-            updateForm(aTokenAmount, tzToMutez(bTokenAmount ?? new BigNumber(0), values.bToken.asset.decimals));
+            updateForm(aTokenAmount, bTokenAmount ?? new BigNumber(0));
           };
 
           const handleBTokenChange = (bToken: AssetAmountInterface) => {
@@ -129,10 +129,10 @@ export const AddLiquidityModal = () => {
             if (isDefined(bToken.amount)) {
               bTokenAmount = bToken.amount;
 
-              aTokenAmount = findTokenInput(aToBExchangeRate, mutezToTz(bTokenAmount, bToken.asset.decimals));
+              aTokenAmount = findTokenInput(aToBExchangeRate, bTokenAmount);
             }
 
-            updateForm(tzToMutez(aTokenAmount ?? new BigNumber(0), values.aToken.asset.decimals), bTokenAmount);
+            updateForm(aTokenAmount ?? new BigNumber(0), bTokenAmount);
           };
 
           return (
