@@ -85,8 +85,8 @@ export const RemoveLiquidityModal = () => {
         onSubmit={onSubmitHandler}
       >
         {({ values, setTouched, setValues, submitForm }) => {
-          const aToBExchangeRate = findExchangeRate(values.aToken.asset, aTokenPool, values.bToken.asset, bTokenPool);
-          const bToAExchangeRate = findExchangeRate(values.bToken.asset, bTokenPool, values.aToken.asset, aTokenPool);
+          const aToBExchangeRate = findExchangeRate(aTokenPool, bTokenPool);
+          const bToAExchangeRate = findExchangeRate(bTokenPool, aTokenPool);
 
           const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
