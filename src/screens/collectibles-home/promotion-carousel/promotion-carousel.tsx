@@ -12,9 +12,9 @@ import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
 
-  const { handleLayout } = useLayoutSizes();
-  const layoutWidth = Dimensions.get('window').width;
-  const itemWidth = useMemo(() => layoutWidth - 2 * formatSize(16), [layoutWidth]);
+  const { layoutWidth, handleLayout } = useLayoutSizes();
+  const windowWidth = Dimensions.get('window').width;
+  const itemWidth = useMemo(() => windowWidth - 2 * formatSize(16), [windowWidth]);
 
   const [activeDotIndex, setActiveDotIndex] = useState(0);
 
