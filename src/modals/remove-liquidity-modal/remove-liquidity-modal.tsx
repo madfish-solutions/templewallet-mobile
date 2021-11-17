@@ -30,17 +30,13 @@ import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } 
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
-  const {
-    lpContract: tzBtcLpContract,
-    aToken,
-    bToken
-  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
 
   const { navigate } = useNavigation();
 
-  const aTokenPool = tzBtcLpContract.storage.xtzPool;
-  const bTokenPool = tzBtcLpContract.storage.tokenPool;
-  const lpTotalSupply = tzBtcLpContract.storage.lqtTotal;
+  const aTokenPool = lpContract.storage.xtzPool;
+  const bTokenPool = lpContract.storage.tokenPool;
+  const lpTotalSupply = lpContract.storage.lqtTotal;
 
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
@@ -53,9 +49,9 @@ export const RemoveLiquidityModal = () => {
       isDefined(values.lpToken.amount) &&
       isDefined(values.aToken.amount) &&
       isDefined(values.bToken.amount) &&
-      isDefined(tzBtcLpContract.contract)
+      isDefined(lpContract.contract)
     ) {
-      const transferParams = tzBtcLpContract.contract.methods
+      const transferParams = lpContract.contract.methods
         .removeLiquidity(
           publicKeyHash,
           values.lpToken.amount,

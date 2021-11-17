@@ -37,12 +37,12 @@ export type ModalsParamList = {
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.RemoveLiquidity]: {
-    lpContract: ContractInterface<LiquidityBakingContractAbstraction | undefined, LiquidityBakingStorage>;
+    lpContract: ContractInterface<LiquidityBakingContractAbstraction, LiquidityBakingStorage>;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
   [ModalsEnum.AddLiquidity]: {
-    lpContract: ContractInterface<LiquidityBakingContractAbstraction | undefined, LiquidityBakingStorage>;
+    lpContract: ContractInterface<LiquidityBakingContractAbstraction, LiquidityBakingStorage>;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };

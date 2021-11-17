@@ -32,7 +32,7 @@ import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
   const {
-    lpContract: tzBtcLpContract,
+    lpContract,
     aToken,
     bToken
   } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
@@ -40,18 +40,18 @@ export const AddLiquidityModal = () => {
   const styles = useAddLiquidityModalStyles();
   const { publicKeyHash } = useSelectedAccountSelector();
 
-  const aTokenPool = tzBtcLpContract.storage.xtzPool;
-  const bTokenPool = tzBtcLpContract.storage.tokenPool;
-  const lpTotalSupply = tzBtcLpContract.storage.lqtTotal;
+  const aTokenPool = lpContract.storage.xtzPool;
+  const bTokenPool = lpContract.storage.tokenPool;
+  const lpTotalSupply = lpContract.storage.lqtTotal;
 
-  const bTokenContract = useContract<Fa12TokenContractAbstraction, undefined>(TZ_BTC_TOKEN_ADDRESS, undefined);
+  const bTokenContract = useContract<Fa12TokenContractAbstraction, undefined>(bToken.address, undefined);
 
   const onSubmitHandler = (values: AddLiquidityModalFormValues) => {
     if (
       isDefined(values.aToken.amount) &&
       isDefined(values.bToken.amount) &&
       isDefined(bTokenContract.contract) &&
-      isDefined(tzBtcLpContract.contract)
+      isDefined(lpContract.contract)
     ) {
       const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
 
@@ -63,7 +63,7 @@ export const AddLiquidityModal = () => {
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, values.bToken.amount)
         .toTransferParams({ mutez: true });
 
-      const transferParams = tzBtcLpContract.contract.methods
+      const transferParams = lpContract.contract.methods
         .addLiquidity(publicKeyHash, lpTokensOutput, values.bToken.amount, getTransactionTimeoutDate())
         .toTransferParams({ mutez: true, amount: values.aToken.amount.toNumber() });
 
