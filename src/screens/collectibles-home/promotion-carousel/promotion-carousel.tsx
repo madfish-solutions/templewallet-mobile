@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import { Divider } from '../../../components/divider/divider';
@@ -13,7 +13,7 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const windowWidth = Dimensions.get('window').width;
+  const windowWidth = useWindowDimensions().width;
   const itemWidth = useMemo(() => windowWidth - 2 * formatSize(16), [windowWidth]);
 
   const [activeDotIndex, setActiveDotIndex] = useState(0);
