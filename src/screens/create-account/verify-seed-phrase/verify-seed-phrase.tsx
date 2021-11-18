@@ -69,9 +69,9 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     () =>
       object().shape(
         wordsToCheckPositions.reduce(
-          (shape, wordPosition, index) => ({
+          (shape, index) => ({
             ...shape,
-            [`word${index}`]: string().oneOf([words[wordPosition]], '').required('')
+            [`word${index}`]: string().oneOf([words[index]], '').required('')
           }),
           {}
         )
@@ -82,7 +82,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
   const initialValues = useMemo(
     () =>
       wordsToCheckPositions.reduce(
-        (previousValue, _, index) => ({
+        (previousValue, index) => ({
           ...previousValue,
           [`word${index}`]: ''
         }),

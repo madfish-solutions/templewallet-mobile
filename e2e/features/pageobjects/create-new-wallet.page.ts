@@ -6,13 +6,13 @@ export class CreateNewWalletPage extends Page {
   seedPhraseOut = findElement(CreateNewWalletSelectors.SeedPhraseOut);
   genNewSeedButton = findElement(CreateNewWalletSelectors.GenNewSeedButton);
   madeSeedPhraseBackupCheckbox = findElement(CreateNewWalletSelectors.MadeSeedPhraseBackupCheckbox);
-  nextButton = findElement(CreateNewWalletSelectors.NextButton);
+  createANewWalletNextButton = findElement(CreateNewWalletSelectors.NextButton);
   copySeedButton = findElement(CreateNewWalletSelectors.CopyButton);
 
   async isVisible() {
     await this.seedPhraseOut.waitForExist();
     await this.genNewSeedButton.waitForDisplayed();
     await this.madeSeedPhraseBackupCheckbox.waitForDisplayed();
-    await this.nextButton.waitForDisplayed();
+    await this.createANewWalletNextButton.waitForDisplayed();
   }
 }

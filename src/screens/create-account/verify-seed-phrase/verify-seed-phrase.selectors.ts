@@ -1,3 +1,3 @@
 export enum VerifySeedPhraseSelectors {
-  NextButton = 'VerifySeedPhraseSelectors.NextButton'
+  NextButton = 'Next button on Verify your seed page'
 }

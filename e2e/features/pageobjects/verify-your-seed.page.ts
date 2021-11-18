@@ -4,12 +4,12 @@ import { findElement, findElements } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class VerifyYourSeedPage extends Page {
-  nextButton = findElement(VerifySeedPhraseSelectors.NextButton);
+  verifyYourSeedNextButton = findElement(VerifySeedPhraseSelectors.NextButton);
 
   getConfirmationTitles = () => findElements(SeedPhraseWordInputSelectors.Title);
   getConfirmationInputs = () => findElements(SeedPhraseWordInputSelectors.Input);
 
   async isVisible() {
-    await this.nextButton.waitForDisplayed();
+    await this.verifyYourSeedNextButton.waitForDisplayed();
   }
 }
