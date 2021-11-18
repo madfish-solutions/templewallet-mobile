@@ -101,7 +101,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
         <Label label={label} />
         {hasExchangeRate && (
           <TextSegmentControl
-            width={formatSize(138)}
+            width={formatSize(158)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', 'USD']}
             onChange={handleTokenInputTypeChange}
