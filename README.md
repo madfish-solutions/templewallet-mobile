@@ -1,5 +1,5 @@
 
-![application screenshot](./docs/assets/readmeScreenshot.jpeg)
+![application screenshot](./docs/assets/readmeScreenshot.png)
 
 # 📝 About
 

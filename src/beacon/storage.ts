@@ -2,6 +2,8 @@ import { Storage, StorageKey, StorageKeyReturnType } from '@airgap/beacon-sdk';
 import { defaultValues } from '@airgap/beacon-sdk/dist/cjs/types/storage/StorageKeyReturnDefaults';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { isDefined } from '../utils/is-defined';
+
 export class BeaconStorage implements Storage {
   static async isSupported() {
     return true;
@@ -10,7 +12,7 @@ export class BeaconStorage implements Storage {
   public async get<K extends StorageKey>(key: K): Promise<StorageKeyReturnType[K]> {
     const value = await AsyncStorage.getItem(key);
 
-    if (value) {
+    if (isDefined(value)) {
       try {
         return JSON.parse(value);
       } catch {}

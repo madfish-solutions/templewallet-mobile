@@ -27,6 +27,7 @@ export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, o
         value={value}
         placeholder={placeholder}
         multiline={true}
+        autoCapitalize="none"
         style={StyledTextInputStyles.addressInput}
         isError={isError}
         isShowCleanButton={true}

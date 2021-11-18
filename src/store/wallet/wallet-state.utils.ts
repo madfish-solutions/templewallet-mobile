@@ -66,18 +66,6 @@ export const pushOrUpdateTokensBalances = (
   return result;
 };
 
-export const removeTokenFromTokenList = (tokensList: AccountTokenInterface[], slug: string) => {
-  const result: AccountTokenInterface[] = [];
-
-  for (const token of tokensList) {
-    if (token.slug !== slug) {
-      result.push(token);
-    }
-  }
-
-  return result;
-};
-
 export const toggleTokenVisibility = (tokensList: AccountTokenInterface[], slug: string) => {
   const result: AccountTokenInterface[] = [];
 

@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadPermissionsActions } from './d-apps-actions';
+import { loadDAppsListActions, loadPermissionsActions } from './d-apps-actions';
 import { dAppsInitialState, DAppsState } from './d-apps-state';
 
 export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builder => {
@@ -16,5 +16,18 @@ export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builde
   builder.addCase(loadPermissionsActions.fail, (state, { payload: error }) => ({
     ...state,
     permissions: createEntity([], false, error)
+  }));
+
+  builder.addCase(loadDAppsListActions.submit, state => ({
+    ...state,
+    dappsList: createEntity(state.dappsList.data, true)
+  }));
+  builder.addCase(loadDAppsListActions.success, (state, { payload: dappsList }) => ({
+    ...state,
+    dappsList: createEntity(dappsList, false)
+  }));
+  builder.addCase(loadDAppsListActions.fail, (state, { payload: error }) => ({
+    ...state,
+    dappsList: createEntity([], false, error)
   }));
 });

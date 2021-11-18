@@ -4,7 +4,8 @@ import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 
 export interface ApproveOperationRequestActionPayloadInterface {
-  message: OperationRequestOutput;
+  rpcUrl: string;
   sender: WalletAccountInterface;
   opParams: ParamsWithKind[];
+  message: OperationRequestOutput;
 }

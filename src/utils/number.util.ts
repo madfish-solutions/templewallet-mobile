@@ -1,16 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
-export const formatAssetAmount = (
-  amount: BigNumber,
-  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
-  decimalPlace = 6
-) => {
+export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
   if (isNaN(amount.toNumber())) {
     return '';
   }
 
-  return amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, roundingMode).toFixed();
+  return numberWithSpaces(
+    amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
+  );
 };
 
 export const roundFiat = (
@@ -32,4 +30,11 @@ export const kFormatter = (num: number): string | number => {
   }
 
   return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+};
+
+const numberWithSpaces = (amount: string) => {
+  const parts = amount.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+  return parts.join('.');
 };

@@ -23,10 +23,10 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
-  useAssetsListSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
-  useVisibleAccountsListSelector
+  useVisibleAccountsListSelector,
+  useVisibleAssetListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
@@ -46,7 +46,7 @@ export const SendModal: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const visibleAccounts = useVisibleAccountsListSelector();
-  const assetsList = useAssetsListSelector();
+  const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useTezosTokenSelector();
 

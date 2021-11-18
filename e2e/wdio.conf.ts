@@ -1,5 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 
+import { isDefined } from '../src/utils/is-defined';
+
 dotenvConfig();
 
 const waitforTimeout = 30 * 60 * 1000;
@@ -39,11 +41,11 @@ const iosCapability = {
 };
 
 const getCapabilities = () => {
-  if (process.env.ANDROID) {
+  if (isDefined(process.env.ANDROID)) {
     return [androidCapability];
   }
 
-  if (process.env.IOS) {
+  if (isDefined(process.env.IOS)) {
     return [iosCapability];
   }
 

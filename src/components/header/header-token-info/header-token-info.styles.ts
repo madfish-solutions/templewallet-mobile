@@ -3,6 +3,7 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useHeaderTokenInfoStyles = createUseStyles(({ colors, typography }) => ({
   container: {
+    marginHorizontal: formatSize(10),
     flexDirection: 'row',
     alignItems: 'center'
   },

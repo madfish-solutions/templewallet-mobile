@@ -15,7 +15,7 @@ import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
 import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
+import { useAssetsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
 import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
@@ -33,6 +33,7 @@ interface Props {
 export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
+  const assetsList = useAssetsListSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
@@ -43,7 +44,7 @@ export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
       .then(contract => {
         if (!isValidTokenContract(contract)) {
           showErrorToast({ description: 'Invalid token address' });
-        } else if (selectedAccount.tokensList.find(item => item.slug === getTokenSlug(token)) !== undefined) {
+        } else if (assetsList.find(item => getTokenSlug(item) === getTokenSlug(token)) !== undefined) {
           showErrorToast({ description: 'Token with this address already added to this account.' });
         } else {
           dispatch(loadTokenSuggestionActions.submit(token));

@@ -24,7 +24,10 @@ export enum IconNameEnum {
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',
   Settings = 'Settings',
+  DApps = 'DApps',
   SoonBadge = 'SoonBadge',
+  QuipuSwap = 'QuipuSwap',
+  QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',
   TezToken = 'TezToken',
   TzBtcToken = 'TzBtcToken',
@@ -69,5 +72,12 @@ export enum IconNameEnum {
   AlertShield = 'AlertShield',
   Success = 'Success',
   Navigation = 'Navigation',
-  Hummer = 'Hummer'
+  Hummer = 'Hummer',
+  LbDappIcon = 'LbDappIcon',
+  LbTokenIcon = 'LbTokenIcon',
+  RefreshIcon = 'RefreshIcon',
+  ChartIcon = 'ChartIcon',
+  MinusIcon = 'MinusIcon',
+  PlusIcon = 'PlusIcon',
+  PlusIconOrange = 'PlusIconOrange'
 }

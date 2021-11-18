@@ -35,20 +35,20 @@ export const useShelter = () => {
           switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
             forkJoin([
               Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
-              useBiometry ? Shelter.enableBiometryPassword$(password) : of(false)
+              useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
             ])
           )
         )
         .subscribe(([accounts, isPasswordSaved]) => {
           if (accounts !== undefined) {
             const firstAccount = accounts[0];
-
             dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
+
             for (const account of accounts) {
               dispatch(addHdAccountAction(account));
             }
 
-            isPasswordSaved && dispatch(setIsBiometricsEnabled(true));
+            isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
           }
         }),
       createHdAccount$
@@ -118,18 +118,18 @@ export const useShelter = () => {
           )
         )
         .subscribe(isPasswordSaved => {
-          if (isPasswordSaved) {
+          if (isPasswordSaved === false) {
+            showErrorToast({ description: 'Wrong password, please, try again' });
+          } else {
             showSuccessToast({ description: 'Successfully enabled!' });
 
             dispatch(setIsBiometricsEnabled(true));
             navigate(StacksEnum.MainStack);
-          } else {
-            showErrorToast({ description: 'Wrong password, please, try again' });
           }
         })
     ];
 
-    return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
+    return () => subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
 
   const importWallet = (params: ImportWalletParams) => importWallet$.next(params);

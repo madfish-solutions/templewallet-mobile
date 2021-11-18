@@ -10,6 +10,7 @@ import {
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
+import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
@@ -77,7 +78,7 @@ export const useTokensMetadataSelector = () =>
   useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
 
 export const useAssetsListSelector = (): TokenInterface[] => {
-  const selectedAccountTokensList = useSelectedAccountSelector().tokensList;
+  const selectedAccount = useSelectedAccountSelector();
   const getTokenMetadata = useTokenMetadataGetter();
 
   const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
@@ -85,16 +86,24 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   useEffect(
     () =>
       setAssetsList(
-        selectedAccountTokensList.map(({ slug, balance, isVisible }) => ({
-          balance,
-          isVisible,
-          ...getTokenMetadata(slug)
-        }))
+        selectedAccount.tokensList
+          .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
+          .map(({ slug, balance, isVisible }) => ({
+            balance,
+            isVisible,
+            ...getTokenMetadata(slug)
+          }))
       ),
-    [selectedAccountTokensList, getTokenMetadata]
+    [selectedAccount.tokensList, getTokenMetadata, selectedAccount.removedTokensList]
   );
 
   return assetsList;
+};
+
+export const useVisibleAssetListSelector = () => {
+  const tokensList = useAssetsListSelector();
+
+  return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
 export const useTokensListSelector = () => {
@@ -112,7 +121,7 @@ export const useVisibleTokensListSelector = () => {
 export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 
-  return useMemo(() => assetsList.filter(({ artifactUri }) => isDefined(artifactUri)), [assetsList]);
+  return useMemo(() => assetsList.filter(asset => isCollectible(asset) && isNonZeroBalance(asset)), [assetsList]);
 };
 
 export const useVisibleCollectiblesListSelector = () => {
