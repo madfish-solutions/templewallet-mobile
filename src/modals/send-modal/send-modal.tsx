@@ -33,6 +33,7 @@ import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
+import { tzToMutez } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -102,7 +103,7 @@ export const SendModal: FC = () => {
         sendAssetActions.submit({
           asset,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
-          amount: amount.toNumber()
+          amount: tzToMutez(amount, asset.decimals).toNumber()
         })
       )
     );
