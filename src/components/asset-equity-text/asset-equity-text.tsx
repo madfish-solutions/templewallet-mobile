@@ -18,7 +18,7 @@ export const AssetEquityText: FC<Props> = ({ asset, style }) => {
   const exchangeRates = useExchangeRatesSelector();
   const styles = useAssetEquityTextStyles();
 
-  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
+  const exchangeRate = exchangeRates[getTokenSlug(asset)];
 
   const visibleAmount = formatAssetAmount(new BigNumber(exchangeRate), 2);
   const visibleSymbol = asset.symbol;

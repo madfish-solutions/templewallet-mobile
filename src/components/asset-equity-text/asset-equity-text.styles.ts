@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 
-export const useAssetEquityTextStyles = createUseStyles(() => ({
+export const useAssetEquityTextStyles = createUseStyles(({ colors }) => ({
   numberText: {
-    color: '#707070'
+    color: colors.gray1
   }
 }));
