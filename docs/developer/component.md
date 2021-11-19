@@ -27,8 +27,8 @@ return <View>{title}</View>;
 - All padding and margins constants should be defined in `shared-style` and extend base values
 - Each component should have separate `my-components.styles.ts` file
 - Multiple styles and style merging should be done only via arrays `[]`
-- Conditional styling should be done via [rnw-community/shared](https://github.com/rnw-community/rnw-community/tree/master/packages/shared) `cs()` util
-- For different platform(Web, iOS, Android) styling use [rnw-community/platform](https://github.com/rnw-community/rnw-community/blob/master/packages/platform/readme.md) helpers
+- Conditional styling should be done via `conditionalStyle` function
+- For different platform(Web, iOS, Android) styling use `iosStyles` and `androidStyles` functions
 - JSX should not contain style merging, this styles should be extracted into **components render function**:
 
 ### Bad
@@ -53,11 +53,18 @@ return <View style={rootStyle} />;
 
 ## Component example file structure
 
+Example:
+
 - Component file `my-awesome-component/my-awesome-component.tsx`
 - Styles file `my-awesome-component/my-awesome-component.styles.ts`
 - Props interface file `my-awesome-component/my-awesome-component.props.ts`
 - Tests file `my-awesome-component/my-awesome-component.spec.tsx`
 - Description file `my-awesome-component/my-awesome-component.md`
+
+Another example:
+
+- Helper file `utils/image.utils.ts`
+- Tests file `utils/image.utils.spec.ts`
 
 ## Naming of handlers in components
 
@@ -130,7 +137,7 @@ Try to avoid premature optimization practices
 
 ### React.memo
 
-Add this **React optimization** only for complex components with rendering problems, leave it to Dan =)
+Add this **React optimization** only for complex components with rendering problems
 
 ### useMemo
 
