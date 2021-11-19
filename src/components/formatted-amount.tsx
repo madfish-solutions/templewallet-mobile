@@ -25,23 +25,25 @@ export const FormattedAmount: FC<Props> = ({
   symbol,
   style
 }) => {
-  const dollarAmount = amount.isZero()
-    ? amount
-    : amount.isPositive()
+  const isZeroAmount = amount.isZero();
+  if (isZeroAmount) {
+    return <Text style={style}>- - - -</Text>;
+  }
+
+  const dollarAmount = amount.isPositive()
     ? bigIntClamp(amount, MIN_POSITIVE_AMOUNT_VALUE, new BigNumber(Infinity))
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
 
   const formattedAmount = isDollarValue ? formatAssetAmount(dollarAmount, 2) : formatAssetAmount(amount);
-  const isZeroAmount = amount.eq(0);
-  const visibleAmount = isZeroAmount ? '- - - -' : formattedAmount;
+  const visibleAmount = formattedAmount;
 
   return (
     <Text style={style}>
-      {!isZeroAmount && isDollarValue && '≈ '}
+      {isDollarValue && '≈ '}
       {showMinusSign && '- '}
       {showPlusSign && '+ '}
       {visibleAmount}
-      {isDollarValue ? ' $' : isZeroAmount ? '' : ` ${symbol}`}
+      {isDollarValue ? ' $' : ` ${symbol}`}
     </Text>
   );
 };

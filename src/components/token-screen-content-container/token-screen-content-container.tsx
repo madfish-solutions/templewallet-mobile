@@ -31,7 +31,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
     <>
       <View style={styles.headerContainer}>
         <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
-          {!isBakerSelected ? (
+          {isBakerSelected ? (
             <Text style={styles.delegateText}>Rewards & Redelegate</Text>
           ) : (
             <Text style={styles.delegateText}>
