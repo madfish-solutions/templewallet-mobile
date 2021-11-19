@@ -97,6 +97,36 @@ const Component = () => {
 };
 ```
 
+## Ternary return
+
+when it comes to rendering multiple elements with fragments depending on a condition
+
+#### Bad
+
+```jsx
+const AuthButton = props => {
+  let { isLoggedIn } = props;
+
+  if (isLoggedIn) {
+    return <button>Logout</button>;
+  } else {
+    return <button>Login</button>;
+  }
+};
+```
+
+#### Good
+
+```jsx
+const AuthButton = props => {
+  let { isLoggedIn } = props;
+
+  return isLoggedIn ? <button>Logout</button> : <button>Login</button>;
+};
+```
+
+The ternary approach is useful for uncomplicated `if…else` evaluations. For complicated comparisons and components, it may impact readability as a project grows.
+
 ## Using hooks in components
 
 Hooks should be defined/used as top as possible. Hooks shouldn't be used in props directly.

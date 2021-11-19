@@ -17,6 +17,28 @@ SVG should be imported according to [this article](https://create-react-app.dev/
 import { ReactComponent as Logo } from './logo.svg';
 ```
 
+## Short return
+
+We tend to use short versions of functions where its possible
+
+#### Bad
+
+```jsx
+const fn = boolean => {
+  if (boolean) {
+    return 1;
+  } else {
+    return 2;
+  }
+};
+```
+
+#### Good
+
+```jsx
+const fn = value => (value ? 1 : 2);
+```
+
 ---
 
 - Return to the [Guides](../readme.md)
