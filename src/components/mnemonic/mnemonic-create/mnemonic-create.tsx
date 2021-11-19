@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import { emptyFn } from '../../../config/general';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
-import { CreateNewWalletSelectors } from '../../../screens/create-account/create-new-wallet/create-new-wallet.selectors';
 import { formatSize } from '../../../styles/format-size';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
@@ -16,6 +15,7 @@ import { OVERLAY_SHOW_TIMEOUT } from '../mnemonic.config';
 import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
+import { MnemonicCreateSelectors } from './mnemonic-create.selectors';
 
 export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur, testID }) => {
   const { activeTimer, clearActiveTimer } = useActiveTimer();
@@ -50,7 +50,7 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
         <ButtonSmallSecondary
           title="GEN NEW"
           onPress={handleGenerateNewButtonPress}
-          testID={CreateNewWalletSelectors.GenNewSeedButton}
+          testID={MnemonicCreateSelectors.GenNewSeedButton}
         />
         {isString(value) ? (
           <>
@@ -58,7 +58,7 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
             <ButtonSmallSecondary
               title="COPY"
               onPress={() => copyStringToClipboard(value)}
-              testID={CreateNewWalletSelectors.CopyButton}
+              testID={MnemonicCreateSelectors.CopyButton}
             />
           </>
         ) : null}
