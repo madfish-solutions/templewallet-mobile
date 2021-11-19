@@ -1,32 +1,26 @@
-# Prerequisites to run project
+## Linters and code format
 
-- Install nodejs
-- Install yarn pkg
-- Setup IDE
+In all projects we use [.eslintrc](.eslintrc) and [.prettierrc](.prettierrc)
 
-## Nodejs runtime
+## Code styleguides:
 
-[Nodejs installer](https://nodejs.org/en/download/)
-Pick LTS version
+## Variable naming
 
-## Yarn package manager
+- All variable should be named in `camelCase`
+- Generic names should not be used for naming(like data, array, list, etc)
 
-[Yarn installer](https://classic.yarnpkg.com/lang/en/docs/install/)
+## SVG import
 
-## IDE setup
+SVG should be imported according to [this article](https://create-react-app.dev/docs/adding-images-fonts-and-files#adding-svgs) for React (excluding React Native).
 
-### Visual Studio Code
+```ts
+import { ReactComponent as Logo } from './logo.svg';
+```
 
-Recommended plugins:
-
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-- [Babel Javascript](https://marketplace.visualstudio.com/items?itemName=mgmcdermott.vscode-language-babel)
-- [Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
-
-### Webstorm
-
-0 config, works fine for every project.
+- ex1
+- ex2
+- ex3
+- ex4
 
 ---
 

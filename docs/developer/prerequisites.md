@@ -1,11 +1,32 @@
-## Linters and code format
+# Prerequisites to run project
 
-## Code styleguides:
+- Install nodejs
+- Install yarn pkg
+- Setup IDE
 
-- ex1
-- ex2
-- ex3
-- ex4
+## Nodejs runtime
+
+[Nodejs installer](https://nodejs.org/en/download/)
+Pick LTS version
+
+## Yarn package manager
+
+[Yarn installer](https://classic.yarnpkg.com/lang/en/docs/install/)
+
+## IDE setup
+
+### Visual Studio Code
+
+Recommended plugins:
+
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Babel Javascript](https://marketplace.visualstudio.com/items?itemName=mgmcdermott.vscode-language-babel)
+- [Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
+
+### Webstorm
+
+0 config, works fine for every project.
 
 ---
 
