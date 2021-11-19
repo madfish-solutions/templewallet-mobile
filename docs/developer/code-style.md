@@ -1,8 +1,8 @@
+# Code styleguides:
+
 ## Linters and code format
 
 In all projects we use [.eslintrc](.eslintrc) and [.prettierrc](.prettierrc)
-
-## Code styleguides:
 
 ## Variable naming
 
