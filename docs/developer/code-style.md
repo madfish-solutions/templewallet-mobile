@@ -17,11 +17,6 @@ SVG should be imported according to [this article](https://create-react-app.dev/
 import { ReactComponent as Logo } from './logo.svg';
 ```
 
-- ex1
-- ex2
-- ex3
-- ex4
-
 ---
 
 - Return to the [Guides](../readme.md)

@@ -157,3 +157,9 @@ const calculatedData = useMemo(
   [input, complexCalculationFn, complexFilterFn]
 );
 ```
+
+---
+
+- Return to the [Guides](../readme.md)
+
+---
