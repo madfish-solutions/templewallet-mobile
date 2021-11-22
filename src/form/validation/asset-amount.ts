@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { object } from 'yup';
+import { bool, object } from 'yup';
 
 import { bigNumberValidation } from './big-number';
 import { makeRequiredErrorMessage } from './messages';
@@ -15,5 +15,6 @@ export const assetAmountValidation = object().shape({
       }
 
       return false;
-    })
+    }),
+  isToken: bool().notRequired()
 });
