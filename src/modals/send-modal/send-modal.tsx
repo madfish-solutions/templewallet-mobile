@@ -21,6 +21,7 @@ import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -31,6 +32,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
@@ -52,6 +54,7 @@ export const SendModal: FC = () => {
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
+  const exchangeRates = useExchangeRatesSelector();
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -78,7 +81,7 @@ export const SendModal: FC = () => {
   );
 
   const onSubmit = async ({
-    assetAmount: { asset, amount },
+    assetAmount: { asset, amount, isToken },
     receiverPublicKeyHash,
     ownAccount,
     transferBetweenOwnAccounts
@@ -95,6 +98,7 @@ export const SendModal: FC = () => {
         return;
       }
     }
+    const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
 
     void (
       isDefined(amount) &&
@@ -102,7 +106,7 @@ export const SendModal: FC = () => {
         sendAssetActions.submit({
           asset,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
-          amount: amount.toNumber()
+          amount: isToken === true ? amount.toNumber() : amount.dividedBy(exchangeRate).toNumber()
         })
       )
     );

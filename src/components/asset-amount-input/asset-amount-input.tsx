@@ -25,6 +25,7 @@ import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 export interface AssetAmountInterface {
   asset: TokenInterface;
   amount?: BigNumber;
+  isToken?: boolean;
 }
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
@@ -67,9 +68,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    isDefined(value.amount)
-      ? mutezToTz(isTokenInputType ? value.amount : value.amount.times(exchangeRate), value.asset.decimals)
-      : undefined,
+    isDefined(value.amount) ? mutezToTz(value.amount, value.asset.decimals) : undefined,
     asset.decimals,
     onBlur,
     onFocus,
@@ -87,11 +86,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     () =>
       void onValueChange({
         ...value,
-        amount: isDefined(inputValue)
-          ? isTokenInputType
-            ? tzToMutez(inputValue, value.asset.decimals)
-            : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate)
-          : undefined
+        amount: isDefined(inputValue) ? tzToMutez(inputValue, value.asset.decimals) : undefined,
+        isToken: isTokenInputType
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
   );
@@ -147,7 +143,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <AssetValueText
-          amount={amount.toFixed()}
+          amount={isTokenInputType ? amount.toFixed() : amount.dividedBy(exchangeRate).toFixed()}
           asset={asset}
           style={styles.equivalentValueText}
           convertToDollar={isTokenInputType}
