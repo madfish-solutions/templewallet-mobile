@@ -10,7 +10,7 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
-import { tzToMutez } from '../../utils/tezos.util';
+import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
@@ -67,7 +67,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    isDefined(value.amount) ? value.amount : undefined,
+    inputValue,
     asset.decimals,
     onBlur,
     onFocus,
@@ -79,20 +79,17 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
-    if (isDefined(inputValue)) {
-      setInputValue(
-        tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
-          ? inputValue.multipliedBy(exchangeRate).decimalPlaces(0)
-          : inputValue.dividedBy(exchangeRate).decimalPlaces(0)
-      );
-    }
   };
 
   useEffect(
     () =>
       void onValueChange({
         ...value,
-        amount: isDefined(inputValue) ? inputValue : undefined
+        amount: isDefined(inputValue)
+          ? isTokenInputType
+            ? tzToMutez(inputValue, value.asset.decimals)
+            : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate).decimalPlaces(0)
+          : undefined
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
   );
@@ -104,7 +101,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
         <Label label={label} />
         {hasExchangeRate && (
           <TextSegmentControl
-            width={formatSize(138)}
+            width={formatSize(158)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', 'USD']}
             onChange={handleTokenInputTypeChange}
@@ -148,7 +145,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <AssetValueText
-          amount={tzToMutez(amount, asset.decimals).toFixed()}
+          amount={amount.toFixed()}
           asset={asset}
           style={styles.equivalentValueText}
           convertToDollar={isTokenInputType}
