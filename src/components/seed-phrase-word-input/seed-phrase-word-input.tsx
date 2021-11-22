@@ -3,22 +3,26 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
+import { setTestID } from '../../utils/test-id.utils';
 import { Divider } from '../divider/divider';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
+import { SeedPhraseWordInputSelectors } from './seed-phrase-word-input.selectors';
 import { useSeedPhraseWordInputStyles } from './seed-phrase-word-input.styles';
 
 interface SeedPhraseWordInputProps {
   inputName: string;
-  position: number;
+  index: number;
 }
 
-export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, position }) => {
+export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, index }) => {
   const styles = useSeedPhraseWordInputStyles();
   const [field, , helpers] = useField<string>(inputName);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Word {position + 1}</Text>
+      <Text style={styles.title} {...setTestID(SeedPhraseWordInputSelectors.Title)}>
+        Word {index + 1}{' '}
+      </Text>
 
       <Divider size={formatSize(6)} />
 
@@ -30,6 +34,7 @@ export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, p
         onChangeText={field.onChange(inputName)}
         style={styles.wordInput}
         textAlign="center"
+        testID={SeedPhraseWordInputSelectors.Input}
       />
     </View>
   );

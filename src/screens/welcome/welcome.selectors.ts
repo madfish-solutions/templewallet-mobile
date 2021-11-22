@@ -1,4 +1,4 @@
 export enum WelcomeSelectors {
-  CreateNewWalletButton = 'CreateNewWalletButton',
-  ImportExistingWalletButton = 'ImportExistingWalletButton'
+  CreateNewWalletButton = 'Create New Wallet button on Welcome page',
+  ImportExistingWalletButton = 'Import Existing Wallet button on Welcome page'
 }

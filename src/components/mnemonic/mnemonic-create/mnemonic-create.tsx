@@ -15,8 +15,9 @@ import { OVERLAY_SHOW_TIMEOUT } from '../mnemonic.config';
 import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
+import { MnemonicCreateSelectors } from './mnemonic-create.selectors';
 
-export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur }) => {
+export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur, testID }) => {
   const { activeTimer, clearActiveTimer } = useActiveTimer();
 
   const [isShowOverlay, setIsShowOverlay] = useState(isString(value));
@@ -43,13 +44,22 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
         style={StyledTextInputStyles.mnemonicInput}
         onBlur={onBlur}
         onChangeText={onChangeText}
+        testID={testID}
       />
       <View style={MnemonicStyles.buttonsContainer}>
-        <ButtonSmallSecondary title="GEN NEW" onPress={handleGenerateNewButtonPress} />
+        <ButtonSmallSecondary
+          title="GEN NEW"
+          onPress={handleGenerateNewButtonPress}
+          testID={MnemonicCreateSelectors.GenNewSeedButton}
+        />
         {isString(value) ? (
           <>
             <Divider size={formatSize(8)} />
-            <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
+            <ButtonSmallSecondary
+              title="COPY"
+              onPress={() => copyStringToClipboard(value)}
+              testID={MnemonicCreateSelectors.CopyButton}
+            />
           </>
         ) : null}
       </View>

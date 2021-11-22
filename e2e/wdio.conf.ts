@@ -35,9 +35,9 @@ const iosCapability = {
   noReset: true,
   nativeInstrumentsLib: true,
   isolateSimDevice: true,
-  platformVersion: '14.5',
+  platformVersion: '13.7',
   deviceName: 'iPhone 11 Pro Max',
-  app: './ios/build/Build/Products/Release-iphonesimulator/TempleWallet.app'
+  app: './ios/Build/Products/Debug-iphonesimulator/TempleWallet.app'
 };
 
 const getCapabilities = () => {
@@ -68,7 +68,7 @@ export const config: WebdriverIO.Config = {
   framework: 'cucumber',
   reporters: ['spec'],
   cucumberOpts: {
-    require: ['./e2e/features/step-definitions/steps.ts'],
+    require: ['./e2e/features/step-definitions/*.steps.ts'],
     backtrace: false,
     requireModule: [],
     dryRun: false,
@@ -79,7 +79,7 @@ export const config: WebdriverIO.Config = {
     profile: [],
     strict: false,
     tagExpression: '',
-    timeout: 60000,
+    timeout: 15 * 1000,
     ignoreUndefinedDefinitions: false
   }
 };
