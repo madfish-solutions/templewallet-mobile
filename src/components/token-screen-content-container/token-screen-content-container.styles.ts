@@ -14,5 +14,22 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
   headerText: {
     ...typography.body15Semibold,
     color: colors.gray1
+  },
+  delegateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: formatSize(4),
+    paddingHorizontal: formatSize(8),
+    borderRadius: formatSize(14),
+    backgroundColor: colors.blue
+  },
+  delegateText: {
+    ...typography.caption13Semibold,
+    color: colors.white
+  },
+  apyText: {
+    ...typography.caption13Semibold,
+    color: colors.white
   }
 }));
