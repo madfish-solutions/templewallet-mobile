@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
@@ -14,126 +14,120 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { Fa12TokenContractAbstraction } from '../../interfaces/fa-1-2-token.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
-import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
-import { emptyToken } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
+import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../../token/data/token-slugs';
+import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
-import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } from './remove-liquidity-modal.form';
-import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
+import { addLiquidityModalValidationSchema, AddLiquidityModalFormValues } from './add-liquidity-modal.form';
+import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
-export const RemoveLiquidityModal = () => {
+export const AddLiquidityModal = () => {
   const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
-
   const { navigate } = useNavigation();
+  const styles = useAddLiquidityModalStyles();
+  const { publicKeyHash } = useSelectedAccountSelector();
 
   const aTokenPool = lpContract.storage.xtzPool;
   const bTokenPool = lpContract.storage.tokenPool;
   const lpTotalSupply = lpContract.storage.lqtTotal;
 
-  const { publicKeyHash } = useSelectedAccountSelector();
-  const styles = useRemoveLiquidityModalStyles();
-  const assetsList = useAssetsListSelector();
+  const bTokenContract = useContract<Fa12TokenContractAbstraction, undefined>(bToken.address, undefined);
 
-  const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken;
-
-  const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
+  const onSubmitHandler = (values: AddLiquidityModalFormValues) => {
     if (
-      isDefined(values.lpToken.amount) &&
       isDefined(values.aToken.amount) &&
       isDefined(values.bToken.amount) &&
+      isDefined(bTokenContract.contract) &&
       isDefined(lpContract.contract)
     ) {
-      const transferParams = lpContract.contract.methods
-        .removeLiquidity(
-          publicKeyHash,
-          values.lpToken.amount,
-          values.aToken.amount,
-          values.bToken.amount,
-          getTransactionTimeoutDate()
-        )
+      const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
+
+      const zeroApproveOpParams = bTokenContract.contract.methods
+        .approve(LIQUIDITY_BAKING_DEX_ADDRESS, new BigNumber(0))
         .toTransferParams({ mutez: true });
 
-      const opParams = parseTransferParamsToParamsWithKind(transferParams);
+      const bTokenApproveOpParams = bTokenContract.contract.methods
+        .approve(LIQUIDITY_BAKING_DEX_ADDRESS, values.bToken.amount)
+        .toTransferParams({ mutez: true });
 
-      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams });
+      const transferParams = lpContract.contract.methods
+        .addLiquidity(publicKeyHash, lpTokensOutput, values.bToken.amount, getTransactionTimeoutDate())
+        .toTransferParams({ mutez: true, amount: values.aToken.amount.toNumber() });
+
+      const opParams = [
+        ...parseTransferParamsToParamsWithKind(zeroApproveOpParams),
+        ...parseTransferParamsToParamsWithKind(bTokenApproveOpParams),
+        ...parseTransferParamsToParamsWithKind(transferParams),
+        ...parseTransferParamsToParamsWithKind(zeroApproveOpParams)
+      ];
+
+      navigate(ModalsEnum.Confirmation, {
+        type: ConfirmationTypeEnum.InternalOperations,
+        opParams
+      });
     }
   };
 
-  const removeLiquidityModalInitialValues = useMemo<RemoveLiquidityModalFormValues>(
+  const addLiquidityModalInitialValues = useMemo<AddLiquidityModalFormValues>(
     () => ({
-      lpToken: { asset: lpToken, amount: undefined },
       aToken: { asset: aToken, amount: undefined },
       bToken: { asset: bToken, amount: undefined }
     }),
-    [lpToken, aToken, bToken]
+    [aToken, bToken]
   );
 
   return (
     <>
       <Formik
-        initialValues={removeLiquidityModalInitialValues}
-        validationSchema={removeLiquidityModalValidationSchema}
+        initialValues={addLiquidityModalInitialValues}
+        validationSchema={addLiquidityModalValidationSchema}
         enableReinitialize={true}
         onSubmit={onSubmitHandler}
       >
-        {({ values, setTouched, setValues, submitForm }) => {
+        {({ values, setValues, setTouched, submitForm }) => {
           const aToBExchangeRate = findExchangeRate(aTokenPool, bTokenPool);
           const bToAExchangeRate = findExchangeRate(bTokenPool, aTokenPool);
 
-          const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
+          const updateForm = (aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
               ...values,
-              lpToken: { ...values.lpToken, amount: lpTokenAmount },
               aToken: { ...values.aToken, amount: aTokenAmount },
               bToken: { ...values.bToken, amount: bTokenAmount }
             });
 
-            setTimeout(() =>
-              setTouched({ lpToken: { amount: true }, aToken: { amount: true }, bToken: { amount: true } })
-            );
-          };
-          const handleLpTokenChange = (lpToken: AssetAmountInterface) => {
-            let lpTokenAmount, aTokenAmount, bTokenAmount;
-
-            if (isDefined(lpToken.amount)) {
-              lpTokenAmount = lpToken.amount;
-              aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
-              bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
-            }
-
-            updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
+            setTimeout(() => {
+              setTouched({ aToken: { amount: true }, bToken: { amount: true } });
+            });
           };
 
           const handleATokenChange = (aToken: AssetAmountInterface) => {
-            let lpTokenAmount, aTokenAmount, bTokenAmount;
-
+            let bTokenAmount, aTokenAmount;
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
-              lpTokenAmount = findTokenToLpInput(aTokenAmount, lpTotalSupply, aTokenPool);
-              bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
+
+              bTokenAmount = findTokenInput(bToAExchangeRate, aTokenAmount);
             }
 
-            updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
+            updateForm(aTokenAmount, bTokenAmount ?? new BigNumber(0));
           };
 
           const handleBTokenChange = (bToken: AssetAmountInterface) => {
-            let lpTokenAmount, aTokenAmount, bTokenAmount;
-
+            let bTokenAmount, aTokenAmount;
             if (isDefined(bToken.amount)) {
               bTokenAmount = bToken.amount;
-              lpTokenAmount = findTokenToLpInput(bTokenAmount, lpTotalSupply, bTokenPool);
-              aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
+
+              aTokenAmount = findTokenInput(aToBExchangeRate, bTokenAmount);
             }
 
-            updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
+            updateForm(aTokenAmount ?? new BigNumber(0), bTokenAmount);
           };
 
           return (
@@ -141,19 +135,8 @@ export const RemoveLiquidityModal = () => {
               <ModalStatusBar />
               <ScreenContainer>
                 <FormAssetAmountInput
-                  name="lpToken"
-                  label="Select LP"
-                  assetsList={[values.lpToken.asset]}
-                  onValueChange={handleLpTokenChange}
-                />
-                <Divider size={formatSize(16)} />
-                <View style={styles.iconCentered}>
-                  <Icon size={formatSize(24)} name={IconNameEnum.ArrowDown} />
-                </View>
-                <Divider size={formatSize(24)} />
-                <FormAssetAmountInput
                   name="aToken"
-                  label="Output"
+                  label="Token A"
                   assetsList={[values.aToken.asset]}
                   onValueChange={handleATokenChange}
                 />
@@ -164,7 +147,7 @@ export const RemoveLiquidityModal = () => {
                 <Divider size={formatSize(24)} />
                 <FormAssetAmountInput
                   name="bToken"
-                  label="Output"
+                  label="Token B"
                   assetsList={[values.bToken.asset]}
                   onValueChange={handleBTokenChange}
                 />
@@ -191,7 +174,7 @@ export const RemoveLiquidityModal = () => {
                 </View>
               </ScreenContainer>
               <View style={styles.submitButton}>
-                <ButtonLargePrimary title="Remove" onPress={submitForm} />
+                <ButtonLargePrimary title="Add" onPress={submitForm} />
               </View>
               <InsetSubstitute type="bottom" />
             </>

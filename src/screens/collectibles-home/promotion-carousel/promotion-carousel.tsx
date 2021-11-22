@@ -13,7 +13,7 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const itemWidth = useMemo(() => layoutWidth - 2 * formatSize(16), [layoutWidth]);
+  const itemWidth = useMemo(() => Math.abs(layoutWidth - 2 * formatSize(16)), [layoutWidth]);
 
   const [activeDotIndex, setActiveDotIndex] = useState(0);
 

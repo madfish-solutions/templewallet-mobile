@@ -9,5 +9,11 @@ export interface LiquidityBakingContractAbstraction extends ContractAbstraction<
       bTokenOutput: BigNumber,
       transactionTimeoutDate: string
     ) => ContractMethod<ContractProvider>;
+    addLiquidity: (
+      senderPublicKeyHash: string,
+      lpTokensOutput: BigNumber,
+      bTokenInput: BigNumber,
+      transactionTimeoutDate: string
+    ) => ContractMethod<ContractProvider>;
   };
 }
