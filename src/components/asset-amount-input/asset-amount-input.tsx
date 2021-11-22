@@ -68,9 +68,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     isDefined(value.amount)
-      ? isTokenInputType
-        ? mutezToTz(value.amount, value.asset.decimals)
-        : mutezToTz(value.amount, value.asset.decimals).times(exchangeRate).decimalPlaces(0)
+      ? mutezToTz(isTokenInputType ? value.amount : value.amount.times(exchangeRate), value.asset.decimals)
       : undefined,
     asset.decimals,
     onBlur,
@@ -92,7 +90,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
         amount: isDefined(inputValue)
           ? isTokenInputType
             ? tzToMutez(inputValue, value.asset.decimals)
-            : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate).decimalPlaces(0)
+            : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate)
           : undefined
       }),
     [inputValue, asset, isTokenInputType, exchangeRate]
