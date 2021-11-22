@@ -6,6 +6,7 @@ import React, { createRef, useMemo, useState } from 'react';
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
+import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
@@ -137,6 +138,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.RemoveLiquidity}
               component={RemoveLiquidityModal}
               options={useModalOptions('Remove Liquidity')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.AddLiquidity}
+              component={AddLiquidityModal}
+              options={useModalOptions('Add Liquidity')}
             />
 
             <RootStack.Screen

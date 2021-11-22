@@ -11,10 +11,10 @@
     deep-eql "^0.1.3"
     keypather "^1.10.2"
 
-"@airgap/beacon-sdk@2.2.9":
-  version "2.2.9"
-  resolved "https://registry.npmjs.org/@airgap/beacon-sdk/-/beacon-sdk-2.2.9.tgz"
-  integrity sha512-ZqwOMC2ZpSoGTsu0wItR27baeNtWZu6dDGsfhVpsdWPTZmOSk6rsSMz5g+uh4gBCX2UDwDZiBg9FQj9maj5Z8w==
+"@airgap/beacon-sdk@^2.3.7":
+  version "2.3.7"
+  resolved "https://registry.yarnpkg.com/@airgap/beacon-sdk/-/beacon-sdk-2.3.7.tgz#c71dae05d88c3dac9316317f53aedd4585aec0ef"
+  integrity sha512-IcUaXvX3FNEeJOC2TzPcy7w0Zxia7a5QCvNObjeUnOlctVKna0wFb8rJq94QznBD/YHYlgyqpyZ5bqDnhDiALA==
   dependencies:
     "@types/chrome" "0.0.115"
     "@types/libsodium-wrappers" "0.7.7"

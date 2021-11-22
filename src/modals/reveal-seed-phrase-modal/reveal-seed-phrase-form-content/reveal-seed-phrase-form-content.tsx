@@ -28,7 +28,7 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
     return getDerivationPath(currentAccountIndex);
   }, [hdAccounts, values.account.publicKeyHash]);
 
-  useEffect(() => setFieldValue('derivationPath', derivationPath), [derivationPath]);
+  useEffect(() => void setFieldValue('derivationPath', derivationPath), [derivationPath]);
 
   return (
     <ScreenContainer>

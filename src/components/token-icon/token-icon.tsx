@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import { Image, View } from 'react-native';
+import { SvgCssUri } from 'react-native-svg';
 
 import { formatSize } from '../../styles/format-size';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { formatImgUri } from '../../utils/image.utils';
+import { formatImgUri, isImgUriSvg } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { Icon } from '../icon/icon';
@@ -23,7 +24,11 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
       {isDefined(iconName) ? (
         <Icon name={iconName} size={size} />
       ) : isString(thumbnailUri) ? (
-        <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
+        isImgUriSvg(thumbnailUri) ? (
+          <SvgCssUri width={size} height={size} uri={thumbnailUri} />
+        ) : (
+          <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
+        )
       ) : (
         <Icon name={IconNameEnum.NoNameToken} size={size} />
       )}

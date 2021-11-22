@@ -108,7 +108,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               </View>
               {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
             </View>
-            {isDefined(token) && Number(token.amount) > 0 && !isCollectible(token.tokenData) && (
+            {isDefined(token) && Number(token.amount) > 0 && (
               <View>
                 <AssetValueText
                   amount={token.amount}
@@ -117,13 +117,15 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
                   showMinusSign
                 />
                 <Divider size={formatSize(8)} />
-                <AssetValueText
-                  convertToDollar
-                  amount={token.amount}
-                  asset={token.tokenData}
-                  style={styles.amountDollar}
-                  showMinusSign
-                />
+                {!isCollectible(token.tokenData) && (
+                  <AssetValueText
+                    convertToDollar
+                    amount={token.amount}
+                    asset={token.tokenData}
+                    style={styles.amountDollar}
+                    showMinusSign
+                  />
+                )}
               </View>
             )}
           </View>
