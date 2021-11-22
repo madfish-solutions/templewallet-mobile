@@ -5,6 +5,7 @@ import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
 import { useTotalBalance } from '../../hooks/use-total-balance';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { AssetEquityText } from '../asset-equity-text/asset-equity-text';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -32,7 +33,14 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
           size={formatSize(24)}
           onPress={toggleHideBalance}
         />
-        <Text style={styles.dateText}>Equity Value {currentDate}</Text>
+        {showTokenValue ? (
+          <View style={styles.equityContainer}>
+            <Text style={styles.dateText}>Equity Value {currentDate}</Text>
+            <AssetEquityText style={styles.dateText} asset={token} />
+          </View>
+        ) : (
+          <Text style={styles.dateText}>Equity Value {currentDate}</Text>
+        )}
       </View>
       {showTokenValue ? (
         <>
