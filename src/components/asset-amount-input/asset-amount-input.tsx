@@ -10,7 +10,7 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
-import { tzToMutez } from '../../utils/tezos.util';
+import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
@@ -67,7 +67,11 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    inputValue,
+    isDefined(value.amount)
+      ? isTokenInputType
+        ? mutezToTz(value.amount, value.asset.decimals)
+        : mutezToTz(value.amount, value.asset.decimals).times(exchangeRate).decimalPlaces(0)
+      : undefined,
     asset.decimals,
     onBlur,
     onFocus,
