@@ -20,6 +20,7 @@
     "e2e": "./node_modules/.bin/wdio ./e2e/wdio.conf.ts",
     "e2e:android": "ANDROID=true npm run e2e",
     "e2e:ios": "IOS=true npm run e2e",
+    "e2e:ios:dev": "yarn e2e:ios -- -- --cucumberOpts.tagExpression='@dev'",
     "clear:android": "cd android && ./gradlew clean",
     "clear:ios": "rm -rf ios/Pods",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true"
@@ -89,7 +90,7 @@
     "react-native-quick-actions": "^0.3.13",
     "react-native-radio-buttons-group": "^2.2.4",
     "react-native-randombytes": "^3.6.0",
-    "react-native-reanimated": "^2.2.3",
+    "react-native-reanimated": "^2.2.4",
     "react-native-restart": "^0.0.22",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.6.0",

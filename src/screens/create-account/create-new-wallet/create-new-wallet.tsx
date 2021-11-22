@@ -17,6 +17,7 @@ import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
 import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './create-new-wallet.form';
+import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
 
 interface CreateNewWalletProps {
@@ -57,14 +58,14 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
               label="Seed phrase"
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
-            <FormMnemonicCreate name="seedPhrase" />
+            <FormMnemonicCreate name="seedPhrase" testID={CreateNewWalletSelectors.SeedPhraseOut} />
           </View>
 
           <View>
             <NewSeedPhraseAttention />
             <Divider />
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="madeSeedPhraseBackup">
+              <FormCheckbox name="madeSeedPhraseBackup" testID={CreateNewWalletSelectors.MadeSeedPhraseBackupCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </FormCheckbox>
@@ -72,7 +73,12 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
             <CheckboxLabel>And accept the risks that if I lose the phrase,{'\n'}my funds may be lost.</CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Next"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewWalletSelectors.NextButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

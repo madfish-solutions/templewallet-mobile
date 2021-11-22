@@ -7,38 +7,38 @@ import { useVerifySeedPhraseRowStyles } from './verify-seed-phrase-row.styles';
 
 interface VerifySeedPhraseRowProps {
   inputName: string;
-  wordPosition: number;
+  index: number;
   words: string[];
 }
 
-export const VerifySeedPhraseRow: FC<VerifySeedPhraseRowProps> = ({ inputName, wordPosition, words }) => {
+export const VerifySeedPhraseRow: FC<VerifySeedPhraseRowProps> = ({ inputName, index, words }) => {
   const styles = useVerifySeedPhraseRowStyles();
 
-  if (wordPosition === 0) {
+  if (index === 0) {
     return (
       <View style={styles.container}>
-        <SeedPhraseWordInput inputName={inputName} position={0} />
-        <SeedPhraseWordGiven position={1} value={words[1]} />
-        <SeedPhraseWordGiven position={2} value={words[2]} />
+        <SeedPhraseWordInput index={index} inputName={inputName} />
+        <SeedPhraseWordGiven index={index + 1} words={words} />
+        <SeedPhraseWordGiven index={index + 2} words={words} />
       </View>
     );
   }
 
-  if (wordPosition === words.length - 1) {
+  if (index === words.length - 1) {
     return (
       <View style={styles.container}>
-        <SeedPhraseWordGiven position={words.length - 3} value={words[words.length - 3]} />
-        <SeedPhraseWordGiven position={words.length - 2} value={words[words.length - 2]} />
-        <SeedPhraseWordInput inputName={inputName} position={words.length - 1} />
+        <SeedPhraseWordGiven index={index - 2} words={words} />
+        <SeedPhraseWordGiven index={index - 1} words={words} />
+        <SeedPhraseWordInput index={index} inputName={inputName} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <SeedPhraseWordGiven position={wordPosition - 1} value={words[wordPosition - 1]} />
-      <SeedPhraseWordInput inputName={inputName} position={wordPosition} />
-      <SeedPhraseWordGiven position={wordPosition + 1} value={words[wordPosition + 1]} />
+      <SeedPhraseWordGiven index={index - 1} words={words} />
+      <SeedPhraseWordInput index={index} inputName={inputName} />
+      <SeedPhraseWordGiven index={index + 1} words={words} />
     </View>
   );
 };

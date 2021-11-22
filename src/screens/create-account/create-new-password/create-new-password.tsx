@@ -24,6 +24,7 @@ import {
   createNewPasswordInitialValues,
   createNewPasswordValidationSchema
 } from './create-new-password.form';
+import { CreateNewPasswordCreateAccountSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
@@ -57,10 +58,13 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput name="password" testID={CreateNewPasswordCreateAccountSelectors.PasswordInput} />
 
             <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
+            <FormPasswordInput
+              name="passwordConfirmation"
+              testID={CreateNewPasswordCreateAccountSelectors.RepeatPasswordInput}
+            />
 
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
@@ -70,7 +74,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
 
           <View>
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms">
+              <FormCheckbox name="acceptTerms" testID={CreateNewPasswordCreateAccountSelectors.AcceptTermsCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
@@ -81,7 +85,12 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
             </CheckboxLabel>
 
             <Divider />
-            <ButtonLargePrimary title="Create" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Create"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordCreateAccountSelectors.CreateButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

@@ -45,7 +45,7 @@ const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
     });
     decipher.update(forge.util.createBuffer(Buffer.from(chiphertext, 'hex').toString('binary'), 'utf-8'));
     const pass = decipher.finish();
-    if (isDefined(pass)) {
+    if (pass === true) {
       return Buffer.from(decipher.output.toHex(), 'hex');
     } else {
       return null;
