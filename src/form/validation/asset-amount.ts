@@ -15,6 +15,5 @@ export const assetAmountValidation = object().shape({
       }
 
       return false;
-    }),
-  isToken: bool().notRequired()
+    })
 });

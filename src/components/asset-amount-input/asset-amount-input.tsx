@@ -25,7 +25,6 @@ import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 export interface AssetAmountInterface {
   asset: TokenInterface;
   amount?: BigNumber;
-  isToken?: boolean;
 }
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
@@ -55,6 +54,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const colors = useColors();
 
   const [inputValue, setInputValue] = useState<BigNumber>();
+  const [usdValue, setUsdValue] = useState<BigNumber>();
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
@@ -68,7 +68,13 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
-    isDefined(value.amount) ? mutezToTz(value.amount, value.asset.decimals) : undefined,
+    isDefined(value.amount)
+      ? isTokenInputType
+        ? mutezToTz(value.amount, value.asset.decimals)
+        : isDefined(usdValue)
+        ? mutezToTz(usdValue, value.asset.decimals)
+        : undefined
+      : undefined,
     asset.decimals,
     onBlur,
     onFocus,
@@ -82,15 +88,19 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     setInputTypeIndex(tokenTypeIndex);
   };
 
-  useEffect(
-    () =>
-      void onValueChange({
-        ...value,
-        amount: isDefined(inputValue) ? tzToMutez(inputValue, value.asset.decimals) : undefined,
-        isToken: isTokenInputType
-      }),
-    [inputValue, asset, isTokenInputType, exchangeRate]
-  );
+  useEffect(() => {
+    if (isTokenInputType && isDefined(inputValue)) {
+      setUsdValue(tzToMutez(inputValue, value.asset.decimals));
+    }
+    onValueChange({
+      ...value,
+      amount: isDefined(inputValue)
+        ? isTokenInputType
+          ? tzToMutez(inputValue, value.asset.decimals)
+          : tzToMutez(inputValue, value.asset.decimals).dividedBy(exchangeRate).decimalPlaces(0)
+        : undefined
+    });
+  }, [inputValue, asset, isTokenInputType, exchangeRate]);
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
   return (
@@ -143,7 +153,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <AssetValueText
-          amount={isTokenInputType ? amount.toFixed() : amount.dividedBy(exchangeRate).toFixed()}
+          amount={amount.toFixed()}
           asset={asset}
           style={styles.equivalentValueText}
           convertToDollar={isTokenInputType}
