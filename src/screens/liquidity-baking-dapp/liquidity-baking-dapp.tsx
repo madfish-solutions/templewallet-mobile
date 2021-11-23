@@ -67,7 +67,7 @@ export const LiquidityBakingDapp = () => {
       </View>
       <View style={styles.bottomLbContainer}>
         <View>
-          <Text style={styles.priceTitle}>price</Text>
+          <Text style={styles.priceTitle}>TVL</Text>
           <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
         </View>
       </View>
