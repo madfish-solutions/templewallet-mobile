@@ -15,11 +15,12 @@ import { useTokenScreenContentContainerStyles } from './token-screen-content-con
 interface Props {
   historyComponent: ReactElement;
   infoComponent: ReactElement;
+  isTezos?: boolean;
 }
 
 const historyComponentIndex = 0;
 
-export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent }) => {
+export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, isTezos }) => {
   const styles = useTokenScreenContentContainerStyles();
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
@@ -30,7 +31,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        {showHistoryComponent ? (
+        {showHistoryComponent && isTezos === true ? (
           <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
             {isBakerSelected ? (
               <Text style={styles.delegateText}>Rewards & Redelegate</Text>
@@ -41,7 +42,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
             )}
           </TouchableOpacity>
         ) : (
-          <View />
+          <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>
         )}
 
         <IconSegmentControl

@@ -34,7 +34,11 @@ export const TezosTokenScreen = () => {
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>
 
-      <TokenScreenContentContainer historyComponent={<TezosTokenHistory />} infoComponent={<TezosTokenInfo />} />
+      <TokenScreenContentContainer
+        historyComponent={<TezosTokenHistory />}
+        infoComponent={<TezosTokenInfo />}
+        isTezos
+      />
     </>
   );
 };
