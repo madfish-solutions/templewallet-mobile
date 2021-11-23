@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -16,8 +16,8 @@ interface Props {
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const { layoutWidth, handleLayout } = useLayoutSizes();
 
-  const smallCardSize = (1 / 3) * layoutWidth - formatSize(0.5);
-  const bigCardSize = (2 / 3) * layoutWidth - formatSize(0.5);
+  const smallCardSize = useMemo(() => (1 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
+  const bigCardSize = useMemo(() => (2 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
 
   const [first, second, third, ...rest] = collectiblesList;
 
