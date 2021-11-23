@@ -56,7 +56,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onTouchStart={() =>
           void showWarningToast({
             title: 'Work in progress...',
-            description: 'You will be available to buy crypto soon.'
+            description: 'you will be available to swap crypto soon.'
           })
         }
       >

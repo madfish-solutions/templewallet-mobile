@@ -23,11 +23,11 @@ export const AssetEquityText: FC<Props> = ({ asset, style }) => {
   const visibleAmount = formatAssetAmount(new BigNumber(exchangeRate), 2);
   const visibleSymbol = asset.symbol;
 
-  return (
+  return exchangeRate ? (
     <Text style={style}>
       <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{visibleSymbol}</Text>
       <Text style={style}> ≈ $ </Text>
       <Text style={[style, styles.numberText]}>{visibleAmount}</Text>
     </Text>
-  );
+  ) : null;
 };

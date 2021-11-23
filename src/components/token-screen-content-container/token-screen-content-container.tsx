@@ -30,15 +30,19 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
-          {isBakerSelected ? (
-            <Text style={styles.delegateText}>Rewards & Redelegate</Text>
-          ) : (
-            <Text style={styles.delegateText}>
-              Delegate: <Text style={styles.apyText}>{delegationApy}% APY</Text>
-            </Text>
-          )}
-        </TouchableOpacity>
+        {showHistoryComponent ? (
+          <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
+            {isBakerSelected ? (
+              <Text style={styles.delegateText}>Rewards & Redelegate</Text>
+            ) : (
+              <Text style={styles.delegateText}>
+                Delegate: <Text style={styles.apyText}>{delegationApy}% APY</Text>
+              </Text>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <View />
+        )}
 
         <IconSegmentControl
           selectedIndex={segmentedControlIndex}
