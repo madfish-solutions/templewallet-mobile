@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
-import { StyleProp, Text, TextStyle, View } from 'react-native';
+import { StyleProp, Text, TextStyle } from 'react-native';
 
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -23,15 +23,11 @@ export const AssetEquityText: FC<Props> = ({ asset, style }) => {
   const visibleAmount = formatAssetAmount(new BigNumber(exchangeRate), 2);
   const visibleSymbol = asset.symbol;
 
-  if (!exchangeRate) {
-    return <View />;
-  }
-
-  return (
+  return exchangeRate ? (
     <Text style={style}>
       <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{visibleSymbol}</Text>
       <Text style={style}> ≈ $ </Text>
       <Text style={[style, styles.numberText]}>{visibleAmount}</Text>
     </Text>
-  );
+  ) : null;
 };
