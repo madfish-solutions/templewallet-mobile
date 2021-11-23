@@ -40,6 +40,7 @@ export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typograph
     justifyContent: 'center'
   },
   buttonContainer: {
-    flex: 1
+    flex: 1,
+    backgroundColor: colors.pageBG
   }
 }));
