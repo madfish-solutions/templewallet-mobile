@@ -1,16 +1,20 @@
 import { BigNumber } from 'bignumber.js';
 import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import { AccountDropdown } from '../../components/account-dropdown/account-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { FormattedAmount } from '../../components/formatted-amount';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
+import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
 import {
@@ -19,7 +23,13 @@ import {
 } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
 import { LiquidityBakingContractAbstraction } from '../../op-params/liquidity-baking/liquidity-baking.contract-abstraction.interface';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
-import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
+import {
+  useAssetsListSelector,
+  useSelectedAccountSelector,
+  useTezosTokenSelector,
+  useVisibleAccountsListSelector
+} from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
@@ -29,9 +39,12 @@ import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
 export const LiquidityBakingDapp = () => {
   const { navigate } = useNavigation();
+  const dispatch = useDispatch();
   const styles = useLiquidityBakingDappStyles();
   const assetsList = useAssetsListSelector();
   const exchangeRates = useExchangeRatesSelector();
+  const selectedAccount = useSelectedAccountSelector();
+  const visibleAccounts = useVisibleAccountsListSelector();
 
   const lpContract = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
     LIQUIDITY_BAKING_DEX_ADDRESS,
@@ -58,6 +71,26 @@ export const LiquidityBakingDapp = () => {
   return (
     <ScreenContainer>
       <InsetSubstitute type="top" />
+      <View style={styles.accountContainer}>
+        <AccountDropdown
+          value={selectedAccount}
+          list={visibleAccounts}
+          onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+        />
+        <View style={styles.accountActionsContainer}>
+          <TouchableIcon
+            size={formatSize(16)}
+            name={IconNameEnum.MoreHorizontal}
+            onPress={() => navigate(ScreensEnum.DApps)}
+          />
+          <View style={styles.verticalLineDivider} />
+          <TouchableIcon
+            size={formatSize(16)}
+            name={IconNameEnum.XCircle}
+            onPress={() => navigate(ScreensEnum.DApps)}
+          />
+        </View>
+      </View>
       <View style={styles.lineDivider} />
       <Divider size={formatSize(8)} />
       <View style={styles.lbCoinContainer}>

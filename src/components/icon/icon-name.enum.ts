@@ -19,6 +19,7 @@ export enum IconNameEnum {
   InputXCircle = 'InputXCircle',
   X = 'X',
   XCircle = 'XCircle',
+  MoreHorizontal = 'MoreHorizontal',
   ShoppingCard = 'ShoppingCard',
   SwapArrow = 'SwapArrow',
   EyeClosedBold = 'EyeClosedBold',
