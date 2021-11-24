@@ -8,14 +8,24 @@ import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps {
   publicKeyHash: string;
+  noCopy?: boolean;
 }
 
-export const PublicKeyHashText: FC<Props> = ({ publicKeyHash, marginTop, marginRight, marginBottom, marginLeft }) => {
+export const PublicKeyHashText: FC<Props> = ({
+  publicKeyHash,
+  marginTop,
+  marginRight,
+  marginBottom,
+  marginLeft,
+  noCopy
+}) => {
   const styles = usePublicKeyHashTextStyles();
 
   const handlePress = (e: GestureResponderEvent) => {
-    e.stopPropagation();
-    copyStringToClipboard(publicKeyHash);
+    if (noCopy !== true) {
+      e.stopPropagation();
+      copyStringToClipboard(publicKeyHash);
+    }
   };
 
   return (

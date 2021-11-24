@@ -20,25 +20,31 @@ interface Props {
   account?: WalletAccountInterface;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
+  isModal?: boolean;
 }
 
 export const AccountDropdownItem: FC<Props> = ({
   account = emptyWalletAccount,
   showFullData = true,
-  actionIconName
+  actionIconName,
+  isModal
 }) => {
   const styles = useAccountDropdownItemStyles();
+
+  const infoContainerStyle = isModal === true ? styles.smallInfoContainer : styles.infoContainer;
 
   return (
     <View style={styles.root}>
       <RobotIcon seed={account.publicKeyHash} />
-      <View style={styles.infoContainer}>
-        <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
-          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
-        </View>
+      <View style={infoContainerStyle}>
+        {isModal !== true && (
+          <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
+            <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+          </View>
+        )}
         <View style={styles.lowerContainer}>
-          <WalletAddress publicKeyHash={account.publicKeyHash} />
+          <WalletAddress noCopy={isModal} publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText
@@ -47,6 +53,7 @@ export const AccountDropdownItem: FC<Props> = ({
               />
             </HideBalance>
           )}
+          {isDefined(actionIconName) && isModal === true && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
       </View>
     </View>
