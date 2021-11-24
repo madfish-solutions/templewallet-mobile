@@ -4,7 +4,9 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
+import { generateModalOptions } from '../components/header/generate-modal-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
+import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
@@ -155,7 +157,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.LiquidityBakingDapp}
                 component={LiquidityBakingDapp}
-                options={{ headerShown: false }}
+                options={generateModalOptions(<HeaderModal />)}
               />
 
               {/** Swap stack **/}

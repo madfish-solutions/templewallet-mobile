@@ -18,7 +18,7 @@ import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-i
 import { accountEqualityFn } from './account-equality-fn';
 
 const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ value }) => (
-  <AccountDropdownItem account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
+  <AccountDropdownItem isModal account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
 );
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
