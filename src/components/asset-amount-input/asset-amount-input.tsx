@@ -32,9 +32,8 @@ const TOKEN_INPUT_TYPE_INDEX = 0;
 const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value, disabled }) => (
   <TokenDropdownItem
     token={value}
-    actionIconName={IconNameEnum.TriangleDown}
+    actionIconName={disabled === true ? IconNameEnum.TriangleDownDisabled : IconNameEnum.TriangleDown}
     isShowBalance={false}
-    disabled={disabled}
     iconSize={formatSize(32)}
   />
 );
@@ -47,6 +46,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   isError = false,
   onBlur,
   onFocus,
+  hideUsdSwitcher = false,
   onValueChange
 }) => {
   const amountInputRef = useRef<TextInput>(null);
@@ -99,7 +99,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {hasExchangeRate && (
+        {hasExchangeRate && !hideUsdSwitcher && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}

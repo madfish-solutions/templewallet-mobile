@@ -19,7 +19,6 @@ interface Props {
   token?: TokenInterface;
   actionIconName?: IconNameEnum;
   isShowBalance?: boolean;
-  disabled?: boolean;
   iconSize?: number;
 }
 
@@ -27,7 +26,6 @@ export const TokenDropdownItem: FC<Props> = ({
   token = emptyToken,
   actionIconName,
   isShowBalance = true,
-  disabled = false,
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
@@ -49,7 +47,7 @@ export const TokenDropdownItem: FC<Props> = ({
                 <AssetValueText asset={token} amount={token?.balance} />
               </HideBalance>
             )}
-            {isDefined(actionIconName) && !disabled && <Icon name={actionIconName} size={formatSize(24)} />}
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>
         </View>
 
