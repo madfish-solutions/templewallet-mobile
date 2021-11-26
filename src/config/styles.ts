@@ -13,6 +13,7 @@ export const black = '#000000';
 export const orange = '#FF5B00';
 export const orangeLight = '#FF7A00';
 export const orangeLight200 = '#FF3D00';
+export const dark = '#0d0d0d';
 export const darkOrange = 'rgba(255, 122, 0, 0.1)';
 export const white = '#FFFFFF';
 export const red = 'red';
