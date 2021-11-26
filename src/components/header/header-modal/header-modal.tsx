@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { setSelectedAccountAction } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from '../../../store/wallet/wallet-selectors';
-import { AccountDropdown } from '../../account-dropdown/account-dropdown';
+import { CurrentAccountDropdown } from '../../account-dropdown/current-account-dropdown';
 import { useHeaderModalStyles } from './header-modal.styles';
 
 export const HeaderModal: FC = () => {
@@ -16,7 +16,8 @@ export const HeaderModal: FC = () => {
 
   return (
     <View style={styles.accountContainer}>
-      <AccountDropdown
+      <CurrentAccountDropdown
+        isModal
         value={selectedAccount}
         list={visibleAccounts}
         onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}

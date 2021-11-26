@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 
 import { HeaderCloseOptionsButton } from './header-close-options-button/header-close-options-button';
 
-export const generateModalOptions = (
+export const generateIntegratedAppOptions = (
   headerTitleElement: ReturnType<FC>,
   headerLeftComponent: ReturnType<FC> = null
 ): StackNavigationOptions => ({

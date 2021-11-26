@@ -138,7 +138,6 @@ export const RemoveLiquidityModal = () => {
               <ModalStatusBar />
               <ScreenContainer>
                 <FormAssetAmountInput
-                  hideUsdSwitcher
                   name="lpToken"
                   label="Select LP"
                   assetsList={[values.lpToken.asset]}
@@ -150,7 +149,6 @@ export const RemoveLiquidityModal = () => {
                 </View>
                 <Divider size={formatSize(24)} />
                 <FormAssetAmountInput
-                  hideUsdSwitcher
                   name="aToken"
                   label="Output"
                   assetsList={[values.aToken.asset]}
@@ -162,7 +160,6 @@ export const RemoveLiquidityModal = () => {
                 </View>
                 <Divider size={formatSize(24)} />
                 <FormAssetAmountInput
-                  hideUsdSwitcher
                   name="bToken"
                   label="Output"
                   assetsList={[values.bToken.asset]}

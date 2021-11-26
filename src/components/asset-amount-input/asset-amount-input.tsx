@@ -46,7 +46,6 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   isError = false,
   onBlur,
   onFocus,
-  hideUsdSwitcher = false,
   onValueChange
 }) => {
   const amountInputRef = useRef<TextInput>(null);
@@ -99,7 +98,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {hasExchangeRate && !hideUsdSwitcher && (
+        {hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}

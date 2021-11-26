@@ -41,7 +41,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, noCopy }) => {
         <TouchableOpacity
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
-          onPress={() => (noCopy === true ? 0 : copyStringToClipboard(domainName))}
+          onPress={noCopy === true ? undefined : () => copyStringToClipboard(domainName)}
         >
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>

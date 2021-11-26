@@ -13,5 +13,4 @@ export interface AssetAmountInputProps {
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
   onValueChange: EventFn<AssetAmountInterface>;
-  hideUsdSwitcher?: boolean;
 }
