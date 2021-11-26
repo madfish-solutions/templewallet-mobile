@@ -67,20 +67,9 @@ export const Dropdown = <T extends unknown>({
     <>
       <TouchableOpacity
         style={styles.valueContainer}
-        onPress={() => {
-          if (disabled) {
-            return;
-          }
-          dropdownBottomSheetController.open();
-        }}
-        onLongPress={() => {
-          if (disabled) {
-            return;
-          }
-          if (onLongPress) {
-            onLongPress();
-          }
-        }}
+        onPress={dropdownBottomSheetController.open}
+        onLongPress={onLongPress}
+        disabled={disabled}
       >
         {renderValue({ value, disabled })}
       </TouchableOpacity>
