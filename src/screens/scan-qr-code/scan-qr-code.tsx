@@ -1,11 +1,9 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
-import { useBarStyle } from '../../hooks/use-bar-style.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
