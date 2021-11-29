@@ -7,9 +7,33 @@ export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typograph
     borderBottomWidth: formatSize(0.5),
     borderColor: colors.lines
   },
+  verticalLineDivider: {
+    width: formatSize(1),
+    height: formatSize(12),
+    backgroundColor: colors.lines,
+    marginHorizontal: formatSize(8)
+  },
   lbCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  accountContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: formatSize(8)
+  },
+  accountActionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    borderRadius: formatSize(8),
+    borderWidth: formatSize(1),
+    borderColor: colors.lines,
+    paddingVertical: formatSize(6),
+    paddingHorizontal: formatSize(8),
+    position: 'absolute',
+    top: formatSize(8),
+    right: formatSize(0)
   },
   lbCoinText: {
     ...typography.numbersMedium15,
@@ -40,6 +64,7 @@ export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typograph
     justifyContent: 'center'
   },
   buttonContainer: {
-    flex: 1
+    flex: 1,
+    backgroundColor: colors.pageBG
   }
 }));

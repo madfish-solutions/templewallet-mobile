@@ -40,6 +40,7 @@ import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
+import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -79,6 +80,7 @@ import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
 import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
+import TriangleDownDisabledIcon from './assets/triangle-down-disabled.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
@@ -107,6 +109,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
+  [IconNameEnum.MoreHorizontal]: MoreHorizontalIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
@@ -133,6 +136,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Tag]: TagIcon,
   [IconNameEnum.QrScanner]: QrScannerIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
+  [IconNameEnum.TriangleDownDisabled]: TriangleDownDisabledIcon,
   [IconNameEnum.Check]: CheckIcon,
   [IconNameEnum.Lock]: LockIcon,
   [IconNameEnum.Clock]: ClockIcon,

@@ -21,6 +21,10 @@ const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ va
   <AccountDropdownItem account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
 );
 
+const renderAccountValueWithModal: DropdownValueComponent<WalletAccountInterface> = ({ value }) => (
+  <AccountDropdownItem isModal account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
+);
+
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
   const { createHdAccount } = useShelter();
@@ -50,6 +54,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
 };
 
 export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>> = ({
+  isModal,
   value,
   list,
   onValueChange
@@ -62,7 +67,7 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
       value={value}
       list={list}
       equalityFn={accountEqualityFn}
-      renderValue={renderAccountValue}
+      renderValue={isModal === true ? renderAccountValueWithModal : renderAccountValue}
       renderListItem={renderAccountListItem}
       renderActionButtons={ActionButtons}
       onValueChange={onValueChange}

@@ -32,9 +32,8 @@ const TOKEN_INPUT_TYPE_INDEX = 0;
 const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value, disabled }) => (
   <TokenDropdownItem
     token={value}
-    actionIconName={IconNameEnum.TriangleDown}
+    actionIconName={disabled === true ? IconNameEnum.TriangleDownDisabled : IconNameEnum.TriangleDown}
     isShowBalance={false}
-    disabled={disabled}
     iconSize={formatSize(32)}
   />
 );

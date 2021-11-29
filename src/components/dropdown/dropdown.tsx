@@ -20,6 +20,7 @@ export interface DropdownProps<T> {
 }
 
 export interface DropdownValueProps<T> {
+  isModal?: boolean;
   value?: T;
   list: T[];
   disabled?: boolean;
@@ -69,6 +70,7 @@ export const Dropdown = <T extends unknown>({
         style={styles.valueContainer}
         onPress={dropdownBottomSheetController.open}
         onLongPress={onLongPress}
+        disabled={disabled}
       >
         {renderValue({ value, disabled })}
       </TouchableOpacity>

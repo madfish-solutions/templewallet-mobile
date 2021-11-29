@@ -58,7 +58,7 @@ export const LiquidityBakingDapp = () => {
   return (
     <ScreenContainer>
       <InsetSubstitute type="top" />
-      <View style={styles.lineDivider} />
+
       <Divider size={formatSize(8)} />
       <View style={styles.lbCoinContainer}>
         <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
@@ -67,7 +67,7 @@ export const LiquidityBakingDapp = () => {
       </View>
       <View style={styles.bottomLbContainer}>
         <View>
-          <Text style={styles.priceTitle}>price</Text>
+          <Text style={styles.priceTitle}>TVL</Text>
           <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
         </View>
       </View>
