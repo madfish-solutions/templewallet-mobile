@@ -119,7 +119,6 @@ export const SendModal: FC = () => {
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />
           <View>
-            <Text>{values.assetAmount.amount?.toFixed()}</Text>
             <Divider size={formatSize(8)} />
             <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
             <Divider />
