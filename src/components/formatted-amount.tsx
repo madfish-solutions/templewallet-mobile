@@ -25,12 +25,9 @@ export const FormattedAmount: FC<Props> = ({
   symbol,
   style
 }) => {
-  const isZeroAmount = amount.isZero();
-  if (isZeroAmount) {
-    return <Text style={style}>0.00</Text>;
-  }
-
-  const dollarAmount = amount.isPositive()
+  const dollarAmount = amount.isZero()
+    ? amount
+    : amount.isPositive()
     ? bigIntClamp(amount, MIN_POSITIVE_AMOUNT_VALUE, new BigNumber(Infinity))
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
 
