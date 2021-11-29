@@ -46,7 +46,6 @@ export enum IconNameEnum {
   Tag = 'Tag',
   QrScanner = 'QrScanner',
   TriangleDown = 'TriangleDown',
-  TriangleDownDisabled = 'TriangleDownDisabled',
   Check = 'Check',
   Lock = 'Lock',
   Clock = 'Clock',

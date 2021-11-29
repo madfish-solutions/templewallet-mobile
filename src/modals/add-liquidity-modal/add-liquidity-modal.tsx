@@ -124,6 +124,9 @@ export const AddLiquidityModal = () => {
               aTokenAmount = findTokenInput(bToken.amount, bTokenPool, aTokenPool);
             }
 
+            console.log('b', bTokenAmount?.toFixed());
+            console.log('a', aTokenAmount?.toFixed());
+
             updateForm(aTokenAmount ?? new BigNumber(0), bTokenAmount);
           };
 
