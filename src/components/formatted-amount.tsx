@@ -27,7 +27,7 @@ export const FormattedAmount: FC<Props> = ({
 }) => {
   const isZeroAmount = amount.isZero();
   if (isZeroAmount) {
-    return <Text style={style}>- - - -</Text>;
+    return <Text style={style}>0.00</Text>;
   }
 
   const dollarAmount = amount.isPositive()
