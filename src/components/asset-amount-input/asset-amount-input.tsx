@@ -107,18 +107,18 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     setInputTypeIndex(tokenTypeIndex);
   };
 
-  useEffect(() => {
-    const useEf = isDefined(inputValueRef.current)
-      ? isTokenInputType
-        ? tzToMutez(inputValueRef.current, value.asset.decimals)
-        : dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate)
-      : undefined;
-
-    void onValueChange({
-      ...value,
-      amount: useEf
-    });
-  }, [inputValueRef.current, value.asset.decimals, exchangeRate, isTokenInputType]);
+  useEffect(
+    () =>
+      void onValueChange({
+        ...value,
+        amount: isDefined(inputValueRef.current)
+          ? isTokenInputType
+            ? tzToMutez(inputValueRef.current, value.asset.decimals)
+            : dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate)
+          : undefined
+      }),
+    [inputValueRef.current, value.asset.decimals, exchangeRate, isTokenInputType]
+  );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
