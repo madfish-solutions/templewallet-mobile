@@ -156,7 +156,7 @@ export const AddLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(findExchangeRate(aTokenPool, bTokenPool))}
+                    {formatAssetAmount(findExchangeRate(aTokenPool, aToken.decimals, bTokenPool, bToken.decimals))}
                   </Text>
                 </View>
                 <View style={styles.lineDivider} />
@@ -166,7 +166,7 @@ export const AddLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(findExchangeRate(bTokenPool, aTokenPool))}
+                    {formatAssetAmount(findExchangeRate(bTokenPool, bToken.decimals, aTokenPool, aToken.decimals))}
                   </Text>
                 </View>
               </ScreenContainer>
