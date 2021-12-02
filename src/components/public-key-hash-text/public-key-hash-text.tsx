@@ -8,7 +8,7 @@ import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps {
   publicKeyHash: string;
-  noCopy?: boolean;
+  disabled?: boolean;
 }
 
 export const PublicKeyHashText: FC<Props> = ({
@@ -17,12 +17,12 @@ export const PublicKeyHashText: FC<Props> = ({
   marginRight,
   marginBottom,
   marginLeft,
-  noCopy
+  disabled = false
 }) => {
   const styles = usePublicKeyHashTextStyles();
 
   const handlePress = (e: GestureResponderEvent) => {
-    if (noCopy !== true) {
+    if (disabled !== true) {
       e.stopPropagation();
       copyStringToClipboard(publicKeyHash);
     }
@@ -32,6 +32,7 @@ export const PublicKeyHashText: FC<Props> = ({
     <TouchableOpacity
       style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
       onPress={handlePress}
+      disabled={disabled}
     >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}

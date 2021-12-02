@@ -44,7 +44,7 @@ export const AccountDropdownItem: FC<Props> = ({
           </View>
         )}
         <View style={styles.lowerContainer}>
-          <WalletAddress noCopy={isModal} publicKeyHash={account.publicKeyHash} />
+          <WalletAddress disabled={isModal} publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText

@@ -53,7 +53,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>> = ({
+export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterface> & { isModal?: boolean }> = ({
   isModal,
   value,
   list,

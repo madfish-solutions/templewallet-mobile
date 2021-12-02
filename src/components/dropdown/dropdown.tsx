@@ -20,7 +20,6 @@ export interface DropdownProps<T> {
 }
 
 export interface DropdownValueProps<T> {
-  isModal?: boolean;
   value?: T;
   list: T[];
   disabled?: boolean;

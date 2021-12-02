@@ -1,10 +1,10 @@
 import { createUseStylesConfig } from '../../../../styles/create-use-styles';
 import { useButtonLargeSharedStyleConfig } from '../button-large.styles';
 
-export const useButtonLargePrimaryStyleConfig = createUseStylesConfig(({ colors }) => ({
+export const useButtonLargeWhiteStyleConfig = createUseStylesConfig(({ colors }) => ({
   ...useButtonLargeSharedStyleConfig(),
   activeColorConfig: {
-    titleColor: colors.white,
+    titleColor: '#ffffff',
     backgroundColor: colors.orange
   }
 }));
