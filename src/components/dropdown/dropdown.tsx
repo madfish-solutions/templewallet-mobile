@@ -28,6 +28,7 @@ export interface DropdownValueProps<T> {
 
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderValue: DropdownValueComponent<T>;
+  renderAccountListItem: DropdownListItemComponent<T>;
 };
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;

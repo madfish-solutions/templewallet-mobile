@@ -5,9 +5,10 @@ import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { AccountDropdownBase } from './account-dropdown-base';
 import { AccountDropdownItem } from './account-dropdown-item/account-dropdown-item';
+import { renderModalAccountListItem } from './account-dropdown-item/account-dropdown-item-modal';
 
 const renderAccountValueWithModal: DropdownValueComponent<WalletAccountInterface> = ({ value }) => (
-  <AccountDropdownItem isModal account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
+  <AccountDropdownItem account={value} showFullData={false} actionIconName={IconNameEnum.TriangleDown} />
 );
 
 export const ModalAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>> = ({
@@ -20,6 +21,7 @@ export const ModalAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>
       value={value}
       list={list}
       renderValue={renderAccountValueWithModal}
+      renderAccountListItem={renderModalAccountListItem}
       onValueChange={onValueChange}
     />
   );

@@ -8,7 +8,6 @@ import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
-import { renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
@@ -43,7 +42,8 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<WalletAccountInterfa
   value,
   list,
   onValueChange,
-  renderValue
+  renderValue,
+  renderAccountListItem
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
