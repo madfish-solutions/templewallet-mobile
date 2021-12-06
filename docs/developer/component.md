@@ -188,12 +188,6 @@ const calculatedData = useMemo(
 );
 ```
 
----
-
-- Return to the [Guides](../readme.md)
-
----
-
 ## Ternary operators should not be nested
 
 Just because you can do something, doesn’t mean you should, and that’s the case with nested ternary operations. Nesting ternary operators results in the kind of code that may seem clear as day when you write it, but six months later will leave maintainers (or worse - future you) scratching their heads and cursing.
@@ -368,6 +362,7 @@ Overriding or shadowing a variable declared in an outer scope can strongly impac
 ## Cognitive Complexity of functions should not be too high
 
 Cognitive Complexity is a measure of how hard the control flow of a function is to understand. Functions with high Cognitive Complexity will be difficult to maintain.
+Try to refactor complicated logic to utils and helpers.
 
 ## Local variables should not be declared and then immediately returned or thrown
 
@@ -622,26 +617,105 @@ let apples = color ? `${count} ${color}` : count;
 let message = `I have ${apples} apples`;
 ```
 
-<!-- do not use ts-ignore -->
-<!-- positive condition ternary (watch screenshot_2) -->
-<!-- use tailwind's classname composition in extension -->
-<!-- try do not use inline styles as much as possible -->
-<!-- naming - interface, type, components with uppercase. functions with lower -->
-<!-- prefer interfaces over types -->
-<!-- do not let console.log be pushed to VCS -->
-<!-- try to use implicit type casting (var!.field => var: IType {field:any};) -->
-<!-- filenaming and classname inside must match -->
-<!-- interface and component naming must match -->
-<!-- no export if not use outside -->
-<!-- use isDefined() insteand of pure boolean check, ex if(var) => if(isDefined(var)) -->
-<!-- reuse components as much as possible -->
-<!-- try implement todos as much as possible -->
-<!-- try to remove comments -->
-<!-- try to refactor complicated logic to utils and helpers -->
-<!-- try to cover with test utils and helpers -->
-<!-- consider using try...catch on unsecure code -->
-<!-- Emptry.Fn for side-effect functions -->
-<!-- void on single instruction useEffects -->
+## Try to avoid `@ts-ignore`
+
+## Positive condition ternary
+
+Its easier to understand "positive" conditions.
+
+### Bad
+
+```jsx
+return !onboardingCompleted ? <Onboarding /> : <PageLayout />;
+```
+
+### Good
+
+```jsx
+return onboardingCompleted ? <PageLayout /> : <Onboarding />;
+```
+
+## Library classname composition
+
+In some projects we use Tailwind and its better to re-use its classnames instead of implementing new one.
+
+### Bad
+
+```jsx
+return !onboardingCompleted ? <Onboarding /> : <PageLayout />;
+```
+
+### Good
+
+```jsx
+return onboardingCompleted ? <PageLayout /> : <Onboarding />;
+```
+
+## Prefer interfaces over types
+
+## Do not let leak `console.log` in development branch
+
+## Try to use implicit type casting (var!.field => var: IType {field:any};)
+
+In some projects we use Tailwind and its better to re-use its classnames instead of implementing new one.
+
+### Bad
+
+```ts
+function getSplittedString(variable?: string) {
+  return variable!.split(' ');
+}
+```
+
+### Good
+
+```ts
+function getSplittedString(variable: string): string[] {
+  return variable.split(' ');
+}
+```
+
+## Do not export if not entity not used outside of file
+
+## Use `isDefined()` helper-function instead of pure boolean check
+
+### Bad
+
+```jsx
+return !!variable ? true : false;
+```
+
+### Good
+
+```jsx
+return isDefined(variable) ? true : false;
+```
+
+## use `Empty.Fn` for typing side-effect function
+
+## Reuse components as much as possible
+
+## Try to implement `// TODO` as early as possible
+
+## Try to cover with test utils and helpers
+
+## Consider using `try...catch` on unsecure code
+
+## Try to use implicit type casting (var!.field => var: IType {field:any};)
+
+In some projects we use Tailwind and its better to re-use its classnames instead of implementing new one.
+
+### Bad
+
+```jsx
+return !onboardingCompleted ? <Onboarding /> : <PageLayout />;
+```
+
+### Good
+
+```jsx
+return onboardingCompleted ? <PageLayout /> : <Onboarding />;
+```
 
 ## Component props order
 
@@ -651,6 +725,8 @@ Try to follow these recommended order of props filling in component:
 - props (e.g. disabled)
 - handlers
 
-```
+---
 
-```
+- Return to the [Guides](../readme.md)
+
+---
