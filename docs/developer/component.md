@@ -193,3 +193,33 @@ const calculatedData = useMemo(
 - Return to the [Guides](../readme.md)
 
 ---
+
+<!-- WRITE SONARQUBE CASES WITH [brain overloaded] and [ternary] CASES -->
+<!-- do not use ts-ignore -->
+<!-- positive condition ternary (watch screenshot_2) -->
+<!-- use tailwind's classname composition in extension -->
+<!-- try do not use inline styles as much as possible -->
+<!-- naming - interface, type, components with uppercase. functions with lower -->
+<!-- prefer interfaces over types -->
+<!-- do not let console.log be pushed to VCS -->
+<!-- try to use implicit type casting (var!.field => var: IType {field:any};) -->
+<!-- filenaming and classname inside must match -->
+<!-- interface and component naming must match -->
+<!-- no export if not use outside -->
+<!-- use isDefined() insteand of pure boolean check, ex if(var) => if(isDefined(var)) -->
+<!-- reuse components as much as possible -->
+<!-- try implement todos as much as possible -->
+<!-- try to remove comments -->
+<!-- try to refactor complicated logic to utils and helpers -->
+<!-- try to cover with test utils and helpers -->
+<!-- consider using try...catch on unsecure code -->
+<!-- Emptry.Fn for side-effect functions -->
+<!-- void on single instruction useEffects -->
+
+## Component props order
+
+Try to follow these recommended order of props filling in component:
+
+- styles
+- ...
+- handlers
