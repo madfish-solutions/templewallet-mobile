@@ -17,7 +17,7 @@ export const HeaderModal: FC = () => {
   return (
     <View style={styles.accountContainer}>
       <CurrentAccountDropdown
-        isModal
+        isModal={true}
         value={selectedAccount}
         list={visibleAccounts}
         onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}

@@ -17,7 +17,7 @@ export const HeaderCloseOptionsButton: FC = () => {
       <TouchableIcon
         size={formatSize(16)}
         name={IconNameEnum.MoreHorizontal}
-        disabled
+        disabled={true}
         onPress={() => navigate(ScreensEnum.DApps)}
       />
       <View style={styles.verticalLineDivider} />

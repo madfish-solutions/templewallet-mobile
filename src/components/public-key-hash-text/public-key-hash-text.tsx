@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 import { MarginProps } from '../../interfaces/margin.props';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
@@ -21,18 +21,13 @@ export const PublicKeyHashText: FC<Props> = ({
 }) => {
   const styles = usePublicKeyHashTextStyles();
 
-  const handlePress = (e: GestureResponderEvent) => {
-    if (disabled !== true) {
-      e.stopPropagation();
-      copyStringToClipboard(publicKeyHash);
-    }
-  };
+  const handlePress = () => copyStringToClipboard(publicKeyHash);
 
   return (
     <TouchableOpacity
       style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
-      onPress={handlePress}
       disabled={disabled}
+      onPress={handlePress}
     >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}
