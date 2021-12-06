@@ -26,6 +26,10 @@ export interface DropdownValueProps<T> {
   onValueChange: EventFn<T | undefined>;
 }
 
+export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
+  renderValue: DropdownValueComponent<T>;
+};
+
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
 export type DropdownValueComponent<T> = FC<{
