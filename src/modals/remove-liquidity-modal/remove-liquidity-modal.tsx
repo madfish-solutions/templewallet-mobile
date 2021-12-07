@@ -85,9 +85,6 @@ export const RemoveLiquidityModal = () => {
         onSubmit={onSubmitHandler}
       >
         {({ values, setTouched, setValues, submitForm }) => {
-          const aToBExchangeRate = findExchangeRate(aTokenPool, bTokenPool);
-          const bToAExchangeRate = findExchangeRate(bTokenPool, aTokenPool);
-
           const updateForm = (lpTokenAmount?: BigNumber, aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
               ...values,
@@ -117,7 +114,7 @@ export const RemoveLiquidityModal = () => {
 
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
-              lpTokenAmount = findTokenToLpInput(aTokenAmount, lpTotalSupply, aTokenPool);
+              lpTokenAmount = findTokenToLpInput(aTokenAmount, aTokenPool, lpTotalSupply);
               bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
             }
 
@@ -129,7 +126,7 @@ export const RemoveLiquidityModal = () => {
 
             if (isDefined(bToken.amount)) {
               bTokenAmount = bToken.amount;
-              lpTokenAmount = findTokenToLpInput(bTokenAmount, lpTotalSupply, bTokenPool);
+              lpTokenAmount = findTokenToLpInput(bTokenAmount, bTokenPool, lpTotalSupply);
               aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
             }
 
@@ -176,7 +173,7 @@ export const RemoveLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(aToBExchangeRate)}
+                    {formatAssetAmount(findExchangeRate(aTokenPool, aToken.decimals, bTokenPool, bToken.decimals))}
                   </Text>
                 </View>
                 <View style={styles.lineDivider} />
@@ -186,7 +183,7 @@ export const RemoveLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(bToAExchangeRate)}
+                    {formatAssetAmount(findExchangeRate(bTokenPool, bToken.decimals, aTokenPool, aToken.decimals))}
                   </Text>
                 </View>
               </ScreenContainer>

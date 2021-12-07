@@ -1,4 +1,4 @@
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
@@ -26,7 +26,7 @@ import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
-import { addLiquidityModalValidationSchema, AddLiquidityModalFormValues } from './add-liquidity-modal.form';
+import { AddLiquidityModalFormValues, addLiquidityModalValidationSchema } from './add-liquidity-modal.form';
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
@@ -48,7 +48,7 @@ export const AddLiquidityModal = () => {
       isDefined(bTokenContract.contract) &&
       isDefined(lpContract.contract)
     ) {
-      const lpTokensOutput = findLpTokenAmount(values.aToken.amount, lpTotalSupply, aTokenPool);
+      const lpTokensOutput = findLpTokenAmount(values.aToken.amount, aTokenPool, lpTotalSupply);
 
       const zeroApproveOpParams = bTokenContract.contract.methods
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, new BigNumber(0))
@@ -58,14 +58,14 @@ export const AddLiquidityModal = () => {
         .approve(LIQUIDITY_BAKING_DEX_ADDRESS, values.bToken.amount)
         .toTransferParams({ mutez: true });
 
-      const transferParams = lpContract.contract.methods
+      const addLiquidityParams = lpContract.contract.methods
         .addLiquidity(publicKeyHash, lpTokensOutput, values.bToken.amount, getTransactionTimeoutDate())
         .toTransferParams({ mutez: true, amount: values.aToken.amount.toNumber() });
 
       const opParams = [
         ...parseTransferParamsToParamsWithKind(zeroApproveOpParams),
         ...parseTransferParamsToParamsWithKind(bTokenApproveOpParams),
-        ...parseTransferParamsToParamsWithKind(transferParams),
+        ...parseTransferParamsToParamsWithKind(addLiquidityParams),
         ...parseTransferParamsToParamsWithKind(zeroApproveOpParams)
       ];
 
@@ -93,9 +93,6 @@ export const AddLiquidityModal = () => {
         onSubmit={onSubmitHandler}
       >
         {({ values, setValues, setTouched, submitForm }) => {
-          const aToBExchangeRate = findExchangeRate(aTokenPool, bTokenPool);
-          const bToAExchangeRate = findExchangeRate(bTokenPool, aTokenPool);
-
           const updateForm = (aTokenAmount?: BigNumber, bTokenAmount?: BigNumber) => {
             setValues({
               ...values,
@@ -110,10 +107,10 @@ export const AddLiquidityModal = () => {
 
           const handleATokenChange = (aToken: AssetAmountInterface) => {
             let bTokenAmount, aTokenAmount;
+
             if (isDefined(aToken.amount)) {
               aTokenAmount = aToken.amount;
-
-              bTokenAmount = findTokenInput(bToAExchangeRate, aTokenAmount);
+              bTokenAmount = findTokenInput(aToken.amount, aTokenPool, bTokenPool);
             }
 
             updateForm(aTokenAmount, bTokenAmount ?? new BigNumber(0));
@@ -121,10 +118,10 @@ export const AddLiquidityModal = () => {
 
           const handleBTokenChange = (bToken: AssetAmountInterface) => {
             let bTokenAmount, aTokenAmount;
+
             if (isDefined(bToken.amount)) {
               bTokenAmount = bToken.amount;
-
-              aTokenAmount = findTokenInput(aToBExchangeRate, bTokenAmount);
+              aTokenAmount = findTokenInput(bToken.amount, bTokenPool, aTokenPool);
             }
 
             updateForm(aTokenAmount ?? new BigNumber(0), bTokenAmount);
@@ -159,7 +156,7 @@ export const AddLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(aToBExchangeRate)}
+                    {formatAssetAmount(findExchangeRate(aTokenPool, aToken.decimals, bTokenPool, bToken.decimals))}
                   </Text>
                 </View>
                 <View style={styles.lineDivider} />
@@ -169,7 +166,7 @@ export const AddLiquidityModal = () => {
                   </Text>
                   <Text style={styles.detailsValue}>
                     <Text style={styles.approxEqual}>≈ </Text>
-                    {formatAssetAmount(bToAExchangeRate)}
+                    {formatAssetAmount(findExchangeRate(bTokenPool, bToken.decimals, aTokenPool, aToken.decimals))}
                   </Text>
                 </View>
               </ScreenContainer>

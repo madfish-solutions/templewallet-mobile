@@ -26,6 +26,11 @@ export interface DropdownValueProps<T> {
   onValueChange: EventFn<T | undefined>;
 }
 
+export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
+  renderValue: DropdownValueComponent<T>;
+  renderAccountListItem: DropdownListItemComponent<T>;
+};
+
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
 export type DropdownValueComponent<T> = FC<{
@@ -67,6 +72,7 @@ export const Dropdown = <T extends unknown>({
     <>
       <TouchableOpacity
         style={styles.valueContainer}
+        disabled={disabled}
         onPress={dropdownBottomSheetController.open}
         onLongPress={onLongPress}
       >

@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeWhite } from '../../components/button/button-large/button-large-white/button-large-white';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { FormattedAmount } from '../../components/formatted-amount';
@@ -58,7 +58,7 @@ export const LiquidityBakingDapp = () => {
   return (
     <ScreenContainer>
       <InsetSubstitute type="top" />
-      <View style={styles.lineDivider} />
+
       <Divider size={formatSize(8)} />
       <View style={styles.lbCoinContainer}>
         <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
@@ -67,7 +67,7 @@ export const LiquidityBakingDapp = () => {
       </View>
       <View style={styles.bottomLbContainer}>
         <View>
-          <Text style={styles.priceTitle}>price</Text>
+          <Text style={styles.priceTitle}>TVL</Text>
           <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
         </View>
       </View>
@@ -76,7 +76,7 @@ export const LiquidityBakingDapp = () => {
       <Divider size={formatSize(16)} />
       <ButtonsContainer>
         <View style={styles.buttonContainer}>
-          <ButtonLargePrimary
+          <ButtonLargeWhite
             title="REMOVE"
             iconName={IconNameEnum.MinusIcon}
             onPress={() => navigate(ModalsEnum.RemoveLiquidity, { lpContract, aToken, bToken })}
@@ -84,7 +84,7 @@ export const LiquidityBakingDapp = () => {
         </View>
         <Divider size={formatSize(16)} />
         <View style={styles.buttonContainer}>
-          <ButtonLargePrimary
+          <ButtonLargeWhite
             title="ADD"
             iconName={IconNameEnum.PlusIcon}
             onPress={() => navigate(ModalsEnum.AddLiquidity, { lpContract, aToken, bToken })}

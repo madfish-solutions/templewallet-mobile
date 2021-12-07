@@ -9,7 +9,7 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
     borderRadius: formatSize(10),
     paddingHorizontal: formatSize(24),
     paddingVertical: formatSize(20),
-    backgroundColor: colors.accentBG
+    backgroundColor: colors.orange
   },
   title: {
     ...typography.body15Semibold,

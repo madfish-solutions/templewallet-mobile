@@ -40,6 +40,7 @@ import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
+import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -107,6 +108,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
+  [IconNameEnum.MoreHorizontal]: MoreHorizontalIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
