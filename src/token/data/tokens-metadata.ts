@@ -15,7 +15,7 @@ export const LIQUIDITY_BAKING_LP_METADATA: TokenMetadataInterface = {
   id: 0,
   address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
   name: 'Liquidity Baking Token',
-  symbol: 'Liquidity Baking Token',
+  symbol: 'LBT',
   decimals: 6
 };
 
