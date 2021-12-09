@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^2.3.8",
+    "@babel/preset-typescript": "^7.16.0",
     "@dicebear/avatars": "4.10.1",
     "@dicebear/avatars-bottts-sprites": "4.10.1",
     "@gorhom/bottom-sheet": "4.1.5",
@@ -55,7 +56,7 @@
     "bip39": "^3.0.3",
     "buffer": "^6.0.3",
     "ed25519-hd-key": "^1.2.0",
-    "events": "^1.1.1",
+    "events": "^3.3.0",
     "formik": "^2.2.6",
     "https-browserify": "^0.0.1",
     "jest-date-mock": "^1.0.8",
