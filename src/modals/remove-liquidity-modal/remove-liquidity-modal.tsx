@@ -20,6 +20,7 @@ import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_LP_METADATA } from '../../token/data/tokens-metadata';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
@@ -42,7 +43,10 @@ export const RemoveLiquidityModal = () => {
   const styles = useRemoveLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
 
-  const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken;
+  const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? {
+    ...emptyToken,
+    ...LIQUIDITY_BAKING_LP_METADATA
+  };
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
