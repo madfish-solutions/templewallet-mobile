@@ -34,7 +34,7 @@ export const AssetValueText: FC<Props> = ({
   const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
   const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
 
-  const visibleSymbol = showSymbol ? asset.symbol : '';
+  const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
   return (
     <Text style={style}>
