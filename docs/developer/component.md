@@ -730,3 +730,26 @@ Try to follow these recommended order of props filling in component:
 - Return to the [Guides](../readme.md)
 
 ---
+
+## Error hanlding
+
+if there are several types of errors that you need to handle, then you can check instance of error in catch block to determine the types of errors
+
+### Example
+
+```jsx
+try {
+  // Here we throw CustomError
+  someOperation();
+  // Here we throw AnotherCustomError
+  anotherOperation();
+} catch (e) {
+  if (e instanceof CustomError) {
+    // Custom handling
+  } else if (e instanceof AnotherCustomError) {
+    // Another custom handling
+  } else {
+    // Default error handling
+  }
+}
+```
