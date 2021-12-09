@@ -105,7 +105,7 @@
     "redux-observable": "^1.2.0",
     "redux-persist": "^6.0.0",
     "rxjs": "^6.6.7",
-    "stream-browserify": "^1.0.0",
+    "stream-browserify": "^3.0.0",
     "text-encoding": "^0.7.0",
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.1",
