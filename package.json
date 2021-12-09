@@ -110,7 +110,7 @@
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.1",
     "url": "^0.11.0",
-    "util": "^0.10.4",
+    "util": "^0.12.4",
     "vm-browserify": "^1.1.2",
     "yup": "^0.32.11"
   },
