@@ -12719,12 +12719,10 @@ react-native-svg@^12.1.0:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
 
-react-native-toast-message@^1.4.9:
-  version "1.4.9"
-  resolved "https://registry.npmjs.org/react-native-toast-message/-/react-native-toast-message-1.4.9.tgz"
-  integrity sha512-QhHzzsiymKpHEWz2nUKQjQMRuGN+/a8cOwDXJcz3TQFY03p20f6sJW9JKw3KkMfvWiUhGbApCPpNU6tHaAZ32w==
-  dependencies:
-    prop-types "^15.7.2"
+react-native-toast-message@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.0.2.tgz#68f2396735e2f4ca9e290ca6a63d03d601a4a140"
+  integrity sha512-jjHRgK4o388WTfikoJ2D/EWtnrXKOW8YvpSBMENRG/QwK9C6SUWZ2zas/lpP634IMUbS1VuKwtQqpNXoJIAHwg==
 
 react-native-url-polyfill@^1.3.0:
   version "1.3.0"

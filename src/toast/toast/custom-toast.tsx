@@ -14,11 +14,12 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { tzktUrl } from '../../utils/linking.util';
 import { hexa } from '../../utils/style.util';
+import { ToastProviderStyles } from '../toast-provider.styles';
 import { useToastStyles } from './toast.styles';
 
 interface Props {
   title?: string;
-  description: string;
+  description?: string;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
@@ -43,7 +44,7 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <TouchableOpacity style={[styles.container, ToastProviderStyles.toast]} onPress={handlePress}>
       <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
           <Icon
