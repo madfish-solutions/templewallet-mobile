@@ -26,6 +26,21 @@
   - `src/pages` - for React/nextjs page containers
   - `src/store` - for Redux or Context Providers
 
+## Component example file structure
+
+```
+├───components/
+│   └───my-awesome-component/
+│       ├───my-awesome-component.tsx
+│       ├───my-awesome-component.spec.tsx
+│       ├───my-awesome-component.props.ts
+│       ├───my-awesome-component.md
+│       └───my-awesome-component.styles.ts
+└───utils/
+    ├───image.utils.ts
+    └───image.utils.spec.ts
+```
+
 ---
 
 - Return to the [Guides](../readme.md)

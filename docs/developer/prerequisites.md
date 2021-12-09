@@ -17,16 +17,20 @@ Pick LTS version
 
 ### Visual Studio Code
 
+Example of settings for IDE/workspace [vscode](.vscode.json)
+
 Recommended plugins:
 
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-- [Babel Javascript](https://marketplace.visualstudio.com/items?itemName=mgmcdermott.vscode-language-babel)
-- [Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 
 ### Webstorm
 
 0 config, works fine for every project.
+
+## Project setup
+
+In all projects we use [.eslintrc](/.eslintrc.json) and [.prettierrc](/.prettierrc.js)
 
 ---
 
