@@ -58,7 +58,7 @@
     "ed25519-hd-key": "^1.2.0",
     "events": "^3.3.0",
     "formik": "^2.2.6",
-    "https-browserify": "^0.0.1",
+    "https-browserify": "^1.0.0",
     "jest-date-mock": "^1.0.8",
     "jsc-android": "^250230.2.1",
     "lodash-es": "^4.17.21",
