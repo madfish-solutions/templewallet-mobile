@@ -137,7 +137,7 @@
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.3.0",
-    "jest": "^26.6.3",
+    "jest": "^27.4.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "node-libs-react-native": "^1.2.1",
     "react-native-flipper": "^0.119.0",
@@ -152,16 +152,5 @@
     "@types/react": "^17",
     "libsodium-wrappers": "0.7.6",
     "libsodium": "0.7.6"
-  },
-  "jest": {
-    "preset": "react-native",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
   }
 }
