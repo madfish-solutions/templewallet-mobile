@@ -39,7 +39,7 @@ export const FormattedAmount: FC<Props> = ({
       {showMinusSign && '- '}
       {showPlusSign && '+ '}
       {formattedAmount}
-      {isDollarValue ? ' $' : ` ${symbol}`}
+      {isDollarValue ? ' $' : `${symbol}`}
     </Text>
   );
 };
