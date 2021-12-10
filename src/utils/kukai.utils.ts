@@ -3,6 +3,7 @@ import * as forge from 'node-forge';
 import { NativeModules } from 'react-native';
 import scrypt from 'react-native-scrypt';
 
+import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
 
 const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
@@ -21,7 +22,7 @@ const decrypt_v1 = async (ciphertext: string, password: string, salt: string | n
       throw new Error('Missing password or salt');
     }
     const key = await NativeModules.Aes.pbkdf2(password, salt, 10000, 32, 512);
-    const plaintext = await NativeModules.Aes.decryptData({ ciphertext, iv: salt }, key);
+    const plaintext = await NativeModules.Aes.decrypt(ciphertext, key, salt, AES_ALGORITHM);
 
     return Buffer.from(plaintext);
   } catch (e) {
