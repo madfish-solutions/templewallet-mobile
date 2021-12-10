@@ -9,17 +9,13 @@ import { formatSize } from '../styles/format-size';
 import { CopiedToast } from './copied-toast/copied-toast';
 import { CustomToast } from './toast/custom-toast';
 
+type CustomToastProps = ToastConfigParams<{
+  operationHash: string;
+}>;
+
 const config = {
   [ToastTypeEnum.Copied]: ({ hide }: { hide: EmptyFn }) => <CopiedToast onPress={hide} />,
-  [ToastTypeEnum.Success]: ({
-    hide,
-    text1,
-    text2,
-    onPress,
-    props
-  }: ToastConfigParams<{
-    operationHash: string;
-  }>) => (
+  [ToastTypeEnum.Success]: ({ hide, text1, text2, onPress, props }: CustomToastProps) => (
     <CustomToast
       title={text1}
       description={text2}
@@ -29,24 +25,10 @@ const config = {
       onPress={onPress}
     />
   ),
-  [ToastTypeEnum.Error]: ({
-    hide,
-    text1,
-    text2,
-    onPress
-  }: ToastConfigParams<{
-    operationHash: string;
-  }>) => (
+  [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress }: CustomToastProps) => (
     <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Error} onPress={onPress} />
   ),
-  [ToastTypeEnum.Warning]: ({
-    hide,
-    text1,
-    text2,
-    onPress
-  }: ToastConfigParams<{
-    operationHash: string;
-  }>) => (
+  [ToastTypeEnum.Warning]: ({ hide, text1, text2, onPress }: CustomToastProps) => (
     <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Warning} onPress={onPress} />
   )
 };
