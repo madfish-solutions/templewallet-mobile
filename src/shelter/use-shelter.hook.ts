@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { forkJoin, merge, of, Subject } from 'rxjs';
+import { EMPTY, empty, forkJoin, merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
@@ -133,7 +133,7 @@ export const useShelter = () => {
   }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
 
   const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
-  const createHdAccount = () => createHdAccount$.next();
+  const createHdAccount = () => createHdAccount$.next(EMPTY);
   const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
   const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
 

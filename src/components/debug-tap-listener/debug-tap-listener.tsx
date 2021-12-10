@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
-import { View } from 'react-native';
-import { Subject } from 'rxjs';
+import { GestureResponderEvent, View } from 'react-native';
+import { EMPTY, Subject } from 'rxjs';
 import { buffer, debounceTime, filter, map } from 'rxjs/operators';
 
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -28,7 +28,7 @@ export const DebugTapListener: FC = ({ children }) => {
     return () => navigateToDebugScreen$.unsubscribe();
   }, []);
 
-  const handleTouchStart = () => tap$.next();
+  const handleTouchStart = () => tap$.next(EMPTY);
 
   return (
     <View style={DebugTapListenerStyles.container} onTouchStart={handleTouchStart}>

@@ -180,7 +180,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     )
   );
 
-const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     withSelectedAccount(state$),

@@ -1,4 +1,4 @@
-import { combineEpics } from 'redux-observable';
+import { combineEpics, Epic } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
@@ -12,7 +12,7 @@ import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.util
 import { RootState } from '../create-store';
 import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
-const loadSelectedBakerAddressEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
     withSelectedAccount(state$),
@@ -32,7 +32,7 @@ const loadSelectedBakerAddressEpic = (action$: Observable<Action>, state$: Obser
     )
   );
 
-const loadBakersListEpic = (action$: Observable<Action>) =>
+const loadBakersListEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadBakersListActions.submit),
     switchMap(() =>
