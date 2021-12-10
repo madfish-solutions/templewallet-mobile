@@ -6,7 +6,7 @@ import {
   mockRandomKey,
   mockUnencryptedString
 } from '../mocks/native-modules.mock';
-import { decryptString$, encryptString$, generateRandomValues } from './crypto.util';
+import { AES_ALGORITHM, decryptString$, encryptString$, generateRandomValues } from './crypto.util';
 import { rxJsTestingHelper } from './testing.utis';
 
 describe('generateRandomValues', () => {
@@ -44,7 +44,7 @@ it('encryptString$ should encrypt a message with a given password', done => {
       expect(encryptionOutput).toEqual(expectedEncryptionOutput);
       expect(mockNativeAes.pbkdf2).toBeCalledWith('correctPassword', expectedSalt, 5000, 256);
       expect(mockNativeAes.randomKey).toBeCalledWith(16);
-      expect(mockNativeAes.encrypt).toBeCalledWith(mockUnencryptedString, mockPbkdf2Key, mockRandomKey);
+      expect(mockNativeAes.encrypt).toBeCalledWith(mockUnencryptedString, mockPbkdf2Key, mockRandomKey, AES_ALGORITHM);
     }, done)
   );
 });
@@ -57,7 +57,8 @@ it('decryptString$ should decrypt a message with correct password', done => {
       expect(mockNativeAes.decrypt).toBeCalledWith(
         expectedEncryptionOutput.cipher,
         mockPbkdf2Key,
-        expectedEncryptionOutput.iv
+        expectedEncryptionOutput.iv,
+        AES_ALGORITHM
       );
     }, done)
   );

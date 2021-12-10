@@ -141,7 +141,7 @@
     "jest": "^27.4.4",
     "metro-react-native-babel-preset": "^0.66.2",
     "node-libs-react-native": "^1.2.1",
-    "react-native-flipper": "^0.123.0",
+    "react-native-flipper": "^0.124.0",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "17.0.2",
     "redux-flipper": "^2.0.1",

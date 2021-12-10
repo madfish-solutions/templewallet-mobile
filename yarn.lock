@@ -12443,10 +12443,10 @@ react-native-exception-handler@^2.10.10:
   resolved "https://registry.npmjs.org/react-native-exception-handler/-/react-native-exception-handler-2.10.10.tgz"
   integrity sha512-otAXGoZDl1689OoUJWN/rXxVbdoZ3xcmyF1uq/CsizdLwwyZqVGd6d+p/vbYvnF996FfEyAEBnHrdFxulTn51w==
 
-react-native-flipper@^0.123.0:
-  version "0.123.0"
-  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.123.0.tgz#06972ea704962fcffd42db63bdaed3d8f6fcce84"
-  integrity sha512-pWFf/Z9ljZvATciXPnuNGn+gjd57bQzkUNmnhUKk/MZM6oh4zhEb3/Idh1bDwqulW81Sk5H1tXCQmdSRlqwKMQ==
+react-native-flipper@^0.124.0:
+  version "0.124.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.124.0.tgz#dd6036032f0b9fef55b12c9f35e232a1abc1ce93"
+  integrity sha512-YWcOWuZykwwPl+UHw088+7sPmPt+nvVc4ljWNHsCjq0gZyivA23JED0C/y+cOTWx6dOQmhhme3j1lhre8epA5A==
 
 react-native-fs@^2.18.0:
   version "2.18.0"
