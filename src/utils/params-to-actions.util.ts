@@ -12,7 +12,8 @@ const knownActivityTypes: Record<ParamsWithKind['kind'], ActivityTypeEnum> = {
   [OpKind.ORIGINATION]: ActivityTypeEnum.Origination,
   [OpKind.TRANSACTION]: ActivityTypeEnum.Transaction,
   [OpKind.DELEGATION]: ActivityTypeEnum.Delegation,
-  [OpKind.ACTIVATION]: ActivityTypeEnum.Activation
+  [OpKind.ACTIVATION]: ActivityTypeEnum.Activation,
+  [OpKind.REGISTER_GLOBAL_CONSTANT]: ActivityTypeEnum.Transaction
 };
 
 export const paramsToPendingActions = (

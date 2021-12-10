@@ -18,7 +18,7 @@ import { useToastStyles } from './toast.styles';
 
 interface Props {
   title?: string;
-  description: string;
+  description?: string;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;

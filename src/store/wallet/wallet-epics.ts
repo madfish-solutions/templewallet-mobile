@@ -41,7 +41,6 @@ import {
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
-import { WalletRootState } from './wallet-state';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -180,7 +179,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     )
   );
 
-const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     withSelectedAccount(state$),
