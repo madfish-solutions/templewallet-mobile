@@ -41,7 +41,6 @@ import {
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
-import { WalletRootState } from './wallet-state';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react';
-import { GestureResponderEvent, View } from 'react-native';
+import { View } from 'react-native';
 import { EMPTY, Subject } from 'rxjs';
 import { buffer, debounceTime, filter, map } from 'rxjs/operators';
 

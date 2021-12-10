@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { EMPTY, empty, forkJoin, merge, of, Subject } from 'rxjs';
+import { EMPTY, forkJoin, merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';

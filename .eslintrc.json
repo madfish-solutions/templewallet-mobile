@@ -42,7 +42,8 @@
         "newlines-between": "always"
       }
     ],
-    "@typescript-eslint/strict-boolean-expressions": 2,
+    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unnecessary-type-constraint": "off",
     "@typescript-eslint/ban-ts-comment": "off",
