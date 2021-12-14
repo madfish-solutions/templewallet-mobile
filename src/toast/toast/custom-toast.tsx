@@ -22,7 +22,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
-  onPress?: EmptyFn;
+  onPress: EmptyFn;
 }
 
 export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
@@ -75,7 +75,7 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
               </View>
             )}
           </View>
-          {isDefined(onPress) ? (
+          {onPress.name !== 'noop' ? (
             <Icon
               name={IconNameEnum.Navigation}
               {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
