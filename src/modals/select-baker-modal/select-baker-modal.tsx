@@ -21,9 +21,10 @@ import { BakerInterface } from '../../interfaces/baker.interface';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useBakersListSelector } from '../../store/baking/baking-selectors';
+import { useBakersListSelector, useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { showErrorToast } from '../../toast/toast.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
@@ -46,6 +47,7 @@ export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
+  const [currentBaker] = useSelectedBakerSelector();
 
   const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -58,11 +60,21 @@ export const SelectBakerModal: FC = () => {
   const debouncedSetSearchValue = debounce(setSearchValue);
 
   const handleNextPress = () => {
-    isDefined(selectedBaker) &&
-      navigate(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }]
-      });
+    if (isDefined(selectedBaker)) {
+      if (currentBaker.address === selectedBaker.address) {
+        showErrorToast({
+          title: 'Re-delegation is not possible',
+          description: 'Already delegated funds to this baker.'
+        });
+      } else {
+        navigate(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams: [
+            { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
+          ]
+        });
+      }
+    }
   };
 
   useEffect(() => {
