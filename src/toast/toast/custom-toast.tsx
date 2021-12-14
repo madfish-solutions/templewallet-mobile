@@ -22,7 +22,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
-  onPress?: EmptyFn;
+  onPress: EmptyFn;
 }
 
 export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
@@ -36,9 +36,7 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
   };
 
   const handlePress = () => {
-    if (isDefined(onPress)) {
-      onPress();
-    }
+    onPress();
     hide();
   };
 
