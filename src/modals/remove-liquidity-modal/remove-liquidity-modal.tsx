@@ -85,16 +85,19 @@ export const RemoveLiquidityModal = () => {
     [lpToken, aToken, bToken]
   );
 
-  useEffect(() => {
-    if (!searchLp) {
-      dispatch(
-        loadTokenMetadataActions.submit({
-          address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
-          id: LIQUIDITY_BAKING_LP_TOKEN_ID
-        })
-      );
-    }
-  }, [searchLp]);
+  useEffect(
+    () =>
+      void (
+        !isDefined(searchLp) &&
+        dispatch(
+          loadTokenMetadataActions.submit({
+            address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
+            id: LIQUIDITY_BAKING_LP_TOKEN_ID
+          })
+        )
+      ),
+    [searchLp]
+  );
 
   return (
     <>
