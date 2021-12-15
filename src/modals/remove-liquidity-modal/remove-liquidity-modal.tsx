@@ -19,7 +19,11 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/wallet/wallet-actions';
-import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import {
+  useAssetsListSelector,
+  useSelectedAccountSelector,
+  useTokensMetadataSelector
+} from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
   LIQUIDITY_BAKING_LP_SLUG,
@@ -48,8 +52,18 @@ export const RemoveLiquidityModal = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
+  const notAccountedAssetsList = useTokensMetadataSelector();
 
-  const searchLp = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG);
+  let isPresentInMetadata = emptyToken;
+  if (LIQUIDITY_BAKING_LP_SLUG in notAccountedAssetsList) {
+    isPresentInMetadata = {
+      ...notAccountedAssetsList[LIQUIDITY_BAKING_LP_SLUG],
+      isVisible: true,
+      balance: '0'
+    };
+  }
+
+  const searchLp = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? isPresentInMetadata;
 
   const lpToken = searchLp ?? emptyToken;
 
@@ -84,6 +98,8 @@ export const RemoveLiquidityModal = () => {
     }),
     [lpToken, aToken, bToken]
   );
+
+  console.log(searchLp, assetsList);
 
   useEffect(
     () =>

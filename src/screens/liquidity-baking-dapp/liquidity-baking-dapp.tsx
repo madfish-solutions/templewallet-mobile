@@ -8,7 +8,6 @@ import { Divider } from '../../components/divider/divider';
 import { FormattedAmount } from '../../components/formatted-amount';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -56,9 +55,7 @@ export const LiquidityBakingDapp = () => {
   }, [exchangeRates, aTokenPool, bTokenPool]);
 
   return (
-    <ScreenContainer>
-      <InsetSubstitute type="top" />
-
+    <ScreenContainer style={styles.mainContainer}>
       <Divider size={formatSize(8)} />
       <View style={styles.lbCoinContainer}>
         <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />

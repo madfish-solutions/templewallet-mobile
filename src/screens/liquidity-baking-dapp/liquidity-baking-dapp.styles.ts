@@ -2,6 +2,9 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typography }) => ({
+  mainContainer: {
+    backgroundColor: colors.navigation
+  },
   lineDivider: {
     width: '100%',
     borderBottomWidth: formatSize(0.5),
