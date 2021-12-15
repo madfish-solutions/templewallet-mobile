@@ -99,8 +99,6 @@ export const RemoveLiquidityModal = () => {
     [lpToken, aToken, bToken]
   );
 
-  console.log(searchLp, assetsList);
-
   useEffect(
     () =>
       void (

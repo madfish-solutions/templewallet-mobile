@@ -68,6 +68,7 @@ export const config: WebdriverIO.Config = {
   framework: 'cucumber',
   reporters: ['spec'],
   cucumberOpts: {
+    retry: 0,
     require: ['./e2e/features/step-definitions/*.steps.ts'],
     backtrace: false,
     requireModule: [],

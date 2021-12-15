@@ -73,7 +73,6 @@ export enum IconNameEnum {
   Link = 'Link',
   AlertShield = 'AlertShield',
   Success = 'Success',
-  Navigation = 'Navigation',
   Hummer = 'Hummer',
   LbDappIcon = 'LbDappIcon',
   LbTokenIcon = 'LbTokenIcon',
