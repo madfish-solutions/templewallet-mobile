@@ -36,8 +36,5 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
   },
   iconLeft: {
     margin: formatSize(10)
-  },
-  iconRight: {
-    margin: formatSize(10)
   }
 }));

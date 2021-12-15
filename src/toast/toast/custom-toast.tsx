@@ -22,7 +22,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
-  onPress?: EmptyFn;
+  onPress: EmptyFn;
 }
 
 export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
@@ -36,9 +36,7 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
   };
 
   const handlePress = () => {
-    if (isDefined(onPress)) {
-      onPress();
-    }
+    onPress();
     hide();
   };
 
@@ -75,15 +73,7 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
               </View>
             )}
           </View>
-          {isDefined(onPress) ? (
-            <Icon
-              name={IconNameEnum.Navigation}
-              {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
-              style={styles.iconRight}
-            />
-          ) : (
-            <Divider size={formatSize(16)} />
-          )}
+          <Divider size={formatSize(16)} />
         </View>
       </View>
     </TouchableOpacity>

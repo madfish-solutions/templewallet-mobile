@@ -41,7 +41,6 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
-import NavigationIcon from './assets/navigation.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
@@ -163,7 +162,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Link]: LinkIcon,
   [IconNameEnum.AlertShield]: AlertShield,
   [IconNameEnum.Success]: SuccessIcon,
-  [IconNameEnum.Navigation]: NavigationIcon,
   [IconNameEnum.Hummer]: HummerIcon,
   [IconNameEnum.LbDappIcon]: LbDappIcon,
   [IconNameEnum.LbTokenIcon]: LbTokenIcon,
