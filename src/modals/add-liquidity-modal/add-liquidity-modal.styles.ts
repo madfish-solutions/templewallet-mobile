@@ -36,7 +36,7 @@ export const useAddLiquidityModalStyles = createUseStyles(({ colors, typography 
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
     paddingHorizontal: formatSize(8),
-    backgroundColor: colors.white
+    backgroundColor: colors.pageBG
   },
   iconCentered: {
     justifyContent: 'center',

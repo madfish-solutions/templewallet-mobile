@@ -1,8 +1,9 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -17,9 +18,14 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
+import { loadTokenMetadataActions } from '../../store/wallet/wallet-actions';
 import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
+import {
+  LIQUIDITY_BAKING_LP_SLUG,
+  LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
+  LIQUIDITY_BAKING_LP_TOKEN_ID
+} from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
@@ -31,6 +37,7 @@ import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
   const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const dispatch = useDispatch();
 
   const { navigate } = useNavigation();
 
@@ -42,7 +49,9 @@ export const RemoveLiquidityModal = () => {
   const styles = useRemoveLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
 
-  const lpToken = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken;
+  const searchLp = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG);
+
+  const lpToken = searchLp ?? emptyToken;
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
@@ -74,6 +83,20 @@ export const RemoveLiquidityModal = () => {
       bToken: { asset: bToken, amount: undefined }
     }),
     [lpToken, aToken, bToken]
+  );
+
+  useEffect(
+    () =>
+      void (
+        !isDefined(searchLp) &&
+        dispatch(
+          loadTokenMetadataActions.submit({
+            address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
+            id: LIQUIDITY_BAKING_LP_TOKEN_ID
+          })
+        )
+      ),
+    [searchLp]
   );
 
   return (
