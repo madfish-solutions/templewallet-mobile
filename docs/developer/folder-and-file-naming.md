@@ -12,7 +12,7 @@
 - Other TS files should have `.ts` extension
 - Words in file name should be separated using `-`(dash) sign - **kebab-case**
 - Files naming pattern `[a-z0-9-].?[a-z0-9]?.tsx`:
-  - all `[name]` - `my-awesome-component`: all words should be separated using `-`(dash) sign
+  - all `[name]` - `toast-popup`: all words should be separated using `-`(dash) sign
   - all `[type]` - `service|util|prop|interface|enum|model|type`: single word describing component type
   - names can be combined `[name].[type].ts`
 - Every type of entity should have separate folder, for ex:
@@ -30,12 +30,12 @@
 
 ```
 ├───components/
-│   └───my-awesome-component/
-│       ├───my-awesome-component.tsx
-│       ├───my-awesome-component.spec.tsx
-│       ├───my-awesome-component.props.ts
-│       ├───my-awesome-component.md
-│       └───my-awesome-component.styles.ts
+│   └───toast-popup/
+│       ├───toast-popup.tsx
+│       ├───toast-popup.spec.tsx
+│       ├───toast-popup.props.ts
+│       ├───toast-popup.md
+│       └───toast-popup.styles.ts
 └───utils/
     ├───image.utils.ts
     └───image.utils.spec.ts

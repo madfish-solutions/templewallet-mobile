@@ -315,31 +315,6 @@ async function foo() {
 }
 ```
 
-## Jump statements should not be redundant
-
-Jump statements, such as `return`, `break` and `continue` let you change the default flow of program execution, but jump statements that direct the control flow to the original direction are just a waste of keystrokes.
-
-### Noncompliant Code Example
-
-```jsx
-function redundantJump(x) {
-  if (x == 1) {
-    console.log('x == 1');
-    return; // Noncompliant
-  }
-}
-```
-
-### Compliant Solution
-
-```jsx
-function redundantJump(x) {
-  if (x == 1) {
-    console.log('x == 1');
-  }
-}
-```
-
 ### Exceptions
 
 `break` and `return` inside `switch` statement are ignored, because they are often used for consistency. `continue` with label is also ignored, because label is usually used for clarity. Also a jump statement being a single statement in a block is ignored.
@@ -369,9 +344,7 @@ let apples = color ? `${count} ${color}` : count;
 let message = `I have ${apples} apples`;
 ```
 
-## Do not use `@ts-ignore` and `any` type
-
-## Positive condition ternary
+## Positive condition ternary in components/tsx
 
 Its easier to understand "positive" conditions.
 

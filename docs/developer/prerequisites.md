@@ -30,7 +30,11 @@ Recommended plugins:
 
 ## Project setup
 
-In all projects we use [.eslintrc](/.eslintrc.json) and [.prettierrc](/.prettierrc.js)
+In all projects we use `.eslintrc` and `.prettierrc`, examples:
+
+- [.eslintrc](https://github.com/madfish-solutions/templewallet-extension/blob/develop/.eslintrc) in React app
+- [.eslintrc](/.eslintrc.json) in React Native app
+- [.prettierrc](/.prettierrc.js)
 
 ---
 

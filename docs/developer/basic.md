@@ -47,16 +47,19 @@ return <View style={rootStyle} />;
 
 ## Variable naming
 
-- All variable should be named in `camelCase`
+- All classnames, interfaces, props and components should be named id `PascalCase`
+- All variables and functions should be named in `camelCase`
 - Generic names should not be used for naming(like data, array, list, etc)
+- Interfaces can be named `Person` if there no shadowing or no corresponding classes/components, `PersonProps` for `Person` component, `IPerson` for `Person` class
 
-## SVG import
+## Code-related
 
-SVG should be imported according to [this article](https://create-react-app.dev/docs/adding-images-fonts-and-files#adding-svgs) for React (excluding React Native).
-
-```ts
-import { ReactComponent as Logo } from './logo.svg';
-```
+- Do not use default export in files
+- Do not use `@ts-ignore`, `any` type and `as` casting
+- Casting:
+  - `Boolean` for casting to `bool` (not `!!myvar`)
+  - `String` for casting to `string` (not `+ ''`)
+  - `Number` for casting to `number` (not `+myvar`)
 
 ## Short return
 
@@ -335,30 +338,6 @@ var foo = () => {
 };
 ```
 
-## Default export names and file names should match
-
-By convention, a file that exports only one class, function, or constant should be named for that class, function or constant. Anything else may confuse maintainers.
-
-### Noncompliant Code Example
-
-```jsx
-// file path: calculation-component.js  -- Noncompliant
-class MyClass {
-  // ...
-}
-export default MyClass;
-```
-
-### Compliant Solution
-
-```jsx
-// file path: calculation-component.js
-class CalculationComponent {
-  // ...
-}
-export default CalculationComponent;
-```
-
 ### Exceptions
 
 Case, underscores ( \_ ) and dashes (-) are ignored from the name comparison.
@@ -376,17 +355,17 @@ In some projects we use Tailwind and its better to re-use its classnames instead
 ### Bad
 
 ```ts
-function getSplittedString(variable?: string) {
+const getSplittedString = (variable?: string) => {
   return variable!.split(' ');
-}
+};
 ```
 
 ### Good
 
 ```ts
-function getSplittedString(variable: string): string[] {
+const getSplittedString = (variable: string): string[] => {
   return variable.split(' ');
-}
+};
 ```
 
 ## Do not export if not entity not used outside of file
@@ -444,6 +423,20 @@ try {
     // Default error handling
   }
 }
+```
+
+## SVG import
+
+SVG should be imported according to [this article](https://create-react-app.dev/docs/adding-images-fonts-and-files#adding-svgs) for React (excluding React Native).
+
+```ts
+import { ReactComponent as Logo } from './logo.svg';
+```
+
+In React Native use svg-transformer [config](../../metro.config.js) and import-as-default-component
+
+```ts
+import AlertShield from './assets/alert-shield.svg';
 ```
 
 ---
