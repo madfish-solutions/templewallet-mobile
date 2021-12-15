@@ -11,14 +11,6 @@ export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezToken
 };
 
-export const LIQUIDITY_BAKING_LP_METADATA: TokenMetadataInterface = {
-  id: 0,
-  address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
-  name: 'Liquidity Baking Token',
-  symbol: 'LBT',
-  decimals: 6
-};
-
 export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
@@ -59,6 +51,5 @@ export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'uUSD',
     decimals: 12,
     thumbnailUri: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd'
-  },
-  LIQUIDITY_BAKING_LP_METADATA
+  }
 ];
