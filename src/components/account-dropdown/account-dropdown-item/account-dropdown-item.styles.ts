@@ -15,7 +15,7 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: 'center',
-    marginLeft: formatSize(10)
+    marginLeft: formatSize(4)
   },
   upperContainer: {
     flexDirection: 'row',

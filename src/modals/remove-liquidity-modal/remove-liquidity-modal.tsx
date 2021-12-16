@@ -19,14 +19,18 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/wallet/wallet-actions';
-import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import {
+  useAssetsListSelector,
+  useSelectedAccountSelector,
+  useTokensMetadataSelector
+} from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
   LIQUIDITY_BAKING_LP_SLUG,
   LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
   LIQUIDITY_BAKING_LP_TOKEN_ID
 } from '../../token/data/token-slugs';
-import { emptyToken } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -48,10 +52,13 @@ export const RemoveLiquidityModal = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
   const assetsList = useAssetsListSelector();
+  const tokensMetadataRecord = useTokensMetadataSelector();
 
-  const searchLp = assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG);
-
-  const lpToken = searchLp ?? emptyToken;
+  const lpToken: TokenInterface = {
+    ...emptyToken,
+    ...tokensMetadataRecord[LIQUIDITY_BAKING_LP_SLUG],
+    ...assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG)
+  };
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
@@ -88,7 +95,7 @@ export const RemoveLiquidityModal = () => {
   useEffect(
     () =>
       void (
-        !isDefined(searchLp) &&
+        lpToken.address === emptyToken.address &&
         dispatch(
           loadTokenMetadataActions.submit({
             address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
@@ -96,7 +103,7 @@ export const RemoveLiquidityModal = () => {
           })
         )
       ),
-    [searchLp]
+    [lpToken]
   );
 
   return (
