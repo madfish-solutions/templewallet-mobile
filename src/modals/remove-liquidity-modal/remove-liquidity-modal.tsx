@@ -54,7 +54,7 @@ export const RemoveLiquidityModal = () => {
   const assetsList = useAssetsListSelector();
   const notAccountedAssetsList = useTokensMetadataSelector();
 
-  let isPresentInMetadata = emptyToken;
+  let isPresentInMetadata;
   if (LIQUIDITY_BAKING_LP_SLUG in notAccountedAssetsList) {
     isPresentInMetadata = {
       ...notAccountedAssetsList[LIQUIDITY_BAKING_LP_SLUG],

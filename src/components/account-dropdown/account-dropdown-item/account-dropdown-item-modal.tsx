@@ -24,7 +24,7 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
 
   return (
     <View style={styles.root}>
-      <RobotIcon size={24} seed={account.publicKeyHash} />
+      <RobotIcon size={formatSize(24)} seed={account.publicKeyHash} />
       <View style={styles.smallInfoContainer}>
         <View style={styles.lowerContainer}>
           <WalletAddress disabled={true} publicKeyHash={account.publicKeyHash} />
