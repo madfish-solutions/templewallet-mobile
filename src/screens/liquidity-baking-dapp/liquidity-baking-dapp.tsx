@@ -6,6 +6,7 @@ import { ButtonLargeWhite } from '../../components/button/button-large/button-la
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
 import { FormattedAmount } from '../../components/formatted-amount';
+import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -55,39 +56,42 @@ export const LiquidityBakingDapp = () => {
   }, [exchangeRates, aTokenPool, bTokenPool]);
 
   return (
-    <ScreenContainer style={styles.mainContainer}>
-      <Divider size={formatSize(8)} />
-      <View style={styles.lbCoinContainer}>
-        <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
-        <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
+    <>
+      <HeaderCard>
         <Divider size={formatSize(8)} />
-      </View>
-      <View style={styles.bottomLbContainer}>
-        <View>
-          <Text style={styles.priceTitle}>TVL</Text>
-          <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
+        <View style={styles.lbCoinContainer}>
+          <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
+          <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
+          <Divider size={formatSize(8)} />
         </View>
-      </View>
-      <Divider size={formatSize(8)} />
-      <View style={styles.lineDivider} />
-      <Divider size={formatSize(16)} />
-      <ButtonsContainer>
-        <View style={styles.buttonContainer}>
-          <ButtonLargeWhite
-            title="REMOVE"
-            iconName={IconNameEnum.MinusIcon}
-            onPress={() => navigate(ModalsEnum.RemoveLiquidity, { lpContract, aToken, bToken })}
-          />
+        <View style={styles.bottomLbContainer}>
+          <View>
+            <Text style={styles.priceTitle}>TVL</Text>
+            <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
+          </View>
         </View>
+        <Divider size={formatSize(8)} />
+        <View style={styles.lineDivider} />
         <Divider size={formatSize(16)} />
-        <View style={styles.buttonContainer}>
-          <ButtonLargeWhite
-            title="ADD"
-            iconName={IconNameEnum.PlusIcon}
-            onPress={() => navigate(ModalsEnum.AddLiquidity, { lpContract, aToken, bToken })}
-          />
-        </View>
-      </ButtonsContainer>
-    </ScreenContainer>
+        <ButtonsContainer>
+          <View style={styles.buttonContainer}>
+            <ButtonLargeWhite
+              title="REMOVE"
+              iconName={IconNameEnum.MinusIcon}
+              onPress={() => navigate(ModalsEnum.RemoveLiquidity, { lpContract, aToken, bToken })}
+            />
+          </View>
+          <Divider size={formatSize(16)} />
+          <View style={styles.buttonContainer}>
+            <ButtonLargeWhite
+              title="ADD"
+              iconName={IconNameEnum.PlusIcon}
+              onPress={() => navigate(ModalsEnum.AddLiquidity, { lpContract, aToken, bToken })}
+            />
+          </View>
+        </ButtonsContainer>
+      </HeaderCard>
+      <ScreenContainer />
+    </>
   );
 };
