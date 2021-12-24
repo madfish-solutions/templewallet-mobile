@@ -18,7 +18,6 @@ import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { isDefined } from '../../utils/is-defined';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
@@ -164,13 +163,11 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
-        catchError((err, caught) => {
+        catchError(err => {
           if (err.message === 'Confirmation polling timed out') {
             return of(1);
-          } else if (isDefined(err.message)) {
-            throw new Error(err.message);
           } else {
-            return caught;
+            throw new Error(err.message);
           }
         }),
         delay(BCD_INDEXING_DELAY),
