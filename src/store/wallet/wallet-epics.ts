@@ -165,7 +165,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
         switchMap(operation => operation.confirmation(1)),
         catchError(err => {
           if (err.message === 'Confirmation polling timed out') {
-            return of(1);
+            return of(undefined);
           } else {
             throw new Error(err.message);
           }
