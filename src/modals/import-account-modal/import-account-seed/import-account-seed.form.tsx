@@ -25,6 +25,6 @@ export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues
   password: string(),
   derivationType: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)).required(),
   derivationPath: string().test('validateDerivationPath', 'Invalid derivation path', p =>
-    isDefined(p) ? isValidPath(p) : false
+    isDefined(p) ? isValidPath(p) : true
   )
 });
