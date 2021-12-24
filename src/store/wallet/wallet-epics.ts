@@ -163,6 +163,13 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
+        catchError(err => {
+          if (err.message === 'Confirmation polling timed out') {
+            return of(undefined);
+          } else {
+            throw new Error(err.message);
+          }
+        }),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
           loadTezosBalanceActions.submit(),
