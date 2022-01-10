@@ -1,6 +1,6 @@
 import { TokenInterface } from '../token/interfaces/token.interface';
 
-const IPFS_GATEWAY = 'ipfs.io';
+const IPFS_GATEWAY = 'cloudflare-ipfs.com';
 const IPFS_PROTOCOL_PREFIX = 'ipfs://';
 
 export const formatImgUri = (origin: string) =>
@@ -14,7 +14,7 @@ export const formatCollectibleUri = (collectible: TokenInterface) => {
   const { address } = collectible;
   const id = `${collectible.id}`;
 
-  return `https://assets.objkt.com/file/assets-001/${address}/${id.length > 1 ? id[id.length - 2] : 0}/${
+  return `https://assets.objkt.media/file/assets-001/${address}/${id.length > 1 ? id[id.length - 2] : 0}/${
     id[id.length - 1]
   }/${id}/thumb400`;
 };
