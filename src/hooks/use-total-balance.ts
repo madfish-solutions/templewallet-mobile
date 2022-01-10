@@ -27,7 +27,7 @@ export const useTotalBalance = () => {
     dollarValue = dollarValue.plus(tezosDollarValue);
 
     setTotalBalance(tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_METADATA.decimals));
-  }, [visibleTokens, exchangeRates]);
+  }, [tezosToken, visibleTokens, exchangeRates]);
 
   return { totalBalance, summaryAsset: TEZ_TOKEN_METADATA };
 };
