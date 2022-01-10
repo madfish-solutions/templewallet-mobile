@@ -2,8 +2,18 @@ import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
 export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
+  const MIN_DISPLAYED_AMOUNT = new BigNumber(0.000001);
+
   if (isNaN(amount.toNumber())) {
     return '';
+  }
+
+  if (amount.isLessThan(MIN_DISPLAYED_AMOUNT) && !amount.isZero()) {
+    if (decimalPlace === 6) {
+      return '<0.000001';
+    } else {
+      return '0.01';
+    }
   }
 
   return numberWithSpaces(
