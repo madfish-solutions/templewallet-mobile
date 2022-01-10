@@ -1,7 +1,7 @@
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { formatImgUri, formatCollectibleUri, isImgUriSvg } from './image.utils';
 
-const objktOrigin = 'https://assets.objkt.com/file/assets-001/';
+const objktOrigin = 'https://assets.objkt.media/file/assets-001/';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
@@ -17,8 +17,8 @@ describe('image utils', () => {
       expect(formatImgUri(mockHttpsUri)).toEqual(mockHttpsUri);
     });
 
-    it('should convert ipfs:// uri to URL to ipfs.io for that file', () => {
-      expect(formatImgUri('ipfs://mockFileHash')).toEqual('https://ipfs.io/ipfs/mockFileHash/');
+    it('should convert ipfs:// uri to URL to cloudflare-ipfs.com for that file', () => {
+      expect(formatImgUri('ipfs://mockFileHash')).toEqual('https://cloudflare-ipfs.com/ipfs/mockFileHash/');
     });
   });
   describe('is image svg', () => {
