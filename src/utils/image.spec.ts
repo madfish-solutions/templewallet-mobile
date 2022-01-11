@@ -1,5 +1,5 @@
 import { TokenInterface } from '../token/interfaces/token.interface';
-import { formatImgUri, formatCollectibleUri, isImgUriSvg, objktOrigin } from './image.utils';
+import { formatImgUri, formatCollectibleUri, isImgUriSvg } from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
@@ -31,13 +31,13 @@ describe('image utils', () => {
     it('should convert asset KT and id to objkt.com URL for that asset', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 } as TokenInterface;
       expect(formatCollectibleUri(collectible)).toEqual(
-        `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/1/7/464017/thumb400`
+        `https://assets.objkt.media/file/assets-001/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/1/7/464017/thumb400`
       );
     });
     it('should convert asset KT and id with id < 10 to objkt.com URL for that asset', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 9 } as TokenInterface;
       expect(formatCollectibleUri(collectible)).toEqual(
-        `${objktOrigin}KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/0/9/9/thumb400`
+        `https://assets.objkt.media/file/assets-001/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/0/9/9/thumb400`
       );
     });
   });
