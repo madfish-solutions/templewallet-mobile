@@ -1,7 +1,5 @@
 import { TokenInterface } from '../token/interfaces/token.interface';
-import { formatImgUri, formatCollectibleUri, isImgUriSvg } from './image.utils';
-
-const objktOrigin = 'https://assets.objkt.media/file/assets-001/';
+import { formatImgUri, formatCollectibleUri, isImgUriSvg, objktOrigin } from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
