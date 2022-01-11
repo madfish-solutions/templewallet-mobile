@@ -36,7 +36,17 @@ const loadBakersListEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadBakersListActions.submit),
     switchMap(() =>
-      from(bakingBadApi.get<BakerInterface[]>('/bakers')).pipe(
+      from(
+        bakingBadApi.get<BakerInterface[]>('/bakers', {
+          params: {
+            configs: true,
+            insurance: true,
+            contribution: true,
+            type: 'tezos_only,multiasset,tezos_dune',
+            health: 'active'
+          }
+        })
+      ).pipe(
         map(({ data }) => loadBakersListActions.success(data)),
         catchError(err => of(loadBakersListActions.fail(err.message)))
       )
