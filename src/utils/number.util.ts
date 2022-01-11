@@ -2,23 +2,25 @@ import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
 export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
-  const MIN_DISPLAYED_AMOUNT = new BigNumber(0.000001);
-
   if (isNaN(amount.toNumber())) {
     return '';
   }
 
-  if (amount.isLessThan(MIN_DISPLAYED_AMOUNT) && !amount.isZero()) {
-    if (decimalPlace === 6) {
-      return '<0.000001';
-    } else {
-      return '0.01';
-    }
-  }
+  const minDisplayedAmount = new BigNumber(`0.${'0'.repeat(decimalPlace - 1)}1`);
 
-  return numberWithSpaces(
+  const result = numberWithSpaces(
     amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
   );
+
+  if (
+    amount.isLessThan(minDisplayedAmount) &&
+    amount.isGreaterThan(minDisplayedAmount.multipliedBy(-1)) &&
+    !amount.isZero()
+  ) {
+    return `< ${result}`;
+  } else {
+    return result;
+  }
 };
 
 export const roundFiat = (
