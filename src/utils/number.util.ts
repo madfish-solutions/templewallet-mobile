@@ -8,18 +8,16 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
 
   const minDisplayedAmount = new BigNumber(`0.${'0'.repeat(decimalPlace - 1)}1`);
 
-  const result = numberWithSpaces(
-    amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
-  );
-
   if (
     amount.isLessThan(minDisplayedAmount) &&
     amount.isGreaterThan(minDisplayedAmount.multipliedBy(-1)) &&
     !amount.isZero()
   ) {
-    return `< ${result}`;
+    return amount.isNegative() ? `< -${minDisplayedAmount}` : `< ${minDisplayedAmount}`;
   } else {
-    return result;
+    return numberWithSpaces(
+      amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
+    );
   }
 };
 
