@@ -6,9 +6,19 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
     return '';
   }
 
-  return numberWithSpaces(
-    amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
-  );
+  const minDisplayedAmount = new BigNumber(`0.${'0'.repeat(decimalPlace - 1)}1`);
+
+  if (
+    amount.isLessThan(minDisplayedAmount) &&
+    amount.isGreaterThan(minDisplayedAmount.multipliedBy(-1)) &&
+    !amount.isZero()
+  ) {
+    return amount.isNegative() ? `< -${minDisplayedAmount}` : `< ${minDisplayedAmount}`;
+  } else {
+    return numberWithSpaces(
+      amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
+    );
+  }
 };
 
 export const roundFiat = (

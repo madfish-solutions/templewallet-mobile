@@ -39,6 +39,12 @@ describe('formatAssetAmount', () => {
   it('should return 0 if 0 passed into', () => {
     expect(formatAssetAmount(new BigNumber(0), 1)).toEqual('0');
   });
+  it('should return less-than sign if passed value is less than min rounded value', () => {
+    expect(formatAssetAmount(new BigNumber(0.001), 2)).toEqual('< 0.01');
+  });
+  it('should return less-than sign if passed negative value is greater than min rounded value additive inverse', () => {
+    expect(formatAssetAmount(new BigNumber('-0.0001'), 3)).toEqual('< -0.001');
+  });
 });
 
 describe('roundFiat', () => {
