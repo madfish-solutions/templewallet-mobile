@@ -50,7 +50,7 @@ export const Debug: FC = () => {
         onChangeText={text => setPublicKeyHash(text)}
       />
       <Divider />
-      <ButtonMedium title="Import Debug Acc" iconName={IconNameEnum.Alert} onPress={handleImportButtonPress} />
+      <ButtonMedium title="Import Debug Acc" iconName={IconNameEnum.Deal} onPress={handleImportButtonPress} />
       <Divider size={formatSize(50)} />
       <ButtonMedium title="Throw Test Error" iconName={IconNameEnum.Alert} onPress={handleThrowErrorButtonsPress} />
       <Divider />
