@@ -12,9 +12,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
   const [isLoaded, setIsLoaded] = useState(false);
   const [fallback, setFallback] = useState(false);
 
-  let thumbnailUri;
+  let uri;
   if (isDefined(collectible) && isDefined(collectible.thumbnailUri)) {
-    thumbnailUri = fallback ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible);
+    uri = fallback ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible);
   }
 
   return isDefined(collectible) ? (
@@ -29,7 +29,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         <Image
           style={styles.image}
           source={{
-            uri: thumbnailUri,
+            uri,
             width: size,
             height: size
           }}
