@@ -12,12 +12,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoadingFailed, setIsLoadingFailed] = useState(false);
 
-  let uri;
-  if (isDefined(collectible) && isDefined(collectible.thumbnailUri)) {
-    uri = isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible);
-  }
-
-  return isDefined(collectible) ? (
+  return isDefined(collectible) && isDefined(collectible.thumbnailUri) ? (
     <View
       style={{
         width: size,
@@ -29,7 +24,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         <Image
           style={styles.image}
           source={{
-            uri,
+            uri: isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible),
             width: size,
             height: size
           }}
