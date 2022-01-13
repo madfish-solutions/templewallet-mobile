@@ -10,11 +10,11 @@ import { useCollectibleIconStyles } from './collectible-icon.styles';
 export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
   const styles = useCollectibleIconStyles();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [fallback, setFallback] = useState(false);
+  const [isLoadingFailed, setIsLoadingFailed] = useState(false);
 
   let uri;
   if (isDefined(collectible) && isDefined(collectible.thumbnailUri)) {
-    uri = fallback ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible);
+    uri = isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible);
   }
 
   return isDefined(collectible) ? (
@@ -34,7 +34,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
             height: size
           }}
           blurRadius={isLoaded ? 0 : 5}
-          onError={() => setFallback(true)}
+          onError={() => setIsLoadingFailed(true)}
           onLoadEnd={() => setIsLoaded(true)}
         />
       ) : null}
