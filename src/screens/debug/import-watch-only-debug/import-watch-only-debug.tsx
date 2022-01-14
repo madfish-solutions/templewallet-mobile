@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { Divider } from '../../../components/divider/divider';
 import { AccountTypeEnum } from '../../../enums/account-type.enum';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormTextInput } from '../../../form/form-text-input';
@@ -45,9 +44,7 @@ export const ImportWatchOnlyDebug: FC = () => {
       {({ submitForm, isValid }) => (
         <View>
           <FormTextInput name="name" placeholder="Account name" />
-          <Divider />
           <FormAddressInput name="address" placeholder="Address" />
-          <Divider />
           <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
         </View>
       )}
