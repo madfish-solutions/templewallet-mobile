@@ -1,4 +1,4 @@
-import { Given } from '@wdio/cucumber-framework';
+import { Given, Before } from '@wdio/cucumber-framework';
 
 import { getInputText } from '../../utils/input.utils';
 import { findElement } from '../../utils/search.utils';
@@ -7,6 +7,17 @@ import { Pages } from './steps-data';
 const { createNewWallet, verifyYourSeed } = Pages;
 
 let temporarySeedPhrase = '';
+
+Before(scenario => {
+  // @ts-ignore
+  this.put = scenario.gherkinDocument.feature;
+
+  // @ts-ignore
+  this.myContext = {
+    fileName: null,
+    fileContent: null
+  };
+});
 
 Given(/^I save seed phrase$/, async () => {
   temporarySeedPhrase = await createNewWallet.seedPhraseOut.getValue();
@@ -33,6 +44,8 @@ Given(/^I enter correct seed words$/, async () => {
 });
 
 Given(/^I am on the (\w+) page$/, async (page: keyof typeof Pages) => {
+  // @ts-ignore
+  console.log(`context is: ${this.put}`);
   await Pages[page].isVisible();
 });
 
