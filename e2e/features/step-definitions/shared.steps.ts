@@ -1,10 +1,24 @@
 import { Given, Before } from '@wdio/cucumber-framework';
+import { useDispatch } from 'react-redux';
 
+import { ScreensEnum } from '../../../src/navigator/enums/screens.enum';
+import { useNavigation } from '../../../src/navigator/hooks/use-navigation.hook';
+import { useAppLock } from '../../../src/shelter/use-app-lock.hook';
+import { useShelter } from '../../../src/shelter/use-shelter.hook';
+import { rootStateResetAction } from '../../../src/store/root-state.actions';
 import { getInputText } from '../../utils/input.utils';
 import { findElement } from '../../utils/search.utils';
 import { Pages } from './steps-data';
 
 const { createNewWallet, verifyYourSeed } = Pages;
+
+const Accounts = {
+  testAccount: {
+    pk: '1',
+    pkh: '2',
+    sk: '3'
+  }
+};
 
 let temporarySeedPhrase = '';
 
@@ -47,6 +61,23 @@ Given(/^I am on the (\w+) page$/, async (page: keyof typeof Pages) => {
   // @ts-ignore
   console.log(`context is: ${this.put}`);
   await Pages[page].isVisible();
+});
+
+Given(/^I have (\w+) account$/, async (account: keyof typeof Accounts) => {
+  const dispatch = useDispatch();
+  dispatch(rootStateResetAction.submit());
+  console.log(`context is: ${account}`);
+  const { importWallet } = useShelter();
+  importWallet({
+    password: getInputText('password'),
+    seedPhrase: getInputText('seed')
+  });
+  const { unlock } = useAppLock();
+  unlock(getInputText('password'));
+  const { navigate } = useNavigation();
+  navigate(ScreensEnum.Wallet);
+  // unlock(getInputText('password'));
+  // await Pages[page].isVisible();
 });
 
 Given(/I press (.*)/, async (buttonSelector: string) => {
