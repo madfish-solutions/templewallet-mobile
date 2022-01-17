@@ -113,9 +113,6 @@ export const EnterPassword = () => {
         <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
         {process.env.NODE_ENV === 'development' && (
           <View>
-            {/* <Button onPress={() => resetStorage()} testID="resetStorageBtn">
-                    <Text>Reset storage</Text>
-                  </Button> */}
             <ButtonSmallSecondary title={'fill storage'} onPress={() => fillStorage()} testID="fillStorageButton" />
           </View>
         )}
