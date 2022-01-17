@@ -1,10 +1,12 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from '../../components/button/button-link/button-link';
+import { ButtonSmallSecondary } from '../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -18,6 +20,8 @@ import { FormPasswordInput } from '../../form/form-password-input';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { useShelter } from '../../shelter/use-shelter.hook';
+import { rootStateResetAction } from '../../store/root-state.actions';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
@@ -35,6 +39,21 @@ export const EnterPassword = () => {
   const { biometryType } = useBiometryAvailability();
   const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
+
+  const dispatch = useDispatch();
+  const { importWallet } = useShelter();
+  const fillStorage = () => {
+    dispatch(rootStateResetAction.submit());
+    const getEnv = (key: string): string => process.env[key] ?? '';
+
+    const appPassword = getEnv('E2E_APP_PASSWORD');
+    const seedPhrase = getEnv('E2E_SEED_PHRASE');
+    importWallet({
+      password: appPassword,
+      seedPhrase: seedPhrase
+    });
+    unlock(appPassword);
+  };
 
   const biometricsEnabled = useBiometricsEnabledSelector();
 
@@ -92,6 +111,14 @@ export const EnterPassword = () => {
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
         <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
+        {process.env.NODE_ENV === 'development' && (
+          <View>
+            {/* <Button onPress={() => resetStorage()} testID="resetStorageBtn">
+                    <Text>Reset storage</Text>
+                  </Button> */}
+            <ButtonSmallSecondary title={'fill storage'} onPress={() => fillStorage()} testID="fillStorageButton" />
+          </View>
+        )}
         <InsetSubstitute type="bottom" />
       </View>
       <ToastProvider />

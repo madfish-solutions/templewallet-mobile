@@ -2,7 +2,10 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
+// import { View } from 'react-native';
+// import { useDispatch } from 'react-redux';
 
+// import { ButtonSmallSecondary } from '../components/button/button-small/button-small-secondary/button-small-secondary';
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -21,12 +24,15 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
+// import { useShelter } from '../shelter/use-shelter.hook';
+// import { rootStateResetAction } from '../store/root-state.actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
+// import { useNavigation } from './hooks/use-navigation.hook';
 import { MainStackScreen } from './main-stack';
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
@@ -37,8 +43,25 @@ const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
+  // const { unlock } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
+  // const dispatch = useDispatch();
+  // const { importWallet } = useShelter();
+  // const { navigate } = useNavigation();
+  // const fillStorage = () => {
+  //   dispatch(rootStateResetAction.submit());
+  //   const getEnv = (key: string): string => process.env[key] ?? '';
+
+  //   const appPassword = getEnv('E2E_APP_PASSWORD');
+  //   const seedPhrase = getEnv('E2E_SEED_PHRASE');
+  //   importWallet({
+  //     password: appPassword,
+  //     seedPhrase: seedPhrase
+  //   });
+  //   unlock(appPassword);
+  //   navigate(ScreensEnum.Wallet);
+  // };
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
