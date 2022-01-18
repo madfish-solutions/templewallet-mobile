@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Given, Before } from '@wdio/cucumber-framework';
 // import { useDispatch } from 'react-redux';
 
@@ -18,15 +19,11 @@ const { createNewWallet, verifyYourSeed } = Pages;
 
 let temporarySeedPhrase = '';
 
-Before(scenario => {
-  // @ts-ignore
-  this.put = scenario.gherkinDocument.feature;
-
-  // @ts-ignore
-  this.myContext = {
-    fileName: null,
-    fileContent: null
-  };
+Before(() => {
+  console.log('jsdjk');
+  AsyncStorage.getAllKeys().then(value => {
+    console.log(value);
+  });
 });
 
 Given(/^I save seed phrase$/, async () => {
