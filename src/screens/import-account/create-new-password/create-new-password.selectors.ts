@@ -1,6 +1,6 @@
 export enum CreateNewPasswordSelectors {
-  PasswordInput = 'PasswordInput',
-  RepeatPasswordInput = 'RepeatPasswordInput',
-  AcceptTermsCheckbox = 'AcceptTermsCheckbox',
-  ImportButton = 'ImportButton'
+  PasswordInput = 'Password Input on Create a new Password page when Import Account',
+  RepeatPasswordInput = 'Repeat Password Input on Create a new Password page when Import Account',
+  AcceptTermsCheckbox = 'Accept Terms Checkbox on Create a new Password page when Import Account',
+  ImportButton = 'Import button on Create a new Password page when Import Account'
 }

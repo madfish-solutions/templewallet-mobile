@@ -20,6 +20,7 @@ import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
+import { ToastProvider } from '../../toast/toast-provider';
 import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
@@ -93,6 +94,7 @@ export const EnterPassword = () => {
         <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
         <InsetSubstitute type="bottom" />
       </View>
+      <ToastProvider />
     </ScreenContainer>
   );
 };

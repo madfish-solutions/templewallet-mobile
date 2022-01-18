@@ -4,7 +4,9 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
+import { generateIntegratedAppOptions } from '../components/header/generate-integrated-dapp-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
+import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
@@ -20,6 +22,7 @@ import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
+import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
@@ -150,6 +153,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.DApps}
                 component={DApps}
                 options={{ animationEnabled: false, headerShown: false }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.LiquidityBakingDapp}
+                component={LiquidityBakingDapp}
+                options={generateIntegratedAppOptions(<HeaderModal />)}
               />
 
               {/** Swap stack **/}

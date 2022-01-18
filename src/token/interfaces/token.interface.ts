@@ -3,6 +3,8 @@ import { emptyTokenMetadata, TokenMetadataInterface } from './token-metadata.int
 
 export type TokenInterface = Omit<AccountTokenInterface, 'slug'> & TokenMetadataInterface;
 
+export type TokenPreviewType = Omit<TokenInterface, 'isVisible' | 'balance'>;
+
 export const emptyToken: TokenInterface = {
   ...emptyTokenMetadata,
   balance: '0',

@@ -1,6 +1,11 @@
 import React, { FC, ReactElement, useState } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { delegationApy } from '../../config/general';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { formatSize } from '../../styles/format-size';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ScreenContainer } from '../screen-container/screen-container';
@@ -10,12 +15,15 @@ import { useTokenScreenContentContainerStyles } from './token-screen-content-con
 interface Props {
   historyComponent: ReactElement;
   infoComponent: ReactElement;
+  isTezos?: boolean;
 }
 
 const historyComponentIndex = 0;
 
-export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent }) => {
+export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, isTezos }) => {
   const styles = useTokenScreenContentContainerStyles();
+  const { navigate } = useNavigation();
+  const [, isBakerSelected] = useSelectedBakerSelector();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showHistoryComponent = segmentedControlIndex === historyComponentIndex;
@@ -23,7 +31,19 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>
+        {showHistoryComponent && isTezos === true ? (
+          <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
+            {isBakerSelected ? (
+              <Text style={styles.delegateText}>Rewards & Redelegate</Text>
+            ) : (
+              <Text style={styles.delegateText}>
+                Delegate: <Text style={styles.apyText}>{delegationApy}% APY</Text>
+              </Text>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>
+        )}
 
         <IconSegmentControl
           selectedIndex={segmentedControlIndex}

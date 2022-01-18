@@ -11,6 +11,12 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     justifyContent: 'space-between',
     marginLeft: formatSize(10)
   },
+  smallInfoContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+    marginLeft: formatSize(4)
+  },
   upperContainer: {
     flexDirection: 'row',
     alignItems: 'center'

@@ -21,7 +21,7 @@ export const TokenListItem: FC<Props> = ({ token, apy, onPress }) => {
       <TokenContainer token={token} apy={apy}>
         <View style={styles.rightContainer}>
           <HideBalance style={styles.balanceText}>
-            <AssetValueText asset={token} showSymbol={false} amount={token.balance} />
+            <AssetValueText asset={token} amount={token.balance} showSymbol={false} />
           </HideBalance>
           <HideBalance style={styles.valueText}>
             <AssetValueText asset={token} convertToDollar amount={token.balance} />

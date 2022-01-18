@@ -1,18 +1,18 @@
-import React, { FC } from 'react';
-import { Dimensions, Image, View } from 'react-native';
+import React, { FC, useState } from 'react';
+import { Image, View } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { formatImgUri } from '../../utils/image.utils';
+import { formatCollectibleUri, formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { CollectibleIconProps } from './collectible-icon.props';
-import { CollectibleIconStyles } from './collectible-icon.styles';
+import { useCollectibleIconStyles } from './collectible-icon.styles';
 
 export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
-  const colors = useColors();
-  const scale = Dimensions.get('screen').width / Dimensions.get('screen').width;
+  const styles = useCollectibleIconStyles();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoadingFailed, setIsLoadingFailed] = useState(false);
 
-  return isDefined(collectible) ? (
+  return isDefined(collectible) && isDefined(collectible.thumbnailUri) ? (
     <View
       style={{
         width: size,
@@ -22,14 +22,15 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
     >
       {isDefined(collectible.artifactUri) ? (
         <Image
-          style={[
-            CollectibleIconStyles.image,
-            {
-              backgroundColor: colors.blue10,
-              borderRadius: formatSize(8 * scale)
-            }
-          ]}
-          source={{ uri: formatImgUri(collectible.artifactUri), width: size, height: size }}
+          style={styles.image}
+          source={{
+            uri: isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible),
+            width: size,
+            height: size
+          }}
+          blurRadius={isLoaded ? 0 : 5}
+          onError={() => setIsLoadingFailed(true)}
+          onLoadEnd={() => setIsLoaded(true)}
         />
       ) : null}
     </View>

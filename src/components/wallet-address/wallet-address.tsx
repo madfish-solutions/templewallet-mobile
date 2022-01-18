@@ -15,9 +15,10 @@ import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text'
 import { useWalletAddressStyles } from './wallet-address.styles';
 interface Props {
   publicKeyHash: string;
+  disabled?: boolean;
 }
 
-export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
+export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
   const styles = useWalletAddressStyles();
   const [domainName, setDomainName] = useState('');
   const [isShownDomainName, setIsShownDomainName] = useState(false);
@@ -40,6 +41,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash }) => {
         <TouchableOpacity
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
+          disabled={disabled}
           onPress={() => copyStringToClipboard(domainName)}
         >
           <Text style={styles.domainNameText}>{domainName}</Text>

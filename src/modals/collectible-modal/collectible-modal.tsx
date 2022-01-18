@@ -10,6 +10,7 @@ import { HeaderTitle } from '../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
+import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
@@ -27,6 +28,7 @@ export const CollectibleModal = () => {
 
   return (
     <ScreenContainer isFullScreenMode={true}>
+      <ModalStatusBar />
       <View onLayout={handleLayout}>
         <CollectibleIcon collectible={collectible} size={layoutWidth} />
         <Divider size={formatSize(16)} />

@@ -39,7 +39,7 @@ const removePermissionEpic = (action$: Observable<Action>) =>
           forkJoin(
             peers.map(peer =>
               from(getSenderId(peer.publicKey)).pipe(
-                switchMap(peerSenderId =>
+                map(peerSenderId =>
                   senderId === peerSenderId ? BeaconHandler.removePeer({ ...peer, senderId: peerSenderId }) : EMPTY
                 )
               )

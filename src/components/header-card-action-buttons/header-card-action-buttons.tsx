@@ -56,11 +56,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onTouchStart={() =>
           void showWarningToast({
             title: 'Work in progress...',
-            description: 'You will be available to buy crypto soon.'
+            description: 'you will be available to swap crypto soon.'
           })
         }
       >
-        <ButtonMedium title="BUY" iconName={IconNameEnum.ShoppingCard} disabled={true} onPress={emptyFn} />
+        <ButtonMedium title="Swap" iconName={IconNameEnum.SwapArrow} disabled={true} onPress={emptyFn} />
       </View>
     </ButtonsContainer>
   );

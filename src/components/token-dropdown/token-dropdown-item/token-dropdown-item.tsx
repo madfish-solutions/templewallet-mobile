@@ -44,7 +44,7 @@ export const TokenDropdownItem: FC<Props> = ({
             <Divider size={formatSize(4)} />
             {isShowBalance && (
               <HideBalance style={styles.balance}>
-                <AssetValueText asset={token} amount={token?.balance} />
+                <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
               </HideBalance>
             )}
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}

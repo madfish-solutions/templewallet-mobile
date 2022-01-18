@@ -9,7 +9,7 @@ import { tzToMutez } from './tezos.util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getParamPreview = (opParam: ParamsWithKind): ParamPreviewInterface => {
-  if (opParam.kind === OpKind.DELEGATION) {
+  if (opParam.kind === OpKind.DELEGATION && isDefined(opParam.delegate)) {
     // Delegate
     return {
       type: ParamPreviewTypeEnum.Delegate,

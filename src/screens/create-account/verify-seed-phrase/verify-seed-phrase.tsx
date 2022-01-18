@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
+import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
 interface VerifySeedPhraseProps {
@@ -68,9 +69,9 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     () =>
       object().shape(
         wordsToCheckPositions.reduce(
-          (shape, wordPosition, index) => ({
+          (shape, index) => ({
             ...shape,
-            [`word${index}`]: string().oneOf([words[wordPosition]], '').required('')
+            [`word${index}`]: string().oneOf([words[index]], '').required('')
           }),
           {}
         )
@@ -81,7 +82,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
   const initialValues = useMemo(
     () =>
       wordsToCheckPositions.reduce(
-        (previousValue, _, index) => ({
+        (previousValue, index) => ({
           ...previousValue,
           [`word${index}`]: ''
         }),
@@ -111,9 +112,9 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
               seed backup
             </Text>
             <Divider />
-            {wordsToCheckPositions.map((wordPosition, index) => (
+            {wordsToCheckPositions.map(index => (
               <Fragment key={index}>
-                <VerifySeedPhraseRow inputName={`word${index}`} wordPosition={wordPosition} words={words} />
+                <VerifySeedPhraseRow inputName={`word${index}`} index={index} words={words} />
                 {index !== wordsToCheckPositions.length - 1 ? (
                   <Divider size={formatSize(42)} />
                 ) : (
@@ -125,7 +126,12 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
           <View
             onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}
           >
-            <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Next"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={VerifySeedPhraseSelectors.NextButton}
+            />
           </View>
           <InsetSubstitute type="bottom" />
         </ScreenContainer>

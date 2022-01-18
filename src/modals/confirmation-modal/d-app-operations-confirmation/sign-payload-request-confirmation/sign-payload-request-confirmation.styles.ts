@@ -7,6 +7,9 @@ export const useSignPayloadRequestConfirmationStyles = createUseStyles(({ colors
     color: colors.gray1
   },
   descriptionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: formatSize(12),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },

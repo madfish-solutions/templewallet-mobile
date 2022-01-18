@@ -16,6 +16,7 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { isString } from '../../../utils/is-string';
 import { seedToPrivateKey } from '../../../utils/keys.util';
 import { useImportAccountStyles } from '../import-account.styles';
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
@@ -36,7 +37,8 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
-    const privateKey = seedToPrivateKey(seed, values.derivationPath);
+    const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
+
     createImportedAccount({
       name: `Account ${accountsIndex}`,
       privateKey

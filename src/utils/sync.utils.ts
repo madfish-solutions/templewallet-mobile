@@ -1,6 +1,7 @@
 import { NativeModules } from 'react-native';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
+import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
@@ -20,7 +21,7 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
 
   try {
     const key = await NativeModules.Aes.pbkdf2(password, salt, 5000, 256);
-    const decrypted = await NativeModules.Aes.decrypt(encrypted, key, iv);
+    const decrypted = await NativeModules.Aes.decrypt(encrypted, key, iv, AES_ALGORITHM);
 
     const [mnemonic, hdAccountsLength] = JSON.parse(decrypted);
 

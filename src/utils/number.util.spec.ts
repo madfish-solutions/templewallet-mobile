@@ -14,23 +14,36 @@ describe('formatAssetAmount', () => {
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals', () => {
-    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10000.25');
+    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10 000.25');
+  });
+
+  it('should format positive bignumber more than 10 000 000 value and return formatted string', () => {
+    expect(formatAssetAmount(new BigNumber(10123456))).toEqual('10 123 456');
+  });
+
+  it('should format positive bignumber more than 1 000 000 value and return string with 2 decimals', () => {
+    expect(formatAssetAmount(new BigNumber('123456789.25456'))).toEqual('123 456 789.25');
   });
 
   it('should format positive bignumber more than 1000 value and return string with 2 decimals using rounding mode up', () => {
-    expect(formatAssetAmount(bigNumberMoreThanThousand, BigNumber.ROUND_UP)).toEqual('10000.26');
+    expect(formatAssetAmount(bigNumberMoreThanThousand)).toEqual('10 000.25');
   });
 
   it('should format positive bignumber less than 1000 value and return string with 1 decimal using rounding mode up', () => {
-    expect(formatAssetAmount(new BigNumber(100.255133), BigNumber.ROUND_UP, 1)).toEqual('100.3');
+    expect(formatAssetAmount(new BigNumber(100.255133), 1)).toEqual('100.2');
   });
-
   it('should return empty string if NaN passed into', () => {
-    expect(formatAssetAmount(new BigNumber(NaN), BigNumber.ROUND_UP, 1)).toEqual('');
+    expect(formatAssetAmount(new BigNumber(NaN), 1)).toEqual('');
   });
 
   it('should return 0 if 0 passed into', () => {
-    expect(formatAssetAmount(new BigNumber(0), BigNumber.ROUND_UP, 1)).toEqual('0');
+    expect(formatAssetAmount(new BigNumber(0), 1)).toEqual('0');
+  });
+  it('should return less-than sign if passed value is less than min rounded value', () => {
+    expect(formatAssetAmount(new BigNumber(0.001), 2)).toEqual('< 0.01');
+  });
+  it('should return less-than sign if passed negative value is greater than min rounded value additive inverse', () => {
+    expect(formatAssetAmount(new BigNumber('-0.0001'), 3)).toEqual('< -0.001');
   });
 });
 

@@ -41,7 +41,6 @@ import {
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
-import { WalletRootState } from './wallet-state';
 
 const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -164,6 +163,13 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
+        catchError(err => {
+          if (err.message === 'Confirmation polling timed out') {
+            return of(undefined);
+          } else {
+            throw new Error(err.message);
+          }
+        }),
         delay(BCD_INDEXING_DELAY),
         concatMap(() => [
           loadTezosBalanceActions.submit(),
@@ -180,7 +186,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
     )
   );
 
-const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<WalletRootState>) =>
+const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadActivityGroupsActions.submit),
     withSelectedAccount(state$),

@@ -1,7 +1,10 @@
 import { BinaryLike } from 'crypto';
 import { NativeModules } from 'react-native';
+import { Aes } from 'react-native-aes-crypto';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+
+export const AES_ALGORITHM: Aes.Algorithms = 'aes-256-cbc';
 
 export interface EncryptedData {
   cipher: string;
@@ -31,7 +34,8 @@ const pbkdf2$ = (password: BinaryLike, salt: BinaryLike) =>
 
 const randomKey$ = () => from<string>(NativeModules.Aes.randomKey(16));
 
-const encrypt$ = (value: string, key: string, iv: string) => from<string>(NativeModules.Aes.encrypt(value, key, iv));
+const encrypt$ = (value: string, key: string, iv: string) =>
+  from<string>(NativeModules.Aes.encrypt(value, key, iv, AES_ALGORITHM));
 
 export const encryptString$ = (value: string, password: string): Observable<EncryptedData & EncryptedDataSalt> => {
   const salt = generateSalt();
@@ -55,6 +59,8 @@ export const decryptString$ = (
 ): Observable<string | undefined> =>
   pbkdf2$(password, data.salt).pipe(
     switchMap(key =>
-      from<string>(NativeModules.Aes.decrypt(data.cipher, key, data.iv)).pipe(catchError(() => of(undefined)))
+      from<string>(NativeModules.Aes.decrypt(data.cipher, key, data.iv, AES_ALGORITHM)).pipe(
+        catchError(() => of(undefined))
+      )
     )
   );

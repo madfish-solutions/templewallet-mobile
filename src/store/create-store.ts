@@ -2,10 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { Middleware } from 'redux';
 import createDebugger from 'redux-flipper';
-import { ActionsObservable, combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
+import { combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
+import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
@@ -58,7 +59,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const createStore = (...epics: Epic[]) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rootEpic = (action$: ActionsObservable<any>, store$: StateObservable<any>, dependencies: any) =>
+  const rootEpic = (action$: Observable<any>, store$: StateObservable<any>, dependencies: any) =>
     combineEpics(...epics)(action$, store$, dependencies).pipe(
       catchError((error, source) => {
         console.error(error);

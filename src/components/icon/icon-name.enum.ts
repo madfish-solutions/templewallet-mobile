@@ -19,7 +19,9 @@ export enum IconNameEnum {
   InputXCircle = 'InputXCircle',
   X = 'X',
   XCircle = 'XCircle',
+  MoreHorizontal = 'MoreHorizontal',
   ShoppingCard = 'ShoppingCard',
+  SwapArrow = 'SwapArrow',
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',
@@ -71,6 +73,12 @@ export enum IconNameEnum {
   Link = 'Link',
   AlertShield = 'AlertShield',
   Success = 'Success',
-  Navigation = 'Navigation',
-  Hummer = 'Hummer'
+  Hummer = 'Hummer',
+  LbDappIcon = 'LbDappIcon',
+  LbTokenIcon = 'LbTokenIcon',
+  RefreshIcon = 'RefreshIcon',
+  ChartIcon = 'ChartIcon',
+  MinusIcon = 'MinusIcon',
+  PlusIcon = 'PlusIcon',
+  PlusIconOrange = 'PlusIconOrange'
 }

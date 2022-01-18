@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+import { black } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
@@ -21,10 +22,10 @@ export const useProtectedOverlayStyle = createUseStyles(({ colors, typography })
   },
   title: {
     ...typography.body20Bold,
-    color: colors.black
+    color: black
   },
   description: {
     ...typography.body17Semibold,
-    color: colors.black
+    color: black
   }
 }));

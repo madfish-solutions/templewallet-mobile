@@ -7,6 +7,7 @@ export const mockAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: createEntity('100'),
   tokensList: mockAccountTokens,
+  removedTokensList: [],
   activityGroups: createEntity(mockAppliedActivityGroups),
   pendingActivities: mockPendingActivityGroups
 };

@@ -14,15 +14,10 @@ import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { RobotIcon } from '../../robot-icon/robot-icon';
 import { WalletAddress } from '../../wallet-address/wallet-address';
+import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
-interface Props {
-  account?: WalletAccountInterface;
-  showFullData?: boolean;
-  actionIconName?: IconNameEnum;
-}
-
-export const AccountDropdownItem: FC<Props> = ({
+export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   account = emptyWalletAccount,
   showFullData = true,
   actionIconName
