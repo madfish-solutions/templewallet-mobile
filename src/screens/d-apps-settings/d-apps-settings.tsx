@@ -16,7 +16,7 @@ export const DAppsSettings = () => {
 
   return (
     <ScreenContainer>
-      <Label label="Authorized DApps" description="Click on the Trash icon to reset permissions." />
+      <Label description="Click on the Trash icon to reset permissions." />
       {permissions.data.length === 0 ? (
         <DataPlaceholder text="No connected DApps were found" />
       ) : (

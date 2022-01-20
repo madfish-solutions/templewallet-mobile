@@ -186,7 +186,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.DAppsSettings}
                 component={DAppsSettings}
-                options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+                options={generateScreenOptions(<HeaderTitle title="Authorized DApps" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NodeSettings}
