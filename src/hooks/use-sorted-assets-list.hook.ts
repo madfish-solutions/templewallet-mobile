@@ -10,11 +10,9 @@ import { mutezToTz } from '../utils/tezos.util';
 export const useSortedAssetsList = (filteredAssetsList: TokenInterface[]) => {
   const exchangeRates = useExchangeRatesSelector();
 
-  const sortedAssetsList = [...filteredAssetsList];
-
   return useMemo(
     () =>
-      sortedAssetsList.sort((asset1, asset2) => {
+      [...filteredAssetsList].sort((asset1, asset2) => {
         const zero = new BigNumber(0);
 
         const exchangeRate1: number | undefined = exchangeRates[getTokenSlug(asset1)];
