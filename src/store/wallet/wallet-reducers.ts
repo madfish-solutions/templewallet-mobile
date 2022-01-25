@@ -20,6 +20,7 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
+  isPendingOperationOutdated,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -130,7 +131,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(loadActivityGroupsActions.submit, state =>
     updateCurrentAccountState(state, account => ({
       ...account,
-      activityGroups: createEntity(account.activityGroups.data, true)
+      activityGroups: createEntity(account.activityGroups.data, true),
+      pendingActivities: account.pendingActivities.filter(
+        pendingActivityGroup => !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
+      )
     }))
   );
   builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>

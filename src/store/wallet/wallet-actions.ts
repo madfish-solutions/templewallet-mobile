@@ -40,9 +40,6 @@ export const sendAssetActions = createActions<SendAssetActionPayloadInterface, s
 export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
 
-export const approveInternalOperationRequestAction = createAction<ParamsWithKind[]>(
-  'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
-);
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
