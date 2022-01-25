@@ -88,7 +88,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.DAppsSettings)}>
-              <WhiteContainerText text="DApps" />
+              <WhiteContainerText text="Authorized DApps" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>

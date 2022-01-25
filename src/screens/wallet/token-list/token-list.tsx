@@ -9,6 +9,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { delegationApy } from '../../../config/general';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
+import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -28,9 +29,10 @@ export const TokenList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredAssetsList(visibleTokensList);
+  const sortedAssetsList = useSortedAssetsList(filteredAssetsList);
   const [isShowTezos, setIsShowTezos] = useState(true);
 
-  const isShowPlaceholder = !isShowTezos && filteredAssetsList.length === 0;
+  const isShowPlaceholder = !isShowTezos && sortedAssetsList.length === 0;
 
   useEffect(
     () => setIsShowTezos(filterTezos(tezosToken.balance, isHideZeroBalance, searchValue)),
@@ -68,7 +70,7 @@ export const TokenList: FC = () => {
               />
             )}
 
-            {filteredAssetsList.map(
+            {sortedAssetsList.map(
               (token, index) =>
                 token.isVisible && (
                   <TokenListItem
