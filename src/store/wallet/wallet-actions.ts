@@ -2,7 +2,6 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
