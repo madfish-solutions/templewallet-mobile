@@ -11,7 +11,6 @@ import { WalletState } from './wallet-state';
 const MAX_PENDING_OPERATION_DISPLAY_TIME = 4 * 3600000;
 
 export const isPendingOperationOutdated = (addedAt: number) => {
-  console.log(1);
   const currentTime = new Date().getTime();
 
   return currentTime - addedAt > MAX_PENDING_OPERATION_DISPLAY_TIME;
