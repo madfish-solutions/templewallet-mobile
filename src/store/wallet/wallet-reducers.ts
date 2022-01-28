@@ -128,6 +128,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
+  builder.addCase(loadActivityGroupsActions.submit, state =>
+    updateCurrentAccountState(state, account => ({
+      ...account,
+      activityGroups: createEntity(account.activityGroups.data, true)
+    }))
+  );
   builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
     updateCurrentAccountState(state, account => ({
       ...account,
