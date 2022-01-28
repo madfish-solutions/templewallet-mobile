@@ -2,7 +2,6 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -40,9 +39,6 @@ export const sendAssetActions = createActions<SendAssetActionPayloadInterface, s
 export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
 
-export const approveInternalOperationRequestAction = createAction<ParamsWithKind[]>(
-  'wallet/APPROVE_INTERNAL_OPERATION_REQUEST'
-);
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;

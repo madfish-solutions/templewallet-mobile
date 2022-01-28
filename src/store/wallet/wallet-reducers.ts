@@ -20,6 +20,7 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
+  isPendingOperationOutdated,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -141,7 +142,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         pendingActivityGroup =>
           !activityGroups.some(
             completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
-          )
+          ) && !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
       )
     }))
   );

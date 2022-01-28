@@ -14,25 +14,21 @@ import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { StacksEnum } from '../../navigator/enums/stacks.enum';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
-import { paramsToPendingActions } from '../../utils/params-to-actions.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { sendTransaction$, withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
 import {
-  addPendingOperation,
   addTokenMetadataAction,
-  approveInternalOperationRequestAction,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
@@ -127,32 +123,6 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
     )
   );
 
-const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(approveInternalOperationRequestAction),
-    toPayload(),
-    withSelectedAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[opParams, sender], rpcUrl]) =>
-      sendTransaction$(rpcUrl, sender, opParams).pipe(
-        switchMap(({ hash }) => {
-          showSuccessToast({ description: 'Successfully sent!' });
-
-          return [
-            navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash: hash, sender }),
-            addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
-          ];
-        }),
-        catchError(err => {
-          showErrorToast({ description: err.message });
-
-          return EMPTY;
-        })
-      )
-    )
-  );
-
 const BCD_INDEXING_DELAY = 15000;
 
 const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
@@ -230,6 +200,5 @@ export const walletEpics = combineEpics(
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
-  approveInternalOperationRequestEpic,
   addTokenMetadataEpic
 );
