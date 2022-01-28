@@ -128,15 +128,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadActivityGroupsActions.submit, state =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(account.activityGroups.data, true),
-      pendingActivities: account.pendingActivities.filter(
-        pendingActivityGroup => !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
-      )
-    }))
-  );
   builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
     updateCurrentAccountState(state, account => ({
       ...account,
@@ -145,7 +136,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         pendingActivityGroup =>
           !activityGroups.some(
             completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
-          )
+          ) && !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
       )
     }))
   );
