@@ -1,5 +1,5 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -14,10 +14,16 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles } from './welcome.styles';
+import { generateSK64 } from '../../utils/crypto.util';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
+  const [masterKey, setMasterKey] = useState('')
+
+  useEffect(() => {
+    generateSK64().then((key) => { setMasterKey(key) })
+  }, [])
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -30,6 +36,7 @@ export const Welcome = () => {
         quote="The only function of economic forecasting is to make astrology look more respectable."
         author="John Kenneth Galbraith"
       />
+      <View><Text>{masterKey}</Text></View>
       <Divider />
       <View>
         <ButtonLargePrimary

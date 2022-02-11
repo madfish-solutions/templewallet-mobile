@@ -12599,6 +12599,10 @@ react-native-svg@^12.1.0:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
 
+"react-native-themis@git+https://github.com/radetsky/react-native-themis.git":
+  version "0.1.0"
+  resolved "git+https://github.com/radetsky/react-native-themis.git#2afed07dc745d2fa279d6d92406548843a4efe73"
+
 react-native-toast-message@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.1.0.tgz#973568a4ef2f2563515c45fcda166e590bb39ee9"
