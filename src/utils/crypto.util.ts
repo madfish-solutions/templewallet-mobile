@@ -3,6 +3,7 @@ import { NativeModules } from 'react-native';
 import { Aes } from 'react-native-aes-crypto';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { symmetricKey64 } from 'react-native-themis';
 
 export const AES_ALGORITHM: Aes.Algorithms = 'aes-256-cbc';
 
@@ -13,6 +14,10 @@ export interface EncryptedData {
 
 export interface EncryptedDataSalt {
   salt: string;
+}
+
+export const generateSK64 = (): Promise<string> => {
+  return symmetricKey64();
 }
 
 export const generateRandomValues = (byteCount = 16) => {
