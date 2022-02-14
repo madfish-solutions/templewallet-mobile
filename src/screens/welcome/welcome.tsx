@@ -14,16 +14,11 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles } from './welcome.styles';
-import { generateSK64 } from '../../utils/crypto.util';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
   const [masterKey, setMasterKey] = useState('')
-
-  useEffect(() => {
-    generateSK64().then((key) => { setMasterKey(key) })
-  }, [])
 
   return (
     <ScreenContainer isFullScreenMode={true}>

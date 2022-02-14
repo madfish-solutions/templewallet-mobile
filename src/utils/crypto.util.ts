@@ -55,17 +55,25 @@ const decryptt$ = (context: string, key: string, encrypted64: string): Observabl
 export const encryptString$ = (value: string, password: string): Observable<EncryptedData & EncryptedDataSalt> => {
   const salt = generateSalt();
 
-  return forkJoin([pbkdf2$(password, salt), randomKey$()]).pipe(
-    switchMap(([key, iv]) =>
-      encryptt$(value, key, iv).pipe(
-        map(cipher => ({
-          cipher,
-          iv,
-          salt
-        }))
-      )
-    )
-  );
+  return from(secureSealWithPassphraseEncrypt64(password, value, salt)).pipe(
+    map(cipher => ({
+      cipher,
+      iv: "",
+      salt
+    }))
+  )
+
+  // return forkJoin([pbkdf2$(password, salt), randomKey$()]).pipe(
+  //   switchMap(([key, iv]) =>
+  //     encryptt$(value, key, iv).pipe(
+  //       map(cipher => ({
+  //         cipher,
+  //         iv,
+  //         salt
+  //       }))
+  //     )
+  //   )
+  // );
 };
 
 
@@ -73,7 +81,10 @@ export const encryptString$ = (value: string, password: string): Observable<Encr
 export const decryptString$ = (
   data: EncryptedData & EncryptedDataSalt,
   password: string
-): Observable<string | undefined> =>
-  pbkdf2$(password, data.salt).pipe(
-    switchMap(key => decryptt$(data.iv, key, data.cipher))
-  );
+): Observable<string | undefined> => {
+  return from(secureSealWithPassphraseDecrypt64(password, data.cipher, data.salt));
+}
+
+  // pbkdf2$(password, data.salt).pipe(
+  //   switchMap(key => decryptt$(data.iv, key, data.cipher))
+  // );
