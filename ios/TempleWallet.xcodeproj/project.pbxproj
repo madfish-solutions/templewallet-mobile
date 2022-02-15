@@ -518,7 +518,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = 9DBX2BVVMN;
+				DEVELOPMENT_TEAM = D653UWS37K;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TempleWallet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -532,7 +532,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = TempleWallet;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -549,7 +549,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = 9DBX2BVVMN;
+				DEVELOPMENT_TEAM = D653UWS37K;
 				INFOPLIST_FILE = TempleWallet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -562,7 +562,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = TempleWallet;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
