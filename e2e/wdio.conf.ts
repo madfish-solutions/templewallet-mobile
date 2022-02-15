@@ -35,7 +35,7 @@ const iosCapability = {
   noReset: true,
   nativeInstrumentsLib: true,
   isolateSimDevice: true,
-  platformVersion: '13.7',
+  platformVersion: '15.2',
   deviceName: 'iPhone 11 Pro Max',
   app: './ios/Build/Products/Debug-iphonesimulator/TempleWallet.app'
 };
@@ -69,7 +69,7 @@ export const config: WebdriverIO.Config = {
   reporters: ['spec'],
   cucumberOpts: {
     retry: 0,
-    require: ['./e2e/features/step-definitions/*.steps.ts'],
+    require: ['./e2e/features/support/*.ts', './e2e/features/step-definitions/*.steps.ts'],
     backtrace: false,
     requireModule: [],
     dryRun: false,
