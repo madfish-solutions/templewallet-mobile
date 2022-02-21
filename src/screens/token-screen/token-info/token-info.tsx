@@ -4,7 +4,8 @@ import { Text, TouchableOpacity } from 'react-native';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { StyledTextInput } from '../../../components/styled-text-input/styled-text-input';
-import { useIsFA2Token } from '../../../hooks/use-is-fa2-token.hook';
+import { useTokenType } from '../../../hooks/use-token-type';
+import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isDefined } from '../../../utils/is-defined';
@@ -16,7 +17,7 @@ interface Props {
 
 export const TokenInfo: FC<Props> = ({ token }) => {
   const styles = useTokenInfoStyles();
-  const [isFa2, loading] = useIsFA2Token(token.address);
+  const { tokenType, loading } = useTokenType(token.address);
 
   const symbol = token.symbol;
 
@@ -28,7 +29,7 @@ export const TokenInfo: FC<Props> = ({ token }) => {
       </TouchableOpacity>
       <Divider />
 
-      {isDefined(token.id) && !loading && isFa2 && (
+      {isDefined(token.id) && !loading && tokenType === TokenTypeEnum.FA_2 && (
         <>
           <Label label="Token ID" description={`Token Id of a ${symbol} token contract.`} />
           <StyledTextInput placeholder={token.id.toString()} editable={false} />

@@ -1,22 +1,25 @@
 import { useEffect, useState } from 'react';
 
+import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { getTokenType } from '../token/utils/token.utils';
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
-export const useIsFA2Token = (address: string) => {
+export const useTokenType = (address: string) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
-  const [loading, setLoading] = useState(false);
-  const [isFa2, setIsFa2] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isFa2, setIsFa2] = useState<TokenTypeEnum>(TokenTypeEnum.FA_1_2);
 
   useEffect(() => {
     async function getTokenStandart() {
       try {
         setLoading(true);
         const contract = await tezos.contract.at(address);
-        const isTokenFa2 = contract.methods.update_operators;
-        setIsFa2(Boolean(isTokenFa2));
+
+        const tokenType = getTokenType(contract);
+        setIsFa2(tokenType);
       } catch (error) {
         setLoading(false);
       }
@@ -26,5 +29,5 @@ export const useIsFA2Token = (address: string) => {
     getTokenStandart();
   }, []);
 
-  return [isFa2, loading];
+  return { tokenType: isFa2, loading };
 };
