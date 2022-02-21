@@ -1,7 +1,9 @@
 import { PortalProvider } from '@gorhom/portal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useMemo, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
@@ -21,8 +23,10 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
+import { rootStateResetAction } from '../store/root-state.actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
+import { isDefined } from '../utils/is-defined';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -39,10 +43,23 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
+  const dispatch = useDispatch();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
+
+  useEffect(() => {
+    const clearKeychainOnReinstall = async () => {
+      const cacheKey = 'keychain_reinstall';
+      const cached = await AsyncStorage.getItem(cacheKey);
+      if (!isDefined(cached)) {
+        dispatch(rootStateResetAction.submit);
+      }
+      await AsyncStorage.setItem(cacheKey, 'true');
+    };
+    clearKeychainOnReinstall();
+  }, []);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
