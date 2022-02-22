@@ -19,7 +19,7 @@ export const settingsInitialState: SettingsState = {
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
-  isReinstalled: true
+  isReinstalled: false
 };
 
 export interface SettingsRootState {

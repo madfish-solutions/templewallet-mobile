@@ -7,5 +7,6 @@ export const mockSettingsState: SettingsState = {
   isBiometricsEnabled: false,
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
-  selectedRpcUrl: RpcList[0].url
+  selectedRpcUrl: RpcList[0].url,
+  isReinstalled: false
 };
