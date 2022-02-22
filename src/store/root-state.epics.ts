@@ -1,15 +1,42 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Keychain from 'react-native-keychain';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable } from 'rxjs';
-import { concatMap, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { concatMap, filter, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { BeaconHandler } from '../beacon/beacon-handler';
 import { globalNavigationRef } from '../navigator/root-stack';
+import { isDefined } from '../utils/is-defined';
 import { getKeychainOptions } from '../utils/keychain.utils';
 import { RootState } from './create-store';
-import { rootStateResetAction, untypedNavigateAction } from './root-state.actions';
+import { reinstallAction, rootStateResetAction, untypedNavigateAction } from './root-state.actions';
+
+const reinstallEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(reinstallAction.submit),
+    switchMap(async () => {
+      const cacheKey = 'keychain_reinstall';
+      const cached = await AsyncStorage.getItem(cacheKey);
+      if (!isDefined(cached)) {
+        // dispatch(rootStateResetAction.submit);
+        return true;
+      }
+      await AsyncStorage.setItem(cacheKey, 'true');
+
+      return false;
+    }),
+    filter(x => !!x),
+    withLatestFrom(state$, (_, state) =>
+      state.wallet.accounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
+    ),
+    switchMap(keychainOptionsArray =>
+      from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
+    ),
+    switchMap(() => forkJoin([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()])),
+    mapTo(rootStateResetAction.success())
+  );
 
 const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -36,4 +63,4 @@ const navigateEpic = (action$: Observable<Action>) =>
     })
   );
 
-export const rootStateEpics = combineEpics(rootStateResetEpic, navigateEpic);
+export const rootStateEpics = combineEpics(rootStateResetEpic, navigateEpic, reinstallEpic);

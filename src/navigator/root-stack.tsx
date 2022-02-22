@@ -1,5 +1,4 @@
 import { PortalProvider } from '@gorhom/portal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useEffect, useMemo, useState } from 'react';
@@ -23,10 +22,9 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { rootStateResetAction } from '../store/root-state.actions';
+import { reinstallAction } from '../store/root-state.actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
-import { isDefined } from '../utils/is-defined';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -50,15 +48,7 @@ export const RootStackScreen = () => {
   useQuickActions();
 
   useEffect(() => {
-    const clearKeychainOnReinstall = async () => {
-      const cacheKey = 'keychain_reinstall';
-      const cached = await AsyncStorage.getItem(cacheKey);
-      if (!isDefined(cached)) {
-        dispatch(rootStateResetAction.submit);
-      }
-      await AsyncStorage.setItem(cacheKey, 'true');
-    };
-    clearKeychainOnReinstall();
+    dispatch(reinstallAction.submit);
   }, []);
 
   const handleNavigationContainerStateChange = () =>
