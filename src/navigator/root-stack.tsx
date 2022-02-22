@@ -23,6 +23,7 @@ import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { reinstallAction } from '../store/root-state.actions';
+import { setIsReinstalled } from '../store/settings/settings-actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -49,6 +50,7 @@ export const RootStackScreen = () => {
 
   useEffect(() => {
     dispatch(reinstallAction.submit);
+    dispatch(setIsReinstalled(true));
   }, []);
 
   const handleNavigationContainerStateChange = () =>

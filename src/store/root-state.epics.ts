@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Keychain from 'react-native-keychain';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable } from 'rxjs';
@@ -16,26 +15,10 @@ import { reinstallAction, rootStateResetAction, untypedNavigateAction } from './
 const reinstallEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(reinstallAction.submit),
-    switchMap(async () => {
-      const cacheKey = 'keychain_reinstall';
-      const cached = await AsyncStorage.getItem(cacheKey);
-      if (!isDefined(cached)) {
-        // dispatch(rootStateResetAction.submit);
-        return true;
-      }
-      await AsyncStorage.setItem(cacheKey, 'true');
-
-      return false;
-    }),
+    withLatestFrom(state$, (_, state) => state.settings.isReinstalled),
+    switchMap(async isReinstalled => isDefined(isReinstalled) || isReinstalled === true),
     filter(x => !!x),
-    withLatestFrom(state$, (_, state) =>
-      state.wallet.accounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
-    ),
-    switchMap(keychainOptionsArray =>
-      from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
-    ),
-    switchMap(() => forkJoin([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()])),
-    mapTo(rootStateResetAction.success())
+    mapTo(rootStateResetAction.submit())
   );
 
 const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>

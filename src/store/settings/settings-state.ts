@@ -10,6 +10,7 @@ export interface SettingsState {
   isBalanceHiddenSetting: boolean;
   rpcList: RpcInterface[];
   selectedRpcUrl: string;
+  isReinstalled: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -17,7 +18,8 @@ export const settingsInitialState: SettingsState = {
   isBiometricsEnabled: false,
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
-  selectedRpcUrl: RpcList[0].url
+  selectedRpcUrl: RpcList[0].url,
+  isReinstalled: true
 };
 
 export interface SettingsRootState {
