@@ -10,7 +10,7 @@ export const useTokenType = (address: string) => {
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [typeOfToken, setTypeOfToken] = useState<TokenTypeEnum>(TokenTypeEnum.FA_1_2);
+  const [tokenType, setTokenType] = useState<TokenTypeEnum>(TokenTypeEnum.FA_1_2);
 
   useEffect(() => {
     async function getTokenStandart() {
@@ -18,8 +18,8 @@ export const useTokenType = (address: string) => {
         setLoading(true);
         const contract = await tezos.contract.at(address);
 
-        const tokenType = getTokenType(contract);
-        setTypeOfToken(tokenType);
+        const type = getTokenType(contract);
+        setTokenType(type);
       } catch (error) {
         setLoading(false);
       }
@@ -29,5 +29,5 @@ export const useTokenType = (address: string) => {
     getTokenStandart();
   }, []);
 
-  return { tokenType: typeOfToken, loading };
+  return { tokenType, loading };
 };
