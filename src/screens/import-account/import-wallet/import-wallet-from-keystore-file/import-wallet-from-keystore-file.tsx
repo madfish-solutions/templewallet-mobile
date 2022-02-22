@@ -32,11 +32,19 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
       });
-    } catch {
-      showErrorToast({
-        title: 'Wrong file or password',
-        description: 'Please change one of them and try again'
-      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      if (e.message === 'Unsupported kukai version') {
+        showErrorToast({
+          title: 'Cannot import',
+          description: 'Unsupported kukai version'
+        });
+      } else {
+        showErrorToast({
+          title: 'Wrong file or password',
+          description: 'Please change one of them and try again'
+        });
+      }
     }
   };
 
