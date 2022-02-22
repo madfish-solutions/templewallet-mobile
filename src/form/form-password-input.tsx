@@ -1,9 +1,11 @@
 import { useField } from 'formik';
 import React, { FC, useState } from 'react';
 
+import { Divider } from '../components/divider/divider';
 import { PasswordStrengthIndicator } from '../components/password-strength-indicator/password-strength-indicator';
 import { StyledPasswordInput } from '../components/styled-password-input/styled-password-input';
 import { StyledPasswordInputProps } from '../components/styled-password-input/styled-password-input.props';
+import { formatSize } from '../styles/format-size';
 import { hasError } from '../utils/has-error';
 import { isDefined } from '../utils/is-defined';
 import { ErrorMessage } from './error-message/error-message';
@@ -60,7 +62,15 @@ export const FormPasswordInput: FC<Props> = ({ name, isNewPassword, testID }) =>
         testID={testID}
       />
       {isDefined(isNewPassword) && isNewPassword ? (
-        focused && <PasswordStrengthIndicator isError={isError} validation={passwordValidation} />
+        <>
+          <Divider size={formatSize(16)} />
+          {focused && (
+            <>
+              <PasswordStrengthIndicator isError={isError} validation={passwordValidation} />
+              <Divider size={formatSize(32)} />
+            </>
+          )}
+        </>
       ) : (
         <ErrorMessage meta={meta} />
       )}

@@ -1,10 +1,9 @@
 import React, { FC } from 'react';
-import { FlatList, ListRenderItem, View } from 'react-native';
+import { FlatList, ListRenderItem } from 'react-native';
 
 import { PasswordValidation } from '../../form/form-password-input';
 import { isDefined } from '../../utils/is-defined';
 import { PasswordStrengthIndicatorItem } from './password-strength-indicator-item/password-strength-indicator-item';
-import { usePasswordStrengthIndicatorStyles } from './password-strength-indicator.styles';
 
 interface PasswordStrengthIndicatorProps {
   validation: PasswordValidation;
@@ -21,8 +20,6 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({
   validation: { minChar, cases, number, specialChar },
   isError = false
 }) => {
-  const styles = usePasswordStrengthIndicatorStyles();
-
   const validationMessages: ValidationMessage[] = [
     {
       isValid: minChar,
@@ -51,9 +48,5 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({
     />
   );
 
-  return (
-    <View style={styles.container}>
-      <FlatList data={validationMessages} renderItem={renderItem} keyExtractor={item => item.message} />
-    </View>
-  );
+  return <FlatList data={validationMessages} renderItem={renderItem} keyExtractor={item => item.message} />;
 };
