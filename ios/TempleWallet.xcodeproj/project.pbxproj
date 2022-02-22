@@ -50,6 +50,7 @@
 		57F3A6BC4E85427EE22F19B0 /* libPods-TempleWallet-TempleWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet-TempleWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
 		98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		B64BE5B527C5313A001A7BF5 /* security.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = security.txt; sourceTree = "<group>"; };
 		C3B9AD5375956C7D75A5D466 /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		C990F6C4CAEDB1CD8BFEBD6D /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
 		DB3DA71D057206653C0F4CC6 /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -127,6 +128,7 @@
 				9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */,
 				98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */,
 				50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */,
+				B64BE5B527C5313A001A7BF5 /* security.txt */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -602,7 +604,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -668,7 +670,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
