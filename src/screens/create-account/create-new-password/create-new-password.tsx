@@ -58,7 +58,11 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" testID={CreateNewPasswordCreateAccountSelectors.PasswordInput} />
+            <FormPasswordInput
+              isNewPassword
+              name="password"
+              testID={CreateNewPasswordCreateAccountSelectors.PasswordInput}
+            />
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput
