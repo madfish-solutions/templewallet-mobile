@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -18,6 +19,8 @@ import { FormPasswordInput } from '../../form/form-password-input';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { setPasswordAttempts, setPasswordTimelock } from '../../store/security/security-actions';
+import { usePasswordAttempt, usePasswordTimelock } from '../../store/security/security-selectors';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
@@ -29,19 +32,82 @@ import {
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
+const LOCK_TIME = 60_000;
+const LAST_ATTEMPT = 3;
+
+const checkTime = (i: number) => (i < 10 ? '0' + i : i);
+
+const getTimeLeft = (start: number, end: number) => {
+  const isPositiveTime = start + end - Date.now() < 0 ? 0 : start + end - Date.now();
+  const diff = isPositiveTime / 1000;
+  const seconds = Math.floor(diff % 60);
+  const minutes = Math.floor(diff / 60);
+
+  return `${checkTime(minutes)}:${checkTime(seconds)}`;
+};
+
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
 
   const { biometryType } = useBiometryAvailability();
   const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
+  const dispatch = useDispatch();
+  const attempt = usePasswordAttempt();
+  const timelock = usePasswordTimelock();
+  const lockLevel = LOCK_TIME * Math.floor(attempt / 3);
+  const [timeleft, setTimeleft] = useState(getTimeLeft(timelock, lockLevel));
 
   const biometricsEnabled = useBiometricsEnabledSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
+  const setAttempt = useCallback((n: number) => dispatch(setPasswordAttempts(n)), []);
+  const setTimeLock = useCallback((n: number) => dispatch(setPasswordTimelock(n)), []);
+
+  const onSubmit = useCallback(
+    async ({ password }: EnterPasswordFormValues) => {
+      // if (submitting) return;
+      try {
+        if (attempt > LAST_ATTEMPT) {
+          await new Promise(res => setTimeout(res, Math.random() * 2000 + 1000));
+        }
+        await unlock(password);
+
+        setAttempt(1);
+      } catch (err) {
+        if (attempt >= LAST_ATTEMPT) {
+          setTimeLock(Date.now());
+        }
+        setAttempt(attempt + 1);
+        setTimeleft(getTimeLeft(Date.now(), LOCK_TIME * Math.floor((attempt + 1) / 3)));
+
+        console.error(err);
+
+        // Human delay.
+        await new Promise(res => setTimeout(res, 300));
+        // setError('password', SUBMIT_ERROR_TYPE, err.message);
+        // focusPasswordField();
+      }
+    },
+    [unlock, attempt, setAttempt, setTimeLock]
+  );
+
+  const isDisabled = useMemo(() => Date.now() - timelock <= lockLevel, [timelock, lockLevel]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Date.now() - timelock > lockLevel) {
+        setTimeLock(0);
+      }
+      setTimeleft(getTimeLeft(timelock, lockLevel));
+    }, 1_000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timelock, lockLevel, setTimeLock]);
 
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
     isBiometryAvailable
@@ -69,6 +135,17 @@ export const EnterPassword = () => {
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
               <View style={styles.passwordInputSection}>
+                {isDisabled && (
+                  // <Alert
+                  //   type="error"
+                  //   title={t('error')}
+                  //   description={`${t('unlockPasswordErrorDelay')} ${timeleft}`}
+                  //   className="mt-6"
+                  // />
+                  <Text>
+                    You have entered the wrong password three times. Your wallet is being blocked for {timeleft}
+                  </Text>
+                )}
                 <View style={styles.passwordInputWrapper}>
                   <FormPasswordInput name="password" />
                 </View>
@@ -84,7 +161,7 @@ export const EnterPassword = () => {
               </View>
 
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="Unlock" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary title="Unlock" disabled={!isValid && isDisabled} onPress={submitForm} />
               <Divider />
             </View>
           )}
