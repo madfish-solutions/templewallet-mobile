@@ -12,7 +12,7 @@ import { FormFileInput } from '../../../../form/form-file-input';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast } from '../../../../toast/toast.utils';
-import { decryptSeedPhrase } from '../../../../utils/kukai.utils';
+import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
 import { ImportWalletProps } from '../import-wallet';
 import {
   ImportWalletFromKeystoreFileFormValues,
@@ -32,11 +32,19 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
       });
-    } catch {
-      showErrorToast({
-        title: 'Wrong file or password',
-        description: 'Please change one of them and try again'
-      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      if (e.message === KUKAI_VERSION_ERROR) {
+        showErrorToast({
+          title: 'Cannot import',
+          description: KUKAI_VERSION_ERROR
+        });
+      } else {
+        showErrorToast({
+          title: 'Wrong file or password',
+          description: 'Please change one of them and try again'
+        });
+      }
     }
   };
 

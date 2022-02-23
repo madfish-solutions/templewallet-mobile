@@ -1,32 +1,19 @@
 import { entropyToMnemonic } from 'bip39';
 import * as forge from 'node-forge';
-import { NativeModules } from 'react-native';
 import scrypt from 'react-native-scrypt';
 
-import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
 
+export const KUKAI_VERSION_ERROR = 'Unsupported kukai version';
+
 const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
-  if (version === 1) {
-    return decrypt_v1(chiphertext, password, salt);
-  } else if (version === 2 || version === 3) {
+  if (version === 1 || version === 2) {
+    throw new Error(KUKAI_VERSION_ERROR);
+  }
+  if (version === 3) {
     return decrypt_v2(chiphertext, password, salt);
   } else {
     throw new Error('Unrecognized encryption format');
-  }
-};
-
-const decrypt_v1 = async (ciphertext: string, password: string, salt: string | null) => {
-  try {
-    if (!isDefined(password) || !isDefined(salt)) {
-      throw new Error('Missing password or salt');
-    }
-    const key = await NativeModules.Aes.pbkdf2(password, salt, 10000, 32, 512);
-    const plaintext = await NativeModules.Aes.decrypt(ciphertext, key, salt, AES_ALGORITHM);
-
-    return Buffer.from(plaintext);
-  } catch (e) {
-    return null;
   }
 };
 
