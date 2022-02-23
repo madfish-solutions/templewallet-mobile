@@ -29,6 +29,17 @@ export const useSecureInputStyles = createUseStyles(({ colors, typography }) => 
     borderColor: colors.lines,
     borderWidth: formatSize(0.5)
   },
+  letterContainerCenter: {
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(10),
+    backgroundColor: colors.cardBG,
+    borderColor: colors.lines,
+    borderWidth: formatSize(0.5),
+    alignItems: 'center'
+  },
+  buttonsContainer: {
+    flexDirection: 'row'
+  },
   letter: {
     color: colors.accentBG
   },

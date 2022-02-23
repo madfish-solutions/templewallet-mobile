@@ -34,6 +34,8 @@ import HummerIcon from './assets/hummer.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import KeyboardShiftOutlinedIcon from './assets/keyboard-shift-outline.svg';
+import KeyboardShiftIcon from './assets/keyboard-shift.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
@@ -101,6 +103,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
+  [IconNameEnum.KeyboardShift]: KeyboardShiftIcon,
+  [IconNameEnum.KeyboardShiftOutlined]: KeyboardShiftOutlinedIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
