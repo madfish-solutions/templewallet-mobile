@@ -10,18 +10,6 @@ import { hasError } from '../utils/has-error';
 import { isDefined } from '../utils/is-defined';
 import { ErrorMessage } from './error-message/error-message';
 
-const MIN_PASSWORD_LENGTH = 8;
-const uppercaseLowercaseMixtureRegx = /(?=.*[a-z])(?=.*[A-Z])/;
-const lettersNumbersMixtureRegx = /(?=.*\d)(?=.*[A-Za-z])/;
-const specialCharacterRegx = /[!@#$%^&*()_+\-=\]{};':"\\|,.<>?]/;
-
-export interface PasswordValidation {
-  minChar: boolean;
-  cases: boolean;
-  number: boolean;
-  specialChar: boolean;
-}
-
 interface Props extends Pick<StyledPasswordInputProps, 'testID'> {
   name: string;
   isShowPasswordStrengthIndicator?: boolean;
@@ -32,22 +20,6 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
   const isError = hasError(meta);
 
   const [focused, setFocused] = useState(false);
-  const [passwordValidation, setPasswordValidation] = useState<PasswordValidation>({
-    minChar: false,
-    cases: false,
-    number: false,
-    specialChar: false
-  });
-
-  const handleChange = (text: string) => {
-    helpers.setValue(text);
-    setPasswordValidation({
-      minChar: text.length >= MIN_PASSWORD_LENGTH,
-      cases: uppercaseLowercaseMixtureRegx.test(text),
-      number: lettersNumbersMixtureRegx.test(text),
-      specialChar: specialCharacterRegx.test(text)
-    });
-  };
 
   return (
     <>
@@ -58,7 +30,7 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
         autoCapitalize="none"
         onBlur={() => helpers.setTouched(true)}
         onFocus={() => setFocused(true)}
-        onChangeText={text => handleChange(text)}
+        onChangeText={field.onChange(name)}
         testID={testID}
       />
       {isDefined(isShowPasswordStrengthIndicator) && isShowPasswordStrengthIndicator ? (
@@ -66,7 +38,7 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
           <Divider size={formatSize(16)} />
           {focused && (
             <>
-              <PasswordStrengthIndicator isError={isError} validation={passwordValidation} />
+              <PasswordStrengthIndicator isError={isError} password={field.value} />
               <Divider size={formatSize(32)} />
             </>
           )}

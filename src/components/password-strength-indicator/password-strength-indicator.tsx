@@ -1,22 +1,33 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 
-import { PasswordValidation } from '../../form/form-password-input';
 import { isDefined } from '../../utils/is-defined';
 import {
   PasswordStrengthIndicatorItem,
   PasswordStrengthIndicatorItemProps
 } from './password-strength-indicator-item/password-strength-indicator-item';
 
+const MIN_PASSWORD_LENGTH = 8;
+const uppercaseLowercaseMixtureRegx = /(?=.*[a-z])(?=.*[A-Z])/;
+const lettersNumbersMixtureRegx = /(?=.*\d)(?=.*[A-Za-z])/;
+const specialCharacterRegx = /[!@#$%^&*()_+\-=\]{};':"\\|,.<>?]/;
+
 interface PasswordStrengthIndicatorProps {
-  validation: PasswordValidation;
+  password: string;
   isError?: boolean;
 }
 
-export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({
-  validation: { minChar, cases, number, specialChar },
-  isError = false
-}) => {
+export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({ password, isError = false }) => {
+  const { minChar, cases, number, specialChar } = useMemo(
+    () => ({
+      minChar: password.length >= MIN_PASSWORD_LENGTH,
+      cases: uppercaseLowercaseMixtureRegx.test(password),
+      number: lettersNumbersMixtureRegx.test(password),
+      specialChar: specialCharacterRegx.test(password)
+    }),
+    [password]
+  );
+
   const validationMessages: PasswordStrengthIndicatorItemProps[] = [
     {
       isValid: minChar,
