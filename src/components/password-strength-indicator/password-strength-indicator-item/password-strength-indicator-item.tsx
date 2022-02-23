@@ -1,11 +1,11 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 import { Text } from 'react-native';
 
 import { usePasswordStrengthIndicatorItemStyles } from './password-strength-indicator-item.styles';
 
-interface PasswordStrengthIndicatorItemProps {
+export interface PasswordStrengthIndicatorItemProps {
   isValid: boolean;
-  message: ReactNode;
+  message: string;
   noColor?: boolean;
 }
 

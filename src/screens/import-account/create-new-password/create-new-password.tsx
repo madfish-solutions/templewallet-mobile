@@ -75,7 +75,11 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput isNewPassword name="password" testID={CreateNewPasswordSelectors.PasswordInput} />
+            <FormPasswordInput
+              isShowPasswordStrengthIndicator
+              name="password"
+              testID={CreateNewPasswordSelectors.PasswordInput}
+            />
 
             <Label label="Repeat Password" description="Please enter the password again." />
             <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.RepeatPasswordInput} />

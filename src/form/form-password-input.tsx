@@ -24,10 +24,10 @@ export interface PasswordValidation {
 
 interface Props extends Pick<StyledPasswordInputProps, 'testID'> {
   name: string;
-  isNewPassword?: boolean;
+  isShowPasswordStrengthIndicator?: boolean;
 }
 
-export const FormPasswordInput: FC<Props> = ({ name, isNewPassword, testID }) => {
+export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndicator, testID }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -61,7 +61,7 @@ export const FormPasswordInput: FC<Props> = ({ name, isNewPassword, testID }) =>
         onChangeText={text => handleChange(text)}
         testID={testID}
       />
-      {isDefined(isNewPassword) && isNewPassword ? (
+      {isDefined(isShowPasswordStrengthIndicator) && isShowPasswordStrengthIndicator ? (
         <>
           <Divider size={formatSize(16)} />
           {focused && (

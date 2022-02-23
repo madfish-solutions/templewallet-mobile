@@ -3,24 +3,21 @@ import { FlatList, ListRenderItem } from 'react-native';
 
 import { PasswordValidation } from '../../form/form-password-input';
 import { isDefined } from '../../utils/is-defined';
-import { PasswordStrengthIndicatorItem } from './password-strength-indicator-item/password-strength-indicator-item';
+import {
+  PasswordStrengthIndicatorItem,
+  PasswordStrengthIndicatorItemProps
+} from './password-strength-indicator-item/password-strength-indicator-item';
 
 interface PasswordStrengthIndicatorProps {
   validation: PasswordValidation;
   isError?: boolean;
 }
 
-interface ValidationMessage {
-  isValid: boolean;
-  message: string;
-  noColor?: boolean;
-}
-
 export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({
   validation: { minChar, cases, number, specialChar },
   isError = false
 }) => {
-  const validationMessages: ValidationMessage[] = [
+  const validationMessages: PasswordStrengthIndicatorItemProps[] = [
     {
       isValid: minChar,
       message: '✓ At least 8 characters - the more characters, the better'
@@ -40,7 +37,7 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({
     }
   ];
 
-  const renderItem: ListRenderItem<ValidationMessage> = ({ item }) => (
+  const renderItem: ListRenderItem<PasswordStrengthIndicatorItemProps> = ({ item }) => (
     <PasswordStrengthIndicatorItem
       isValid={item.isValid}
       message={item.message}
