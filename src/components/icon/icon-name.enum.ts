@@ -16,8 +16,6 @@ export enum IconNameEnum {
   DownloadCloud = 'DownloadCloud',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
-  KeyboardShift = 'KeyboardShift',
-  KeyboardShiftOutlined = 'KeyboardShiftOutlined',
   InputXCircle = 'InputXCircle',
   X = 'X',
   XCircle = 'XCircle',
