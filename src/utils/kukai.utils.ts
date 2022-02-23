@@ -4,9 +4,11 @@ import scrypt from 'react-native-scrypt';
 
 import { isDefined } from './is-defined';
 
+export const KUKAI_VERSION_ERROR = 'Unsupported kukai version';
+
 const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
   if (version === 1 || version === 2) {
-    throw new Error('Unsupported kukai version');
+    throw new Error(KUKAI_VERSION_ERROR);
   }
   if (version === 3) {
     return decrypt_v2(chiphertext, password, salt);
