@@ -1,18 +1,25 @@
 import { useField } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
+import { Divider } from '../components/divider/divider';
+import { PasswordStrengthIndicator } from '../components/password-strength-indicator/password-strength-indicator';
 import { StyledPasswordInput } from '../components/styled-password-input/styled-password-input';
 import { StyledPasswordInputProps } from '../components/styled-password-input/styled-password-input.props';
+import { formatSize } from '../styles/format-size';
 import { hasError } from '../utils/has-error';
+import { isDefined } from '../utils/is-defined';
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<StyledPasswordInputProps, 'testID'> {
   name: string;
+  isShowPasswordStrengthIndicator?: boolean;
 }
 
-export const FormPasswordInput: FC<Props> = ({ name, testID }) => {
+export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndicator, testID }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
+
+  const [focused, setFocused] = useState(false);
 
   return (
     <>
@@ -22,10 +29,23 @@ export const FormPasswordInput: FC<Props> = ({ name, testID }) => {
         isShowCleanButton={true}
         autoCapitalize="none"
         onBlur={() => helpers.setTouched(true)}
+        onFocus={() => setFocused(true)}
         onChangeText={field.onChange(name)}
         testID={testID}
       />
-      <ErrorMessage meta={meta} />
+      {isDefined(isShowPasswordStrengthIndicator) && isShowPasswordStrengthIndicator ? (
+        <>
+          <Divider size={formatSize(16)} />
+          {focused && (
+            <>
+              <PasswordStrengthIndicator isError={isError} password={field.value} />
+              <Divider size={formatSize(32)} />
+            </>
+          )}
+        </>
+      ) : (
+        <ErrorMessage meta={meta} />
+      )}
     </>
   );
 };
