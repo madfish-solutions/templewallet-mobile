@@ -17,6 +17,13 @@ const decrypt = async (chiphertext: string, password: string, salt: string, vers
   }
 };
 
+export class KukaiError extends Error {
+  constructor() {
+    super();
+    throw new Error(KUKAI_VERSION_ERROR);
+  }
+}
+
 const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
   try {
     if (!password || !salt) {
