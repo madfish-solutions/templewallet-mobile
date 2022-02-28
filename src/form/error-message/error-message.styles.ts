@@ -6,9 +6,10 @@ import { formatSize } from '../../styles/format-size';
 export const ErrorMessageStyles = StyleSheet.create({
   root: {
     color: transparent,
-    fontSize: formatSize(12),
-    lineHeight: formatSize(12),
-    marginTop: formatSize(4),
+    fontSize: formatSize(11),
+    lineHeight: formatSize(13),
+    marginVertical: formatSize(6),
+    marginLeft: formatSize(6),
     alignSelf: 'flex-start'
   },
   rootVisible: {

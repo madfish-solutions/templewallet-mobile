@@ -1,4 +1,5 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
+import { formatSize } from '../../../styles/format-size';
 
 export const usePasswordStrengthIndicatorItemStyles = createUseStyles(({ colors, typography }) => ({
   adding: {
@@ -9,6 +10,7 @@ export const usePasswordStrengthIndicatorItemStyles = createUseStyles(({ colors,
   },
   text: {
     ...typography.caption11Regular,
-    color: colors.gray1
+    color: colors.gray1,
+    marginLeft: formatSize(6)
   }
 }));

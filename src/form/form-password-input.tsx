@@ -39,7 +39,7 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
           {focused && (
             <>
               <PasswordStrengthIndicator isError={isError} password={field.value} />
-              <Divider size={formatSize(32)} />
+              <Divider size={formatSize(28)} />
             </>
           )}
         </>
