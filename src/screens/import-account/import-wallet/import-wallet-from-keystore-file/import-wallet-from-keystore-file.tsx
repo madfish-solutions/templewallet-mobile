@@ -13,7 +13,6 @@ import { FormPasswordInput } from '../../../../form/form-password-input';
 import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast } from '../../../../toast/toast.utils';
 import { decryptSeedPhrase, KukaiError, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
-
 import { ImportWalletProps } from '../import-wallet';
 import {
   ImportWalletFromKeystoreFileFormValues,
