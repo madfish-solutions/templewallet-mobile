@@ -33,9 +33,9 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
 
   const { biometryType } = useBiometryAvailability();
-  const { unlock, unlockWithBiometry, timeleft } = useAppLock();
+  const { unlock, unlockWithBiometry, timelock } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
-  const isDisabled = timeleft !== '00:00';
+  const isDisabled = timelock > 0;
 
   const biometricsEnabled = useBiometricsEnabledSelector();
 
@@ -78,7 +78,7 @@ export const EnterPassword = () => {
                   //   className="mt-6"
                   // />
                   <Text>
-                    You have entered the wrong password three times. Your wallet is being blocked for {timeleft}
+                    You have entered the wrong password three times. Your wallet is being blocked for {timelock}
                   </Text>
                 )}
                 <View style={styles.passwordInputWrapper}>
