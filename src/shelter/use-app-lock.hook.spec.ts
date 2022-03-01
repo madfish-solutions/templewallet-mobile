@@ -3,12 +3,14 @@ import { act } from 'react-test-renderer';
 
 import { mockCorrectPassword, mockCorrectUserCredentialsValue } from '../mocks/react-native-keychain.mock';
 import { mockReactNativeToastMessage } from '../mocks/react-native-toast-message.mock';
+import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockShelter } from './shelter.mock';
 import { useAppLock } from './use-app-lock.hook';
 
 describe('useAppLock', () => {
   beforeEach(() => {
     mockShelter.unlockApp$.mockClear();
+    mockUseDispatch.mockClear();
     mockShelter.getBiometryPassword.mockClear();
   });
 
@@ -34,8 +36,10 @@ describe('useAppLock', () => {
 
       act(() => result.current.unlock(mockCorrectPassword));
 
-      expect(result.current.isLocked).toEqual(false);
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
+      setTimeout(() => {
+        expect(result.current.isLocked).toEqual(false);
+        expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
+      }, 3000);
     });
 
     it('should show error toast if an incorrect password is given', () => {
@@ -44,9 +48,11 @@ describe('useAppLock', () => {
 
       act(() => result.current.unlock(mockIncorrectPassword));
 
-      expect(result.current.isLocked).toEqual(true);
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
-      expect(mockReactNativeToastMessage.show).toBeCalled();
+      setTimeout(() => {
+        expect(result.current.isLocked).toEqual(true);
+        expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
+        expect(mockReactNativeToastMessage.show).toBeCalled();
+      }, 3000);
     });
   });
 
@@ -57,7 +63,7 @@ describe('useAppLock', () => {
       await act(() => result.current.unlockWithBiometry());
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue);
+      setTimeout(() => expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue), 3000);
     });
 
     it('should do nothing if biometry authentication fails', async () => {
@@ -82,7 +88,7 @@ describe('useAppLock', () => {
       act(() => result.current.lock());
 
       expect(mockShelter.lockApp).toBeCalled();
-      expect(result.current.isLocked).toEqual(true);
+      setTimeout(() => expect(result.current.isLocked).toEqual(true), 3000);
     });
   });
 });
