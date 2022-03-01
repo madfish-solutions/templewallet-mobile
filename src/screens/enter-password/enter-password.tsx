@@ -15,6 +15,7 @@ import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
+import { MaxPasswordAttemtps } from '../../config/system';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
@@ -116,33 +117,31 @@ export const EnterPassword = () => {
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
               <View style={styles.passwordInputSection}>
-                {isDisabled && (
-                  // <Alert
-                  //   type="error"
-                  //   title={t('error')}
-                  //   description={`${t('unlockPasswordErrorDelay')} ${timeleft}`}
-                  //   className="mt-6"
-                  // />
-                  <Text>
-                    You have entered the wrong password three times. Your wallet is being blocked for {timeleft}
+                {isDisabled ? (
+                  <Text style={styles.passwordBlocked}>
+                    You have entered the wrong password {MaxPasswordAttemtps} times. Your wallet is being blocked for{' '}
+                    {timeleft}
                   </Text>
-                )}
-                <View style={styles.passwordInputWrapper}>
-                  <FormPasswordInput name="password" />
-                </View>
-                {isBiometryAvailable && (
+                ) : (
                   <>
-                    <Divider size={formatSize(16)} />
-                    <View>
-                      <Divider size={formatSize(4)} />
-                      <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
+                    <View style={styles.passwordInputWrapper}>
+                      <FormPasswordInput name="password" />
                     </View>
+                    {isBiometryAvailable && (
+                      <>
+                        <Divider size={formatSize(16)} />
+                        <View>
+                          <Divider size={formatSize(4)} />
+                          <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
+                        </View>
+                      </>
+                    )}
                   </>
                 )}
               </View>
 
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="Unlock" disabled={!isValid && isDisabled} onPress={submitForm} />
+              <ButtonLargePrimary title="Unlock" disabled={!isValid || isDisabled} onPress={submitForm} />
               <Divider />
             </View>
           )}

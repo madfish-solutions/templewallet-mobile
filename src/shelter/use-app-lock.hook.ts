@@ -3,13 +3,12 @@ import { useDispatch } from 'react-redux';
 import { Subject } from 'rxjs';
 import { delay, switchMap } from 'rxjs/operators';
 
+import { MaxPasswordAttemtps } from '../config/system';
 import { setPasswordAttempts } from '../store/security/security-actions';
 import { usePasswordAttempt } from '../store/security/security-selectors';
 import { showErrorToast } from '../toast/toast.utils';
 import { isDefined } from '../utils/is-defined';
 import { Shelter } from './shelter';
-
-const LAST_ATTEMPT = 3;
 
 export const useAppLock = () => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
@@ -38,7 +37,7 @@ export const useAppLock = () => {
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
         .pipe(
-          delay(attempt > LAST_ATTEMPT ? Math.random() * 2000 + 1000 : 0),
+          delay(attempt > MaxPasswordAttemtps ? Math.random() * 2000 + 1000 : 0),
           switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {
