@@ -6,17 +6,6 @@ import { isDefined } from './is-defined';
 
 export const KUKAI_VERSION_ERROR = 'Unsupported kukai version';
 
-const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
-  if (version === 1 || version === 2) {
-    throw new Error(KUKAI_VERSION_ERROR);
-  }
-  if (version === 3) {
-    return decrypt_v2(chiphertext, password, salt);
-  } else {
-    throw new Error('Unrecognized encryption format');
-  }
-};
-
 const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
   try {
     if (!password || !salt) {
@@ -55,12 +44,15 @@ const bumpIV = (salt: string, bumps: number) => {
 
 export const decryptSeedPhrase = async (json: string, pwd: string) => {
   const walletData = JSON.parse(json);
+  if (walletData.walletType === 4 && (walletData.version === 1 || walletData.version === 2)) {
+    throw new Error(KUKAI_VERSION_ERROR);
+  }
   if (
     (walletData.walletType === 4 && walletData.version === 3) ||
     (walletData.walletType === 0 && walletData.version === 3)
   ) {
     const iv = bumpIV(walletData.iv, 1);
-    const entropy = await decrypt(walletData.encryptedEntropy, pwd, iv, walletData.version);
+    const entropy = await decrypt_v2(walletData.encryptedEntropy, pwd, iv);
     if (!isDefined(entropy) || (typeof entropy === 'string' && entropy === '')) {
       throw new Error('Failed to decrypt entropy. Make sure the password is correct');
     }
