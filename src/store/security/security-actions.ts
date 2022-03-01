@@ -1,4 +1,4 @@
-import { createAction } from '@reduxjs/toolkit';
+import { createActions } from '../create-actions';
 
-export const setPasswordAttempts = createAction<number>('security/SET_PASSWORD_ATTEMPTS');
-export const setPasswordTimelock = createAction<number>('security/SET_PASSWORD_TIMELOCK');
+export const setPasswordAttempts = createActions<number>('security/SET_PASSWORD_ATTEMPTS');
+export const setPasswordTimelock = createActions<number>('security/SET_PASSWORD_TIMELOCK');
