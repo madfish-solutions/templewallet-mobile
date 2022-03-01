@@ -44,7 +44,7 @@ const bumpIV = (salt: string, bumps: number) => {
 
 export const decryptSeedPhrase = async (json: string, pwd: string) => {
   const walletData = JSON.parse(json);
-  if (walletData.version === 1 || walletData.version === 2) {
+  if (walletData.walletType === 4 && (walletData.version === 1 || walletData.version === 2)) {
     throw new Error(KUKAI_VERSION_ERROR);
   }
   if (
