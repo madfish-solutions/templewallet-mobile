@@ -4,6 +4,7 @@ import { OVERLAY_SHOW_TIMEOUT } from '../../../components/mnemonic/mnemonic.conf
 import { RevealSecretView } from '../../../components/mnemonic/reveal-secret-view/reveal-secret-view';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { isDefined } from '../../../utils/is-defined';
 
 interface Props {
   publicKeyHash: string;
@@ -19,6 +20,20 @@ export const RevealPrivateKeyView: FC<Props> = ({ publicKeyHash }) => {
     clearActiveTimer();
     setSecretKey(undefined);
   }, [publicKeyHash]);
+
+  useEffect(() => {
+    if (isDefined(secretKey)) {
+      const timer = setTimeout(() => {
+        setSecretKey(undefined);
+      }, 3 * 60_000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+
+    return undefined;
+  }, [secretKey, setSecretKey]);
 
   const handleProtectedOverlayPress = () =>
     revealSecretKey({
