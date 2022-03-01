@@ -41,7 +41,6 @@ export const useAppLock = () => {
           switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {
-          console.log(success);
           if (success) {
             dispatch(setPasswordAttempts.submit(1));
 

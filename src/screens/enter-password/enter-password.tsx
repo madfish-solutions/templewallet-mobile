@@ -65,13 +65,9 @@ export const EnterPassword = () => {
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  console.log(timeleft, timelock, attempt);
-
   const onSubmit = useCallback(
     ({ password }: EnterPasswordFormValues) => {
-      console.log(timeleft, timelock, attempt);
       if (!isDisabled) {
-        console.log('submit', Date.now());
         unlock(password);
       }
     },
