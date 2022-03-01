@@ -19,8 +19,9 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
     textAlign: 'center'
   },
   passwordBlocked: {
-    height: formatSize(40),
-    marginLeft: formatSize(4)
+    paddingBottom: formatSize(4),
+    paddingLeft: formatSize(4),
+    color: colors.destructive
   },
   passwordInputSection: {
     flexDirection: 'row'
