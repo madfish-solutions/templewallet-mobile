@@ -113,7 +113,7 @@ export const EnterPassword = () => {
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
               <View style={styles.passwordInputSection}>
-                {!isDisabled ? (
+                {isDisabled ? (
                   <Text style={styles.passwordBlocked}>
                     You have entered the wrong password {MaxPasswordAttemtps} times. Your wallet is being blocked for{' '}
                     {timeleft}
