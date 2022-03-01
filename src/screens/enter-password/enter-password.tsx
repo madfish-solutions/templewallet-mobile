@@ -33,7 +33,7 @@ import {
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
-const LOCK_TIME = 5_000;
+const LOCK_TIME = 60_000;
 
 const checkTime = (i: number) => (i < 10 ? '0' + i : i);
 
