@@ -17,13 +17,6 @@ const decrypt = async (chiphertext: string, password: string, salt: string, vers
   }
 };
 
-export class KukaiError extends Error {
-  constructor() {
-    super();
-    throw new Error(KUKAI_VERSION_ERROR);
-  }
-}
-
 const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
   try {
     if (!password || !salt) {
@@ -67,7 +60,7 @@ export const decryptSeedPhrase = async (json: string, pwd: string) => {
     (walletData.walletType === 0 && walletData.version === 3)
   ) {
     const iv = bumpIV(walletData.iv, 1);
-    const entropy = await decrypt(walletData.encryptedEntropy, pwd, iv, 3);
+    const entropy = await decrypt(walletData.encryptedEntropy, pwd, iv, walletData.version);
     if (!isDefined(entropy) || (typeof entropy === 'string' && entropy === '')) {
       throw new Error('Failed to decrypt entropy. Make sure the password is correct');
     }

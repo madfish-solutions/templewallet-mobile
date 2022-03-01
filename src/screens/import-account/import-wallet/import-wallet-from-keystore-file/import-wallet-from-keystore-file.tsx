@@ -12,7 +12,7 @@ import { FormFileInput } from '../../../../form/form-file-input';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast } from '../../../../toast/toast.utils';
-import { decryptSeedPhrase, KukaiError, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
+import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
 import { ImportWalletProps } from '../import-wallet';
 import {
   ImportWalletFromKeystoreFileFormValues,
@@ -34,7 +34,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      if (e instanceof KukaiError) {
+      if (e.message === KUKAI_VERSION_ERROR) {
         showErrorToast({
           title: 'Cannot import',
           description: KUKAI_VERSION_ERROR
