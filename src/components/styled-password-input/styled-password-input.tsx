@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 import { isString } from '../../utils/is-string';
@@ -12,6 +12,20 @@ export const StyledPasswordInput: FC<StyledPasswordInputProps> = ({ value, ...pr
   const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);
 
   const styles = useStyledPasswordInputStyles();
+
+  useEffect(() => {
+    if (isSecureTextEntry) {
+      const timer = setTimeout(() => {
+        setIsSecureTextEntry(false);
+      }, 10_000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+
+    return undefined;
+  }, [isSecureTextEntry, setIsSecureTextEntry]);
 
   return (
     <View style={styles.view}>
