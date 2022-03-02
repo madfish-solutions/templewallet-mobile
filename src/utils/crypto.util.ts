@@ -53,6 +53,8 @@ export const encryptString$ = (value: string, password: string): Observable<Encr
   );
 };
 
+export const encryptPass$ = (password: string) => pbkdf2$(password, generateSalt());
+
 export const decryptString$ = (
   data: EncryptedData & EncryptedDataSalt,
   password: string

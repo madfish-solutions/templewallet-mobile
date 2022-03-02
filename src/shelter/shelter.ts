@@ -22,6 +22,8 @@ const EMPTY_PASSWORD = '';
 
 export class Shelter {
   private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
+  private static _hash$ = new BehaviorSubject(EMPTY_PASSWORD);
+  private static _salt$ = new BehaviorSubject(EMPTY_PASSWORD);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
     forkJoin(
@@ -58,8 +60,15 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, password).pipe(
       map(value => {
+        console.log(value, password);
         if (value === APP_IDENTIFIER) {
+          // encryptPass$(password).subscribe(encrypted => {
+          //   console.log(encrypted);
+
+          //   return Shelter._password$.next(encrypted);
+          // });
           Shelter._password$.next(password);
+          // console.log(Shelter._password$.getValue());
 
           return true;
         }
@@ -172,4 +181,6 @@ export class Shelter {
 
   static isPasswordCorrect = (password: string) =>
     password !== EMPTY_PASSWORD && password === Shelter._password$.getValue();
+  // crypto.pbkdf2Sync(password, Shelter._salt$.getValue(), 1000, 64, 'sha512').toString('hex') ===
+  // Shelter._password$.getValue();
 }
