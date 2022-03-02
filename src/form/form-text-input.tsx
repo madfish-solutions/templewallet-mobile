@@ -24,6 +24,7 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
         isError={isError}
         isShowCleanButton={isShowCleanButton}
         autoCapitalize={autoCapitalize}
+        autoCorrect={false}
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
       />
