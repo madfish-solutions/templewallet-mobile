@@ -15,7 +15,9 @@ const TAQUITO_MISSED_BLOCK_ERROR_MESSAGE =
   'Taquito missed a block while waiting for operation confirmation and was not able to find the operation';
 
 export const showErrorToast = ({ description, title, onPress }: ToastProps) => {
-  if (description === TAQUITO_MISSED_BLOCK_ERROR_MESSAGE) return;
+  if (description === TAQUITO_MISSED_BLOCK_ERROR_MESSAGE) {
+    return;
+  }
 
   return Toast.show({
     type: ToastTypeEnum.Error,
