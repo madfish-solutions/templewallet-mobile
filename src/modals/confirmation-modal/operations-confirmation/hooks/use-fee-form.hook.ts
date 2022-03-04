@@ -74,9 +74,9 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
     () => ({
       formInitialValues: estimationWasSuccessful ? basicFees : {},
       formValidationSchema: object().shape({
-        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee is required', value => {
+        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee must be positive', value => {
           if (estimationWasSuccessful) {
-            return isDefined(value) && value instanceof BigNumber && value.gte(0);
+            return isDefined(value) && value instanceof BigNumber && value.isGreaterThan(0);
           }
 
           return true;
