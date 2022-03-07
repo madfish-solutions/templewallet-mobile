@@ -18,6 +18,7 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
   return (
     <>
       <StyledTextInput
+        keyboardType="visible-password"
         value={field.value}
         editable={editable}
         placeholder={placeholder}
@@ -25,6 +26,7 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
         isShowCleanButton={isShowCleanButton}
         autoCapitalize={autoCapitalize}
         autoCorrect={false}
+        autoComplete="off"
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
       />
