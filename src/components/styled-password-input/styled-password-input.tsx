@@ -16,9 +16,11 @@ export const StyledPasswordInput: FC<StyledPasswordInputProps> = ({ value, ...pr
   const styles = useStyledPasswordInputStyles();
 
   const handleSecureEntryPress = () => {
-    if (!isSecureTextEntry) {
+    if (isSecureTextEntry) {
       clearActiveTimer();
-      activeTimer.current = setTimeout(() => setIsSecureTextEntry(true), 10_000);
+      activeTimer.current = setTimeout(() => {
+        setIsSecureTextEntry(true);
+      }, 10_000);
     }
     setIsSecureTextEntry(!isSecureTextEntry);
   };
