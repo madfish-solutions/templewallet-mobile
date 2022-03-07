@@ -113,12 +113,12 @@ export const useShelter = () => {
 
       enableBiometryPassword$
         .pipe(
-          switchMap(password =>
-            Shelter.isPasswordCorrect(password) ? Shelter.enableBiometryPassword$(password) : of(false)
+          switchMap(async password =>
+            (await Shelter.isPasswordCorrect(password)) ? Shelter.enableBiometryPassword$(password) : of(false)
           )
         )
         .subscribe(isPasswordSaved => {
-          if (isPasswordSaved === false) {
+          if (typeof isPasswordSaved === 'boolean' && isPasswordSaved === false) {
             showErrorToast({ description: 'Wrong password, please, try again' });
           } else {
             showSuccessToast({ description: 'Successfully enabled!' });

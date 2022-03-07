@@ -1,7 +1,7 @@
 import { BinaryLike } from 'crypto';
 import { NativeModules } from 'react-native';
 import { Aes } from 'react-native-aes-crypto';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of, withLatestFrom } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 export const AES_ALGORITHM: Aes.Algorithms = 'aes-256-cbc';
@@ -66,3 +66,8 @@ export const decryptString$ = (
       )
     )
   );
+
+export const withEncryptedPass = (keychainData: EncryptedData & EncryptedDataSalt, password: string) =>
+  encryptPass$(password).pipe(withLatestFrom(hash => [keychainData, hash]));
+
+// map(keychainData => encryptPass$(password).pipe(withLatestFrom(hash => [hash, keychainData]))),

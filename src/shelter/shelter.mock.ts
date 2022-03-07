@@ -26,7 +26,7 @@ export const mockShelter = {
   createHdAccount$: jest.fn(() => of(mockHdAccount)),
   revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
-  isPasswordCorrect: jest.fn((password: string) => password === mockCorrectPassword),
+  isPasswordCorrect: jest.fn(async (password: string) => password === mockCorrectPassword),
   createImportedAccount$: jest.fn(() => of(mockHdAccount))
 };
 

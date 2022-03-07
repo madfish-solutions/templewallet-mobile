@@ -252,38 +252,38 @@ describe('Shelter', () => {
   });
 
   describe('password check', () => {
-    it('should return "false" for empty string & locked app', () => {
-      expect(Shelter.isPasswordCorrect('')).toEqual(false);
+    it('should return "false" for empty string & locked app', async () => {
+      expect(await Shelter.isPasswordCorrect('')).toEqual(false);
     });
 
-    it('should return "false" for incorrect password & locked app', () => {
-      expect(Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
+    it('should return "false" for incorrect password & locked app', async () => {
+      expect(await Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
     });
 
-    it('should return "false" for correct password & locked app', () => {
-      expect(Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(false);
+    it('should return "false" for correct password & locked app', async () => {
+      expect(await Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(false);
     });
 
     it('should return "false" for empty string & unlocked app', done => {
       Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(() => {
-          expect(Shelter.isPasswordCorrect('')).toEqual(false);
+        rxJsTestingHelper(async () => {
+          expect(await Shelter.isPasswordCorrect('')).toEqual(false);
         }, done)
       );
     });
 
     it('should return "false" for correct password & unlocked app', done => {
       Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(() => {
-          expect(Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
+        rxJsTestingHelper(async () => {
+          expect(await Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
         }, done)
       );
     });
 
     it('should return "true" for correct password & unlocked app', done => {
       Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(() => {
-          expect(Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(true);
+        rxJsTestingHelper(async () => {
+          expect(await Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(true);
         }, done)
       );
     });
