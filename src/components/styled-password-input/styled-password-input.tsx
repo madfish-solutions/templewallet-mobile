@@ -1,6 +1,7 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { View } from 'react-native';
 
+import { useActiveTimer } from '../../hooks/use-active-timer.hook';
 import { isString } from '../../utils/is-string';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -10,22 +11,17 @@ import { useStyledPasswordInputStyles } from './styled-password-input.styles';
 
 export const StyledPasswordInput: FC<StyledPasswordInputProps> = ({ value, ...props }) => {
   const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);
+  const { activeTimer, clearActiveTimer } = useActiveTimer();
 
   const styles = useStyledPasswordInputStyles();
 
-  useEffect(() => {
+  const handleSecureEntryPress = () => {
     if (!isSecureTextEntry) {
-      const timer = setTimeout(() => {
-        setIsSecureTextEntry(true);
-      }, 10_000);
-
-      return () => {
-        clearTimeout(timer);
-      };
+      clearActiveTimer();
+      activeTimer.current = setTimeout(() => setIsSecureTextEntry(true), 10_000);
     }
-
-    return undefined;
-  }, [isSecureTextEntry, setIsSecureTextEntry]);
+    setIsSecureTextEntry(!isSecureTextEntry);
+  };
 
   return (
     <View style={styles.view}>
@@ -34,7 +30,7 @@ export const StyledPasswordInput: FC<StyledPasswordInputProps> = ({ value, ...pr
         <View style={styles.eyeButton}>
           <TouchableIcon
             name={isSecureTextEntry ? IconNameEnum.EyeOpenBold : IconNameEnum.EyeClosedBold}
-            onPress={() => setIsSecureTextEntry(!isSecureTextEntry)}
+            onPress={handleSecureEntryPress}
           />
         </View>
       )}
