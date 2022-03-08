@@ -38,6 +38,9 @@ export const MnemonicInput: FC<MnemonicProps> = ({
     <View style={MnemonicStyles.container}>
       <StyledTextInput
         ref={inputRef}
+        keyboardType="visible-password"
+        autoCorrect={false}
+        autoComplete="off"
         value={value}
         isError={isError}
         multiline={true}
