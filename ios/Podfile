@@ -19,7 +19,7 @@ abstract_target target 'Wallet' do
       # Pods for testing
     end
   end
-  target 'TempleWallet' do
+  target 'TempleWalletDevelopment' do
     #Development-specific pods
   end
 
