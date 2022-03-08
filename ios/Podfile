@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-abstract_target target 'Wallet' do
+abstract_target 'Wallet' do
   config = use_native_modules!
 
   use_react_native!(
