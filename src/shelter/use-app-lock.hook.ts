@@ -30,8 +30,18 @@ export const useAppLock = () => {
     const subscriptions = [
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
-        .pipe(switchMap(password => Shelter.unlockApp$(password)))
-        .subscribe(success => !success && showErrorToast({ description: 'Wrong password, please, try again' }))
+        .pipe(
+          switchMap(password => {
+            console.log(password);
+
+            return Shelter.unlockApp$(password);
+          })
+        )
+        .subscribe(success => {
+          console.log('[success]', success);
+
+          return !success && showErrorToast({ description: 'Wrong password, please, try again' });
+        })
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
