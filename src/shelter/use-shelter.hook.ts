@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { EMPTY, forkJoin, merge, of, Subject } from 'rxjs';
+import { EMPTY, forkJoin, from, merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
@@ -113,8 +113,12 @@ export const useShelter = () => {
 
       enableBiometryPassword$
         .pipe(
-          switchMap(async password =>
-            (await Shelter.isPasswordCorrect(password)) ? Shelter.enableBiometryPassword$(password) : of(false)
+          switchMap(password =>
+            from(Shelter.isPasswordCorrect(password)).pipe(
+              switchMap(isPasswordCorrect =>
+                isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)
+              )
+            )
           )
         )
         .subscribe(isPasswordSaved => {

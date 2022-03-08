@@ -208,14 +208,9 @@ export class Shelter {
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
   static isPasswordCorrect = async (password: string) => {
-    const isNotEmpty = password !== EMPTY_PASSWORD;
-    const isLocked = await firstValueFrom(Shelter.isLocked$);
-    if (!isLocked && isNotEmpty) {
-      const isCorrect = await firstValueFrom(Shelter.verifyPassword$(password));
+    const isNotEmpty = password !== EMPTY_PASSWORD && Shelter._hash$.getValue() !== EMPTY_PASSWORD;
+    const isCorrect = await firstValueFrom(Shelter.verifyPassword$(password));
 
-      return isCorrect;
-    }
-
-    return false;
+    return isCorrect && isNotEmpty;
   };
 }
