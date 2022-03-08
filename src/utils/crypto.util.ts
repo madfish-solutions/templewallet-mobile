@@ -67,7 +67,8 @@ export const decryptString$ = (
     )
   );
 
-export const withEncryptedPass = (keychainData: EncryptedData & EncryptedDataSalt, password: string) =>
+export const withEncryptedPass$ = (
+  keychainData: EncryptedData & EncryptedDataSalt,
+  password: string
+): Observable<[EncryptedData & EncryptedDataSalt, string]> =>
   encryptPass$(password).pipe(withLatestFrom(hash => [keychainData, hash]));
-
-// map(keychainData => encryptPass$(password).pipe(withLatestFrom(hash => [hash, keychainData]))),

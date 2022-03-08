@@ -2,7 +2,7 @@ import { InMemorySigner } from '@taquito/signer';
 import { mnemonicToSeedSync } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
-import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, forkJoin, from, Observable, of, throwError, firstValueFrom } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
@@ -13,7 +13,7 @@ import {
   EncryptedDataSalt,
   encryptPass$,
   encryptString$,
-  withEncryptedPass
+  withEncryptedPass$
 } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
@@ -63,35 +63,44 @@ export class Shelter {
   static lockApp = () => Shelter._hash$.next(EMPTY_PASSWORD);
 
   static unlockApp$ = (password: string) =>
+    Shelter.verifyPassword$(password).pipe(
+      map(value => {
+        if (value) {
+          encryptPass$(password).subscribe(encrypted => {
+            Shelter._hash$.next(encrypted);
+          });
+
+          return true;
+        }
+
+        return false;
+      }),
+      catchError(() => of(false))
+    );
+
+  static verifyPassword$ = (password: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY))).pipe(
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${PASSWORD_CHECK_KEY}]`) : of(rawKeychainData)
       ),
       map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData =>
-        withEncryptedPass(keychainData, password)
-          .pipe(
-            switchMap(([keychainData, hash]) =>
-              decryptString$(keychainData as EncryptedData & EncryptedDataSalt, hash as string)
-            )
-          )
-          .pipe(
-            switchMap(value =>
-              value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value)
-            ),
-            map(value => {
-              if (value === APP_IDENTIFIER) {
-                encryptPass$(password).subscribe(encrypted => {
-                  Shelter._hash$.next(encrypted);
-                });
+        withEncryptedPass$(keychainData, password).pipe(
+          switchMap(([keychainData, hash]) => {
+            return decryptString$(keychainData, hash);
+          }),
+          switchMap(value => {
+            return value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value);
+          }),
+          map(value => {
+            if (value === APP_IDENTIFIER) {
+              return true;
+            }
 
-                return true;
-              }
-
-              return false;
-            }),
-            catchError(() => of(false))
-          )
+            return false;
+          }),
+          catchError(() => of(false))
+        )
       )
     );
 
@@ -199,6 +208,14 @@ export class Shelter {
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
   static isPasswordCorrect = async (password: string) => {
-    return password !== EMPTY_PASSWORD && (await firstValueFrom(Shelter.unlockApp$(password)));
+    const isNotEmpty = password !== EMPTY_PASSWORD;
+    const isLocked = await firstValueFrom(Shelter.isLocked$);
+    if (!isLocked && isNotEmpty) {
+      const isCorrect = await firstValueFrom(Shelter.verifyPassword$(password));
+
+      return isCorrect;
+    }
+
+    return false;
   };
 }
