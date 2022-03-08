@@ -113,20 +113,15 @@ export const useShelter = () => {
 
       enableBiometryPassword$
         .pipe(
-          switchMap(password => {
-            console.log(password);
-
-            return from(Shelter.isPasswordCorrect(password)).pipe(
-              switchMap(isPasswordCorrect => {
-                console.log(isPasswordCorrect);
-
-                return isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false);
-              })
-            );
-          })
+          switchMap(password =>
+            from(Shelter.isPasswordCorrect(password)).pipe(
+              switchMap(isPasswordCorrect =>
+                isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)
+              )
+            )
+          )
         )
         .subscribe(isPasswordSaved => {
-          console.log(isPasswordSaved);
           if (typeof isPasswordSaved === 'boolean' && isPasswordSaved === false) {
             showErrorToast({ description: 'Wrong password, please, try again' });
           } else {

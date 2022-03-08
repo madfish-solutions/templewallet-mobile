@@ -65,7 +65,6 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.verifyPassword$(password).pipe(
       map(value => {
-        console.log('[unlockApp$]', value);
         if (value) {
           encryptPass$(password).subscribe(encrypted => {
             Shelter._hash$.next(encrypted);
@@ -81,34 +80,17 @@ export class Shelter {
 
   static verifyPassword$ = (password: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY))).pipe(
-      switchMap(rawKeychainData => {
-        console.log('[Keychain]', rawKeychainData);
-
-        return rawKeychainData === false
-          ? throwError(`No record in Keychain [${PASSWORD_CHECK_KEY}]`)
-          : of(rawKeychainData);
-      }),
+      switchMap(rawKeychainData =>
+        rawKeychainData === false ? throwError(`No record in Keychain [${PASSWORD_CHECK_KEY}]`) : of(rawKeychainData)
+      ),
       map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData =>
         withEncryptedPass$(keychainData, password).pipe(
-          switchMap(([keychainData, hash]) => {
-            console.log('[withEncryptedPass$]', [keychainData, hash]);
-
-            return decryptString$(keychainData, password);
-          }),
-          switchMap(value => {
-            console.log('[after decryptString$]', value);
-
-            // return throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`)
-            return value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value);
-          }),
-          map(value => {
-            if (value === APP_IDENTIFIER) {
-              return true;
-            }
-
-            return false;
-          }),
+          switchMap(([keychainData]) => decryptString$(keychainData, password)),
+          switchMap(value =>
+            value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value)
+          ),
+          map(value => value === APP_IDENTIFIER),
           catchError(() => of(false))
         )
       )
