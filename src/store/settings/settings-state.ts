@@ -10,7 +10,7 @@ export interface SettingsState {
   isBalanceHiddenSetting: boolean;
   rpcList: RpcInterface[];
   selectedRpcUrl: string;
-  isReinstalled: boolean;
+  isNotFirstAppLaunch: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -19,7 +19,7 @@ export const settingsInitialState: SettingsState = {
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
-  isReinstalled: false
+  isNotFirstAppLaunch: false
 };
 
 export interface SettingsRootState {

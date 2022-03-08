@@ -31,8 +31,8 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     selectedRpcUrl
   }));
-  builder.addCase(setIsReinstalled, (state, { payload: isReinstalled }) => ({
+  builder.addCase(setIsReinstalled.success, state => ({
     ...state,
-    isReinstalled
+    isNotFirstAppLaunch: true
   }));
 });

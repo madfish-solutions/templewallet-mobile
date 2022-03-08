@@ -2,6 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
+import { createActions } from '../create-actions';
 
 export const changeTheme = createAction<ThemesEnum>('settings/CHANGE_THEME');
 
@@ -13,4 +14,4 @@ export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
 
-export const setIsReinstalled = createAction<boolean>('settings/SET_IS_REINSTALLED');
+export const setIsReinstalled = createActions<boolean>('settings/SET_IS_REINSTALLED');
