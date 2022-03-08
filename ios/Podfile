@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'TempleWallet' do
+abstract_target target 'Wallet' do
   config = use_native_modules!
 
   use_react_native!(
@@ -12,9 +12,15 @@ target 'TempleWallet' do
     :hermes_enabled => false
   )
 
-  target 'TempleWalletTests' do
-    inherit! :complete
-    # Pods for testing
+  target 'TempleWallet' do
+    #Production-specific pods
+    target 'TempleWalletTests' do
+      inherit! :complete
+      # Pods for testing
+    end
+  end
+  target 'TempleWallet' do
+    #Development-specific pods
   end
 
   # Enables Flipper.
