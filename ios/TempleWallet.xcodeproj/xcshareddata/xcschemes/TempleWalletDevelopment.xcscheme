@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B6B2BDC827D7DBF8001B305E"
-               BuildableName = "TempleWallet development.app"
+               BuildableName = "TempleWalletDevelopment.app"
                BlueprintName = "TempleWalletDevelopment"
                ReferencedContainer = "container:TempleWallet.xcodeproj">
             </BuildableReference>
@@ -68,7 +68,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B6B2BDC827D7DBF8001B305E"
-            BuildableName = "TempleWallet development.app"
+            BuildableName = "TempleWalletDevelopment.app"
             BlueprintName = "TempleWalletDevelopment"
             ReferencedContainer = "container:TempleWallet.xcodeproj">
          </BuildableReference>
@@ -85,7 +85,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B6B2BDC827D7DBF8001B305E"
-            BuildableName = "TempleWallet development.app"
+            BuildableName = "TempleWalletDevelopment.app"
             BlueprintName = "TempleWalletDevelopment"
             ReferencedContainer = "container:TempleWallet.xcodeproj">
          </BuildableReference>
