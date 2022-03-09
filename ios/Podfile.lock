@@ -304,7 +304,7 @@ PODS:
     - React-Core
   - react-native-slider (4.1.12):
     - React-Core
-  - react-native-themis (0.1.0):
+  - react-native-themis (0.14.3):
     - React-Core
   - React-perflogger (0.66.4)
   - React-RCTActionSheet (0.66.4):
@@ -713,7 +713,7 @@ SPEC CHECKSUMS:
   react-native-restart: 733a51ad137f15b0f8dc34c4082e55af7da00979
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
-  react-native-themis: c5f3da35ee4bf04ec9eccdc25f851cd98bb33124
+  react-native-themis: 9f5e239751941b31a8870ba807999fab2a17b7c5
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
   React-RCTAnimation: 743e88b55ac62511ae5c2e22803d4f503f2a3a13

@@ -4,6 +4,8 @@ import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
 
+import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
+
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
 export const parseSyncPayload = async (payload: string, password: string): Promise<SyncPayloadInterface> => {
@@ -40,7 +42,7 @@ export const isSyncPayload = (payload: string): boolean => {
       const prefix = Buffer.from(payload.slice(0, 16), 'base64').toString('utf8');
 
       return prefix === TEMPLE_SYNC_PREFIX;
-    } catch (_err) {}
+    } catch (_err) { }
   }
 
   return false;
