@@ -6,7 +6,7 @@ import { NavigationParamList } from '../navigator/hooks/use-navigation.hook';
 import { createActions } from './create-actions';
 
 export const rootStateResetAction = createActions('root/RESET');
-export const isFirstAppLaunchCheckAction = createActions('root/REINSTALL');
+export const isFirstAppLaunchCheckAction = createActions('root/FIRST_APP_LAUNCH');
 
 export const untypedNavigateAction =
   createAction<NavigationArgsType<ParamListBase, keyof ParamListBase>>('navigation/NAVIGATE');

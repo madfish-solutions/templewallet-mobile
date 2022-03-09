@@ -47,9 +47,7 @@ export const RootStackScreen = () => {
 
   useQuickActions();
 
-  useEffect(() => {
-    dispatch(isFirstAppLaunchCheckAction.submit);
-  }, [dispatch]);
+  useEffect(() => void dispatch(isFirstAppLaunchCheckAction.submit), [dispatch]);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);

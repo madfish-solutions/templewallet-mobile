@@ -33,6 +33,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   }));
   builder.addCase(setIsReinstalled.success, state => ({
     ...state,
-    isNotFirstAppLaunch: true
+    isFirstAppLaunch: false
   }));
 });
