@@ -1,12 +1,15 @@
 import Keychain from 'react-native-keychain';
 
+import { isAndroid } from '../config/system';
+
 export const APP_IDENTIFIER = 'com.madfish.temple-wallet';
 
 export const PASSWORD_CHECK_KEY = 'app-password';
 export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
 
 export const getKeychainOptions = (key: string): Keychain.Options => ({
-  service: `${APP_IDENTIFIER}/${key}`
+  service: `${APP_IDENTIFIER}/${key}`,
+  securityLevel: isAndroid ? Keychain.SECURITY_LEVEL.SECURE_HARDWARE : undefined
 });
 
 export const biometryKeychainOptions: Keychain.Options = {
