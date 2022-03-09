@@ -12,7 +12,7 @@ import { RootState } from './create-store';
 import { isFirstAppLaunchCheckAction, rootStateResetAction, untypedNavigateAction } from './root-state.actions';
 import { setIsReinstalled } from './settings/settings-actions';
 
-const reinstallEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const isFirstLaunchCheckEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(isFirstAppLaunchCheckAction.submit),
     withLatestFrom(state$, (_, state) => state.settings.isFirstAppLaunch),
@@ -45,4 +45,4 @@ const navigateEpic = (action$: Observable<Action>) =>
     })
   );
 
-export const rootStateEpics = combineEpics(rootStateResetEpic, navigateEpic, reinstallEpic);
+export const rootStateEpics = combineEpics(rootStateResetEpic, navigateEpic, isFirstLaunchCheckEpic);
