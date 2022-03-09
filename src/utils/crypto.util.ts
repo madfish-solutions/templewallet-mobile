@@ -7,11 +7,17 @@ import {
 } from 'react-native-themis';
 
 
-export const generateRandomValues = (byteCount = 16) => {
-  const view = new Uint8Array(byteCount);
-  crypto.getRandomValues(view);
-  return view;
+export function generateRandomValues(byteCount = 32) {
+  async function key() {
+    const key64: string = await symmetricKey64();
+    console.log("====>", key64)
+    const rv = Array.from(Buffer.from(key64, 'base64'));
+    console.log(rv)
+    return rv;
+  }
+  return Promise.resolve(key());
 };
+
 
 export interface EncryptedData {
   encrypted64: string;

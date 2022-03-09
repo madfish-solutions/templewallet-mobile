@@ -6,7 +6,6 @@ import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
 import { formatSize } from '../../../styles/format-size';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
-import { generateSeed } from '../../../utils/keys.util';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../divider/divider';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
@@ -16,6 +15,9 @@ import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 import { MnemonicCreateSelectors } from './mnemonic-create.selectors';
+import { symmetricKey64 } from 'react-native-themis';
+import { entropyToMnemonic } from 'bip39';
+
 
 export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur, testID }) => {
   const { activeTimer, clearActiveTimer } = useActiveTimer();
@@ -30,8 +32,14 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
   };
 
   const handleGenerateNewButtonPress = () => {
-    onChangeText(generateSeed());
-    hideOverlay();
+
+    symmetricKey64().then((key64: string) => {
+      const entropy = Array.from(Buffer.from(key64, 'base64'));
+      const mnemonic = entropyToMnemonic(Buffer.from(entropy));
+      onChangeText(mnemonic);
+      hideOverlay();
+    })
+
   };
 
   return (
