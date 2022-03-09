@@ -18,6 +18,9 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
   return (
     <>
       <StyledTextInput
+        keyboardType="visible-password"
+        autoCorrect={false}
+        autoComplete="off"
         value={field.value}
         editable={editable}
         placeholder={placeholder}

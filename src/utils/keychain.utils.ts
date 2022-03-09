@@ -1,6 +1,6 @@
 import Keychain from 'react-native-keychain';
 
-export const APP_IDENTIFIER = 'com.madfish-solutions.temple-mobile';
+export const APP_IDENTIFIER = 'com.madfish.temple-wallet';
 
 export const PASSWORD_CHECK_KEY = 'app-password';
 export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
