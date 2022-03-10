@@ -27,10 +27,10 @@ export const AddCustomRpcModal: FC = () => {
   const rpcList = useRpcListSelector();
 
   const handleSubmit = (newRpc: RpcInterface) => {
-    const existingRpc = rpcList.find(rpc => rpc.url === newRpc.url);
+    const duplicate = rpcList.find(rpc => rpc.name === newRpc.name || rpc.url === newRpc.url);
 
-    if (isDefined(existingRpc)) {
-      showErrorToast({ description: `RPC with such URL already exist (${existingRpc.name})` });
+    if (isDefined(duplicate)) {
+      showErrorToast({ description: `RPC already exist ${duplicate.name}(${duplicate.url})` });
     } else {
       dispatch(addCustomRpc(newRpc));
       dispatch(setSelectedRpcUrl(newRpc.url));
