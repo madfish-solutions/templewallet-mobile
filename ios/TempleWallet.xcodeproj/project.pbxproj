@@ -888,7 +888,7 @@
 				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D653UWS37K;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = TempleWalletDevelopment/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -918,7 +918,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D653UWS37K;
-				INFOPLIST_FILE = TempleWalletDevelopment/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
