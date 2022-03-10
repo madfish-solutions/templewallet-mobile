@@ -10,7 +10,6 @@
 		00E356F31AD99517003FC87E /* TempleWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TempleWalletTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		147833BB2734253800B1F789 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 147833BA2734253800B1F789 /* BootSplash.storyboard */; };
 		23B2DA6B3BF0422F9865D51C /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED1D3E783F444FCEB3D94065 /* Inter-SemiBold.ttf */; };
 		332FA4B0549749D09B28A57D /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */; };
@@ -28,6 +27,7 @@
 		B6B2BDD727D7DBF8001B305E /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */; };
 		B6B2BDD827D7DBF8001B305E /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */; };
 		B6B2BDD927D7DBF8001B305E /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
+		B6DCC6C327DA191A00A41D73 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
 		E32E875616FACC5CCA2A18FD /* libPods-Wallet-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B7F4300EE51699FD4EB0C /* libPods-Wallet-TempleWallet-TempleWalletTests.a */; };
 		EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */; };
@@ -608,8 +608,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6DCC6C327DA191A00A41D73 /* main.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -882,7 +882,7 @@
 				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D653UWS37K;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/TempleWalletDevelopment/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -892,7 +892,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet-development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -912,7 +912,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D653UWS37K;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/TempleWalletDevelopment/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -922,7 +922,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet-development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_VERSION = 5.0;
