@@ -9,6 +9,7 @@ export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
 
 export const getKeychainOptions = (key: string): Keychain.Options => ({
   service: `${APP_IDENTIFIER}/${key}`,
+  accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
   securityLevel: isAndroid ? Keychain.SECURITY_LEVEL.SECURE_HARDWARE : undefined
 });
 
