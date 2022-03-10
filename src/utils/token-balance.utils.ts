@@ -9,6 +9,7 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { getTokenType } from '../token/utils/token.utils';
 import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
+import { isDefined } from './is-defined';
 
 const size = 10;
 
@@ -42,8 +43,7 @@ export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
-    map(balance => balance.toFixed()),
-    catchError(() => '0')
+    map(balance => balance.toFixed())
   );
 
 const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug: string) => {
@@ -59,8 +59,8 @@ const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug
         return contract.views.getBalance(publicKeyHash).read();
       }
     }),
-    map((balance: BigNumber) => (balance.isNaN() ? '0' : balance.toFixed())),
-    catchError(() => '0')
+    map((balance: BigNumber) => (balance.isNaN() ? undefined : balance.toFixed())),
+    catchError(() => undefined)
   );
 };
 
@@ -70,11 +70,15 @@ export const loadAssetsBalances$ = (rpcUrl: string, publicKeyHash: string, asset
       loadAssetBalance$(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount), publicKeyHash, assetSlug)
     )
   ).pipe(
-    map(balancesList => {
+    map((balancesList: (string | undefined)[]) => {
       const balancesRecord: Record<string, string> = {};
 
       for (let index = 0; index < assetSlugs.length; index++) {
-        balancesRecord[assetSlugs[index]] = balancesList[index] ?? '0';
+        const balance = balancesList[index];
+
+        if (isDefined(balance)) {
+          balancesRecord[assetSlugs[index]] = balance;
+        }
       }
 
       return balancesRecord;
