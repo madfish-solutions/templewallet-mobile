@@ -7,9 +7,9 @@ import { betterCallDevApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { getTokenType } from '../token/utils/token.utils';
+import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
-import { isDefined } from './is-defined';
 
 const size = 10;
 
