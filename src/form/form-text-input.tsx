@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import { StyledTextInput } from '../components/styled-text-input/styled-text-input';
 import { StyledTextInputProps } from '../components/styled-text-input/styled-text-input.props';
 import { isAndroid } from '../config/system';
+import { autocorrectDisableAndroid, autocorrectDisableIos } from '../utils/autocorrect-disable.utils';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
@@ -15,14 +16,12 @@ interface Props
 export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCleanButton, autoCapitalize }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
+  const autocorrectProperty = isAndroid ? autocorrectDisableAndroid : autocorrectDisableIos;
 
   return (
     <>
       <StyledTextInput
-        autoCorrect={false}
-        autoComplete="off"
-        spellCheck={false}
-        {...(isAndroid ? { keyboardType: 'visible-password' } : {})}
+        {...autocorrectProperty}
         value={field.value}
         editable={editable}
         placeholder={placeholder}

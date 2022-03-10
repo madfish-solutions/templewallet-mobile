@@ -4,6 +4,7 @@ import { TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../../config/general';
 import { isAndroid } from '../../../config/system';
+import { autocorrectDisableAndroid, autocorrectDisableIos } from '../../../utils/autocorrect-disable.utils';
 import { isString } from '../../../utils/is-string';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
@@ -34,15 +35,13 @@ export const MnemonicInput: FC<MnemonicProps> = ({
     inputRef.current?.focus();
     onChangeText(await Clipboard.getString());
   };
+  const autocorrectProperty = isAndroid ? autocorrectDisableAndroid : autocorrectDisableIos;
 
   return (
     <View style={MnemonicStyles.container}>
       <StyledTextInput
         ref={inputRef}
-        autoCorrect={false}
-        autoComplete="off"
-        spellCheck={false}
-        {...(isAndroid ? { keyboardType: 'visible-password' } : {})}
+        {...autocorrectProperty}
         value={value}
         isError={isError}
         multiline={true}
