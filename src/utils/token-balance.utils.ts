@@ -60,7 +60,7 @@ const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug
       }
     }),
     map((balance: BigNumber) => (balance.isNaN() ? undefined : balance.toFixed())),
-    catchError(() => undefined)
+    catchError(() => of(undefined))
   );
 };
 
