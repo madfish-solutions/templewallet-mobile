@@ -892,7 +892,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -922,7 +922,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
 				SWIFT_VERSION = 5.0;
