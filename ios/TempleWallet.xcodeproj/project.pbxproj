@@ -14,6 +14,7 @@
 		147833BB2734253800B1F789 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 147833BA2734253800B1F789 /* BootSplash.storyboard */; };
 		23B2DA6B3BF0422F9865D51C /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED1D3E783F444FCEB3D94065 /* Inter-SemiBold.ttf */; };
 		332FA4B0549749D09B28A57D /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */; };
+		40FC54AC408AEE86D96ECD3B /* libPods-Wallet-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2A07ABF34CDA369940C10D9 /* libPods-Wallet-TempleWallet.a */; };
 		4171C3561A5B2874F1BC7969 /* libPods-Wallet-TempleWalletDevelopment.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDFDBB914383E9D51A81EFE6 /* libPods-Wallet-TempleWalletDevelopment.a */; };
 		6354AC6457E34CC999F84EAE /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */; };
 		97759125A527465C91F8E13C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */; };
@@ -30,7 +31,6 @@
 		BC9B23EA3FA2EB4DEB68AC48 /* libPods-Wallet-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8B0C75D6AADBAA11B52E57 /* libPods-Wallet-TempleWallet-TempleWalletTests.a */; };
 		C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
 		EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */; };
-		F04FB477DC8FA82241566C0B /* libPods-Wallet-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2A07ABF34CDA369940C10D9 /* libPods-Wallet-TempleWallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F04FB477DC8FA82241566C0B /* libPods-Wallet-TempleWallet.a in Frameworks */,
+				40FC54AC408AEE86D96ECD3B /* libPods-Wallet-TempleWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
