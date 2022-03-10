@@ -1,11 +1,15 @@
-export const autocorrectDisableAndroid = {
+import { isAndroid } from '../config/system';
+
+const autocorrectDisableAndroid = {
   autoCorrect: false,
-  autoComplete: 'off',
   spellCheck: false,
+  autoComplete: 'off',
   keyboardType: 'visible-password'
 };
 
-export const autocorrectDisableIos = {
+const autocorrectDisableIos = {
   autoCorrect: false,
   spellCheck: false
 };
+
+export const autocorrectDisableProps = isAndroid ? autocorrectDisableAndroid : autocorrectDisableIos;
