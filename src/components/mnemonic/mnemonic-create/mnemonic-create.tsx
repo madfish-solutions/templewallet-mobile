@@ -35,7 +35,7 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
 
     symmetricKey64().then((key64: string) => {
       const entropy = Array.from(Buffer.from(key64, 'base64'));
-      const mnemonic = entropyToMnemonic(Buffer.from(entropy));
+      const mnemonic = entropyToMnemonic(Buffer.from(entropy.slice(0, 16)));
       onChangeText(mnemonic);
       hideOverlay();
     })
