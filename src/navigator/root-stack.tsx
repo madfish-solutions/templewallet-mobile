@@ -5,6 +5,7 @@ import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { useAndroidPasscode } from '../hooks/use-android-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
@@ -46,6 +47,8 @@ export const RootStackScreen = () => {
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
+
+  useAndroidPasscode();
 
   useEffect(() => void dispatch(isFirstAppLaunchCheckAction.submit()), [dispatch]);
 

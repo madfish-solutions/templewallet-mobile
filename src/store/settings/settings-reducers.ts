@@ -5,6 +5,7 @@ import {
   changeTheme,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
+  setIsPasscode,
   setIsReinstalled,
   setSelectedRpcUrl
 } from './settings-actions';
@@ -30,6 +31,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
+  }));
+  builder.addCase(setIsPasscode, (state, { payload: isPasscodeSet }) => ({
+    ...state,
+    isPasscodeSet
   }));
   builder.addCase(setIsReinstalled.success, state => ({
     ...state,

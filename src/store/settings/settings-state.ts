@@ -11,6 +11,7 @@ export interface SettingsState {
   rpcList: RpcInterface[];
   selectedRpcUrl: string;
   isFirstAppLaunch: boolean;
+  isPasscodeSet: boolean | null;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -19,7 +20,8 @@ export const settingsInitialState: SettingsState = {
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
-  isFirstAppLaunch: true
+  isFirstAppLaunch: true,
+  isPasscodeSet: null
 };
 
 export interface SettingsRootState {
