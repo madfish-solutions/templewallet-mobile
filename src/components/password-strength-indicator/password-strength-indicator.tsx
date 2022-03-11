@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react';
+import { View } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
@@ -52,14 +53,14 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({ 
   return (
     <>
       {validationMessages.map(item => (
-        <>
+        <View key={item.message}>
           <PasswordStrengthIndicatorItem
             isValid={item.isValid}
             message={item.message}
             noColor={isDefined(item.noColor) ? item.noColor : !isError}
           />
           <Divider size={formatSize(4)} />
-        </>
+        </View>
       ))}
     </>
   );
