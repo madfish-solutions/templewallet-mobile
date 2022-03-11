@@ -54,7 +54,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient?.respond(message);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 
   public static getPermissions = () => {
@@ -62,7 +62,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.getPermissions();
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 
   public static getPeers = () => {
@@ -70,7 +70,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.getPeers();
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 
   public static removePermission = (accountIdentifier: string) => {
@@ -78,7 +78,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removePermission(accountIdentifier);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 
   public static removeAllPermissions = () => {
@@ -92,7 +92,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removePeer(peer, true);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 
   public static removeAllPeers = () => {
@@ -100,7 +100,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removeAllPeers(true);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject('Wallet client not defined!');
   };
 }
 
