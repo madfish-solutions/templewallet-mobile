@@ -23,7 +23,7 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { isFirstAppLaunchCheckAction } from '../store/root-state.actions';
+import { resetKeychainOnInstallAction } from '../store/root-state.actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -47,10 +47,9 @@ export const RootStackScreen = () => {
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
-
   useAndroidPasscode();
 
-  useEffect(() => void dispatch(isFirstAppLaunchCheckAction.submit()), [dispatch]);
+  useEffect(() => void dispatch(resetKeychainOnInstallAction.submit()), []);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);

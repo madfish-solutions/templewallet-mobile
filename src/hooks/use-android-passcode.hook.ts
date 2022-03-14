@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { isPinOrFingerprintSet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid } from '../config/system';
-import { rootStateResetAction } from '../store/root-state.actions';
+import { resetApplicationAction } from '../store/root-state.actions';
 import { setIsPasscode } from '../store/settings/settings-actions';
 
 export const useAndroidPasscode = () => {
@@ -12,13 +12,15 @@ export const useAndroidPasscode = () => {
   // const [passwordLock, setPasswordLock] = useState<null | boolean>(null);
 
   const appState = useRef(AppState.currentState);
-  const [, setAppStateVisible] = useState(appState.current);
+  // const [, setAppStateVisible] = useState(appState.current);
 
   const isPinOrFingerPrintHandler = useCallback((isPinOrFingerprintSet: boolean) => {
-    if (!isPinOrFingerprintSet && isAndroid) {
-      dispatch(rootStateResetAction.submit());
-      dispatch(setIsPasscode(false));
-    } else if (isPinOrFingerprintSet && isAndroid) {
+    if (!isPinOrFingerprintSet) {
+      if (!isAndroid) {
+        dispatch(setIsPasscode(false));
+      }
+      dispatch(resetApplicationAction.submit());
+    } else {
       dispatch(setIsPasscode(true));
     }
   }, []);
@@ -30,7 +32,7 @@ export const useAndroidPasscode = () => {
       }
 
       appState.current = nextAppState;
-      setAppStateVisible(appState.current);
+      // setAppStateVisible(appState.current);
       isPinOrFingerprintSet().then(isPinOrFingerPrintHandler);
     });
 
