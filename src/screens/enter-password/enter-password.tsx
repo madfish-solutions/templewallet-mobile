@@ -33,7 +33,7 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
 
   const { biometryType } = useBiometryAvailability();
-  const { unlock, unlockWithBiometry, lock } = useAppLock();
+  const { unlock, unlockWithBiometry } = useAppLock();
   const handleResetDataButtonPress = useResetDataHandler();
 
   const biometricsEnabled = useBiometricsEnabledSelector();
@@ -43,10 +43,6 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
 
-  const erasePasswordHandler = () => {
-    lock();
-    handleResetDataButtonPress();
-  };
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
     isBiometryAvailable
   ]);
@@ -95,7 +91,7 @@ export const EnterPassword = () => {
         </Formik>
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
-        <ButtonLink title="Erase Data" onPress={erasePasswordHandler} />
+        <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
         <InsetSubstitute type="bottom" />
       </View>
       <ToastProvider />

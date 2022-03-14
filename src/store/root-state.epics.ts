@@ -1,12 +1,13 @@
 import Keychain from 'react-native-keychain';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable } from 'rxjs';
-import { concatMap, filter, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { concatMap, filter, mapTo, switchMap, withLatestFrom, map } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { BeaconHandler } from '../beacon/beacon-handler';
 import { globalNavigationRef } from '../navigator/root-stack';
+import { Shelter } from '../shelter/shelter';
 import { getKeychainOptions } from '../utils/keychain.utils';
 import { RootState } from './create-store';
 import { isFirstAppLaunchCheckAction, rootStateResetAction, untypedNavigateAction } from './root-state.actions';
@@ -30,7 +31,11 @@ const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<Root
       from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
     ),
     switchMap(() => forkJoin([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()])),
-    mapTo(rootStateResetAction.success())
+    map(() => {
+      Shelter.lockApp();
+
+      return rootStateResetAction.success();
+    })
   );
 
 const navigateEpic = (action$: Observable<Action>) =>
