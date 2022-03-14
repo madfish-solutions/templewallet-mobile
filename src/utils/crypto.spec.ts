@@ -1,74 +1,30 @@
-import { mockCrypto } from '../mocks/crypto.mock';
 import {
-  mockPbkdf2Key,
   mockEncryptedString,
-  mockNativeAes,
-  mockRandomKey,
-  mockUnencryptedString
+  mockNativeThemis,
+  mockUnencryptedString,
+  mockSymmetricKey64,
+  mockPassphrase,
 } from '../mocks/native-modules.mock';
-import { AES_ALGORITHM, decryptString$, encryptString$, generateRandomValues } from './crypto.util';
-import { rxJsTestingHelper } from './testing.utis';
-
-describe('generateRandomValues', () => {
-  beforeEach(() => {
-    mockCrypto.getRandomValues.mockClear();
-  });
-
-  it('should generate 16 cryptographically safe random bytes by default', () => {
-    const output = generateRandomValues();
-    expect(output).toHaveLength(16);
-    expect(mockCrypto.getRandomValues).toBeCalledWith(output);
-  });
-
-  it('should generate another amount of random bytes if specified', () => {
-    const expectedAmount = 12;
-    const output = generateRandomValues(expectedAmount);
-    expect(output).toHaveLength(expectedAmount);
-    expect(mockCrypto.getRandomValues).toBeCalledWith(output);
-  });
-});
 
 beforeEach(() => {
-  mockNativeAes.decrypt.mockClear();
-  mockNativeAes.encrypt.mockClear();
-  mockNativeAes.pbkdf2.mockClear();
+  mockNativeThemis.secureCellSealWithPassphraseEncrypt64.mockClear();
+  mockNativeThemis.secureCellSealWithPassphraseDecrypt64.mockClear();
 });
 
-const expectedSalt = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
-
-const expectedEncryptionOutput = { cipher: mockEncryptedString, iv: mockRandomKey, salt: expectedSalt };
-
-it('encryptString$ should encrypt a message with a given password', done => {
-  encryptString$(mockUnencryptedString, 'correctPassword').subscribe(
-    rxJsTestingHelper(encryptionOutput => {
-      expect(encryptionOutput).toEqual(expectedEncryptionOutput);
-      expect(mockNativeAes.pbkdf2).toBeCalledWith('correctPassword', expectedSalt, 5000, 256);
-      expect(mockNativeAes.randomKey).toBeCalledWith(16);
-      expect(mockNativeAes.encrypt).toBeCalledWith(mockUnencryptedString, mockPbkdf2Key, mockRandomKey, AES_ALGORITHM);
-    }, done)
-  );
+it('secureCellSealWithPassphraseEncrypt64 should encrypt a message with a given password', async () => {
+  const encryptionOutput = await mockNativeThemis.secureCellSealWithPassphraseEncrypt64(mockPassphrase, mockUnencryptedString, mockSymmetricKey64)
+  expect(encryptionOutput).toEqual(mockEncryptedString)
 });
 
-it('decryptString$ should decrypt a message with correct password', done => {
-  decryptString$(expectedEncryptionOutput, 'correctPassword').subscribe(
-    rxJsTestingHelper(decryptionOutput => {
-      expect(decryptionOutput).toEqual(mockUnencryptedString);
-      expect(mockNativeAes.pbkdf2).toBeCalledWith('correctPassword', expectedEncryptionOutput.salt, 5000, 256);
-      expect(mockNativeAes.decrypt).toBeCalledWith(
-        expectedEncryptionOutput.cipher,
-        mockPbkdf2Key,
-        expectedEncryptionOutput.iv,
-        AES_ALGORITHM
-      );
-    }, done)
-  );
+it('secureCellSealWithPassphraseDecrypt64 should decrypt a message with correct password', async () => {
+  const decryptionOutput = await mockNativeThemis.secureCellSealWithPassphraseDecrypt64(mockPassphrase, mockEncryptedString, mockSymmetricKey64)
+  expect(decryptionOutput).toEqual(mockUnencryptedString)
 });
 
-it('decryptString$ should return undefined if a password is incorrect', done => {
-  mockNativeAes.decrypt.mockImplementationOnce(() => Promise.reject());
-  decryptString$(expectedEncryptionOutput, 'incorrectPassword').subscribe(
-    rxJsTestingHelper(decryptionOutput => {
-      expect(decryptionOutput).toBeUndefined();
-    }, done)
-  );
+it('secureCellSealWithPassphraseDecrypt64 should return undefined if a password is incorrect', async () => {
+  try {
+    await mockNativeThemis.secureCellSealWithPassphraseDecrypt64('incorrectPassword', mockEncryptedString, mockSymmetricKey64)
+  } catch (e) {
+    expect(e).toBeUndefined();
+  }
 });

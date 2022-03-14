@@ -1,12 +1,12 @@
 import { NativeModules } from 'react-native';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
-import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
-
-import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
+import { Aes } from 'react-native-aes-crypto';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
+
+const AES_ALGORITHM: Aes.Algorithms = 'aes-256-cbc';
 
 export const parseSyncPayload = async (payload: string, password: string): Promise<SyncPayloadInterface> => {
   let index = 0;

@@ -1,5 +1,6 @@
 export const mockCrypto = {
-  getRandomValues: jest.fn()
+  encryptString$: jest.fn(),
+  decryptString$: jest.fn(),
 };
 
 global.crypto = mockCrypto;
