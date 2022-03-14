@@ -12,8 +12,6 @@ import { resetKeychain$ } from '../utils/keychain.utils';
 import { RootState } from './create-store';
 import { resetApplicationAction, resetKeychainOnInstallAction, untypedNavigateAction } from './root-state.actions';
 
-Keychain.getAllGenericPasswordServices().then(res => console.log('keychain services', res));
-
 const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(resetKeychainOnInstallAction.submit),
