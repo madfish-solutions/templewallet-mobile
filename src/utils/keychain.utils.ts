@@ -1,4 +1,6 @@
 import Keychain from 'react-native-keychain';
+import { forkJoin, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { isAndroid } from '../config/system';
 
@@ -18,3 +20,10 @@ export const biometryKeychainOptions: Keychain.Options = {
   accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
   authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
 };
+
+export const resetKeychain$ = () =>
+  from(Keychain.getAllGenericPasswordServices()).pipe(
+    switchMap(keychainServicesArray =>
+      forkJoin(keychainServicesArray.map(service => Keychain.resetGenericPassword({ service })))
+    )
+  );
