@@ -1,5 +1,5 @@
 import { useField } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
 import { Divider } from '../components/divider/divider';
 import { PasswordStrengthIndicator } from '../components/password-strength-indicator/password-strength-indicator';
@@ -19,8 +19,6 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
-  const [focused, setFocused] = useState(false);
-
   return (
     <>
       <StyledPasswordInput
@@ -29,19 +27,14 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
         isShowCleanButton={true}
         autoCapitalize="none"
         onBlur={() => helpers.setTouched(true)}
-        onFocus={() => setFocused(true)}
         onChangeText={field.onChange(name)}
         testID={testID}
       />
       {isDefined(isShowPasswordStrengthIndicator) && isShowPasswordStrengthIndicator ? (
         <>
           <Divider size={formatSize(16)} />
-          {focused && (
-            <>
-              <PasswordStrengthIndicator isError={isError} password={field.value} />
-              <Divider size={formatSize(28)} />
-            </>
-          )}
+          <PasswordStrengthIndicator isError={isError} password={field.value} />
+          <Divider size={formatSize(28)} />
         </>
       ) : (
         <ErrorMessage meta={meta} />
