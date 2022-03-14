@@ -1,4 +1,3 @@
-import Keychain from 'react-native-keychain';
 import { combineEpics, Epic } from 'redux-observable';
 import { EMPTY, forkJoin, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
