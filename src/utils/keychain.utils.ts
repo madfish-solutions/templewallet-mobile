@@ -1,6 +1,5 @@
 import Keychain from 'react-native-keychain';
-import { forkJoin, from, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { isAndroid } from '../config/system';
 
