@@ -17,7 +17,6 @@
 		63537FF252ABC765D06D530C /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A5F5FCD118BCB27CFB3BD6 /* libPods-TempleWallet.a */; };
 		6354AC6457E34CC999F84EAE /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */; };
 		97759125A527465C91F8E13C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */; };
-		B624A1D927DF79B100C50624 /* Development-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B624A1D827DF79B100C50624 /* Development-Info.plist */; };
 		B6DCC6C327DA191A00A41D73 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
 		EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */; };
@@ -57,7 +56,6 @@
 		9786D55BBFDA9960F277896E /* Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet-TempleWalletTests/Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		A5FAD5C80249BF918707CB3C /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
-		B624A1D827DF79B100C50624 /* Development-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Development-Info.plist"; sourceTree = "<group>"; };
 		B64BE5B527C5313A001A7BF5 /* security.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = security.txt; sourceTree = "<group>"; };
 		DD58F3FF593F65168A1DF735 /* Pods-Wallet-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet/Pods-Wallet-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		E2766CE1F1B7D4076C95569A /* Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet-TempleWalletTests/Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -111,7 +109,6 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				B624A1D827DF79B100C50624 /* Development-Info.plist */,
 			);
 			name = TempleWallet;
 			sourceTree = "<group>";
@@ -281,7 +278,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B624A1D927DF79B100C50624 /* Development-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				332FA4B0549749D09B28A57D /* Inter-Bold.ttf in Resources */,
 				EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */,
@@ -536,7 +532,7 @@
 				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D653UWS37K;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = TempleWallet/Info.plist;
+				INFOPLIST_FILE = "TempleWallet/Debug-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -618,7 +614,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -684,7 +680,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
