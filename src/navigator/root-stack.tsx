@@ -24,6 +24,7 @@ import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { resetKeychainOnInstallAction } from '../store/root-state.actions';
+import { useIsPassCodeSetSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -43,6 +44,7 @@ export const RootStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
   const dispatch = useDispatch();
+  const isPassCodeSet = useIsPassCodeSetSelector();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
@@ -161,7 +163,8 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
-      {isAuthorised && isLocked && <EnterPassword />}
+      {/* TODO: change to === false */}
+      {isAuthorised && isLocked && isPassCodeSet !== true && <EnterPassword />}
     </NavigationContainer>
   );
 };
