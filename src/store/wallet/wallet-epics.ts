@@ -38,7 +38,7 @@ import {
   waitForOperationCompletionAction
 } from './wallet-actions';
 
-const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     withSelectedAccount(state$),
@@ -194,7 +194,7 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
-  loadTokenAssetsEpic,
+  loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
   sendAssetEpic,

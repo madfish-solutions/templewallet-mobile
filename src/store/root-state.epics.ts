@@ -1,28 +1,38 @@
-import Keychain from 'react-native-keychain';
-import { combineEpics } from 'redux-observable';
-import { EMPTY, forkJoin, from, Observable } from 'rxjs';
-import { concatMap, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { combineEpics, Epic } from 'redux-observable';
+import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { BeaconHandler } from '../beacon/beacon-handler';
 import { globalNavigationRef } from '../navigator/root-stack';
-import { getKeychainOptions } from '../utils/keychain.utils';
+import { Shelter } from '../shelter/shelter';
+import { resetBeacon$ } from '../utils/beacon.utils';
+import { resetKeychain$ } from '../utils/keychain.utils';
 import { RootState } from './create-store';
-import { rootStateResetAction, untypedNavigateAction } from './root-state.actions';
+import { resetApplicationAction, resetKeychainOnInstallAction, untypedNavigateAction } from './root-state.actions';
 
-const rootStateResetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(rootStateResetAction.submit),
-    withLatestFrom(state$, (_, state) =>
-      state.wallet.accounts.map(({ publicKeyHash }) => getKeychainOptions(publicKeyHash))
-    ),
-    switchMap(keychainOptionsArray =>
-      from(keychainOptionsArray).pipe(switchMap(options => Keychain.resetGenericPassword(options)))
-    ),
-    switchMap(() => forkJoin([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()])),
-    mapTo(rootStateResetAction.success())
+    ofType(resetKeychainOnInstallAction.submit),
+    withLatestFrom(state$, (_, state) => state.settings.isFirstAppLaunch),
+    filter(isFirstAppLaunch => isFirstAppLaunch === true),
+    switchMap(() => resetKeychain$()),
+    mapTo(resetKeychainOnInstallAction.success()),
+    catchError(err => of(resetKeychainOnInstallAction.fail(err.message)))
   );
+
+const resetApplicationEpic = (action$: Observable<Action>) => {
+  return action$.pipe(
+    ofType(resetApplicationAction.submit),
+    switchMap(() => forkJoin([resetKeychain$(), resetBeacon$()])),
+    map(() => {
+      Shelter.lockApp();
+
+      return resetApplicationAction.success();
+    }),
+    catchError(err => of(resetApplicationAction.fail(err.message)))
+  );
+};
 
 const navigateEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -36,4 +46,4 @@ const navigateEpic = (action$: Observable<Action>) =>
     })
   );
 
-export const rootStateEpics = combineEpics(rootStateResetEpic, navigateEpic);
+export const rootStateEpics = combineEpics(resetApplicationEpic, navigateEpic, resetKeychainOnInstallEpic);

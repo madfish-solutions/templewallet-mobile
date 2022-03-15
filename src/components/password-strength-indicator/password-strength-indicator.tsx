@@ -1,5 +1,4 @@
-import React, { FC, useMemo } from 'react';
-import { FlatList, ListRenderItem } from 'react-native';
+import React, { FC, Fragment, useMemo } from 'react';
 
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
@@ -50,16 +49,18 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({ 
     }
   ];
 
-  const renderItem: ListRenderItem<PasswordStrengthIndicatorItemProps> = ({ item }) => (
+  return (
     <>
-      <PasswordStrengthIndicatorItem
-        isValid={item.isValid}
-        message={item.message}
-        noColor={isDefined(item.noColor) ? item.noColor : !isError}
-      />
-      <Divider size={formatSize(4)} />
+      {validationMessages.map(item => (
+        <Fragment key={item.message}>
+          <PasswordStrengthIndicatorItem
+            isValid={item.isValid}
+            message={item.message}
+            noColor={isDefined(item.noColor) ? item.noColor : !isError}
+          />
+          <Divider size={formatSize(4)} />
+        </Fragment>
+      ))}
     </>
   );
-
-  return <FlatList data={validationMessages} renderItem={renderItem} keyExtractor={item => item.message} />;
 };
