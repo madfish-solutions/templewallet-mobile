@@ -3,6 +3,7 @@ import React, { FC, useRef, useState } from 'react';
 import { TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../../config/general';
+import { autocorrectDisableProps } from '../../../utils/autocorrect-disable.utils';
 import { isString } from '../../../utils/is-string';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
@@ -37,6 +38,7 @@ export const MnemonicInput: FC<MnemonicProps> = ({
   return (
     <View style={MnemonicStyles.container}>
       <StyledTextInput
+        {...autocorrectDisableProps}
         ref={inputRef}
         value={value}
         isError={isError}
