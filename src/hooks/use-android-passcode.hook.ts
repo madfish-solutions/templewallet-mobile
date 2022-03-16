@@ -3,7 +3,6 @@ import { AppState } from 'react-native';
 import { isPinOrFingerprintSet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
-import { resetApplicationAction } from '../store/root-state.actions';
 import { setIsPasscode } from '../store/settings/settings-actions';
 
 export const useAndroidPasscode = () => {
@@ -14,7 +13,6 @@ export const useAndroidPasscode = () => {
   const isPinOrFingerPrintHandler = useCallback((isPinOrFingerprintSet: boolean) => {
     if (!isPinOrFingerprintSet) {
       dispatch(setIsPasscode(false));
-      dispatch(resetApplicationAction.submit());
     } else {
       dispatch(setIsPasscode(true));
     }
