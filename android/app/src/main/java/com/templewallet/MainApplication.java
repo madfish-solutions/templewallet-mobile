@@ -16,7 +16,6 @@ import org.wonday.orientation.OrientationActivityLifecycle;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
-import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
