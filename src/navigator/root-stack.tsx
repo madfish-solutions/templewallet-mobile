@@ -163,8 +163,7 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
-      {/* TODO: change to === false */}
-      {isAuthorised && isLocked && isPassCodeSet !== true && <EnterPassword />}
+      {isAuthorised && isLocked && isPassCodeSet === true && <EnterPassword />}
     </NavigationContainer>
   );
 };

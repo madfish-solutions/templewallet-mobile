@@ -79,8 +79,7 @@ export const MainStackScreen = () => {
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
   useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
 
-  // TODO: change to === false
-  if (isPassCodeSet === true) {
+  if (isPassCodeSet === false) {
     return <PassCode />;
   }
 
