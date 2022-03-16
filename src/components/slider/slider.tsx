@@ -17,7 +17,7 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
   const colors = useColors();
   const styles = useSliderStyles();
 
-  const debouncedValueChange = debounce(onValueChange);
+  const debouncedValueChange = debounce(onValueChange, 200);
 
   return (
     <>
