@@ -6,9 +6,7 @@ import {
   changeTheme,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
-  setSelectedRpcUrl,
-  setIsPasscode,
-  setPasscodeDisabled
+  setSelectedRpcUrl
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -32,14 +30,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
-  }));
-  builder.addCase(setIsPasscode, (state, { payload: isPasscodeSet }) => ({
-    ...state,
-    isPasscodeSet
-  }));
-  builder.addCase(setPasscodeDisabled, state => ({
-    ...state,
-    isPasscodeSet: false
   }));
   builder.addCase(resetKeychainOnInstallAction.success, state => ({
     ...state,

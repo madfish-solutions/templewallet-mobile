@@ -12,9 +12,6 @@ export const useBiometricsEnabledSelector = () =>
 export const useBalanceHiddenSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenSetting);
 
-export const useIsPassCodeSetSelector = () =>
-  useSelector<SettingsRootState, boolean | null>(({ settings }) => settings.isPasscodeSet);
-
 export const useRpcListSelector = () =>
   useSelector<SettingsRootState, RpcInterface[]>(({ settings }) => settings.rpcList);
 export const useSelectedRpcUrlSelector = () =>

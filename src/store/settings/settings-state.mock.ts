@@ -8,6 +8,5 @@ export const mockSettingsState: SettingsState = {
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
-  isFirstAppLaunch: true,
-  isPasscodeSet: null
+  isFirstAppLaunch: true
 };

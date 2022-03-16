@@ -4,7 +4,7 @@ import { createStackNavigator, StackNavigationOptions, TransitionPresets } from 
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
-import { useAndroidPasscode } from '../hooks/use-android-passcode.hook';
+import { usePasscode } from '../hooks/use-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -22,8 +22,8 @@ import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
+import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useIsPassCodeSetSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -42,12 +42,11 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
-  const isPassCodeSet = useIsPassCodeSetSelector();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
-  useAndroidPasscode();
+  const { isPasscode } = usePasscode();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
@@ -160,7 +159,8 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
-      {isAuthorised && isLocked && isPassCodeSet === true && <EnterPassword />}
+      {isAuthorised && isLocked && <EnterPassword />}
+      {isPasscode === false && <PassCode />}
     </NavigationContainer>
   );
 };

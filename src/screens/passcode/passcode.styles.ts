@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
 
+import { zIndexEnum } from '../../enums/z-index.enum';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const usePassCodeStyles = createUseStyles(({ typography, colors }) => ({
   root: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    zIndex: zIndexEnum.PasswordLockScreen
   },
   container: {
     marginTop: formatSize(108),

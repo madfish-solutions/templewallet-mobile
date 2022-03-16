@@ -26,7 +26,6 @@ import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
-import { PassCode } from '../screens/passcode/passcode';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
@@ -38,7 +37,6 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { useIsPassCodeSetSelector } from '../store/settings/settings-selectors';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -58,7 +56,6 @@ const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
-  const isPassCodeSet = useIsPassCodeSetSelector();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
@@ -78,10 +75,6 @@ export const MainStackScreen = () => {
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
   useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
-
-  if (isPassCodeSet === false) {
-    return <PassCode />;
-  }
 
   return (
     <PortalProvider>

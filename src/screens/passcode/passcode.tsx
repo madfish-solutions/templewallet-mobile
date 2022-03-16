@@ -22,7 +22,7 @@ export const PassCode = () => {
   }, []);
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
+    <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
           <Icon name={IconNameEnum.Lock} size={formatSize(64)} color={colors.orange} />
