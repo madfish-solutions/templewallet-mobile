@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Linking, Text, View } from 'react-native';
+import { generalSettings } from 'react-native-android-open-settings';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
@@ -17,7 +18,7 @@ export const PassCode = () => {
   const colors = useColors();
 
   const handleSettings = useCallback(() => {
-    isIOS ? Linking.openURL('App-Prefs:Bluetooth') : Linking.sendIntent('android.settings.BLUETOOTH_SETTINGS');
+    isIOS ? Linking.openURL('App-Prefs:Bluetooth') : generalSettings();
   }, []);
 
   return (
