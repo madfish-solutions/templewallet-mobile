@@ -1,5 +1,7 @@
 import { TezosOperationType } from '@airgap/beacon-sdk';
+import { of } from 'rxjs';
 
+import { BeaconHandler } from '../beacon/beacon-handler';
 import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { SemiPartialTezosOperation } from '../types/semi-partial-tezos-operation';
 
@@ -42,4 +44,12 @@ export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsW
     default:
       return walletParam as any; // Beacon and taquito has different enums for op.kind
   }
+};
+
+// pseudo async function as we don't need to wait until Beacon will remove all connections
+// (common async solution does not work without the Internet connection)
+export const resetBeacon$ = () => {
+  Promise.all([BeaconHandler.removeAllPermissions(), BeaconHandler.removeAllPeers()]);
+
+  return of(0);
 };

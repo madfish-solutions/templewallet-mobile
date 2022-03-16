@@ -1,11 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
-  setIsReinstalled,
   setSelectedRpcUrl
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
@@ -31,7 +31,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     selectedRpcUrl
   }));
-  builder.addCase(setIsReinstalled.success, state => ({
+  builder.addCase(resetKeychainOnInstallAction.success, state => ({
     ...state,
     isFirstAppLaunch: false
   }));

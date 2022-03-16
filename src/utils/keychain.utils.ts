@@ -1,4 +1,5 @@
 import Keychain from 'react-native-keychain';
+import { of } from 'rxjs';
 
 import { isAndroid } from '../config/system';
 
@@ -17,4 +18,18 @@ export const biometryKeychainOptions: Keychain.Options = {
   ...getKeychainOptions(PASSWORD_STORAGE_KEY),
   accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
   authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
+};
+
+// pseudo async function as we don't need to wait until Keychain will remove all data
+// (common async solution stops reset process)
+export const resetKeychain$ = () => {
+  Keychain.getAllGenericPasswordServices()
+    .then(keychainServicesArray => {
+      if (keychainServicesArray.length > 0) {
+        Promise.all(keychainServicesArray.map(service => Keychain.resetGenericPassword({ service })));
+      }
+    })
+    .catch(() => void 0);
+
+  return of(0);
 };

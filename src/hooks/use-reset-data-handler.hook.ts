@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { rootStateResetAction } from '../store/root-state.actions';
+import { resetApplicationAction } from '../store/root-state.actions';
 
 export const useResetDataHandler = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ export const useResetDataHandler = () => {
       {
         text: 'Reset',
         style: 'destructive',
-        onPress: () => dispatch(rootStateResetAction.submit())
+        onPress: () => dispatch(resetApplicationAction.submit())
       }
     ]);
 };
