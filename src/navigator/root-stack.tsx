@@ -1,12 +1,12 @@
 import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useAndroidPasscode } from '../hooks/use-android-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
+import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -23,7 +23,6 @@ import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-moda
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { resetKeychainOnInstallAction } from '../store/root-state.actions';
 import { useIsPassCodeSetSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
@@ -43,15 +42,13 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
-  const dispatch = useDispatch();
   const isPassCodeSet = useIsPassCodeSetSelector();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
   useAndroidPasscode();
-
-  useEffect(() => void dispatch(resetKeychainOnInstallAction.submit()), []);
+  useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
