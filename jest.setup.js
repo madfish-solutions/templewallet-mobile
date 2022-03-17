@@ -10,7 +10,6 @@ if (typeof atob === 'undefined') {
 }
 
 import './src/mocks/mem.mock';
-import './src/mocks/crypto.mock';
 
 import './src/mocks/taquito-signer.mock';
 import './src/mocks/native-modules.mock';
