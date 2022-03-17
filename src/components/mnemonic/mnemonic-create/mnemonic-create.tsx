@@ -1,5 +1,7 @@
+import { entropyToMnemonic } from 'bip39';
 import React, { FC, useState } from 'react';
 import { View } from 'react-native';
+import { symmetricKey64 } from 'react-native-themis';
 
 import { emptyFn } from '../../../config/general';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
@@ -15,9 +17,6 @@ import { MnemonicProps } from '../mnemonic.props';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 import { MnemonicCreateSelectors } from './mnemonic-create.selectors';
-import { symmetricKey64 } from 'react-native-themis';
-import { entropyToMnemonic } from 'bip39';
-
 
 export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText = emptyFn, onBlur, testID }) => {
   const { activeTimer, clearActiveTimer } = useActiveTimer();
@@ -32,14 +31,12 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
   };
 
   const handleGenerateNewButtonPress = () => {
-
     symmetricKey64().then((key64: string) => {
       const entropy = Array.from(Buffer.from(key64, 'base64'));
       const mnemonic = entropyToMnemonic(Buffer.from(entropy.slice(0, 16)));
       onChangeText(mnemonic);
       hideOverlay();
-    })
-
+    });
   };
 
   return (

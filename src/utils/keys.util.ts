@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import { derivePath } from 'ed25519-hd-key';
 import { forkJoin, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
 import { isString } from './is-string';
 
 const TEZOS_BIP44_COINTYPE = 1729;
@@ -32,4 +33,3 @@ export const getPublicKeyAndHash$ = (privateKey: string) =>
   from(InMemorySigner.fromSecretKey(privateKey)).pipe(
     switchMap(signer => forkJoin([signer.publicKey(), signer.publicKeyHash()]))
   );
-

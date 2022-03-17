@@ -1,8 +1,8 @@
 import { NativeModules } from 'react-native';
+import { Aes } from 'react-native-aes-crypto';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { isDefined } from './is-defined';
-import { Aes } from 'react-native-aes-crypto';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
@@ -42,7 +42,7 @@ export const isSyncPayload = (payload: string): boolean => {
       const prefix = Buffer.from(payload.slice(0, 16), 'base64').toString('utf8');
 
       return prefix === TEMPLE_SYNC_PREFIX;
-    } catch (_err) { }
+    } catch (_err) {}
   }
 
   return false;

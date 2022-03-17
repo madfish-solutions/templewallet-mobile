@@ -26,4 +26,3 @@ it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing priv
     }, done)
   );
 });
-

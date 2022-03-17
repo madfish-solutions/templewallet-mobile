@@ -51,7 +51,6 @@
   },
   "globals": {
     "localStorage": true,
-    "crypto": true,
     "atob": true,
     "btoa": true
   }
