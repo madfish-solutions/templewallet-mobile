@@ -1,13 +1,12 @@
-import { entropyToMnemonic } from 'bip39';
 import React, { FC, useState } from 'react';
 import { View } from 'react-native';
-import { symmetricKey64 } from 'react-native-themis';
 
 import { emptyFn } from '../../../config/general';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
 import { formatSize } from '../../../styles/format-size';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
+import { generateSeed } from '../../../utils/keys.util';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../divider/divider';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
@@ -30,13 +29,11 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
     activeTimer.current = setTimeout(() => setIsShowOverlay(true), OVERLAY_SHOW_TIMEOUT);
   };
 
-  const handleGenerateNewButtonPress = () => {
-    symmetricKey64().then((key64: string) => {
-      const entropy = Array.from(Buffer.from(key64, 'base64'));
-      const mnemonic = entropyToMnemonic(Buffer.from(entropy.slice(0, 16)));
-      onChangeText(mnemonic);
-      hideOverlay();
-    });
+  const handleGenerateNewButtonPress = async () => {
+    const seed = await generateSeed();
+
+    onChangeText(seed);
+    hideOverlay();
   };
 
   return (
