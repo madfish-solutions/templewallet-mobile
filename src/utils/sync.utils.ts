@@ -21,7 +21,8 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
   const encrypted = pick();
 
   try {
-    const decrypted = await secureCellSealWithPassphraseDecrypt64(password, encrypted);
+    const context = "templewalletsync" + password;
+    const decrypted = await secureCellSealWithPassphraseDecrypt64(password, encrypted, context);
 
     const [mnemonic, hdAccountsLength] = JSON.parse(decrypted);
 
