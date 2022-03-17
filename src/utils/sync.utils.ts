@@ -3,6 +3,7 @@ import { NativeModules } from 'react-native';
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { isDefined } from './is-defined';
 import { Aes } from 'react-native-aes-crypto';
+import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
@@ -17,13 +18,10 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
     throw new Error('Payload is not Temple Sync payload');
   }
 
-  const salt = Buffer.from(pick(24), 'base64').toString('hex');
-  const iv = Buffer.from(pick(24), 'base64').toString('hex');
   const encrypted = pick();
 
   try {
-    const key = await NativeModules.Aes.pbkdf2(password, salt, 5000, 256);
-    const decrypted = await NativeModules.Aes.decrypt(encrypted, key, iv, AES_ALGORITHM);
+    const decrypted = await secureCellSealWithPassphraseDecrypt64(password, encrypted);
 
     const [mnemonic, hdAccountsLength] = JSON.parse(decrypted);
 
