@@ -4,7 +4,7 @@ import { createStackNavigator, StackNavigationOptions, TransitionPresets } from 
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
-import { usePasscode } from '../hooks/use-passcode.hook';
+import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -46,7 +46,7 @@ export const RootStackScreen = () => {
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
-  const { isPasscode } = usePasscode();
+  const isPasscode = useDevicePasscode();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>

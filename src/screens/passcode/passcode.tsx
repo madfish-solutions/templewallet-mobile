@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Linking, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 import { generalSettings } from 'react-native-android-open-settings';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -11,15 +11,16 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { isIOS } from '../../config/system';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { openUrl } from '../../utils/linking.util';
 import { usePassCodeStyles } from './passcode.styles';
 
 export const PassCode = () => {
   const styles = usePassCodeStyles();
   const colors = useColors();
 
-  const handleSettings = useCallback(() => {
-    isIOS ? Linking.openURL('App-Prefs:Bluetooth') : generalSettings();
-  }, []);
+  const handleSettings = () => {
+    isIOS ? openUrl('app-settings:') : generalSettings();
+  };
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
