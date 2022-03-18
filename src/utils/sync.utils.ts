@@ -1,6 +1,8 @@
+import { validateMnemonic } from 'bip39';
+import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
+
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { isDefined } from './is-defined';
-import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
@@ -19,6 +21,9 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
     const decrypted = await secureCellSealWithPassphraseDecrypt64(password, encrypted);
 
     const [mnemonic, hdAccountsLength] = JSON.parse(decrypted);
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error('Mnemonic not validated');
+    }
 
     return {
       mnemonic,
@@ -35,7 +40,7 @@ export const isSyncPayload = (payload: string): boolean => {
       const prefix = Buffer.from(payload.slice(0, 16), 'base64').toString('utf8');
 
       return prefix === TEMPLE_SYNC_PREFIX;
-    } catch (_err) { }
+    } catch (_err) {}
   }
 
   return false;
