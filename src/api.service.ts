@@ -6,6 +6,7 @@ export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/
 
 export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
 
-export const templeWalletApi = axios.create({ baseURL: 'https://api.templewallet.com/api' });
+// export const templeWalletApi = axios.create({ baseURL: 'https://api.templewallet.com/api' });
+export const templeWalletApi = axios.create({ baseURL: 'http://localhost:3000/api' });
 
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
