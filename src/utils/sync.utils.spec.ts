@@ -47,7 +47,6 @@ describe('parseSyncPayload', () => {
   it('should throw error when valid payload and invalid password', async () => {
     await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError('Failed to decrypt sync payload');
   });
-
   it('should parse when payload and password valid', async () => {
     NativeModules.Aes.decrypt = jest.fn(() =>
       Promise.resolve(JSON.stringify([validParsed.mnemonic, validParsed.hdAccountsLength]))

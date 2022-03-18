@@ -30,6 +30,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
     const colors = useColors();
 
     const handleCleanButtonPress = () => {
+      onBlur();
       onChangeText('');
     };
 

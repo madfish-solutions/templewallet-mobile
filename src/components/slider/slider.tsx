@@ -10,6 +10,8 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSliderStyles } from './slider.styles';
 
+const CALCULATION_LATENCY = 200;
+
 type Props = Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'> &
   Required<Pick<SliderProps, 'value' | 'onValueChange'>>;
 
@@ -17,7 +19,7 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
   const colors = useColors();
   const styles = useSliderStyles();
 
-  const debouncedValueChange = debounce(onValueChange);
+  const debouncedValueChange = debounce(onValueChange, CALCULATION_LATENCY);
 
   return (
     <>

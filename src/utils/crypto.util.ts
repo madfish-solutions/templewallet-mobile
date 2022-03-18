@@ -1,52 +1,28 @@
-import { from, Observable } from 'rxjs';
-
 import {
-  symmetricKey64,
+  secureCellSealWithPassphraseDecrypt64,
   secureCellSealWithPassphraseEncrypt64,
-  secureCellSealWithPassphraseDecrypt64
+  symmetricKey64
 } from 'react-native-themis';
+import { from, Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface EncryptedData {
   encrypted64: string;
-}
-
-export interface EncryptedDataSalt {
   salt64: string;
 }
 
-export const encryptString$ = (value: string, password: string): Observable<EncryptedData & EncryptedDataSalt> => {
-  function encryption(): Promise<EncryptedData & EncryptedDataSalt> {
-    return new Promise((resolve) => {
-      symmetricKey64().then((salt64: string) => {
-        secureCellSealWithPassphraseEncrypt64(password, value, salt64)
-          .then((encrypted64: string) => {
-            resolve({ encrypted64, salt64 })
-          })
-      })
-    })
-  }
+export const encryptString$ = (value: string, password: string): Observable<EncryptedData> => {
+  const encryption = async () => {
+    const salt64 = await symmetricKey64();
+    const encrypted64 = await secureCellSealWithPassphraseEncrypt64(password, value, salt64);
 
-  return from(encryption())
+    return { encrypted64, salt64 };
+  };
+
+  return from(encryption());
 };
 
-
-
-export const decryptString$ = (
-  data: EncryptedData & EncryptedDataSalt,
-  password: string
-): Observable<string | undefined> => {
-
-  function decryption(): Promise<string | undefined> {
-    return new Promise((resolve, reject) => {
-      secureCellSealWithPassphraseDecrypt64(password, data.encrypted64, data.salt64)
-        .then((decrypted: string) => {
-          resolve(decrypted)
-        })
-        .catch(() => {
-          reject(undefined)
-        })
-    })
-  }
-
-  return from(decryption());
-}
+export const decryptString$ = (data: EncryptedData, password: string): Observable<string | undefined> =>
+  from(secureCellSealWithPassphraseDecrypt64(password, data.encrypted64, data.salt64)).pipe(
+    catchError(() => of(undefined))
+  );

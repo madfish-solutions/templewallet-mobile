@@ -1,5 +1,5 @@
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
-import { getDerivationPath, seedToPrivateKey, getPublicKeyAndHash$ } from './keys.util';
+import { getDerivationPath, seedToPrivateKey, getPublicKeyAndHash$, generateSeed } from './keys.util';
 import { rxJsTestingHelper } from './testing.utis';
 
 it('getDerivationPath should return derivation path, passing account index', () => {
@@ -27,3 +27,6 @@ it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing priv
   );
 });
 
+it('generateSeed should generate seed', async () => {
+  await expect(generateSeed()).resolves.toEqual(mockAccountCredentials.seed);
+});
