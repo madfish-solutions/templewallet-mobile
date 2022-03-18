@@ -16,3 +16,6 @@ export const useRpcListSelector = () =>
   useSelector<SettingsRootState, RpcInterface[]>(({ settings }) => settings.rpcList);
 export const useSelectedRpcUrlSelector = () =>
   useSelector<SettingsRootState, string>(({ settings }) => settings.selectedRpcUrl);
+
+export const useFirstAppLaunchSelector = () =>
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isFirstAppLaunch);
