@@ -98,6 +98,7 @@
     "react-native-scrypt": "^1.2.1",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "^12.1.0",
+    "react-native-themis": "^0.14.4",
     "react-native-toast-message": "^2.1.0",
     "react-native-url-polyfill": "^1.3.0",
     "react-redux": "^7.2.6",

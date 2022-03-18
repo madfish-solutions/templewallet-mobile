@@ -27,6 +27,6 @@ it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing priv
   );
 });
 
-it('generateSeed should generate seed', () => {
-  expect(generateSeed()).toEqual(mockAccountCredentials.seed);
+it('generateSeed should generate seed', async () => {
+  await expect(generateSeed()).resolves.toEqual(mockAccountCredentials.seed);
 });

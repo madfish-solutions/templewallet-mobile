@@ -8,8 +8,7 @@ const mockIncorrectDecryptResult = undefined;
 export const mockCorrectDecryptResult = 'mockCorrectDecryptResult';
 
 export const mockCryptoUtil = {
-  generateRandomValues: jest.fn(),
-  encryptString$: jest.fn(() => of(mockEncryptedData)),
+  encryptString$: jest.fn((_value: string, _password: string) => of(mockEncryptedData)),
   decryptString$: jest.fn((_: unknown, password: string) =>
     Promise.resolve(password === mockCorrectPassword ? mockCorrectDecryptResult : mockIncorrectDecryptResult)
   )
