@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import themis from 'react-native-themis';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
@@ -48,7 +48,7 @@ describe('parseSyncPayload', () => {
     await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError('Failed to decrypt sync payload');
   });
   it('should parse when payload and password valid', async () => {
-    NativeModules.Aes.decrypt = jest.fn(() =>
+    themis.secureCellSealWithPassphraseDecrypt64 = jest.fn(() =>
       Promise.resolve(JSON.stringify([validParsed.mnemonic, validParsed.hdAccountsLength]))
     );
 
