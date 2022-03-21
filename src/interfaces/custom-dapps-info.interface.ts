@@ -12,7 +12,7 @@ export interface CustomDAppInfo {
   type: DappType;
   logo: string;
   slug: string;
-  category: [DappType];
+  category: DappType[];
 }
 
 export interface CustomDAppsInfo {
