@@ -4,7 +4,6 @@ import { createStackNavigator, StackNavigationOptions, TransitionPresets } from 
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
-import { isIOS } from '../config/system';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -130,10 +129,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.ImportAccount}
               component={ImportAccountModal}
-              options={{
-                ...useModalOptions('Import account'),
-                gestureResponseDistance: isIOS ? undefined : 30
-              }}
+              options={useModalOptions('Import account')}
             />
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
