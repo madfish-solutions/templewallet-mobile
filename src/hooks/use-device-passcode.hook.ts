@@ -20,7 +20,7 @@ export const useDevicePasscode = () => {
     });
   };
 
-  useAppStateStatus({ onAppActiveState: isPinState, onAppBackgroundState: isPinState, onAppInactiveState: isPinState });
+  useAppStateStatus({ onAppActiveState: isPinState, onAppBackgroundState: isPinState });
 
   return isDevicePasscodeSet;
 };
