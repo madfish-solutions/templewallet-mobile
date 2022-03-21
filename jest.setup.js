@@ -10,7 +10,6 @@ if (typeof atob === 'undefined') {
 }
 
 import './src/mocks/mem.mock';
-import './src/mocks/crypto.mock';
 
 import './src/mocks/taquito-signer.mock';
 import './src/mocks/native-modules.mock';
@@ -23,6 +22,7 @@ import './src/mocks/react-native-fs.mock';
 import './src/mocks/react-native-orientation-locker.mock';
 import './src/mocks/react-native-permissions.mock';
 import './src/mocks/react-native-screens.mock';
+import './src/mocks/react-native-themis.mock';
 import './src/mocks/react-native-reanimated.mock';
 import './src/mocks/react-native-quick-actions.mock';
 import './src/mocks/react-native-toast-message.mock';

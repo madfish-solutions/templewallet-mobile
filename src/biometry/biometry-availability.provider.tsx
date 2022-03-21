@@ -20,7 +20,7 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
       .catch(noop);
   };
 
-  useAppStateStatus(updateBiometryAvailability);
+  useAppStateStatus({ onAppActiveState: updateBiometryAvailability });
 
   return (
     <BiometryAvailabilityContext.Provider value={{ isHardwareAvailable, biometryType }}>
