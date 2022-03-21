@@ -74,7 +74,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-config": "^1.4.5",
     "react-native-crypto": "^2.2.0",
-    "react-native-device-info": "^8.4.8",
+    "react-native-device-info": "^8.5.0",
     "react-native-document-picker": "^7.1.1",
     "react-native-exception-handler": "^2.10.10",
     "react-native-fs": "^2.18.0",
