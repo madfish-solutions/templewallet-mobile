@@ -1,4 +1,4 @@
-enum DappTypeCategory {
+enum DappType {
   Exchanges = 'Exchanges',
   Marketplaces = 'Marketplaces',
   Games = 'Games',
@@ -28,10 +28,10 @@ enum DataTypeSlug {
 export interface CustomDAppInfo {
   name: string;
   dappUrl: string;
-  type: string;
+  type: DappType;
   logo: string;
   slug: DataTypeSlug;
-  category: [DappTypeCategory];
+  category: [DappType];
 }
 
 export interface CustomDAppsInfo {
