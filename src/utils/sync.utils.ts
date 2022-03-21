@@ -1,12 +1,10 @@
-import { NativeModules } from 'react-native';
-import { Aes } from 'react-native-aes-crypto';
+import { validateMnemonic } from 'bip39';
+import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { isDefined } from './is-defined';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
-
-const AES_ALGORITHM: Aes.Algorithms = 'aes-256-cbc';
 
 export const parseSyncPayload = async (payload: string, password: string): Promise<SyncPayloadInterface> => {
   let index = 0;
@@ -17,15 +15,15 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
     throw new Error('Payload is not Temple Sync payload');
   }
 
-  const salt = Buffer.from(pick(24), 'base64').toString('hex');
-  const iv = Buffer.from(pick(24), 'base64').toString('hex');
   const encrypted = pick();
 
   try {
-    const key = await NativeModules.Aes.pbkdf2(password, salt, 5000, 256);
-    const decrypted = await NativeModules.Aes.decrypt(encrypted, key, iv, AES_ALGORITHM);
+    const decrypted = await secureCellSealWithPassphraseDecrypt64(password, encrypted);
 
     const [mnemonic, hdAccountsLength] = JSON.parse(decrypted);
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error('Mnemonic not validated');
+    }
 
     return {
       mnemonic,
