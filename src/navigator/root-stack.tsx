@@ -130,9 +130,10 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.ImportAccount}
               component={ImportAccountModal}
-              options={Object.assign(useModalOptions('Import account'), {
+              options={{
+                ...useModalOptions('Import account'),
                 gestureResponseDistance: isIOS ? undefined : 30
-              })}
+              }}
             />
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
