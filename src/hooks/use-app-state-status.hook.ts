@@ -5,13 +5,28 @@ import { emptyFn, EmptyFn } from '../config/general';
 
 enum BasicAppStateStatus {
   Active = 'active',
-  Background = 'background'
+  Background = 'background',
+  Inactive = 'inactive'
 }
 
-export const useAppStateStatus = (onAppActiveState: EmptyFn, onAppBackgroundState: EmptyFn = emptyFn) => {
+interface AppStateStatusProps {
+  onAppActiveState?: EmptyFn;
+  onAppBackgroundState?: EmptyFn;
+  onAppInactiveState?: EmptyFn;
+}
+
+export const useAppStateStatus = ({
+  onAppActiveState = emptyFn,
+  onAppBackgroundState = emptyFn,
+  onAppInactiveState = emptyFn
+}: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
 
   const handleAppStateChange = (newAppState: AppStateStatus) => {
+    if (prevAppState.current !== BasicAppStateStatus.Inactive && newAppState === BasicAppStateStatus.Inactive) {
+      onAppInactiveState();
+    }
+
     if (prevAppState.current === BasicAppStateStatus.Background && newAppState === BasicAppStateStatus.Active) {
       onAppActiveState();
     }
