@@ -7,15 +7,13 @@ export enum DappEnum {
   Other = 'Other'
 }
 
-type DappType = keyof typeof DappEnum;
-
 export interface CustomDAppInfo {
   name: string;
   dappUrl: string;
-  type: DappType;
+  type: DappEnum;
   logo: string;
   slug: string;
-  category: DappType[];
+  category: DappEnum[];
 }
 
 export interface CustomDAppsInfo {
