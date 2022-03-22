@@ -5,7 +5,7 @@ export const mockAccountCredentials = {
   privateKeyWithoutDerivationPath: 'edsk3FZiaY865vx1fG11XhHmGCFa1xgvgdQ4KCjmszEGLnCJuWtrSU',
   publicKey: 'edpkuv28oLEsFEbRreYPBikjNp6u9CfXjG3ArGCfnPbQfa4UWPRQN6',
   publicKeyHash: 'tz1W311ULA4p9EcEvNyufJgSBNSxg8tPdyei',
-  seed: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
+  seed: 'agree amazing bid shock slogan garment above afford melt strong puzzle unit'
 };
 
 export const mockHDAccountCredentials = {

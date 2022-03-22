@@ -37,7 +37,7 @@ export const DApps = () => {
   return (
     <>
       <InsetSubstitute type="top" />
-      <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
+      <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} />
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Integrated</Text>
       <Divider size={formatSize(20)} />

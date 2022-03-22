@@ -19,7 +19,7 @@ export const OthersDApp: FC<Props> = ({ item }) => {
   const [imageLoadError, setImageLoadError] = useState(false);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.website)}>
+    <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.dappUrl)}>
       {imageLoadError ? (
         <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
       ) : (

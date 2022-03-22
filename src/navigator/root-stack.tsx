@@ -1,11 +1,12 @@
 import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
+import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -21,8 +22,8 @@ import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
+import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { resetKeychainOnInstallAction } from '../store/root-state.actions';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -41,13 +42,12 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
-  const dispatch = useDispatch();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
-
-  useEffect(() => void dispatch(resetKeychainOnInstallAction.submit()), []);
+  const isPasscode = useDevicePasscode();
+  useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
@@ -160,6 +160,7 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {isAuthorised && isLocked && <EnterPassword />}
+      {isPasscode === false && <PassCode />}
     </NavigationContainer>
   );
 };
