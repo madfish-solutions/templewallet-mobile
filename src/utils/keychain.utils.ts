@@ -1,6 +1,5 @@
 import Keychain from 'react-native-keychain';
-import { forkJoin, from } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { isAndroid } from '../config/system';
 
@@ -21,9 +20,16 @@ export const biometryKeychainOptions: Keychain.Options = {
   authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
 };
 
-export const resetKeychain$ = () =>
-  from(Keychain.getAllGenericPasswordServices()).pipe(
-    switchMap(keychainServicesArray =>
-      forkJoin(keychainServicesArray.map(service => Keychain.resetGenericPassword({ service })))
-    )
-  );
+// pseudo async function as we don't need to wait until Keychain will remove all data
+// (common async solution stops reset process)
+export const resetKeychain$ = () => {
+  Keychain.getAllGenericPasswordServices()
+    .then(keychainServicesArray => {
+      if (keychainServicesArray.length > 0) {
+        Promise.all(keychainServicesArray.map(service => Keychain.resetGenericPassword({ service })));
+      }
+    })
+    .catch(() => void 0);
+
+  return of(0);
+};
