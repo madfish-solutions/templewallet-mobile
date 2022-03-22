@@ -2,8 +2,10 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
+import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -40,6 +42,10 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
+  useAppStateStatus({
+    onAppInactiveState: () => show(),
+    onAppActiveState: () => hide()
+  });
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
