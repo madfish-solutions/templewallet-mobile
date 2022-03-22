@@ -6,6 +6,7 @@ import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
@@ -23,6 +24,7 @@ import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
+import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
@@ -50,6 +52,7 @@ export const RootStackScreen = () => {
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
+  const isPasscode = useDevicePasscode();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
@@ -163,6 +166,7 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {isAuthorised && isLocked && <EnterPassword />}
+      {isPasscode === false && <PassCode />}
     </NavigationContainer>
   );
 };
