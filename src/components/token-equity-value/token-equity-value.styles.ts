@@ -17,7 +17,8 @@ export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }
   dateText: {
     ...typography.tagline11Tag,
     color: colors.gray3,
-    marginLeft: formatSize(2)
+    marginLeft: formatSize(2),
+    textTransform: 'uppercase'
   },
   mainValueText: {
     ...typography.numbersMedium20,
