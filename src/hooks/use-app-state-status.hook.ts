@@ -22,12 +22,18 @@ export const useAppStateStatus = ({
 }: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
 
+  console.log('prevAppState', prevAppState.current);
+
   const handleAppStateChange = (newAppState: AppStateStatus) => {
     if (prevAppState.current !== BasicAppStateStatus.Inactive && newAppState === BasicAppStateStatus.Inactive) {
       onAppInactiveState();
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Background && newAppState === BasicAppStateStatus.Active) {
+    if (
+      (prevAppState.current === BasicAppStateStatus.Background ||
+        prevAppState.current === BasicAppStateStatus.Inactive) &&
+      newAppState === BasicAppStateStatus.Active
+    ) {
       onAppActiveState();
     }
 
@@ -36,7 +42,11 @@ export const useAppStateStatus = ({
     }
 
     // Other states are optional on different platforms, so they are ignored
-    if (newAppState === BasicAppStateStatus.Active || newAppState === BasicAppStateStatus.Background) {
+    if (
+      newAppState === BasicAppStateStatus.Active ||
+      newAppState === BasicAppStateStatus.Background ||
+      newAppState === BasicAppStateStatus.Inactive
+    ) {
       prevAppState.current = newAppState as BasicAppStateStatus;
     }
   };
