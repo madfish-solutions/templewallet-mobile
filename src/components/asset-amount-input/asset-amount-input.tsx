@@ -163,7 +163,20 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            onValueChange={newAsset => onValueChange({ ...value, asset: newAsset ?? emptyToken })}
+            onValueChange={newAsset => {
+              onValueChange({
+                amount: isDefined(inputValueRef.current)
+                  ? isTokenInputType
+                    ? tzToMutez(inputValueRef.current, newAsset?.decimals ?? 0)
+                    : dollarToTokenAmount(
+                        inputValueRef.current,
+                        newAsset?.decimals ?? 0,
+                        exchangeRates[getTokenSlug(newAsset ?? emptyToken)]
+                      )
+                  : undefined,
+                asset: newAsset ?? emptyToken
+              });
+            }}
           />
         </View>
       </View>
