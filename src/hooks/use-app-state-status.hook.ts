@@ -27,15 +27,11 @@ export const useAppStateStatus = ({
       onAppInactiveState();
     }
 
-    if (
-      (prevAppState.current === BasicAppStateStatus.Background ||
-        prevAppState.current === BasicAppStateStatus.Inactive) &&
-      newAppState === BasicAppStateStatus.Active
-    ) {
+    if (prevAppState.current !== BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Active) {
       onAppActiveState();
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Background) {
+    if (prevAppState.current !== BasicAppStateStatus.Background && newAppState === BasicAppStateStatus.Background) {
       onAppBackgroundState();
     }
 
