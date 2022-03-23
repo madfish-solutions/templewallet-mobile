@@ -1,6 +1,8 @@
-import { BinaryLike } from 'crypto';
+import { entropyToMnemonic } from 'bip39';
+import * as forge from 'node-forge';
 import { NativeModules } from 'react-native';
 import { Aes } from 'react-native-aes-crypto';
+import scrypt from 'react-native-scrypt';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -29,8 +31,18 @@ const generateSalt = (): string => {
   return btoa(String.fromCharCode.apply(null, Array.from(view)));
 };
 
-const pbkdf2$ = (password: BinaryLike, salt: BinaryLike) =>
-  from<string>(NativeModules.Aes.pbkdf2(password, salt, 5000, 256));
+const scrypt$ = async (password: string, salt: string) =>
+  from<string>(
+    await scrypt(
+      Buffer.from(password, 'base64').toString(),
+      Buffer.from(salt, 'base64').toString(),
+      65536,
+      8,
+      1,
+      32,
+      'base64'
+    )
+  );
 
 const randomKey$ = () => from<string>(NativeModules.Aes.randomKey(16));
 
@@ -40,7 +52,7 @@ const encrypt$ = (value: string, key: string, iv: string) =>
 export const encryptString$ = (value: string, password: string): Observable<EncryptedData & EncryptedDataSalt> => {
   const salt = generateSalt();
 
-  return forkJoin([pbkdf2$(password, salt), randomKey$()]).pipe(
+  return forkJoin([from(scrypt$(password, salt)).pipe(switchMap(x => x)), randomKey$()]).pipe(
     switchMap(([key, iv]) =>
       encrypt$(value, key, iv).pipe(
         map(cipher => ({
@@ -53,22 +65,47 @@ export const encryptString$ = (value: string, password: string): Observable<Encr
   );
 };
 
-export const encryptPass$ = (password: string) => pbkdf2$(password, generateSalt());
+export const hashPassword$ = (password: string) => from(scrypt$(password, generateSalt())).pipe(switchMap(str => str));
+
+const decrypt = async (chipher: string, password: string, salt: string) => {
+  try {
+    if (!password || !salt) {
+      throw new Error('Missing password or salt');
+    }
+    const parts = chipher.split('==');
+    const chiphertext = parts[0];
+    const tag = parts[1];
+    const key = await scrypt(Buffer.from(password), Buffer.from(salt, 'hex'), 65536, 8, 1, 32, 'buffer');
+    const decipher = forge.cipher.createDecipher('AES-GCM', key.toString('binary'));
+    decipher.start({
+      iv: Buffer.from(salt, 'hex'),
+      tag: forge.util.createBuffer(Buffer.from(tag, 'hex').toString('binary'), 'utf-8')
+    });
+    decipher.update(forge.util.createBuffer(Buffer.from(chiphertext, 'hex').toString('binary'), 'utf-8'));
+    const pass = decipher.finish();
+    if (pass === true) {
+      return Buffer.from(decipher.output.toHex(), 'hex').toString();
+    } else {
+      return '';
+    }
+  } catch (err) {
+    return '';
+  }
+};
 
 export const decryptString$ = (
   data: EncryptedData & EncryptedDataSalt,
   password: string
 ): Observable<string | undefined> =>
-  pbkdf2$(password, data.salt).pipe(
-    switchMap(key =>
-      from<string>(NativeModules.Aes.decrypt(data.cipher, key, data.iv, AES_ALGORITHM)).pipe(
-        catchError(() => of(undefined))
-      )
+  from(
+    from(scrypt$(password, data.salt)).pipe(
+      switchMap(key => key),
+      map(key => decrypt(data.cipher, key, data.iv))
     )
-  );
+  ).pipe(map(key => key));
 
 export const withEncryptedPass$ = (
   keychainData: EncryptedData & EncryptedDataSalt,
   password: string
 ): Observable<[EncryptedData & EncryptedDataSalt, string]> =>
-  encryptPass$(password).pipe(map(hash => [keychainData, hash]));
+  hashPassword$(password).pipe(map(hash => [keychainData, hash]));

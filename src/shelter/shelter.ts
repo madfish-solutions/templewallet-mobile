@@ -11,7 +11,7 @@ import {
   decryptString$,
   EncryptedData,
   EncryptedDataSalt,
-  encryptPass$,
+  hashPassword$,
   encryptString$,
   withEncryptedPass$
 } from '../utils/crypto.util';
@@ -28,14 +28,14 @@ import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../ut
 const EMPTY_PASSWORD = '';
 
 export class Shelter {
-  private static _hash$ = new BehaviorSubject(EMPTY_PASSWORD);
+  private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
     forkJoin(
       Object.entries(data).map(entry =>
         of(entry).pipe(
           switchMap(([key, value]) =>
-            encryptString$(value, Shelter._hash$.getValue()).pipe(
+            encryptString$(value, Shelter._passwordHash$.getValue()).pipe(
               switchMap(encryptedData =>
                 Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
               )
@@ -56,18 +56,18 @@ export class Shelter {
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static isLocked$ = Shelter._hash$.pipe(map(password => password === EMPTY_PASSWORD));
+  static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD));
 
-  static getIsLocked = () => Shelter._hash$.getValue() === EMPTY_PASSWORD;
+  static getIsLocked = () => Shelter._passwordHash$.getValue() === EMPTY_PASSWORD;
 
-  static lockApp = () => Shelter._hash$.next(EMPTY_PASSWORD);
+  static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD);
 
   static unlockApp$ = (password: string) =>
     Shelter.verifyPassword$(password).pipe(
       map(value => {
         if (value) {
-          encryptPass$(password).subscribe(encrypted => {
-            Shelter._hash$.next(encrypted);
+          hashPassword$(password).subscribe(encrypted => {
+            Shelter._passwordHash$.next(encrypted);
           });
 
           return true;
@@ -101,8 +101,8 @@ export class Shelter {
     password: string,
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
-    encryptPass$(password).subscribe(encrypted => {
-      Shelter._hash$.next(encrypted);
+    hashPassword$(password).subscribe(encrypted => {
+      Shelter._passwordHash$.next(encrypted);
     });
 
     const seed = mnemonicToSeedSync(seedPhrase);
@@ -171,13 +171,13 @@ export class Shelter {
     );
 
   static revealSecretKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._hash$.getValue()).pipe(
+    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._passwordHash$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
 
-  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._hash$.getValue());
+  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
 
   static getSigner$ = (publicKeyHash: string) =>
     Shelter.revealSecretKey$(publicKeyHash).pipe(
@@ -200,7 +200,7 @@ export class Shelter {
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
   static isPasswordCorrect = async (password: string) => {
-    const isNotEmpty = password !== EMPTY_PASSWORD && Shelter._hash$.getValue() !== EMPTY_PASSWORD;
+    const isNotEmpty = password !== EMPTY_PASSWORD && Shelter._passwordHash$.getValue() !== EMPTY_PASSWORD;
     const isCorrect = await firstValueFrom(Shelter.verifyPassword$(password));
 
     return isCorrect && isNotEmpty;

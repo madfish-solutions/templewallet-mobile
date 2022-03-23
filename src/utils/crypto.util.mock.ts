@@ -11,7 +11,7 @@ export const mockCryptoUtil = {
   generateRandomValues: jest.fn(),
   encryptString$: jest.fn(() => of(mockEncryptedData)),
   withEncryptedPass$: jest.fn((keychain, password: string) => of([mockEncryptedData, password])),
-  encryptPass$: jest.fn(() => of(mockCorrectPassword)),
+  hashPassword$: jest.fn(() => of(mockCorrectPassword)),
   decryptString$: jest.fn((_: unknown, password: string) =>
     Promise.resolve(password === mockCorrectPassword ? mockCorrectDecryptResult : mockIncorrectDecryptResult)
   )
