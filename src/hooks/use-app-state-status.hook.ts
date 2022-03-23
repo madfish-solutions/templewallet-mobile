@@ -22,8 +22,6 @@ export const useAppStateStatus = ({
 }: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
 
-  console.log('prevAppState', prevAppState.current);
-
   const handleAppStateChange = (newAppState: AppStateStatus) => {
     if (prevAppState.current !== BasicAppStateStatus.Inactive && newAppState === BasicAppStateStatus.Inactive) {
       onAppInactiveState();
