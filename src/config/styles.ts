@@ -10,6 +10,7 @@ export const greyLight200 = '#E5E5EA';
 export const greyLight400 = '#F4F4F4';
 export const blue = '#007AFF';
 export const black = '#000000';
+export const dark = '#1B262C';
 export const orange = '#FF5B00';
 export const orangeLight = '#FF7A00';
 export const orangeLight200 = '#FF3D00';

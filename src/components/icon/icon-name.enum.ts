@@ -80,5 +80,6 @@ export enum IconNameEnum {
   ChartIcon = 'ChartIcon',
   MinusIcon = 'MinusIcon',
   PlusIcon = 'PlusIcon',
-  PlusIconOrange = 'PlusIconOrange'
+  PlusIconOrange = 'PlusIconOrange',
+  UkraineIcon = 'UkraineIcon'
 }
