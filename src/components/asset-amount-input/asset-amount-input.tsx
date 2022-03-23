@@ -107,6 +107,21 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     setInputTypeIndex(tokenTypeIndex);
   };
 
+  const handleTokenChange = (newAsset?: TokenInterface) => {
+    const decimals = newAsset?.decimals ?? 0;
+    const asset = newAsset ?? emptyToken;
+    const exchangeRate = exchangeRates[getTokenSlug(asset)];
+
+    onValueChange({
+      amount: isDefined(inputValueRef.current)
+        ? isTokenInputType
+          ? tzToMutez(inputValueRef.current, decimals)
+          : dollarToTokenAmount(inputValueRef.current, decimals, exchangeRate)
+        : undefined,
+      asset
+    });
+  };
+
   useEffect(
     () =>
       void onValueChange({
@@ -163,20 +178,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            onValueChange={newAsset => {
-              onValueChange({
-                amount: isDefined(inputValueRef.current)
-                  ? isTokenInputType
-                    ? tzToMutez(inputValueRef.current, newAsset?.decimals ?? 0)
-                    : dollarToTokenAmount(
-                        inputValueRef.current,
-                        newAsset?.decimals ?? 0,
-                        exchangeRates[getTokenSlug(newAsset ?? emptyToken)]
-                      )
-                  : undefined,
-                asset: newAsset ?? emptyToken
-              });
-            }}
+            onValueChange={handleTokenChange}
           />
         </View>
       </View>
