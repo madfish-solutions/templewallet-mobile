@@ -1,14 +1,12 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
-import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
@@ -17,29 +15,36 @@ import { WhiteContainerAction } from '../../components/white-container/white-con
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
-import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { changeTheme } from '../../store/settings/settings-actions';
-import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 // import { SettingsHeader } from './settings-header/settings-header';
 import { useBuyStyles } from './buy.styles';
 
+const TABS = [
+  {
+    id: 0,
+    name: 'Crypto',
+    component: <View>1</View>
+  },
+  {
+    id: 1,
+    name: 'Debit/Credit Card',
+    component: <View>2</View>
+  }
+];
+
 export const Buy = () => {
   const styles = useBuyStyles();
-  const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
 
-  const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
-  const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
+  const [tab, setTab] = useState(TABS[1]);
 
-  const handleThemeSegmentControlChange = (newThemeIndex: number) =>
-    dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
+  const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
 
   return (
     <>
@@ -47,9 +52,7 @@ export const Buy = () => {
 
       <ScreenContainer isFullScreenMode={true}>
         <View style={styles.upperContainer}>
-          <View style={styles.quoteContainer}>
-            <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
-          </View>
+          <TextSegmentControl selectedIndex={tab.id} values={TABS.map(x => x.name)} onChange={handleTabChange} />
           <Divider size={formatSize(8)} />
 
           <WhiteContainer>
@@ -64,7 +67,7 @@ export const Buy = () => {
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction disabled={true}>
+            {/* <WhiteContainerAction disabled={true}>
               <WhiteContainerText text="Appearance" />
 
               <TextSegmentControl
@@ -73,7 +76,7 @@ export const Buy = () => {
                 width={formatSize(120)}
                 onChange={handleThemeSegmentControlChange}
               />
-            </WhiteContainerAction>
+            </WhiteContainerAction> */}
 
             <WhiteContainerDivider />
 
