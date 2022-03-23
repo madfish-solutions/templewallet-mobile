@@ -12,20 +12,6 @@ export interface EncryptedData {
   salt64: string;
 }
 
-export const generateRandomValues = (byteCount = 16) => {
-  const view = new Uint8Array(byteCount);
-
-  crypto.getRandomValues(view);
-
-  return view;
-};
-
-const generateSalt = (length = 32): string => {
-  const view = generateRandomValues(length);
-
-  return btoa(String.fromCharCode.apply(null, Array.from(view)));
-};
-
 const scrypt$ = async (password: string, salt: string) =>
   from<string>(
     await scrypt(
@@ -39,7 +25,15 @@ const scrypt$ = async (password: string, salt: string) =>
     )
   );
 
-export const hashPassword$ = (password: string) => from(scrypt$(password, generateSalt())).pipe(switchMap(str => str));
+export const hashPassword$ = (password: string) => {
+  const genSalt = async () => {
+    const salt = await symmetricKey64();
+
+    return await scrypt$(password, salt);
+  };
+
+  return from(genSalt()).pipe(switchMap(x => x));
+};
 
 export const withEncryptedPass$ = (
   keychainData: EncryptedData,
