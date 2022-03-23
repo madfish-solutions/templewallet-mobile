@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
@@ -29,5 +30,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
+  }));
+  builder.addCase(resetKeychainOnInstallAction.success, state => ({
+    ...state,
+    isFirstAppLaunch: false
   }));
 });

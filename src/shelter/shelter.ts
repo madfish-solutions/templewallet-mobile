@@ -7,14 +7,7 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
-import {
-  decryptString$,
-  EncryptedData,
-  EncryptedDataSalt,
-  hashPassword$,
-  encryptString$,
-  withEncryptedPass$
-} from '../utils/crypto.util';
+import { decryptString$, EncryptedData, hashPassword$, encryptString$, withEncryptedPass$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
   APP_IDENTIFIER,
@@ -51,7 +44,7 @@ export class Shelter {
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
-      map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
+      map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData => decryptString$(keychainData, hash)),
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
@@ -83,7 +76,7 @@ export class Shelter {
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${PASSWORD_CHECK_KEY}]`) : of(rawKeychainData)
       ),
-      map((rawKeychainData): EncryptedData & EncryptedDataSalt => JSON.parse(rawKeychainData.password)),
+      map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData =>
         withEncryptedPass$(keychainData, password).pipe(
           switchMap(([keychainData]) => decryptString$(keychainData, password)),

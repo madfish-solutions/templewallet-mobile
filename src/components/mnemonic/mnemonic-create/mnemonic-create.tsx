@@ -29,8 +29,10 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
     activeTimer.current = setTimeout(() => setIsShowOverlay(true), OVERLAY_SHOW_TIMEOUT);
   };
 
-  const handleGenerateNewButtonPress = () => {
-    onChangeText(generateSeed());
+  const handleGenerateNewButtonPress = async () => {
+    const seed = await generateSeed();
+
+    onChangeText(seed);
     hideOverlay();
   };
 

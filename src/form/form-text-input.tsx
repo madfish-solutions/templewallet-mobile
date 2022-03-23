@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 import { StyledTextInput } from '../components/styled-text-input/styled-text-input';
 import { StyledTextInputProps } from '../components/styled-text-input/styled-text-input.props';
+import { autocorrectDisableProps } from '../utils/autocorrect-disable.utils';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
@@ -18,6 +19,7 @@ export const FormTextInput: FC<Props> = ({ name, editable, placeholder, isShowCl
   return (
     <>
       <StyledTextInput
+        {...autocorrectDisableProps}
         value={field.value}
         editable={editable}
         placeholder={placeholder}
