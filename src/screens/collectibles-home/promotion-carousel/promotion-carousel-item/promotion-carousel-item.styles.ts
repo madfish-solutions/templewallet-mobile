@@ -1,21 +1,27 @@
+import { black, dark } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
 export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typography }) => ({
-  root: {
-    paddingHorizontal: formatSize(8),
-    paddingVertical: formatSize(4),
-    borderRadius: formatSize(10)
-  },
-  emojisContainer: {
+  container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: formatSize(12)
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: formatSize(35),
+    paddingVertical: formatSize(32),
+    backgroundColor: colors.blue10,
+    borderRadius: 10
   },
-  text: {
-    ...typography.numbersStatus8,
-    color: colors.white,
-    textTransform: 'uppercase',
-    alignSelf: 'flex-end'
+  textContainer: {
+    flexDirection: 'column',
+    maxWidth: formatSize(184)
+  },
+  title: {
+    ...typography.body17Semibold,
+    color: dark
+  },
+  description: {
+    ...typography.caption11Regular,
+    color: black
   }
 }));

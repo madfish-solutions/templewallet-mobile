@@ -80,6 +80,7 @@ import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
+import UkraineIcon from './assets/ukraine.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
@@ -169,5 +170,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ChartIcon]: ChartIcon,
   [IconNameEnum.MinusIcon]: MinusIcon,
   [IconNameEnum.PlusIcon]: PlusIcon,
-  [IconNameEnum.PlusIconOrange]: PlusIconOrange
+  [IconNameEnum.PlusIconOrange]: PlusIconOrange,
+  [IconNameEnum.UkraineIcon]: UkraineIcon
 };
