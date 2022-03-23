@@ -19,7 +19,7 @@ export const PassCode = () => {
   const colors = useColors();
 
   const handleSettings = () => {
-    isIOS ? openUrl('app-settings:') : generalSettings();
+    isIOS ? openUrl('App-Prefs:Security') : generalSettings();
   };
 
   return (
