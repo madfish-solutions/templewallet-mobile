@@ -5,15 +5,24 @@ export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
   upperContainer: {
     position: 'relative'
   },
-  quoteContainer: {
-    position: 'absolute',
-    top: formatSize(-72),
-    right: formatSize(4)
+  textContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: formatSize(48),
+    padding: formatSize(8)
+  },
+  divider: {
+    marginLeft: formatSize(16),
+    marginRight: formatSize(16),
+    borderBottomWidth: formatSize(0.5),
+    borderColor: colors.lines
   },
   actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    ...typography.caption13Semibold,
+    alignItems: 'center',
+    color: colors.orange,
+    justifyContent: 'center'
   },
   logoutButton: {
     flexDirection: 'row',
@@ -21,9 +30,10 @@ export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     padding: formatSize(8)
   },
-  logoutButtonText: {
-    ...typography.tagline13Tag,
-    color: colors.destructive,
-    marginRight: formatSize(2)
+  providerLogo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: formatSize(72)
   }
 }));

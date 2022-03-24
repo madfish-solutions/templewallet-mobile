@@ -40,6 +40,7 @@ import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
+import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -49,6 +50,7 @@ import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
+import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
@@ -127,6 +129,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.UsdSToken]: UsdSTokenIcon,
   [IconNameEnum.BlndToken]: BlndTokenIcon,
   [IconNameEnum.StkrToken]: StkrTokenIcon,
+  /** topup icons **/
+  [IconNameEnum.MoonPay]: MoonPayIcon,
+  [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.Share]: ShareIcon,
