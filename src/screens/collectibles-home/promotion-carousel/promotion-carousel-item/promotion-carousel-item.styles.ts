@@ -17,7 +17,7 @@ export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typogra
   },
   title: {
     ...typography.body17Semibold,
-    color: colors.dark
+    color: colors.black
   },
   description: {
     ...typography.caption11Regular,
