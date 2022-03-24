@@ -57,7 +57,7 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.verifyPassword$(password).pipe(
       map(value => {
-        if (value !== null) {
+        if (value) {
           hashPassword$(password).subscribe(encrypted => {
             Shelter._passwordHash$.next(encrypted);
           });
