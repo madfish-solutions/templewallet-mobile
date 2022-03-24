@@ -1,5 +1,5 @@
 import { InMemorySigner } from '@taquito/signer';
-import { mnemonicToSeedSync } from 'bip39';
+import { generateMnemonic, mnemonicToSeedSync } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError, firstValueFrom } from 'rxjs';
@@ -10,7 +10,6 @@ import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, hashPassword$, encryptString$, withEncryptedPass$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
-  APP_IDENTIFIER,
   biometryKeychainOptions,
   getKeychainOptions,
   PASSWORD_CHECK_KEY,
@@ -58,7 +57,7 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.verifyPassword$(password).pipe(
       map(value => {
-        if (value) {
+        if (value !== null) {
           hashPassword$(password).subscribe(encrypted => {
             Shelter._passwordHash$.next(encrypted);
           });
@@ -83,7 +82,7 @@ export class Shelter {
           switchMap(value =>
             value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value)
           ),
-          map(value => value === APP_IDENTIFIER),
+          map(value => value !== null),
           catchError(() => of(false))
         )
       )
@@ -110,7 +109,7 @@ export class Shelter {
             Shelter.saveSensitiveData$({
               seedPhrase,
               [publicKeyHash]: privateKey,
-              [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
+              [PASSWORD_CHECK_KEY]: generateMnemonic(128)
             }).pipe(
               mapTo({
                 type: AccountTypeEnum.HD_ACCOUNT,

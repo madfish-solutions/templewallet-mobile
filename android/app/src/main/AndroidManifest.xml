@@ -2,6 +2,7 @@
           package="com.templewallet">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- used for debug and for api/rpc calls of blockchain -->
 
     <application
             android:name=".MainApplication"

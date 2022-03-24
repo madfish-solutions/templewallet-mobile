@@ -13,3 +13,5 @@ export const privacyPolicy = 'https://templewallet.com/privacy';
 export const termsOfUse = 'https://templewallet.com/terms';
 export const contact = 'https://templewallet.com/contact';
 export const delegationManual = 'https://youtu.be/iFH8WEfuaDI';
+
+export const supportUkraine = 'https://donate.tezos.org.ua';

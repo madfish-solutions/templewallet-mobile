@@ -1,24 +1,25 @@
 import React, { FC } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
+import { Divider } from '../../../../components/divider/divider';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { supportUkraine } from '../../../../config/socials';
 import { formatSize } from '../../../../styles/format-size';
-import { PromotionCarouselItemInterface } from '../promotion-carousel.data';
+import { openUrl } from '../../../../utils/linking.util';
 import { usePromotionCarouselItemStyles } from './promotion-carousel-item.styles';
 
-const width = formatSize(64);
-const height = formatSize(64);
-
-export const PromotionCarouselItem: FC<PromotionCarouselItemInterface> = ({ backgroundColor, emojisArray }) => {
+export const PromotionCarouselItem: FC = () => {
   const styles = usePromotionCarouselItemStyles();
 
   return (
-    <View style={[styles.root, { backgroundColor }]}>
-      <View style={styles.emojisContainer}>
-        {emojisArray.map(uri => (
-          <Image key={uri} source={{ uri, width, height }} />
-        ))}
+    <TouchableOpacity style={styles.container} onPress={() => openUrl(supportUkraine)}>
+      <Icon name={IconNameEnum.UkraineIcon} width={formatSize(72)} height={formatSize(48)} />
+      <Divider size={formatSize(16)} />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>Stand with Ukraine</Text>
+        <Text style={styles.description}>Donate TEZ - support Ukrainians in their fight with Putin occupants.</Text>
       </View>
-      <Text style={styles.text}>Promote your shit here for 1 TEZ/Day</Text>
-    </View>
+    </TouchableOpacity>
   );
 };

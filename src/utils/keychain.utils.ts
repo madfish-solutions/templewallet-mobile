@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 
 import { isAndroid } from '../config/system';
 
-export const APP_IDENTIFIER = 'com.madfish.temple-wallet';
+const APP_IDENTIFIER = 'com.madfish.temple-wallet';
 
 export const PASSWORD_CHECK_KEY = 'app-password';
 export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
