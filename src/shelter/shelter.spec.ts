@@ -1,7 +1,12 @@
+import { of, catchError } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
-import { mockAccountCredentials, mockHDAccountCredentials } from '../mocks/account-credentials.mock';
+import {
+  mockAccountCredentials,
+  mockAccountIncorrectCredentials,
+  mockHDAccountCredentials
+} from '../mocks/account-credentials.mock';
 import {
   mockCorrectPassword,
   mockCorrectUserCredentials,
@@ -25,6 +30,23 @@ describe('Shelter', () => {
     it('should initially lock app & be unable to decrypt data', done => {
       Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)
         .pipe(withLatestFrom(Shelter.isLocked$))
+        .subscribe(
+          rxJsTestingHelper(([decryptResult, isLocked]) => {
+            expect(decryptResult).toBeUndefined();
+            expect(isLocked).toEqual(true);
+          }, done)
+        );
+    });
+
+    it('should not unlock app with incorrect mnemonic seed phrase account', done => {
+      Shelter.unlockApp$(mockIncorrectPassword)
+        .pipe(
+          switchMap(() =>
+            Shelter.revealSecretKey$(mockAccountIncorrectCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
+          )
+        )
         .subscribe(
           rxJsTestingHelper(([decryptResult, isLocked]) => {
             expect(decryptResult).toBeUndefined();
@@ -114,6 +136,25 @@ describe('Shelter', () => {
             expect(isLocked).toEqual(false);
           }, done)
         );
+    });
+
+    it('should not import HD account with wrong mnemonic', done => {
+      const fn = () => {
+        try {
+          Shelter.importHdAccount$(mockAccountIncorrectCredentials.seedPhrase, mockCorrectPassword)
+            .pipe(withLatestFrom(Shelter.isLocked$))
+            .subscribe(
+              rxJsTestingHelper(() => {
+                return true;
+              }, done)
+            );
+
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      expect(fn()).toBeFalsy();
     });
 
     it('should create HD account', done => {
