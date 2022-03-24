@@ -17,7 +17,7 @@ export const PromotionCarouselItem: FC = () => {
       <Icon name={IconNameEnum.UkraineIcon} width={formatSize(72)} height={formatSize(48)} />
       <Divider size={formatSize(16)} />
       <View style={styles.textContainer}>
-        <Text style={styles.title}> Stand with Ukraine</Text>
+        <Text style={styles.title}>Stand with Ukraine</Text>
         <Text style={styles.description}>Donate TEZ - support Ukrainians in their fight with Putin occupants.</Text>
       </View>
     </TouchableOpacity>
