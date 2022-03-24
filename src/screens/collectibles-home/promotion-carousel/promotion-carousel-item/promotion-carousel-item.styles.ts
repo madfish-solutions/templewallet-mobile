@@ -14,7 +14,7 @@ export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typogra
   },
   textContainer: {
     flexDirection: 'column',
-    maxWidth: formatSize(184)
+    maxWidth: formatSize(185)
   },
   title: {
     ...typography.body17Semibold,
