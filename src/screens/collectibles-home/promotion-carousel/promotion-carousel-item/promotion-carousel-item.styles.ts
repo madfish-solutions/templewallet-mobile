@@ -1,4 +1,3 @@
-import { black, dark } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
@@ -14,14 +13,14 @@ export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typogra
   },
   textContainer: {
     flexDirection: 'column',
-    maxWidth: formatSize(184)
+    maxWidth: formatSize(185)
   },
   title: {
     ...typography.body17Semibold,
-    color: dark
+    color: colors.black
   },
   description: {
     ...typography.caption11Regular,
-    color: black
+    color: colors.black
   }
 }));
