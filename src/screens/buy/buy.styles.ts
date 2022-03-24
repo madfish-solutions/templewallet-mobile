@@ -2,9 +2,6 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
-  upperContainer: {
-    position: 'relative'
-  },
   textContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

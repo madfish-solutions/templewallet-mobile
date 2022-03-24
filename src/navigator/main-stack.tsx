@@ -160,13 +160,6 @@ export const MainStackScreen = () => {
                 options={generateIntegratedAppOptions(<HeaderModal />)}
               />
 
-              {/** Swap stack **/}
-              {/* <MainStack.Screen
-                name={ScreensEnum.Swap}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
-              /> */}
-
               {/** Buy stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Buy}

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
+import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { useBuyStyles } from './buy.styles';
 import { Debit } from './debit';
-import { Disclaimer } from './disclaimer/disclaimer';
 
 const TABS = [
   {
@@ -22,14 +20,13 @@ const TABS = [
 ];
 
 export const Buy = () => {
-  const styles = useBuyStyles();
   const [tab, setTab] = useState(TABS[1]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
-      <View style={styles.upperContainer}>
+      <View>
         <TextSegmentControl selectedIndex={tab.id} values={TABS.map(x => x.name)} onChange={handleTabChange} />
         {tab.component}
       </View>
@@ -39,7 +36,12 @@ export const Buy = () => {
 We are working on that.`}
         />
       )}
-      {!isTablet() && <Disclaimer />}
+      <Disclaimer
+        title="Disclaimer"
+        texts={[
+          'Temple integrated third-party solutions to buy TEZ with crypto or a Debit/Credit card. Choose a provider, follow guides, get TEZ on your account.'
+        ]}
+      />
     </ScreenContainer>
   );
 };
