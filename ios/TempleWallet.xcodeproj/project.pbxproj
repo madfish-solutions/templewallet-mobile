@@ -17,6 +17,7 @@
 		63537FF252ABC765D06D530C /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A5F5FCD118BCB27CFB3BD6 /* libPods-TempleWallet.a */; };
 		6354AC6457E34CC999F84EAE /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9204D434AC834D1C9C81C942 /* Rubik-Medium.ttf */; };
 		97759125A527465C91F8E13C /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */; };
+		B642F42B27EC95C70081D363 /* libRNScrypt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B642F42A27EC95A40081D363 /* libRNScrypt.a */; };
 		B6DCC6C327DA191A00A41D73 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		C53A8AF6CC82414B97266A23 /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B77BB7F81F45B4AD68FC47 /* Rubik-SemiBold.ttf */; };
 		EC490FFF248F41A9B35275AF /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E31513459E841A2B4C766C9 /* Inter-Regular.ttf */; };
@@ -29,6 +30,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = TempleWallet;
+		};
+		B642F42927EC95A40081D363 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B642F42527EC95A40081D363 /* RNScrypt.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNScrypt;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -56,6 +64,7 @@
 		9786D55BBFDA9960F277896E /* Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet-TempleWalletTests/Pods-Wallet-TempleWallet-TempleWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		98F7D3D2C3AE4391BE719C78 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		A5FAD5C80249BF918707CB3C /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		B642F42527EC95A40081D363 /* RNScrypt.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNScrypt.xcodeproj; path = "../node_modules/react-native-scrypt/ios/RNScrypt.xcodeproj"; sourceTree = "<group>"; };
 		B64BE5B527C5313A001A7BF5 /* security.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = security.txt; sourceTree = "<group>"; };
 		DD58F3FF593F65168A1DF735 /* Pods-Wallet-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet/Pods-Wallet-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		E2766CE1F1B7D4076C95569A /* Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-Wallet-TempleWallet-TempleWalletTests/Pods-Wallet-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -76,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B642F42B27EC95C70081D363 /* libRNScrypt.a in Frameworks */,
 				63537FF252ABC765D06D530C /* libPods-TempleWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +150,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				B642F42527EC95A40081D363 /* RNScrypt.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -165,6 +176,14 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* TempleWallet.app */,
 				00E356EE1AD99517003FC87E /* TempleWalletTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B642F42627EC95A40081D363 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B642F42A27EC95A40081D363 /* libRNScrypt.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -258,6 +277,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B642F42627EC95A40081D363 /* Products */;
+					ProjectRef = B642F42527EC95A40081D363 /* RNScrypt.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* TempleWallet */,
@@ -265,6 +290,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B642F42A27EC95A40081D363 /* libRNScrypt.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNScrypt.a;
+			remoteRef = B642F42927EC95A40081D363 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
