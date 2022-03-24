@@ -1,12 +1,7 @@
-import { black, dark, white } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
 export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typography }) => ({
-  root: {
-    backgroundColor: white,
-    borderRadius: 10
-  },
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -22,10 +17,10 @@ export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typogra
   },
   title: {
     ...typography.body17Semibold,
-    color: dark
+    color: colors.dark
   },
   description: {
     ...typography.caption11Regular,
-    color: black
+    color: colors.black
   }
 }));

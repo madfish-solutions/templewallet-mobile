@@ -14,6 +14,7 @@ const basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#000000',
+  dark: '#1B262C',
   white: '#ffffff',
   peach: '#FF7A00'
 };
@@ -22,6 +23,7 @@ const basicDarkColors: typeof basicLightColors = {
   adding: '#34CC4E',
   destructive: '#FF3B30',
   black: '#ffffff',
+  dark: '#ffffff',
   white: '#000000',
   peach: '#FF7A00'
 };
