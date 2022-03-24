@@ -1,8 +1,12 @@
-import { black, dark } from '../../../../config/styles';
+import { black, dark, white } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
 export const usePromotionCarouselItemStyles = createUseStyles(({ colors, typography }) => ({
+  root: {
+    backgroundColor: white,
+    borderRadius: 10
+  },
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
