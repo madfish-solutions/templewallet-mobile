@@ -1,5 +1,5 @@
 import { InMemorySigner } from '@taquito/signer';
-import { mnemonicToSeedSync, validateMnemonic } from 'bip39';
+import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
@@ -10,7 +10,6 @@ import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, encryptString$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
-  APP_IDENTIFIER,
   biometryKeychainOptions,
   getKeychainOptions,
   PASSWORD_CHECK_KEY,
@@ -58,7 +57,7 @@ export class Shelter {
   static unlockApp$ = (password: string) =>
     Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, password).pipe(
       map(value => {
-        if (value === APP_IDENTIFIER) {
+        if (value !== null) {
           Shelter._password$.next(password);
 
           return true;
@@ -91,7 +90,7 @@ export class Shelter {
             Shelter.saveSensitiveData$({
               seedPhrase,
               [publicKeyHash]: privateKey,
-              [PASSWORD_CHECK_KEY]: APP_IDENTIFIER
+              [PASSWORD_CHECK_KEY]: generateMnemonic(128)
             }).pipe(
               mapTo({
                 type: AccountTypeEnum.HD_ACCOUNT,
