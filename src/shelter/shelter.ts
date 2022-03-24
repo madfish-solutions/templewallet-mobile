@@ -87,7 +87,7 @@ export class Shelter {
             Shelter.saveSensitiveData$({
               seedPhrase,
               [publicKeyHash]: privateKey,
-              [PASSWORD_CHECK_KEY]: generateCheck()
+              [PASSWORD_CHECK_KEY]: generateMnemonic(128)
             }).pipe(
               mapTo({
                 type: AccountTypeEnum.HD_ACCOUNT,
@@ -171,8 +171,4 @@ export class Shelter {
 
   static isPasswordCorrect = (password: string) =>
     password !== EMPTY_PASSWORD && password === Shelter._password$.getValue();
-}
-
-function generateCheck() {
-  return generateMnemonic(128);
 }
