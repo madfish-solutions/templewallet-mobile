@@ -27,15 +27,6 @@ export const Debit = () => {
         </TouchableOpacity>
       </WhiteContainer>
       <Divider size={formatSize(16)} />
-      {/* <WhiteContainer>
-        <View style={styles.providerLogo}>
-          <Icon name={IconNameEnum.Ramp} size={formatSize(160)} />
-        </View>
-        <View style={styles.divider} />
-        <TouchableOpacity style={styles.textContainer} onPress={emptyFn}>
-          <Text style={styles.actionsContainer}>Buy TEZ with Ramp</Text>
-        </TouchableOpacity>
-      </WhiteContainer> */}
     </>
   );
 };
