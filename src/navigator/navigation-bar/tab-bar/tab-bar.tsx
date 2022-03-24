@@ -32,7 +32,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         <TabBarButton
           label="Wallet"
           iconName={IconNameEnum.TezWallet}
-          iconWidth={formatSize(24)}
+          iconWidth={formatSize(28)}
           routeName={ScreensEnum.Wallet}
           focused={isStackFocused(walletStackScreens)}
         />
