@@ -3,7 +3,6 @@ import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import {
   mockAccountCredentials,
-  mockAccountIncorrectCredentials,
   mockHDAccountCredentials
 } from '../mocks/account-credentials.mock';
 import {
@@ -29,23 +28,6 @@ describe('Shelter', () => {
     it('should initially lock app & be unable to decrypt data', done => {
       Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)
         .pipe(withLatestFrom(Shelter.isLocked$))
-        .subscribe(
-          rxJsTestingHelper(([decryptResult, isLocked]) => {
-            expect(decryptResult).toBeUndefined();
-            expect(isLocked).toEqual(true);
-          }, done)
-        );
-    });
-
-    it('should not unlock app with incorrect mnemonic seed phrase account', done => {
-      Shelter.unlockApp$(mockIncorrectPassword)
-        .pipe(
-          switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountIncorrectCredentials.publicKeyHash).pipe(
-              withLatestFrom(Shelter.isLocked$)
-            )
-          )
-        )
         .subscribe(
           rxJsTestingHelper(([decryptResult, isLocked]) => {
             expect(decryptResult).toBeUndefined();
@@ -137,14 +119,15 @@ describe('Shelter', () => {
         );
     });
 
-    it('should not import HD account with wrong mnemonic', () => {
-      let res;
-      try {
-        res = Shelter.importHdAccount$(mockAccountIncorrectCredentials.seedPhrase, mockCorrectPassword);
-      } catch {
-        res = false;
-      }
-      expect(res).toBe(false);
+    it('should not import HD account with wrong mnemonic', done => {
+      const incorrectSeedPhraseMock = 'Lorem ipsum dolor sit amet consectetur adipiscing elit donec iaculis libero et';
+
+      Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
+        error: err => {
+          expect(err).toEqual('Mnemonic not validated');
+          done();
+        }
+      });
     });
 
     it('should create HD account', done => {

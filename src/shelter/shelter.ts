@@ -76,7 +76,7 @@ export class Shelter {
     Shelter._password$.next(password);
 
     if (!validateMnemonic(seedPhrase)) {
-      throw new Error('Mnemonic not validated');
+      return throwError('Mnemonic not validated');
     }
     const seed = mnemonicToSeedSync(seedPhrase);
 
