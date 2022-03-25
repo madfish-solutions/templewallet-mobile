@@ -1,5 +1,5 @@
 import { InMemorySigner } from '@taquito/signer';
-import { generateMnemonic, mnemonicToSeedSync } from 'bip39';
+import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError, firstValueFrom } from 'rxjs';
@@ -97,6 +97,9 @@ export class Shelter {
       Shelter._passwordHash$.next(encrypted);
     });
 
+    if (!validateMnemonic(seedPhrase)) {
+      return throwError('Mnemonic not validated');
+    }
     const seed = mnemonicToSeedSync(seedPhrase);
 
     return forkJoin(
