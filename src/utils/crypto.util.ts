@@ -13,17 +13,7 @@ export interface EncryptedData {
 }
 
 const scrypt$ = async (password: string, salt: string) =>
-  from<string>(
-    await scrypt(
-      Buffer.from(password, 'base64').toString(),
-      Buffer.from(salt, 'base64').toString(),
-      65536,
-      8,
-      1,
-      32,
-      'base64'
-    )
-  );
+  from<string>(await scrypt(password, salt, 65536, 8, 1, 32, 'base64'));
 
 export const hashPassword$ = (password: string) => {
   const genSalt = async () => {
