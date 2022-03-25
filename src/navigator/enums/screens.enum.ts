@@ -24,6 +24,9 @@ export enum ScreensEnum {
   /** Swap stack **/
   Swap = 'Swap',
 
+  /** Buy stack **/
+  Buy = 'Buy',
+
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
@@ -57,6 +60,9 @@ export type ScreensParamList = {
 
   /** Swap stack **/
   [ScreensEnum.Swap]: undefined;
+
+  /** Buy stack **/
+  [ScreensEnum.Buy]: undefined;
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

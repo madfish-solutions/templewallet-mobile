@@ -23,6 +23,10 @@ export const TokenInfo: FC<Props> = ({ token }) => {
 
   return (
     <>
+      <Label label="Decimals" description={`Decimals of ${symbol} token.`} />
+      <StyledTextInput placeholder={token.decimals.toString()} editable={false} />
+      <Divider />
+
       <Label label="Contract" description={`Address of a ${symbol} token contract.`} />
       <TouchableOpacity style={styles.addressContainer} onPress={() => copyStringToClipboard(token.address)}>
         <Text style={styles.addressText}>{token.address}</Text>
@@ -33,12 +37,8 @@ export const TokenInfo: FC<Props> = ({ token }) => {
         <>
           <Label label="Token ID" description={`Token Id of a ${symbol} token contract.`} />
           <StyledTextInput placeholder={token.id.toString()} editable={false} />
-          <Divider />
         </>
       )}
-
-      <Label label="Decimals" description={`Decimals of ${symbol} token.`} />
-      <StyledTextInput placeholder={token.decimals.toString()} editable={false} />
     </>
   );
 };

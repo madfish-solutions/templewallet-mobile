@@ -1,3 +1,4 @@
+import { validateMnemonic } from 'bip39';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
@@ -28,6 +29,9 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
     try {
       const content = await readFile(values.keystoreFile.uri, 'utf8');
       const seedPhrase = await decryptSeedPhrase(content, values.password);
+      if (!validateMnemonic(seedPhrase)) {
+        throw new Error('Mnemonic not validated');
+      }
       onSubmit({
         seedPhrase,
         password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
