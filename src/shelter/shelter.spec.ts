@@ -116,6 +116,17 @@ describe('Shelter', () => {
         );
     });
 
+    it('should not import HD account with wrong mnemonic', done => {
+      const incorrectSeedPhraseMock = 'Lorem ipsum dolor sit amet consectetur adipiscing elit donec iaculis libero et';
+
+      Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
+        error: err => {
+          expect(err).toEqual('Mnemonic not validated');
+          done();
+        }
+      });
+    });
+
     it('should create HD account', done => {
       const mockName = 'mockName';
 
