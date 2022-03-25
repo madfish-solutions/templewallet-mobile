@@ -161,7 +161,7 @@
     "json-schema": "^0.4.0",
     "node-fetch": "^2.6.7",
     "jpeg-js": "^0.4.0",
-    "yargs-parser": "^13.1.2",
+    "yargs": "^17.4.0",
     "appium-flutter-driver": "^1.0.1",
     "appium-chromedriver": "^4.28.0",
     "appium-ios-simulator": "^4.0.1",
