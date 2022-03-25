@@ -1,4 +1,3 @@
-import { of, catchError } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
@@ -138,23 +137,14 @@ describe('Shelter', () => {
         );
     });
 
-    it('should not import HD account with wrong mnemonic', done => {
-      const fn = () => {
-        try {
-          Shelter.importHdAccount$(mockAccountIncorrectCredentials.seedPhrase, mockCorrectPassword)
-            .pipe(withLatestFrom(Shelter.isLocked$))
-            .subscribe(
-              rxJsTestingHelper(() => {
-                return true;
-              }, done)
-            );
-
-          return true;
-        } catch (e) {
-          return false;
-        }
-      };
-      expect(fn()).toBeFalsy();
+    it('should not import HD account with wrong mnemonic', () => {
+      let res;
+      try {
+        res = Shelter.importHdAccount$(mockAccountIncorrectCredentials.seedPhrase, mockCorrectPassword);
+      } catch {
+        res = false;
+      }
+      expect(res).toBe(false);
     });
 
     it('should create HD account', done => {
