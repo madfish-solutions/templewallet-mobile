@@ -1,29 +1,18 @@
-import scrypt from 'react-native-scrypt';
+import { sha256 } from 'react-native-sha256';
 import {
   secureCellSealWithPassphraseDecrypt64,
   secureCellSealWithPassphraseEncrypt64,
   symmetricKey64
 } from 'react-native-themis';
 import { from, Observable, of } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 export interface EncryptedData {
   encrypted64: string;
   salt64: string;
 }
 
-const scrypt$ = async (password: string, salt: string) =>
-  from<string>(await scrypt(password, salt, 65536, 8, 1, 32, 'base64'));
-
-export const hashPassword$ = (password: string) => {
-  const genSalt = async () => {
-    const salt = await symmetricKey64();
-
-    return await scrypt$(password, salt);
-  };
-
-  return from(genSalt()).pipe(switchMap(x => x));
-};
+export const hashPassword$ = (password: string) => from(sha256(password));
 
 export const withEncryptedPass$ = (
   keychainData: EncryptedData,

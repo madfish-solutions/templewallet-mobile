@@ -56,16 +56,18 @@ export class Shelter {
 
   static unlockApp$ = (password: string) =>
     Shelter.verifyPassword$(password).pipe(
-      map(value => {
-        if (value) {
-          hashPassword$(password).subscribe(encrypted => {
-            Shelter._passwordHash$.next(encrypted);
-          });
+      switchMap(value => {
+        if (value !== true) {
+          return of(false);
+        } else {
+          return from(hashPassword$(password)).pipe(
+            switchMap(passwordHash => {
+              Shelter._passwordHash$.next(passwordHash);
 
-          return true;
+              return of(true);
+            })
+          );
         }
-
-        return false;
       }),
       catchError(() => of(false))
     );
@@ -78,7 +80,7 @@ export class Shelter {
       map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData =>
         withEncryptedPass$(keychainData, password).pipe(
-          switchMap(([keychainData]) => decryptString$(keychainData, password)),
+          switchMap(([keychainData, hash]) => decryptString$(keychainData, hash)),
           switchMap(value =>
             value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value)
           ),
@@ -93,38 +95,41 @@ export class Shelter {
     password: string,
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
-    hashPassword$(password).subscribe(encrypted => {
-      Shelter._passwordHash$.next(encrypted);
-    });
-
     if (!validateMnemonic(seedPhrase)) {
       return throwError('Mnemonic not validated');
     }
+
     const seed = mnemonicToSeedSync(seedPhrase);
 
-    return forkJoin(
-      range(0, hdAccountsLength).map(hdAccountIndex => {
-        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
-        const name = `Account ${hdAccountIndex + 1}`;
+    return from(hashPassword$(password)).pipe(
+      switchMap(passwordHash => {
+        Shelter._passwordHash$.next(passwordHash);
 
-        return getPublicKeyAndHash$(privateKey).pipe(
-          switchMap(([publicKey, publicKeyHash]) =>
-            Shelter.saveSensitiveData$({
-              seedPhrase,
-              [publicKeyHash]: privateKey,
-              [PASSWORD_CHECK_KEY]: generateMnemonic(128)
-            }).pipe(
-              mapTo({
-                type: AccountTypeEnum.HD_ACCOUNT,
-                name,
-                publicKey,
-                publicKeyHash
-              })
-            )
-          )
-        );
+        return forkJoin(
+          range(0, hdAccountsLength).map(hdAccountIndex => {
+            const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+            const name = `Account ${hdAccountIndex + 1}`;
+
+            return getPublicKeyAndHash$(privateKey).pipe(
+              switchMap(([publicKey, publicKeyHash]) =>
+                Shelter.saveSensitiveData$({
+                  seedPhrase,
+                  [publicKeyHash]: privateKey,
+                  [PASSWORD_CHECK_KEY]: generateMnemonic(128)
+                }).pipe(
+                  mapTo({
+                    type: AccountTypeEnum.HD_ACCOUNT,
+                    name,
+                    publicKey,
+                    publicKeyHash
+                  })
+                )
+              )
+            );
+          })
+        ).pipe(catchError(() => of(undefined)));
       })
-    ).pipe(catchError(() => of(undefined)));
+    );
   };
 
   static createImportedAccount$ = (privateKey: string, name: string) =>
