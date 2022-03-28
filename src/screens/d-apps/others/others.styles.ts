@@ -1,11 +1,7 @@
-import { Dimensions } from 'react-native';
-
 import { black } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 import { generateShadow } from '../../../styles/generate-shadow';
-
-const width = Dimensions.get('window').width - 40;
 
 export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -17,7 +13,7 @@ export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => (
     padding: formatSize(16),
     marginRight: formatSize(16),
     marginBottom: formatSize(16),
-    width: width / 2 - 5
+    width: '45%'
   },
   text: {
     ...typography.caption13Semibold,
