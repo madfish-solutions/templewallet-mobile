@@ -21,17 +21,12 @@ export const mockShelter = {
 
     return of(isCorrectPassword);
   }),
-  verifyPassword$: jest.fn((password: string) => {
-    const isCorrectPassword = password === mockCorrectPassword;
-
-    return of(isCorrectPassword);
-  }),
   importHdAccount$: jest.fn(() => of([mockHdAccount])),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createHdAccount$: jest.fn(() => of(mockHdAccount)),
   revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
-  isPasswordCorrect: jest.fn(async (password: string) => password === mockCorrectPassword),
+  isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createImportedAccount$: jest.fn(() => of(mockHdAccount))
 };
 

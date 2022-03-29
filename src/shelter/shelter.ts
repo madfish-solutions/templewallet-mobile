@@ -2,12 +2,12 @@ import { InMemorySigner } from '@taquito/signer';
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
-import { BehaviorSubject, forkJoin, from, Observable, of, throwError, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
-import { decryptString$, EncryptedData, hashPassword$, encryptString$, withEncryptedPass$ } from '../utils/crypto.util';
+import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
   biometryKeychainOptions,
@@ -17,10 +17,10 @@ import {
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 
-const EMPTY_PASSWORD = '';
+const EMPTY_PASSWORD_HASH = '';
 
 export class Shelter {
-  private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD);
+  private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
     forkJoin(
@@ -38,53 +38,35 @@ export class Shelter {
       )
     );
 
-  private static decryptSensitiveData$ = (key: string, hash: string) =>
+  private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
       map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
-      switchMap(keychainData => decryptString$(keychainData, hash)),
+      switchMap(keychainData => decryptString$(keychainData, passwordHash)),
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD));
+  static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD_HASH));
 
-  static getIsLocked = () => Shelter._passwordHash$.getValue() === EMPTY_PASSWORD;
+  static getIsLocked = () => Shelter._passwordHash$.getValue() === EMPTY_PASSWORD_HASH;
 
-  static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD);
+  static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD_HASH);
 
   static unlockApp$ = (password: string) =>
-    Shelter.verifyPassword$(password).pipe(
-      switchMap(value => {
-        if (value !== true) {
-          return of(false);
-        } else {
-          return from(hashPassword$(password)).pipe(
-            switchMap(passwordHash => {
+    hashPassword$(password).pipe(
+      switchMap(passwordHash =>
+        Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
+          map(value => {
+            if (value !== null) {
               Shelter._passwordHash$.next(passwordHash);
 
-              return of(true);
-            })
-          );
-        }
-      }),
-      catchError(() => of(false))
-    );
+              return true;
+            }
 
-  static verifyPassword$ = (password: string) =>
-    from(Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY))).pipe(
-      switchMap(rawKeychainData =>
-        rawKeychainData === false ? throwError(`No record in Keychain [${PASSWORD_CHECK_KEY}]`) : of(rawKeychainData)
-      ),
-      map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
-      switchMap(keychainData =>
-        withEncryptedPass$(keychainData, password).pipe(
-          switchMap(([keychainData, hash]) => decryptString$(keychainData, hash)),
-          switchMap(value =>
-            value === undefined ? throwError(`Failed to decrypt value [${PASSWORD_CHECK_KEY}]`) : of(value)
-          ),
-          map(value => value !== null),
+            return false;
+          }),
           catchError(() => of(false))
         )
       )
@@ -99,11 +81,11 @@ export class Shelter {
       return throwError('Mnemonic not validated');
     }
 
-    const seed = mnemonicToSeedSync(seedPhrase);
-
-    return from(hashPassword$(password)).pipe(
+    return hashPassword$(password).pipe(
       switchMap(passwordHash => {
         Shelter._passwordHash$.next(passwordHash);
+
+        const seed = mnemonicToSeedSync(seedPhrase);
 
         return forkJoin(
           range(0, hdAccountsLength).map(hdAccountIndex => {
@@ -127,8 +109,9 @@ export class Shelter {
               )
             );
           })
-        ).pipe(catchError(() => of(undefined)));
-      })
+        );
+      }),
+      catchError(() => of(undefined))
     );
   };
 
@@ -199,10 +182,6 @@ export class Shelter {
 
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
-  static isPasswordCorrect = async (password: string) => {
-    const isNotEmpty = password !== EMPTY_PASSWORD && Shelter._passwordHash$.getValue() !== EMPTY_PASSWORD;
-    const isCorrect = await firstValueFrom(Shelter.verifyPassword$(password));
-
-    return isCorrect && isNotEmpty;
-  };
+  static isPasswordCorrect$ = (password: string) =>
+    hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
 }

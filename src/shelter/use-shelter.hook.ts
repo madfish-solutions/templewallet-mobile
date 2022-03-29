@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { EMPTY, forkJoin, from, merge, of, Subject } from 'rxjs';
+import { EMPTY, forkJoin, merge, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { EventFn } from '../config/general';
@@ -114,7 +114,7 @@ export const useShelter = () => {
       enableBiometryPassword$
         .pipe(
           switchMap(password =>
-            from(Shelter.isPasswordCorrect(password)).pipe(
+            Shelter.isPasswordCorrect$(password).pipe(
               switchMap(isPasswordCorrect =>
                 isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)
               )
@@ -122,7 +122,7 @@ export const useShelter = () => {
           )
         )
         .subscribe(isPasswordSaved => {
-          if (typeof isPasswordSaved === 'boolean' && isPasswordSaved === false) {
+          if (isPasswordSaved === false) {
             showErrorToast({ description: 'Wrong password, please, try again' });
           } else {
             showSuccessToast({ description: 'Successfully enabled!' });

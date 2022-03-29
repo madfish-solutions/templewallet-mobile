@@ -24,8 +24,6 @@ describe('useShelter', () => {
     mockShelter.revealSecretKey$.mockClear();
     mockShelter.revealSeedPhrase$.mockClear();
     mockShelter.createImportedAccount$.mockClear();
-    mockShelter.unlockApp$.mockClear();
-    mockShelter.verifyPassword$.mockClear();
     mockUseDispatch.mockClear();
     mockGoBack.mockClear();
     mockNavigate.mockClear();
@@ -108,7 +106,6 @@ describe('useShelter', () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.enableBiometryPassword(mockCorrectPassword);
-    jest.runAllTimers();
 
     expect(mockShelter.enableBiometryPassword$).toBeCalledWith(mockCorrectPassword);
 
@@ -121,7 +118,6 @@ describe('useShelter', () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.enableBiometryPassword('mockIncorrectPassword');
-    jest.runAllTimers();
 
     expect(mockShowErrorToast).toBeCalledWith({ description: 'Wrong password, please, try again' });
     expect(mockShelter.enableBiometryPassword$).not.toBeCalled();

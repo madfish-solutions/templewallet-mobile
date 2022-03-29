@@ -5,19 +5,14 @@ import {
   symmetricKey64
 } from 'react-native-themis';
 import { from, Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 export interface EncryptedData {
   encrypted64: string;
   salt64: string;
 }
 
-export const hashPassword$ = (password: string) => from(sha256(password));
-
-export const withEncryptedPass$ = (
-  keychainData: EncryptedData,
-  password: string
-): Observable<[EncryptedData, string]> => hashPassword$(password).pipe(map(hash => [keychainData, hash]));
+export const hashPassword$ = (input: string) => from(sha256(input));
 
 export const encryptString$ = (value: string, password: string): Observable<EncryptedData> => {
   const encryption = async () => {

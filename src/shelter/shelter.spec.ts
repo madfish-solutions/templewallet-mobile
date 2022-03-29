@@ -8,7 +8,12 @@ import {
   mockCorrectUserCredentialsValue,
   mockKeychain
 } from '../mocks/react-native-keychain.mock';
-import { mockCorrectDecryptResult, mockCryptoUtil, mockEncryptedData } from '../utils/crypto.util.mock';
+import {
+  mockCorrectDecryptResult,
+  mockCorrectPasswordHash,
+  mockCryptoUtil,
+  mockEncryptedData
+} from '../utils/crypto.util.mock';
 import { biometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
 import { rxJsTestingHelper } from '../utils/testing.utis';
 import { Shelter } from './shelter';
@@ -103,7 +108,7 @@ describe('Shelter', () => {
 
             expect(mockCryptoUtil.encryptString$).toBeCalledWith(
               mockAccountCredentials.seedPhrase,
-              mockCorrectPassword
+              mockCorrectPasswordHash
             );
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               'seedPhrase',
@@ -141,7 +146,7 @@ describe('Shelter', () => {
 
             expect(mockCryptoUtil.encryptString$).toBeCalledWith(
               mockHDAccountCredentials.privateKey,
-              mockCorrectPassword
+              mockCorrectPasswordHash
             );
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               mockHDAccountCredentials.publicKeyHash,
@@ -166,7 +171,7 @@ describe('Shelter', () => {
 
             expect(mockCryptoUtil.encryptString$).toBeCalledWith(
               mockHDAccountCredentials.privateKey,
-              mockCorrectPassword
+              mockCorrectPasswordHash
             );
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               mockHDAccountCredentials.publicKeyHash,
@@ -184,7 +189,10 @@ describe('Shelter', () => {
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockCorrectDecryptResult);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(mockCorrectUserCredentialsValue, mockCorrectPassword);
+            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+              mockCorrectUserCredentialsValue,
+              mockCorrectPasswordHash
+            );
             expect(mockKeychain.getGenericPassword).toBeCalledWith(getKeychainOptions('seedPhrase'));
           }, done)
         );
@@ -197,7 +205,10 @@ describe('Shelter', () => {
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(mockCorrectUserCredentialsValue, mockCorrectPassword);
+            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+              mockCorrectUserCredentialsValue,
+              mockCorrectPasswordHash
+            );
             expect(mockKeychain.getGenericPassword).toBeCalledWith(
               getKeychainOptions(mockAccountCredentials.publicKeyHash)
             );
@@ -214,7 +225,10 @@ describe('Shelter', () => {
             await expect(signer.publicKey()).resolves.toEqual(mockAccountCredentials.publicKey);
             await expect(signer.publicKeyHash()).resolves.toEqual(mockAccountCredentials.publicKeyHash);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(mockCorrectUserCredentialsValue, mockCorrectPassword);
+            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+              mockCorrectUserCredentialsValue,
+              mockCorrectPasswordHash
+            );
             expect(mockKeychain.getGenericPassword).toBeCalledWith(
               getKeychainOptions(mockAccountCredentials.publicKeyHash)
             );
@@ -261,40 +275,58 @@ describe('Shelter', () => {
   });
 
   describe('password check', () => {
-    it('should return "false" for empty string & locked app', async () => {
-      expect(await Shelter.isPasswordCorrect('')).toEqual(false);
+    it('should return "false" for empty string & locked app', done => {
+      Shelter.isPasswordCorrect$('').subscribe(
+        rxJsTestingHelper(isPasswordCorrect => {
+          expect(isPasswordCorrect).toEqual(false);
+        }, done)
+      );
     });
 
-    it('should return "false" for incorrect password & locked app', async () => {
-      expect(await Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
+    it('should return "false" for incorrect password & locked app', done => {
+      Shelter.isPasswordCorrect$(mockIncorrectPassword).subscribe(
+        rxJsTestingHelper(isPasswordCorrect => {
+          expect(isPasswordCorrect).toEqual(false);
+        }, done)
+      );
     });
 
-    it('should return "false" for correct password & locked app', async () => {
-      expect(await Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(false);
+    it('should return "false" for correct password & locked app', done => {
+      Shelter.isPasswordCorrect$(mockCorrectPassword).subscribe(
+        rxJsTestingHelper(isPasswordCorrect => {
+          expect(isPasswordCorrect).toEqual(false);
+        }, done)
+      );
     });
 
     it('should return "false" for empty string & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(async () => {
-          expect(await Shelter.isPasswordCorrect('')).toEqual(false);
-        }, done)
-      );
+      Shelter.unlockApp$(mockCorrectPassword)
+        .pipe(switchMap(() => Shelter.isPasswordCorrect$('')))
+        .subscribe(
+          rxJsTestingHelper(isPasswordCorrect => {
+            expect(isPasswordCorrect).toEqual(false);
+          }, done)
+        );
     });
 
     it('should return "false" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(async () => {
-          expect(await Shelter.isPasswordCorrect(mockIncorrectPassword)).toEqual(false);
-        }, done)
-      );
+      Shelter.unlockApp$(mockCorrectPassword)
+        .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockIncorrectPassword)))
+        .subscribe(
+          rxJsTestingHelper(isPasswordCorrect => {
+            expect(isPasswordCorrect).toEqual(false);
+          }, done)
+        );
     });
 
     it('should return "true" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword).subscribe(
-        rxJsTestingHelper(async () => {
-          expect(await Shelter.isPasswordCorrect(mockCorrectPassword)).toEqual(true);
-        }, done)
-      );
+      Shelter.unlockApp$(mockCorrectPassword)
+        .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockCorrectPassword)))
+        .subscribe(
+          rxJsTestingHelper(isPasswordCorrect => {
+            expect(isPasswordCorrect).toEqual(true);
+          }, done)
+        );
     });
   });
 });
