@@ -44,8 +44,9 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
+
   useAppStateStatus({
-    onAppInactiveState: () => isAuthorised && !isLocked && show(),
+    onAppInactiveState: () => show(),
     onAppActiveState: () => hide()
   });
 
