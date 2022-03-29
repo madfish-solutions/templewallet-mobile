@@ -7,7 +7,7 @@ import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
-import { decryptString$, EncryptedData, encryptString$ } from '../utils/crypto.util';
+import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
   biometryKeychainOptions,
@@ -17,17 +17,17 @@ import {
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 
-const EMPTY_PASSWORD = '';
+const EMPTY_PASSWORD_HASH = '';
 
 export class Shelter {
-  private static _password$ = new BehaviorSubject(EMPTY_PASSWORD);
+  private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
     forkJoin(
       Object.entries(data).map(entry =>
         of(entry).pipe(
           switchMap(([key, value]) =>
-            encryptString$(value, Shelter._password$.getValue()).pipe(
+            encryptString$(value, Shelter._passwordHash$.getValue()).pipe(
               switchMap(encryptedData =>
                 Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
               )
@@ -38,34 +38,38 @@ export class Shelter {
       )
     );
 
-  private static decryptSensitiveData$ = (key: string, password: string) =>
+  private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
       map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
-      switchMap(keychainData => decryptString$(keychainData, password)),
+      switchMap(keychainData => decryptString$(keychainData, passwordHash)),
       switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static isLocked$ = Shelter._password$.pipe(map(password => password === EMPTY_PASSWORD));
+  static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD_HASH));
 
-  static getIsLocked = () => Shelter._password$.getValue() === EMPTY_PASSWORD;
+  static getIsLocked = () => Shelter._passwordHash$.getValue() === EMPTY_PASSWORD_HASH;
 
-  static lockApp = () => Shelter._password$.next(EMPTY_PASSWORD);
+  static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD_HASH);
 
   static unlockApp$ = (password: string) =>
-    Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, password).pipe(
-      map(value => {
-        if (value !== null) {
-          Shelter._password$.next(password);
+    hashPassword$(password).pipe(
+      switchMap(passwordHash =>
+        Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
+          map(value => {
+            if (value !== null) {
+              Shelter._passwordHash$.next(passwordHash);
 
-          return true;
-        }
+              return true;
+            }
 
-        return false;
-      }),
-      catchError(() => of(false))
+            return false;
+          }),
+          catchError(() => of(false))
+        )
+      )
     );
 
   static importHdAccount$ = (
@@ -73,36 +77,42 @@ export class Shelter {
     password: string,
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
-    Shelter._password$.next(password);
-
     if (!validateMnemonic(seedPhrase)) {
       return throwError('Mnemonic not validated');
     }
-    const seed = mnemonicToSeedSync(seedPhrase);
 
-    return forkJoin(
-      range(0, hdAccountsLength).map(hdAccountIndex => {
-        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
-        const name = `Account ${hdAccountIndex + 1}`;
+    return hashPassword$(password).pipe(
+      switchMap(passwordHash => {
+        Shelter._passwordHash$.next(passwordHash);
 
-        return getPublicKeyAndHash$(privateKey).pipe(
-          switchMap(([publicKey, publicKeyHash]) =>
-            Shelter.saveSensitiveData$({
-              seedPhrase,
-              [publicKeyHash]: privateKey,
-              [PASSWORD_CHECK_KEY]: generateMnemonic(128)
-            }).pipe(
-              mapTo({
-                type: AccountTypeEnum.HD_ACCOUNT,
-                name,
-                publicKey,
-                publicKeyHash
-              })
-            )
-          )
+        const seed = mnemonicToSeedSync(seedPhrase);
+
+        return forkJoin(
+          range(0, hdAccountsLength).map(hdAccountIndex => {
+            const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+            const name = `Account ${hdAccountIndex + 1}`;
+
+            return getPublicKeyAndHash$(privateKey).pipe(
+              switchMap(([publicKey, publicKeyHash]) =>
+                Shelter.saveSensitiveData$({
+                  seedPhrase,
+                  [publicKeyHash]: privateKey,
+                  [PASSWORD_CHECK_KEY]: generateMnemonic(128)
+                }).pipe(
+                  mapTo({
+                    type: AccountTypeEnum.HD_ACCOUNT,
+                    name,
+                    publicKey,
+                    publicKeyHash
+                  })
+                )
+              )
+            );
+          })
         );
-      })
-    ).pipe(catchError(() => of(undefined)));
+      }),
+      catchError(() => of(undefined))
+    );
   };
 
   static createImportedAccount$ = (privateKey: string, name: string) =>
@@ -144,13 +154,13 @@ export class Shelter {
     );
 
   static revealSecretKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._password$.getValue()).pipe(
+    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._passwordHash$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
 
-  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._password$.getValue());
+  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
 
   static getSigner$ = (publicKeyHash: string) =>
     Shelter.revealSecretKey$(publicKeyHash).pipe(
@@ -172,6 +182,6 @@ export class Shelter {
 
   static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
 
-  static isPasswordCorrect = (password: string) =>
-    password !== EMPTY_PASSWORD && password === Shelter._password$.getValue();
+  static isPasswordCorrect$ = (password: string) =>
+    hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
 }

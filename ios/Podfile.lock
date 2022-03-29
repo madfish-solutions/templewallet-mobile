@@ -431,6 +431,8 @@ PODS:
   - RNSentry (3.2.7):
     - React-Core
     - Sentry (= 7.5.4)
+  - RNSha256 (1.4.7):
+    - React
   - RNSVG (12.3.0):
     - React-Core
   - Sentry (7.5.4):
@@ -523,6 +525,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNScrypt (from `../node_modules/react-native-scrypt`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNSha256 (from `../node_modules/react-native-sha256`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -661,6 +664,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-scrypt"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNSha256:
+    :path: "../node_modules/react-native-sha256"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -738,6 +743,7 @@ SPEC CHECKSUMS:
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSentry: bf1f0970fffd3519a5cf553217f281bbb5b10de4
+  RNSha256: bf2c90a9e0cec6dcbcc4100e4e19715ae7feaa34
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   Sentry: 5c5dd4005f3b7b9765d5a8871232cddbd0d888b7
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd

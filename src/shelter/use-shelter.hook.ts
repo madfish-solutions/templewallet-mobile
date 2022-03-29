@@ -114,7 +114,11 @@ export const useShelter = () => {
       enableBiometryPassword$
         .pipe(
           switchMap(password =>
-            Shelter.isPasswordCorrect(password) ? Shelter.enableBiometryPassword$(password) : of(false)
+            Shelter.isPasswordCorrect$(password).pipe(
+              switchMap(isPasswordCorrect =>
+                isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)
+              )
+            )
           )
         )
         .subscribe(isPasswordSaved => {
