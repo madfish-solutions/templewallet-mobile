@@ -5,9 +5,8 @@ import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { WhiteContainer } from '../../components/white-container/white-container';
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useColors } from '../../styles/use-colors';
 import { openUrl } from '../../utils/linking.util';
 import { useBuyStyles } from './buy.styles';
 import { useSignedMoonPayUrl } from './useSignedUrl';
@@ -15,15 +14,14 @@ import { useSignedMoonPayUrl } from './useSignedUrl';
 export const Debit = () => {
   const styles = useBuyStyles();
   const url = useSignedMoonPayUrl();
-  const theme = useThemeSelector();
-  const MoonPaythemeIcon = theme === ThemesEnum.light ? IconNameEnum.MoonPayBlack : IconNameEnum.MoonPayWhite;
+  const colors = useColors();
 
   return (
     <>
       <Divider size={formatSize(16)} />
       <WhiteContainer>
         <View style={styles.providerLogo}>
-          <Icon name={MoonPaythemeIcon} size={formatSize(160)} />
+          <Icon name={IconNameEnum.MoonPay} size={formatSize(160)} color={colors.black} />
         </View>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.textContainer} onPress={() => openUrl(url)} disabled={!url}>

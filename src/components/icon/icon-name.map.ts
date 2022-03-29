@@ -40,8 +40,7 @@ import LinkIcon from './assets/link.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
-import MoonPayBlackIcon from './assets/moonpayBlack.svg';
-import MoonPayWhiteIcon from './assets/moonpayWhite.svg';
+import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -132,8 +131,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.BlndToken]: BlndTokenIcon,
   [IconNameEnum.StkrToken]: StkrTokenIcon,
   /** topup icons **/
-  [IconNameEnum.MoonPayBlack]: MoonPayBlackIcon,
-  [IconNameEnum.MoonPayWhite]: MoonPayWhiteIcon,
+  [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
