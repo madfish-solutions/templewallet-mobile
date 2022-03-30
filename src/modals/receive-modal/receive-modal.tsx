@@ -86,7 +86,6 @@ export const ReceiveModal: FC = () => {
         backgroundColor={colors.pageBG}
       />
       <Divider />
-
       <Text style={styles.addressTitle}>Address</Text>
       <Divider size={formatSize(8)} />
 
