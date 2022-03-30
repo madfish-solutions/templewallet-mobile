@@ -25,11 +25,10 @@ export const FormattedAmount: FC<Props> = ({
   symbol,
   style
 }) => {
-  const dollarAmount = amount.isZero()
-    ? amount
-    : amount.isPositive()
+  const positiveAmount = amount.isPositive()
     ? bigIntClamp(amount, MIN_POSITIVE_AMOUNT_VALUE, new BigNumber(Infinity))
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
+  const dollarAmount = amount.isZero() ? amount : positiveAmount;
 
   const formattedAmount = isDollarValue ? formatAssetAmount(dollarAmount, 2) : formatAssetAmount(amount);
   const isLessThan = formattedAmount.includes('<');
