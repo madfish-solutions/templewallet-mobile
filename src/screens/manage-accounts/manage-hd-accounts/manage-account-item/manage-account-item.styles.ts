@@ -2,6 +2,7 @@ import { black } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 import { generateShadow } from '../../../../styles/generate-shadow';
+import { AlignItems, FlexDirection, JustifyContent } from '../../../../styles/types';
 
 export const useManageAccountItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -13,19 +14,19 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     backgroundColor: colors.cardBG
   },
   upperContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    flexDirection: FlexDirection.Row,
+    justifyContent: JustifyContent.SpaceBetween,
+    alignItems: AlignItems.Center
   },
   accountContainer: {
     flexShrink: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: FlexDirection.Row,
+    alignItems: AlignItems.Center
   },
   accountContainerData: {
     flexShrink: 1,
     marginLeft: formatSize(10),
-    justifyContent: 'space-between'
+    justifyContent: JustifyContent.SpaceBetween
   },
   accountText: {
     ...typography.caption13Semibold,
@@ -33,15 +34,15 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     marginBottom: formatSize(2)
   },
   actionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: FlexDirection.Row,
+    alignItems: AlignItems.Center
   },
   lowerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: FlexDirection.Row,
+    justifyContent: JustifyContent.SpaceBetween
   },
   lowerContainerData: {
-    justifyContent: 'space-between'
+    justifyContent: JustifyContent.SpaceBetween
   },
   balanceText: {
     ...typography.numbersRegular15,

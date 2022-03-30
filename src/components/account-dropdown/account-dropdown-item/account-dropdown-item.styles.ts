@@ -1,37 +1,38 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
+import { AlignItems, FlexDirection, JustifyContent } from '../../../styles/types';
 
 export const useAccountDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
-    flexDirection: 'row'
+    flexDirection: FlexDirection.Row
   },
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: 'space-between',
+    justifyContent: JustifyContent.SpaceBetween,
     marginLeft: formatSize(10)
   },
   smallInfoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: 'center',
+    justifyContent: JustifyContent.Center,
     marginLeft: formatSize(4)
   },
   upperContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: FlexDirection.Row,
+    alignItems: AlignItems.Center
   },
   upperContainerFullData: {
-    justifyContent: 'space-between'
+    justifyContent: JustifyContent.SpaceBetween
   },
   name: {
     ...typography.tagline13Tag,
     color: colors.black
   },
   lowerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    flexDirection: FlexDirection.Row,
+    justifyContent: JustifyContent.SpaceBetween,
+    alignItems: AlignItems.Center
   },
   balanceText: {
     ...typography.numbersRegular13,
