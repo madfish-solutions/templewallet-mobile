@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
@@ -110,29 +110,34 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const handleTokenChange = (newAsset?: TokenInterface) => {
     const decimals = newAsset?.decimals ?? 0;
     const asset = newAsset ?? emptyToken;
-    const exchangeRate = exchangeRates[getTokenSlug(asset)];
+    const newExchangeRate = exchangeRates[getTokenSlug(asset)];
 
     onValueChange({
-      amount: isDefined(inputValueRef.current)
-        ? isTokenInputType
-          ? tzToMutez(inputValueRef.current, decimals)
-          : dollarToTokenAmount(inputValueRef.current, decimals, exchangeRate)
-        : undefined,
+      amount: getDefinedAmount(decimals, newExchangeRate),
       asset
     });
   };
 
+  const getDefinedAmount = useCallback(
+    (decimals, newExchangeRate) => {
+      if (!isDefined(inputValueRef.current)) {
+        return undefined;
+      } else {
+        return isTokenInputType
+          ? tzToMutez(inputValueRef.current, decimals)
+          : dollarToTokenAmount(inputValueRef.current, decimals, newExchangeRate);
+      }
+    },
+    [isTokenInputType, inputValueRef.current]
+  );
+
   useEffect(
     () =>
-      void onValueChange({
+      onValueChange({
         ...value,
-        amount: isDefined(inputValueRef.current)
-          ? isTokenInputType
-            ? tzToMutez(inputValueRef.current, value.asset.decimals)
-            : dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate)
-          : undefined
+        amount: getDefinedAmount(value.asset.decimals, exchangeRate)
       }),
-    [inputValueRef.current, value.asset.decimals, exchangeRate, isTokenInputType]
+    [value.asset.decimals, exchangeRate, getDefinedAmount]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
