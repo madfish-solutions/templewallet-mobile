@@ -9,54 +9,14 @@ export const mapOperationsToActivities = (address: string, operations: Operation
   const activities: ActivityInterface[] = [];
 
   for (const operation of operations) {
-    const {
-      type,
-      status,
-      hash,
-      timestamp,
-      parameters,
-      hasInternals,
-      contractBalance,
-      sender,
-      target,
-      newDelegate,
-      originatedContract
-    } = operation;
+    const { type, status, hash, timestamp, hasInternals, target } = operation;
 
     if (!(hasInternals === true && address === target.address) && status === ActivityStatusEnum.Applied) {
-      const source = sender;
-      let destination: MemberInterface = { address: '' };
-      let amount = '0';
-      let entrypoint = '';
-
-      switch (type) {
-        case ActivityTypeEnum.Transaction:
-          if (address !== target.address && address !== source.address) {
-            continue;
-          }
-          destination = target;
-          amount = operation.amount.toString();
-          entrypoint = extractEntrypoint(parameters);
-          break;
-
-        case ActivityTypeEnum.Delegation:
-          if (address !== source.address) {
-            continue;
-          }
-          isDefined(newDelegate) && (destination = newDelegate);
-          amount = '0';
-          break;
-
-        case ActivityTypeEnum.Origination:
-          isDefined(originatedContract) && (destination = originatedContract);
-          isDefined(contractBalance) && (amount = contractBalance.toString());
-          break;
-
-        default:
-          console.log(`Ignoring kind ${type}`);
-
-          continue;
+      const newActivity = getActivityByType(operation, address);
+      if (!isDefined(newActivity)) {
+        continue;
       }
+      const { source, entrypoint, destination, amount } = newActivity;
 
       activities.push({
         type,
@@ -86,4 +46,54 @@ export const extractEntrypoint = (operationParameters?: string): string => {
   } catch {}
 
   return '';
+};
+
+interface ActivityTarget {
+  source: MemberInterface;
+  entrypoint: string;
+  amount: string;
+  destination: MemberInterface;
+}
+
+const getActivityByType = (operation: OperationInterface, address: string): ActivityTarget | undefined => {
+  const { type, parameters, target, newDelegate, originatedContract, contractBalance, sender } = operation;
+  let destination: MemberInterface = { address: '' };
+  let amount = '0';
+  let entrypoint = '';
+
+  switch (type) {
+    case ActivityTypeEnum.Transaction:
+      if (address !== target.address && address !== sender.address) {
+        return;
+      }
+      destination = target;
+      amount = operation.amount.toString();
+      entrypoint = extractEntrypoint(parameters);
+      break;
+
+    case ActivityTypeEnum.Delegation:
+      if (address !== sender.address) {
+        return;
+      }
+      isDefined(newDelegate) && (destination = newDelegate);
+      amount = '0';
+      break;
+
+    case ActivityTypeEnum.Origination:
+      isDefined(originatedContract) && (destination = originatedContract);
+      isDefined(contractBalance) && (amount = contractBalance.toString());
+      break;
+
+    default:
+      console.log(`Ignoring kind ${type}`);
+
+      return;
+  }
+
+  return {
+    source: sender,
+    entrypoint,
+    amount,
+    destination
+  };
 };
