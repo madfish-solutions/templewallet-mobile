@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { decode, encode } from 'base-64';
-
 import { isDefined } from './src/utils/is-defined';
 
 require('text-encoding');
@@ -11,14 +9,6 @@ if (!isDefined(global.localStorage)) {
   global.localStorage = {
     getItem: () => null
   };
-}
-
-if (!isDefined(global.btoa)) {
-  global.btoa = encode;
-}
-
-if (!isDefined(global.atob)) {
-  global.atob = decode;
 }
 
 if (!isDefined(global.document)) {

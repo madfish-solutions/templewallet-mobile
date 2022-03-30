@@ -1,13 +1,4 @@
-import { decode, encode } from 'base-64';
 import 'react-native-gesture-handler/jestSetup';
-
-if (typeof btoa === 'undefined') {
-  global.btoa = encode;
-}
-
-if (typeof atob === 'undefined') {
-  global.atob = decode;
-}
 
 import './src/mocks/mem.mock';
 
