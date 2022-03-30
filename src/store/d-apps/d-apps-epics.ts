@@ -51,11 +51,7 @@ const removePermissionEpic = (action$: Observable<Action>) =>
 
               return loadPermissionsActions.submit();
             }),
-            catchError(err => {
-              showErrorToast({ description: err.message });
-
-              return EMPTY;
-            })
+            catchError(handleError)
           )
         )
       )
@@ -79,11 +75,7 @@ const abortRequestEpic = (action$: Observable<Action>) =>
 
           return navigateAction(StacksEnum.MainStack);
         }),
-        catchError(err => {
-          showErrorToast({ description: err.message });
-
-          return EMPTY;
-        })
+        catchError(handleError)
       )
     )
   );
@@ -98,5 +90,11 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
       )
     )
   );
+
+const handleError = (error: Error) => {
+  showErrorToast({ description: error.message });
+
+  return EMPTY;
+};
 
 export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic, loadDAppsListEpic);
