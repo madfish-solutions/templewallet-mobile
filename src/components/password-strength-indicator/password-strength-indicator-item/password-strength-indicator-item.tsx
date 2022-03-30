@@ -15,7 +15,8 @@ export const PasswordStrengthIndicatorItem: FC<PasswordStrengthIndicatorItemProp
   noColor = false
 }) => {
   const styles = usePasswordStrengthIndicatorItemStyles();
-  const validationColor = isValid ? styles.adding : noColor ? undefined : styles.destructive;
+  const errorColor = noColor ? undefined : styles.destructive;
+  const validationColor = isValid ? styles.adding : errorColor;
 
   return <Text style={[styles.text, validationColor]}>{message}</Text>;
 };
