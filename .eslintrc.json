@@ -10,9 +10,10 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:sonarjs/recommended"
   ],
-  "plugins": ["@typescript-eslint", "import", "jest"],
+  "plugins": ["@typescript-eslint", "import", "jest", "sonarjs"],
   "settings": {
     "import/resolver": {
       "typescript": {}
