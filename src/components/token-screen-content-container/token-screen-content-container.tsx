@@ -27,6 +27,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showHistoryComponent = segmentedControlIndex === historyComponentIndex;
+  const historyHeaderText = showHistoryComponent ? 'History' : 'Info';
 
   return (
     <>
@@ -36,7 +37,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
             <SelectedBaker isBakerSelected={isBakerSelected} />
           </TouchableOpacity>
         ) : (
-          <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>
+          <Text style={styles.headerText}>{historyHeaderText}</Text>
         )}
 
         <IconSegmentControl
