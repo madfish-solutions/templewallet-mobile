@@ -10,8 +10,8 @@ export const useDevicePasscode = () => {
   const [isDevicePasscodeSet, setDevicePasscode] = useState<boolean>(true);
 
   const isPinState = () => {
-    isPinOrFingerprintSet().then((isPinOrFingerprintSet: boolean) => {
-      if (!isPinOrFingerprintSet) {
+    isPinOrFingerprintSet().then((isSecured: boolean) => {
+      if (!isSecured) {
         dispatch(resetApplicationAction.submit());
         setDevicePasscode(false);
       } else {
