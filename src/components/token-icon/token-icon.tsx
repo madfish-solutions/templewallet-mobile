@@ -23,15 +23,25 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
     <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
       {isDefined(iconName) ? (
         <Icon name={iconName} size={size} />
-      ) : isString(thumbnailUri) ? (
-        isImgUriSvg(thumbnailUri) ? (
-          <SvgCssUri width={size} height={size} uri={thumbnailUri} />
-        ) : (
-          <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
-        )
       ) : (
-        <Icon name={IconNameEnum.NoNameToken} size={size} />
+        <DefinedTokenIcon thumbnailUri={thumbnailUri} size={size} />
       )}
     </View>
   );
+};
+
+interface DefinedTokenIconProps {
+  size: number;
+  thumbnailUri: string | undefined;
+}
+
+const DefinedTokenIcon: FC<DefinedTokenIconProps> = ({ thumbnailUri, size }) => {
+  if (!isString(thumbnailUri)) {
+    return <Icon name={IconNameEnum.NoNameToken} size={size} />;
+  }
+  if (isImgUriSvg(thumbnailUri)) {
+    return <SvgCssUri width={size} height={size} uri={thumbnailUri} />;
+  }
+
+  return <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />;
 };
