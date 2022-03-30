@@ -8,11 +8,11 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useAttentionMessageStyles } from './attention-message.styles';
 
-type AttentionMessage = {
+type AttentionMessageProps = {
   title?: string;
 };
 
-export const AttentionMessage: FC<AttentionMessage> = ({ children, title }) => {
+export const AttentionMessage: FC<AttentionMessageProps> = ({ children, title }) => {
   const styles = useAttentionMessageStyles();
 
   return (
