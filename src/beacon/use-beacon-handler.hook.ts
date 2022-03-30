@@ -30,13 +30,15 @@ export const useBeaconHandler = () => {
   useEffect(() => {
     const listener = ({ url }: { url: string | null }) => beaconDeepLinkHandler(url ?? '');
 
+    let emitter: { remove: () => void } | undefined;
+
     BeaconHandler.init(message =>
       navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
     ).then(() => {
-      Linking.addEventListener('url', listener);
+      emitter = Linking.addEventListener('url', listener);
       Linking.getInitialURL().then(url => listener({ url }));
     });
 
-    return () => Linking.removeEventListener('url', listener);
+    return () => (isDefined(emitter) ? emitter.remove() : undefined);
   }, []);
 };
