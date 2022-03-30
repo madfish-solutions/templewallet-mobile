@@ -13,6 +13,8 @@ const validParsed: SyncPayloadInterface = {
   hdAccountsLength: 3
 };
 
+const FAILED_TO_DECRYPT_ERROR = 'Failed to decrypt payload';
+
 describe('isSyncPayload', () => {
   it('should false when random payload', () => {
     expect(isSyncPayload('10101010')).toEqual(false);
@@ -36,15 +38,13 @@ describe('parseSyncPayload', () => {
     await expect(parseSyncPayload('10101010', '01010')).rejects.toThrowError('Payload is not Temple Sync payload');
   });
   it('should throw error when only prefix', async () => {
-    await expect(parseSyncPayload(prefixB64, validPassword)).rejects.toThrowError('Failed to decrypt sync payload');
+    await expect(parseSyncPayload(prefixB64, validPassword)).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should throw error when pseudo valid payload', async () => {
-    await expect(parseSyncPayload(pseudoValidPayload, validPassword)).rejects.toThrowError(
-      'Failed to decrypt sync payload'
-    );
+    await expect(parseSyncPayload(pseudoValidPayload, validPassword)).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should throw error when valid payload and invalid password', async () => {
-    await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError('Failed to decrypt sync payload');
+    await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should parse when payload and password valid', async () => {
     mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
