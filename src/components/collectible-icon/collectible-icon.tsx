@@ -12,7 +12,19 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoadingFailed, setIsLoadingFailed] = useState(false);
 
-  return isDefined(collectible) && isDefined(collectible.thumbnailUri) ? (
+  if (!isDefined(collectible) || !isDefined(collectible.thumbnailUri) || !isDefined(collectible.artifactUri)) {
+    return (
+      <View
+        style={{
+          width: size,
+          height: size,
+          padding: formatSize(4)
+        }}
+      />
+    );
+  }
+
+  return (
     <View
       style={{
         width: size,
@@ -20,19 +32,18 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         padding: formatSize(4)
       }}
     >
-      {isDefined(collectible.artifactUri) ? (
-        <Image
-          style={styles.image}
-          source={{
-            uri: isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible),
-            width: size,
-            height: size
-          }}
-          blurRadius={isLoaded ? 0 : 5}
-          onError={() => setIsLoadingFailed(true)}
-          onLoadEnd={() => setIsLoaded(true)}
-        />
-      ) : null}
+      <Image
+        style={styles.image}
+        source={{
+          uri: isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible),
+          width: size,
+          height: size
+        }}
+        blurRadius={isLoaded ? 0 : 5}
+        onError={() => setIsLoadingFailed(true)}
+        onLoadEnd={() => setIsLoaded(true)}
+      />
+      )
     </View>
-  ) : null;
+  );
 };
