@@ -95,9 +95,9 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     numericInputValue,
     value.asset.decimals,
+    newInputValue => (inputValueRef.current = newInputValue),
     onBlur,
-    onFocus,
-    newInputValue => (inputValueRef.current = newInputValue)
+    onFocus
   );
 
   const handleTokenInputTypeChange = (tokenTypeIndex: number) => {

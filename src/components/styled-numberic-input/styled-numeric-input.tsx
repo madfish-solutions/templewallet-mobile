@@ -20,9 +20,9 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     value,
     decimals,
+    onChange,
     onBlur,
-    onFocus,
-    onChange
+    onFocus
   );
 
   return (
