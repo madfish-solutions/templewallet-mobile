@@ -105,23 +105,23 @@ export const AddLiquidityModal = () => {
             });
           };
 
-          const handleATokenChange = (aToken: AssetAmountInterface) => {
+          const handleATokenChange = (tokenA: AssetAmountInterface) => {
             let bTokenAmount, aTokenAmount;
 
-            if (isDefined(aToken.amount)) {
-              aTokenAmount = aToken.amount;
-              bTokenAmount = findTokenInput(aToken.amount, aTokenPool, bTokenPool);
+            if (isDefined(tokenA.amount)) {
+              aTokenAmount = tokenA.amount;
+              bTokenAmount = findTokenInput(tokenA.amount, aTokenPool, bTokenPool);
             }
 
             updateForm(aTokenAmount, bTokenAmount ?? new BigNumber(0));
           };
 
-          const handleBTokenChange = (bToken: AssetAmountInterface) => {
+          const handleBTokenChange = (tokenB: AssetAmountInterface) => {
             let bTokenAmount, aTokenAmount;
 
-            if (isDefined(bToken.amount)) {
-              bTokenAmount = bToken.amount;
-              aTokenAmount = findTokenInput(bToken.amount, bTokenPool, aTokenPool);
+            if (isDefined(tokenB.amount)) {
+              bTokenAmount = tokenB.amount;
+              aTokenAmount = findTokenInput(tokenB.amount, bTokenPool, aTokenPool);
             }
 
             updateForm(aTokenAmount ?? new BigNumber(0), bTokenAmount);
