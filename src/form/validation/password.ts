@@ -8,10 +8,10 @@ const atLeastOneNumberError = 'At least 1 number';
 const minError = 'At least 8 English characters';
 const onlyAsciiCharsError = 'Only English letters are allowed';
 
-const PASSWORD_PATTERN_ONE_LOWER_CASE = new RegExp('(?=.*[a-z])');
-const PASSWORD_PATTERN_ONE_UPPER_CASE = new RegExp('(?=.*[A-Z])');
-const PASSWORD_PATTERN_ONE_NUMERIC = new RegExp('(?=.*[0-9])');
-const PASSWORD_PATTERN_ONLY_ENGLISH_LETTERS = new RegExp('^[\u0021-\u007e]*$');
+const PASSWORD_PATTERN_ONE_LOWER_CASE = /(?=.*[a-z])/;
+const PASSWORD_PATTERN_ONE_UPPER_CASE = /(?=.*[A-Z])/;
+const PASSWORD_PATTERN_ONE_NUMERIC = /(?=.*[0-9])/;
+const PASSWORD_PATTERN_ONLY_ENGLISH_LETTERS = /^[\u0021-\u007e]*$/;
 
 export const passwordValidation = string()
   .required(makeRequiredErrorMessage('Password'))
