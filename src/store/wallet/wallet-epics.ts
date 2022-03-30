@@ -38,6 +38,13 @@ import {
   waitForOperationCompletionAction
 } from './wallet-actions';
 
+const submitLoadActions = () => [
+  loadTezosBalanceActions.submit(),
+  loadTokenBalancesActions.submit(),
+  loadActivityGroupsActions.submit(),
+  loadSelectedBakerActions.submit()
+];
+
 const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
@@ -141,12 +148,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
           }
         }),
         delay(BCD_INDEXING_DELAY),
-        concatMap(() => [
-          loadTezosBalanceActions.submit(),
-          loadTokenBalancesActions.submit(),
-          loadActivityGroupsActions.submit(),
-          loadSelectedBakerActions.submit()
-        ]),
+        concatMap(submitLoadActions),
         catchError(err => {
           showErrorToast({ description: err.message });
 
@@ -182,15 +184,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
   );
 
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(addTokenMetadataAction),
-    concatMap(() => [
-      loadTezosBalanceActions.submit(),
-      loadTokenBalancesActions.submit(),
-      loadActivityGroupsActions.submit(),
-      loadSelectedBakerActions.submit()
-    ])
-  );
+  action$.pipe(ofType(addTokenMetadataAction), concatMap(submitLoadActions));
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
