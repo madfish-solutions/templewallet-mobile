@@ -125,19 +125,9 @@ describe('Shelter', () => {
     it('should not import HD account with wrong mnemonic', done => {
       const incorrectSeedPhraseMock = 'Lorem ipsum dolor sit amet consectetur adipiscing elit donec iaculis libero et';
 
-      const callback = (account: AccountInterface[] | undefined) =>
-        expect(account).toThrowError('Mnemonic not validated');
       Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
-        next: async data => {
-          try {
-            await callback(data);
-            done();
-          } catch (e) {
-            done(e);
-          }
-        },
-        error: e => {
-          expect(e.message).toBe('Mnemonic not validated');
+        error: err => {
+          expect(err.message).toBe('Mnemonic not validated');
           done();
         }
       });
