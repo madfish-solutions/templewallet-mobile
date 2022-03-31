@@ -1,29 +1,21 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ActivityGroup } from '../../../../interfaces/activity.interface';
-import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
-import { useColors } from '../../../../styles/use-colors';
 import { Divider } from '../../../divider/divider';
 import { Icon } from '../../../icon/icon';
 import { useActivityGroupTypeStyles } from './activity-group-type.styles';
-import { handleChooseIcon, IconGroupType } from './activity-group-type.util';
+import { useActivityGroupInfo } from './use-activity-group-info';
 
 interface Props {
   group: ActivityGroup;
 }
 
 export const ActivityGroupType: FC<Props> = ({ group }) => {
-  const colors = useColors();
   const styles = useActivityGroupTypeStyles();
 
-  const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
-
-  const [iconName, iconColor, typeText] = useMemo<IconGroupType>(
-    () => handleChooseIcon(group, colors, publicKeyHash),
-    [group, publicKeyHash, colors]
-  );
+  const [iconName, iconColor, typeText] = useActivityGroupInfo(group);
 
   return (
     <View style={styles.container}>

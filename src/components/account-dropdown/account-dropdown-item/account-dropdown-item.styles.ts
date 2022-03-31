@@ -1,38 +1,38 @@
+/* eslint sonarjs/no-duplicate-string: 0 */
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
-import { AlignItems, FlexDirection, JustifyContent } from '../../../styles/types';
 
 export const useAccountDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
-    flexDirection: FlexDirection.Row
+    flexDirection: 'row'
   },
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: JustifyContent.SpaceBetween,
+    justifyContent: 'space-between',
     marginLeft: formatSize(10)
   },
   smallInfoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: JustifyContent.Center,
+    justifyContent: 'center',
     marginLeft: formatSize(4)
   },
   upperContainer: {
-    flexDirection: FlexDirection.Row,
-    alignItems: AlignItems.Center
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   upperContainerFullData: {
-    justifyContent: JustifyContent.SpaceBetween
+    justifyContent: 'space-between'
   },
   name: {
     ...typography.tagline13Tag,
     color: colors.black
   },
   lowerContainer: {
-    flexDirection: FlexDirection.Row,
-    justifyContent: JustifyContent.SpaceBetween,
-    alignItems: AlignItems.Center
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   balanceText: {
     ...typography.numbersRegular13,

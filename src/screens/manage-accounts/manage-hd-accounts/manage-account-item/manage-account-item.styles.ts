@@ -1,8 +1,8 @@
+/* eslint sonarjs/no-duplicate-string: 0 */
 import { black } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 import { generateShadow } from '../../../../styles/generate-shadow';
-import { AlignItems, FlexDirection, JustifyContent } from '../../../../styles/types';
 
 export const useManageAccountItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -14,19 +14,19 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     backgroundColor: colors.cardBG
   },
   upperContainer: {
-    flexDirection: FlexDirection.Row,
-    justifyContent: JustifyContent.SpaceBetween,
-    alignItems: AlignItems.Center
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   accountContainer: {
     flexShrink: 1,
-    flexDirection: FlexDirection.Row,
-    alignItems: AlignItems.Center
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   accountContainerData: {
     flexShrink: 1,
     marginLeft: formatSize(10),
-    justifyContent: JustifyContent.SpaceBetween
+    justifyContent: 'space-between'
   },
   accountText: {
     ...typography.caption13Semibold,
@@ -34,15 +34,15 @@ export const useManageAccountItemStyles = createUseStyles(({ colors, typography 
     marginBottom: formatSize(2)
   },
   actionsContainer: {
-    flexDirection: FlexDirection.Row,
-    alignItems: AlignItems.Center
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   lowerContainer: {
-    flexDirection: FlexDirection.Row,
-    justifyContent: JustifyContent.SpaceBetween
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   lowerContainerData: {
-    justifyContent: JustifyContent.SpaceBetween
+    justifyContent: 'space-between'
   },
   balanceText: {
     ...typography.numbersRegular15,

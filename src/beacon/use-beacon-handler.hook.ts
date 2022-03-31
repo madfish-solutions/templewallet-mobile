@@ -1,6 +1,6 @@
 import { Serializer } from '@airgap/beacon-sdk';
 import { useEffect } from 'react';
-import { Linking } from 'react-native';
+import { EmitterSubscription, Linking } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
 
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
@@ -30,7 +30,7 @@ export const useBeaconHandler = () => {
   useEffect(() => {
     const listener = ({ url }: { url: string | null }) => beaconDeepLinkHandler(url ?? '');
 
-    let emitter: { remove: () => void } | undefined;
+    let emitter: EmitterSubscription;
 
     BeaconHandler.init(message =>
       navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
