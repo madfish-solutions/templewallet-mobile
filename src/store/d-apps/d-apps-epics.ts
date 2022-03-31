@@ -51,8 +51,8 @@ const removePermissionEpic = (action$: Observable<Action>) =>
 
               return loadPermissionsActions.submit();
             }),
-            catchError((error: Error) => {
-              showErrorToast({ description: error.message });
+            catchError(err => {
+              showErrorToast({ description: err.message });
 
               return EMPTY;
             })
@@ -79,8 +79,8 @@ const abortRequestEpic = (action$: Observable<Action>) =>
 
           return navigateAction(StacksEnum.MainStack);
         }),
-        catchError((error: Error) => {
-          showErrorToast({ description: error.message });
+        catchError(err => {
+          showErrorToast({ description: err.message });
 
           return EMPTY;
         })
