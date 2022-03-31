@@ -16,10 +16,10 @@ describe('useQuickActions', () => {
         userInfo: { url: '' }
       }
     ]);
+
     expect(mockDeviceEventEmitter.addListener).toBeCalled();
 
     expect(mockReactNativeQuickActions.clearShortcutItems).not.toBeCalled();
-    expect(mockDeviceEventEmitter.removeListener).not.toBeCalled();
   });
 
   it('should clear shortcut items and remove quick action shortcut listener on unmount', () => {
@@ -28,6 +28,5 @@ describe('useQuickActions', () => {
     unmount();
 
     expect(mockReactNativeQuickActions.clearShortcutItems).toBeCalled();
-    expect(mockDeviceEventEmitter.removeListener).toBeCalled();
   });
 });
