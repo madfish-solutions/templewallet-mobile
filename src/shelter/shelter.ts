@@ -82,7 +82,7 @@ export class Shelter {
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
-      return throwError('Mnemonic not validated');
+      return throwError(() => new Error('Mnemonic not validated'));
     }
 
     return hashPassword$(password).pipe(
