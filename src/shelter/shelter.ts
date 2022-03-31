@@ -33,7 +33,9 @@ export class Shelter {
               )
             )
           ),
-          switchMap(result => (result === false ? throwError('Failed to save sensitive data') : of(result)))
+          switchMap(result =>
+            result === false ? throwError(() => new Error('Failed to save sensitive data')) : of(result)
+          )
         )
       )
     );
@@ -45,7 +47,9 @@ export class Shelter {
       ),
       map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData => decryptString$(keychainData, passwordHash)),
-      switchMap(value => (value === undefined ? throwError(`Failed to decrypt value [${key}]`) : of(value)))
+      switchMap(value =>
+        value === undefined ? throwError(() => new Error(`Failed to decrypt value [${key}]`)) : of(value)
+      )
     );
 
   static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD_HASH));
@@ -78,7 +82,7 @@ export class Shelter {
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
-      return throwError('Mnemonic not validated');
+      return throwError(() => new Error('Mnemonic not validated'));
     }
 
     return hashPassword$(password).pipe(
@@ -164,7 +168,9 @@ export class Shelter {
 
   static getSigner$ = (publicKeyHash: string) =>
     Shelter.revealSecretKey$(publicKeyHash).pipe(
-      switchMap(value => (value === undefined ? throwError('Failed to reveal private key') : of(value))),
+      switchMap(value =>
+        value === undefined ? throwError(() => new Error('Failed to reveal private key')) : of(value)
+      ),
       map(privateKey => new InMemorySigner(privateKey))
     );
 
