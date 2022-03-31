@@ -4,7 +4,7 @@ import { of, Subject, switchMap } from 'rxjs';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { setIsBiometricsEnabled } from '../../store/settings/settings-actions';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { Shelter } from './../shelter';
+import { Shelter } from '../shelter';
 
 export const enableBiometryPasswordSubscription = (
   enableBiometryPassword$: Subject<string>,

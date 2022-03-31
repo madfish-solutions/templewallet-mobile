@@ -5,7 +5,7 @@ import { WalletAccountInterface } from '../../interfaces/wallet-account.interfac
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
 import { getPublicKeyAndHash$ } from '../../utils/keys.util';
-import { Shelter } from './../shelter';
+import { Shelter } from '../shelter';
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<{ privateKey: string; name: string }>,

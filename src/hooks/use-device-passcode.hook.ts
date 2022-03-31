@@ -11,11 +11,11 @@ export const useDevicePasscode = () => {
 
   const isPinState = () => {
     isPinOrFingerprintSet().then((isSecured: boolean) => {
-      if (!isSecured) {
+      if (isSecured) {
+        setDevicePasscode(true);
+      } else {
         dispatch(resetApplicationAction.submit());
         setDevicePasscode(false);
-      } else {
-        setDevicePasscode(true);
       }
     });
   };

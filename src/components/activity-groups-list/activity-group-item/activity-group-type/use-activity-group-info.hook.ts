@@ -7,12 +7,11 @@ import { useColors } from '../../../../styles/use-colors';
 import { isString } from '../../../../utils/is-string';
 import { IconNameEnum } from '../../../icon/icon-name.enum';
 
-export type IconGroupType = [IconNameEnum, string, string];
-
-export const useActivityGroupInfo = (group: ActivityGroup): IconGroupType => {
+export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
-  const [iconName, iconColor, typeText] = useMemo<IconGroupType>(() => {
+
+  return useMemo<[IconNameEnum, string, string]>(() => {
     if (group.length > 1) {
       return [IconNameEnum.Clipboard, colors.gray1, 'Interaction'];
     }
@@ -45,6 +44,4 @@ export const useActivityGroupInfo = (group: ActivityGroup): IconGroupType => {
         return [IconNameEnum.Clipboard, colors.gray1, 'Undelegated'];
     }
   }, [group, publicKeyHash, colors]);
-
-  return [iconName, iconColor, typeText];
 };

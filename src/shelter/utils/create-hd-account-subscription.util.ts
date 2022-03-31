@@ -3,7 +3,7 @@ import { Subject, switchMap } from 'rxjs';
 
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
-import { Shelter } from './../shelter';
+import { Shelter } from '../shelter';
 
 export const createHdAccountSubscription = (
   createHdAccount$: Subject<unknown>,

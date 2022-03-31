@@ -1,11 +1,11 @@
 import { catchError, map, merge, of, Subject, switchMap } from 'rxjs';
 
 import { EventFn } from '../../config/general';
-import { RevealSecretKeyParams } from './../interfaces/reveal-secret-key-params.interface';
-import { RevealSeedPhraseParams } from './../interfaces/reveal-seed-phrase.params';
-import { Shelter } from './../shelter';
+import { RevealSecretKeyParams } from '../interfaces/reveal-secret-key-params.interface';
+import { RevealSeedPhraseParams } from '../interfaces/reveal-seed-phrase.params';
+import { Shelter } from '../shelter';
 
-export const mergeSubscription = (
+export const revealSecretsSubscription = (
   revealSecretKey$: Subject<RevealSecretKeyParams>,
   revealSeedPhrase$: Subject<RevealSeedPhraseParams>
 ) =>

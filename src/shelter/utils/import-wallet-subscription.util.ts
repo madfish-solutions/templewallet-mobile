@@ -3,8 +3,8 @@ import { forkJoin, of, Subject, switchMap } from 'rxjs';
 
 import { setIsBiometricsEnabled } from '../../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
-import { ImportWalletParams } from './../interfaces/import-wallet-params.interface';
-import { Shelter } from './../shelter';
+import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
+import { Shelter } from '../shelter';
 
 export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>, dispatch: Dispatch) =>
   importWallet$

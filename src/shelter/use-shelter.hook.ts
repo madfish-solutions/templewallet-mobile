@@ -7,11 +7,11 @@ import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
-import { createHdAccountSubscription } from './util/create-hd-account-subscription';
-import { createImportAccountSubscription } from './util/create-import-account-subscription';
-import { enableBiometryPasswordSubscription } from './util/enable-biometry-password-subscription';
-import { importWalletSubscription } from './util/import-wallet-subscription';
-import { mergeSubscription } from './util/merge-subscription';
+import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
+import { createImportAccountSubscription } from './utils/create-import-account-subscription.util';
+import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
+import { importWalletSubscription } from './utils/import-wallet-subscription.util';
+import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export const useShelter = () => {
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
       createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
-      mergeSubscription(revealSecretKey$, revealSeedPhrase$),
+      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 
