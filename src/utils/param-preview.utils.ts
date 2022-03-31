@@ -72,7 +72,7 @@ const tryParseFA1_2Approve = (parameters: any, destination: string): FA1_2Approv
     if (entrypoint === 'approve') {
       let to, amount: string | undefined;
 
-      const { args: x } = value as any;
+      const { args: x } = value;
       if (typeof x[0].string === 'string') {
         to = x[0].string;
       }
@@ -165,7 +165,7 @@ const getFa12TokenTransfers = (destination: string, parameters: any): TokenTrans
     if (entrypoint === 'transfer') {
       let from, to, amount: string | undefined;
 
-      const { args: x } = value as any;
+      const { args: x } = value;
       if (typeof x[0].string === 'string') {
         from = x[0].string;
       }
@@ -198,7 +198,7 @@ const getFa2TokenTransfers = (destination: string, parameters: any): TokenTransf
       return null;
     }
 
-    for (const { args: x } of value as any) {
+    for (const { args: x } of value) {
       let from: string | undefined;
 
       if (typeof x[0].string === 'string') {
