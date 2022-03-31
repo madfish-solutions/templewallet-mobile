@@ -33,11 +33,13 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   return (
     <ButtonsContainer>
-      <ButtonMedium
-        title="RECEIVE"
-        iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { token })}
-      />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium
+          title="RECEIVE"
+          iconName={IconNameEnum.ArrowDown}
+          onPress={() => navigate(ModalsEnum.Receive, { token })}
+        />
+      </View>
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}

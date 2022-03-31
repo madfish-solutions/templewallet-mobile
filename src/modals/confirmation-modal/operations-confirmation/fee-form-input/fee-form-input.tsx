@@ -1,8 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikHelpers } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Text, View, TouchableOpacity } from 'react-native';
 
 import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { Divider } from '../../../../components/divider/divider';
