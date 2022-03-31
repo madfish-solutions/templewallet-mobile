@@ -43,7 +43,7 @@ export class Shelter {
   private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
     from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
       switchMap(rawKeychainData =>
-        rawKeychainData === false ? throwError(`No record in Keychain [${key}]`) : of(rawKeychainData)
+        rawKeychainData === false ? throwError(() => new Error(`No record in Keychain [${key}]`)) : of(rawKeychainData)
       ),
       map((rawKeychainData): EncryptedData => JSON.parse(rawKeychainData.password)),
       switchMap(keychainData => decryptString$(keychainData, passwordHash)),
@@ -82,7 +82,7 @@ export class Shelter {
     hdAccountsLength = 1
   ): Observable<AccountInterface[] | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
-      return throwError(() => new Error('Mnemonic not validated'));
+      return throwError('Mnemonic not validated');
     }
 
     return hashPassword$(password).pipe(
