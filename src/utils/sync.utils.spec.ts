@@ -13,7 +13,7 @@ const validParsed: SyncPayloadInterface = {
   hdAccountsLength: 3
 };
 
-const FAILED_TO_DECRYPT_ERROR = 'Failed to decrypt payload';
+const FAILED_TO_DECRYPT_ERROR = 'Failed to decrypt sync payload';
 
 describe('isSyncPayload', () => {
   it('should false when random payload', () => {
