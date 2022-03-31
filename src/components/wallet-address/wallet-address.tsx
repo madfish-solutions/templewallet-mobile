@@ -35,8 +35,6 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
     updateDomainReverseName(publicKeyHash);
   }, [publicKeyHash]);
 
-  const shownName = isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe;
-
   return (
     <View style={styles.pkhWrapper}>
       {isShownDomainName ? (
@@ -55,7 +53,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
         <TouchableIcon
           size={formatSize(16)}
           style={styles.iconContainer}
-          name={shownName}
+          name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           onPress={() => setIsShownDomainName(!isShownDomainName)}
         />
       ) : null}

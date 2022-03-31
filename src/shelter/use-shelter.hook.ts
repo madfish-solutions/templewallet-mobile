@@ -7,13 +7,11 @@ import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
-import {
-  getCreateHdAccountStream,
-  getCreateImportAccountStream,
-  getEnableBiometryPasswordStream,
-  getImportWalletStream,
-  getMergeStream
-} from './use-shelter.util';
+import { createHdAccountSubscription } from './util/create-hd-account-subscription';
+import { createImportAccountSubscription } from './util/create-import-account-subscription';
+import { enableBiometryPasswordSubscription } from './util/enable-biometry-password-subscription';
+import { importWalletSubscription } from './util/import-wallet-subscription';
+import { mergeSubscription } from './util/merge-subscription';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
@@ -29,11 +27,11 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
-      getImportWalletStream(importWallet$, dispatch),
-      getCreateHdAccountStream(createHdAccount$, accounts, dispatch),
-      getCreateImportAccountStream(createImportedAccount$, accounts, dispatch, goBack),
-      getMergeStream(revealSecretKey$, revealSeedPhrase$),
-      getEnableBiometryPasswordStream(enableBiometryPassword$, dispatch, navigate)
+      importWalletSubscription(importWallet$, dispatch),
+      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
+      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
+      mergeSubscription(revealSecretKey$, revealSeedPhrase$),
+      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());

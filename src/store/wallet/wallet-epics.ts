@@ -38,7 +38,7 @@ import {
   waitForOperationCompletionAction
 } from './wallet-actions';
 
-const submitLoadActions = () => [
+const updateDataActions = () => [
   loadTezosBalanceActions.submit(),
   loadTokenBalancesActions.submit(),
   loadActivityGroupsActions.submit(),
@@ -148,7 +148,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
           }
         }),
         delay(BCD_INDEXING_DELAY),
-        concatMap(submitLoadActions),
+        concatMap(updateDataActions),
         catchError(err => {
           showErrorToast({ description: err.message });
 
@@ -184,7 +184,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
   );
 
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addTokenMetadataAction), concatMap(submitLoadActions));
+  action$.pipe(ofType(addTokenMetadataAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,

@@ -1,7 +1,9 @@
+export const mockDeviceEventEmitterInstance = {
+  remove: jest.fn()
+};
+
 export const mockDeviceEventEmitter = {
-  addListener: jest.fn(() => ({
-    remove: jest.fn()
-  }))
+  addListener: jest.fn(() => mockDeviceEventEmitterInstance)
 };
 
 export const mockLinking = {

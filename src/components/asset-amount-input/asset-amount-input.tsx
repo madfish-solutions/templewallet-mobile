@@ -107,6 +107,16 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     setInputTypeIndex(tokenTypeIndex);
   };
 
+  const getDefinedAmount = useCallback(
+    (decimals, newExchangeRate) =>
+      isDefined(inputValueRef.current)
+        ? isTokenInputType
+          ? tzToMutez(inputValueRef.current, decimals)
+          : dollarToTokenAmount(inputValueRef.current, decimals, newExchangeRate)
+        : undefined,
+    [isTokenInputType, inputValueRef.current]
+  );
+
   const handleTokenChange = (newAsset?: TokenInterface) => {
     const decimals = newAsset?.decimals ?? 0;
     const asset = newAsset ?? emptyToken;
@@ -117,19 +127,6 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
       asset
     });
   };
-
-  const getDefinedAmount = useCallback(
-    (decimals, newExchangeRate) => {
-      if (!isDefined(inputValueRef.current)) {
-        return undefined;
-      } else {
-        return isTokenInputType
-          ? tzToMutez(inputValueRef.current, decimals)
-          : dollarToTokenAmount(inputValueRef.current, decimals, newExchangeRate);
-      }
-    },
-    [isTokenInputType, inputValueRef.current]
-  );
 
   useEffect(
     () =>

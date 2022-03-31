@@ -21,11 +21,11 @@ export const AfterSyncQRScan = () => {
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,
     password,
-    useBiometry: useBiometryHook
+    useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
     parseSyncPayload(payload, password)
       .then(res => {
-        setUseBiometry(useBiometryHook === true);
+        setUseBiometry(useBiometryValue === true);
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
 
@@ -33,7 +33,7 @@ export const AfterSyncQRScan = () => {
           importWallet({
             seedPhrase: res.mnemonic,
             password,
-            useBiometry: useBiometryHook,
+            useBiometry: useBiometryValue,
             hdAccountsLength: res.hdAccountsLength
           });
         } else {
