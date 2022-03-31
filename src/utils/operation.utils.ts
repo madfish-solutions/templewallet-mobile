@@ -76,7 +76,6 @@ const getActivityByType = (operation: OperationInterface, address: string): Acti
         return;
       }
       isDefined(newDelegate) && (destination = newDelegate);
-      amount = '0';
       break;
 
     case ActivityTypeEnum.Origination:
