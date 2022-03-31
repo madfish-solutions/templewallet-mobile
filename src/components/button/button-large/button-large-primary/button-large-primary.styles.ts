@@ -6,5 +6,9 @@ export const useButtonLargePrimaryStyleConfig = createUseStylesConfig(({ colors 
   activeColorConfig: {
     titleColor: colors.white,
     backgroundColor: colors.orange
+  },
+  disabledColorConfig: {
+    titleColor: colors.white,
+    backgroundColor: colors.disabled
   }
 }));
