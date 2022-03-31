@@ -18,15 +18,24 @@ export const AfterSyncQRScan = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
-  const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
+  const handleConfirmSyncFormSubmit = ({
+    usePrevPassword,
+    password,
+    useBiometry: useBiometryHook
+  }: ConfirmSyncFormValues) => {
     parseSyncPayload(payload, password)
       .then(res => {
-        setUseBiometry(useBiometry === true);
+        setUseBiometry(useBiometryHook === true);
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword === true) {
-          importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
+          importWallet({
+            seedPhrase: res.mnemonic,
+            password,
+            useBiometry: useBiometryHook,
+            hdAccountsLength: res.hdAccountsLength
+          });
         } else {
           setInnerScreenIndex(1);
         }
