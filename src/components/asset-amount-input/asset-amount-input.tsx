@@ -65,6 +65,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const inputValueRef = useRef<BigNumber>();
+  console.log(inputValueRef.current);
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = (() => {
@@ -75,7 +76,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           if (isDefined(inputValueRef.current)) {
             const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
 
-            if (currentTokenValue.isEqualTo(value.amount)) {
+            if (currentTokenValue.isEqualTo(value.amount) || isDefined(value.asset.artifactUri)) {
               return inputValueRef.current;
             }
           }
