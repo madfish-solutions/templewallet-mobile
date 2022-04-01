@@ -10,7 +10,7 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
-import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
+import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
@@ -75,7 +75,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           if (isDefined(inputValueRef.current)) {
             const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
 
-            if (currentTokenValue.isEqualTo(value.amount) || isDefined(value.asset.artifactUri)) {
+            if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
               return inputValueRef.current;
             }
           }
