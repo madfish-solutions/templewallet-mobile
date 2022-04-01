@@ -1,7 +1,6 @@
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
-import { AccountInterface } from '../interfaces/account.interface';
 import { mockAccountCredentials, mockHDAccountCredentials } from '../mocks/account-credentials.mock';
 import {
   mockCorrectPassword,
