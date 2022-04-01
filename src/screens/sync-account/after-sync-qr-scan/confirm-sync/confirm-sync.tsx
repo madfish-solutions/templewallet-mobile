@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -14,12 +15,28 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextLink } from '../../../../components/text-link/text-link';
 import { privacyPolicy, termsOfUse } from '../../../../config/socials';
+import { MaxPasswordAttemtps } from '../../../../config/system';
 import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
+import { setPasswordTimelock } from '../../../../store/security/security-actions';
+import { usePasswordAttempt, usePasswordTimelock } from '../../../../store/security/security-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { ConfirmSyncFormValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { useConfirmSyncStyles } from './confirm-sync.styles';
+
+const LOCK_TIME = 5_000;
+
+const checkTime = (i: number) => (i < 10 ? '0' + i : i);
+
+const getTimeLeft = (start: number, end: number) => {
+  const isPositiveTime = start + end - Date.now() < 0 ? 0 : start + end - Date.now();
+  const diff = isPositiveTime / 1000;
+  const seconds = Math.floor(diff % 60);
+  const minutes = Math.floor(diff / 60);
+
+  return `${checkTime(minutes)}:${checkTime(seconds)}`;
+};
 
 interface ConfirmSyncProps {
   onSubmit: (formValues: ConfirmSyncFormValues) => void;
@@ -28,6 +45,13 @@ interface ConfirmSyncProps {
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   const styles = useConfirmSyncStyles();
 
+  const dispatch = useDispatch();
+  const timelock = usePasswordTimelock();
+  const attempt = usePasswordAttempt();
+  const lockLevel = LOCK_TIME * Math.floor(attempt / 3);
+  const [timeleft, setTimeleft] = useState(getTimeLeft(timelock, lockLevel));
+  const isDisabled = useMemo(() => Date.now() - timelock <= lockLevel, [timelock, lockLevel]);
+
   useNavigationSetOptions(
     {
       headerLeft: () => <HeaderBackButton />,
@@ -35,6 +59,19 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
     },
     []
   );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Date.now() - timelock > lockLevel) {
+        dispatch(setPasswordTimelock.submit(0));
+      }
+      setTimeleft(getTimeLeft(timelock, lockLevel));
+    }, 1_000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timelock, lockLevel]);
 
   return (
     <Formik
@@ -50,7 +87,14 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="The same password is used to unlock your extension." />
-            <FormPasswordInput name="password" />
+            {isDisabled ? (
+              <Text style={styles.passwordBlocked}>
+                You have entered the wrong password {MaxPasswordAttemtps} times. Your synchronization is being blocked
+                for {timeleft}
+              </Text>
+            ) : (
+              <FormPasswordInput name="password" />
+            )}
 
             <View style={styles.checkboxContainer}>
               <FormCheckbox name="usePrevPassword">
@@ -81,7 +125,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             <Divider />
             <ButtonLargePrimary
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
-              disabled={!isValid}
+              disabled={!isValid || isDisabled}
               onPress={submitForm}
             />
             <InsetSubstitute type="bottom" />
