@@ -65,7 +65,6 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   const hasExchangeRate = isDefined(exchangeRate);
 
   const inputValueRef = useRef<BigNumber>();
-  console.log(inputValueRef.current);
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = (() => {
