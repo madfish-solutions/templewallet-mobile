@@ -12,7 +12,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoadingFailed, setIsLoadingFailed] = useState(false);
 
-  return isDefined(collectible) && isDefined(collectible.thumbnailUri) ? (
+  return (
     <View
       style={{
         width: size,
@@ -20,7 +20,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         padding: formatSize(4)
       }}
     >
-      {isDefined(collectible.artifactUri) ? (
+      {isDefined(collectible) && isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri) && (
         <Image
           style={styles.image}
           source={{
@@ -32,7 +32,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
           onError={() => setIsLoadingFailed(true)}
           onLoadEnd={() => setIsLoaded(true)}
         />
-      ) : null}
+      )}
     </View>
-  ) : null;
+  );
 };

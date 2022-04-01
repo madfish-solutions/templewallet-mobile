@@ -13,6 +13,8 @@ import { isDefined } from '../utils/is-defined';
 import { BeaconStorage } from './storage';
 import { WalletClient } from './wallet-client';
 
+const WALLET_CLIENT_ERROR = 'Wallet client not defined!';
+
 export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
 
@@ -54,7 +56,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient?.respond(message);
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static getPermissions = () => {
@@ -62,7 +64,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.getPermissions();
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static getPeers = () => {
@@ -70,7 +72,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.getPeers();
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removePermission = (accountIdentifier: string) => {
@@ -78,7 +80,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removePermission(accountIdentifier);
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removeAllPermissions = () => {
@@ -92,7 +94,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removePeer(peer, true);
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removeAllPeers = () => {
@@ -100,7 +102,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removeAllPeers(true);
     }
 
-    return Promise.reject('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 }
 

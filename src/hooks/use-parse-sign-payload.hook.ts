@@ -8,10 +8,7 @@ export const useParseSignPayload = (message: SignPayloadRequestOutput) => {
   const [payloadPreview, setPayloadPreview] = useState('');
   const isPayloadParsed = isString(payloadPreview);
 
-  useEffect(
-    () => void getParsedSignPayload(message).then(payloadPreview => setPayloadPreview(payloadPreview)),
-    [message]
-  );
+  useEffect(() => void getParsedSignPayload(message).then(payload => setPayloadPreview(payload)), [message]);
 
   return { payloadPreview, isPayloadParsed };
 };
