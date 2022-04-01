@@ -50,8 +50,6 @@
     "jest/no-done-callback": "off"
   },
   "globals": {
-    "localStorage": true,
-    "atob": true,
-    "btoa": true
+    "localStorage": true
   }
 }

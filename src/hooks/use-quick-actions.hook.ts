@@ -25,11 +25,12 @@ export const useQuickActions = () => {
         userInfo: { url: '' }
       }
     ]);
-    DeviceEventEmitter.addListener('quickActionShortcut', quickActionHandler);
+
+    const emitter = DeviceEventEmitter.addListener('quickActionShortcut', quickActionHandler);
 
     return () => {
       QuickActions.clearShortcutItems();
-      DeviceEventEmitter.removeListener('quickActionShortcut', quickActionHandler);
+      emitter.remove();
     };
   }, []);
 };
