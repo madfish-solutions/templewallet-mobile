@@ -38,7 +38,7 @@ export const useAppLock = () => {
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
         .pipe(
-          delay(passwordDelay),
+          delay(0),
           switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {

@@ -14,7 +14,7 @@ export const usePasswordLock = () => {
   useEffect(() => {
     const interval = setInterval(
       () => setTimeleft(Date.now() - lockTime <= lockLevel ? getTimeLeft(lockTime, lockLevel) : '-'),
-      1_000
+      1000
     );
 
     return () => void clearInterval(interval);

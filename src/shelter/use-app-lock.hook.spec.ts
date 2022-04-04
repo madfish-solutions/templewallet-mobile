@@ -1,14 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-test-renderer';
 
-import { CONSTANT_DELAY_TIME, RANDOM_DELAY_TIME } from '../config/security';
 import { mockCorrectPassword, mockCorrectUserCredentialsValue } from '../mocks/react-native-keychain.mock';
 import { mockReactNativeToastMessage } from '../mocks/react-native-toast-message.mock';
 import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockShelter } from './shelter.mock';
 import { useAppLock } from './use-app-lock.hook';
-
-const BRUTEFORCE_LOCK_TIME = RANDOM_DELAY_TIME + CONSTANT_DELAY_TIME;
 
 describe('useAppLock', () => {
   beforeEach(() => {
@@ -38,11 +35,10 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockCorrectPassword));
+      jest.runAllTimers();
 
-      setTimeout(() => {
-        expect(result.current.isLocked).toEqual(false);
-        expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
-      }, BRUTEFORCE_LOCK_TIME);
+      expect(result.current.isLocked).toEqual(false);
+      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
     });
 
     it('should show error toast if an incorrect password is given', () => {
@@ -50,12 +46,11 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockIncorrectPassword));
+      jest.runAllTimers();
 
-      setTimeout(() => {
-        expect(result.current.isLocked).toEqual(true);
-        expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
-        expect(mockReactNativeToastMessage.show).toBeCalled();
-      }, BRUTEFORCE_LOCK_TIME);
+      expect(result.current.isLocked).toEqual(true);
+      expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
+      expect(mockReactNativeToastMessage.show).toBeCalled();
     });
   });
 
@@ -64,12 +59,10 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
+      jest.runAllTimers();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
-      setTimeout(
-        () => expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue),
-        BRUTEFORCE_LOCK_TIME
-      );
+      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue);
     });
 
     it('should do nothing if biometry authentication fails', async () => {
@@ -77,6 +70,7 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
+      jest.runAllTimers();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
       expect(mockShelter.unlockApp$).not.toBeCalled();
@@ -94,7 +88,7 @@ describe('useAppLock', () => {
       act(() => result.current.lock());
 
       expect(mockShelter.lockApp).toBeCalled();
-      setTimeout(() => expect(result.current.isLocked).toEqual(true), BRUTEFORCE_LOCK_TIME);
+      expect(result.current.isLocked).toEqual(true);
     });
   });
 });
