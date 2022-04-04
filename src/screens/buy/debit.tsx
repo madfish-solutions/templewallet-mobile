@@ -21,7 +21,7 @@ export const Debit = () => {
       <Divider size={formatSize(16)} />
       <WhiteContainer>
         <View style={styles.providerLogo}>
-          <Icon name={IconNameEnum.MoonPay} size={formatSize(160)} color={colors.black} />
+          <Icon name={IconNameEnum.MoonPay} width={formatSize(160)} height={formatSize(40)} color={colors.black} />
         </View>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.textContainer} onPress={() => openUrl(url)} disabled={!url}>

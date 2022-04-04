@@ -11,9 +11,9 @@ const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 export const useNumericInput = (
   value: BigNumber | undefined,
   decimals: number,
+  onChange: EventFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
-  onFocus: TextInputProps['onFocus'] = emptyFn,
-  onChange: EventFn<BigNumber | undefined>
+  onFocus: TextInputProps['onFocus'] = emptyFn
 ) => {
   const [stringValue, setStringValue] = useState('');
   const [focused, setFocused] = useState(false);

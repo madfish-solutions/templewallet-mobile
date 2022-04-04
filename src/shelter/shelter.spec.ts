@@ -126,7 +126,7 @@ describe('Shelter', () => {
 
       Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
         error: err => {
-          expect(err).toEqual('Mnemonic not validated');
+          expect(err.message).toBe('Mnemonic not validated');
           done();
         }
       });

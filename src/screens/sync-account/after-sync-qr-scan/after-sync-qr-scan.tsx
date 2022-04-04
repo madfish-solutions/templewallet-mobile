@@ -24,16 +24,25 @@ export const AfterSyncQRScan = () => {
   const dispatch = useDispatch();
   const attempt = usePasswordAttempt();
 
-  const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
+  const handleConfirmSyncFormSubmit = ({
+    usePrevPassword,
+    password,
+    useBiometry: useBiometryValue
+  }: ConfirmSyncFormValues) => {
     parseSyncPayload(payload, password)
       .then(res => {
-        setUseBiometry(useBiometry === true);
+        setUseBiometry(useBiometryValue === true);
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword === true) {
-          importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
           dispatch(setPasswordAttempts.submit(1));
+          importWallet({
+            seedPhrase: res.mnemonic,
+            password,
+            useBiometry: useBiometryValue,
+            hdAccountsLength: res.hdAccountsLength
+          });
         } else {
           setInnerScreenIndex(1);
         }
