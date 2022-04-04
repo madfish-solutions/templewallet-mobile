@@ -113,25 +113,21 @@ export const EnterPassword = () => {
             <View>
               <Label label="Password" description="A password is used to protect the wallet." />
               <View style={styles.passwordInputSection}>
-                {isDisabled ? (
-                  <Text style={styles.passwordBlocked}>
-                    You have entered the wrong password {MaxPasswordAttemtps} times. Your wallet is being blocked for{' '}
-                    {timeleft}
-                  </Text>
-                ) : (
+                <View style={styles.passwordInputWrapper}>
+                  <FormPasswordInput
+                    name="password"
+                    {...(isDisabled && {
+                      error: `You have entered the wrong password ${MaxPasswordAttemtps} times. Your wallet is being blocked for ${timeleft}`
+                    })}
+                  />
+                </View>
+                {isBiometryAvailable && (
                   <>
-                    <View style={styles.passwordInputWrapper}>
-                      <FormPasswordInput name="password" />
+                    <Divider size={formatSize(16)} />
+                    <View>
+                      <Divider size={formatSize(4)} />
+                      <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
                     </View>
-                    {isBiometryAvailable && (
-                      <>
-                        <Divider size={formatSize(16)} />
-                        <View>
-                          <Divider size={formatSize(4)} />
-                          <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
-                        </View>
-                      </>
-                    )}
                   </>
                 )}
               </View>
