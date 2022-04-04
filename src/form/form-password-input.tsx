@@ -13,9 +13,10 @@ import { ErrorMessage } from './error-message/error-message';
 interface Props extends Pick<StyledPasswordInputProps, 'testID'> {
   name: string;
   isShowPasswordStrengthIndicator?: boolean;
+  error?: string;
 }
 
-export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndicator, testID }) => {
+export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndicator, testID, error }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -37,7 +38,7 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
           <Divider size={formatSize(28)} />
         </>
       ) : (
-        <ErrorMessage meta={meta} />
+        <ErrorMessage meta={{ ...meta, error: isDefined(error) ? error : meta.error }} />
       )}
     </>
   );

@@ -1,8 +1,10 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { enterPassword } from '../../../store/security/security-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
@@ -18,6 +20,8 @@ export const AfterSyncQRScan = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
+  const dispatch = useDispatch();
+
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,
     password,
@@ -30,6 +34,7 @@ export const AfterSyncQRScan = () => {
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword === true) {
+          dispatch(enterPassword.success());
           importWallet({
             seedPhrase: res.mnemonic,
             password,
@@ -40,7 +45,11 @@ export const AfterSyncQRScan = () => {
           setInnerScreenIndex(1);
         }
       })
-      .catch(e => showErrorToast({ description: e.message }));
+      .catch(e => {
+        dispatch(enterPassword.fail());
+
+        return showErrorToast({ description: e.message });
+      });
   };
 
   return (

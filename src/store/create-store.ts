@@ -19,6 +19,8 @@ import { DAppsRootState } from './d-apps/d-apps-state';
 import { debugReducers } from './debug/debug-reducers';
 import { DebugRootState } from './debug/debug-state';
 import { rootStateReducer } from './root-state.reducers';
+import { securityReducers } from './security/security-reducers';
+import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
 import { walletReducers } from './wallet/wallet-reducers';
@@ -29,6 +31,7 @@ export type RootState = WalletRootState &
   SettingsRootState &
   DAppsRootState &
   CurrencyRootState &
+  SecurityRootState &
   DebugRootState;
 
 const epicMiddleware = createEpicMiddleware();
@@ -50,6 +53,7 @@ const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
   baking: bakingReducers,
   settings: settingsReducers,
+  security: securityReducers,
   dApps: dAppsReducers,
   currency: currencyReducers,
   debug: debugReducers

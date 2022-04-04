@@ -33,6 +33,7 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockCorrectPassword));
+      jest.runAllTimers();
 
       expect(result.current.isLocked).toEqual(false);
       expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
@@ -43,6 +44,7 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockIncorrectPassword));
+      jest.runAllTimers();
 
       expect(result.current.isLocked).toEqual(true);
       expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
@@ -55,6 +57,7 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
+      jest.runAllTimers();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
       expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue);
@@ -65,6 +68,7 @@ describe('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
+      jest.runAllTimers();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
       expect(mockShelter.unlockApp$).not.toBeCalled();
