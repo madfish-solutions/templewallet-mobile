@@ -8,8 +8,8 @@ export const withSecurityState =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { security }): [T, SecurityState] => {
-        const { passwordAttempt, passwordTimelock } = security;
+        const { passwordAttempt, passwordLockTime } = security;
 
-        return [value, { passwordAttempt, passwordTimelock }];
+        return [value, { passwordAttempt, passwordLockTime }];
       })
     );
