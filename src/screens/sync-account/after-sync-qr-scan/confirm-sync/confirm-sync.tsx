@@ -13,8 +13,8 @@ import { InsetSubstitute } from '../../../../components/inset-substitute/inset-s
 import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextLink } from '../../../../components/text-link/text-link';
+import { MAX_PASSWORD_ATTEMPTS } from '../../../../config/security';
 import { privacyPolicy, termsOfUse } from '../../../../config/socials';
-import { MaxPasswordAttemtps } from '../../../../config/system';
 import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
@@ -56,8 +56,8 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             <Label label="Password" description="The same password is used to unlock your extension." />
             <FormPasswordInput
               name="password"
-              {...(isDisabled === true && {
-                error: `You have entered the wrong password ${MaxPasswordAttemtps} times. Your wallet is being blocked for ${timeleft}`
+              {...(isDisabled && {
+                error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
               })}
             />
 

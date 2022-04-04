@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { Subject } from 'rxjs';
 import { delay, switchMap } from 'rxjs/operators';
 
-import { MaxPasswordAttemtps } from '../config/system';
-import { setPasswordAttempts } from '../store/security/security-actions';
+import { usePasswordDelay } from '../hooks/use-password-delay.hook';
+import { enterPassword } from '../store/security/security-actions';
 import { usePasswordAttempt } from '../store/security/security-selectors';
 import { showErrorToast } from '../toast/toast.utils';
 import { isDefined } from '../utils/is-defined';
@@ -14,6 +14,7 @@ export const useAppLock = () => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
   const dispatch = useDispatch();
   const attempt = usePasswordAttempt();
+  const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
 
   const lock = useCallback(() => Shelter.lockApp(), []);
@@ -37,16 +38,16 @@ export const useAppLock = () => {
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
         .pipe(
-          delay(attempt > MaxPasswordAttemtps ? Math.random() * 2000 + 1000 : 0),
+          delay(passwordDelay),
           switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {
           if (success) {
-            dispatch(setPasswordAttempts.submit(1));
+            dispatch(enterPassword.success());
 
             return true;
           } else {
-            dispatch(setPasswordAttempts.submit(attempt + 1));
+            dispatch(enterPassword.fail(''));
             showErrorToast({ description: 'Wrong password, please, try again' });
 
             return false;

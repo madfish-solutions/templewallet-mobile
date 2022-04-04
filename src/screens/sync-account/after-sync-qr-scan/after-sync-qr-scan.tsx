@@ -4,8 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { setPasswordAttempts } from '../../../store/security/security-actions';
-import { usePasswordAttempt } from '../../../store/security/security-selectors';
+import { enterPassword } from '../../../store/security/security-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
@@ -22,7 +21,6 @@ export const AfterSyncQRScan = () => {
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
   const dispatch = useDispatch();
-  const attempt = usePasswordAttempt();
 
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,
@@ -36,7 +34,7 @@ export const AfterSyncQRScan = () => {
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword === true) {
-          dispatch(setPasswordAttempts.submit(1));
+          dispatch(enterPassword.success());
           importWallet({
             seedPhrase: res.mnemonic,
             password,
@@ -48,9 +46,7 @@ export const AfterSyncQRScan = () => {
         }
       })
       .catch(e => {
-        if (e.message === 'Failed to decrypt sync payload') {
-          dispatch(setPasswordAttempts.submit(attempt + 1));
-        }
+        dispatch(enterPassword.fail(''));
 
         return showErrorToast({ description: e.message });
       });

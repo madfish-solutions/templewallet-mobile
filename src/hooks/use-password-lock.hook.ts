@@ -1,31 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-import { WRONG_PASSWORD_LOCK_TIME } from '../config/system';
-import { setPasswordTimelock } from '../store/security/security-actions';
-import { usePasswordAttempt, usePasswordTimelock } from '../store/security/security-selectors';
+import { MAX_PASSWORD_ATTEMPTS, WRONG_PASSWORD_LOCK_TIME } from '../config/security';
+import { usePasswordAttempt, usePasswordLockTime } from '../store/security/security-selectors';
 import { getTimeLeft } from '../utils/password.util';
 
 export const usePasswordLock = () => {
-  const dispatch = useDispatch();
-  const timelock = usePasswordTimelock();
+  const lockTime = usePasswordLockTime();
   const attempt = usePasswordAttempt();
-  const lockLevel = WRONG_PASSWORD_LOCK_TIME * Math.floor(attempt / 3);
-  const [timeleft, setTimeleft] = useState(getTimeLeft(timelock, lockLevel));
-  const isDisabled = useMemo(() => Date.now() - timelock <= lockLevel, [timelock, lockLevel]);
+  const lockLevel = WRONG_PASSWORD_LOCK_TIME * Math.floor(attempt / MAX_PASSWORD_ATTEMPTS);
+  const [timeleft, setTimeleft] = useState(getTimeLeft(lockTime, lockLevel));
+  const isDisabled: boolean = useMemo(() => Date.now() - lockTime <= lockLevel, [lockTime, lockLevel]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (Date.now() - timelock > lockLevel) {
-        dispatch(setPasswordTimelock.submit(0));
-      }
-      setTimeleft(getTimeLeft(timelock, lockLevel));
-    }, 1_000);
+    const interval = setInterval(() => setTimeleft(getTimeLeft(lockTime, lockLevel)), 1_000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [timelock, lockLevel]);
+  }, [lockTime, lockLevel]);
 
   return { timeleft, isDisabled };
 };
