@@ -56,7 +56,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             <Label label="Password" description="The same password is used to unlock your extension." />
             <FormPasswordInput
               name="password"
-              {...(isDisabled !== true && {
+              {...(isDisabled === true && {
                 error: `You have entered the wrong password ${MaxPasswordAttemtps} times. Your wallet is being blocked for ${timeleft}`
               })}
             />
