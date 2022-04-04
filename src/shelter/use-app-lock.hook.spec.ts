@@ -1,11 +1,14 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-test-renderer';
 
+import { CONSTANT_DELAY_TIME, RANDOM_DELAY_TIME } from '../config/security';
 import { mockCorrectPassword, mockCorrectUserCredentialsValue } from '../mocks/react-native-keychain.mock';
 import { mockReactNativeToastMessage } from '../mocks/react-native-toast-message.mock';
 import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockShelter } from './shelter.mock';
 import { useAppLock } from './use-app-lock.hook';
+
+const BRUTEFORCE_LOCK_TIME = RANDOM_DELAY_TIME + CONSTANT_DELAY_TIME;
 
 describe('useAppLock', () => {
   beforeEach(() => {
@@ -39,7 +42,7 @@ describe('useAppLock', () => {
       setTimeout(() => {
         expect(result.current.isLocked).toEqual(false);
         expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
-      }, 3000);
+      }, BRUTEFORCE_LOCK_TIME);
     });
 
     it('should show error toast if an incorrect password is given', () => {
@@ -52,7 +55,7 @@ describe('useAppLock', () => {
         expect(result.current.isLocked).toEqual(true);
         expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
         expect(mockReactNativeToastMessage.show).toBeCalled();
-      }, 3000);
+      }, BRUTEFORCE_LOCK_TIME);
     });
   });
 
@@ -63,7 +66,10 @@ describe('useAppLock', () => {
       await act(() => result.current.unlockWithBiometry());
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
-      setTimeout(() => expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue), 3000);
+      setTimeout(
+        () => expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue),
+        BRUTEFORCE_LOCK_TIME
+      );
     });
 
     it('should do nothing if biometry authentication fails', async () => {
@@ -88,7 +94,7 @@ describe('useAppLock', () => {
       act(() => result.current.lock());
 
       expect(mockShelter.lockApp).toBeCalled();
-      setTimeout(() => expect(result.current.isLocked).toEqual(true), 3000);
+      setTimeout(() => expect(result.current.isLocked).toEqual(true), BRUTEFORCE_LOCK_TIME);
     });
   });
 });

@@ -47,7 +47,7 @@ export const useAppLock = () => {
 
             return true;
           } else {
-            dispatch(enterPassword.fail(''));
+            dispatch(enterPassword.fail());
             showErrorToast({ description: 'Wrong password, please, try again' });
 
             return false;

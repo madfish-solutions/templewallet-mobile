@@ -46,7 +46,7 @@ export const AfterSyncQRScan = () => {
         }
       })
       .catch(e => {
-        dispatch(enterPassword.fail(''));
+        dispatch(enterPassword.fail());
 
         return showErrorToast({ description: e.message });
       });
