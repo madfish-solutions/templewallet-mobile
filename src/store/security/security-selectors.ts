@@ -7,3 +7,6 @@ export const usePasswordLockTime = () =>
 
 export const usePasswordAttempt = () =>
   useSelector<SecurityRootState, number>(({ security }) => security.passwordAttempt);
+
+export const useIsForceUpdateNeeded = () =>
+  useSelector<SecurityRootState, boolean>(({ security }) => security.isForceUpdateNeeded.data);

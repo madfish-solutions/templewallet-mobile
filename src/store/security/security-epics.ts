@@ -8,7 +8,7 @@ import { ofType } from 'ts-action-operators';
 import { templeWalletApi } from '../../api.service';
 import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
-import { checkApp } from './app-check-actions';
+import { checkApp } from './security-actions';
 
 export const CheckAppEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -30,11 +30,11 @@ export const CheckAppEpic = (action$: Observable<Action>) =>
             }
           }
 
-          return [checkApp.success({ isForceUpdateNeeded })];
+          return [checkApp.success(isForceUpdateNeeded)];
         }),
         catchError(err => of(checkApp.fail(err.message)))
       )
     )
   );
 
-export const appCheckEpics = combineEpics(CheckAppEpic);
+export const securityEpics = combineEpics(CheckAppEpic);

@@ -35,9 +35,9 @@ import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-scre
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
-import { checkApp } from '../store/app-check/app-check-actions';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { checkApp } from '../store/security/security-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
