@@ -13,10 +13,12 @@ import { InsetSubstitute } from '../../../../components/inset-substitute/inset-s
 import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextLink } from '../../../../components/text-link/text-link';
+import { MAX_PASSWORD_ATTEMPTS } from '../../../../config/security';
 import { privacyPolicy, termsOfUse } from '../../../../config/socials';
 import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
+import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
 import { ConfirmSyncFormValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { useConfirmSyncStyles } from './confirm-sync.styles';
@@ -27,6 +29,8 @@ interface ConfirmSyncProps {
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   const styles = useConfirmSyncStyles();
+
+  const { isDisabled, timeleft } = usePasswordLock();
 
   useNavigationSetOptions(
     {
@@ -50,7 +54,12 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Password" description="The same password is used to unlock your extension." />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput
+              name="password"
+              {...(isDisabled && {
+                error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+              })}
+            />
 
             <View style={styles.checkboxContainer}>
               <FormCheckbox name="usePrevPassword">
@@ -81,7 +90,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             <Divider />
             <ButtonLargePrimary
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
-              disabled={!isValid}
+              disabled={!isValid || isDisabled}
               onPress={submitForm}
             />
             <InsetSubstitute type="bottom" />
