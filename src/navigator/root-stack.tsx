@@ -27,7 +27,7 @@ import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ForceUpdate } from '../screens/force-update/force-update';
 import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useCheckInfoSelector } from '../store/app-check/app-check-selectors';
+import { useIsForceUpdateNeeded } from '../store/security/security-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -56,7 +56,7 @@ export const RootStackScreen = () => {
 
   useQuickActions();
   const isPasscode = useDevicePasscode();
-  const { isForceUpdateNeeded } = useCheckInfoSelector();
+  const isForceUpdateNeeded = useIsForceUpdateNeeded();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
