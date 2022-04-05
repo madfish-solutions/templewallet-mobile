@@ -56,7 +56,7 @@ export const RootStackScreen = () => {
 
   useQuickActions();
   const isPasscode = useDevicePasscode();
-  const isForceUpdateNeeded = useCheckInfoSelector().isForceUpdateNeeded;
+  const { isForceUpdateNeeded } = useCheckInfoSelector();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>

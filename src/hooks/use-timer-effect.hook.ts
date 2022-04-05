@@ -20,9 +20,5 @@ export const useTimerEffect = (callback: EmptyFn, refreshInterval: number, deps:
 export const useAuthorisedTimerEffect = (callback: EmptyFn, refreshInterval: number, deps: DependencyList = []) => {
   const isAuthorised = useIsAuthorisedSelector();
 
-  useEffect(() => {
-    if (isAuthorised) {
-      effect(callback, refreshInterval);
-    }
-  }, [isAuthorised, ...deps]);
+  useEffect(() => void (isAuthorised && effect(callback, refreshInterval)), [isAuthorised, ...deps]);
 };

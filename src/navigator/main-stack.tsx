@@ -65,9 +65,7 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
 
-  const initAppCheck = () => {
-    dispatch(checkApp.submit());
-  };
+  const initAppCheck = () => void dispatch(checkApp.submit());
 
   useTimerEffect(initAppCheck, APP_CHECK_INTERVAL);
 
