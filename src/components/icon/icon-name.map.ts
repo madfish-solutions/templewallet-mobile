@@ -69,16 +69,9 @@ import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
-import BlndTokenIcon from './assets/tokens/blnd.svg';
-import EthTzTokenIcon from './assets/tokens/ethTz.svg';
-import KUsdTokenIcon from './assets/tokens/kUsd.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
-import StkrTokenIcon from './assets/tokens/stkr.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
 import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
-import UsdSTokenIcon from './assets/tokens/usds.svg';
-import UsdTzTokenIcon from './assets/tokens/usdTz.svg';
-import WXtzTokenIcon from './assets/tokens/wXtz.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
@@ -122,14 +115,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
-  /** TODO: delete this before release */
-  [IconNameEnum.UsdTzToken]: UsdTzTokenIcon,
-  [IconNameEnum.EthTzToken]: EthTzTokenIcon,
-  [IconNameEnum.KUsdToken]: KUsdTokenIcon,
-  [IconNameEnum.WXtzToken]: WXtzTokenIcon,
-  [IconNameEnum.UsdSToken]: UsdSTokenIcon,
-  [IconNameEnum.BlndToken]: BlndTokenIcon,
-  [IconNameEnum.StkrToken]: StkrTokenIcon,
   /** topup icons **/
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
