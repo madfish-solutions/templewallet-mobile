@@ -11,7 +11,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useAuthorisedTimerEffect } from '../hooks/use-authorized-timer-effect.hook';
+import { useAuthorisedTimerEffect, useTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
@@ -35,6 +35,7 @@ import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-scre
 import { TokenScreen } from '../screens/token-screen/token-screen';
 import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
+import { checkApp } from '../store/app-check/app-check-actions';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
 import {
@@ -53,6 +54,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
+const APP_CHECK_INTERVAL = 30 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -62,6 +64,12 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
+
+  const initAppCheck = () => {
+    dispatch(checkApp.submit());
+  };
+
+  useTimerEffect(initAppCheck, APP_CHECK_INTERVAL);
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());

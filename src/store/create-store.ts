@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { appCheckReducers } from './app-check/app-check-reducers';
+import { AppCheckRootState } from './app-check/app-check-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -29,6 +31,7 @@ export type RootState = WalletRootState &
   SettingsRootState &
   DAppsRootState &
   CurrencyRootState &
+  AppCheckRootState &
   DebugRootState;
 
 const epicMiddleware = createEpicMiddleware();
@@ -52,6 +55,7 @@ const rootReducer = rootStateReducer<RootState>({
   settings: settingsReducers,
   dApps: dAppsReducers,
   currency: currencyReducers,
+  appCheck: appCheckReducers,
   debug: debugReducers
 });
 

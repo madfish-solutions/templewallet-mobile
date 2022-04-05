@@ -50,6 +50,7 @@ export enum IconNameEnum {
   Ramp = 'Ramp',
   Check = 'Check',
   Lock = 'Lock',
+  Cloud = 'Cloud',
   Clock = 'Clock',
   Info = 'Info',
   ChevronRight = 'ChevronRight',

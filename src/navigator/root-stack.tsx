@@ -24,8 +24,10 @@ import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { EnterPassword } from '../screens/enter-password/enter-password';
+import { ForceUpdate } from '../screens/force-update/force-update';
 import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useCheckInfoSelector } from '../store/app-check/app-check-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -54,6 +56,7 @@ export const RootStackScreen = () => {
 
   useQuickActions();
   const isPasscode = useDevicePasscode();
+  const isForceUpdateNeeded = useCheckInfoSelector().isForceUpdateNeeded;
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
@@ -167,7 +170,8 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {isAuthorised && isLocked && <EnterPassword />}
-      {isPasscode === false && <PassCode />}
+      {!isPasscode && <PassCode />}
+      {isForceUpdateNeeded && <ForceUpdate />}
     </NavigationContainer>
   );
 };

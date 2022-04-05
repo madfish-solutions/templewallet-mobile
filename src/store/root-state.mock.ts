@@ -1,3 +1,4 @@
+import { mockAppCheckState } from './app-check/app-check-state.mock';
 import { mockBakingState } from './baking/baking-state.mock';
 import { RootState } from './create-store';
 import { mockCurrencyState } from './currency/currency-state.mock';
@@ -12,5 +13,6 @@ export const mockRootState: RootState = {
   settings: mockSettingsState,
   dApps: mockDAppsState,
   currency: mockCurrencyState,
+  appCheck: mockAppCheckState,
   debug: mockDebugState
 };

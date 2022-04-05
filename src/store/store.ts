@@ -1,3 +1,4 @@
+import { appCheckEpics } from './app-check/app-check-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
@@ -14,5 +15,6 @@ export const { store, persistor } = createStore(
   dAppsEpics,
   debugEpics,
   settingsEpic,
-  currencyEpics
+  currencyEpics,
+  appCheckEpics
 );
