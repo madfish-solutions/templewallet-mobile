@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <domain includeSubdomains="true">templewallet.com</domain>
+        <pin-set expiration="2023-04-30">
+            <pin digest="SHA-256">HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">madfish.solutions</domain>
+        <pin-set expiration="2022-09-05">
+            <pin digest="SHA-256">QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</pin>
+        </pin-set>
+    </domain-config>
+</network-security-config>
