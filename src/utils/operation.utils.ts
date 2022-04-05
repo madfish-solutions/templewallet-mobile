@@ -44,7 +44,6 @@ export const mapOperationsToActivities = (address: string, operations: Operation
             continue;
           }
           isDefined(newDelegate) && (destination = newDelegate);
-          amount = '0';
           break;
 
         case ActivityTypeEnum.Origination:
