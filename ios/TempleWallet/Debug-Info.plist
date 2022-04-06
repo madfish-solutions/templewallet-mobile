@@ -57,6 +57,33 @@
 		<true/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
+		<key>NSPinnedDomains</key>
+		<dict>
+			<key>templewallet.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSPinnedCAIdentities</key>
+				<array>
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
+					</dict>
+				</array>
+			</dict>
+			<key>madfish.solutions</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSPinnedCAIdentities</key>
+				<array>
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</string>
+					</dict>
+				</array>
+			</dict>
+		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow to use camera for QR-code scan</string>
