@@ -82,13 +82,13 @@ export const EnterPassword = () => {
                   />
                 </View>
                 {isBiometryAvailable && (
-                  <>
+                  <View style={styles.passwordBiometry}>
                     <Divider size={formatSize(16)} />
                     <View>
                       <Divider size={formatSize(4)} />
                       <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
                     </View>
-                  </>
+                  </View>
                 )}
               </View>
 
