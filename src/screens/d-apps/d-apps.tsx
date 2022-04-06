@@ -3,6 +3,7 @@ import { FlatList, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
+import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
@@ -51,6 +52,10 @@ export const DApps = () => {
       </View>
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Others</Text>
+      <Divider size={formatSize(8)} />
+      <View style={styles.dappBlockWrapper}>
+        <Disclaimer texts={['Other DApps are third-party websites.', 'They should be used at your own risk.']} />
+      </View>
       <Divider size={formatSize(16)} />
       {sortedDAppsList.length ? (
         <FlatList
