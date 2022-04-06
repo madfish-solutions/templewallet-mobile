@@ -9,7 +9,7 @@ export const securityReducers = createReducer<SecurityState>(securityInitialStat
   builder.addCase(enterPassword.fail, state => ({
     ...state,
     passwordAttempt: state.passwordAttempt + 1,
-    passwordLockTime: state.passwordAttempt > MAX_PASSWORD_ATTEMPTS ? Date.now() : state.passwordLockTime
+    passwordLockTime: state.passwordAttempt >= MAX_PASSWORD_ATTEMPTS ? Date.now() : state.passwordLockTime
   }));
   builder.addCase(enterPassword.success, state => ({
     ...state,
