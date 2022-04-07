@@ -21,3 +21,4 @@ import './src/mocks/react-native-toast-message.mock';
 import './src/mocks/react-navigation.mock';
 import './src/mocks/react-redux.mock';
 import './src/mocks/tezos.mock';
+import './src/mocks/react-native-firebase-app-check.mock';
