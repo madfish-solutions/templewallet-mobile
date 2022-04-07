@@ -127,11 +127,11 @@ export const RemoveLiquidityModal = () => {
               setTouched({ lpToken: { amount: true }, aToken: { amount: true }, bToken: { amount: true } })
             );
           };
-          const handleLpTokenChange = (lpToken: AssetAmountInterface) => {
+          const handleLpTokenChange = (newLpToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
 
-            if (isDefined(lpToken.amount)) {
-              lpTokenAmount = lpToken.amount;
+            if (isDefined(newLpToken.amount)) {
+              lpTokenAmount = newLpToken.amount;
               aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
               bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
             }
@@ -139,11 +139,11 @@ export const RemoveLiquidityModal = () => {
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
           };
 
-          const handleATokenChange = (aToken: AssetAmountInterface) => {
+          const handleATokenChange = (newAToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
 
-            if (isDefined(aToken.amount)) {
-              aTokenAmount = aToken.amount;
+            if (isDefined(newAToken.amount)) {
+              aTokenAmount = newAToken.amount;
               lpTokenAmount = findTokenToLpInput(aTokenAmount, aTokenPool, lpTotalSupply);
               bTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, bTokenPool);
             }
@@ -151,11 +151,11 @@ export const RemoveLiquidityModal = () => {
             updateForm(lpTokenAmount, aTokenAmount, bTokenAmount);
           };
 
-          const handleBTokenChange = (bToken: AssetAmountInterface) => {
+          const handleBTokenChange = (newBToken: AssetAmountInterface) => {
             let lpTokenAmount, aTokenAmount, bTokenAmount;
 
-            if (isDefined(bToken.amount)) {
-              bTokenAmount = bToken.amount;
+            if (isDefined(newBToken.amount)) {
+              bTokenAmount = newBToken.amount;
               lpTokenAmount = findTokenToLpInput(bTokenAmount, bTokenPool, lpTotalSupply);
               aTokenAmount = findLpToTokenOutput(lpTokenAmount, lpTotalSupply, aTokenPool);
             }

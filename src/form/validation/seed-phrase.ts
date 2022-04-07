@@ -6,7 +6,7 @@ import { makeRequiredErrorMessage } from './messages';
 
 const wordsCountError = '12, 15, 18, 21 or 24 words';
 const validError = 'Invalid phrase';
-const onlyAsciiRegex = new RegExp('^[\u0020-\u007e]*$');
+const onlyAsciiRegex = /^[\u0020-\u007e]*$/;
 
 export const seedPhraseValidation = string()
   .required(makeRequiredErrorMessage('Seed phrase'))

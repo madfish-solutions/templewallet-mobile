@@ -1,8 +1,11 @@
 import { PartialObserver } from 'rxjs';
 
-import { EventFn } from '../config/general';
+import { EventFn, EventFnPromisable } from '../config/general';
 
-export const rxJsTestingHelper = <T>(callback: EventFn<T>, done: jest.DoneCallback): PartialObserver<T> => ({
+export const rxJsTestingHelper = <T>(
+  callback: EventFn<T> | EventFnPromisable<T>,
+  done: jest.DoneCallback
+): PartialObserver<T> => ({
   next: async data => {
     try {
       await callback(data);

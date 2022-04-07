@@ -21,7 +21,12 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
   passwordInputSection: {
     flexDirection: 'row'
   },
+  passwordBiometry: {
+    flexDirection: 'row',
+    flexShrink: 0
+  },
   passwordInputWrapper: {
-    flexGrow: 1
+    flexGrow: 1,
+    flexShrink: 1
   }
 }));
