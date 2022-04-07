@@ -39,6 +39,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { checkApp } from '../store/security/security-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -50,7 +51,6 @@ import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
-import { checkApp } from '../store/security/security-actions';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 

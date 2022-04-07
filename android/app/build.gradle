@@ -137,7 +137,7 @@ android {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 40
+        versionCode 200
         versionName "1.0"
         missingDimensionStrategy 'react-native-camera', 'general'
         // TODO: remove after Flipper update (0.140.0 does not work without code bellow)
