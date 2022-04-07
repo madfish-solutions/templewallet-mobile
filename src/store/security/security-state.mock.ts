@@ -5,5 +5,6 @@ import { SecurityState } from './security-state';
 export const mockSecurityState: SecurityState = {
   passwordAttempt: INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS,
   passwordLockTime: INITIAL_ENTER_PASSWORD_LOCKTIME,
-  isForceUpdateNeeded: createEntity(false)
+  isForceUpdateNeeded: createEntity(false),
+  isAppCheckFailed: createEntity(false)
 };
