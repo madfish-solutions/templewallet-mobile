@@ -1,4 +1,5 @@
 import { PortalProvider } from '@gorhom/portal';
+import { firebase } from '@react-native-firebase/app-check';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,6 +11,7 @@ import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
+import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useAuthorisedTimerEffect, useTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
@@ -54,7 +56,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
-const APP_CHECK_INTERVAL = 30 * 60 * 1000;
+const APP_CHECK_INTERVAL = 10 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -65,7 +67,19 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
 
-  const initAppCheck = () => void dispatch(checkApp.submit());
+  useFirebaseApp();
+  const appCheck = firebase.appCheck();
+
+  const initAppCheck = async () => {
+    try {
+      console.log(1);
+      await appCheck.activate('ignored', false);
+      const appCheckToken = await appCheck.getToken();
+      dispatch(checkApp.submit(appCheckToken.token));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useTimerEffect(initAppCheck, APP_CHECK_INTERVAL);
 

@@ -23,11 +23,12 @@ import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
+import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ForceUpdate } from '../screens/force-update/force-update';
 import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
-import { useIsForceUpdateNeeded } from '../store/security/security-selectors';
+import { useIsAppCheckFailed, useIsForceUpdateNeeded } from '../store/security/security-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -57,6 +58,7 @@ export const RootStackScreen = () => {
   useQuickActions();
   const isPasscode = useDevicePasscode();
   const isForceUpdateNeeded = useIsForceUpdateNeeded();
+  const isAppCheckFailed = useIsAppCheckFailed();
   useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
@@ -172,6 +174,7 @@ export const RootStackScreen = () => {
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
+      {!isAppCheckFailed && <AppCheckWarning />}
     </NavigationContainer>
   );
 };

@@ -10,3 +10,6 @@ export const usePasswordAttempt = () =>
 
 export const useIsForceUpdateNeeded = () =>
   useSelector<SecurityRootState, boolean>(({ security }) => security.isForceUpdateNeeded.data);
+
+export const useIsAppCheckFailed = () =>
+  useSelector<SecurityRootState, boolean>(({ security }) => security.isAppCheckFailed.data);
