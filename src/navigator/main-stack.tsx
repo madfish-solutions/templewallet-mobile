@@ -56,7 +56,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
-const APP_CHECK_INTERVAL = 10 * 1000;
+const APP_CHECK_INTERVAL = 30 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -72,13 +72,10 @@ export const MainStackScreen = () => {
 
   const initAppCheck = async () => {
     try {
-      console.log(1);
       await appCheck.activate('ignored', false);
       const appCheckToken = await appCheck.getToken();
       dispatch(checkApp.submit(appCheckToken.token));
-    } catch (err) {
-      console.log(err);
-    }
+    } catch {}
   };
 
   useTimerEffect(initAppCheck, APP_CHECK_INTERVAL);
