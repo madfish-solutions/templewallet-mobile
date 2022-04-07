@@ -12,7 +12,7 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { useAppCheckWarningStyles } from './app-check-warning.styles';
 
-const handleOk = () => RNExitApp.exitApp();
+const handleClose = () => RNExitApp.exitApp();
 
 export const AppCheckWarning = () => {
   const styles = useAppCheckWarningStyles();
@@ -36,7 +36,7 @@ export const AppCheckWarning = () => {
         </View>
       </View>
       <View>
-        <ButtonLargePrimary title="Ok" onPress={handleOk} />
+        <ButtonLargePrimary title="Close the app" onPress={handleClose} />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>
