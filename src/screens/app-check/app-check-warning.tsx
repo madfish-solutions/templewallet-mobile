@@ -1,5 +1,6 @@
 import React from 'react';
-import { BackHandler, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import RNExitApp from 'react-native-exit-app';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
@@ -11,7 +12,7 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { useAppCheckWarningStyles } from './app-check-warning.styles';
 
-const handleOk = () => BackHandler.exitApp();
+const handleOk = () => RNExitApp.exitApp();
 
 export const AppCheckWarning = () => {
   const styles = useAppCheckWarningStyles();
