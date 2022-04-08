@@ -8,8 +8,8 @@ export const useFirebaseApp = () =>
     (async () => {
       if (firebase.apps.length === 0) {
         await firebase.initializeApp({
-          projectId: 'templewallet',
-          appId: isIOS ? '1:14863818751:ios:77311aaef75709509f51ca' : '1:14863818751:android:6e6bb01b103964a69f51ca'
+          projectId: 'templewallet-fa3b3',
+          appId: isIOS ? '1:1067475869467:ios:838d63298a5073892c3dbe' : '1:1067475869467:android:a65f23f3674ab6052c3dbe'
         });
       }
     })();

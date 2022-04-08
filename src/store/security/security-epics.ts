@@ -25,7 +25,7 @@ export const CheckAppEpic = (action$: Observable<Action>) =>
     switchMap(appCheckToken =>
       from(
         templeWalletApi.get<appCheckPayload>('mobile-check', {
-          params: { appCheckToken: appCheckToken.token }
+          params: { platform: isIOS ? 'ios' : 'android', appCheckToken: appCheckToken.token }
         })
       ).pipe(
         switchMap(({ data }) => {
