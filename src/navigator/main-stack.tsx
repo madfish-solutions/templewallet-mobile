@@ -1,5 +1,4 @@
 import { PortalProvider } from '@gorhom/portal';
-import { firebase } from '@react-native-firebase/app-check';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useDispatch } from 'react-redux';
@@ -56,7 +55,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
-const APP_CHECK_INTERVAL = 30 * 60 * 1000;
+const APP_CHECK_INTERVAL = 60 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -68,17 +67,8 @@ export const MainStackScreen = () => {
   useBeaconHandler();
 
   useFirebaseApp();
-  const appCheck = firebase.appCheck();
 
-  const initAppCheck = async () => {
-    try {
-      await appCheck.activate('ignored', false);
-      const appCheckToken = await appCheck.getToken();
-      dispatch(checkApp.submit(appCheckToken.token));
-    } catch {}
-  };
-
-  useTimerEffect(initAppCheck, APP_CHECK_INTERVAL);
+  useTimerEffect(() => dispatch(checkApp.submit()), APP_CHECK_INTERVAL);
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());

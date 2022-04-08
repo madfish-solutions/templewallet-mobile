@@ -3,4 +3,4 @@ import { createActions } from '../create-actions';
 
 export const enterPassword = createActions<void, void, void>('security/ENTER_PASSWORD');
 
-export const checkApp = createActions<string, AppCheckInterface, string>('security/CHECK_APP');
+export const checkApp = createActions<void, AppCheckInterface, string>('security/CHECK_APP');

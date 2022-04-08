@@ -1,9 +1,10 @@
+import { firebase } from '@react-native-firebase/app-check';
 import { getReadableVersion } from 'react-native-device-info';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
-import { ofType, toPayload } from 'ts-action-operators';
+import { ofType } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
 import { isIOS } from '../../config/system';
@@ -14,14 +15,17 @@ interface appCheckPayload extends VersionsInterface {
   isAppCheckFailed: boolean;
 }
 
+const appCheck = firebase.appCheck();
+
 export const CheckAppEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    toPayload(),
+    switchMap(() => appCheck.activate('ignored', false)),
+    switchMap(() => appCheck.getToken()),
     switchMap(appCheckToken =>
       from(
         templeWalletApi.get<appCheckPayload>('mobile-check', {
-          params: { appCheckToken }
+          params: { appCheckToken: appCheckToken.token }
         })
       ).pipe(
         switchMap(({ data }) => {
