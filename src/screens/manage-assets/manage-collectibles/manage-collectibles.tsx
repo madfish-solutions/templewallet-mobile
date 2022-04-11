@@ -24,7 +24,7 @@ export const ManageCollectibles = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search by name or address" onChangeText={setSearchValue} />
+      <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />
       <Text style={styles.descriptionText}>Show, remove and hide collectibles.</Text>
 
       <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
