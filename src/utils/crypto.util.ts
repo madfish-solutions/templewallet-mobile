@@ -1,3 +1,4 @@
+import { sha256 } from 'react-native-sha256';
 import {
   secureCellSealWithPassphraseDecrypt64,
   secureCellSealWithPassphraseEncrypt64,
@@ -10,6 +11,8 @@ export interface EncryptedData {
   encrypted64: string;
   salt64: string;
 }
+
+export const hashPassword$ = (input: string) => from(sha256(input));
 
 export const encryptString$ = (value: string, password: string): Observable<EncryptedData> => {
   const encryption = async () => {

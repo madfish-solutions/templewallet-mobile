@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { showErrorToast, showWarningToast } from '../../toast/toast.utils';
+import { showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { ButtonMedium } from '../button/button-medium/button-medium';
@@ -33,11 +33,13 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   return (
     <ButtonsContainer>
-      <ButtonMedium
-        title="RECEIVE"
-        iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { token })}
-      />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium
+          title="RECEIVE"
+          iconName={IconNameEnum.ArrowDown}
+          onPress={() => navigate(ModalsEnum.Receive, { token })}
+        />
+      </View>
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
@@ -51,16 +53,8 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         />
       </View>
       <Divider size={formatSize(8)} />
-      <View
-        style={styles.buttonContainer}
-        onTouchStart={() =>
-          void showWarningToast({
-            title: 'Work in progress...',
-            description: 'you will be available to swap crypto soon.'
-          })
-        }
-      >
-        <ButtonMedium title="Swap" iconName={IconNameEnum.SwapArrow} disabled={true} onPress={emptyFn} />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
       </View>
     </ButtonsContainer>
   );

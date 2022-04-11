@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { hide, show } from 'react-native-bootsplash';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -14,8 +15,11 @@ import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
+import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { useAppStateStatus } from '../../hooks/use-app-state-status.hook';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
+import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
@@ -32,16 +36,23 @@ import { useEnterPasswordStyles } from './enter-password.styles';
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
 
-  const { biometryType } = useBiometryAvailability();
   const { unlock, unlockWithBiometry } = useAppLock();
+
+  const { biometryType } = useBiometryAvailability();
   const handleResetDataButtonPress = useResetDataHandler();
+  const { isDisabled, timeleft } = usePasswordLock();
 
   const biometricsEnabled = useBiometricsEnabledSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  const onSubmit = ({ password }: EnterPasswordFormValues) => unlock(password);
+  const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
+
+  useAppStateStatus({
+    onAppSplashScreenShow: () => show(),
+    onAppSplashScreenHide: () => hide()
+  });
 
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
     isBiometryAvailable
@@ -70,21 +81,26 @@ export const EnterPassword = () => {
               <Label label="Password" description="A password is used to protect the wallet." />
               <View style={styles.passwordInputSection}>
                 <View style={styles.passwordInputWrapper}>
-                  <FormPasswordInput name="password" />
+                  <FormPasswordInput
+                    name="password"
+                    {...(isDisabled && {
+                      error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+                    })}
+                  />
                 </View>
                 {isBiometryAvailable && (
-                  <>
+                  <View style={styles.passwordBiometry}>
                     <Divider size={formatSize(16)} />
                     <View>
                       <Divider size={formatSize(4)} />
                       <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
                     </View>
-                  </>
+                  </View>
                 )}
               </View>
 
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="Unlock" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary title="Unlock" disabled={!isValid || isDisabled} onPress={submitForm} />
               <Divider />
             </View>
           )}

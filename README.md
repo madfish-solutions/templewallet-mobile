@@ -44,27 +44,3 @@ yarn ts
 yarn lint
 yarn test
 ```
-
-
-## 💻 Installation on computers with M1 silicone chip
-
-If you running application on MacBook with M1 silicone chip, you'll need install Rosetta:
-
-```
-softwareupdate --install-rosetta
-```
-
-After successfully installed Rosetta - you have to open terminal app using Rosetta (right mouse click on app - 'Get Info' - checkbox 'run with Rosetta') and run these commands:
-
-```bash
-yarn ios:pods
-```
-
-or
-```
-sudo arch -x86_64 gem install ffi
-
-arch -x86_64 pod install
-```
-
-After that, you need to open with Rosetta Xcode application, [add excluded architectures](https://khushwanttanwar.medium.com/xcode-12-compilation-errors-while-running-with-ios-14-simulators-5731c91326e9) in build settings on specified target, choose device where to launch build: emulator or real connected device 
