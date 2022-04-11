@@ -44,7 +44,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>41</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -59,18 +59,6 @@
 		<true/>
 		<key>NSPinnedDomains</key>
 		<dict>
-			<key>templewallet.com</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSPinnedLeafIdentities</key>
-				<array>
-					<dict>
-						<key>SPKI-SHA256-BASE64</key>
-						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
-					</dict>
-				</array>
-			</dict>
 			<key>madfish.solutions</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
@@ -80,6 +68,18 @@
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</string>
+					</dict>
+				</array>
+			</dict>
+			<key>templewallet.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSPinnedLeafIdentities</key>
+				<array>
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
 					</dict>
 				</array>
 			</dict>
