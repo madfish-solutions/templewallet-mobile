@@ -6,10 +6,10 @@ import QRCode from 'react-native-qrcode-svg';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { TokenIcon } from '../../components/token-icon/token-icon';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -24,7 +24,7 @@ export const ReceiveModal: FC = () => {
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
   const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
 
-  const { name, symbol, iconName = IconNameEnum.NoNameToken } = token;
+  const { name, symbol } = token;
 
   const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
 
@@ -32,7 +32,7 @@ export const ReceiveModal: FC = () => {
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <ModalStatusBar />
       <View style={styles.tokenContainer}>
-        <Icon name={iconName} size={formatSize(40)} />
+        <TokenIcon token={token} />
         <Divider size={formatSize(8)} />
         <View style={styles.tokenInfoContainer}>
           <Text style={styles.tokenSymbol}>{symbol}</Text>
