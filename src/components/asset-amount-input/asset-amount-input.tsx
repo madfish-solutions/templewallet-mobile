@@ -14,6 +14,7 @@ import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
+import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
@@ -212,12 +213,14 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           <View style={styles.balanceRow}>
             <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
             <Divider size={formatSize(4)} />
-            <AssetValueText
-              amount={value.asset.balance}
-              asset={value.asset}
-              style={styles.balanceValueText}
-              convertToDollar={!isTokenInputType}
-            />
+            <HideBalance style={styles.balanceValueText}>
+              <AssetValueText
+                amount={value.asset.balance}
+                asset={value.asset}
+                style={styles.balanceValueText}
+                convertToDollar={!isTokenInputType}
+              />
+            </HideBalance>
           </View>
         </View>
       </View>
