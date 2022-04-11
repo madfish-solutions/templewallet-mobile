@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { EMPTY_PUBLIC_KEY_HASH } from '../../../config/system';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -23,17 +24,18 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
+  const { publicKeyHash, name } = account;
 
   return (
     <View style={styles.root}>
-      <RobotIcon seed={account.publicKeyHash} />
+      <RobotIcon seed={publicKeyHash} />
       <View style={styles.infoContainer}>
         <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>{name}</Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <WalletAddress publicKeyHash={account.publicKeyHash} />
+          {publicKeyHash !== EMPTY_PUBLIC_KEY_HASH && <WalletAddress publicKeyHash={publicKeyHash} />}
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText
