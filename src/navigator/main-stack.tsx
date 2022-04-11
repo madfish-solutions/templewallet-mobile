@@ -12,7 +12,7 @@ import { HeaderTokenInfo } from '../components/header/header-token-info/header-t
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useAuthorisedTimerEffect, useTimerEffect } from '../hooks/use-timer-effect.hook';
+import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
@@ -38,7 +38,6 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { checkApp } from '../store/security/security-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -55,7 +54,6 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
 const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
-const APP_CHECK_INTERVAL = 60 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -65,10 +63,7 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
-
   useFirebaseApp();
-
-  useTimerEffect(() => dispatch(checkApp.submit()), APP_CHECK_INTERVAL);
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());

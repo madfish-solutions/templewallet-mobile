@@ -1,4 +1,5 @@
 import { firebase } from '@react-native-firebase/app-check';
+import { Platform } from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
@@ -25,7 +26,7 @@ export const CheckAppEpic = (action$: Observable<Action>) =>
     switchMap(appCheckToken =>
       from(
         templeWalletApi.get<appCheckPayload>('mobile-check', {
-          params: { platform: isIOS ? 'ios' : 'android', appCheckToken: appCheckToken.token }
+          params: { platform: Platform.OS, appCheckToken: appCheckToken.token }
         })
       ).pipe(
         switchMap(({ data }) => {

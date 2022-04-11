@@ -27,7 +27,7 @@ export const securityReducers = createReducer<SecurityState>(securityInitialStat
   }));
   builder.addCase(checkApp.fail, (state, { payload }) => ({
     ...state,
-    isForceUpdateNeeded: createEntity(state.isForceUpdateNeeded.data, false, payload),
-    isAppCheckFailed: createEntity(state.isAppCheckFailed.data, false, payload)
+    isForceUpdateNeeded: createEntity(false, false, payload),
+    isAppCheckFailed: createEntity(false, false, payload)
   }));
 });
