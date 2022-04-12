@@ -17,7 +17,7 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { Fa12TokenContractAbstraction } from '../../interfaces/fa-1-2-token.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useContract } from '../../op-params/liquidity-baking/contracts';
+import { useContract, useLiquidityBakingContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -30,7 +30,8 @@ import { AddLiquidityModalFormValues, addLiquidityModalValidationSchema } from '
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
-  const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const { aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddLiquidity>>().params;
+  const lpContract = useLiquidityBakingContract();
   const { navigate } = useNavigation();
   const styles = useAddLiquidityModalStyles();
   const { publicKeyHash } = useSelectedAccountSelector();

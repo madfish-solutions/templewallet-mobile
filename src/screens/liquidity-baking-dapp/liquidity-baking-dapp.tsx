@@ -13,11 +13,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
-import {
-  LiquidityBakingStorage,
-  liquidityBakingStorageInitialValue
-} from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
-import { LiquidityBakingContractAbstraction } from '../../op-params/liquidity-baking/liquidity-baking.contract-abstraction.interface';
+import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -33,10 +29,7 @@ export const LiquidityBakingDapp = () => {
   const assetsList = useAssetsListSelector();
   const exchangeRates = useExchangeRatesSelector();
 
-  const lpContract = useContract<LiquidityBakingContractAbstraction, LiquidityBakingStorage>(
-    LIQUIDITY_BAKING_DEX_ADDRESS,
-    liquidityBakingStorageInitialValue
-  );
+  const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 
   const aToken = useTezosTokenSelector() ?? emptyToken;
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
@@ -78,7 +71,7 @@ export const LiquidityBakingDapp = () => {
             <ButtonLargeWhite
               title="REMOVE"
               iconName={IconNameEnum.MinusIcon}
-              onPress={() => navigate(ModalsEnum.RemoveLiquidity, { lpContract, aToken, bToken })}
+              onPress={() => navigate(ModalsEnum.RemoveLiquidity, { aToken, bToken })}
             />
           </View>
           <Divider size={formatSize(16)} />
@@ -86,7 +79,7 @@ export const LiquidityBakingDapp = () => {
             <ButtonLargeWhite
               title="ADD"
               iconName={IconNameEnum.PlusIcon}
-              onPress={() => navigate(ModalsEnum.AddLiquidity, { lpContract, aToken, bToken })}
+              onPress={() => navigate(ModalsEnum.AddLiquidity, { aToken, bToken })}
             />
           </View>
         </ButtonsContainer>

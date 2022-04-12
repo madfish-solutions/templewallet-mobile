@@ -17,6 +17,7 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useLiquidityBakingContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/wallet/wallet-actions';
 import {
@@ -40,7 +41,8 @@ import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } 
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
-  const { lpContract, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const { aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const lpContract = useLiquidityBakingContract();
   const dispatch = useDispatch();
 
   const { navigate } = useNavigation();
