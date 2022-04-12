@@ -74,9 +74,12 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
 
             {values.usePrevPassword === true && (
-              <Disclaimer
-                texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
-              />
+              <>
+                <Disclaimer
+                  texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
+                />
+                <Divider size={formatSize(8)} />
+              </>
             )}
           </View>
           <View>
