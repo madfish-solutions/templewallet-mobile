@@ -9,6 +9,7 @@ import { checkApp } from '../store/security/security-actions';
 
 const APP_CHECK_INTERVAL = 60 * 60 * 1000;
 
+const firebaseProjectId = getEnv('FIREBASE_PROJECT_ID');
 const iosAppId = getEnv('IOS_APP_ID');
 const androidAppId = getEnv('ANDROID_APP_ID');
 
@@ -19,7 +20,7 @@ export const useFirebaseApp = () => {
     (async () => {
       if (firebase.apps.length === 0) {
         await firebase.initializeApp({
-          projectId: 'templewallet-fa3b3',
+          projectId: firebaseProjectId,
           appId: isIOS ? iosAppId : androidAppId
         });
       }
