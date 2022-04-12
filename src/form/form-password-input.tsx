@@ -44,8 +44,8 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
         <ErrorMessage
           meta={{
             ...meta,
-            touched: isDefined(error) ? true : meta.touched,
-            error: isDefined(error) ? error : undefined
+            touched: true,
+            error
           }}
         />
       )}
