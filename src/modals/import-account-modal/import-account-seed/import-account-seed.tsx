@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
+import { Disclaimer } from '../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
@@ -60,6 +61,11 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
               <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
               <FormMnemonicInput name="seedPhrase" />
             </View>
+            <Divider size={formatSize(12)} />
+            <Disclaimer
+              title="Attention!"
+              texts={['Be aware that some third-party keyboards may capture your input data.']}
+            />
             <Divider size={formatSize(12)} />
             <Label
               label="Derivation"
