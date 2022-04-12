@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "14863818751",
+    "project_id": "templewallet",
+    "storage_bucket": "templewallet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14863818751:android:6e6bb01b103964a69f51ca",
+        "android_client_info": {
+          "package_name": "com.templewallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14863818751-8n5f2tlcd59g6g11nfgojf1l1vtmd2pa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA_oCBkR7Yn7a4kymDY4xI8ejEVsBIj0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14863818751-8n5f2tlcd59g6g11nfgojf1l1vtmd2pa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

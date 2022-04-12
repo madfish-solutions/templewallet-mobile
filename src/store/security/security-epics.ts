@@ -1,3 +1,5 @@
+import { firebase } from '@react-native-firebase/app-check';
+import { Platform } from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
@@ -10,12 +12,26 @@ import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
 import { checkApp } from './security-actions';
 
+interface appCheckPayload extends VersionsInterface {
+  isAppCheckFailed: boolean;
+}
+
+const appCheck = firebase.appCheck();
+
 export const CheckAppEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    switchMap(() =>
-      from(templeWalletApi.get<VersionsInterface>('mobile-check')).pipe(
+    switchMap(() => appCheck.activate('ignored', false)),
+    switchMap(() => appCheck.getToken()),
+    switchMap(appCheckToken =>
+      from(
+        templeWalletApi.get<appCheckPayload>('mobile-check', {
+          params: { platform: Platform.OS, appCheckToken: appCheckToken.token }
+        })
+      ).pipe(
         switchMap(({ data }) => {
+          const isAppCheckFailed = data.isAppCheckFailed;
+
           const currentVersion = getReadableVersion();
           const minVersion = isIOS ? data.minIosVersion : data.minAndroidVersion;
 
@@ -30,7 +46,7 @@ export const CheckAppEpic = (action$: Observable<Action>) =>
             }
           }
 
-          return [checkApp.success(isForceUpdateNeeded)];
+          return [checkApp.success({ isForceUpdateNeeded, isAppCheckFailed })];
         }),
         catchError(err => of(checkApp.fail(err.message)))
       )

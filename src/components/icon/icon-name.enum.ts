@@ -44,6 +44,7 @@ export enum IconNameEnum {
   Check = 'Check',
   Lock = 'Lock',
   Cloud = 'Cloud',
+  AppCheckAlert = 'AppCheckAlert',
   Clock = 'Clock',
   Info = 'Info',
   ChevronRight = 'ChevronRight',

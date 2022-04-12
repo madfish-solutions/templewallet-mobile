@@ -54,11 +54,21 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Write secrets to google-services.json
+        run: |
+          cat ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }} > android/app/google.services.json
+
+      - name: Write secrets to GoogleService.info.plist
+        run: |
+          cat ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }} > ios/GoogleService.info.plist
+
       - name: Create .env file
         run: |
           cat << EOF > .env
           READ_ONLY_SIGNER_PUBLIC_KEY=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+          IOS_APP_ID=${{ secrets.IOS_APP_ID }}
+          ANDROID_APP_ID=${{ secrets.ANDROID_APP_ID }}
           EOF
 
       - name: Install Android Gemfile dependencies

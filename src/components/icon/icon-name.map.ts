@@ -3,6 +3,7 @@ import { SvgProps } from 'react-native-svg';
 
 import AlertShield from './assets/alert-shield.svg';
 import AlertIcon from './assets/alert.svg';
+import AppCheckAlertIcon from './assets/app-check-alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
@@ -129,6 +130,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Check]: CheckIcon,
   [IconNameEnum.Lock]: LockIcon,
   [IconNameEnum.Cloud]: CloudIcon,
+  [IconNameEnum.AppCheckAlert]: AppCheckAlertIcon,
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
