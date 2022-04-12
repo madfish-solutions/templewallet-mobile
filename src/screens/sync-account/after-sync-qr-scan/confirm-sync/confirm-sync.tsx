@@ -2,9 +2,9 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AttentionMessage } from '../../../../components/attention-message/attention-message';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../../components/checkbox-description/checkbox-label';
+import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../../components/divider/divider';
 import { HeaderBackButton } from '../../../../components/header/header-back-button/header-back-button';
 import { HeaderTitle } from '../../../../components/header/header-title/header-title';
@@ -74,7 +74,9 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
 
             {values.usePrevPassword === true && (
-              <AttentionMessage title="The password to unlock your mobile temple wallet is the same you set for the extension." />
+              <Disclaimer
+                texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
+              />
             )}
           </View>
           <View>
