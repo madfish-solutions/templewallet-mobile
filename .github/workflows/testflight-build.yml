@@ -67,6 +67,8 @@ jobs:
           cat << EOF > .env
           READ_ONLY_SIGNER_PUBLIC_KEY=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+          IOS_APP_ID=${{ secrets.IOS_APP_ID }}
+          ANDROID_APP_ID=${{ secrets.ANDROID_APP_ID }}
           EOF
 
       - name: Install Android Gemfile dependencies
