@@ -43,8 +43,7 @@ export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
-    map(balance => balance.toFixed()),
-    catchError(() => of(undefined))
+    map(balance => balance.toFixed())
   );
 
 const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug: string) => {
