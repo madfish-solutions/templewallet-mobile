@@ -49,28 +49,16 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsLocalNetworking</key>
+		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsArbitraryLoadsForMedia</key>
 		<false/>
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<false/>
-		<key>NSAllowsArbitraryLoads</key>
+		<key>NSAllowsLocalNetworking</key>
 		<false/>
 		<key>NSPinnedDomains</key>
 		<dict>
-			<key>templewallet.com</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSPinnedLeafIdentities</key>
-				<array>
-					<dict>
-						<key>SPKI-SHA256-BASE64</key>
-						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
-					</dict>
-				</array>
-			</dict>
 			<key>madfish.solutions</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
@@ -80,6 +68,18 @@
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</string>
+					</dict>
+				</array>
+			</dict>
+			<key>templewallet.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSPinnedLeafIdentities</key>
+				<array>
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
 					</dict>
 				</array>
 			</dict>

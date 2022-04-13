@@ -22,7 +22,9 @@ export enum ScreensEnum {
   LiquidityBakingDapp = 'LiquidityBakingDapp',
 
   /** Swap stack **/
-  Swap = 'Swap',
+  SwapScreen = 'SwapScreen',
+  SwapSettingsScreen = 'SwapSettingsScreen',
+  SwapQuestionsScreen = 'SwapQuestionsScreen',
 
   /** Buy stack **/
   Buy = 'Buy',
@@ -59,7 +61,9 @@ export type ScreensParamList = {
   [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
-  [ScreensEnum.Swap]: undefined;
+  [ScreensEnum.SwapScreen]: undefined;
+  [ScreensEnum.SwapSettingsScreen]: undefined;
+  [ScreensEnum.SwapQuestionsScreen]: undefined;
 
   /** Buy stack **/
   [ScreensEnum.Buy]: undefined;
@@ -85,7 +89,11 @@ export const walletStackScreens = [
   ScreensEnum.ScanQrCode
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
-export const swapStackScreens = [ScreensEnum.Swap];
+export const swapStackScreens = [
+  ScreensEnum.SwapScreen,
+  ScreensEnum.SwapSettingsScreen,
+  ScreensEnum.SwapQuestionsScreen
+];
 export const settingsStackScreens = [
   ScreensEnum.Settings,
   ScreensEnum.ManageAccounts,

@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateIntegratedAppOptions } from '../components/header/generate-integrated-dapp-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
+import { HeaderAction } from '../components/header/header-action/header-actions';
 import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
@@ -30,6 +31,9 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
+import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
+import { SwapScreen } from '../screens/swap/swap';
 import { AfterSyncQRScan } from '../screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { SyncInstructions } from '../screens/sync-account/sync-instructions/sync-instructions';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
@@ -167,6 +171,25 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Buy}
                 component={Buy}
                 options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
+              />
+
+              {/** Swap stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.SwapScreen}
+                component={SwapScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SwapSettingsScreen}
+                component={SwapSettingsScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SwapQuestionsScreen}
+                component={SwapQuestionsScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Settings stack **/}
