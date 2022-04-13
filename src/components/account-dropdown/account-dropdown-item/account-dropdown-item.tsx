@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { EMPTY_PUBLIC_KEY_HASH } from '../../../config/system';
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -35,7 +34,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          {publicKeyHash !== EMPTY_PUBLIC_KEY_HASH && <WalletAddress publicKeyHash={publicKeyHash} />}
+          <WalletAddress publicKeyHash={publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText
