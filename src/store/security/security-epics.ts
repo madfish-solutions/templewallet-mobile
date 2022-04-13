@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
 import { combineEpics } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -21,12 +21,17 @@ const appCheck = firebase.appCheck();
 export const CheckAppEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    switchMap(() => appCheck.activate('ignored', false)),
-    switchMap(() => appCheck.getToken()),
+    switchMap(() =>
+      from(appCheck.activate('ignored', false)).pipe(
+        switchMap(() => appCheck.getToken()),
+        map(appCheck => appCheck.token),
+        catchError(() => of('INVALID_TOKEN'))
+      )
+    ),
     switchMap(appCheckToken =>
       from(
         templeWalletApi.get<appCheckPayload>('mobile-check', {
-          params: { platform: Platform.OS, appCheckToken: appCheckToken.token }
+          params: { platform: Platform.OS, appCheckToken }
         })
       ).pipe(
         switchMap(({ data }) => {

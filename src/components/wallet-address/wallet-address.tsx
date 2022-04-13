@@ -1,8 +1,8 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { isAndroid } from '../../config/system';
+import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -25,15 +25,30 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
+  const mountedRef = useRef(true);
 
   const updateDomainReverseName = async (pkh: string) => {
-    setDomainName((await resolver.resolveAddressToName(pkh)) ?? '');
+    const resolvedName = (await resolver.resolveAddressToName(pkh)) ?? '';
+    if (!mountedRef.current) {
+      return null;
+    }
+    setDomainName(resolvedName);
   };
 
   useEffect(() => {
-    setIsShownDomainName(false);
-    updateDomainReverseName(publicKeyHash);
+    if (publicKeyHash !== EMPTY_PUBLIC_KEY_HASH) {
+      setIsShownDomainName(false);
+      updateDomainReverseName(publicKeyHash);
+    }
+
+    return () => {
+      mountedRef.current = false;
+    };
   }, [publicKeyHash]);
+
+  if (publicKeyHash === EMPTY_PUBLIC_KEY_HASH) {
+    return null;
+  }
 
   return (
     <View style={styles.pkhWrapper}>

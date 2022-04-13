@@ -56,11 +56,15 @@ jobs:
 
       - name: Write secrets to google-services.json
         run: |
-          cat ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }} > android/app/google.services.json
+          cat << EOF > ./android/app/google.services.json
+          ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
+          EOF 
 
       - name: Write secrets to GoogleService.info.plist
         run: |
-          cat ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }} > ios/GoogleService.info.plist
+          cat << EOF > ./ios/GoogleService.info.plist
+          ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
+          EOF
 
       - name: Create .env file
         run: |
@@ -69,6 +73,8 @@ jobs:
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           IOS_APP_ID=${{ secrets.IOS_APP_ID }}
           ANDROID_APP_ID=${{ secrets.ANDROID_APP_ID }}
+          FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
+          TEMPLE_WALLET_API=${{ secrets.TEMPLE_WALLET_API }}
           EOF
 
       - name: Install Android Gemfile dependencies

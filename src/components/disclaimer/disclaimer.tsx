@@ -14,8 +14,10 @@ export const Disclaimer: FC<Props> = ({ title, texts }) => {
 
   return (
     <AttentionMessage title={title}>
-      {texts.map(x => (
-        <Text style={styles.description}>{x}</Text>
+      {texts.map(text => (
+        <Text key={text} style={styles.description}>
+          {text}
+        </Text>
       ))}
     </AttentionMessage>
   );

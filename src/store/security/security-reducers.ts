@@ -13,7 +13,8 @@ export const securityReducers = createReducer<SecurityState>(securityInitialStat
   }));
   builder.addCase(enterPassword.success, state => ({
     ...state,
-    passwordAttempt: INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS
+    passwordAttempt: INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS,
+    passwordLockTime: 0
   }));
   builder.addCase(checkApp.submit, state => ({
     ...state,

@@ -1,8 +1,5 @@
-import { ContractInterface } from '../../interfaces/contract.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
-import { LiquidityBakingStorage } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
-import { LiquidityBakingContractAbstraction } from '../../op-params/liquidity-baking/liquidity-baking.contract-abstraction.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
@@ -37,12 +34,12 @@ export type ModalsParamList = {
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.RemoveLiquidity]: {
-    lpContract: ContractInterface<LiquidityBakingContractAbstraction, LiquidityBakingStorage>;
+    lpContractAddress: string;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
   [ModalsEnum.AddLiquidity]: {
-    lpContract: ContractInterface<LiquidityBakingContractAbstraction, LiquidityBakingStorage>;
+    lpContractAddress: string;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
