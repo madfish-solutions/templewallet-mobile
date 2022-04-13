@@ -1,3 +1,4 @@
+import { EMPTY_PUBLIC_KEY_HASH } from '../config/system';
 import { AccountTypeEnum } from '../enums/account-type.enum';
 
 export interface AccountInterface {
@@ -11,12 +12,12 @@ export const initialAccount: AccountInterface = {
   name: '',
   type: AccountTypeEnum.HD_ACCOUNT,
   publicKey: '',
-  publicKeyHash: 'empty_public_key_hash'
+  publicKeyHash: EMPTY_PUBLIC_KEY_HASH
 };
 
 export const emptyAccount: AccountInterface = {
   name: '',
   type: AccountTypeEnum.HD_ACCOUNT,
   publicKey: '',
-  publicKeyHash: 'empty_public_key_hash'
+  publicKeyHash: EMPTY_PUBLIC_KEY_HASH
 };
