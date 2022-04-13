@@ -28,8 +28,13 @@ export const useContract = <C extends ContractAbstraction<ContractProvider>, S>(
   return { contract, storage };
 };
 
-export const useLiquidityBakingContract = () => {
-  const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
+/**
+ *
+ * @param bakingDexAddress - address of the liquidity baking dex contract
+ * @returns contract instance of liquidity dex
+ */
+export const useLiquidityBakingContract = (bakingDexAddress = LIQUIDITY_BAKING_DEX_ADDRESS) => {
+  const lpContract = useContract(bakingDexAddress, liquidityBakingStorageInitialValue);
 
   return lpContract;
 };
