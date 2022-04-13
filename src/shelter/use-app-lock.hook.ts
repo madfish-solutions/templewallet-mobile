@@ -23,6 +23,8 @@ export const useAppLock = () => {
     const password = await Shelter.getBiometryPassword()
       .then(rawKeychainData => {
         if (rawKeychainData !== false) {
+          dispatch(enterPassword.success());
+
           return JSON.parse(rawKeychainData.password) as string;
         }
 
