@@ -41,8 +41,9 @@ import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } 
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
-  const { aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
-  const lpContract = useLiquidityBakingContract();
+  const { lpContractAddress, aToken, bToken } =
+    useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
+  const lpContract = useLiquidityBakingContract(lpContractAddress);
   const dispatch = useDispatch();
 
   const { navigate } = useNavigation();

@@ -30,8 +30,8 @@ import { AddLiquidityModalFormValues, addLiquidityModalValidationSchema } from '
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
-  const { aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddLiquidity>>().params;
-  const lpContract = useLiquidityBakingContract();
+  const { lpContractAddress, aToken, bToken } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddLiquidity>>().params;
+  const lpContract = useLiquidityBakingContract(lpContractAddress);
   const { navigate } = useNavigation();
   const styles = useAddLiquidityModalStyles();
   const { publicKeyHash } = useSelectedAccountSelector();
