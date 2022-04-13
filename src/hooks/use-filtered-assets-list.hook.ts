@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { WHITELIST_TOKENS } from '../config/whitelist';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
@@ -11,14 +12,22 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredAssetsList, setFilteredAssetsList] = useState<TokenInterface[]>([]);
 
-  useEffect(() => {
-    const result: TokenInterface[] = assetsList.filter(asset => isNonZeroBalance(asset));
-
-    setNonZeroBalanceAssetsList(result);
+  // TODO: change
+  const whitelist = useMemo(() => {
+    return [
+      ...assetsList,
+      ...WHITELIST_TOKENS.filter(x => !assetsList.every(y => y.address === x.address && y.id === x.id))
+    ];
   }, [assetsList]);
 
   useEffect(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
+    const result: TokenInterface[] = whitelist.filter(asset => isNonZeroBalance(asset));
+
+    setNonZeroBalanceAssetsList(result);
+  }, [whitelist]);
+
+  useEffect(() => {
+    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : whitelist;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -40,7 +49,7 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
     } else {
       setFilteredAssetsList(sourceArray);
     }
-  }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
+  }, [isHideZeroBalance, searchValue, whitelist, nonZeroBalanceAssetsList]);
 
   return {
     filteredAssetsList,
