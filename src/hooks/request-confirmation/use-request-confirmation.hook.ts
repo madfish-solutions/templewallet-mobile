@@ -5,7 +5,6 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 
 import { Action } from '../../interfaces/action.interface';
 import { showErrorToast } from '../../toast/toast.utils';
-import { isDefined } from '../../utils/is-defined';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   project: (value: T, index: number) => O
@@ -27,13 +26,11 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
             tap(() => setIsLoading(false)),
             catchError(err => {
               setIsLoading(false);
-              if (isDefined(err.message) && typeof err.message === 'string') {
-                if (String(err.message).startsWith('JSON Parse error: Unexpected token')) {
-                  showErrorToast({ description: 'Transaction is likely to fail' });
-                } else {
-                  showErrorToast({ description: err.message });
-                }
-              }
+              showErrorToast({
+                description: String(err.message).startsWith('JSON Parse error: Unexpected token')
+                  ? 'Transaction is likely to fail'
+                  : err.message
+              });
 
               return EMPTY;
             })
