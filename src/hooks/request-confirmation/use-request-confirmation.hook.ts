@@ -26,11 +26,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
             tap(() => setIsLoading(false)),
             catchError(err => {
               setIsLoading(false);
-              showErrorToast({
-                description: String(err.message).startsWith('JSON Parse error: Unexpected token')
-                  ? 'Transaction is likely to fail'
-                  : err.message
-              });
+              showErrorToast({ description: err.message });
 
               return EMPTY;
             })
