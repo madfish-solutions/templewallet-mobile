@@ -34,12 +34,12 @@ export type ModalsParamList = {
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.RemoveLiquidity]: {
-    lpContractAddress?: string;
+    lpContractAddress: string;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
   [ModalsEnum.AddLiquidity]: {
-    lpContractAddress?: string;
+    lpContractAddress: string;
     aToken: TokenInterface;
     bToken: TokenInterface;
   };

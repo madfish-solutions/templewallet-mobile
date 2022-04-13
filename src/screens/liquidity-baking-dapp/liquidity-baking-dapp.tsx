@@ -71,7 +71,13 @@ export const LiquidityBakingDapp = () => {
             <ButtonLargeWhite
               title="REMOVE"
               iconName={IconNameEnum.MinusIcon}
-              onPress={() => navigate(ModalsEnum.RemoveLiquidity, { aToken, bToken })}
+              onPress={() =>
+                navigate(ModalsEnum.RemoveLiquidity, {
+                  lpContractAddress: LIQUIDITY_BAKING_DEX_ADDRESS,
+                  aToken,
+                  bToken
+                })
+              }
             />
           </View>
           <Divider size={formatSize(16)} />
@@ -79,7 +85,9 @@ export const LiquidityBakingDapp = () => {
             <ButtonLargeWhite
               title="ADD"
               iconName={IconNameEnum.PlusIcon}
-              onPress={() => navigate(ModalsEnum.AddLiquidity, { aToken, bToken })}
+              onPress={() =>
+                navigate(ModalsEnum.AddLiquidity, { lpContractAddress: LIQUIDITY_BAKING_DEX_ADDRESS, aToken, bToken })
+              }
             />
           </View>
         </ButtonsContainer>

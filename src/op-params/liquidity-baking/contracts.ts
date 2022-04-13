@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../../token/data/token-slugs';
 import { isDefined } from '../../utils/is-defined';
 import { liquidityBakingStorageInitialValue } from './liquidity-baking-storage.interface';
 
@@ -33,7 +32,7 @@ export const useContract = <C extends ContractAbstraction<ContractProvider>, S>(
  * @param bakingDexAddress - address of the liquidity baking dex contract
  * @returns contract instance of liquidity dex
  */
-export const useLiquidityBakingContract = (bakingDexAddress = LIQUIDITY_BAKING_DEX_ADDRESS) => {
+export const useLiquidityBakingContract = (bakingDexAddress: string) => {
   const lpContract = useContract(bakingDexAddress, liquidityBakingStorageInitialValue);
 
   return lpContract;
