@@ -13,7 +13,6 @@ import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-b
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
-import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
@@ -149,11 +148,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Activity}
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.SelectBaker}
-                component={SelectBakerModal}
-                options={generateScreenOptions(<HeaderTitle title="Select Baker" />)}
               />
 
               {/** DApps stack **/}

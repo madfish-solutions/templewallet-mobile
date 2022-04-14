@@ -8,6 +8,7 @@ export enum ModalsEnum {
   Send = 'Send',
   AddToken = 'AddToken',
   RenameAccount = 'RenameAccount',
+  SelectBaker = 'SelectBaker',
   Confirmation = 'Confirmation',
   RevealSeedPhrase = 'RevealSeedPhrase',
   RevealPrivateKey = 'RevealPrivateKey',
@@ -24,6 +25,7 @@ export type ModalsParamList = {
   [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
   [ModalsEnum.AddToken]: undefined;
   [ModalsEnum.RenameAccount]: { account: WalletAccountInterface };
+  [ModalsEnum.SelectBaker]: undefined;
   [ModalsEnum.Confirmation]: ConfirmationModalParams;
   [ModalsEnum.RevealSeedPhrase]: { account?: WalletAccountInterface };
   [ModalsEnum.RevealPrivateKey]: { account: WalletAccountInterface };

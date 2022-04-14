@@ -16,7 +16,6 @@ export enum ScreensEnum {
   ManageAssets = 'ManageAssets',
   Activity = 'Activity',
   ScanQrCode = 'ScanQrCode',
-  SelectBaker = 'SelectBaker',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -54,7 +53,6 @@ export type ScreensParamList = {
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
   [ScreensEnum.ScanQrCode]: undefined;
-  [ScreensEnum.SelectBaker]: undefined;
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;

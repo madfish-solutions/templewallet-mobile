@@ -1,7 +1,8 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';

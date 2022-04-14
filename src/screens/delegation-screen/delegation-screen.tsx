@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { loadBakersListActions } from '../../store/baking/baking-actions';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
@@ -13,7 +13,7 @@ export const DelegationScreen = () => {
   const { navigate } = useNavigation();
   const [selectedBaker, isBakerSelected] = useSelectedBakerSelector();
 
-  const handleDelegatePress = () => navigate(ScreensEnum.SelectBaker);
+  const handleDelegatePress = () => navigate(ModalsEnum.SelectBaker);
 
   useEffect(() => void dispatch(loadBakersListActions.submit()), []);
 
