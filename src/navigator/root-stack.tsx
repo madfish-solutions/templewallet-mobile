@@ -21,7 +21,6 @@ import { RemoveLiquidityModal } from '../modals/remove-liquidity-modal/remove-li
 import { RenameAccountModal } from '../modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
-import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
 import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
@@ -115,11 +114,6 @@ export const RootStackScreen = () => {
               name={ModalsEnum.RenameAccount}
               component={RenameAccountModal}
               options={useModalOptions('Rename account')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.SelectBaker}
-              component={SelectBakerModal}
-              options={useModalOptions('Select Baker')}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
