@@ -12,6 +12,7 @@ import { formatSize } from '../../../../../styles/format-size';
 import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
+import { getTruncatedProps } from '../../../../../utils/style.util';
 import { isCollectible } from '../../../../../utils/tezos.util';
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
@@ -104,9 +105,13 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               <View style={styles.infoContainer}>
                 <RobotIcon seed={iconSeed} size={formatSize(32)} />
                 <Divider size={formatSize(10)} />
-                <Text style={styles.description}>{description}</Text>
+                <Text {...getTruncatedProps(styles.description)}>{description}</Text>
               </View>
-              {isDefined(hash) && <PublicKeyHashText publicKeyHash={hash} />}
+              {isDefined(hash) && (
+                <View style={styles.hashContainer}>
+                  <PublicKeyHashText publicKeyHash={hash} />
+                </View>
+              )}
             </View>
             {isDefined(token) && Number(token.amount) > 0 && (
               <View>
