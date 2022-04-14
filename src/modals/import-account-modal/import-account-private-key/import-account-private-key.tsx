@@ -11,6 +11,7 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
+import { isAndroid } from '../../../config/system';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
@@ -46,11 +47,15 @@ export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
             <Divider size={formatSize(12)} />
             <Label label="Private key" description="The Secret key of the Account you want to import." />
             <FormMnemonicInput name="privateKey" placeholder="e.g. AFVEWNWEQwt34QRVGEWBFDSAd" />
-            <Divider size={formatSize(16)} />
-            <Disclaimer
-              title="Attention!"
-              texts={['Be aware that some third-party keyboards may capture your input data.']}
-            />
+            {isAndroid && (
+              <>
+                <Divider size={formatSize(16)} />
+                <Disclaimer
+                  title="Attention!"
+                  texts={['Be aware that some third-party keyboards may capture your input data.']}
+                />
+              </>
+            )}
           </View>
           <View>
             <ButtonsContainer>

@@ -12,6 +12,7 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
+import { isAndroid } from '../../../config/system';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -61,11 +62,15 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
               <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
               <FormMnemonicInput name="seedPhrase" />
             </View>
-            <Divider size={formatSize(12)} />
-            <Disclaimer
-              title="Attention!"
-              texts={['Be aware that some third-party keyboards may capture your input data.']}
-            />
+            {isAndroid && (
+              <>
+                <Divider size={formatSize(12)} />
+                <Disclaimer
+                  title="Attention!"
+                  texts={['Be aware that some third-party keyboards may capture your input data.']}
+                />
+              </>
+            )}
             <Divider size={formatSize(12)} />
             <Label
               label="Derivation"
