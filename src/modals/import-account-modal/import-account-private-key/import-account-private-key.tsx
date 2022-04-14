@@ -2,16 +2,15 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Disclaimer } from '../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
-import { isAndroid } from '../../../config/system';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
@@ -47,15 +46,7 @@ export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
             <Divider size={formatSize(12)} />
             <Label label="Private key" description="The Secret key of the Account you want to import." />
             <FormMnemonicInput name="privateKey" placeholder="e.g. AFVEWNWEQwt34QRVGEWBFDSAd" />
-            {isAndroid && (
-              <>
-                <Divider size={formatSize(16)} />
-                <Disclaimer
-                  title="Attention!"
-                  texts={['Be aware that some third-party keyboards may capture your input data.']}
-                />
-              </>
-            )}
+            <AndroidKeyboardDisclaimer />
           </View>
           <View>
             <ButtonsContainer>
