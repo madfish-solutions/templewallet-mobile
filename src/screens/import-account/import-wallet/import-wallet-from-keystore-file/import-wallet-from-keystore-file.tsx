@@ -61,11 +61,6 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
           title: 'Cannot import',
           description: KUKAI_VERSION_ERROR
         });
-      } else if (e.message === TOO_WEAK_PASSWORD_ERROR) {
-        showErrorToast({
-          title: 'Cannot import',
-          description: TOO_WEAK_PASSWORD_ERROR
-        });
       } else {
         showErrorToast({
           title: 'Wrong file or password',
@@ -81,7 +76,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       validationSchema={importWalletFromKeystoreFileValidationSchema}
       onSubmit={handleSubmit}
     >
-      {({ isValid, submitForm, isSubmitting }) => (
+      {({ isValid, submitForm, isSubmitting, values }) => (
         <>
           <View style={styles.seedPhraseInputContainer}>
             <View>
@@ -91,7 +86,14 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
               <Divider size={formatSize(12)} />
               <Label label="File password" description="Please enter a password for keystore file" />
               <FormPasswordInput name="password" />
-              <FormCheckbox name="shouldUseFilePasswordForExtension">
+              <FormCheckbox
+                {...(values.shouldUseFilePasswordForExtension === true &&
+                  !checkKukaiPasswordValid(values.password) && {
+                    error:
+                      'The "keystore file" password is too weak to use as an app password. You need to set a new one.'
+                  })}
+                name="shouldUseFilePasswordForExtension"
+              >
                 <Text style={styles.checkboxText}>Use this password as App password</Text>
               </FormCheckbox>
             </View>
