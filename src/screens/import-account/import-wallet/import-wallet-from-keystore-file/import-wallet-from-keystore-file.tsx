@@ -34,13 +34,16 @@ const checkKukaiPasswordValid = (password: string): boolean =>
   LETTERS_NUMBERS_MIXTURE_REGX.test(password) &&
   SPECIAL_CHARACTER_REGX.test(password);
 
+const TOO_WEAK_PASSWORD_ERROR =
+  'The password is too weak. Please, set a new one according to the requirements of the application.';
+
 export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }) => {
   const styles = useImportWalletFromKeystoreFileStyles();
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
     try {
       if (values.shouldUseFilePasswordForExtension === true && !checkKukaiPasswordValid(values.password)) {
-        throw new Error('Password is not valid');
+        throw new Error(TOO_WEAK_PASSWORD_ERROR);
       }
       const content = await readFile(values.keystoreFile.uri, 'utf8');
       const seedPhrase = await decryptSeedPhrase(content, values.password);
@@ -57,6 +60,11 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
         showErrorToast({
           title: 'Cannot import',
           description: KUKAI_VERSION_ERROR
+        });
+      } else if (e.message === TOO_WEAK_PASSWORD_ERROR) {
+        showErrorToast({
+          title: 'Cannot import',
+          description: TOO_WEAK_PASSWORD_ERROR
         });
       } else {
         showErrorToast({
