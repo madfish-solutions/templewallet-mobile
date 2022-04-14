@@ -8,6 +8,12 @@ import { ButtonLargePrimary } from '../../../../components/button/button-large/b
 import { Divider } from '../../../../components/divider/divider';
 import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../../components/label/label';
+import {
+  LETTERS_NUMBERS_MIXTURE_REGX,
+  MIN_PASSWORD_LENGTH,
+  SPECIAL_CHARACTER_REGX,
+  UPPER_CASE_LOWER_CASE_MIXTURE_REGX
+} from '../../../../config/security';
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormFileInput } from '../../../../form/form-file-input';
 import { FormPasswordInput } from '../../../../form/form-password-input';
@@ -22,11 +28,20 @@ import {
 } from './import-wallet-from-keystore-file.form';
 import { useImportWalletFromKeystoreFileStyles } from './import-wallet-from-keystore-file.styles';
 
+const checkKukaiPasswordValid = (password: string): boolean =>
+  password.length >= MIN_PASSWORD_LENGTH &&
+  UPPER_CASE_LOWER_CASE_MIXTURE_REGX.test(password) &&
+  LETTERS_NUMBERS_MIXTURE_REGX.test(password) &&
+  SPECIAL_CHARACTER_REGX.test(password);
+
 export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }) => {
   const styles = useImportWalletFromKeystoreFileStyles();
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
     try {
+      if (values.shouldUseFilePasswordForExtension === true && !checkKukaiPasswordValid(values.password)) {
+        throw new Error('Password is not valid');
+      }
       const content = await readFile(values.keystoreFile.uri, 'utf8');
       const seedPhrase = await decryptSeedPhrase(content, values.password);
       if (!validateMnemonic(seedPhrase)) {
