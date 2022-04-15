@@ -42,7 +42,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
     try {
-      if (values.shouldUseFilePasswordForExtension === true && !checkKukaiPasswordValid(values.password)) {
+      if (values.shouldUseFilePasswordForExtension && !checkKukaiPasswordValid(values.password)) {
         throw new Error(TOO_WEAK_PASSWORD_ERROR);
       }
       const content = await readFile(values.keystoreFile.uri, 'utf8');
@@ -52,7 +52,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       }
       onSubmit({
         seedPhrase,
-        password: values.shouldUseFilePasswordForExtension === true ? values.password : undefined
+        password: values.shouldUseFilePasswordForExtension ? values.password : undefined
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -87,7 +87,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
               <Label label="File password" description="Please enter a password for keystore file" />
               <FormPasswordInput name="password" />
               <FormCheckbox
-                {...(values.shouldUseFilePasswordForExtension === true &&
+                {...(values.shouldUseFilePasswordForExtension &&
                   !checkKukaiPasswordValid(values.password) && {
                     error:
                       'The "keystore file" password is too weak to use as an app password. You need to set a new one.'
