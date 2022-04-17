@@ -14,13 +14,14 @@ export const HeaderCloseOptionsButton: FC = () => {
 
   return (
     <View style={styles.accountActionsContainer}>
-      <TouchableIcon
+      {/* TODO: uncomment after figure out why we need options here */}
+      {/* <TouchableIcon
         size={formatSize(16)}
         name={IconNameEnum.MoreHorizontal}
         disabled={true}
         onPress={() => navigate(ScreensEnum.DApps)}
       />
-      <View style={styles.verticalLineDivider} />
+      <View style={styles.verticalLineDivider} /> */}
       <TouchableIcon size={formatSize(16)} name={IconNameEnum.XCircle} onPress={() => navigate(ScreensEnum.DApps)} />
     </View>
   );

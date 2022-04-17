@@ -14,7 +14,7 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
     switchMap(() =>
-      from(templeWalletApi.get<ExchangeRateInterface[]>('exchange-rates')).pipe(
+      from(templeWalletApi.get<ExchangeRateInterface[]>('/exchange-rates')).pipe(
         switchMap(({ data }) => {
           const mappedRates: ExchangeRateRecord = {};
 
