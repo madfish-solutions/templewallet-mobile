@@ -16,6 +16,7 @@ import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { isDefined } from '../../../utils/is-defined';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
@@ -60,13 +61,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
         <View style={styles.lowerContainer}>
           <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{(baker.fee * 100).toFixed(2)}%</Text>
+            <Text style={styles.cellValueText}>{isDefined(baker.fee) ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {baker.freeSpace.toFixed(2)} {TEZ_TOKEN_METADATA.symbol}
+              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {TEZ_TOKEN_METADATA.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />
@@ -89,6 +90,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
           onPress={() => openUrl(tzktUrl(baker.address))}
+          disabled={!isDefined(baker.address)}
         />
 
         <Text style={styles.descriptionText}>
