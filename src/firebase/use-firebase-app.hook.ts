@@ -13,10 +13,9 @@ export const useFirebaseApp = () => {
   useEffect(() => {
     (async () => {
       if (firebase.apps.length === 0) {
-        // await firebase.initializeApp({
-        //   projectId: FIREBASE_PROJECT_ID,
-        //   appId: isIOS ? IOS_APP_ID : ANDROID_APP_ID
-        // });
+        // Native builds get the initializeApp config from google-services.json GoogleService-Info.plist
+        //@ts-ignore
+        await firebase.initializeApp();
       }
     })();
   }, []);
