@@ -7,7 +7,7 @@ import { isString } from '../../../../utils/is-string';
 export type ImportWalletFromKeystoreFileFormValues = {
   keystoreFile: FileInputValue;
   password: string;
-  shouldUseFilePasswordForExtension?: boolean;
+  shouldUseFilePasswordForExtension: boolean;
 };
 
 export const importWalletFromKeystoreFileValidationSchema: SchemaOf<ImportWalletFromKeystoreFileFormValues> =
@@ -17,7 +17,7 @@ export const importWalletFromKeystoreFileValidationSchema: SchemaOf<ImportWallet
       .test('keystore-file', 'A keystore file is required', value => isString(value?.uri))
       .required(),
     password: string().required(makeRequiredErrorMessage('File password')),
-    shouldUseFilePasswordForExtension: boolean()
+    shouldUseFilePasswordForExtension: boolean().required()
   });
 
 export const importWalletFromKeystoreFileInitialValues: ImportWalletFromKeystoreFileFormValues = {
