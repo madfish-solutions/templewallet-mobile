@@ -41,6 +41,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
   const styles = useImportWalletFromKeystoreFileStyles();
 
   const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
+    console.log(!checkKukaiPasswordValid(values.password));
     try {
       if (values.shouldUseFilePasswordForExtension && !checkKukaiPasswordValid(values.password)) {
         throw new Error(TOO_WEAK_PASSWORD_ERROR);
