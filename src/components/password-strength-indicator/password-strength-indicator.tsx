@@ -1,5 +1,11 @@
 import React, { FC, Fragment, useMemo } from 'react';
 
+import {
+  LETTERS_NUMBERS_MIXTURE_REGX,
+  MIN_PASSWORD_LENGTH,
+  SPECIAL_CHARACTER_REGX,
+  UPPER_CASE_LOWER_CASE_MIXTURE_REGX
+} from '../../config/security';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { Divider } from '../divider/divider';
@@ -7,11 +13,6 @@ import {
   PasswordStrengthIndicatorItem,
   PasswordStrengthIndicatorItemProps
 } from './password-strength-indicator-item/password-strength-indicator-item';
-
-const MIN_PASSWORD_LENGTH = 8;
-const uppercaseLowercaseMixtureRegx = /(?=.*[a-z])(?=.*[A-Z])/;
-const lettersNumbersMixtureRegx = /(?=.*\d)(?=.*[A-Za-z])/;
-const specialCharacterRegx = /[!@#$%^&*()_+\-=\]{};':"\\|,.<>?]/;
 
 interface PasswordStrengthIndicatorProps {
   password: string;
@@ -22,9 +23,9 @@ export const PasswordStrengthIndicator: FC<PasswordStrengthIndicatorProps> = ({ 
   const { minChar, cases, number, specialChar } = useMemo(
     () => ({
       minChar: password.length >= MIN_PASSWORD_LENGTH,
-      cases: uppercaseLowercaseMixtureRegx.test(password),
-      number: lettersNumbersMixtureRegx.test(password),
-      specialChar: specialCharacterRegx.test(password)
+      cases: UPPER_CASE_LOWER_CASE_MIXTURE_REGX.test(password),
+      number: LETTERS_NUMBERS_MIXTURE_REGX.test(password),
+      specialChar: SPECIAL_CHARACTER_REGX.test(password)
     }),
     [password]
   );

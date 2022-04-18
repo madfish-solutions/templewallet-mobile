@@ -1,6 +1,6 @@
 import { createEntity } from '../store/create-entity';
 import { LoadableEntityState } from '../store/types';
-import { MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
+import { HIDDEN_WHITELIST_TOKENS, MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { ActivityGroup } from './activity.interface';
@@ -17,7 +17,10 @@ export interface AccountStateInterface {
 export const initialAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: createEntity('0'),
-  tokensList: MAINNET_TOKENS_METADATA.map(token => ({ slug: getTokenSlug(token), balance: '0', isVisible: true })),
+  tokensList: [
+    ...MAINNET_TOKENS_METADATA.map(token => ({ slug: getTokenSlug(token), balance: '0', isVisible: true })),
+    ...HIDDEN_WHITELIST_TOKENS.map(token => ({ slug: getTokenSlug(token), balance: '0', isVisible: false }))
+  ],
   removedTokensList: [],
   activityGroups: createEntity([]),
   pendingActivities: []

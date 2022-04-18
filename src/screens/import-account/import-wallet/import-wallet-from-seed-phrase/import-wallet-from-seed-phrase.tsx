@@ -2,8 +2,8 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { AndroidKeyboardDisclaimer } from '../../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { Divider } from '../../../../components/divider/divider';
 import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../../components/label/label';
 import { FormMnemonicInput } from '../../../../form/form-mnemonic-input';
@@ -26,9 +26,8 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
         <View style={ImportWalletFromSeedPhraseStyles.seedPhraseInputContainer}>
           <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
           <FormMnemonicInput name="seedPhrase" testID={ImportWalletFromSeedPhraseSelectors.SeedPhraseInput} />
+          <AndroidKeyboardDisclaimer />
         </View>
-        <Divider />
-
         <View>
           <ButtonLargePrimary
             title="Next"

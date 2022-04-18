@@ -18,7 +18,7 @@ export const useSignedMoonPayUrl = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await templeWalletApi.get<{ signedUrl: string }>('moonpay-sign', { params: { url } });
+        const result = await templeWalletApi.get<{ signedUrl: string }>('/moonpay-sign', { params: { url } });
         setSignedUrl(result.data.signedUrl);
       } catch {}
     })();

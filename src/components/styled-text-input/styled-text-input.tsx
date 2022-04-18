@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { TextInput, View } from 'react-native';
+import { Keyboard, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
@@ -31,6 +31,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
 
     const handleCleanButtonPress = () => {
       onBlur();
+      Keyboard.dismiss();
       onChangeText('');
     };
 

@@ -1,6 +1,6 @@
-import { ContractAbstraction, ContractProvider, ContractMethod } from '@taquito/taquito';
+import { ContractProvider, ContractMethod } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-export interface LiquidityBakingContractAbstraction extends ContractAbstraction<ContractProvider> {
+export interface LiquidityBakingContractAbstraction {
   methods: {
     removeLiquidity: (
       senderPublicKeyHash: string,

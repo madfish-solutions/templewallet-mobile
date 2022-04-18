@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
@@ -60,6 +61,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
               <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
               <FormMnemonicInput name="seedPhrase" />
             </View>
+            <AndroidKeyboardDisclaimer />
             <Divider size={formatSize(12)} />
             <Label
               label="Derivation"
