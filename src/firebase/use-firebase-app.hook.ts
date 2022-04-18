@@ -15,10 +15,10 @@ export const useFirebaseApp = () => {
   useEffect(() => {
     (async () => {
       if (firebase.apps.length === 0) {
-        await firebase.initializeApp({
-          projectId: FIREBASE_PROJECT_ID,
-          appId: isIOS ? IOS_APP_ID : ANDROID_APP_ID
-        });
+        // await firebase.initializeApp({
+        //   projectId: FIREBASE_PROJECT_ID,
+        //   appId: isIOS ? IOS_APP_ID : ANDROID_APP_ID
+        // });
       }
     })();
   }, []);
