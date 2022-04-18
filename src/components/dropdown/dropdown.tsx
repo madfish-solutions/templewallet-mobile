@@ -1,5 +1,5 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -25,7 +25,7 @@ export interface DropdownValueProps<T> {
   value?: T;
   list: T[];
   disabled?: boolean;
-  comparator?: keyof T;
+  comparator?: Array<keyof T>;
   autoScroll?: boolean;
   onValueChange: EventFn<T | undefined>;
 }
@@ -70,26 +70,23 @@ export const Dropdown = <T extends unknown>({
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = 0.7 * useWindowDimensions().height;
   const [dataSourceCords, setDataSourceCords] = useState<Array<number>>([]);
-
-  const onPressTouch = useCallback(() => {
-    console.log(autoScroll, comparator, value);
-    if (!autoScroll || !isDefined(comparator) || !isDefined(value)) {
-      return;
-    }
-    const scrollToIndex = list.findIndex(x => x[comparator] === value[comparator]);
-    console.log('scroll', scrollToIndex, Boolean(scrollRef.current), dataSourceCords);
-    if (dataSourceCords.length > scrollToIndex && isDefined(scrollRef.current)) {
-      scrollRef.current.scrollTo({
-        x: 0,
-        y: dataSourceCords[scrollToIndex - 1],
-        animated: true
-      });
-    }
-  }, [scrollRef]);
+  const [lastScroll, setLastScroll] = useState(false);
 
   useEffect(() => {
-    scrollRef.current ? onPressTouch() : setTimeout(onPressTouch, 50);
-  }, [scrollRef]);
+    if (!autoScroll || !isDefined(comparator) || !isDefined(value) || lastScroll) {
+      return;
+    }
+    const scrollToIndex = list.findIndex(x => comparator.every(key => x[key] === value[key]));
+    if (dataSourceCords.length < scrollToIndex || !isDefined(scrollRef.current)) {
+      return;
+    }
+    scrollRef.current.scrollTo({
+      x: 0,
+      y: dataSourceCords[scrollToIndex - 1],
+      animated: true
+    });
+    setLastScroll(true);
+  }, [scrollRef, dataSourceCords, list, value, comparator, autoScroll, lastScroll]);
 
   const createDropdownItemPressHandler = (item: T) => () => {
     onValueChange(item);
@@ -101,7 +98,10 @@ export const Dropdown = <T extends unknown>({
       <TouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
-        onPress={dropdownBottomSheetController.open}
+        onPress={() => {
+          setLastScroll(false);
+          dropdownBottomSheetController.open();
+        }}
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
@@ -118,8 +118,8 @@ export const Dropdown = <T extends unknown>({
                   key={index}
                   onLayout={event => {
                     const layout = event.nativeEvent.layout;
-                    // console.log(layout);
-                    dataSourceCords[index] = layout.height * index;
+                    const itemPosition = layout.height * index;
+                    dataSourceCords[index] = isDefined(itemPosition) ? itemPosition : 0;
                     setDataSourceCords(dataSourceCords);
                   }}
                   onPress={createDropdownItemPressHandler(item)}

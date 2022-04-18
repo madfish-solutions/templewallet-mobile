@@ -49,7 +49,7 @@ export const Wallet = () => {
             value={selectedAccount}
             list={visibleAccounts}
             autoScroll
-            comparator="publicKeyHash"
+            comparator={['publicKeyHash']}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 
