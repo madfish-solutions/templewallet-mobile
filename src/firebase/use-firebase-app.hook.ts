@@ -2,10 +2,8 @@ import { firebase } from '@react-native-firebase/app-check';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { isIOS } from '../config/system';
 import { useTimerEffect } from '../hooks/use-timer-effect.hook';
 import { checkApp } from '../store/security/security-actions';
-import { ANDROID_APP_ID, FIREBASE_PROJECT_ID, IOS_APP_ID } from '../utils/env.utils';
 
 const APP_CHECK_INTERVAL = 60 * 60 * 1000;
 
