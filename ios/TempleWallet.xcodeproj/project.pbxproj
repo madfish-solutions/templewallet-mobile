@@ -44,6 +44,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TempleWallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TempleWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TempleWallet/main.m; sourceTree = "<group>"; };
+		14480D60280899C500EFB6FD /* TempleWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TempleWallet.entitlements; path = TempleWallet/TempleWallet.entitlements; sourceTree = "<group>"; };
 		147833BA2734253800B1F789 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
 		147C8F2627FEF9FD004B84B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2E258677689E4FCD91BA4529 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 		13B07FAE1A68108700A75B9A /* TempleWallet */ = {
 			isa = PBXGroup;
 			children = (
+				14480D60280899C500EFB6FD /* TempleWallet.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				147833BA2734253800B1F789 /* BootSplash.storyboard */,

@@ -1,5 +1,5 @@
 import { ContractAbstraction, ContractProvider } from '@taquito/taquito';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -12,16 +12,27 @@ export const useContract = <C extends ContractAbstraction<ContractProvider>, S>(
 ) => {
   const [contract, setContract] = useState<C>();
   const [storage, setStorage] = useState<S>(storageInitialValue);
+  const mountedRef = useRef(true);
 
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
+  const loadContract = async () => {
+    const newContract = await tezos.contract.at<C>(address);
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setContract(newContract);
+    isDefined(newContract) && setStorage(await newContract.storage<S>());
+  };
+
   useEffect(() => {
-    (async () => {
-      const newContract = await tezos.contract.at<C>(address);
-      setContract(newContract);
-      isDefined(newContract) && setStorage(await newContract.storage<S>());
-    })();
+    loadContract();
+
+    return () => {
+      mountedRef.current = false;
+    };
   }, [address]);
 
   return { contract, storage };

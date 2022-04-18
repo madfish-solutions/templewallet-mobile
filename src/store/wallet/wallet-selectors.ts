@@ -85,7 +85,7 @@ export const useAssetsListSelector = (): TokenInterface[] => {
 
   useEffect(
     () =>
-      setAssetsList(
+      void setAssetsList(
         selectedAccount.tokensList
           .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
           .map(({ slug, balance, isVisible }) => ({
