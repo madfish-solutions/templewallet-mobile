@@ -11,7 +11,6 @@ import { Label } from '../../../../components/label/label';
 import {
   LETTERS_NUMBERS_MIXTURE_REGX,
   MIN_PASSWORD_LENGTH,
-  SPECIAL_CHARACTER_REGX,
   UPPER_CASE_LOWER_CASE_MIXTURE_REGX
 } from '../../../../config/security';
 import { FormCheckbox } from '../../../../form/form-checkbox';
@@ -31,8 +30,7 @@ import { useImportWalletFromKeystoreFileStyles } from './import-wallet-from-keys
 const checkKukaiPasswordValid = (password: string): boolean =>
   password.length >= MIN_PASSWORD_LENGTH &&
   UPPER_CASE_LOWER_CASE_MIXTURE_REGX.test(password) &&
-  LETTERS_NUMBERS_MIXTURE_REGX.test(password) &&
-  SPECIAL_CHARACTER_REGX.test(password);
+  LETTERS_NUMBERS_MIXTURE_REGX.test(password);
 
 const TOO_WEAK_PASSWORD_ERROR =
   'The password is too weak. Please, set a new one according to the requirements of the application.';
