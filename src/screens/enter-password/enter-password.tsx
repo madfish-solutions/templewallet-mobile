@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { hide, show } from 'react-native-bootsplash';
 
@@ -25,6 +25,7 @@ import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
@@ -48,6 +49,9 @@ export const EnterPassword = () => {
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent('EnterPassword', ''), []);
 
   useAppStateStatus({
     onAppSplashScreenShow: () => show(),

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
 
@@ -10,11 +10,15 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { useAppCheckWarningStyles } from './app-check-warning.styles';
 
 export const AppCheckWarning = () => {
   const styles = useAppCheckWarningStyles();
   const colors = useColors();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent('AppCheckWarning', ''), []);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>

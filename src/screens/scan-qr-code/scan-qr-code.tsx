@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
@@ -10,6 +10,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { isSyncPayload } from '../../utils/sync.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
@@ -19,6 +20,9 @@ export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { goBack, navigate } = useNavigation();
   const tezosToken = useTezosTokenSelector();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.Debug, ''), []);
 
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();

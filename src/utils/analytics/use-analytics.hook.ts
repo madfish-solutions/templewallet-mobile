@@ -1,14 +1,10 @@
 import { useAnalytics as useSegmentAnalytics } from '@segment/analytics-react-native';
-import { nanoid } from 'nanoid';
 
+import { useUserIdSelector } from '../../store/settings/settings-selectors';
 import { AnalyticsEventCategory } from './analytics-event.enum';
 
 export const useAnalytics = () => {
-  // const [analyticsState] = useLocalStorage<AnalyticsStateInterface>('analytics', {
-  //   userId: nanoid()
-  // });
-
-  const userId = nanoid();
+  const userId = useUserIdSelector();
 
   const { track, screen } = useSegmentAnalytics();
 

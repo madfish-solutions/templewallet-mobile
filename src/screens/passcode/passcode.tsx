@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { generalSettings } from 'react-native-android-open-settings';
 
@@ -11,12 +11,16 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { isIOS } from '../../config/system';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { usePassCodeStyles } from './passcode.styles';
 
 export const PassCode = () => {
   const styles = usePassCodeStyles();
   const colors = useColors();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent('PassCode', ''), []);
 
   const handleSettings = () => {
     isIOS ? openUrl('App-Prefs:Security') : generalSettings();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -12,12 +12,16 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.Welcome, ''), []);
 
   return (
     <ScreenContainer isFullScreenMode={true}>

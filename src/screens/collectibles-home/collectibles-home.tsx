@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
@@ -12,6 +12,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useVisibleCollectiblesListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
@@ -19,6 +20,9 @@ import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
   const { navigate } = useNavigation();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.CollectiblesHome, ''), []);
 
   const visibleCollectiblesList = useVisibleCollectiblesListSelector();
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);

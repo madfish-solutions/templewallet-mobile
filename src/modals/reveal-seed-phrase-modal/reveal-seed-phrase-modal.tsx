@@ -1,11 +1,12 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { emptyFn } from '../../config/general';
 import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useHdAccountListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
 import {
   RevealSeedPhraseModalFormValues,
@@ -23,6 +24,10 @@ export const RevealSeedPhraseModal = () => {
 
     return accountFromRouteProps ?? selectedHdAccount;
   }, []);
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ModalsEnum.RevealSeedPhrase, ''), []);
+
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
     account,
     derivationPath: ''

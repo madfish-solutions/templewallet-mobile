@@ -1,11 +1,12 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
+import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
@@ -21,6 +22,8 @@ export const AfterSyncQRScan = () => {
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
   const dispatch = useDispatch();
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.ConfirmSync, ''), []);
 
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,

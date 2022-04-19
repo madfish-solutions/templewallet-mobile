@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -9,6 +9,7 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { useSyncInstructionsStyles } from './sync-instructions.styles';
 
 const syncSteps = [
@@ -21,6 +22,9 @@ const syncSteps = [
 export const SyncInstructions = () => {
   const { navigate } = useNavigation();
   const styles = useSyncInstructionsStyles();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.SyncInstructions, ''), []);
 
   useNavigationSetOptions(
     {

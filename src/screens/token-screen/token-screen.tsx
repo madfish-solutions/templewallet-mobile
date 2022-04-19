@@ -16,6 +16,7 @@ import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
@@ -32,6 +33,9 @@ export const TokenScreen = () => {
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.TokenScreen, ''), []);
 
   useEffect(() => {
     dispatch(loadTokenBalancesActions.submit());

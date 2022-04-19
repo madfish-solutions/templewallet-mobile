@@ -1,16 +1,21 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useRecentActionsSelector } from '../../store/debug/debug-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { ActionItem } from './action-item/action-item';
 import { ImportWatchOnlyDebug } from './import-watch-only-debug/import-watch-only-debug';
 
 export const Debug: FC = () => {
   const recentActions = useRecentActionsSelector();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.Debug, ''), []);
 
   const handleThrowErrorButtonsPress = () => {
     throw new Error('Test error from Debug screen');

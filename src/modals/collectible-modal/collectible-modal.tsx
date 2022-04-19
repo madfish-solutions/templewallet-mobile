@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
@@ -17,12 +17,16 @@ import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const { navigate } = useNavigation();
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ModalsEnum.CollectibleModal, ''), []);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={collectible.name} /> }, [collectible]);
 

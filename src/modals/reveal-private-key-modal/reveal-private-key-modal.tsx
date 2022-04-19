@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
@@ -12,6 +12,7 @@ import { emptyFn } from '../../config/general';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import {
   RevealPrivateKeyModalFormValues,
   revealPrivateKeyModalValidationSchema
@@ -24,6 +25,9 @@ export const RevealPrivateKeyModal = () => {
   const accounts = useAccountsListSelector();
 
   const RevealPrivateKeyModalInitialValues: RevealPrivateKeyModalFormValues = { account };
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ModalsEnum.RevealPrivateKey, ''), []);
 
   return (
     <Formik

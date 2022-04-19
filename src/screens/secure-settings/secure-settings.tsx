@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { openSecuritySettings } from '../../biometry/biometry.utils';
@@ -10,10 +10,12 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { disableBiometryPassword, setIsBalanceHidden } from '../../store/settings/settings-actions';
 import { useBalanceHiddenSelector, useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 
 export const SecureSettings = () => {
@@ -25,6 +27,9 @@ export const SecureSettings = () => {
   const isBalanceHiddenSetting = useBalanceHiddenSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.SecureSettings, ''), []);
 
   const handleBiometrySwitch = (newValue: boolean) => {
     if (isDefined(biometryType)) {

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { Debit } from './debit';
 
 const TABS = [
@@ -23,6 +25,9 @@ export const Buy = () => {
   const [tab, setTab] = useState(TABS[1]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
+
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(ScreensEnum.Buy, ''), []);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
