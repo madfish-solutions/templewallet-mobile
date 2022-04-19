@@ -202,7 +202,7 @@ android {
 
 dependencies {
     implementation "com.google.firebase:firebase-appcheck-debug:16.0.0-beta05"
-    implementation "com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta05"
+    implementation "com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

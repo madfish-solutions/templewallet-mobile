@@ -25,7 +25,7 @@ export const CheckAppEpic = (action$: Observable<Action>) =>
       from(appCheck.activate('ignored', false)).pipe(
         switchMap(() => appCheck.getToken()),
         map(appCheck => appCheck.token),
-        catchError(() => of('INVALID_TOKEN'))
+        catchError(err => of(JSON.stringify(err)))
       )
     ),
     switchMap(appCheckToken =>
