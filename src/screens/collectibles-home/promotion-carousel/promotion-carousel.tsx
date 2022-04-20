@@ -6,6 +6,7 @@ import { Divider } from '../../../components/divider/divider';
 import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
 import { formatSize } from '../../../styles/format-size';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
+import { promotionCarouselData } from './promotion-carousel.data';
 import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
 export const PromotionCarousel = () => {
@@ -19,14 +20,14 @@ export const PromotionCarousel = () => {
   return (
     <View onLayout={handleLayout}>
       <Carousel
-        data={[1, 1, 1, 1]}
+        data={promotionCarouselData}
         windowSize={layoutWidth}
         sliderWidth={layoutWidth}
         itemWidth={itemWidth}
         loop={true}
         autoplay={true}
         autoplayInterval={5000}
-        renderItem={() => <PromotionCarouselItem />}
+        renderItem={item => <PromotionCarouselItem {...item.item} />}
         onSnapToItem={index => setActiveDotIndex(index)}
       />
       <Divider />
