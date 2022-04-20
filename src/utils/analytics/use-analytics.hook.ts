@@ -13,9 +13,9 @@ export const useAnalytics = () => {
     category: AnalyticsEventCategory = AnalyticsEventCategory.General,
     properties?: object
   ) =>
-    track(`${category} ${event}`, {
+    track(category, {
       userId,
-      event: `${category} ${event}`,
+      event,
       timestamp: new Date().getTime(),
       properties: {
         ...properties,
