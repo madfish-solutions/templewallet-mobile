@@ -7,9 +7,3 @@ export enum AnalyticsEventCategory {
   FormSubmitFail = 'FormSubmitFail',
   PageOpened = 'PageOpened'
 }
-
-export enum AnalyticsEventEnum {
-  AnalyticsEnabled = 'AnalyticsEnabled',
-  AnalyticsDisabled = 'AnalyticsDisabled',
-  LanguageChanged = 'LanguageChanged'
-}
