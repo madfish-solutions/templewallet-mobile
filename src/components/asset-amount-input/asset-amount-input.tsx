@@ -184,6 +184,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             title="Assets"
             value={value.asset}
             list={assetsList}
+            autoScroll
+            comparator={['address', 'id']}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}

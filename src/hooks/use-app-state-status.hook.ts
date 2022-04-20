@@ -25,8 +25,12 @@ export const useAppStateStatus = ({
   onAppSplashScreenHide = emptyFn
 }: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
+  const mountedRef = useRef(true);
 
   const handleAppStateChange = (newAppState: AppStateStatus) => {
+    if (!mountedRef.current) {
+      return null;
+    }
     if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Inactive) {
       onAppSplashScreenShow();
       onAppInactiveState();
@@ -51,11 +55,20 @@ export const useAppStateStatus = ({
     }
   };
 
-  useEffect(onAppActiveState, []);
+  useEffect(() => {
+    onAppActiveState();
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const listener = AppState.addEventListener('change', handleAppStateChange);
 
-    return () => listener.remove();
+    return () => {
+      mountedRef.current = false;
+      listener.remove();
+    };
   }, []);
 };

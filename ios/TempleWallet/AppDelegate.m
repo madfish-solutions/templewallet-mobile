@@ -28,6 +28,17 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+@interface AppAttestProviderFactory : NSObject<FIRAppCheckProviderFactory>
+@end
+
+@implementation AppAttestProviderFactory
+
+- (nullable id<FIRAppCheckProvider>)createProviderWithApp:(nonnull FIRApp *)app {
+  return [[FIRAppAttestProvider alloc] initWithApp:app];
+}
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application shouldAllowExtensionPointIdentifier:(NSString *)extensionPointIdentifier {
@@ -39,7 +50,15 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#if DEBUG
+  FIRAppCheckDebugProviderFactory *providerFactory = [[FIRAppCheckDebugProviderFactory alloc] init];
+#else
+  AppAttestProviderFactory *providerFactory = [[AppAttestProviderFactory alloc] init];
+#endif
+[FIRAppCheck setAppCheckProviderFactory:providerFactory];
+
 [FIRApp configure];
+
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
