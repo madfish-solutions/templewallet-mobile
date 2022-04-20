@@ -12,6 +12,8 @@ const renderAccountValue: DropdownValueComponent<WalletAccountInterface> = ({ va
 
 export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterface>> = ({
   value,
+  comparator,
+  autoScroll = false,
   list,
   onValueChange
 }) => {
@@ -19,6 +21,8 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
     <AccountDropdownBase
       value={value}
       list={list}
+      comparator={comparator}
+      autoScroll={autoScroll}
       renderValue={renderAccountValue}
       renderAccountListItem={renderAccountListItem}
       onValueChange={onValueChange}
