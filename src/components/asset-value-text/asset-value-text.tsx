@@ -28,14 +28,20 @@ export const AssetValueText: FC<Props> = ({
 }) => {
   const exchangeRates = useExchangeRatesSelector();
 
+  // console.log('exchangeRates', exchangeRates);
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
+  // console.log('exchangeRate', exchangeRate);
+
   const hideText = convertToDollar && !isDefined(exchangeRate);
 
   const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
+  // console.log('parsedAmount', parsedAmount);
   const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
 
+  // console.log('visibleAmount', visibleAmount);
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
+  // console.log('visibleSymbol', visibleSymbol);
   return (
     <Text style={style}>
       {hideText ? (

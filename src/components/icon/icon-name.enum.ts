@@ -37,6 +37,8 @@ export enum IconNameEnum {
   TezToken = 'TezToken',
   TzBtcToken = 'TzBtcToken',
   NoNameToken = 'NoNameToken',
+  InfoFilled = 'InfoFilled',
+  SwapTokenPlaceholderIcon = 'SwapTokenPlaceholder',
   Share = 'Share',
   Copy = 'Copy',
   Tag = 'Tag',

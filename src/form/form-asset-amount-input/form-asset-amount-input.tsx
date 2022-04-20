@@ -18,7 +18,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   label,
   assetsList,
   frozenBalance,
-  onValueChange = emptyFn
+  onValueChange = emptyFn,
+  isEditable
 }) => {
   const [field, meta, helpers] = useField<AssetAmountInterface>(name);
   const isError = hasError(meta);
@@ -41,6 +42,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         isError={isError}
         onBlur={() => helpers.setTouched(true)}
         onValueChange={handleValueChange}
+        isEditable={isEditable}
       />
       <ErrorMessage meta={meta} />
     </>

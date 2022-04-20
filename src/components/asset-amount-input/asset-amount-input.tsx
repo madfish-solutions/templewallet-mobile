@@ -48,7 +48,9 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   isError = false,
   onBlur,
   onFocus,
-  onValueChange
+  onValueChange,
+  isEditable = true
+  // showExchangeRate = true
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -63,6 +65,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   const exchangeRates = useExchangeRatesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
+
   const hasExchangeRate = isDefined(exchangeRate);
 
   const inputValueRef = useRef<BigNumber>();
@@ -140,6 +143,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
+  console.log('hasExchangeRate', hasExchangeRate);
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -168,6 +173,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
+          editable={isEditable}
         />
         <Divider size={formatSize(8)} />
 

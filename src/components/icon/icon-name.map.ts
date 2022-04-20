@@ -33,6 +33,7 @@ import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
 import HummerIcon from './assets/hummer.svg';
+import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
@@ -75,6 +76,7 @@ import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
+import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
 import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
@@ -123,11 +125,13 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
+  [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
   [IconNameEnum.Tag]: TagIcon,
