@@ -3,7 +3,6 @@ import { formatSize } from '../../styles/format-size';
 
 export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
   headerCard: {
-    height: formatSize(258),
     paddingHorizontal: 0
   },
   widthPaddingHorizontal: {
