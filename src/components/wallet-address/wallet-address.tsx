@@ -35,7 +35,6 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
   };
 
   useEffect(() => {
-    console.log('publicKeyHash', publicKeyHash);
     if (publicKeyHash !== EMPTY_PUBLIC_KEY_HASH) {
       dispatch(setIsDomainAddressShown(false));
       updateDomainReverseName(publicKeyHash);
