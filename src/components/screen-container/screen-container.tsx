@@ -9,14 +9,12 @@ import { setTestID } from '../../utils/test-id.utils';
 import { useScreenContainerStyles } from './screen-container.styles';
 
 interface Props extends TestIdProps {
-  keyboardBehavior?: 'height' | 'padding' | 'position';
   isFullScreenMode?: boolean;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export const ScreenContainer: FC<Props> = ({
-  keyboardBehavior = isAndroid ? 'height' : 'padding',
   isFullScreenMode = false,
   style,
   contentContainerStyle,
@@ -32,7 +30,7 @@ export const ScreenContainer: FC<Props> = ({
     <KeyboardAvoidingView
       style={[styles.scrollView, style]}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      behavior={keyboardBehavior}
+      behavior={isAndroid ? 'height' : 'padding'}
     >
       <ScrollView
         contentContainerStyle={[

@@ -3,6 +3,7 @@ import { Dimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import Orientation, { useOrientationChange } from 'react-native-orientation-locker';
 
+import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useIsAuthorisedSelector } from '../../store/wallet/wallet-selectors';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { CurrentRouteNameContext } from '../current-route-name.context';
@@ -16,12 +17,13 @@ const IPAD_MINI_WIDTH = 768;
 const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
 
 export const NavigationBar: FC = ({ children }) => {
+  const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 
   const [isShowTabletNavigation, setIsShowTabletNavigation] = useState(false);
 
-  const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName);
+  const isShowNavigationBar = isAuthorised && !isLocked && !screensWithoutTabBar.includes(currentRouteName);
 
   useEffect(() => void (!isTablet() && Orientation.lockToPortrait()), []);
 
