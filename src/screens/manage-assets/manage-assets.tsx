@@ -3,7 +3,9 @@ import { View } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { useManageAssetsStyles } from './manage-assets.styles';
 import { ManageCollectibles } from './manage-collectibles/manage-collectibles';
 import { ManageTokens } from './manage-tokens/manage-tokens';
@@ -15,6 +17,8 @@ export const ManageAssets = () => {
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageTokens = segmentedControlIndex === manageTokensIndex;
+
+  usePageAnalytic(ScreensEnum.ManageAssets);
 
   return (
     <>

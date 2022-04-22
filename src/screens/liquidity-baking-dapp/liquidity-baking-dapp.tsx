@@ -11,6 +11,7 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
 import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
@@ -20,6 +21,7 @@ import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
@@ -36,6 +38,8 @@ export const LiquidityBakingDapp = () => {
 
   const aTokenPool = lpContract.storage.xtzPool;
   const bTokenPool = lpContract.storage.tokenPool;
+
+  usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   const volumePrice = useMemo(() => {
     const tezosPoolInTz = mutezToTz(aTokenPool, aToken.decimals);

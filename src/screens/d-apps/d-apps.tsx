@@ -12,6 +12,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
@@ -26,6 +27,8 @@ export const DApps = () => {
   const DAppsList = useDAppsListSelector();
 
   const [searchQuery, setSearchQuery] = useState<string>();
+
+  usePageAnalytic(ScreensEnum.DApps);
 
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchQuery)) {

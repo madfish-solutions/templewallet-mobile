@@ -8,7 +8,9 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useShelter } from '../../shelter/use-shelter.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import {
   EnableBiometryPasswordModalFormValues,
   enableBiometryPasswordModalInitialValues,
@@ -19,6 +21,8 @@ export const EnableBiometryPasswordModal = () => {
   const { enableBiometryPassword } = useShelter();
 
   const handleSubmit = ({ password }: EnableBiometryPasswordModalFormValues) => enableBiometryPassword(password);
+
+  usePageAnalytic(ModalsEnum.EnableBiometryPassword);
 
   return (
     <Formik

@@ -33,6 +33,7 @@ import {
 } from '../../token/data/token-slugs';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -94,6 +95,8 @@ export const RemoveLiquidityModal = () => {
     }),
     [lpToken, aToken, bToken]
   );
+
+  usePageAnalytic(ModalsEnum.RemoveLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   useEffect(
     () =>

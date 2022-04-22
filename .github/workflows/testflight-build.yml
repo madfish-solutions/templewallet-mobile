@@ -72,6 +72,7 @@ jobs:
           READ_ONLY_SIGNER_PUBLIC_KEY=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           TEMPLE_WALLET_API=${{ secrets.TEMPLE_WALLET_API }}
+          SEGMENT_ANALYTICS_KEY=${{ secrets.SEGMENT_ANALYTICS_KEY }}
           EOF
 
       - name: Install Android Gemfile dependencies

@@ -405,7 +405,7 @@ PODS:
     - React-Core
   - RNBootSplash (3.2.6):
     - React-Core
-  - RNCAsyncStorage (1.15.14):
+  - RNCAsyncStorage (1.17.3):
     - React-Core
   - RNCClipboard (1.9.0):
     - React-Core
@@ -476,10 +476,15 @@ PODS:
     - React
   - RNSVG (12.3.0):
     - React-Core
+  - segment-analytics-react-native (2.1.11):
+    - React-Core
+    - sovran-react-native
   - Sentry (7.5.4):
     - Sentry/Core (= 7.5.4)
   - Sentry/Core (7.5.4)
   - SocketRocket (0.6.0)
+  - sovran-react-native (0.2.6):
+    - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -572,6 +577,8 @@ DEPENDENCIES:
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSha256 (from `../node_modules/react-native-sha256`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - "segment-analytics-react-native (from `../node_modules/@segment/analytics-react-native`)"
+  - "sovran-react-native (from `../node_modules/@segment/sovran-react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -728,6 +735,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sha256"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  segment-analytics-react-native:
+    :path: "../node_modules/@segment/analytics-react-native"
+  sovran-react-native:
+    :path: "../node_modules/@segment/sovran-react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -796,7 +807,7 @@ SPEC CHECKSUMS:
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   ReactNativeExceptionHandler: b11ff67c78802b2f62eed0e10e75cb1ef7947c60
   RNBootSplash: 51eef7e143faeab63f81ddbb7c1de38b8fba66ed
-  RNCAsyncStorage: ea6b5c280997b2b32a587793163b1f10e580c4f7
+  RNCAsyncStorage: 005c0e2f09575360f142d0d1f1f15e4ec575b1af
   RNCClipboard: 99fc8ad669a376b756fbc8098ae2fd05c0ed0668
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNDeviceInfo: a674f06c5a5bd496aebb809cbc3be61cfd612a65
@@ -816,8 +827,10 @@ SPEC CHECKSUMS:
   RNSentry: bf1f0970fffd3519a5cf553217f281bbb5b10de4
   RNSha256: bf2c90a9e0cec6dcbcc4100e4e19715ae7feaa34
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
+  segment-analytics-react-native: b251b9e7277a8cbf0a8379d9bca155f0aa1d5d4a
   Sentry: 5c5dd4005f3b7b9765d5a8871232cddbd0d888b7
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  sovran-react-native: ef02f663b489ac5e63ea7b80cd8426bf82992263
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
