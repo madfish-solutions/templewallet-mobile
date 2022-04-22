@@ -38,6 +38,8 @@ export const sendAssetActions = createActions<SendAssetActionPayloadInterface, s
 
 export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
+export const toggleDomainAddressShown = createAction<void>('wallet/TOGGLE_DOMAIN_ADDRESS_SHOWN');
+export const setIsDomainAddressShown = createAction<boolean>('wallet/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;

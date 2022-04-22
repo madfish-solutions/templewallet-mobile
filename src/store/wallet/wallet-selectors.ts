@@ -138,3 +138,6 @@ export const useTezosTokenSelector = (): TokenInterface => {
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);
+
+export const useIsShownDomainName = () =>
+  useSelector<WalletRootState, WalletState['isShownDomainName']>(({ wallet }) => wallet.isShownDomainName);
