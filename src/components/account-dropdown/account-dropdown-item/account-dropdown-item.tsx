@@ -24,6 +24,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
 }) => {
   const styles = useAccountDropdownItemStyles();
   const { publicKeyHash, name } = account;
+  console.log('account', actionIconName, publicKeyHash);
 
   return (
     <View style={styles.root}>
