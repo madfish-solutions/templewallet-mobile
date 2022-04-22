@@ -10,6 +10,7 @@ export interface WalletState {
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
+  isShownDomainName: boolean;
 }
 
 export const walletInitialState: WalletState = {
@@ -22,7 +23,8 @@ export const walletInitialState: WalletState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadata)
+  addTokenSuggestion: createEntity(emptyTokenMetadata),
+  isShownDomainName: false
 };
 
 export interface WalletRootState {
