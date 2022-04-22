@@ -9,7 +9,8 @@ export const usePromotionCarouselItemStyles = createUseStyles(() => ({
     borderRadius: formatSize(10)
   },
   bannerImage: {
-    aspectRatio: 343 / 112,
-    maxWidth: '100%'
+    maxHeight: formatSize(112),
+    maxWidth: formatSize(343),
+    aspectRatio: 343 / 112
   }
 }));

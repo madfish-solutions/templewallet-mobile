@@ -1,3 +1,4 @@
+import { nanoid } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
@@ -11,6 +12,7 @@ export interface SettingsState {
   rpcList: RpcInterface[];
   selectedRpcUrl: string;
   isFirstAppLaunch: boolean;
+  userId: string;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -19,7 +21,8 @@ export const settingsInitialState: SettingsState = {
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
-  isFirstAppLaunch: true
+  isFirstAppLaunch: true,
+  userId: nanoid()
 };
 
 export interface SettingsRootState {

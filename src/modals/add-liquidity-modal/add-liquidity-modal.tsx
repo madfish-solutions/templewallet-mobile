@@ -22,6 +22,7 @@ import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../../token/data/token-slugs';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -84,6 +85,8 @@ export const AddLiquidityModal = () => {
     }),
     [aToken, bToken]
   );
+
+  usePageAnalytic(ModalsEnum.AddLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   return (
     <>

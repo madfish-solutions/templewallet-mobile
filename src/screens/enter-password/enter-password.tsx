@@ -21,10 +21,12 @@ import { useAppStateStatus } from '../../hooks/use-app-state-status.hook';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
@@ -49,6 +51,8 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
+  usePageAnalytic(OverlayEnum.EnterPassword);
+
   useAppStateStatus({
     onAppSplashScreenShow: () => show(),
     onAppSplashScreenHide: () => hide()
@@ -59,7 +63,7 @@ export const EnterPassword = () => {
   ]);
 
   return (
-    <ScreenContainer style={styles.root} isFullScreenMode={true}>
+    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />

@@ -10,6 +10,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isSyncPayload } from '../../utils/sync.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
@@ -19,6 +20,8 @@ export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { goBack, navigate } = useNavigation();
   const tezosToken = useTezosTokenSelector();
+
+  usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();

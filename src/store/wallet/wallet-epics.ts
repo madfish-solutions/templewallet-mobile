@@ -7,7 +7,7 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { betterCallDevApi, tzktApi } from '../../api.service';
+import { tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
@@ -18,7 +18,7 @@ import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
@@ -170,10 +170,9 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
           )
         ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
         from(
-          betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
-            { params: { max: 100, start: 0 } }
-          )
+          tzktApi.get<GetAccountTokenTransfersResponseInterface>('/tokens/transfers', {
+            params: { max: 100, start: 0, 'anyof.from.to': selectedAccount.publicKeyHash }
+          })
         ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),

@@ -17,12 +17,15 @@ import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const { navigate } = useNavigation();
+
+  usePageAnalytic(ModalsEnum.CollectibleModal);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={collectible.name} /> }, [collectible]);
 

@@ -14,7 +14,9 @@ import {
   loadTokenMetadataActions,
   loadTokenSuggestionActions,
   removeTokenAction,
+  setIsDomainAddressShown,
   setSelectedAccountAction,
+  toggleDomainAddressShown,
   toggleTokenVisibilityAction,
   updateWalletAccountAction
 } from './wallet-actions';
@@ -31,6 +33,14 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
+  }));
+  builder.addCase(toggleDomainAddressShown, state => ({
+    ...state,
+    isShownDomainName: !state.isShownDomainName
+  }));
+  builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
+    ...state,
+    isShownDomainName
   }));
   builder.addCase(updateWalletAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,

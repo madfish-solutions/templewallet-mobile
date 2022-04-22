@@ -3,21 +3,20 @@ import { BigNumber } from 'bignumber.js';
 import { forkJoin, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { betterCallDevApi } from '../api.service';
+import { tzktApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 const size = 10;
 
 const getTokenBalances = (accountPublicKeyHash: string, offset: number) =>
-  betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-    `/account/${CURRENT_NETWORK_ID}/${accountPublicKeyHash}/token_balances`,
-    { params: { size, offset } }
-  );
+  tzktApi.get<GetAccountTokenBalancesResponseInterface>('/tokens/balances', {
+    params: { limit: size, offset, account: accountPublicKeyHash }
+  });
 
 export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
   from(getTokenBalances(accountPublicKeyHash, 0)).pipe(

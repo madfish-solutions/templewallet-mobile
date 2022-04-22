@@ -24,6 +24,7 @@ import { changeTheme } from '../../store/settings/settings-actions';
 import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
 
@@ -37,6 +38,8 @@ export const Settings = () => {
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
+
+  usePageAnalytic(ScreensEnum.Settings);
 
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));

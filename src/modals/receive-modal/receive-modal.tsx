@@ -15,6 +15,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
@@ -27,6 +28,8 @@ export const ReceiveModal: FC = () => {
   const { name, symbol } = token;
 
   const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
+
+  usePageAnalytic(ModalsEnum.Receive);
 
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>

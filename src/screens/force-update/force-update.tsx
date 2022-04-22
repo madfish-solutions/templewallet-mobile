@@ -8,8 +8,10 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { isIOS } from '../../config/system';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { useForceUpdateStyles } from './force-update.styles';
 
@@ -21,6 +23,7 @@ const handleUpdate = () => openUrl(isIOS ? APP_STORE_LINK : PLAY_MARKET_LINK);
 export const ForceUpdate = () => {
   const styles = useForceUpdateStyles();
   const colors = useColors();
+  usePageAnalytic(OverlayEnum.ForceUpdate);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
