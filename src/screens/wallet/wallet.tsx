@@ -23,7 +23,7 @@ import {
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
@@ -36,8 +36,7 @@ export const Wallet = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.Wallet, ''), []);
+  usePageAnalytic(ScreensEnum.Wallet);
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit());

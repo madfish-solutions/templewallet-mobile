@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -15,7 +15,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
@@ -29,8 +29,7 @@ export const ReceiveModal: FC = () => {
 
   const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.Receive, ''), []);
+  usePageAnalytic(ModalsEnum.Receive);
 
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>

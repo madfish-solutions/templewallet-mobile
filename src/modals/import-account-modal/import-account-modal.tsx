@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { HeaderProgress } from '../../components/header/header-progress/header-progress';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ImportAccountTypeEnum } from '../../enums/account-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { ImportAccountPrivateKey } from './import-account-private-key/import-account-private-key';
 import { ImportAccountSeed } from './import-account-seed/import-account-seed';
 import { ImportAccountType } from './import-account-type/import-account-type';
@@ -13,6 +13,8 @@ import { ImportAccountType } from './import-account-type/import-account-type';
 export const ImportAccountModal = () => {
   const [importAccountStep, setImportAccountStep] = useState(1);
   const [importType, setImportType] = useState(ImportAccountTypeEnum.SEED_PHRASE);
+
+  usePageAnalytic(ModalsEnum.ImportAccount);
 
   useNavigationSetOptions(
     {
@@ -27,9 +29,6 @@ export const ImportAccountModal = () => {
   };
 
   const onBackHandler = () => setImportAccountStep(importAccountStep - 1);
-
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.ImportAccount, ''), []);
 
   return (
     <>

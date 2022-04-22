@@ -1,5 +1,9 @@
 import { useAnalytics as useSegmentAnalytics } from '@segment/analytics-react-native';
+import { useEffect } from 'react';
 
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useUserIdSelector } from '../../store/settings/settings-selectors';
 import { AnalyticsEventCategory } from './analytics-event.enum';
 
@@ -43,4 +47,9 @@ export const useAnalytics = () => {
     trackEvent,
     pageEvent
   };
+};
+
+export const usePageAnalytic = (screen: ModalsEnum | ScreensEnum | OverlayEnum, params = '') => {
+  const { pageEvent } = useAnalytics();
+  useEffect(() => void pageEvent(screen, params), []);
 };

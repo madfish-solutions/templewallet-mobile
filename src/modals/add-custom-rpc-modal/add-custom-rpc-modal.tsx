@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -19,7 +19,7 @@ import { addCustomRpc, setSelectedRpcUrl } from '../../store/settings/settings-a
 import { useRpcListSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { addCustomRpcFormInitialValues, addCustomRpcFormValidationSchema } from './add-custom-rpc.form';
 
@@ -40,8 +40,7 @@ export const AddCustomRpcModal: FC = () => {
     }
   };
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.AddCustomRpc, ''), []);
+  usePageAnalytic(ModalsEnum.AddCustomRpc);
 
   return (
     <Formik

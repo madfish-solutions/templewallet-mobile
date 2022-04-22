@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
@@ -22,7 +22,7 @@ import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../../token/data/token-slugs';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { findExchangeRate, findLpTokenAmount, findTokenInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -86,11 +86,7 @@ export const AddLiquidityModal = () => {
     [aToken, bToken]
   );
 
-  const { pageEvent } = useAnalytics();
-  useEffect(
-    () => void pageEvent(ModalsEnum.AddLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`),
-    []
-  );
+  usePageAnalytic(ModalsEnum.AddLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -17,7 +17,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { updateWalletAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 
 export const RenameAccountModal = () => {
@@ -34,8 +34,7 @@ export const RenameAccountModal = () => {
     goBack();
   };
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.Receive, ''), []);
+  usePageAnalytic(ModalsEnum.Receive);
 
   return (
     <Formik

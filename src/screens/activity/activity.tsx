@@ -6,14 +6,13 @@ import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadActivityGroupsActions } from '../../store/wallet/wallet-actions';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
   const dispatch = useDispatch();
   const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.Activity, ''), []);
+  usePageAnalytic(ScreensEnum.Activity);
   useEffect(() => void dispatch(loadActivityGroupsActions.submit()), []);
 
   return (

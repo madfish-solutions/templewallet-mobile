@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -31,7 +31,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
@@ -65,8 +65,7 @@ export const SendModal: FC = () => {
   );
   const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.Send, ''), []);
+  usePageAnalytic(ModalsEnum.Send);
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({

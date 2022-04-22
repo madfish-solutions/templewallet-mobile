@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
@@ -11,7 +11,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { setSelectedRpcUrl } from '../../store/settings/settings-actions';
 import { useRpcListSelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const NodeSettings = () => {
   const dispatch = useDispatch();
@@ -22,8 +22,7 @@ export const NodeSettings = () => {
 
   const radioButtons = useMemo(() => rpcList.map(rpc => ({ label: rpc.name, value: rpc.url })), [rpcList]);
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.NodeSettings, ''), []);
+  usePageAnalytic(ScreensEnum.NodeSettings);
   const handleChange = (newRpcUrl: string) => dispatch(setSelectedRpcUrl(newRpcUrl));
 
   return (

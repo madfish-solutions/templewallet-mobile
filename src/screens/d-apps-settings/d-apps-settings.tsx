@@ -7,15 +7,14 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadPermissionsActions } from '../../store/d-apps/d-apps-actions';
 import { usePermissionsSelector } from '../../store/d-apps/d-apps-selectors';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { PermissionItem } from './permission-item/permission-item';
 
 export const DAppsSettings = () => {
   const dispatch = useDispatch();
   const permissions = usePermissionsSelector();
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.DAppsSettings, ''), []);
+  usePageAnalytic(ScreensEnum.DAppsSettings);
   useEffect(() => void dispatch(loadPermissionsActions.submit()), []);
 
   return (

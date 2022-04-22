@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -10,7 +10,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { FormPasswordInput } from '../../form/form-password-input';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import {
   EnableBiometryPasswordModalFormValues,
   enableBiometryPasswordModalInitialValues,
@@ -22,8 +22,7 @@ export const EnableBiometryPasswordModal = () => {
 
   const handleSubmit = ({ password }: EnableBiometryPasswordModalFormValues) => enableBiometryPassword(password);
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ModalsEnum.EnableBiometryPassword, ''), []);
+  usePageAnalytic(ModalsEnum.EnableBiometryPassword);
 
   return (
     <Formik

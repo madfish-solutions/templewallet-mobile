@@ -11,4 +11,4 @@ export const IOS_APP_ID = getEnv('IOS_APP_ID');
 export const ANDROID_APP_ID = getEnv('ANDROID_APP_ID');
 
 export const TEMPLE_WALLET_API = getEnv('TEMPLE_WALLET_API');
-export const SEGMENT_ANALYTICS = getEnv('SEGMENT_ANALYTICS');
+export const SEGMENT_ANALYTICS_KEY = getEnv('SEGMENT_ANALYTICS_KEY');

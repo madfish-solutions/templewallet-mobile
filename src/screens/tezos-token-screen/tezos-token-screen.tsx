@@ -11,7 +11,7 @@ import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 import { TezosTokenInfo } from './tezos-token-info/tezos-token-info';
 
@@ -20,8 +20,7 @@ export const TezosTokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tezosToken = useTezosTokenSelector();
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.TezosTokenScreen, ''), []);
+  usePageAnalytic(ScreensEnum.TezosTokenScreen);
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit());

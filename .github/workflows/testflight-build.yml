@@ -75,6 +75,7 @@ jobs:
           ANDROID_APP_ID=${{ secrets.ANDROID_APP_ID }}
           FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
           TEMPLE_WALLET_API=${{ secrets.TEMPLE_WALLET_API }}
+          SEGMENT_ANALYTICS_KEY=${{ secrets.SEGMENT_ANALYTICS_KEY }}
           EOF
 
       - name: Install Android Gemfile dependencies

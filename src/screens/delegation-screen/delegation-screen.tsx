@@ -6,7 +6,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { loadBakersListActions } from '../../store/baking/baking-actions';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { AboutDelegationScreen } from './about-delegation-screen/about-delegation-screen';
 import { SelectedBakerScreen } from './selected-baker-screen/selected-baker-screen';
 
@@ -17,8 +17,7 @@ export const DelegationScreen = () => {
 
   const handleDelegatePress = () => navigate(ModalsEnum.SelectBaker);
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.Delegation, ''), []);
+  usePageAnalytic(ScreensEnum.Delegation);
 
   useEffect(() => void dispatch(loadBakersListActions.submit()), []);
 

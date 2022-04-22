@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import { ButtonLargeWhite } from '../../components/button/button-large/button-large-white/button-large-white';
@@ -21,7 +21,7 @@ import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
@@ -39,12 +39,7 @@ export const LiquidityBakingDapp = () => {
   const aTokenPool = lpContract.storage.xtzPool;
   const bTokenPool = lpContract.storage.tokenPool;
 
-  const { pageEvent } = useAnalytics();
-  useEffect(
-    () =>
-      void pageEvent(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`),
-    []
-  );
+  usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   const volumePrice = useMemo(() => {
     const tezosPoolInTz = mutezToTz(aTokenPool, aToken.decimals);

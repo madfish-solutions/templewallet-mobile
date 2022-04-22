@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 import { ImportWallet, ImportWalletCredentials } from './import-wallet/import-wallet';
 
@@ -11,8 +11,7 @@ export const ImportAccount = () => {
   const [seedPhrase, setSeedPhrase] = useState('');
   const [initialPassword, setInitialPassword] = useState<string>();
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.ImportAccount, ''), []);
+  usePageAnalytic(ScreensEnum.ImportAccount);
 
   const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase, password }: ImportWalletCredentials) => {
     setSeedPhrase(newSeedPhrase);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -8,9 +8,10 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { isIOS } from '../../config/system';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { useForceUpdateStyles } from './force-update.styles';
 
@@ -22,8 +23,7 @@ const handleUpdate = () => openUrl(isIOS ? APP_STORE_LINK : PLAY_MARKET_LINK);
 export const ForceUpdate = () => {
   const styles = useForceUpdateStyles();
   const colors = useColors();
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent('ForceUpdate', ''), []);
+  usePageAnalytic(OverlayEnum.ForceUpdate);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>

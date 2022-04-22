@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 import { hide, show } from 'react-native-bootsplash';
 
@@ -21,11 +21,12 @@ import { useAppStateStatus } from '../../hooks/use-app-state-status.hook';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
@@ -50,8 +51,7 @@ export const EnterPassword = () => {
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent('EnterPassword', ''), []);
+  usePageAnalytic(OverlayEnum.EnterPassword);
 
   useAppStateStatus({
     onAppSplashScreenShow: () => show(),

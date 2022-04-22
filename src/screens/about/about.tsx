@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
@@ -22,14 +22,13 @@ import {
 } from '../../config/socials';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { formatSize } from '../../styles/format-size';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { useAboutStyles } from './about.styles';
 
 export const About = () => {
   const styles = useAboutStyles();
-  const { pageEvent } = useAnalytics();
-  useEffect(() => void pageEvent(ScreensEnum.CollectiblesHome, ''), []);
+  usePageAnalytic(ScreensEnum.About);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
