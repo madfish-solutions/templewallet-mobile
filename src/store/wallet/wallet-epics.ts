@@ -10,16 +10,21 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
+import { TransferInterface } from '../../interfaces/transfer.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
-import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import {
+  loadAssetsBalances$,
+  loadTezosBalance$,
+  loadTokensWithBalance$,
+  mapAccountTokenBalancesToTokenBalanceInterfaces
+} from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
@@ -52,7 +57,8 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
-        switchMap(tokensWithBalance => {
+        switchMap(tokensWithoutBalance => {
+          const tokensWithBalance = tokensWithoutBalance.map(x => mapAccountTokenBalancesToTokenBalanceInterfaces(x));
           const assetSlugs = uniq([
             ...selectedAccount.tokensList.map(token => token.slug),
             ...tokensWithBalance.map(tokenWithBalance =>
@@ -165,17 +171,18 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
     switchMap(([, selectedAccount]) =>
       forkJoin([
         from(
+          tzktApi.get<Array<TransferInterface>>('/tokens/transfers', {
+            params: { max: 100, start: 0, 'anyof.from.to': selectedAccount.publicKeyHash }
+          })
+        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data))),
+        from(
           tzktApi.get<OperationInterface[]>(
             `accounts/${selectedAccount.publicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
           )
-        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
-        from(
-          tzktApi.get<GetAccountTokenTransfersResponseInterface>('/tokens/transfers', {
-            params: { max: 100, start: 0, 'anyof.from.to': selectedAccount.publicKeyHash }
-          })
-        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
+        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data)))
       ]).pipe(
-        map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
+        map(([transfers, operations]) => groupActivitiesByHash(transfers, operations)),
+        // map(([operations]) => groupActivitiesByHash([], operations)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
         catchError(err => of(loadActivityGroupsActions.fail(err.message)))
       )
