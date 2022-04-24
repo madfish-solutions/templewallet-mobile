@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
-import React, { FC, useMemo, useRef } from 'react';
+import React, { FC, useMemo } from 'react';
 import { ScrollView } from 'react-native';
-import { useAllRoutePairs } from 'swap-router-sdk';
+import { useDispatch } from 'react-redux';
 
 import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
@@ -18,11 +18,14 @@ export const SwapScreen: FC = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
   const assetsList = useVisibleAssetListSelector();
-  console.log('is here update');
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
+  const dispatch = useDispatch();
 
-  const onSubmit = () => {
-    console.log('submit');
+  // TODO: ADD TYPES FOR SWAP ASSETS
+  // TODO ADD validation schema
+
+  const onHandleSubmit = values => {
+    console.log(values);
   };
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
@@ -43,12 +46,12 @@ export const SwapScreen: FC = () => {
 
   return (
     <ScrollView>
-      {/* <SwapPriceUpdateBar /> */}
+      <SwapPriceUpdateBar />
       <Formik
         initialValues={sendModalInitialValues}
         enableReinitialize={true}
         // validationSchema={sendModalValidationSchema}
-        onSubmit={onSubmit}
+        onSubmit={onHandleSubmit}
       >
         {() => <SwapForm />}
       </Formik>

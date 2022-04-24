@@ -25,7 +25,8 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     justifyContent: 'space-between'
   },
   swapInfoContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   smartRouteLastTokenStyle: {
     marginLeft: formatSize(-12)

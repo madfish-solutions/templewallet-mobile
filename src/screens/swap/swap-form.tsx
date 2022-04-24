@@ -12,18 +12,18 @@ import {
 } from 'swap-router-sdk';
 
 // TODO: HOW TO TAKE SLUG FROM TOKEN
+
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { Label } from '../../components/label/label';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
+import { useSlippageTolerance } from '../../hooks/slippage-tolerance/use-async-storage.hook';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
-import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { SwapExchangeRate } from './swap-exchange-rate';
 import { SwapRoute } from './swap-router';
@@ -42,17 +42,29 @@ export function tokensToAtoms(x: BigNumber, decimals: number) {
 }
 const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
 
+interface AssetAmountInterface {
+  asset: TokenInterface;
+  amount?: BigNumber;
+}
+
+
+ 
+
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const assetsList = useVisibleAssetListSelector();
   const styles = useSwapStyles();
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue, submitForm } = useFormikContext();
   const tezosToken = useTezosTokenSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const [bestTrade, setBestTrade] = useState([]);
-  const slippageTolerance = 1.5;
+  const { slippageTolerance } = useSlippageTolerance();
 
-  const { inputAssets, outputAssets } = values;
+  const inputAssets: AssetAmountInterface = values.inputAssets;
+  const outputAssets: AssetAmountInterface = values.outputAssets;
+
+  const inputAssetSlug = getTokenSlug(inputAssets.asset);
+  const outputAssetSlug = getTokenSlug(outputAssets.asset);
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -64,24 +76,12 @@ export const SwapForm: FC = () => {
     [allRoutePairs.data]
   );
 
-  const routePairsCombinations = useRoutePairsCombinations(
-    getTokenSlug(inputAssets.asset),
-    getTokenSlug(outputAssets.asset),
-    filteredRoutePairs
-  );
-
-  const inputMutezAmount = useMemo(
-    () => (inputAssets.amount ? tokensToAtoms(inputAssets.amount, inputAssets.asset.decimals) : undefined),
-    [inputAssets.amount, inputAssets.asset.decimals]
-  );
+  const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
 
   const inputMutezAmountWithFee = useMemo(
-    () => (inputMutezAmount ? inputMutezAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) : undefined),
-    [inputMutezAmount]
+    () => (inputAssets.amount ? inputAssets.amount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) : undefined),
+    [inputAssets.amount]
   );
-
-  // console.log('inputMutezAmount', inputMutezAmount);
-  // console.log('inputMutezAmountWithFee', inputMutezAmountWithFee);
 
   const bestTradeWithSlippageTolerance = useTradeWithSlippageTolerance(
     inputMutezAmountWithFee,
@@ -92,48 +92,32 @@ export const SwapForm: FC = () => {
   useEffect(() => {
     if (inputMutezAmountWithFee && routePairsCombinations.length > 0) {
       const bestTradeExactIn = getBestTradeExactInput(inputMutezAmountWithFee, routePairsCombinations);
-
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
-      const outputTzAmount = bestTradeOutput ? atomsToTokens(bestTradeOutput, outputAssets.asset.decimals) : undefined;
-      console.log('bestTradeExactIn', bestTradeExactIn);
-      console.log('bestTradeOutput', bestTradeOutput);
-      console.log('outputTzAmount', outputTzAmount);
-      setBestTrade(bestTradeExactIn);
-      setFieldValue('outputAssets', { asset: outputAssets.asset, amount: outputTzAmount });
+      if (outputAssets.asset !== emptyToken) {
+        setBestTrade(bestTradeExactIn);
+        setFieldValue('outputAssets', { asset: outputAssets.asset, amount: bestTradeOutput });
+      }
     } else {
       setBestTrade([]);
-      setFieldValue('outputAssets', { asset: outputAssets.asset, amount: undefined });
+      setFieldValue('outputAssets', { asset: inputAssets.asset, amount: undefined });
     }
-
-    // if (isSubmitButtonPressedRef.current) {
-    //   triggerValidation();
-    // }
   }, [
     inputMutezAmountWithFee,
-    outputAssets.asset,
+    outputAssetSlug,
     slippageTolerance,
     routePairsCombinations,
-    outputAssets.decimals,
+    outputAssets.asset.decimals,
     setFieldValue
-    // triggerValidation
   ]);
 
-  const routingFeeAlert = () =>
-    Alert.alert(
-      'Routing Fee',
-      'For choosing the most profitable exchange route among Tezos DEXes. DEXes commissions are not included.',
-      [
-        {
-          text: 'Ok',
-          style: 'default'
-        }
-      ]
-    );
-
+  // setValue([
+  //   { input: { assetSlug: outputValue.assetSlug, amount: inputValue.amount } },
+  //   { output: { assetSlug: inputValue.assetSlug } }
+  // ]);
   const swapAction = () => {
-    setFieldValue('inputAssets', outputAssets);
-    setFieldValue('outputAssets', inputAssets);
+    setFieldValue('inputAssets', { asset: outputAssets.asset, amount: inputAssets.amount });
+    setFieldValue('outputAssets', { asset: outputAssets.asset, amount: inputAssets.amount });
   };
 
   return (
@@ -161,29 +145,17 @@ export const SwapForm: FC = () => {
 
         <Divider />
         <View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              Routing Fee
-              <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
-            </Text>
-            <Text>{ROUTING_FEE_PERCENT}%</Text>
-          </View>
-
           <SwapExchangeRate
             trade={bestTrade}
             inputAssetMetadata={inputAssets.asset}
             outputAssetMetadata={outputAssets.asset}
+            tradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
           />
         </View>
       </View>
       <Divider size={formatSize(16)} />
 
-      <ButtonLargePrimary
-        title="Swap"
-        onPress={() => {
-          console.log('submitted');
-        }}
-      />
+      <ButtonLargePrimary title="Swap" onPress={submitForm} />
     </View>
   );
 };

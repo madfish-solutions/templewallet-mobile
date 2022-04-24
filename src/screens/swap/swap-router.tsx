@@ -19,37 +19,20 @@ interface Props {
 export const SwapRoute: FC<Props> = ({ trade, inputValue, outputValue, loadingHasFailed }) => {
   const styles = useSwapStyles();
 
-  // if (loadingHasFailed) {
-  //   return <SwapRouteInfo text={t('swapRouteLoadingHasFailed')} className="text-red-700" />;
-  // }
-
-  // if (!inputValue.assetSlug || !outputValue.assetSlug) {
-  //   return <SwapRouteInfo text={t('selectTokensToSwap')} />;
-  // }
-
-  // if (!inputValue.amount && !outputValue.amount) {
-  //   return <SwapRouteInfo text={t('enterSwapAmount')} />;
-  // }
-
-  // if (trade.length === 0) {
-  //   return <SwapRouteInfo text={t('noQuotesAvailable')} />;
-  // }
-
-
   return (
-    <View style={styles.swapInfoContainer}>
-      {trade.map((item, index) => {
-        // console.log('item', item);
-        // console.log('getTokenMetadata', getTokenMetadata(item.bTokenSlug));
+    <>
+      <View style={styles.swapInfoContainer}>
+        {trade.map((item, index) => {
+          return (
+            <SwapRouterItem
+              key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
+              tradeOperation={item}
+              isShowNextArrow={index !== trade.length - 1}
+            />
+          );
+        })}
+      </View>
 
-        return (
-          <SwapRouterItem
-            key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
-            tradeOperation={item}
-            isShowNextArrow={index !== trade.length - 1}
-          />
-        );
-      })}
       {!trade.length && (
         <View style={styles.swapInfoContainer}>
           <View style={styles.smartRouteStyle}>
@@ -63,6 +46,6 @@ export const SwapRoute: FC<Props> = ({ trade, inputValue, outputValue, loadingHa
           <Text style={styles.smartRouteTextDescription}>Please, select tokens to swap</Text>
         </View>
       )}
-    </View>
+    </>
   );
 };

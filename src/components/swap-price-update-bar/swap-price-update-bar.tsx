@@ -16,6 +16,7 @@ export const SwapPriceUpdateBar: FC<Props> = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
+
   const blockEndTimestamp = useMemo(
     () => new Date(allRoutePairs.block.header.timestamp).getTime() + BLOCK_DURATION,
     [allRoutePairs.block.header.timestamp]

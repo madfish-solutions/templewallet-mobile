@@ -143,8 +143,6 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
-  console.log('hasExchangeRate', hasExchangeRate);
-
   return (
     <>
       <View style={styles.headerContainer}>

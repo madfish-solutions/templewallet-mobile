@@ -20,15 +20,9 @@ interface Props {
 export const SwapRouterItem: FC<Props> = ({ tradeOperation, isShowNextArrow }) => {
   const styles = useSwapStyles();
   const getTokenMetadata = useTokenMetadataGetter();
-  // console.log('tradeOperation', tradeOperation);
+
   const aTokenMetadata = getTokenMetadata(tradeOperation.aTokenSlug);
   const bTokenMetadata = getTokenMetadata(tradeOperation.bTokenSlug);
-
-  // console.log('!!!!!!!!>>>>>>>>>>>>>>!!!!!!!!!', test);
-  // console.log('tradeOperation.dexType', tradeOperation.dexType);
-  // console.log(aTokenMetadata);
-  // console.log(bTokenMetadata);
-  console.log(tradeOperation)
 
   return (
     <View style={styles.smartRouteStyle}>
