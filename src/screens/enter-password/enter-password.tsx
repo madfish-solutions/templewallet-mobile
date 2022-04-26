@@ -63,7 +63,7 @@ export const EnterPassword = () => {
   ]);
 
   return (
-    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
+    <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
