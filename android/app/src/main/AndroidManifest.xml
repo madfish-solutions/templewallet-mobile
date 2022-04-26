@@ -3,6 +3,8 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- used for debug and for api/rpc calls of blockchain -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- used for analytics -->
 
     <application
             android:name=".MainApplication"

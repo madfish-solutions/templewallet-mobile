@@ -17,6 +17,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { updateWalletAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 
 export const RenameAccountModal = () => {
@@ -32,6 +33,8 @@ export const RenameAccountModal = () => {
     dispatch(updateWalletAccountAction({ ...account, name }));
     goBack();
   };
+
+  usePageAnalytic(ModalsEnum.Receive);
 
   return (
     <Formik

@@ -2,6 +2,8 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
 import { setTestID } from '../../utils/test-id.utils';
@@ -30,7 +32,8 @@ export const Button: FC<Props> = ({
 
   onPress,
 
-  testID
+  testID,
+  testIDProperties
 }) => {
   const {
     containerStyle,
@@ -46,6 +49,14 @@ export const Button: FC<Props> = ({
     borderColor = backgroundColor
   } = disabled ? disabledColorConfig : activeColorConfig;
 
+  const { trackEvent } = useAnalytics();
+
+  const handlePress = () => {
+    testID !== undefined && trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+
+    return onPress !== undefined && onPress();
+  };
+
   return (
     <View style={conditionalStyle(isFullWidth, ButtonStyles.container)}>
       <TouchableOpacity
@@ -56,7 +67,7 @@ export const Button: FC<Props> = ({
           { backgroundColor, borderColor },
           { marginTop, marginRight, marginBottom, marginLeft }
         ]}
-        onPress={onPress}
+        onPress={handlePress}
         {...setTestID(testID)}
       >
         {isDefined(iconName) && (

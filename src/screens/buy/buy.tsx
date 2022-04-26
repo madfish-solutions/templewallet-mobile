@@ -5,6 +5,8 @@ import { DataPlaceholder } from '../../components/data-placeholder/data-placehol
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { Debit } from './debit';
 
 const TABS = [
@@ -23,6 +25,8 @@ export const Buy = () => {
   const [tab, setTab] = useState(TABS[1]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
+
+  usePageAnalytic(ScreensEnum.Buy);
 
   return (
     <ScreenContainer isFullScreenMode={true}>

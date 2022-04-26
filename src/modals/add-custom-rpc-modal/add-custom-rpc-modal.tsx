@@ -13,11 +13,13 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { RpcInterface } from '../../interfaces/rpc.interface';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addCustomRpc, setSelectedRpcUrl } from '../../store/settings/settings-actions';
 import { useRpcListSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { addCustomRpcFormInitialValues, addCustomRpcFormValidationSchema } from './add-custom-rpc.form';
 
@@ -37,6 +39,8 @@ export const AddCustomRpcModal: FC = () => {
       goBack();
     }
   };
+
+  usePageAnalytic(ModalsEnum.AddCustomRpc);
 
   return (
     <Formik

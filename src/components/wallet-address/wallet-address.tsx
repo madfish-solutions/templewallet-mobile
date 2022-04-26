@@ -1,10 +1,12 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { toggleDomainAddressShown, setIsDomainAddressShown } from '../../store/wallet/wallet-actions';
+import { useIsShownDomainName, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { tezosDomainsResolver } from '../../utils/dns.utils';
@@ -21,29 +23,24 @@ interface Props {
 export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
   const styles = useWalletAddressStyles();
   const [domainName, setDomainName] = useState('');
-  const [isShownDomainName, setIsShownDomainName] = useState(false);
+  const dispatch = useDispatch();
+  const isShownDomainName = useIsShownDomainName();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
-  const mountedRef = useRef(true);
 
   const updateDomainReverseName = async (pkh: string) => {
     const resolvedName = (await resolver.resolveAddressToName(pkh)) ?? '';
-    if (!mountedRef.current) {
-      return null;
-    }
     setDomainName(resolvedName);
   };
 
   useEffect(() => {
     if (publicKeyHash !== EMPTY_PUBLIC_KEY_HASH) {
-      setIsShownDomainName(false);
+      dispatch(setIsDomainAddressShown(false));
       updateDomainReverseName(publicKeyHash);
     }
 
-    return () => {
-      mountedRef.current = false;
-    };
+    return undefined;
   }, [publicKeyHash]);
 
   if (publicKeyHash === EMPTY_PUBLIC_KEY_HASH) {
@@ -52,7 +49,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
 
   return (
     <View style={styles.pkhWrapper}>
-      {isShownDomainName ? (
+      {isShownDomainName && isString(domainName) ? (
         <TouchableOpacity
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
@@ -69,7 +66,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
           size={formatSize(16)}
           style={styles.iconContainer}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-          onPress={() => setIsShownDomainName(!isShownDomainName)}
+          onPress={() => dispatch(toggleDomainAddressShown())}
         />
       ) : null}
     </View>

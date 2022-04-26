@@ -31,6 +31,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
@@ -63,6 +64,8 @@ export const SendModal: FC = () => {
     [visibleAccounts, selectedAccount.publicKeyHash]
   );
   const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
+
+  usePageAnalytic(ModalsEnum.Send);
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({

@@ -6,10 +6,12 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 import { TezosTokenInfo } from './tezos-token-info/tezos-token-info';
 
@@ -17,6 +19,8 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tezosToken = useTezosTokenSelector();
+
+  usePageAnalytic(ScreensEnum.TezosTokenScreen);
 
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit());

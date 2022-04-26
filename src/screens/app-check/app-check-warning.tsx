@@ -8,13 +8,17 @@ import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { useAppCheckWarningStyles } from './app-check-warning.styles';
 
 export const AppCheckWarning = () => {
   const styles = useAppCheckWarningStyles();
   const colors = useColors();
+
+  usePageAnalytic(OverlayEnum.AppCheckWarning);
 
   return (
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
