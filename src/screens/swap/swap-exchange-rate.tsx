@@ -5,15 +5,16 @@ import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sd
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../styles/format-size';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { formatAssetAmount } from '../../utils/number.util';
 import { atomsToTokens, ROUTING_FEE_PERCENT } from './swap-form';
 import { useSwapStyles } from './swap.styles';
 
 interface Props {
   trade: Trade;
-  inputAssetMetadata: any;
-  outputAssetMetadata: any;
-  tradeWithSlippageTolerance: any[];
+  inputAssetMetadata: TokenInterface;
+  outputAssetMetadata: TokenInterface;
+  tradeWithSlippageTolerance: Trade | [];
 }
 
 export const SwapExchangeRate: FC<Props> = ({

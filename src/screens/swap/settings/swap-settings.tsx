@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 

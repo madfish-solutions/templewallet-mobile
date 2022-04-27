@@ -24,7 +24,11 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
 
           return [loadExchangeRates.success(mappedRates)];
         }),
-        catchError(err => of(loadExchangeRates.fail(err.message)))
+        catchError(err => {
+          console.log(err.message);
+
+          return of(loadExchangeRates.fail(err.message));
+        })
       )
     )
   );

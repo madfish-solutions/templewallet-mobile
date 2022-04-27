@@ -1,4 +1,4 @@
-import bignumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { useFormikContext } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
@@ -33,12 +33,12 @@ export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.mad
 export const ROUTING_FEE_PERCENT = 0.5;
 export const ROUTING_FEE_RATIO = (100 - ROUTING_FEE_PERCENT) / 100;
 
-export function atomsToTokens(x: bignumber, decimals: number) {
-  return x.integerValue().div(new bignumber(10).pow(decimals));
+export function atomsToTokens(x: BigNumber, decimals: number) {
+  return x.integerValue().div(new BigNumber(10).pow(decimals));
 }
 
-export function tokensToAtoms(x: bignumber, decimals: number) {
-  return x.times(new bignumber(10).pow(decimals)).integerValue();
+export function tokensToAtoms(x: BigNumber, decimals: number) {
+  return x.times(new BigNumber(10).pow(decimals)).integerValue();
 }
 const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
 
