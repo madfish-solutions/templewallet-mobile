@@ -34,14 +34,6 @@ if (typeof process === 'undefined') {
   }
 }
 
-//TODO: Fix
-
-// if(global.performance == null) {
-//   global.performance = {
-//     now: global._chronoNow
-//   };
-// }
-
 process.browser = false;
 if (typeof Buffer === 'undefined') {
   global.Buffer = require('buffer').Buffer;
