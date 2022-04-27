@@ -6,13 +6,13 @@
         <domain includeSubdomains="false">10.0.3.2</domain>
     </domain-config>
     <domain-config>
-        <domain>api.templewallet.com</domain>
+        <domain includeSubdomains="false">api.templewallet.com</domain>
         <pin-set expiration="2023-04-30">
             <pin digest="SHA-256">HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</pin>
         </pin-set>
     </domain-config>
     <domain-config>
-        <domain>metadata.templewallet.com</domain>
+        <domain includeSubdomains="false">metadata.templewallet.com</domain>
         <pin-set expiration="2022-09-02">
             <pin digest="SHA-256">Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</pin>
         </pin-set>

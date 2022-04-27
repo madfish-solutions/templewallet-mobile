@@ -73,6 +73,8 @@
 			</dict>
 			<key>api.templewallet.com</key>
 			<dict>
+			    <key>NSIncludesSubdomains</key>
+            	<false/>
 				<key>NSPinnedLeafIdentities</key>
 				<array>
 					<dict>
@@ -83,6 +85,8 @@
 			</dict>
 			<key>metadata.templewallet.com</key>
             <dict>
+                <key>NSIncludesSubdomains</key>
+                <false/>
                 <key>NSPinnedLeafIdentities</key>
                 <array>
                     <dict>
