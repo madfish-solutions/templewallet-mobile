@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../components/divider/divider';
 import { HeaderBackButton } from '../../../components/header/header-back-button/header-back-button';
@@ -71,14 +72,17 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
               </FormCheckbox>
             </View>
             <CheckboxLabel>And accept the risks that if I lose the phrase,{'\n'}my funds may be lost.</CheckboxLabel>
-
             <Divider />
-            <ButtonLargePrimary
-              title="Next"
-              disabled={!isValid}
-              onPress={submitForm}
-              testID={CreateNewWalletSelectors.NextButton}
-            />
+          </View>
+          <View>
+            <ButtonsContainer>
+              <ButtonLargePrimary
+                title="Next"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={CreateNewWalletSelectors.NextButton}
+              />
+            </ButtonsContainer>
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

@@ -54,31 +54,33 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
       onSubmit={onSubmit}
     >
       {({ values, submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <View style={styles.seedPhraseInputContainer}>
-              <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
-              <FormMnemonicInput name="seedPhrase" />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <View style={styles.seedPhraseInputContainer}>
+                <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
+                <FormMnemonicInput name="seedPhrase" />
+              </View>
+              <AndroidKeyboardDisclaimer />
+              <Divider size={formatSize(12)} />
+              <Label
+                label="Derivation"
+                isOptional
+                description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+              />
+              <ImportAccountSeedDerivationPathForm formValues={values} />
+              <Divider size={formatSize(12)} />
+              <Label
+                label="Password"
+                isOptional
+                description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
+              />
+              <FormPasswordInput name="password" />
+              <Divider size={formatSize(12)} />
             </View>
-            <AndroidKeyboardDisclaimer />
-            <Divider size={formatSize(12)} />
-            <Label
-              label="Derivation"
-              isOptional
-              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
-            />
-            <ImportAccountSeedDerivationPathForm formValues={values} />
-            <Divider size={formatSize(12)} />
-            <Label
-              label="Password"
-              isOptional
-              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
-            />
-            <FormPasswordInput name="password" />
-            <Divider size={formatSize(12)} />
-          </View>
-          <View>
+          </ScreenContainer>
+          <View style={styles.submitButton}>
             <ButtonsContainer>
               <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
               <Divider size={formatSize(16)} />
@@ -86,7 +88,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );
