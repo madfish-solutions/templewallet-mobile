@@ -61,8 +61,6 @@
 		<dict>
 			<key>templewallet.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
 				<key>NSPinnedLeafIdentities</key>
 				<array>
 					<dict>
@@ -85,25 +83,11 @@
 			</dict>
             <key>metadata.templewallet.com</key>
             <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
                 <key>NSPinnedLeafIdentities</key>
                 <array>
                     <dict>
                         <key>SPKI-SHA256-BASE64</key>
                         <string>Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</string>
-                    </dict>
-                </array>
-            </dict>
-            <key>temple-api.stage.madservice.xyz</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSPinnedLeafIdentities</key>
-                <array>
-                    <dict>
-                        <key>SPKI-SHA256-BASE64</key>
-                        <string>OHOVsLmqEJJWda+JkiGd+TYlmFO6+fsU8IwbdpaJTx0=</string>
                     </dict>
                 </array>
             </dict>
