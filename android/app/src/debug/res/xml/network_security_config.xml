@@ -6,7 +6,7 @@
         <domain includeSubdomains="false">10.0.3.2</domain>
     </domain-config>
     <domain-config>
-        <domain>templewallet.com</domain>
+        <domain>api.templewallet.com</domain>
         <pin-set expiration="2023-04-30">
             <pin digest="SHA-256">HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</pin>
         </pin-set>

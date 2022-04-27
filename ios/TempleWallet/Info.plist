@@ -59,7 +59,7 @@
 		<false/>
 		<key>NSPinnedDomains</key>
 		<dict>
-			<key>templewallet.com</key>
+			<key>api.templewallet.com</key>
 			<dict>
 				<key>NSPinnedLeafIdentities</key>
 				<array>
