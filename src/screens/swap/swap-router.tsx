@@ -11,12 +11,9 @@ import { useSwapStyles } from './swap.styles';
 
 interface Props {
   trade: Trade;
-  // inputValue: SwapInputValue;
-  // outputValue: SwapInputValue;
-  // loadingHasFailed: boolean;
 }
 
-export const SwapRoute: FC<Props> = ({ trade, inputValue, outputValue, loadingHasFailed }) => {
+export const SwapRoute: FC<Props> = ({ trade }) => {
   const styles = useSwapStyles();
 
   return (
@@ -27,7 +24,7 @@ export const SwapRoute: FC<Props> = ({ trade, inputValue, outputValue, loadingHa
             <SwapRouterItem
               key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
               tradeOperation={item}
-              isShowNextArrow={index !== trade.length - 1}
+              // isShowNextArrow={index !== trade.length - 1}
             />
           );
         })}

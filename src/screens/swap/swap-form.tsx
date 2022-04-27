@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { useFormikContext } from 'formik';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { View, Text, Alert } from 'react-native';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import { View } from 'react-native';
 import {
   DexTypeEnum,
   getBestTradeExactInput,
@@ -21,6 +21,7 @@ import { Label } from '../../components/label/label';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { useSlippageTolerance } from '../../hooks/slippage-tolerance/use-async-storage.hook';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
+import { AssetAmountInterface, SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -38,30 +39,20 @@ export function atomsToTokens(x: BigNumber, decimals: number) {
 }
 
 export function tokensToAtoms(x: BigNumber, decimals: number) {
-  return x.times(10 ** decimals).integerValue();
+  return x.times(new BigNumber(10).pow(decimals)).integerValue();
 }
 const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
-
-interface AssetAmountInterface {
-  asset: TokenInterface;
-  amount?: BigNumber;
-}
-
-
- 
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const assetsList = useVisibleAssetListSelector();
   const styles = useSwapStyles();
-  const { values, setFieldValue, submitForm } = useFormikContext();
+  const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
-  const [bestTrade, setBestTrade] = useState([]);
   const { slippageTolerance } = useSlippageTolerance();
 
-  const inputAssets: AssetAmountInterface = values.inputAssets;
-  const outputAssets: AssetAmountInterface = values.outputAssets;
+  const { inputAssets, outputAssets, bestTrade } = values;
 
   const inputAssetSlug = getTokenSlug(inputAssets.asset);
   const outputAssetSlug = getTokenSlug(outputAssets.asset);
@@ -90,17 +81,21 @@ export const SwapForm: FC = () => {
   );
 
   useEffect(() => {
+    setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);
+  }, [bestTradeWithSlippageTolerance]);
+
+  useEffect(() => {
     if (inputMutezAmountWithFee && routePairsCombinations.length > 0) {
       const bestTradeExactIn = getBestTradeExactInput(inputMutezAmountWithFee, routePairsCombinations);
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       if (outputAssets.asset !== emptyToken) {
-        setBestTrade(bestTradeExactIn);
+        setFieldValue('bestTrade', bestTradeExactIn);
         setFieldValue('outputAssets', { asset: outputAssets.asset, amount: bestTradeOutput });
       }
     } else {
-      setBestTrade([]);
-      setFieldValue('outputAssets', { asset: inputAssets.asset, amount: undefined });
+      setFieldValue('bestTrade', []);
+      setFieldValue('outputAssets', { asset: outputAssets.asset, amount: undefined });
     }
   }, [
     inputMutezAmountWithFee,
@@ -115,32 +110,39 @@ export const SwapForm: FC = () => {
   //   { input: { assetSlug: outputValue.assetSlug, amount: inputValue.amount } },
   //   { output: { assetSlug: inputValue.assetSlug } }
   // ]);
-  const swapAction = () => {
-    setFieldValue('inputAssets', { asset: outputAssets.asset, amount: inputAssets.amount });
-    setFieldValue('outputAssets', { asset: outputAssets.asset, amount: inputAssets.amount });
-  };
+  const swapAction = useCallback(
+    (inputAsset: AssetAmountInterface, outputAsset: AssetAmountInterface) => {
+      setFieldValue('inputAssets', { asset: outputAsset.asset, amount: outputAsset.amount });
+      setFieldValue('outputAssets', { asset: inputAsset.asset, amount: inputAsset.amount });
+    },
+    [outputAssets, inputAssets]
+  );
 
   return (
     <View style={styles.container}>
       <Divider size={formatSize(8)} />
       <FormAssetAmountInput name="inputAssets" label="From" assetsList={filteredAssetsListWithTez} />
       <View style={styles.swapIconContainer}>
-        <TouchableIcon onPress={swapAction} name={IconNameEnum.SwapArrow} size={formatSize(24)} />
+        <TouchableIcon
+          onPress={() => swapAction(inputAssets, outputAssets)}
+          name={IconNameEnum.SwapArrow}
+          size={formatSize(24)}
+        />
       </View>
       <FormAssetAmountInput
         name="outputAssets"
         label="To"
         assetsList={assetsList}
-        isEditable={false}
+        // onValueChange={handleOutputChange}
         // showExchangeRate={false}
       />
       <Label label="Swap route" />
       <View>
         <SwapRoute
           trade={bestTrade}
-          inputValue={inputAssets}
-          outputValue={outputAssets}
-          loadingHasFailed={allRoutePairs.hasFailed}
+          // inputValue={inputAssets}
+          // outputValue={outputAssets}
+          // loadingHasFailed={allRoutePairs.hasFailed}
         />
 
         <Divider />
@@ -155,7 +157,7 @@ export const SwapForm: FC = () => {
       </View>
       <Divider size={formatSize(16)} />
 
-      <ButtonLargePrimary title="Swap" onPress={submitForm} />
+      <ButtonLargePrimary disabled={inputAssetSlug === outputAssetSlug} title="Swap" onPress={submitForm} />
     </View>
   );
 };

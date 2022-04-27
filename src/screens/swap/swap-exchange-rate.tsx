@@ -11,8 +11,9 @@ import { useSwapStyles } from './swap.styles';
 
 interface Props {
   trade: Trade;
-  // inputAssetMetadata: AssetMetadata;
-  // outputAssetMetadata: AssetMetadata;
+  inputAssetMetadata: any;
+  outputAssetMetadata: any;
+  tradeWithSlippageTolerance: any[];
 }
 
 export const SwapExchangeRate: FC<Props> = ({

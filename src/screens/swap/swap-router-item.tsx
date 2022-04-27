@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { TradeOperation } from 'swap-router-sdk';
 
 import { Divider } from '../../components/divider/divider';
@@ -8,16 +8,13 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TokenIcon } from '../../components/token-icon/token-icon';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import { formatSize } from '../../styles/format-size';
-import { findExchangeRate } from '../../utils/dex.utils';
-import { formatAssetAmount } from '../../utils/number.util';
 import { useSwapStyles } from './swap.styles';
 
 interface Props {
   tradeOperation: TradeOperation;
-  isShowNextArrow: boolean;
 }
 
-export const SwapRouterItem: FC<Props> = ({ tradeOperation, isShowNextArrow }) => {
+export const SwapRouterItem: FC<Props> = ({ tradeOperation }) => {
   const styles = useSwapStyles();
   const getTokenMetadata = useTokenMetadataGetter();
 

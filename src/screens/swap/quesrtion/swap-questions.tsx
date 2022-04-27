@@ -2,10 +2,14 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { Disclaimer } from '../../../components/disclaimer/disclaimer';
+import { ScreensEnum } from '../../../navigator/enums/screens.enum';
+import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { useSwapQuestionsStyles } from './swap-questions.styles';
 
 export const SwapQuestionsScreen: FC = () => {
   const styles = useSwapQuestionsStyles();
+
+  usePageAnalytic(ScreensEnum.SwapQuestionsScreen);
 
   return (
     <View style={styles.contentWrapper}>
