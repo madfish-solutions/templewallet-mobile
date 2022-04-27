@@ -13,10 +13,10 @@ export const useSwapPriceUpdateBarStyles = createUseStyles(({ colors }) => ({
     backgroundColor: colors.liteOrange
   },
   progressBarAnimatedView: {
+    width: '100%',
+    height: formatSize(2),
     position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
+    left: '-50%',
     backgroundColor: colors.orange
   },
   progressBarTextStyle: {

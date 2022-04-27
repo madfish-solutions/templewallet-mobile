@@ -1,12 +1,6 @@
-import BigNumber from 'bignumber.js';
 import { Trade } from 'swap-router-sdk';
 
-import { TokenInterface } from '../token/interfaces/token.interface';
-
-export interface AssetAmountInterface {
-  asset: TokenInterface;
-  amount?: BigNumber;
-}
+import { AssetAmountInterface } from '../components/asset-amount-input/asset-amount-input';
 
 export interface SwapFormValues {
   inputAssets: AssetAmountInterface;

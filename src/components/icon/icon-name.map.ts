@@ -46,6 +46,7 @@ import MinusIcon from './assets/minus-icon.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
+import PlentyIcon from './assets/plenty.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -86,6 +87,7 @@ import UkraineIcon from './assets/ukraine.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
@@ -118,6 +120,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
+  [IconNameEnum.Plenty]: PlentyIcon,
+  [IconNameEnum.Youves]: YouvesIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
   [IconNameEnum.QuipuSwapDark]: QuipuSwapDarkIcon,
   [IconNameEnum.DApps]: DAppsIcon,

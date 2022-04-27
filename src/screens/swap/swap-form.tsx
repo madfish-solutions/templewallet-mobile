@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import bignumber from 'bignumber.js';
 import { useFormikContext } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
@@ -11,8 +11,7 @@ import {
   useTradeWithSlippageTolerance
 } from 'swap-router-sdk';
 
-// TODO: HOW TO TAKE SLUG FROM TOKEN
-
+import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -21,7 +20,7 @@ import { Label } from '../../components/label/label';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { useSlippageTolerance } from '../../hooks/slippage-tolerance/use-async-storage.hook';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
-import { AssetAmountInterface, SwapFormValues } from '../../interfaces/swap-asset.interface';
+import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -34,12 +33,12 @@ export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.mad
 export const ROUTING_FEE_PERCENT = 0.5;
 export const ROUTING_FEE_RATIO = (100 - ROUTING_FEE_PERCENT) / 100;
 
-export function atomsToTokens(x: BigNumber, decimals: number) {
-  return x.integerValue().div(new BigNumber(10).pow(decimals));
+export function atomsToTokens(x: bignumber, decimals: number) {
+  return x.integerValue().div(new bignumber(10).pow(decimals));
 }
 
-export function tokensToAtoms(x: BigNumber, decimals: number) {
-  return x.times(new BigNumber(10).pow(decimals)).integerValue();
+export function tokensToAtoms(x: bignumber, decimals: number) {
+  return x.times(new bignumber(10).pow(decimals)).integerValue();
 }
 const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
 
@@ -105,11 +104,6 @@ export const SwapForm: FC = () => {
     outputAssets.asset.decimals,
     setFieldValue
   ]);
-
-  // setValue([
-  //   { input: { assetSlug: outputValue.assetSlug, amount: inputValue.amount } },
-  //   { output: { assetSlug: inputValue.assetSlug } }
-  // ]);
   const swapAction = useCallback(
     (inputAsset: AssetAmountInterface, outputAsset: AssetAmountInterface) => {
       setFieldValue('inputAssets', { asset: outputAsset.asset, amount: outputAsset.amount });
@@ -129,21 +123,10 @@ export const SwapForm: FC = () => {
           size={formatSize(24)}
         />
       </View>
-      <FormAssetAmountInput
-        name="outputAssets"
-        label="To"
-        assetsList={assetsList}
-        // onValueChange={handleOutputChange}
-        // showExchangeRate={false}
-      />
+      <FormAssetAmountInput name="outputAssets" label="To" assetsList={assetsList} />
       <Label label="Swap route" />
       <View>
-        <SwapRoute
-          trade={bestTrade}
-          // inputValue={inputAssets}
-          // outputValue={outputAssets}
-          // loadingHasFailed={allRoutePairs.hasFailed}
-        />
+        <SwapRoute trade={bestTrade} />
 
         <Divider />
         <View>

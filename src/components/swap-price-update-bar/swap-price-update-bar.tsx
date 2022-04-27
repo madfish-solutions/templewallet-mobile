@@ -1,18 +1,16 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
-import { BlockInterface, useAllRoutePairs } from 'swap-router-sdk';
+import { useAllRoutePairs } from 'swap-router-sdk';
 
 import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
 import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 
-interface Props {
-}
-
 export const BLOCK_DURATION = 30000;
 export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.madservice.xyz';
 
-export const SwapPriceUpdateBar: FC<Props> = () => {
+export const SwapPriceUpdateBar: FC<{}> = () => {
+  const counter = useRef(new Animated.Value(0)).current;
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
@@ -22,14 +20,9 @@ export const SwapPriceUpdateBar: FC<Props> = () => {
     [allRoutePairs.block.header.timestamp]
   );
 
-  const prevWidthPercentRef = useRef(0);
-
   const state = useMemo(() => {
     const millisecondsLeft = blockEndTimestamp - nowTimestamp;
     const secondsLeft = Math.floor(millisecondsLeft / 1000);
-    const widthPercent = Math.max(0, Math.floor((100 / BLOCK_DURATION) * (millisecondsLeft - 1000)));
-    const transitionTime = widthPercent < prevWidthPercentRef.current ? '1s' : '0s';
-    prevWidthPercentRef.current = widthPercent;
 
     const text = isNaN(secondsLeft)
       ? 'Loading...'
@@ -38,11 +31,31 @@ export const SwapPriceUpdateBar: FC<Props> = () => {
       : `Rates update is late for ${Math.abs(secondsLeft)}s`;
 
     return {
-      width: `${widthPercent}%`,
-      transition: `${transitionTime} linear`,
       text
     };
   }, [blockEndTimestamp, nowTimestamp]);
+
+  useEffect(() => {
+    load(nowTimestamp);
+  }, [nowTimestamp]);
+
+  const load = (nowTimestamp: number) => {
+    const widthPercent = Math.max(0, blockEndTimestamp - nowTimestamp) / BLOCK_DURATION;
+    if (isNaN(blockEndTimestamp)) {
+      return 0;
+    }
+    Animated.timing(counter, {
+      toValue: widthPercent,
+      duration: 1000,
+      useNativeDriver: true
+    }).start();
+  };
+
+  const width = counter.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 2],
+    extrapolate: 'clamp'
+  });
 
   useEffect(() => {
     const interval = setInterval(() => setNowTimestamp(new Date().getTime()), 1000);
@@ -53,7 +66,7 @@ export const SwapPriceUpdateBar: FC<Props> = () => {
   return (
     <View style={styles.container}>
       <View style={styles.progressBar}>
-        <Animated.View style={[styles.progressBarAnimatedView, { width: state.width }]} />
+        <Animated.View style={[styles.progressBarAnimatedView, { transform: [{ scaleX: width }] }]} />
       </View>
       <Divider size={formatSize(12)} />
       <Text style={styles.progressBarTextStyle}>{state.text}</Text>

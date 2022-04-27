@@ -31,6 +31,8 @@ export enum IconNameEnum {
   Settings = 'Settings',
   DApps = 'DApps',
   SoonBadge = 'SoonBadge',
+  Youves = 'Youves',
+  Plenty = 'Plenty',
   QuipuSwap = 'QuipuSwap',
   QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',

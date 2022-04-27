@@ -25,7 +25,8 @@ import { emptyToken, TokenInterface } from '../../token/interfaces/token.interfa
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { SwapForm, tokensToAtoms } from './swap-form';
+import { SwapForm } from './swap-form';
+import { swapFormValidationSchema } from './swap-form.form';
 import { getRoutingFeeTransferParams } from './swap.util';
 
 export const SwapScreen: FC = () => {
@@ -97,7 +98,7 @@ export const SwapScreen: FC = () => {
       <Formik
         initialValues={sendModalInitialValues}
         enableReinitialize={true}
-        // validationSchema={sendModalValidationSchema}
+        validationSchema={swapFormValidationSchema}
         onSubmit={onHandleSubmit}
       >
         {() => <SwapForm />}
