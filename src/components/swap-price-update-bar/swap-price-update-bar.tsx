@@ -9,7 +9,7 @@ import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 export const BLOCK_DURATION = 30000;
 export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.madservice.xyz';
 
-export const SwapPriceUpdateBar: FC<{}> = () => {
+export const SwapPriceUpdateBar: FC = () => {
   const counter = useRef(new Animated.Value(0)).current;
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const styles = useSwapPriceUpdateBarStyles();
