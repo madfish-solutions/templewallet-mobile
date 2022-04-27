@@ -64,7 +64,6 @@ export const SwapSettingsScreen: FC = () => {
           decimals={2}
           editable={true}
           isShowCleanButton
-          onBlur={() => console.log('blur')}
           onChange={onHandleChange}
         />
       )}
