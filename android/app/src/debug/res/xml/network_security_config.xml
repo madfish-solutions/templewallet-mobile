@@ -6,21 +6,15 @@
         <domain includeSubdomains="false">10.0.3.2</domain>
     </domain-config>
     <domain-config>
-        <domain includeSubdomains="true">templewallet.com</domain>
+        <domain>api.templewallet.com</domain>
         <pin-set expiration="2023-04-30">
             <pin digest="SHA-256">HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</pin>
         </pin-set>
     </domain-config>
     <domain-config>
-        <domain includeSubdomains="true">metadata.templewallet.com</domain>
+        <domain>metadata.templewallet.com</domain>
         <pin-set expiration="2022-09-02">
             <pin digest="SHA-256">Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</pin>
-        </pin-set>
-    </domain-config>
-    <domain-config>
-        <domain includeSubdomains="true">temple-api.stage.madservice.xyz</domain>
-        <pin-set expiration="2022-08-25">
-            <pin digest="SHA-256">OHOVsLmqEJJWda+JkiGd+TYlmFO6+fsU8IwbdpaJTx0=</pin>
         </pin-set>
     </domain-config>
     <domain-config>
