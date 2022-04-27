@@ -12,6 +12,18 @@
         </pin-set>
     </domain-config>
     <domain-config>
+        <domain includeSubdomains="true">metadata.templewallet.com</domain>
+        <pin-set expiration="2022-09-02">
+            <pin digest="SHA-256">Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">temple-api.stage.madservice.xyz</domain>
+        <pin-set expiration="2022-08-25">
+            <pin digest="SHA-256">OHOVsLmqEJJWda+JkiGd+TYlmFO6+fsU8IwbdpaJTx0=</pin>
+        </pin-set>
+    </domain-config>
+    <domain-config>
         <domain includeSubdomains="true">madfish.solutions</domain>
         <pin-set expiration="2022-09-05">
             <pin digest="SHA-256">QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</pin>
