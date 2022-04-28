@@ -49,8 +49,8 @@ export const RootStackScreen = () => {
   const colors = useColors();
 
   useAppStateStatus({
-    onAppInactiveState: () => show(),
-    onAppActiveState: () => hide()
+    onAppInactiveState: show,
+    onAppActiveState: hide
   });
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
