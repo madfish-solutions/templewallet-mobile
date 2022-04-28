@@ -8,6 +8,7 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { betterCallDevApi, tzktApi } from '../../api.service';
+// import { ActivityStatusEnum } from '../../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
@@ -174,7 +175,10 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
             `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
             { params: { max: 100, start: 0 } }
           )
-        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
+          // tzktApi.get<GetAccountTokenTransfersResponseInterface>('operations/transactions', {
+          //   params: { limit: 100, offset: 0, 'anyof.sender.target': selectedAccount.publicKeyHash }
+          // })
+        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data)))
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
