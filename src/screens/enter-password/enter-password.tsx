@@ -1,7 +1,6 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { hide, show } from 'react-native-bootsplash';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -17,7 +16,6 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
 import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { useAppStateStatus } from '../../hooks/use-app-state-status.hook';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
@@ -52,11 +50,6 @@ export const EnterPassword = () => {
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
   usePageAnalytic(OverlayEnum.EnterPassword);
-
-  useAppStateStatus({
-    onAppSplashScreenShow: () => show(),
-    onAppSplashScreenHide: () => hide()
-  });
 
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
     isBiometryAvailable

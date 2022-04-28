@@ -11,18 +11,14 @@ enum BasicAppStateStatus {
 
 interface AppStateStatusProps {
   onAppActiveState?: EmptyFn;
-  onAppBackgroundState?: EmptyFn;
   onAppInactiveState?: EmptyFn;
-  onAppSplashScreenHide?: EmptyFn;
-  onAppSplashScreenShow?: EmptyFn;
+  onAppBackgroundState?: EmptyFn;
 }
 
 export const useAppStateStatus = ({
   onAppActiveState = emptyFn,
-  onAppBackgroundState = emptyFn,
   onAppInactiveState = emptyFn,
-  onAppSplashScreenShow = emptyFn,
-  onAppSplashScreenHide = emptyFn
+  onAppBackgroundState = emptyFn
 }: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
   const mountedRef = useRef(true);
@@ -31,27 +27,24 @@ export const useAppStateStatus = ({
     if (!mountedRef.current) {
       return null;
     }
-    if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Inactive) {
-      onAppSplashScreenShow();
-      onAppInactiveState();
+
+    if (newAppState === prevAppState.current) {
+      return null;
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Background && newAppState === BasicAppStateStatus.Active) {
-      onAppSplashScreenHide();
+    if (newAppState === BasicAppStateStatus.Active) {
       onAppActiveState();
+      prevAppState.current = BasicAppStateStatus.Active;
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Active) {
-      onAppSplashScreenHide();
+    if (newAppState === BasicAppStateStatus.Inactive) {
+      onAppInactiveState();
+      prevAppState.current = BasicAppStateStatus.Inactive;
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Background) {
+    if (newAppState === BasicAppStateStatus.Background) {
       onAppBackgroundState();
-    }
-
-    // Other states are optional on different platforms, so they are ignored
-    if (newAppState === BasicAppStateStatus.Active || newAppState === BasicAppStateStatus.Background) {
-      prevAppState.current = newAppState as BasicAppStateStatus;
+      prevAppState.current = BasicAppStateStatus.Background;
     }
   };
 
