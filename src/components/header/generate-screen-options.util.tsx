@@ -5,10 +5,11 @@ import { HeaderBackButton } from './header-back-button/header-back-button';
 
 export const generateScreenOptions = (
   headerTitleElement: ReturnType<FC>,
-  headerRightElement: ReturnType<FC> = null
+  headerRightElement: ReturnType<FC> = null,
+  headerLeft = true
 ): StackNavigationOptions => ({
   headerTitleAlign: 'center',
-  headerLeft: () => <HeaderBackButton />,
+  headerLeft: () => headerLeft && <HeaderBackButton />,
   headerTitle: () => headerTitleElement,
   headerRight: () => headerRightElement
 });

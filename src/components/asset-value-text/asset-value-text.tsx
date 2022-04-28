@@ -27,13 +27,12 @@ export const AssetValueText: FC<Props> = ({
   convertToDollar = false
 }) => {
   const exchangeRates = useExchangeRatesSelector();
-
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
+
   const hideText = convertToDollar && !isDefined(exchangeRate);
 
   const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
   const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
-
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
   return (

@@ -21,3 +21,5 @@ export const useFirstAppLaunchSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isFirstAppLaunch);
 
 export const useUserIdSelector = () => useSelector<SettingsRootState, string>(({ settings }) => settings.userId);
+
+export const useSlippageSelector = () => useSelector<SettingsRootState, number>(({ settings }) => settings.slippage);

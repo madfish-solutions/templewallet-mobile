@@ -9,5 +9,6 @@ export const mockSettingsState: SettingsState = {
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
-  userId: '0'
+  userId: '0',
+  slippage: 0
 };

@@ -48,7 +48,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   isError = false,
   onBlur,
   onFocus,
-  onValueChange
+  onValueChange,
+  editable = true
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -63,6 +64,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   const exchangeRates = useExchangeRatesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
+
   const hasExchangeRate = isDefined(exchangeRate);
 
   const inputValueRef = useRef<BigNumber>();
@@ -163,6 +165,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           style={styles.numericInput}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
+          editable={editable}
           autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}
