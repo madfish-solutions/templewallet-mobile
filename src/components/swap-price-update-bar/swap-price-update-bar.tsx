@@ -2,12 +2,12 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { useAllRoutePairs } from 'swap-router-sdk';
 
+import { TEZOS_DEXES_API_URL } from '../../screens/swap/swap-form';
 import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
 import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 
 export const BLOCK_DURATION = 30000;
-export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.madservice.xyz';
 
 export const SwapPriceUpdateBar: FC = () => {
   const counter = useRef(new Animated.Value(0)).current;
