@@ -13,6 +13,7 @@ export interface SettingsState {
   selectedRpcUrl: string;
   isFirstAppLaunch: boolean;
   userId: string;
+  slippage: number;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -22,7 +23,8 @@ export const settingsInitialState: SettingsState = {
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
-  userId: nanoid()
+  userId: nanoid(),
+  slippage: 0
 };
 
 export interface SettingsRootState {

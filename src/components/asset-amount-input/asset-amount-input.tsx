@@ -49,8 +49,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   onBlur,
   onFocus,
   onValueChange,
-  isEditable = true
-  // showExchangeRate = true
+  editable = true
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -166,12 +165,12 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           style={styles.numericInput}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
+          editable={editable}
           autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
-          editable={isEditable}
         />
         <Divider size={formatSize(8)} />
 

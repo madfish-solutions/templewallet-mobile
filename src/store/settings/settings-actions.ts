@@ -12,3 +12,4 @@ export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE
 
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
+export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');

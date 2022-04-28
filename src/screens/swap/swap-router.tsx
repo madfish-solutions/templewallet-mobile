@@ -24,7 +24,6 @@ export const SwapRoute: FC<Props> = ({ trade }) => {
             <SwapRouterItem
               key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
               tradeOperation={item}
-              // isShowNextArrow={index !== trade.length - 1}
             />
           );
         })}

@@ -18,9 +18,9 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { Label } from '../../components/label/label';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
-import { useSlippageTolerance } from '../../hooks/slippage-tolerance/use-async-storage.hook';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
+import { useSlippageSelector } from '../../store/settings/settings-selectors';
 import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -49,7 +49,7 @@ export const SwapForm: FC = () => {
   const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
-  const { slippageTolerance } = useSlippageTolerance();
+  const slippageTolerance = useSlippageSelector();
 
   const { inputAssets, outputAssets, bestTrade } = values;
 

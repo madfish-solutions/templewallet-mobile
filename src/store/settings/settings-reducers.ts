@@ -6,7 +6,8 @@ import {
   changeTheme,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
-  setSelectedRpcUrl
+  setSelectedRpcUrl,
+  setSlippage
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -34,5 +35,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(resetKeychainOnInstallAction.success, state => ({
     ...state,
     isFirstAppLaunch: false
+  }));
+  builder.addCase(setSlippage, (state, { payload: slippage }) => ({
+    ...state,
+    slippage
   }));
 });

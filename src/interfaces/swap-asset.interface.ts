@@ -5,6 +5,6 @@ import { AssetAmountInterface } from '../components/asset-amount-input/asset-amo
 export interface SwapFormValues {
   inputAssets: AssetAmountInterface;
   outputAssets: AssetAmountInterface;
-  bestTrade: Trade | [];
-  bestTradeWithSlippageTolerance: Trade | [];
+  bestTrade: Trade;
+  bestTradeWithSlippageTolerance: Trade;
 }

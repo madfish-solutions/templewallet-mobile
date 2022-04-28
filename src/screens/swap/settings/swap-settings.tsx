@@ -1,13 +1,15 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
 import { StyledNumericInput } from '../../../components/styled-numberic-input/styled-numeric-input';
-import { useSlippageTolerance } from '../../../hooks/slippage-tolerance/use-async-storage.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
+import { setSlippage } from '../../../store/settings/settings-actions';
+import { useSlippageSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
@@ -15,9 +17,11 @@ import { useSwapSettingsStyles } from './swap-settings.styles';
 
 export const SwapSettingsScreen: FC = () => {
   const styles = useSwapSettingsStyles();
-  const { updateSlippageTolerance } = useSlippageTolerance();
+  const dispatch = useDispatch();
+  const updateSlippageTolerance = (slippage: number) => dispatch(setSlippage(slippage));
   const [inputTypeIndex, setInputTypeIndex] = useState(1);
-  const [slippageTolerance, setSlippageTolerance] = useState<string>('');
+  const initialSlippageValue = useSlippageSelector();
+  const [slippageTolerance, setSlippageTolerance] = useState<string>(`${initialSlippageValue}`);
 
   usePageAnalytic(ScreensEnum.SwapSettingsScreen);
 

@@ -10,8 +10,8 @@ export interface AssetAmountInputProps {
   assetsList: TokenInterface[];
   frozenBalance?: string;
   isError?: boolean;
+  editable?: boolean;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
   onValueChange: EventFn<AssetAmountInterface>;
-  isEditable?: boolean;
 }

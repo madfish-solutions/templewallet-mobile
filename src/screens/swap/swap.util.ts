@@ -2,6 +2,7 @@ import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { getTradeInputOperation, loadAssetContract, Trade, TokenStandardEnum } from 'swap-router-sdk';
 
+import { isDefined } from '../../utils/is-defined';
 import { ROUTING_FEE_ADDRESS } from './config';
 
 export const getRoutingFeeTransferParams = async (
@@ -12,7 +13,7 @@ export const getRoutingFeeTransferParams = async (
 ) => {
   const tradeInputOperation = getTradeInputOperation(trade);
 
-  if (inputTokenMutezAmount && tradeInputOperation) {
+  if (inputTokenMutezAmount && isDefined(tradeInputOperation)) {
     const feeAmount = inputTokenMutezAmount.minus(tradeInputOperation.aTokenAmount);
 
     if (tradeInputOperation.aTokenSlug === 'tez') {
@@ -25,10 +26,9 @@ export const getRoutingFeeTransferParams = async (
       ];
     }
 
-    // @ts-ignore
     const assetContract = await loadAssetContract(tradeInputOperation.aTokenSlug, tezos);
 
-    if (assetContract) {
+    if (isDefined(assetContract)) {
       if (assetContract.standard === TokenStandardEnum.FA1_2) {
         return [
           assetContract.contract.methods

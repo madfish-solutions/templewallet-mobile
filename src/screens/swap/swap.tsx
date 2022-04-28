@@ -63,7 +63,6 @@ export const SwapScreen: FC = () => {
       selectedAccount.publicKeyHash,
       tezos
     );
-    // @ts-ignore
     const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
 
     const opParams: Array<ParamsWithKind> = [...routingFeeOpParams, ...tradeOpParams].map(transferParams => ({
