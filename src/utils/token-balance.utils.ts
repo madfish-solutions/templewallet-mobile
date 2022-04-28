@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { forkJoin, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { betterCallDevApi } from '../api.service';
+import { tzktApi } from '../api.service';
 import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { getTokenType } from '../token/utils/token.utils';
@@ -11,34 +11,20 @@ import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
 
-const size = 10;
+const size = 1000; // tzkt update: no total count of pages, but maximum limit is increased to 10k
 
 const getTokenBalances = (accountPublicKeyHash: string, offset: number) =>
-  betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
+  tzktApi.get<GetAccountTokenBalancesResponseInterface>(
     `/account/${CURRENT_NETWORK_ID}/${accountPublicKeyHash}/token_balances`,
-    { params: { size, offset } }
+    {
+      params: { limit: size, offset, account: accountPublicKeyHash }
+    }
   );
 
 export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
   from(getTokenBalances(accountPublicKeyHash, 0)).pipe(
-    switchMap(initialResponse => {
-      if (initialResponse.data.total > size) {
-        const numberOfAdditionalRequests = Math.floor(initialResponse.data.total / size);
-
-        return forkJoin(
-          new Array(numberOfAdditionalRequests)
-            .fill(0)
-            .map((_, index) => getTokenBalances(accountPublicKeyHash, (index + 1) * size))
-        ).pipe(
-          map(restResponses => [
-            ...initialResponse.data.balances,
-            ...restResponses.map(restResponse => restResponse.data.balances).flat()
-          ])
-        );
-      } else {
-        return of(initialResponse.data.balances);
-      }
-    })
+    // TODO: re-implement pagination with abscence of total in new API
+    switchMap(initialResponse => of(initialResponse.data))
   );
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>

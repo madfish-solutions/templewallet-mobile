@@ -57,8 +57,8 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
             ...selectedAccount.tokensList.map(token => token.slug),
             ...tokensWithBalance.map(tokenWithBalance =>
               getTokenSlug({
-                address: tokenWithBalance.contract,
-                id: tokenWithBalance.token_id
+                address: tokenWithBalance.token.contract.address,
+                id: Number(tokenWithBalance.token.tokenId ?? '0')
               })
             )
           ]);

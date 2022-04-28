@@ -35,6 +35,8 @@ export const loadTokenMetadata$ = memoize(
 export const loadTokensWithBalanceMetadata$ = (tokensWithBalance: TokenBalanceInterface[]) =>
   forkJoin(
     tokensWithBalance.map(balance =>
-      loadTokenMetadata$(balance.contract, balance.token_id).pipe(catchError(() => of(tokenBalanceMetadata(balance))))
+      loadTokenMetadata$(balance.token.contract.address, balance.token.tokenId).pipe(
+        catchError(() => of(tokenBalanceMetadata(balance)))
+      )
     )
   );
