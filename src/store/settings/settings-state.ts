@@ -8,6 +8,7 @@ import { RpcList } from '../../utils/rpc/rpc-list';
 export interface SettingsState {
   theme: ThemesEnum;
   isBiometricsEnabled: boolean;
+  isAnalyticsEnabled: boolean;
   isBalanceHiddenSetting: boolean;
   rpcList: RpcInterface[];
   selectedRpcUrl: string;
@@ -19,6 +20,7 @@ export interface SettingsState {
 export const settingsInitialState: SettingsState = {
   theme: Appearance.getColorScheme() === 'dark' ? ThemesEnum.dark : ThemesEnum.light,
   isBiometricsEnabled: false,
+  isAnalyticsEnabled: true,
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,

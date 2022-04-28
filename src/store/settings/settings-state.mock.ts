@@ -5,6 +5,7 @@ import { SettingsState } from './settings-state';
 export const mockSettingsState: SettingsState = {
   theme: ThemesEnum.light,
   isBiometricsEnabled: false,
+  isAnalyticsEnabled: true,
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,

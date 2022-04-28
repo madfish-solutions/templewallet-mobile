@@ -84,7 +84,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
               </FormCheckbox>
             </View>
             <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Usage</TextLink> and{' '}
+              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
               <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
             </CheckboxLabel>
 

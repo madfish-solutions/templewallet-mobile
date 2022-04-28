@@ -4,6 +4,7 @@ import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
+  setIsAnalyticsEnabled,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
   setSelectedRpcUrl,
@@ -17,6 +18,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,
     isBiometricsEnabled
+  }));
+
+  builder.addCase(setIsAnalyticsEnabled, (state, { payload: isAnalyticsEnabled }) => ({
+    ...state,
+    isAnalyticsEnabled
   }));
 
   builder.addCase(setIsBalanceHidden, (state, { payload: isBalanceHiddenSetting }) => ({
