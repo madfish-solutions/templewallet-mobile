@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -20,9 +20,12 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
-import { useAnalyticsEnabledSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
+import {
+  CreateNewPasswordFormValues,
+  createNewPasswordInitialValues,
+  createNewPasswordValidationSchema
+} from './create-new-password.form';
 import { CreateNewPasswordCreateAccountSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
@@ -33,7 +36,6 @@ interface CreateNewPasswordProps {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
   const dispatch = useDispatch();
-  const analyticsEnabled = useAnalyticsEnabledSelector();
 
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
@@ -49,16 +51,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
       headerTitle: () => <HeaderTitle title="Create a new password" />
     },
     [onGoBackPress]
-  );
-
-  const createNewPasswordInitialValues: CreateNewPasswordFormValues = useMemo(
-    () => ({
-      password: '',
-      passwordConfirmation: '',
-      acceptTerms: false,
-      analytics: analyticsEnabled
-    }),
-    [analyticsEnabled]
   );
 
   return (

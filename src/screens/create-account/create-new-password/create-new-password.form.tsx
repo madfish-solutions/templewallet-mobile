@@ -20,3 +20,10 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   acceptTerms: acceptTermsValidation,
   analytics: analyticsValidation
 });
+
+export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
+  password: '',
+  passwordConfirmation: '',
+  acceptTerms: false,
+  analytics: true
+};

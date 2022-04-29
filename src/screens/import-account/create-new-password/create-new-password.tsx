@@ -21,7 +21,6 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
-import { useAnalyticsEnabledSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showWarningToast } from '../../../toast/toast.utils';
 import { isString } from '../../../utils/is-string';
@@ -37,7 +36,6 @@ interface CreateNewPasswordProps {
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const dispatch = useDispatch();
-  const analyticsEnabled = useAnalyticsEnabledSelector();
 
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
@@ -68,9 +66,9 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       password: initialPassword,
       passwordConfirmation: initialPassword,
       acceptTerms: false,
-      analytics: analyticsEnabled
+      analytics: true
     }),
-    [initialPassword, analyticsEnabled]
+    [initialPassword]
   );
 
   return (

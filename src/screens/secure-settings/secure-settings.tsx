@@ -25,6 +25,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
+import { SecureSettingsSelectors } from './secure-settings.selectors';
 
 export const SecureSettings = () => {
   const dispatch = useDispatch();
@@ -53,7 +54,11 @@ export const SecureSettings = () => {
       <WhiteContainer>
         <WhiteContainerAction onPress={() => dispatch(setIsAnalyticsEnabled(!analyticsEnabled))}>
           <WhiteContainerText text="Analytics" />
-          <Switch value={analyticsEnabled} onChange={value => dispatch(setIsAnalyticsEnabled(value))} />
+          <Switch
+            value={analyticsEnabled}
+            onChange={value => dispatch(setIsAnalyticsEnabled(value))}
+            testID={SecureSettingsSelectors.AnalyticsSwitch}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
       {isHardwareAvailable && (
@@ -62,7 +67,11 @@ export const SecureSettings = () => {
           <WhiteContainer>
             <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
               <WhiteContainerText text={biometryType ?? 'Biometrics'} />
-              <Switch value={isBiometryAvailable} onChange={handleBiometrySwitch} />
+              <Switch
+                value={isBiometryAvailable}
+                onChange={handleBiometrySwitch}
+                testID={SecureSettingsSelectors.BiometricsSwitch}
+              />
             </WhiteContainerAction>
           </WhiteContainer>
         </>
@@ -71,7 +80,11 @@ export const SecureSettings = () => {
       <WhiteContainer>
         <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
           <WhiteContainerText text="Hide mode on Launch" />
-          <Switch value={isBalanceHiddenSetting} onChange={value => dispatch(setIsBalanceHidden(value))} />
+          <Switch
+            value={isBalanceHiddenSetting}
+            onChange={value => dispatch(setIsBalanceHidden(value))}
+            testID={SecureSettingsSelectors.HideModeOnLaunchSwitch}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>

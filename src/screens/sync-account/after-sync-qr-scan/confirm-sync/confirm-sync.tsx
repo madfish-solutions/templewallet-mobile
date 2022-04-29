@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -19,7 +19,6 @@ import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/fo
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
-import { useAnalyticsEnabledSelector } from '../../../../store/settings/settings-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { ConfirmSyncFormValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
@@ -30,8 +29,6 @@ interface ConfirmSyncProps {
 }
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
-  const analyticsEnabled = useAnalyticsEnabledSelector();
-
   const styles = useConfirmSyncStyles();
 
   const { isDisabled, timeleft } = usePasswordLock();
@@ -44,17 +41,16 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
     []
   );
 
-  const confirmSyncInitialValues: ConfirmSyncFormValues = useMemo(
-    () => ({
-      password: '',
-      acceptTerms: false,
-      analytics: analyticsEnabled
-    }),
-    [analyticsEnabled]
-  );
-
   return (
-    <Formik initialValues={confirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>
+    <Formik
+      initialValues={{
+        password: '',
+        acceptTerms: false,
+        analytics: true
+      }}
+      validationSchema={ConfirmSyncValidationSchema}
+      onSubmit={onSubmit}
+    >
       {({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
