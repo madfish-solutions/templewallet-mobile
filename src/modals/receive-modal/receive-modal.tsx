@@ -83,16 +83,6 @@ export const ReceiveModal: FC = () => {
         )}
       </TouchableOpacity>
       <Divider />
-      {/* {isString(domainName) ? (
-        <View style={styles.buttonsContainer}>
-          <ButtonLargeWhite
-            title={isShownDomainName ? 'ADRESS' : 'DOMAIN'}
-            iconName={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-            onPress={() => dispatch(toggleDomainAddressShown())}
-          />
-        </View>
-      ) : null}
-      <Divider /> */}
 
       <View style={styles.buttonsContainer}>
         <ButtonMedium title="SHARE" iconName={IconNameEnum.Share} disabled={true} onPress={emptyFn} />
