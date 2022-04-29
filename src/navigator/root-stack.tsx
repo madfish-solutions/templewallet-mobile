@@ -5,6 +5,7 @@ import React, { createRef, useMemo, useState } from 'react';
 import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { isIOS } from '../config/system';
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
@@ -119,7 +120,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={useModalOptions('Select Baker')}
+              options={{ ...useModalOptions('Select Baker'), gestureEnabled: isIOS }}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
