@@ -14,6 +14,7 @@ import { ScreenContainer } from '../../../../components/screen-container/screen-
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
 import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
+import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
@@ -57,13 +58,25 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
           <Divider />
           <View>
             <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput isShowPasswordStrengthIndicator name="password" />
+            <FormPasswordInput
+              isShowPasswordStrengthIndicator
+              name="password"
+              testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+            />
 
             <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
+            <FormPasswordInput
+              name="passwordConfirmation"
+              testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+            />
           </View>
           <View style={styles.buttonContainer}>
-            <ButtonLargePrimary title="Sync" disabled={!isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Sync"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

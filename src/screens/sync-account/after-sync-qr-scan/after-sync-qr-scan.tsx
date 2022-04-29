@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
@@ -27,8 +28,11 @@ export const AfterSyncQRScan = () => {
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,
     password,
+    analytics,
     useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
+    dispatch(setIsAnalyticsEnabled(analytics));
+
     parseSyncPayload(payload, password)
       .then(res => {
         setUseBiometry(useBiometryValue === true);

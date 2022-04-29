@@ -20,7 +20,7 @@ import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { setIsBalanceHidden } from '../../../store/settings/settings-actions';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { useAnalyticsEnabledSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showWarningToast } from '../../../toast/toast.utils';
@@ -43,7 +43,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
-    dispatch(setIsBalanceHidden(analytics));
+    dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
   };
 
@@ -70,7 +70,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       acceptTerms: false,
       analytics: analyticsEnabled
     }),
-    [initialPassword]
+    [initialPassword, analyticsEnabled]
   );
 
   return (
@@ -96,6 +96,16 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
             </View>
+
+            <View style={[styles.checkboxContainer, styles.removeMargin]}>
+              <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.AnalyticsCheckbox}>
+                <Divider size={formatSize(8)} />
+                <Text style={styles.checkboxText}>Analytics</Text>
+              </FormCheckbox>
+            </View>
+            <CheckboxLabel>
+              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+            </CheckboxLabel>
           </View>
           <Divider />
 
@@ -109,17 +119,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             <CheckboxLabel>
               I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
               <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-            </CheckboxLabel>
-            <Divider />
-
-            <View style={[styles.checkboxContainer, styles.removeMargin]}>
-              <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.AnalyticsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Analytics</Text>
-              </FormCheckbox>
-            </View>
-            <CheckboxLabel>
-              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
             </CheckboxLabel>
 
             <Divider />
