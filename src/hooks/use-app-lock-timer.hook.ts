@@ -14,6 +14,7 @@ export const useAppLockTimer = () => {
       if (new Date().getTime() - changedToBackgroundStateMoment.current.getTime() > SHOW_ENTER_PASSWORD_SCREEN_DELAY) {
         lock();
       }
+      changedToBackgroundStateMoment.current = new Date();
     },
     onAppBackgroundState: () => {
       changedToBackgroundStateMoment.current = new Date();
