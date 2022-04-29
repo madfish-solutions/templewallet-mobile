@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
@@ -14,11 +15,12 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
-import { privacyPolicy, termsOfUse } from '../../../config/socials';
+import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showWarningToast } from '../../../toast/toast.utils';
 import { isString } from '../../../utils/is-string';
@@ -33,11 +35,15 @@ interface CreateNewPasswordProps {
 }
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
+  const dispatch = useDispatch();
+
   const styles = useCreateNewPasswordStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
+  const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+    dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
+  };
 
   useNavigationSetOptions(
     {
@@ -59,7 +65,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     () => ({
       password: initialPassword,
       passwordConfirmation: initialPassword,
-      acceptTerms: false
+      acceptTerms: false,
+      analytics: true
     }),
     [initialPassword]
   );
@@ -87,6 +94,16 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             <View style={styles.checkboxContainer}>
               <FormBiometryCheckbox name="useBiometry" />
             </View>
+
+            <View style={[styles.checkboxContainer, styles.removeMargin]}>
+              <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.AnalyticsCheckbox}>
+                <Divider size={formatSize(8)} />
+                <Text style={styles.checkboxText}>Analytics</Text>
+              </FormCheckbox>
+            </View>
+            <CheckboxLabel>
+              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+            </CheckboxLabel>
           </View>
           <Divider />
 
@@ -98,7 +115,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
               </FormCheckbox>
             </View>
             <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Usage</TextLink> and{' '}
+              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
               <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
             </CheckboxLabel>
 

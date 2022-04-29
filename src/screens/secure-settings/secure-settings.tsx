@@ -12,17 +12,27 @@ import { WhiteContainerText } from '../../components/white-container/white-conta
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { disableBiometryPassword, setIsBalanceHidden } from '../../store/settings/settings-actions';
-import { useBalanceHiddenSelector, useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
+import {
+  disableBiometryPassword,
+  setIsAnalyticsEnabled,
+  setIsBalanceHidden
+} from '../../store/settings/settings-actions';
+import {
+  useAnalyticsEnabledSelector,
+  useBalanceHiddenSelector,
+  useBiometricsEnabledSelector
+} from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
+import { SecureSettingsSelectors } from './secure-settings.selectors';
 
 export const SecureSettings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const { isHardwareAvailable, biometryType } = useBiometryAvailability();
 
+  const analyticsEnabled = useAnalyticsEnabledSelector();
   const biometricsEnabled = useBiometricsEnabledSelector();
   const isBalanceHiddenSetting = useBalanceHiddenSelector();
 
@@ -40,13 +50,28 @@ export const SecureSettings = () => {
 
   return (
     <ScreenContainer>
+      <Divider size={formatSize(8)} />
+      <WhiteContainer>
+        <WhiteContainerAction onPress={() => dispatch(setIsAnalyticsEnabled(!analyticsEnabled))}>
+          <WhiteContainerText text="Analytics" />
+          <Switch
+            value={analyticsEnabled}
+            onChange={value => dispatch(setIsAnalyticsEnabled(value))}
+            testID={SecureSettingsSelectors.AnalyticsSwitch}
+          />
+        </WhiteContainerAction>
+      </WhiteContainer>
       {isHardwareAvailable && (
         <>
           <Divider size={formatSize(8)} />
           <WhiteContainer>
             <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
               <WhiteContainerText text={biometryType ?? 'Biometrics'} />
-              <Switch value={isBiometryAvailable} onChange={handleBiometrySwitch} />
+              <Switch
+                value={isBiometryAvailable}
+                onChange={handleBiometrySwitch}
+                testID={SecureSettingsSelectors.BiometricsSwitch}
+              />
             </WhiteContainerAction>
           </WhiteContainer>
         </>
@@ -55,7 +80,11 @@ export const SecureSettings = () => {
       <WhiteContainer>
         <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
           <WhiteContainerText text="Hide mode on Launch" />
-          <Switch value={isBalanceHiddenSetting} onChange={value => dispatch(setIsBalanceHidden(value))} />
+          <Switch
+            value={isBalanceHiddenSetting}
+            onChange={value => dispatch(setIsBalanceHidden(value))}
+            testID={SecureSettingsSelectors.HideModeOnLaunchSwitch}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
