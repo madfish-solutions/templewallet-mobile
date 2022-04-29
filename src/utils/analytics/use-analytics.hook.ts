@@ -14,10 +14,11 @@ export const useAnalytics = () => {
   const { track, screen } = useSegmentAnalytics();
 
   const trackEvent = async (
-    event: string,
+    event?: string,
     category: AnalyticsEventCategory = AnalyticsEventCategory.General,
     properties?: object
   ) =>
+    event !== undefined &&
     analyticsEnabled &&
     track(category, {
       userId,

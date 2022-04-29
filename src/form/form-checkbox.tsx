@@ -19,7 +19,7 @@ export const FormCheckbox: FC<Props> = ({ name, children, disabled, size, testID
   const { trackEvent } = useAnalytics();
 
   const handleChange = (newValue: boolean) => {
-    testID !== undefined && trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
+    trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
 
     helpers.setTouched(true);
     helpers.setValue(newValue);

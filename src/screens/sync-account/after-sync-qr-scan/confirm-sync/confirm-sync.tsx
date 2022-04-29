@@ -20,7 +20,7 @@ import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
-import { ConfirmSyncFormValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
+import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
 import { useConfirmSyncStyles } from './confirm-sync.styles';
 
@@ -42,15 +42,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   );
 
   return (
-    <Formik
-      initialValues={{
-        password: '',
-        acceptTerms: false,
-        analytics: true
-      }}
-      validationSchema={ConfirmSyncValidationSchema}
-      onSubmit={onSubmit}
-    >
+    <Formik initialValues={ConfirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>
       {({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>

@@ -13,7 +13,11 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
+import {
+  CreateNewPasswordFormValues,
+  createNewPasswordInitialValues,
+  createNewPasswordValidationSchema
+} from './create-new-password.form';
 import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
@@ -46,10 +50,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
 
   return (
     <Formik
-      initialValues={{
-        password: '',
-        passwordConfirmation: ''
-      }}
+      initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >

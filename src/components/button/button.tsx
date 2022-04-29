@@ -52,7 +52,7 @@ export const Button: FC<Props> = ({
   const { trackEvent } = useAnalytics();
 
   const handlePress = () => {
-    testID !== undefined && trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
     return onPress !== undefined && onPress();
   };

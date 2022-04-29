@@ -56,7 +56,7 @@ export const Switch: FC<Props> = ({ value, disabled = false, testID, testIDPrope
       hitSlop={generateHitSlop(formatSize(4))}
       onPress={e => {
         e.stopPropagation();
-        testID !== undefined && trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
+        trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
         onChange(!value);
       }}
       onPressOut={() => ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions)}

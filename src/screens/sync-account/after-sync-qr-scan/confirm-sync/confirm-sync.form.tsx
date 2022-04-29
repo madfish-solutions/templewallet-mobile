@@ -21,3 +21,9 @@ export const ConfirmSyncValidationSchema: SchemaOf<ConfirmSyncFormValues> = obje
   acceptTerms: acceptTermsValidation,
   analytics: analyticsValidation
 });
+
+export const ConfirmSyncInitialValues: ConfirmSyncFormValues = {
+  password: '',
+  acceptTerms: false,
+  analytics: true
+};
