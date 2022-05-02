@@ -56,5 +56,8 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     fontSize: formatSize(14),
     lineHeight: formatSize(18),
     color: colors.gray1
+  },
+  infoValue: {
+    color: colors.black
   }
 }));

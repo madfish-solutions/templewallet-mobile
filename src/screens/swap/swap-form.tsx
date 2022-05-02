@@ -26,6 +26,7 @@ import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
 import { SwapExchangeRate } from './swap-exchange-rate';
 import { SwapRoute } from './swap-router';
 import { useSwapStyles } from './swap.styles';
@@ -62,7 +63,7 @@ export const SwapForm: FC = () => {
 
   const inputAssetSlug = getTokenSlug(inputAssets.asset);
   const outputAssetSlug = getTokenSlug(outputAssets.asset);
-  const prevOutput = useRef(outputAssetSlug);
+  const prevOutput = useRef('');
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -87,7 +88,10 @@ export const SwapForm: FC = () => {
     slippageTolerance
   );
 
-  const assetsListWithTez = useMemo<TokenInterface[]>(() => [tezosToken, ...assetsList], [tezosToken, assetsList]);
+  const assetsListWithTez = useMemo<TokenInterface[]>(
+    () => [tezosToken, ...assetsList].filter(x => !isDefined(x.artifactUri)),
+    [tezosToken, assetsList]
+  );
 
   useEffect(() => {
     setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);
@@ -123,22 +127,23 @@ export const SwapForm: FC = () => {
   );
 
   useEffect(() => {
-    // if input === prevOutput.current then input changed
-    // if output !== prevOutput.current then output changed
-    // make last edition apply and wipe other field
-    if (inputAssetSlug === prevOutput.current && inputAssetSlug === outputAssetSlug) {
+    const inputAssetSlugInner = getTokenSlug(inputAssets.asset) + ' ' + inputAssets.asset.name;
+    const outputAssetSlugInner = getTokenSlug(outputAssets.asset) + ' ' + outputAssets.asset.name;
+    if (inputAssetSlugInner === prevOutput.current && inputAssetSlugInner === outputAssetSlugInner) {
       setFieldValue('outputAssets', {
         asset: emptyToken,
         amount: undefined
       });
-    } else if (outputAssetSlug !== prevOutput.current && inputAssetSlug === outputAssetSlug) {
+    } else if (outputAssetSlugInner !== prevOutput.current && inputAssetSlugInner === outputAssetSlugInner) {
       setFieldValue('inputAssets', {
         asset: emptyToken,
         amount: undefined
       });
     }
-    prevOutput.current = outputAssetSlug;
-  }, [inputAssetSlug, outputAssetSlug, setFieldValue]);
+    prevOutput.current = outputAssetSlugInner;
+  }, [outputAssets.asset, inputAssets.asset, setFieldValue]);
+
+  console.log(assetsListWithTez);
 
   return (
     <>

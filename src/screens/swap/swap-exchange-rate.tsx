@@ -70,17 +70,17 @@ export const SwapExchangeRate: FC<Props> = ({
               Routing Fee
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </Text>
-            <Text>{ROUTING_FEE_PERCENT}%</Text>
+            <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Exchange rate</Text>
-            <Text>
+            <Text style={styles.infoValue}>
               1 {outputAssetMetadata.symbol} = {formatAssetAmount(exchangeRate)} {inputAssetMetadata.symbol}
             </Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Minimum received</Text>
-            <Text>
+            <Text style={styles.infoValue}>
               {minimumReceivedAmount && formatAssetAmount(minimumReceivedAmount)} {inputAssetMetadata.symbol}
             </Text>
           </View>
@@ -92,15 +92,15 @@ export const SwapExchangeRate: FC<Props> = ({
               Routing Fee
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </Text>
-            <Text>---</Text>
+            <Text style={styles.infoValue}>---</Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Exchange rate</Text>
-            <Text>---</Text>
+            <Text style={styles.infoValue}>---</Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Minimum received</Text>
-            <Text>---</Text>
+            <Text style={styles.infoValue}>---</Text>
           </View>
         </>
       )}
