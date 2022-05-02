@@ -14,6 +14,14 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  submitButton: {
+    borderTopWidth: formatSize(0.5),
+    borderColor: colors.lines,
+    paddingTop: formatSize(8),
+    paddingBottom: formatSize(16),
+    paddingHorizontal: formatSize(8),
+    backgroundColor: colors.pageBG
+  },
   smartRouteStyle: {
     ...generateShadow(1, colors.black),
     padding: formatSize(8),

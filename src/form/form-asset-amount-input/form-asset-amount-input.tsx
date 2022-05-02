@@ -11,6 +11,7 @@ interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
   name: string;
+  toUsdToggle?: boolean;
 }
 
 export const FormAssetAmountInput: FC<Props> = ({
@@ -18,8 +19,9 @@ export const FormAssetAmountInput: FC<Props> = ({
   label,
   assetsList,
   frozenBalance,
-  onValueChange = emptyFn,
-  editable
+  editable,
+  toUsdToggle = true,
+  onValueChange = emptyFn
 }) => {
   const [field, meta, helpers] = useField<AssetAmountInterface>(name);
   const isError = hasError(meta);
@@ -41,6 +43,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         frozenBalance={frozenBalance}
         isError={isError}
         editable={editable}
+        toUsdToggle={toUsdToggle}
         onBlur={() => helpers.setTouched(true)}
         onValueChange={handleValueChange}
       />

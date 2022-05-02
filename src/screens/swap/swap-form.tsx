@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { useFormikContext } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import {
   DexTypeEnum,
   getBestTradeExactInput,
@@ -17,6 +17,7 @@ import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { Label } from '../../components/label/label';
+import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
@@ -40,7 +41,13 @@ export function atomsToTokens(x: BigNumber, decimals: number) {
 export function tokensToAtoms(x: BigNumber, decimals: number) {
   return x.times(new BigNumber(10).pow(decimals)).integerValue();
 }
-const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
+const KNOWN_DEX_TYPES = [
+  DexTypeEnum.QuipuSwap,
+  DexTypeEnum.Plenty,
+  DexTypeEnum.LiquidityBaking,
+  DexTypeEnum.Youves
+  // DexTypeEnum.QuipuSwapTokenToTokenDex
+];
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
@@ -113,34 +120,46 @@ export const SwapForm: FC = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Divider size={formatSize(8)} />
-      <FormAssetAmountInput name="inputAssets" label="From" assetsList={filteredAssetsListWithTez} />
-      <View style={styles.swapIconContainer}>
-        <TouchableIcon
-          onPress={() => swapAction(inputAssets, outputAssets)}
-          name={IconNameEnum.SwapArrow}
-          size={formatSize(24)}
-        />
-      </View>
-      <FormAssetAmountInput name="outputAssets" label="To" assetsList={assetsList} />
-      <Label label="Swap route" />
-      <View>
-        <SwapRoute trade={bestTrade} />
-
-        <Divider />
-        <View>
-          <SwapExchangeRate
-            trade={bestTrade}
-            inputAssetMetadata={inputAssets.asset}
-            outputAssetMetadata={outputAssets.asset}
-            tradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+    <>
+      <ScrollView>
+        <SwapPriceUpdateBar />
+        <View style={styles.container}>
+          <Divider size={formatSize(8)} />
+          <FormAssetAmountInput name="inputAssets" label="From" assetsList={filteredAssetsListWithTez} />
+          <View style={styles.swapIconContainer}>
+            <TouchableIcon
+              onPress={() => swapAction(inputAssets, outputAssets)}
+              name={IconNameEnum.SwapArrow}
+              size={formatSize(24)}
+            />
+          </View>
+          <FormAssetAmountInput
+            name="outputAssets"
+            label="To"
+            toUsdToggle={false}
+            editable={false}
+            assetsList={assetsList}
           />
-        </View>
-      </View>
-      <Divider size={formatSize(16)} />
+          <Label label="Swap route" />
+          <View>
+            <SwapRoute trade={bestTrade} />
 
-      <ButtonLargePrimary disabled={inputAssetSlug === outputAssetSlug} title="Swap" onPress={submitForm} />
-    </View>
+            <Divider />
+            <View>
+              <SwapExchangeRate
+                trade={bestTrade}
+                inputAssetMetadata={inputAssets.asset}
+                outputAssetMetadata={outputAssets.asset}
+                tradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+              />
+            </View>
+          </View>
+          <Divider size={formatSize(16)} />
+        </View>
+      </ScrollView>
+      <View style={styles.submitButton}>
+        <ButtonLargePrimary disabled={inputAssetSlug === outputAssetSlug} title="Swap" onPress={submitForm} />
+      </View>
+    </>
   );
 };

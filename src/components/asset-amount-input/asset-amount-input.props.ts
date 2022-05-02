@@ -11,6 +11,7 @@ export interface AssetAmountInputProps {
   frozenBalance?: string;
   isError?: boolean;
   editable?: boolean;
+  toUsdToggle?: boolean;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
   onValueChange: EventFn<AssetAmountInterface>;

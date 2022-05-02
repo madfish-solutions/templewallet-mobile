@@ -46,10 +46,11 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   assetsList,
   frozenBalance,
   isError = false,
+  toUsdToggle = true,
+  editable = true,
   onBlur,
   onFocus,
-  onValueChange,
-  editable = true
+  onValueChange
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -146,7 +147,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {hasExchangeRate && (
+        {toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}

@@ -1,11 +1,9 @@
 import { OpKind } from '@taquito/rpc';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
-import { ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { getTradeOpParams } from 'swap-router-sdk';
 
-import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
@@ -92,16 +90,13 @@ export const SwapScreen: FC = () => {
   );
 
   return (
-    <ScrollView>
-      <SwapPriceUpdateBar />
-      <Formik
-        initialValues={sendModalInitialValues}
-        enableReinitialize={true}
-        validationSchema={swapFormValidationSchema}
-        onSubmit={onHandleSubmit}
-      >
-        {() => <SwapForm />}
-      </Formik>
-    </ScrollView>
+    <Formik
+      initialValues={sendModalInitialValues}
+      enableReinitialize={true}
+      validationSchema={swapFormValidationSchema}
+      onSubmit={onHandleSubmit}
+    >
+      {() => <SwapForm />}
+    </Formik>
   );
 };
