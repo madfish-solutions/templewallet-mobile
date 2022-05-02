@@ -4,8 +4,6 @@ import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { getTradeOpParams } from 'swap-router-sdk';
 
-import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
-import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
@@ -13,13 +11,8 @@ import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { navigateAction } from '../../store/root-state.actions';
-import {
-  useSelectedAccountSelector,
-  useTezosTokenSelector,
-  useVisibleAccountsListSelector,
-  useVisibleAssetListSelector
-} from '../../store/wallet/wallet-selectors';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -29,10 +22,7 @@ import { getRoutingFeeTransferParams } from './swap.util';
 
 export const SwapScreen: FC = () => {
   const { trackEvent } = useAnalytics();
-  const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useTezosTokenSelector();
-  const assetsList = useVisibleAssetListSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const dispatch = useDispatch();
@@ -68,25 +58,25 @@ export const SwapScreen: FC = () => {
       kind: OpKind.TRANSACTION
     }));
 
+    console.log('opParams', opParams);
+
     dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
   };
-
-  const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...filteredAssetsList],
-    [tezosToken, filteredAssetsList]
-  );
 
   const sendModalInitialValues = useMemo(
     () => ({
       inputAssets: {
-        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, tezosToken)) ?? emptyToken,
+        asset: tezosToken,
         amount: undefined
       },
-      outputAssets: { asset: emptyToken, amount: undefined },
+      outputAssets: {
+        asset: emptyToken,
+        amount: undefined
+      },
       bestTrade: [],
       bestTradeWithSlippageTolerance: []
     }),
-    [filteredAssetsListWithTez, visibleAccounts]
+    []
   );
 
   return (

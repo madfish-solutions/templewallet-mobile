@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { useFormikContext } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ScrollView, View } from 'react-native';
 import {
   DexTypeEnum,
@@ -45,8 +45,8 @@ const KNOWN_DEX_TYPES = [
   DexTypeEnum.QuipuSwap,
   DexTypeEnum.Plenty,
   DexTypeEnum.LiquidityBaking,
+  // DexTypeEnum.QuipuSwapTokenToTokenDex,
   DexTypeEnum.Youves
-  // DexTypeEnum.QuipuSwapTokenToTokenDex
 ];
 
 export const SwapForm: FC = () => {
@@ -62,6 +62,7 @@ export const SwapForm: FC = () => {
 
   const inputAssetSlug = getTokenSlug(inputAssets.asset);
   const outputAssetSlug = getTokenSlug(outputAssets.asset);
+  const prevOutput = useRef(outputAssetSlug);
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -85,6 +86,8 @@ export const SwapForm: FC = () => {
     bestTrade,
     slippageTolerance
   );
+
+  const assetsListWithTez = useMemo<TokenInterface[]>(() => [tezosToken, ...assetsList], [tezosToken, assetsList]);
 
   useEffect(() => {
     setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);
@@ -119,6 +122,24 @@ export const SwapForm: FC = () => {
     [outputAssets, inputAssets]
   );
 
+  useEffect(() => {
+    // if input === prevOutput.current then input changed
+    // if output !== prevOutput.current then output changed
+    // make last edition apply and wipe other field
+    if (inputAssetSlug === prevOutput.current && inputAssetSlug === outputAssetSlug) {
+      setFieldValue('outputAssets', {
+        asset: emptyToken,
+        amount: undefined
+      });
+    } else if (outputAssetSlug !== prevOutput.current && inputAssetSlug === outputAssetSlug) {
+      setFieldValue('inputAssets', {
+        asset: emptyToken,
+        amount: undefined
+      });
+    }
+    prevOutput.current = outputAssetSlug;
+  }, [inputAssetSlug, outputAssetSlug, setFieldValue]);
+
   return (
     <>
       <ScrollView>
@@ -138,7 +159,7 @@ export const SwapForm: FC = () => {
             label="To"
             toUsdToggle={false}
             editable={false}
-            assetsList={assetsList}
+            assetsList={assetsListWithTez}
           />
           <Label label="Swap route" />
           <View>

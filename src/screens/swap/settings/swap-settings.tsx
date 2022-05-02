@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -15,17 +15,28 @@ import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { useSwapSettingsStyles } from './swap-settings.styles';
 
+const mapSlippageToIndex = (slippage: number): number => {
+  switch (slippage) {
+    case 0.75:
+      return 0;
+    case 1.5:
+      return 1;
+    case 3:
+      return 2;
+    default:
+      return 3;
+  }
+};
+
 export const SwapSettingsScreen: FC = () => {
   const styles = useSwapSettingsStyles();
   const dispatch = useDispatch();
   const updateSlippageTolerance = (slippage: number) => dispatch(setSlippage(slippage));
-  const [inputTypeIndex, setInputTypeIndex] = useState(1);
   const initialSlippageValue = useSlippageSelector();
   const [slippageTolerance, setSlippageTolerance] = useState<string>(`${initialSlippageValue}`);
+  const [inputTypeIndex, setInputTypeIndex] = useState(mapSlippageToIndex(initialSlippageValue));
 
   usePageAnalytic(ScreensEnum.SwapSettingsScreen);
-
-  useEffect(() => void updateSlippageTolerance(1.5), []);
 
   const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
     setInputTypeIndex(tokenTypeIndex);
@@ -50,8 +61,14 @@ export const SwapSettingsScreen: FC = () => {
     }
   };
 
-  const onHandleChange = (value: BigNumber | undefined) =>
-    isDefined(value) ? setSlippageTolerance(value.toString()) : setSlippageTolerance('');
+  const onHandleChange = (value: BigNumber | undefined) => {
+    if (isDefined(value)) {
+      setSlippageTolerance(value.toString());
+      updateSlippageTolerance(value.toNumber());
+    } else {
+      setSlippageTolerance('');
+    }
+  };
 
   return (
     <View style={styles.contentWrapper}>

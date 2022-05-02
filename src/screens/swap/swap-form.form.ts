@@ -1,11 +1,12 @@
 import { object, SchemaOf } from 'yup';
 
+import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { assetAmountValidation } from '../../form/validation/asset-amount';
-import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 
-export const swapFormValidationSchema: SchemaOf<SwapFormValues> = object().shape({
+export const swapFormValidationSchema: SchemaOf<{
+  inputAssets: AssetAmountInterface;
+  outputAssets: AssetAmountInterface;
+}> = object().shape({
   inputAssets: assetAmountValidation,
-  outputAssets: assetAmountValidation,
-  bestTrade: object().shape({}).nullable().required(),
-  bestTradeWithSlippageTolerance: object().shape({}).nullable()
+  outputAssets: assetAmountValidation
 });
