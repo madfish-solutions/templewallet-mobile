@@ -11,9 +11,10 @@ import { formatSize } from '../../styles/format-size';
 import { useSwapStyles } from './swap.styles';
 interface Props {
   tradeOperation: TradeOperation;
+  isShowNextArrow: boolean;
 }
 
-export const SwapRouterItem: FC<Props> = ({ tradeOperation }) => {
+export const SwapRouterItem: FC<Props> = ({ tradeOperation, isShowNextArrow }) => {
   const styles = useSwapStyles();
   const getTokenMetadata = useTokenMetadataGetter();
 
@@ -22,9 +23,12 @@ export const SwapRouterItem: FC<Props> = ({ tradeOperation }) => {
 
   const dexIcon: IconNameEnum = useMemo(() => {
     switch (tradeOperation.dexType) {
+      case DexTypeEnum.LiquidityBaking:
+        return IconNameEnum.LiquidityBaking;
       case DexTypeEnum.Plenty:
         return IconNameEnum.Plenty;
       case DexTypeEnum.QuipuSwap:
+      case DexTypeEnum.QuipuSwapTokenToTokenDex:
         return IconNameEnum.QuipuSwapDark;
       case DexTypeEnum.Youves:
         return IconNameEnum.Youves;
@@ -34,13 +38,16 @@ export const SwapRouterItem: FC<Props> = ({ tradeOperation }) => {
   }, [tradeOperation.dexType]);
 
   return (
-    <View style={styles.smartRouteStyle}>
-      <Icon name={dexIcon} size={formatSize(24)} />
-      <Divider size={formatSize(18)} />
-      <TokenIcon token={aTokenMetadata} size={formatSize(24)} />
-      <View style={styles.smartRouteLastTokenStyle}>
-        <TokenIcon token={bTokenMetadata} size={formatSize(24)} />
+    <>
+      <View style={styles.smartRouteStyle}>
+        <Icon name={dexIcon} size={formatSize(24)} />
+        <Divider size={formatSize(18)} />
+        <TokenIcon token={aTokenMetadata} size={formatSize(24)} />
+        <View style={styles.smartRouteLastTokenStyle}>
+          <TokenIcon token={bTokenMetadata} size={formatSize(24)} />
+        </View>
       </View>
-    </View>
+      {isShowNextArrow && <Icon name={IconNameEnum.ArrowRight} size={formatSize(12)} />}
+    </>
   );
 };

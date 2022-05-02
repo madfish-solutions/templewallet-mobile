@@ -16,7 +16,6 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
   },
   smartRouteStyle: {
     ...generateShadow(1, colors.black),
-    marginRight: formatSize(16),
     padding: formatSize(8),
     borderRadius: formatSize(10),
     borderColor: colors.gray1,
@@ -26,7 +25,8 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
   },
   swapInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   smartRouteLastTokenStyle: {
     marginLeft: formatSize(-12)
