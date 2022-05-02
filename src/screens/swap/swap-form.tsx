@@ -46,7 +46,7 @@ const KNOWN_DEX_TYPES = [
   DexTypeEnum.QuipuSwap,
   DexTypeEnum.Plenty,
   DexTypeEnum.LiquidityBaking,
-  // DexTypeEnum.QuipuSwapTokenToTokenDex,
+  DexTypeEnum.QuipuSwapTokenToTokenDex,
   DexTypeEnum.Youves
 ];
 
