@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useState } from 'react';
-import { View, Text } from 'react-native';
+import { Text, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../../components/divider/divider';
@@ -71,7 +71,7 @@ export const SwapSettingsScreen: FC = () => {
   };
 
   return (
-    <View style={styles.contentWrapper}>
+    <ScrollView keyboardShouldPersistTaps={'never'} style={styles.contentWrapper}>
       <Label label="Slippage tolerance" />
       <TextSegmentControl
         selectedIndex={inputTypeIndex}
@@ -91,6 +91,6 @@ export const SwapSettingsScreen: FC = () => {
       <Text style={styles.desctiption}>
         Slippage tolerance is a setting for the limit of price slippage you are willing to accept.
       </Text>
-    </View>
+    </ScrollView>
   );
 };
