@@ -7,12 +7,15 @@ import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
+import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> {
   title: string;
   list: T[];
+  isSearchable?: boolean;
+  setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
@@ -57,6 +60,8 @@ export const Dropdown = <T extends unknown>({
   title,
   disabled = false,
   autoScroll = false,
+  isSearchable = false,
+  setSearchValue,
   comparator,
   equalityFn,
   renderValue,
@@ -109,6 +114,7 @@ export const Dropdown = <T extends unknown>({
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <ScrollView style={styles.scrollView} ref={scrollRef}>
+          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <View style={styles.contentContainer}>
             {list.map((item, index) => {
               const isSelected = equalityFn(item, value);

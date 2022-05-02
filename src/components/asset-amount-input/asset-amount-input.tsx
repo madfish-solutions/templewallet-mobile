@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -48,6 +49,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   isError = false,
   toUsdToggle = true,
   editable = true,
+  isSearchable = false,
+  setSearchValue = emptyFn,
   onBlur,
   onFocus,
   onValueChange
@@ -184,6 +187,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             list={assetsList}
             autoScroll
             comparator={['address', 'id']}
+            isSearchable={isSearchable}
+            setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}

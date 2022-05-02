@@ -118,6 +118,13 @@ export const useVisibleTokensListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
+export const useVisibleTokensListSelectorWithTezos = () => {
+  const tokensList = useTokensListSelector();
+  const tezosToken = useTezosTokenSelector();
+
+  return useMemo(() => [tezosToken, ...tokensList].filter(({ isVisible }) => isVisible), [tokensList, tezosToken]);
+};
+
 export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 

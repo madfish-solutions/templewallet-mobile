@@ -12,6 +12,8 @@ interface Props
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
   name: string;
   toUsdToggle?: boolean;
+  isSearchable?: boolean;
+  setSearchValue?: EventFn<string>;
 }
 
 export const FormAssetAmountInput: FC<Props> = ({
@@ -21,6 +23,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   frozenBalance,
   editable,
   toUsdToggle = true,
+  isSearchable = false,
+  setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
   const [field, meta, helpers] = useField<AssetAmountInterface>(name);
@@ -42,6 +46,8 @@ export const FormAssetAmountInput: FC<Props> = ({
         assetsList={assetsList}
         frozenBalance={frozenBalance}
         isError={isError}
+        isSearchable={isSearchable}
+        setSearchValue={setSearchValue}
         editable={editable}
         toUsdToggle={toUsdToggle}
         onBlur={() => helpers.setTouched(true)}

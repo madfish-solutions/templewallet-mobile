@@ -12,6 +12,8 @@ export interface AssetAmountInputProps {
   isError?: boolean;
   editable?: boolean;
   toUsdToggle?: boolean;
+  isSearchable?: boolean;
+  setSearchValue?: EventFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
   onValueChange: EventFn<AssetAmountInterface>;

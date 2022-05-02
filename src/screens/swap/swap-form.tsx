@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { useFormikContext } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import {
   DexTypeEnum,
@@ -22,11 +22,11 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useSlippageSelector } from '../../store/settings/settings-selectors';
-import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useVisibleTokensListSelectorWithTezos } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
+import { isString } from '../../utils/is-string';
 import { SwapExchangeRate } from './swap-exchange-rate';
 import { SwapRoute } from './swap-router';
 import { useSwapStyles } from './swap.styles';
@@ -52,11 +52,11 @@ const KNOWN_DEX_TYPES = [
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const assetsList = useVisibleAssetListSelector();
+  const assetsList = useVisibleTokensListSelectorWithTezos();
   const styles = useSwapStyles();
   const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true);
   const slippageTolerance = useSlippageSelector();
 
   const { inputAssets, outputAssets, bestTrade } = values;
@@ -88,10 +88,41 @@ export const SwapForm: FC = () => {
     slippageTolerance
   );
 
-  const assetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...assetsList].filter(x => !isDefined(x.artifactUri)),
-    [tezosToken, assetsList]
-  );
+  // const assetsListWithTez = useMemo<TokenInterface[]>(
+  //   () => [tezosToken, ...assetsList].filter(x => !isDefined(x.artifactUri)),
+  //   [tezosToken, assetsList]
+  // );
+
+  const [searchValue, setSearchTezAssetsValue] = useState<string>();
+
+  const [assetsListWithTez, setAssetsListWithTez] = useState<TokenInterface[]>(assetsList);
+
+  useEffect(() => {
+    const sourceArray = assetsList;
+
+    if (isString(searchValue)) {
+      const lowerCaseSearchValue = searchValue.toLowerCase();
+      const result: TokenInterface[] = [];
+
+      for (const asset of sourceArray) {
+        const { name, symbol, address } = asset;
+
+        if (
+          name.toLowerCase().includes(lowerCaseSearchValue) ||
+          symbol.toLowerCase().includes(lowerCaseSearchValue) ||
+          address.toLowerCase().includes(lowerCaseSearchValue)
+        ) {
+          result.push(asset);
+        }
+      }
+
+      setAssetsListWithTez(result);
+    } else {
+      setAssetsListWithTez(sourceArray);
+    }
+  }, [tezosToken, searchValue, assetsList]);
+
+  // const { setSearchValue: setSearchTezAssetsValue } = useSearchAssets(assetsListWithTez, setAssetsListWithTez, []);
 
   useEffect(() => {
     setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);
@@ -143,15 +174,19 @@ export const SwapForm: FC = () => {
     prevOutput.current = outputAssetSlugInner;
   }, [outputAssets.asset, inputAssets.asset, setFieldValue]);
 
-  console.log(assetsListWithTez);
-
   return (
     <>
       <ScrollView>
         <SwapPriceUpdateBar />
         <View style={styles.container}>
           <Divider size={formatSize(8)} />
-          <FormAssetAmountInput name="inputAssets" label="From" assetsList={filteredAssetsListWithTez} />
+          <FormAssetAmountInput
+            name="inputAssets"
+            label="From"
+            isSearchable
+            assetsList={filteredAssetsListWithTez}
+            setSearchValue={setSearchValue}
+          />
           <View style={styles.swapIconContainer}>
             <TouchableIcon
               onPress={() => swapAction(inputAssets, outputAssets)}
@@ -164,7 +199,9 @@ export const SwapForm: FC = () => {
             label="To"
             toUsdToggle={false}
             editable={false}
+            isSearchable
             assetsList={assetsListWithTez}
+            setSearchValue={setSearchTezAssetsValue}
           />
           <Label label="Swap route" />
           <View>
