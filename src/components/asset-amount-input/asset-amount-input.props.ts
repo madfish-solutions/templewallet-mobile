@@ -13,6 +13,12 @@ export interface AssetAmountInputProps {
   editable?: boolean;
   toUsdToggle?: boolean;
   isSearchable?: boolean;
+  selectionOptions?:
+    | {
+        start: number;
+        end?: number | undefined;
+      }
+    | undefined;
   setSearchValue?: EventFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];

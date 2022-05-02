@@ -50,6 +50,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   toUsdToggle = true,
   editable = true,
   isSearchable = false,
+  selectionOptions = undefined,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -170,6 +171,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}
+          selection={selectionOptions}
           autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}

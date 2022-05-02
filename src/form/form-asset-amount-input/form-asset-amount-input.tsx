@@ -14,6 +14,12 @@ interface Props
   toUsdToggle?: boolean;
   isSearchable?: boolean;
   setSearchValue?: EventFn<string>;
+  selectionOptions?:
+    | {
+        start: number;
+        end?: number | undefined;
+      }
+    | undefined;
 }
 
 export const FormAssetAmountInput: FC<Props> = ({
@@ -24,6 +30,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   editable,
   toUsdToggle = true,
   isSearchable = false,
+  selectionOptions = undefined,
   setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
@@ -47,9 +54,10 @@ export const FormAssetAmountInput: FC<Props> = ({
         frozenBalance={frozenBalance}
         isError={isError}
         isSearchable={isSearchable}
-        setSearchValue={setSearchValue}
         editable={editable}
         toUsdToggle={toUsdToggle}
+        selectionOptions={selectionOptions}
+        setSearchValue={setSearchValue}
         onBlur={() => helpers.setTouched(true)}
         onValueChange={handleValueChange}
       />

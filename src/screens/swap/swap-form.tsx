@@ -183,6 +183,7 @@ export const SwapForm: FC = () => {
           <FormAssetAmountInput
             name="inputAssets"
             label="From"
+            selectionOptions={{ start: 0, end: 0 }}
             isSearchable
             assetsList={filteredAssetsListWithTez}
             setSearchValue={setSearchValue}
