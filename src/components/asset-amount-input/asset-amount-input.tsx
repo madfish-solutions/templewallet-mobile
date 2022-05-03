@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -46,10 +47,14 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
   assetsList,
   frozenBalance,
   isError = false,
+  toUsdToggle = true,
+  editable = true,
+  isSearchable = false,
+  selectionOptions = undefined,
+  setSearchValue = emptyFn,
   onBlur,
   onFocus,
-  onValueChange,
-  editable = true
+  onValueChange
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -146,7 +151,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {hasExchangeRate && (
+        {toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
@@ -166,6 +171,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}
+          selection={selectionOptions}
           autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}
@@ -183,6 +189,8 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             list={assetsList}
             autoScroll
             comparator={['address', 'id']}
+            isSearchable={isSearchable}
+            setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}

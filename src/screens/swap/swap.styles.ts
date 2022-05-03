@@ -14,9 +14,16 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  submitButton: {
+    borderTopWidth: formatSize(0.5),
+    borderColor: colors.lines,
+    paddingTop: formatSize(8),
+    paddingBottom: formatSize(16),
+    paddingHorizontal: formatSize(8),
+    backgroundColor: colors.pageBG
+  },
   smartRouteStyle: {
     ...generateShadow(1, colors.black),
-    marginRight: formatSize(16),
     padding: formatSize(8),
     borderRadius: formatSize(10),
     borderColor: colors.gray1,
@@ -26,7 +33,8 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
   },
   swapInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   smartRouteLastTokenStyle: {
     marginLeft: formatSize(-12)
@@ -48,5 +56,8 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     fontSize: formatSize(14),
     lineHeight: formatSize(18),
     color: colors.gray1
+  },
+  infoValue: {
+    color: colors.black
   }
 }));

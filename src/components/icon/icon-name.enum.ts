@@ -33,6 +33,7 @@ export enum IconNameEnum {
   SoonBadge = 'SoonBadge',
   Youves = 'Youves',
   Plenty = 'Plenty',
+  LiquidityBaking = 'LiquidityBaking',
   QuipuSwap = 'QuipuSwap',
   QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',

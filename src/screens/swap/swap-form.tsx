@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { useFormikContext } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
-import { View } from 'react-native';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import {
   DexTypeEnum,
   getBestTradeExactInput,
@@ -17,14 +17,16 @@ import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { Label } from '../../components/label/label';
+import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useSlippageSelector } from '../../store/settings/settings-selectors';
-import { useTezosTokenSelector, useVisibleAssetListSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { isString } from '../../utils/is-string';
 import { SwapExchangeRate } from './swap-exchange-rate';
 import { SwapRoute } from './swap-router';
 import { useSwapStyles } from './swap.styles';
@@ -40,21 +42,28 @@ export function atomsToTokens(x: BigNumber, decimals: number) {
 export function tokensToAtoms(x: BigNumber, decimals: number) {
   return x.times(new BigNumber(10).pow(decimals)).integerValue();
 }
-const KNOWN_DEX_TYPES = [DexTypeEnum.QuipuSwap, DexTypeEnum.Plenty, DexTypeEnum.LiquidityBaking, DexTypeEnum.Youves];
+const KNOWN_DEX_TYPES = [
+  DexTypeEnum.QuipuSwap,
+  DexTypeEnum.Plenty,
+  DexTypeEnum.LiquidityBaking,
+  DexTypeEnum.QuipuSwapTokenToTokenDex,
+  DexTypeEnum.Youves
+];
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const assetsList = useVisibleAssetListSelector();
+  const assetsList = useTokensListSelector();
   const styles = useSwapStyles();
   const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true);
   const slippageTolerance = useSlippageSelector();
 
   const { inputAssets, outputAssets, bestTrade } = values;
 
   const inputAssetSlug = getTokenSlug(inputAssets.asset);
   const outputAssetSlug = getTokenSlug(outputAssets.asset);
+  const prevOutput = useRef('');
 
   const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
     () => [tezosToken, ...filteredAssetsList],
@@ -78,6 +87,33 @@ export const SwapForm: FC = () => {
     bestTrade,
     slippageTolerance
   );
+
+  const [searchValue, setSearchTezAssetsValue] = useState<string>();
+
+  const assetsListWithTez = useMemo(() => {
+    const sourceArray = assetsList;
+
+    if (isString(searchValue)) {
+      const lowerCaseSearchValue = searchValue.toLowerCase();
+      const result: TokenInterface[] = [];
+
+      for (const asset of sourceArray) {
+        const { name, symbol, address } = asset;
+
+        if (
+          name.toLowerCase().includes(lowerCaseSearchValue) ||
+          symbol.toLowerCase().includes(lowerCaseSearchValue) ||
+          address.toLowerCase().includes(lowerCaseSearchValue)
+        ) {
+          result.push(asset);
+        }
+      }
+
+      return result;
+    } else {
+      return sourceArray;
+    }
+  }, [tezosToken, searchValue, assetsList]);
 
   useEffect(() => {
     setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);
@@ -112,35 +148,73 @@ export const SwapForm: FC = () => {
     [outputAssets, inputAssets]
   );
 
+  useEffect(() => {
+    const inputAssetSlugInner = getTokenSlug(inputAssets.asset) + ' ' + inputAssets.asset.name;
+    const outputAssetSlugInner = getTokenSlug(outputAssets.asset) + ' ' + outputAssets.asset.name;
+    if (inputAssetSlugInner === prevOutput.current && inputAssetSlugInner === outputAssetSlugInner) {
+      setFieldValue('outputAssets', {
+        asset: emptyToken,
+        amount: undefined
+      });
+    } else if (outputAssetSlugInner !== prevOutput.current && inputAssetSlugInner === outputAssetSlugInner) {
+      setFieldValue('inputAssets', {
+        asset: emptyToken,
+        amount: undefined
+      });
+    }
+    prevOutput.current = outputAssetSlugInner;
+  }, [outputAssets.asset, inputAssets.asset, setFieldValue]);
+
   return (
-    <View style={styles.container}>
-      <Divider size={formatSize(8)} />
-      <FormAssetAmountInput name="inputAssets" label="From" assetsList={filteredAssetsListWithTez} />
-      <View style={styles.swapIconContainer}>
-        <TouchableIcon
-          onPress={() => swapAction(inputAssets, outputAssets)}
-          name={IconNameEnum.SwapArrow}
-          size={formatSize(24)}
-        />
-      </View>
-      <FormAssetAmountInput name="outputAssets" label="To" assetsList={assetsList} />
-      <Label label="Swap route" />
-      <View>
-        <SwapRoute trade={bestTrade} />
-
-        <Divider />
-        <View>
-          <SwapExchangeRate
-            trade={bestTrade}
-            inputAssetMetadata={inputAssets.asset}
-            outputAssetMetadata={outputAssets.asset}
-            tradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+    <>
+      <ScrollView>
+        <SwapPriceUpdateBar />
+        <View style={styles.container}>
+          <Divider size={formatSize(8)} />
+          <FormAssetAmountInput
+            name="inputAssets"
+            label="From"
+            selectionOptions={{ start: 0, end: 0 }}
+            isSearchable
+            assetsList={filteredAssetsListWithTez}
+            setSearchValue={setSearchValue}
           />
-        </View>
-      </View>
-      <Divider size={formatSize(16)} />
+          <View style={styles.swapIconContainer}>
+            <TouchableIcon
+              onPress={() => swapAction(inputAssets, outputAssets)}
+              name={IconNameEnum.SwapArrow}
+              size={formatSize(24)}
+            />
+          </View>
+          <FormAssetAmountInput
+            name="outputAssets"
+            label="To"
+            toUsdToggle={false}
+            editable={false}
+            isSearchable
+            assetsList={assetsListWithTez}
+            setSearchValue={setSearchTezAssetsValue}
+          />
+          <Label label="Swap route" />
+          <View>
+            <SwapRoute trade={bestTrade} />
 
-      <ButtonLargePrimary disabled={inputAssetSlug === outputAssetSlug} title="Swap" onPress={submitForm} />
-    </View>
+            <Divider />
+            <View>
+              <SwapExchangeRate
+                trade={bestTrade}
+                inputAssetMetadata={inputAssets.asset}
+                outputAssetMetadata={outputAssets.asset}
+                tradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+              />
+            </View>
+          </View>
+          <Divider size={formatSize(16)} />
+        </View>
+      </ScrollView>
+      <View style={styles.submitButton}>
+        <ButtonLargePrimary disabled={inputAssetSlug === outputAssetSlug} title="Swap" onPress={submitForm} />
+      </View>
+    </>
   );
 };

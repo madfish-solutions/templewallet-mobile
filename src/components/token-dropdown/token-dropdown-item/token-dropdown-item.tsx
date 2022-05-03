@@ -13,6 +13,7 @@ import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
+import { tokenEqualityFn } from '../token-equality-fn';
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
 interface Props {
@@ -31,6 +32,18 @@ export const TokenDropdownItem: FC<Props> = ({
   const styles = useTokenDropdownItemStyles();
 
   const { symbol, name } = token;
+
+  if (tokenEqualityFn(token, emptyToken)) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.symbol}>Select Token</Text>
+        <View style={styles.rightContainer}>
+          <Divider size={formatSize(4)} />
+          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
