@@ -60,60 +60,64 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput
-              isShowPasswordStrengthIndicator
-              name="password"
-              testID={CreateNewPasswordCreateAccountSelectors.PasswordInput}
-            />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordCreateAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput
-              name="passwordConfirmation"
-              testID={CreateNewPasswordCreateAccountSelectors.RepeatPasswordInput}
-            />
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordCreateAccountSelectors.RepeatPasswordInput}
+              />
 
-            <View style={styles.checkboxContainer}>
-              <FormBiometryCheckbox name="useBiometry" />
+              <View style={styles.checkboxContainer}>
+                <FormBiometryCheckbox name="useBiometry" />
+              </View>
+
+              <View style={[styles.checkboxContainer, styles.removeMargin]}>
+                <FormCheckbox name="analytics" testID={CreateNewPasswordCreateAccountSelectors.AnalyticsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Analytics</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+              </CheckboxLabel>
             </View>
-
-            <View style={[styles.checkboxContainer, styles.removeMargin]}>
-              <FormCheckbox name="analytics" testID={CreateNewPasswordCreateAccountSelectors.AnalyticsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Analytics</Text>
-              </FormCheckbox>
-            </View>
-            <CheckboxLabel>
-              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-            </CheckboxLabel>
-          </View>
-          <Divider />
-
-          <View>
-            <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms" testID={CreateNewPasswordCreateAccountSelectors.AcceptTermsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Accept terms</Text>
-              </FormCheckbox>
-            </View>
-            <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-              <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-            </CheckboxLabel>
-
             <Divider />
+
+            <View>
+              <View style={styles.checkboxContainer}>
+                <FormCheckbox name="acceptTerms" testID={CreateNewPasswordCreateAccountSelectors.AcceptTermsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Accept terms</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+              </CheckboxLabel>
+
+              <Divider />
+              <InsetSubstitute type="bottom" />
+            </View>
+          </ScreenContainer>
+          <View style={styles.submitButton}>
             <ButtonLargePrimary
               title="Create"
               disabled={!isValid}
               onPress={submitForm}
               testID={CreateNewPasswordCreateAccountSelectors.CreateButton}
             />
-            <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );
