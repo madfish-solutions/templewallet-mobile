@@ -1,9 +1,9 @@
-import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import { OperationInterface } from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
+import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 
 export const mapOperationsToActivities = (address: string, operations: OperationInterface[]) => {
   const activities: ActivityInterface[] = [];
@@ -23,7 +23,7 @@ export const mapOperationsToActivities = (address: string, operations: Operation
       originatedContract
     } = operation;
 
-    if (!(hasInternals === true && address === target.address) && status === ActivityStatusEnum.Applied) {
+    if (!(hasInternals === true && address === target.address)) {
       const source = sender;
       let destination: MemberInterface = { address: '' };
       let amount = '0';
@@ -60,7 +60,7 @@ export const mapOperationsToActivities = (address: string, operations: Operation
       activities.push({
         type,
         hash,
-        status,
+        status: stringToActivityStatusEnum(status),
         source,
         entrypoint,
         destination,
