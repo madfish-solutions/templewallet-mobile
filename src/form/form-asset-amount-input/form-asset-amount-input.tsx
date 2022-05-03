@@ -10,10 +10,8 @@ import { ErrorMessage } from '../error-message/error-message';
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
-    Pick<AssetAmountInputProps, 'selectionOptions'> {
+    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'> {
   name: string;
-  toUsdToggle?: boolean;
-  isSearchable?: boolean;
   setSearchValue?: EventFn<string>;
 }
 
