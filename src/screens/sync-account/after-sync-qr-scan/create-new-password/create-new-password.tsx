@@ -55,22 +55,26 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <Divider />
-          <View>
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput
-              isShowPasswordStrengthIndicator
-              name="password"
-              testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
-            />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <Divider />
+            <View>
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput
-              name="passwordConfirmation"
-              testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
-            />
-          </View>
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+              />
+              <Divider />
+              <InsetSubstitute type="bottom" />
+            </View>
+          </ScreenContainer>
           <View style={styles.buttonContainer}>
             <ButtonLargePrimary
               title="Sync"
@@ -78,9 +82,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               onPress={submitForm}
               testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
             />
-            <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );
