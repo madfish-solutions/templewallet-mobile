@@ -9,17 +9,12 @@ import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
-    Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
+    Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
+    Pick<AssetAmountInputProps, 'selectionOptions'> {
   name: string;
   toUsdToggle?: boolean;
   isSearchable?: boolean;
   setSearchValue?: EventFn<string>;
-  selectionOptions?:
-    | {
-        start: number;
-        end?: number | undefined;
-      }
-    | undefined;
 }
 
 export const FormAssetAmountInput: FC<Props> = ({

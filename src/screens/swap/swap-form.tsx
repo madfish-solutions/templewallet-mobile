@@ -22,7 +22,7 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useSlippageSelector } from '../../store/settings/settings-selectors';
-import { useTezosTokenSelector, useVisibleTokensListSelectorWithTezos } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -52,7 +52,7 @@ const KNOWN_DEX_TYPES = [
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const assetsList = useVisibleTokensListSelectorWithTezos();
+  const assetsList = useTokensListSelector();
   const styles = useSwapStyles();
   const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
@@ -88,16 +88,9 @@ export const SwapForm: FC = () => {
     slippageTolerance
   );
 
-  // const assetsListWithTez = useMemo<TokenInterface[]>(
-  //   () => [tezosToken, ...assetsList].filter(x => !isDefined(x.artifactUri)),
-  //   [tezosToken, assetsList]
-  // );
-
   const [searchValue, setSearchTezAssetsValue] = useState<string>();
 
-  const [assetsListWithTez, setAssetsListWithTez] = useState<TokenInterface[]>(assetsList);
-
-  useEffect(() => {
+  const assetsListWithTez = useMemo(() => {
     const sourceArray = assetsList;
 
     if (isString(searchValue)) {
@@ -116,13 +109,11 @@ export const SwapForm: FC = () => {
         }
       }
 
-      setAssetsListWithTez(result);
+      return result;
     } else {
-      setAssetsListWithTez(sourceArray);
+      return sourceArray;
     }
   }, [tezosToken, searchValue, assetsList]);
-
-  // const { setSearchValue: setSearchTezAssetsValue } = useSearchAssets(assetsListWithTez, setAssetsListWithTez, []);
 
   useEffect(() => {
     setFieldValue('bestTradeWithSlippageTolerance', bestTradeWithSlippageTolerance);

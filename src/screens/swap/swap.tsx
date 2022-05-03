@@ -58,8 +58,6 @@ export const SwapScreen: FC = () => {
       kind: OpKind.TRANSACTION
     }));
 
-    console.log('opParams', opParams);
-
     dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
   };
 
