@@ -12,6 +12,7 @@ import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { segmentClient } from '../../utils/analytics/analytics.util';
+import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
 import { RootState } from '../create-store';
 import { checkApp } from './security-actions';
 
@@ -24,16 +25,16 @@ const appCheck = firebase.appCheck();
 export const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    switchMap(() =>
+    withSelectedUserId(state$),
+    withSelectedIsAnalyticsEnabled(state$),
+    switchMap(([[, userId], isAnalyticsEnabled]) =>
       from(appCheck.activate('ignored', false)).pipe(
         switchMap(() => appCheck.getToken()),
         map(appCheck => appCheck.token),
         catchError(err => {
-          const settings = state$.value.settings;
-
-          settings.isAnalyticsEnabled &&
+          isAnalyticsEnabled &&
             segmentClient.track(AnalyticsEventCategory.General, {
-              userId: settings.userId,
+              userId,
               event: 'AppCheckError',
               timestamp: new Date().getTime(),
               properties: {
