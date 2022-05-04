@@ -6,6 +6,11 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     flexDirection: 'row',
     alignItems: 'center'
   },
+  placeHolderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: formatSize(36)
+  },
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1
