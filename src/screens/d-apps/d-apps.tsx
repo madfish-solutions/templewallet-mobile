@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
@@ -30,6 +31,16 @@ export const DApps = () => {
 
   usePageAnalytic(ScreensEnum.DApps);
 
+  const tabletMode = isTablet();
+
+  const texts = useMemo(
+    () =>
+      tabletMode
+        ? ['Other DApps are third-party websites. They should be used at your own risk.']
+        : ['Other DApps are third-party websites.', 'They should be used at your own risk.'],
+    [tabletMode]
+  );
+
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchQuery)) {
       return DAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -57,7 +68,7 @@ export const DApps = () => {
       <Text style={styles.text}>Others</Text>
       <Divider size={formatSize(8)} />
       <View style={styles.dappBlockWrapper}>
-        <Disclaimer texts={['Other DApps are third-party websites.', 'They should be used at your own risk.']} />
+        <Disclaimer texts={texts} />
       </View>
       <Divider size={formatSize(16)} />
       {sortedDAppsList.length ? (
