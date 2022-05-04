@@ -92,7 +92,7 @@ export const SwapExchangeRate: FC<Props> = ({
               Routing Fee
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </Text>
-            <Text style={styles.infoValue}>---</Text>
+            <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Exchange rate</Text>
