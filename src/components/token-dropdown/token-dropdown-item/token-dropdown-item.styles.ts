@@ -15,6 +15,9 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center',
     justifyContent: 'space-between'
   },
+  emptyColumn: {
+    flexDirection: 'column'
+  },
   rightContainer: {
     flexDirection: 'row'
   },

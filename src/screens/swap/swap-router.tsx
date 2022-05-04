@@ -40,7 +40,7 @@ export const SwapRoute: FC<Props> = ({ trade }) => {
               <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} />
             </View>
           </View>
-          <Text style={styles.smartRouteTextDescription}>Please, select tokens to swap</Text>
+          <Text style={styles.smartRouteTextDescription}>Please, enter swap amount</Text>
         </View>
       )}
     </>

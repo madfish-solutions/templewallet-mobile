@@ -81,7 +81,7 @@ export const SwapSettingsScreen: FC = () => {
       <Divider size={formatSize(10)} />
       {inputTypeIndex === 3 && (
         <StyledNumericInput
-          value={new BigNumber(slippageTolerance)}
+          value={slippageTolerance !== '' ? new BigNumber(slippageTolerance) : undefined}
           decimals={2}
           editable={true}
           isShowCleanButton

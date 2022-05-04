@@ -22,7 +22,7 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { SwapFormValues } from '../../interfaces/swap-asset.interface';
 import { useSlippageSelector } from '../../store/settings/settings-selectors';
-import { useTezosTokenSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
+import { useTezosTokenSelector, useTokensWithTezosListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -52,7 +52,7 @@ const KNOWN_DEX_TYPES = [
 
 export const SwapForm: FC = () => {
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const assetsList = useTokensListSelector();
+  const assetsList = useTokensWithTezosListSelector();
   const styles = useSwapStyles();
   const { values, setFieldValue, submitForm } = useFormikContext<SwapFormValues>();
   const tezosToken = useTezosTokenSelector();
@@ -64,11 +64,6 @@ export const SwapForm: FC = () => {
   const inputAssetSlug = getTokenSlug(inputAssets.asset);
   const outputAssetSlug = getTokenSlug(outputAssets.asset);
   const prevOutput = useRef('');
-
-  const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...filteredAssetsList],
-    [tezosToken, filteredAssetsList]
-  );
 
   const filteredRoutePairs = useMemo(
     () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
@@ -174,9 +169,8 @@ export const SwapForm: FC = () => {
           <FormAssetAmountInput
             name="inputAssets"
             label="From"
-            selectionOptions={{ start: 0, end: 0 }}
             isSearchable
-            assetsList={filteredAssetsListWithTez}
+            assetsList={filteredAssetsList}
             setSearchValue={setSearchValue}
           />
           <View style={styles.swapIconContainer}>
