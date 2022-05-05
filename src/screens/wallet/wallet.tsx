@@ -11,7 +11,6 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useAppLock } from '../../shelter/use-app-lock.hook';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -19,7 +18,6 @@ import {
   setSelectedAccountAction
 } from '../../store/wallet/wallet-actions';
 import {
-  useIsAuthorisedSelector,
   useSelectedAccountSelector,
   useTezosTokenSelector,
   useVisibleAccountsListSelector
@@ -31,9 +29,6 @@ import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
-  const { isLocked } = useAppLock();
-  const isAuthorised = useIsAuthorisedSelector();
-
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
@@ -49,7 +44,7 @@ export const Wallet = () => {
     dispatch(loadActivityGroupsActions.submit());
   }, []);
 
-  return isAuthorised && !isLocked ? (
+  return (
     <>
       <HeaderCard hasInsetTop={true}>
         <View style={WalletStyles.accountContainer}>
@@ -77,5 +72,5 @@ export const Wallet = () => {
 
       <TokenList />
     </>
-  ) : null;
+  );
 };
