@@ -30,6 +30,8 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   const tokenSuggestion = useAddTokenSuggestionSelector();
   const initialValues = {
     ...tokenSuggestion.data,
+    thumbnailUri:
+      tokenSuggestion.data.displayUri ?? tokenSuggestion.data.artifactUri ?? tokenSuggestion.data.thumbnailUri,
     decimals: new BigNumber(tokenSuggestion.data.decimals)
   };
 

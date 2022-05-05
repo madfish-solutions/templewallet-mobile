@@ -9,6 +9,7 @@ export interface TokenMetadataInterface {
   iconName?: IconNameEnum;
   thumbnailUri?: string;
   artifactUri?: string;
+  displayUri?: string;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

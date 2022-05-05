@@ -14,6 +14,7 @@ export interface TokenMetadataResponse {
   name?: string;
   thumbnailUri?: string;
   artifactUri?: string;
+  displayUri?: string;
 }
 
 export const loadTokenMetadata$ = memoize(
@@ -26,7 +27,8 @@ export const loadTokenMetadata$ = memoize(
         symbol: data.symbol ?? data.name?.substring(0, 8) ?? '???',
         name: data.name ?? data.symbol ?? 'Unknown Token',
         thumbnailUri: data.thumbnailUri,
-        artifactUri: data.artifactUri
+        artifactUri: data.artifactUri,
+        displayUri: data.displayUri
       }))
     ),
   { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
