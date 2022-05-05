@@ -32,9 +32,8 @@ export const SwapSettingsScreen: FC = () => {
   const styles = useSwapSettingsStyles();
   const dispatch = useDispatch();
   const updateSlippageTolerance = (slippage: number) => dispatch(setSlippage(slippage));
-  const initialSlippageValue = useSlippageSelector();
-  const [slippageTolerance, setSlippageTolerance] = useState<string>(`${initialSlippageValue}`);
-  const [inputTypeIndex, setInputTypeIndex] = useState(mapSlippageToIndex(initialSlippageValue));
+  const slippageTolerance = useSlippageSelector();
+  const [inputTypeIndex, setInputTypeIndex] = useState(mapSlippageToIndex(slippageTolerance));
 
   usePageAnalytic(ScreensEnum.SwapSettingsScreen);
 
@@ -53,7 +52,7 @@ export const SwapSettingsScreen: FC = () => {
           return;
         }
 
-        return updateSlippageTolerance(Number(slippageTolerance));
+        return updateSlippageTolerance(slippageTolerance);
       }
 
       default:
@@ -63,10 +62,9 @@ export const SwapSettingsScreen: FC = () => {
 
   const onHandleChange = (value: BigNumber | undefined) => {
     if (isDefined(value)) {
-      setSlippageTolerance(value.toString());
       updateSlippageTolerance(value.toNumber());
     } else {
-      setSlippageTolerance('');
+      updateSlippageTolerance(0);
     }
   };
 
@@ -81,7 +79,7 @@ export const SwapSettingsScreen: FC = () => {
       <Divider size={formatSize(10)} />
       {inputTypeIndex === 3 && (
         <StyledNumericInput
-          value={slippageTolerance !== '' ? new BigNumber(slippageTolerance) : undefined}
+          value={new BigNumber(slippageTolerance)}
           decimals={2}
           editable={true}
           isShowCleanButton

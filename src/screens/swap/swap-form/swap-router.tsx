@@ -1,24 +1,23 @@
+import { useFormikContext } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { Trade } from 'swap-router-sdk';
 
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
-import { SwapFormValues } from '../../interfaces/swap-asset.interface';
-import { formatSize } from '../../styles/format-size';
-import { emptyToken } from '../../token/interfaces/token.interface';
+import { Divider } from '../../../components/divider/divider';
+import { Icon } from '../../../components/icon/icon';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
+import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
+import { formatSize } from '../../../styles/format-size';
+import { emptyToken } from '../../../token/interfaces/token.interface';
+import { useSwapStyles } from '../swap.styles';
 import { SwapRouterItem } from './swap-router-item';
-import { useSwapStyles } from './swap.styles';
 
-interface Props extends Pick<SwapFormValues, 'inputAssets' | 'outputAssets'> {
-  trade: Trade;
-  loadingHasFailed: boolean;
-}
-
-export const SwapRoute: FC<Props> = ({ trade, inputAssets, outputAssets, loadingHasFailed }) => {
+export const SwapRoute: FC<{ loadingHasFailed: boolean }> = ({ loadingHasFailed }) => {
   const styles = useSwapStyles();
+
+  const { values } = useFormikContext<SwapFormValues>();
+
+  const { inputAssets, outputAssets, bestTrade: trade } = values;
 
   const isNotSelectedAsset =
     tokenEqualityFn(outputAssets.asset, emptyToken) || tokenEqualityFn(inputAssets.asset, emptyToken);

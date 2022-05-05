@@ -1,24 +1,18 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
-import { useAllRoutePairs } from 'swap-router-sdk';
 
-import { TEZOS_DEXES_API_URL } from '../../screens/swap/swap-form';
 import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
 import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 
 export const BLOCK_DURATION = 30000;
 
-export const SwapPriceUpdateBar: FC = () => {
+export const SwapPriceUpdateBar: FC<{ timestamp: string }> = ({ timestamp }) => {
   const counter = useRef(new Animated.Value(0)).current;
-  const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
 
-  const blockEndTimestamp = useMemo(
-    () => new Date(allRoutePairs.block.header.timestamp).getTime() + BLOCK_DURATION,
-    [allRoutePairs.block.header.timestamp]
-  );
+  const blockEndTimestamp = useMemo(() => new Date(timestamp).getTime() + BLOCK_DURATION, [timestamp]);
 
   const state = useMemo(() => {
     const millisecondsLeft = blockEndTimestamp - nowTimestamp;

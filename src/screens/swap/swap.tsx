@@ -1,9 +1,11 @@
 import { OpKind } from '@taquito/rpc';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
+import { ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { getTradeOpParams } from 'swap-router-sdk';
+import { DexTypeEnum, getTradeOpParams, useAllRoutePairs } from 'swap-router-sdk';
 
+import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
@@ -16,9 +18,18 @@ import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { SwapForm } from './swap-form';
-import { swapFormValidationSchema } from './swap-form.form';
+import { TEZOS_DEXES_API_URL } from './config';
+import { SwapForm } from './swap-form/swap-form';
+import { swapFormValidationSchema } from './swap-form/swap-form.form';
 import { getRoutingFeeTransferParams } from './swap.util';
+
+const KNOWN_DEX_TYPES = [
+  DexTypeEnum.QuipuSwap,
+  DexTypeEnum.Plenty,
+  DexTypeEnum.LiquidityBaking,
+  DexTypeEnum.QuipuSwapTokenToTokenDex,
+  DexTypeEnum.Youves
+];
 
 export const SwapScreen: FC = () => {
   const { trackEvent } = useAnalytics();
@@ -28,8 +39,11 @@ export const SwapScreen: FC = () => {
   const dispatch = useDispatch();
   usePageAnalytic(ScreensEnum.SwapScreen);
 
-  // TODO: ADD TYPES FOR SWAP ASSETS
-  // TODO ADD validation schema
+  const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
+  const filteredRoutePairs = useMemo(
+    () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
+    [allRoutePairs.data]
+  );
 
   const onHandleSubmit = async (values: SwapFormValues) => {
     const { inputAssets, outputAssets, bestTradeWithSlippageTolerance } = values;
@@ -78,12 +92,15 @@ export const SwapScreen: FC = () => {
   );
 
   return (
-    <Formik
-      initialValues={sendModalInitialValues}
-      validationSchema={swapFormValidationSchema}
-      onSubmit={onHandleSubmit}
-    >
-      {() => <SwapForm />}
-    </Formik>
+    <ScrollView>
+      <SwapPriceUpdateBar timestamp={allRoutePairs.block.header.timestamp.toString()} />
+      <Formik
+        initialValues={sendModalInitialValues}
+        validationSchema={swapFormValidationSchema}
+        onSubmit={onHandleSubmit}
+      >
+        {() => <SwapForm filteredRoutePairs={filteredRoutePairs} loadingHasFailed={allRoutePairs.hasFailed} />}
+      </Formik>
+    </ScrollView>
   );
 };

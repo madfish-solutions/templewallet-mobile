@@ -1,29 +1,30 @@
+import { useFormikContext } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
-import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
+import { getTradeInputAmount, getTradeOutputAmount } from 'swap-router-sdk';
 
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-import { formatSize } from '../../styles/format-size';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { formatAssetAmount } from '../../utils/number.util';
-import { atomsToTokens, ROUTING_FEE_PERCENT } from './swap-form';
-import { useSwapStyles } from './swap.styles';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
+import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
+import { formatSize } from '../../../styles/format-size';
+import { formatAssetAmount } from '../../../utils/number.util';
+import { ROUTING_FEE_PERCENT } from '../config';
+import { useSwapStyles } from '../swap.styles';
+import { atomsToTokens } from './swap-form';
 
-interface Props {
-  trade: Trade;
-  inputAssetMetadata: TokenInterface;
-  outputAssetMetadata: TokenInterface;
-  tradeWithSlippageTolerance: Trade | [];
-}
-
-export const SwapExchangeRate: FC<Props> = ({
-  trade,
-  inputAssetMetadata,
-  outputAssetMetadata,
-  tradeWithSlippageTolerance
-}) => {
+export const SwapExchangeRate: FC = () => {
   const styles = useSwapStyles();
+
+  const { values } = useFormikContext<SwapFormValues>();
+
+  const {
+    inputAssets,
+    outputAssets,
+    bestTrade: trade,
+    bestTradeWithSlippageTolerance: tradeWithSlippageTolerance
+  } = values;
+  const { asset: inputAssetMetadata } = inputAssets;
+  const { asset: outputAssetMetadata } = outputAssets;
 
   const exchangeRate = useMemo(() => {
     const tradeMutezInput = getTradeInputAmount(trade);
@@ -66,10 +67,10 @@ export const SwapExchangeRate: FC<Props> = ({
       {exchangeRate ? (
         <>
           <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              Routing Fee
+            <View>
+              <Text style={styles.infoText}>Routing Fee</Text>
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
-            </Text>
+            </View>
             <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
           </View>
           <View style={styles.infoContainer}>
@@ -88,10 +89,10 @@ export const SwapExchangeRate: FC<Props> = ({
       ) : (
         <>
           <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              Routing Fee
+            <View>
+              <Text style={styles.infoText}>Routing Fee</Text>
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
-            </Text>
+            </View>
             <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
           </View>
           <View style={styles.infoContainer}>
