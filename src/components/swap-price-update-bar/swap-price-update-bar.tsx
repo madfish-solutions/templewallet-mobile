@@ -7,7 +7,7 @@ import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 
 export const BLOCK_DURATION = 30000;
 
-export const SwapPriceUpdateBar: FC<{ timestamp?: string }> = ({ timestamp = 0 }) => {
+export const SwapPriceUpdateBar: FC<{ timestamp: string }> = ({ timestamp = '0' }) => {
   const counter = useRef(new Animated.Value(0)).current;
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
