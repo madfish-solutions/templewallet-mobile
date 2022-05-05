@@ -3,7 +3,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    paddingLeft: formatSize(16),
+    paddingLeft: formatSize(20),
+    paddingRight: formatSize(36),
     paddingBottom: formatSize(16),
     paddingTop: formatSize(8)
   },
