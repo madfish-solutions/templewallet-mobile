@@ -80,7 +80,7 @@ export const MainStackScreen = () => {
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
-  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
+  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>

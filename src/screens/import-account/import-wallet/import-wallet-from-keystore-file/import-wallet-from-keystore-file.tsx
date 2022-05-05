@@ -79,9 +79,9 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
           <View style={styles.seedPhraseInputContainer}>
             <View>
               <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
-              <Divider size={formatSize(20)} />
+              <Divider size={formatSize(0)} />
               <FormFileInput name="keystoreFile" />
-              <Divider size={formatSize(12)} />
+              <Divider size={formatSize(0)} />
               <Label label="File password" description="Please enter a password for keystore file" />
               <FormPasswordInput name="password" />
               <FormCheckbox

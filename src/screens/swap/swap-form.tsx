@@ -183,6 +183,7 @@ export const SwapForm: FC = () => {
           <FormAssetAmountInput
             name="outputAssets"
             label="To"
+            selectionOptions={{ start: 0, end: 0 }}
             toUsdToggle={false}
             editable={false}
             isSearchable
@@ -191,7 +192,12 @@ export const SwapForm: FC = () => {
           />
           <Label label="Swap route" />
           <View>
-            <SwapRoute trade={bestTrade} />
+            <SwapRoute
+              trade={bestTrade}
+              inputAssets={inputAssets}
+              outputAssets={outputAssets}
+              loadingHasFailed={allRoutePairs.hasFailed}
+            />
 
             <Divider />
             <View>

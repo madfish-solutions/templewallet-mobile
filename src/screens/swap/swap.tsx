@@ -80,7 +80,6 @@ export const SwapScreen: FC = () => {
   return (
     <Formik
       initialValues={sendModalInitialValues}
-      enableReinitialize={true}
       validationSchema={swapFormValidationSchema}
       onSubmit={onHandleSubmit}
     >

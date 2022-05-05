@@ -29,6 +29,18 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     borderRightWidth: formatSize(0.5)
   },
+  disabledInput: {
+    ...typography.numbersMedium22,
+    color: colors.gray2,
+    flexGrow: 1,
+    flexShrink: 1,
+    paddingLeft: formatSize(12),
+    paddingVertical: formatSize(12),
+    backgroundColor: colors.lines,
+    borderColor: colors.lines,
+    borderBottomLeftRadius: formatSize(8),
+    borderTopLeftRadius: formatSize(8)
+  },
   dropdownContainer: {
     width: formatSize(126),
     paddingRight: formatSize(12),

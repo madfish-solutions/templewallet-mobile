@@ -68,7 +68,7 @@ export const SwapPriceUpdateBar: FC = () => {
       <View style={styles.progressBar}>
         <Animated.View style={[styles.progressBarAnimatedView, { transform: [{ scaleX: width }] }]} />
       </View>
-      <Divider size={formatSize(12)} />
+      <Divider size={formatSize(6)} />
       <Text style={styles.progressBarTextStyle}>{state.text}</Text>
     </View>
   );

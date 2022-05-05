@@ -26,6 +26,10 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   rightContainer: {
     flexDirection: 'row'
   },
+  placeholder: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
+  },
   symbol: {
     ...typography.numbersRegular15,
     color: colors.black
