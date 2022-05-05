@@ -12,7 +12,7 @@ import { emptyToken } from '../../../token/interfaces/token.interface';
 import { useSwapStyles } from '../swap.styles';
 import { SwapRouterItem } from './swap-router-item';
 
-export const SwapRoute: FC<{ loadingHasFailed: boolean }> = ({ loadingHasFailed }) => {
+export const SwapRoute: FC<{ loadingHasFailed?: boolean }> = ({ loadingHasFailed = false }) => {
   const styles = useSwapStyles();
 
   const { values } = useFormikContext<SwapFormValues>();
@@ -29,7 +29,7 @@ export const SwapRoute: FC<{ loadingHasFailed: boolean }> = ({ loadingHasFailed 
     ? 'Please, select tokens to swap'
     : isNoAmount
     ? 'Please, enter swap amount'
-    : 'Please, select tokens to swap';
+    : 'Loading...';
 
   return (
     <>

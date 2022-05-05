@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { DexTypeEnum, getTradeOpParams, useAllRoutePairs } from 'swap-router-sdk';
+import { getTradeOpParams, useAllRoutePairs } from 'swap-router-sdk';
 
 import { SwapPriceUpdateBar } from '../../components/swap-price-update-bar/swap-price-update-bar';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
@@ -14,6 +14,7 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { navigateAction } from '../../store/root-state.actions';
 import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { showErrorToast } from '../../toast/toast.utils';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -22,14 +23,6 @@ import { TEZOS_DEXES_API_URL } from './config';
 import { SwapForm } from './swap-form/swap-form';
 import { swapFormValidationSchema } from './swap-form/swap-form.form';
 import { getRoutingFeeTransferParams } from './swap.util';
-
-const KNOWN_DEX_TYPES = [
-  DexTypeEnum.QuipuSwap,
-  DexTypeEnum.Plenty,
-  DexTypeEnum.LiquidityBaking,
-  DexTypeEnum.QuipuSwapTokenToTokenDex,
-  DexTypeEnum.Youves
-];
 
 export const SwapScreen: FC = () => {
   const { trackEvent } = useAnalytics();
@@ -40,10 +33,6 @@ export const SwapScreen: FC = () => {
   usePageAnalytic(ScreensEnum.SwapScreen);
 
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const filteredRoutePairs = useMemo(
-    () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
-    [allRoutePairs.data]
-  );
 
   const onHandleSubmit = async (values: SwapFormValues) => {
     const { inputAssets, outputAssets, bestTradeWithSlippageTolerance } = values;
@@ -72,6 +61,10 @@ export const SwapScreen: FC = () => {
       kind: OpKind.TRANSACTION
     }));
 
+    if (opParams.length === 0) {
+      showErrorToast({ description: 'Transaction params not loaded' });
+    }
+
     dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
   };
 
@@ -99,7 +92,7 @@ export const SwapScreen: FC = () => {
         validationSchema={swapFormValidationSchema}
         onSubmit={onHandleSubmit}
       >
-        {() => <SwapForm filteredRoutePairs={filteredRoutePairs} loadingHasFailed={allRoutePairs.hasFailed} />}
+        {() => <SwapForm loadingHasFailed={allRoutePairs.hasFailed} />}
       </Formik>
     </ScrollView>
   );

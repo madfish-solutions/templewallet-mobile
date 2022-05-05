@@ -39,6 +39,8 @@ export const SwapFormAmountInput: FC<Props> = ({
     }
   };
 
+  console.log('SwapFormAmountInput', name);
+
   return (
     <>
       <SwapFormAssetAmountInput
