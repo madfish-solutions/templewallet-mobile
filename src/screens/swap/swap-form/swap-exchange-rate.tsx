@@ -67,7 +67,7 @@ export const SwapExchangeRate: FC = () => {
       {exchangeRate ? (
         <>
           <View style={styles.infoContainer}>
-            <View>
+            <View style={styles.infoRow}>
               <Text style={styles.infoText}>Routing Fee</Text>
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </View>
@@ -89,7 +89,7 @@ export const SwapExchangeRate: FC = () => {
       ) : (
         <>
           <View style={styles.infoContainer}>
-            <View>
+            <View style={styles.infoRow}>
               <Text style={styles.infoText}>Routing Fee</Text>
               <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </View>

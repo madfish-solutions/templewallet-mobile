@@ -10,6 +10,9 @@ export const useSwapStyles = createUseStyles(({ colors }) => ({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  infoRow: {
+    flexDirection: 'row'
+  },
   smartRouteContainer: {
     flexDirection: 'row',
     alignItems: 'center'
