@@ -77,8 +77,6 @@ export const SwapFormDropdown = ({
     dropdownBottomSheetController.close();
   };
 
-  console.log('SwapFormDropdown', title);
-
   return (
     <>
       <TouchableOpacity
