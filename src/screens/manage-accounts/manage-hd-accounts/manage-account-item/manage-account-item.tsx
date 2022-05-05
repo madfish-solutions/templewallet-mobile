@@ -8,9 +8,9 @@ import { Divider } from '../../../../components/divider/divider';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
-import { PublicKeyHashText } from '../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
+import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
@@ -43,7 +43,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <RobotIcon seed={account.publicKeyHash} />
           <View style={styles.accountContainerData}>
             <Text {...getTruncatedProps(styles.accountText)}>{account.name}</Text>
-            <PublicKeyHashText publicKeyHash={account.publicKeyHash} />
+            <WalletAddress publicKeyHash={account.publicKeyHash} />
           </View>
         </View>
 

@@ -33,18 +33,21 @@ import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
 import HummerIcon from './assets/hummer.svg';
+import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
+import LiquidityBakingIcon from './assets/liquidity-baking.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
+import PlentyIcon from './assets/plenty.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -66,12 +69,16 @@ import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
+import SwapInfo from './assets/swap-info.svg';
+import SwapSettings from './assets/swap-settings.svg';
+import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
+import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
 import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
@@ -81,6 +88,7 @@ import UkraineIcon from './assets/ukraine.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
@@ -102,6 +110,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
+  [IconNameEnum.SwapInfo]: SwapInfo,
+  [IconNameEnum.Swap]: SwapIcon,
+  [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
@@ -110,6 +121,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
+  [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
+  [IconNameEnum.Plenty]: PlentyIcon,
+  [IconNameEnum.Youves]: YouvesIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
   [IconNameEnum.QuipuSwapDark]: QuipuSwapDarkIcon,
   [IconNameEnum.DApps]: DAppsIcon,
@@ -117,11 +131,13 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
+  [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
   [IconNameEnum.Tag]: TagIcon,

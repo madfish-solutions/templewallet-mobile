@@ -13,7 +13,12 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
+import {
+  CreateNewPasswordFormValues,
+  createNewPasswordInitialValues,
+  createNewPasswordValidationSchema
+} from './create-new-password.form';
+import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
 import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
@@ -45,28 +50,40 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
 
   return (
     <Formik
-      initialValues={{
-        password: '',
-        passwordConfirmation: ''
-      }}
+      initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <Divider />
-          <View>
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput isShowPasswordStrengthIndicator name="password" />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <Divider />
+            <View>
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
-          </View>
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+              />
+              <Divider />
+              <InsetSubstitute type="bottom" />
+            </View>
+          </ScreenContainer>
           <View style={styles.buttonContainer}>
-            <ButtonLargePrimary title="Sync" disabled={!isValid} onPress={submitForm} />
-            <InsetSubstitute type="bottom" />
+            <ButtonLargePrimary
+              title="Sync"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
+            />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );

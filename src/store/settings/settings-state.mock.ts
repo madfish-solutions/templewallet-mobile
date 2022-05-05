@@ -5,9 +5,11 @@ import { SettingsState } from './settings-state';
 export const mockSettingsState: SettingsState = {
   theme: ThemesEnum.light,
   isBiometricsEnabled: false,
+  isAnalyticsEnabled: true,
   isBalanceHiddenSetting: false,
   rpcList: RpcList,
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
-  userId: '0'
+  userId: '0',
+  slippage: 0
 };

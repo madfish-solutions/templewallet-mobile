@@ -1,20 +1,8 @@
-import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { TransferInterface } from '../interfaces/transfer.interface';
 import { mockAppliedTransfer, mockReceiverAddress, mockSenderAddress } from '../interfaces/transfer.interface.mock';
 import { mapTransfersToActivities } from './transfer.utils';
 
 describe('mapTransfersToActivities', () => {
-  it('should map only Applied transfers', () => {
-    const mockPendingTransfer: TransferInterface = {
-      ...mockAppliedTransfer,
-      status: ActivityStatusEnum.Pending
-    };
-
-    const result = mapTransfersToActivities(mockReceiverAddress, [mockAppliedTransfer, mockPendingTransfer]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].status).toEqual(ActivityStatusEnum.Applied);
-  });
   it('should set contract address & alias as source if there is no sender', () => {
     const mockAppliedTransferWithoutSender: TransferInterface = {
       ...mockAppliedTransfer,

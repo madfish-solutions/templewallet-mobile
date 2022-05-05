@@ -59,10 +59,10 @@
 		<false/>
 		<key>NSPinnedDomains</key>
 		<dict>
-			<key>templewallet.com</key>
+			<key>api.templewallet.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
+                <key>NSIncludesSubdomains</key>
+                <false/>
 				<key>NSPinnedLeafIdentities</key>
 				<array>
 					<dict>
@@ -83,6 +83,18 @@
 					</dict>
 				</array>
 			</dict>
+            <key>metadata.templewallet.com</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <false/>
+                <key>NSPinnedLeafIdentities</key>
+                <array>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</string>
+                    </dict>
+                </array>
+            </dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>

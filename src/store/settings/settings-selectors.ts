@@ -9,6 +9,9 @@ export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>
 export const useBiometricsEnabledSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBiometricsEnabled);
 
+export const useAnalyticsEnabledSelector = () =>
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isAnalyticsEnabled);
+
 export const useBalanceHiddenSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isBalanceHiddenSetting);
 
@@ -21,3 +24,5 @@ export const useFirstAppLaunchSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isFirstAppLaunch);
 
 export const useUserIdSelector = () => useSelector<SettingsRootState, string>(({ settings }) => settings.userId);
+
+export const useSlippageSelector = () => useSelector<SettingsRootState, number>(({ settings }) => settings.slippage);

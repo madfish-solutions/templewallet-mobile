@@ -4,9 +4,11 @@ import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
+  setIsAnalyticsEnabled,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
-  setSelectedRpcUrl
+  setSelectedRpcUrl,
+  setSlippage
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -16,6 +18,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,
     isBiometricsEnabled
+  }));
+
+  builder.addCase(setIsAnalyticsEnabled, (state, { payload: isAnalyticsEnabled }) => ({
+    ...state,
+    isAnalyticsEnabled
   }));
 
   builder.addCase(setIsBalanceHidden, (state, { payload: isBalanceHiddenSetting }) => ({
@@ -34,5 +41,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(resetKeychainOnInstallAction.success, state => ({
     ...state,
     isFirstAppLaunch: false
+  }));
+  builder.addCase(setSlippage, (state, { payload: slippage }) => ({
+    ...state,
+    slippage
   }));
 });

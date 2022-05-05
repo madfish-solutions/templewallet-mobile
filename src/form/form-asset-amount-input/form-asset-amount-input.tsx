@@ -9,8 +9,10 @@ import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
-    Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
+    Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
+    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'> {
   name: string;
+  setSearchValue?: EventFn<string>;
 }
 
 export const FormAssetAmountInput: FC<Props> = ({
@@ -18,6 +20,11 @@ export const FormAssetAmountInput: FC<Props> = ({
   label,
   assetsList,
   frozenBalance,
+  editable,
+  toUsdToggle = true,
+  isSearchable = false,
+  selectionOptions = undefined,
+  setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
   const [field, meta, helpers] = useField<AssetAmountInterface>(name);
@@ -39,6 +46,11 @@ export const FormAssetAmountInput: FC<Props> = ({
         assetsList={assetsList}
         frozenBalance={frozenBalance}
         isError={isError}
+        isSearchable={isSearchable}
+        editable={editable}
+        toUsdToggle={toUsdToggle}
+        selectionOptions={selectionOptions}
+        setSearchValue={setSearchValue}
         onBlur={() => helpers.setTouched(true)}
         onValueChange={handleValueChange}
       />

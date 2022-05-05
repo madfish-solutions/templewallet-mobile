@@ -1,7 +1,7 @@
 import { firebase } from '@react-native-firebase/app-check';
 import { Platform } from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
-import { combineEpics } from 'redux-observable';
+import { combineEpics, StateObservable } from 'redux-observable';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
@@ -10,6 +10,10 @@ import { ofType } from 'ts-action-operators';
 import { templeWalletApi } from '../../api.service';
 import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { segmentClient } from '../../utils/analytics/analytics.util';
+import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
+import { RootState } from '../create-store';
 import { checkApp } from './security-actions';
 
 interface appCheckPayload extends VersionsInterface {
@@ -18,14 +22,30 @@ interface appCheckPayload extends VersionsInterface {
 
 const appCheck = firebase.appCheck();
 
-export const CheckAppEpic = (action$: Observable<Action>) =>
+export const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    switchMap(() =>
+    withSelectedUserId(state$),
+    withSelectedIsAnalyticsEnabled(state$),
+    switchMap(([[, userId], isAnalyticsEnabled]) =>
       from(appCheck.activate('ignored', false)).pipe(
         switchMap(() => appCheck.getToken()),
         map(appCheck => appCheck.token),
-        catchError(err => of(JSON.stringify(err)))
+        catchError(err => {
+          isAnalyticsEnabled &&
+            segmentClient.track(AnalyticsEventCategory.General, {
+              userId,
+              event: 'AppCheckError',
+              timestamp: new Date().getTime(),
+              properties: {
+                event: 'AppCheckError',
+                category: AnalyticsEventCategory.General,
+                message: err.message
+              }
+            });
+
+          return of(JSON.stringify(err));
+        })
       )
     ),
     switchMap(appCheckToken =>

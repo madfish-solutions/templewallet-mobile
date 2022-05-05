@@ -14,13 +14,14 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { TextLink } from '../../../../components/text-link/text-link';
 import { MAX_PASSWORD_ATTEMPTS } from '../../../../config/security';
-import { privacyPolicy, termsOfUse } from '../../../../config/socials';
+import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../../../config/socials';
 import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
-import { ConfirmSyncFormValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
+import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
+import { ConfirmSyncSelectors } from './confirm-sync.selectors';
 import { useConfirmSyncStyles } from './confirm-sync.styles';
 
 interface ConfirmSyncProps {
@@ -41,14 +42,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   );
 
   return (
-    <Formik
-      initialValues={{
-        password: '',
-        acceptTerms: false
-      }}
-      validationSchema={ConfirmSyncValidationSchema}
-      onSubmit={onSubmit}
-    >
+    <Formik initialValues={ConfirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>
       {({ submitForm, isValid, values }) => (
         <ScreenContainer isFullScreenMode={true}>
           <View>
@@ -60,10 +54,11 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               {...(isDisabled && {
                 error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
               })}
+              testID={ConfirmSyncSelectors.PasswordInput}
             />
 
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="usePrevPassword">
+              <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.UsePreviousPasswordCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Use as App Password</Text>
               </FormCheckbox>
@@ -73,24 +68,34 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               <FormBiometryCheckbox name="useBiometry" />
             </View>
 
+            <View style={[styles.checkboxContainer, styles.removeMargin]}>
+              <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.AnalyticsCheckbox}>
+                <Divider size={formatSize(8)} />
+                <Text style={styles.checkboxText}>Analytics</Text>
+              </FormCheckbox>
+            </View>
+            <CheckboxLabel>
+              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+            </CheckboxLabel>
+
             {values.usePrevPassword === true && (
               <>
+                <Divider size={formatSize(8)} />
                 <Disclaimer
                   texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
                 />
-                <Divider size={formatSize(8)} />
               </>
             )}
           </View>
           <View>
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms">
+              <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.AcceptTermsCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Accept terms</Text>
               </FormCheckbox>
             </View>
             <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Usage</TextLink> and{' '}
+              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
               <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
             </CheckboxLabel>
             <Divider />
@@ -98,6 +103,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid || isDisabled}
               onPress={submitForm}
+              testID={ConfirmSyncSelectors.SyncOrNextButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

@@ -4,19 +4,22 @@ import { useEffect } from 'react';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useUserIdSelector } from '../../store/settings/settings-selectors';
+import { useAnalyticsEnabledSelector, useUserIdSelector } from '../../store/settings/settings-selectors';
 import { AnalyticsEventCategory } from './analytics-event.enum';
 
 export const useAnalytics = () => {
   const userId = useUserIdSelector();
+  const analyticsEnabled = useAnalyticsEnabledSelector();
 
   const { track, screen } = useSegmentAnalytics();
 
   const trackEvent = async (
-    event: string,
+    event?: string,
     category: AnalyticsEventCategory = AnalyticsEventCategory.General,
     properties?: object
   ) =>
+    event !== undefined &&
+    analyticsEnabled &&
     track(category, {
       userId,
       event,
@@ -29,6 +32,7 @@ export const useAnalytics = () => {
     });
 
   const pageEvent = async (path: string, search: string, additionalProperties = {}) =>
+    analyticsEnabled &&
     screen(AnalyticsEventCategory.PageOpened, {
       userId,
       name: path,
