@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
@@ -6,18 +6,13 @@ import { isNonZeroBalance } from '../utils/tezos.util';
 
 export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
   const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
-  const [nonZeroBalanceAssetsList, setNonZeroBalanceAssetsList] = useState<TokenInterface[]>([]);
+  const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
+    () => assetsList.filter(asset => isNonZeroBalance(asset)),
+    [assetsList]
+  );
 
   const [searchValue, setSearchValue] = useState<string>();
-  const [filteredAssetsList, setFilteredAssetsList] = useState<TokenInterface[]>([]);
-
-  useEffect(() => {
-    const result: TokenInterface[] = assetsList.filter(asset => isNonZeroBalance(asset));
-
-    setNonZeroBalanceAssetsList(result);
-  }, [assetsList]);
-
-  useEffect(() => {
+  const filteredAssetsList = useMemo<TokenInterface[]>(() => {
     const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
 
     if (isString(searchValue)) {
@@ -36,9 +31,9 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
         }
       }
 
-      setFilteredAssetsList(result);
+      return result;
     } else {
-      setFilteredAssetsList(sourceArray);
+      return sourceArray;
     }
   }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
 
