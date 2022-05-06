@@ -71,8 +71,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
                 name="passwordConfirmation"
                 testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
               />
-              <Divider />
-              <InsetSubstitute type="bottom" />
             </View>
           </ScreenContainer>
           <View style={styles.buttonContainer}>
@@ -82,6 +80,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               onPress={submitForm}
               testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
             />
+            <InsetSubstitute type="bottom" />
           </View>
         </>
       )}

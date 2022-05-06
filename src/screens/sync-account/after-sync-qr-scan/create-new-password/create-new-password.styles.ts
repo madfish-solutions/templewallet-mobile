@@ -8,7 +8,7 @@ export const useCreateNewPasswordStyles = createUseStyles(({ colors }) => ({
     borderColor: colors.lines,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(8),
+    paddingHorizontal: formatSize(16),
     backgroundColor: colors.pageBG
   }
 }));
