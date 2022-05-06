@@ -15,6 +15,7 @@ import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
 import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
+import { isAndroid } from '../../config/system';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
@@ -56,7 +57,7 @@ export const EnterPassword = () => {
   ]);
 
   return (
-    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
+    <ScreenContainer style={styles.root} keyboardBehavior={isAndroid ? 'default' : 'padding'} isFullScreenMode={true}>
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
