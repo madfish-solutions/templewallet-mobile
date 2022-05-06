@@ -177,7 +177,10 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.SwapScreen}
                 component={SwapScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false, false)}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                  animationEnabled: false
+                }}
               />
 
               <MainStack.Screen
