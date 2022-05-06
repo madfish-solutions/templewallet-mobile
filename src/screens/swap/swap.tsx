@@ -86,7 +86,7 @@ export const SwapScreen: FC = () => {
 
   return (
     <ScrollView>
-      <SwapPriceUpdateBar timestamp={allRoutePairs.block.header.timestamp.toString()} />
+      <SwapPriceUpdateBar blockTimestamp={allRoutePairs.block.header.timestamp.toString()} />
       <Formik
         initialValues={sendModalInitialValues}
         validationSchema={swapFormValidationSchema}

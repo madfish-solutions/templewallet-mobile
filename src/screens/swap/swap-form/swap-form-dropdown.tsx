@@ -1,7 +1,7 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { BottomSheet } from '../../../components/bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
@@ -69,7 +69,6 @@ export const SwapFormDropdown = ({
   onLongPress
 }: SwapFormDropdownProps<TokenInterface> & SwapFormDropdownValueProps<TokenInterface>) => {
   const styles = useDropdownStyles();
-  const scrollRef = useRef<ScrollView>(null);
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = 0.7 * useWindowDimensions().height;
   const createDropdownItemPressHandler = (item: TokenInterface) => () => {
@@ -91,24 +90,23 @@ export const SwapFormDropdown = ({
       </TouchableOpacity>
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
-        <ScrollView style={styles.scrollView} ref={scrollRef}>
+        <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
-          <View style={styles.contentContainer}>
-            <FlatList
-              data={list}
-              keyExtractor={item => `${item.address}_${item.id}`}
-              renderItem={({ item, index }) => (
-                <DropdownListItem
-                  item={item}
-                  index={index}
-                  isSelected={equalityFn(item, value)}
-                  onPress={createDropdownItemPressHandler(item)}
-                  renderListItem={() => renderListItem({ item, isSelected: equalityFn(item, value) })}
-                />
-              )}
-            />
-          </View>
-        </ScrollView>
+          <FlatList
+            data={list}
+            contentContainerStyle={styles.flatListContentContainer}
+            keyExtractor={item => `${item.address}_${item.id}`}
+            renderItem={({ item, index }) => (
+              <DropdownListItem
+                item={item}
+                index={index}
+                isSelected={equalityFn(item, value)}
+                onPress={createDropdownItemPressHandler(item)}
+                renderListItem={() => renderListItem({ item, isSelected: equalityFn(item, value) })}
+              />
+            )}
+          />
+        </View>
 
         {renderActionButtons({ onPress: () => dropdownBottomSheetController.close() })}
       </BottomSheet>

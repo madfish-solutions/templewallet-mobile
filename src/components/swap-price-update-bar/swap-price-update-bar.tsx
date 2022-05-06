@@ -8,15 +8,15 @@ import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 export const BLOCK_DURATION = 30000;
 
 interface Props {
-  timestamp: string;
+  blockTimestamp: string;
 }
 
-export const SwapPriceUpdateBar: FC<Props> = ({ timestamp }) => {
+export const SwapPriceUpdateBar: FC<Props> = ({ blockTimestamp }) => {
   const counter = useRef(new Animated.Value(0)).current;
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
 
-  const blockEndTimestamp = useMemo(() => new Date(timestamp).getTime() + BLOCK_DURATION, [timestamp]);
+  const blockEndTimestamp = useMemo(() => new Date(blockTimestamp).getTime() + BLOCK_DURATION, [blockTimestamp]);
 
   const state = useMemo(() => {
     const millisecondsLeft = blockEndTimestamp - nowTimestamp;
