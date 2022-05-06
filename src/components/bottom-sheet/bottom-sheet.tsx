@@ -31,6 +31,7 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
   const [isOpened, setIsOpened] = useState(false);
 
   const bottomInset = max([insets.bottom, formatSize(8)]);
+  console.log(bottomInset, 'bottomInset');
   const renderBackdropComponent = useCallback(
     (props: PropsWithChildren<BottomSheetBackdropProps>) => (
       <BottomSheetBackdrop
@@ -44,7 +45,10 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
     [styles.backdrop]
   );
 
-  const handleChange = (index: number) => setIsOpened(index !== -1);
+  const handleChange = (index: number) => {
+    setIsOpened(index !== -1);
+    console.log('index', index);
+  };
 
   useEffect(() => {
     if (isOpened) {
@@ -58,7 +62,10 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
     }
   }, [isOpened]);
 
-  useOrientationChange(() => controller.close());
+  useOrientationChange(orientation => {
+    console.log(orientation, 'orientation');
+    controller.close();
+  });
 
   return (
     <Portal>
