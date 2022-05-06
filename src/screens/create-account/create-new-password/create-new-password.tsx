@@ -104,9 +104,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
                 I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
                 <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
               </CheckboxLabel>
-
-              <Divider />
-              <InsetSubstitute type="bottom" />
             </View>
           </ScreenContainer>
           <View style={styles.submitButton}>
@@ -116,6 +113,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
               onPress={submitForm}
               testID={CreateNewPasswordCreateAccountSelectors.CreateButton}
             />
+            <InsetSubstitute type="bottom" />
           </View>
         </>
       )}
