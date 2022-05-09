@@ -175,7 +175,7 @@ export const RootStackScreen = () => {
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
-      {/*{isAppCheckFailed && <AppCheckWarning />}*/}
+      {isAppCheckFailed && <AppCheckWarning />}
     </NavigationContainer>
   );
 };
