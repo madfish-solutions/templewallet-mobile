@@ -17,8 +17,8 @@ export const SwapAssetsButton: FC = () => {
 
   const swapAction = useCallback(
     (inputAsset: AssetAmountInterface, outputAsset: AssetAmountInterface) => {
-      setFieldValue('inputAssets', { asset: outputAsset.asset, amount: outputAsset.amount });
-      setFieldValue('outputAssets', { asset: inputAsset.asset, amount: inputAsset.amount });
+      setFieldValue('inputAssets', { asset: outputAsset.asset, amount: undefined });
+      setFieldValue('outputAssets', { asset: inputAsset.asset, amount: undefined });
     },
     [outputAssets, inputAssets]
   );

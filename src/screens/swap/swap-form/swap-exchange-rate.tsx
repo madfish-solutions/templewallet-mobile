@@ -1,54 +1,54 @@
-import { useFormikContext } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
-import { getTradeInputAmount, getTradeOutputAmount } from 'swap-router-sdk';
+import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
 
+import { AssetAmountInterface } from '../../../components/asset-amount-input/asset-amount-input';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
 import { formatSize } from '../../../styles/format-size';
 import { formatAssetAmount } from '../../../utils/number.util';
+import { mutezToTz } from '../../../utils/tezos.util';
 import { ROUTING_FEE_PERCENT } from '../config';
 import { useSwapStyles } from '../swap.styles';
-import { atomsToTokens } from './swap-form';
 
-export const SwapExchangeRate: FC = () => {
+interface Props {
+  inputAssets: AssetAmountInterface;
+  outputAssets: AssetAmountInterface;
+  bestTrade: Trade;
+  bestTradeWithSlippageTolerance: Trade;
+}
+
+export const SwapExchangeRate: FC<Props> = ({
+  inputAssets,
+  outputAssets,
+  bestTrade,
+  bestTradeWithSlippageTolerance
+}) => {
   const styles = useSwapStyles();
 
-  const { values } = useFormikContext<SwapFormValues>();
-
-  const {
-    inputAssets,
-    outputAssets,
-    bestTrade: trade,
-    bestTradeWithSlippageTolerance: tradeWithSlippageTolerance
-  } = values;
-  const { asset: inputAssetMetadata } = inputAssets;
-  const { asset: outputAssetMetadata } = outputAssets;
-
   const exchangeRate = useMemo(() => {
-    const tradeMutezInput = getTradeInputAmount(trade);
-    const tradeMutezOutput = getTradeOutputAmount(trade);
+    const tradeMutezInput = getTradeInputAmount(bestTrade);
+    const tradeMutezOutput = getTradeOutputAmount(bestTrade);
 
     if (tradeMutezInput && tradeMutezOutput && !tradeMutezInput.isEqualTo(0) && !tradeMutezOutput.isEqualTo(0)) {
-      const tradeTzInput = atomsToTokens(tradeMutezInput, inputAssetMetadata.decimals);
-      const tradeTzOutput = atomsToTokens(tradeMutezOutput, outputAssetMetadata.decimals);
+      const tradeTzInput = mutezToTz(tradeMutezInput, inputAssets.asset.decimals);
+      const tradeTzOutput = mutezToTz(tradeMutezOutput, outputAssets.asset.decimals);
 
       return tradeTzInput.dividedBy(tradeTzOutput);
     }
 
     return undefined;
-  }, [trade, inputAssetMetadata.decimals, outputAssetMetadata.decimals]);
+  }, [bestTrade, inputAssets.asset.decimals, outputAssets.asset.decimals]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (tradeWithSlippageTolerance.length > 0) {
-      const lastTradeOperation = tradeWithSlippageTolerance[tradeWithSlippageTolerance.length - 1];
+    if (bestTradeWithSlippageTolerance.length > 0) {
+      const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
 
-      return atomsToTokens(lastTradeOperation.bTokenAmount, outputAssetMetadata.decimals);
+      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
     }
 
     return undefined;
-  }, [tradeWithSlippageTolerance, outputAssetMetadata.decimals]);
+  }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
 
   const routingFeeAlert = () =>
     Alert.alert(
@@ -76,13 +76,13 @@ export const SwapExchangeRate: FC = () => {
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Exchange rate</Text>
             <Text style={styles.infoValue}>
-              1 {outputAssetMetadata.symbol} = {formatAssetAmount(exchangeRate)} {inputAssetMetadata.symbol}
+              1 {outputAssets.asset.symbol} = {formatAssetAmount(exchangeRate)} {inputAssets.asset.symbol}
             </Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Minimum received</Text>
             <Text style={styles.infoValue}>
-              {minimumReceivedAmount && formatAssetAmount(minimumReceivedAmount)} {inputAssetMetadata.symbol}
+              {minimumReceivedAmount && formatAssetAmount(minimumReceivedAmount)} {inputAssets.asset.symbol}
             </Text>
           </View>
         </>

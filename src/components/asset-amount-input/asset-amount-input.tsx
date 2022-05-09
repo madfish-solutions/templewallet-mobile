@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -32,6 +32,18 @@ export interface AssetAmountInterface {
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 
+const getDefinedAmount = (
+  amount: BigNumber | undefined,
+  decimals: number,
+  exchangeRate: number,
+  isTokenInputType: boolean
+) =>
+  isDefined(amount)
+    ? isTokenInputType
+      ? tzToMutez(amount, decimals)
+      : dollarToTokenAmount(amount, decimals, exchangeRate)
+    : undefined;
+
 const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => (
   <TokenDropdownItem
     token={value}
@@ -41,7 +53,7 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
   />
 );
 
-export const AssetAmountInput: FC<AssetAmountInputProps> = ({
+const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
   assetsList,
@@ -98,12 +110,24 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     inputValueRef.current = newNumericInputValue;
 
     return newNumericInputValue;
-  }, [value.amount, value.asset.decimals, exchangeRate]);
+  }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+
+  const onChange = useCallback(
+    newInputValue => {
+      inputValueRef.current = newInputValue;
+
+      onValueChange({
+        ...value,
+        amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
+      });
+    },
+    [value, onValueChange, isTokenInputType]
+  );
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     numericInputValue,
     value.asset.decimals,
-    newInputValue => (inputValueRef.current = newInputValue),
+    onChange,
     onBlur,
     onFocus
   );
@@ -113,36 +137,30 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
-  };
-
-  const getDefinedAmount = useCallback(
-    (decimals, newExchangeRate) =>
-      isDefined(inputValueRef.current)
-        ? isTokenInputType
-          ? tzToMutez(inputValueRef.current, decimals)
-          : dollarToTokenAmount(inputValueRef.current, decimals, newExchangeRate)
-        : undefined,
-    [isTokenInputType, inputValueRef.current]
-  );
-
-  const handleTokenChange = (newAsset?: TokenInterface) => {
-    const decimals = newAsset?.decimals ?? 0;
-    const asset = newAsset ?? emptyToken;
-    const newExchangeRate = exchangeRates[getTokenSlug(asset)];
 
     onValueChange({
-      amount: getDefinedAmount(decimals, newExchangeRate),
-      asset
+      ...value,
+      amount: getDefinedAmount(
+        inputValueRef.current,
+        value.asset.decimals,
+        exchangeRate,
+        tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
+      )
     });
   };
 
-  useEffect(
-    () =>
+  const handleTokenChange = useCallback(
+    (newAsset?: TokenInterface) => {
+      const decimals = newAsset?.decimals ?? 0;
+      const asset = newAsset ?? emptyToken;
+      const newExchangeRate = exchangeRates[getTokenSlug(asset)];
+
       onValueChange({
-        ...value,
-        amount: getDefinedAmount(value.asset.decimals, exchangeRate)
-      }),
-    [value.asset.decimals, exchangeRate, getDefinedAmount]
+        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
+        asset
+      });
+    },
+    [exchangeRates, onValueChange, isTokenInputType]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
@@ -188,12 +206,12 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             value={value.asset}
             list={assetsList}
             autoScroll
-            comparator={['address', 'id']}
             isSearchable={isSearchable}
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
+            keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
           />
         </View>
@@ -240,3 +258,5 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     </>
   );
 };
+
+export const AssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;
