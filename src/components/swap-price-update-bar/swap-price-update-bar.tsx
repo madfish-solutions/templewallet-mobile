@@ -1,24 +1,22 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
-import { useAllRoutePairs } from 'swap-router-sdk';
 
-import { TEZOS_DEXES_API_URL } from '../../screens/swap/swap-form';
 import { formatSize } from '../../styles/format-size';
 import { Divider } from '../divider/divider';
 import { useSwapPriceUpdateBarStyles } from './swap-price-update-bar.styles';
 
 export const BLOCK_DURATION = 30000;
 
-export const SwapPriceUpdateBar: FC = () => {
+interface Props {
+  blockTimestamp: string;
+}
+
+export const SwapPriceUpdateBar: FC<Props> = ({ blockTimestamp }) => {
   const counter = useRef(new Animated.Value(0)).current;
-  const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
   const styles = useSwapPriceUpdateBarStyles();
   const [nowTimestamp, setNowTimestamp] = useState(new Date().getTime());
 
-  const blockEndTimestamp = useMemo(
-    () => new Date(allRoutePairs.block.header.timestamp).getTime() + BLOCK_DURATION,
-    [allRoutePairs.block.header.timestamp]
-  );
+  const blockEndTimestamp = useMemo(() => new Date(blockTimestamp).getTime() + BLOCK_DURATION, [blockTimestamp]);
 
   const state = useMemo(() => {
     const millisecondsLeft = blockEndTimestamp - nowTimestamp;
@@ -68,7 +66,7 @@ export const SwapPriceUpdateBar: FC = () => {
       <View style={styles.progressBar}>
         <Animated.View style={[styles.progressBarAnimatedView, { transform: [{ scaleX: width }] }]} />
       </View>
-      <Divider size={formatSize(12)} />
+      <Divider size={formatSize(6)} />
       <Text style={styles.progressBarTextStyle}>{state.text}</Text>
     </View>
   );

@@ -20,7 +20,7 @@ export const useSwapPriceUpdateBarStyles = createUseStyles(({ colors }) => ({
     backgroundColor: colors.orange
   },
   progressBarTextStyle: {
-    fontSize: formatSize(16),
+    fontSize: formatSize(11),
     color: colors.gray2
   }
 }));

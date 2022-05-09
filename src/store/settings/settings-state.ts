@@ -26,7 +26,7 @@ export const settingsInitialState: SettingsState = {
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
   userId: nanoid(),
-  slippage: 0
+  slippage: 1.5
 };
 
 export interface SettingsRootState {

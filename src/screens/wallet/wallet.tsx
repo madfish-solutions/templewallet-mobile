@@ -51,8 +51,6 @@ export const Wallet = () => {
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
-            autoScroll
-            comparator={['publicKeyHash']}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
           />
 

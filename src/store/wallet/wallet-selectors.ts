@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
@@ -81,23 +81,17 @@ export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccount = useSelectedAccountSelector();
   const getTokenMetadata = useTokenMetadataGetter();
 
-  const [assetsList, setAssetsList] = useState<TokenInterface[]>([]);
-
-  useEffect(
+  return useMemo<TokenInterface[]>(
     () =>
-      void setAssetsList(
-        selectedAccount.tokensList
-          .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
-          .map(({ slug, balance, isVisible }) => ({
-            balance,
-            isVisible,
-            ...getTokenMetadata(slug)
-          }))
-      ),
+      selectedAccount.tokensList
+        .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
+        .map(({ slug, balance, isVisible }) => ({
+          balance,
+          isVisible,
+          ...getTokenMetadata(slug)
+        })),
     [selectedAccount.tokensList, getTokenMetadata, selectedAccount.removedTokensList]
   );
-
-  return assetsList;
 };
 
 export const useVisibleAssetListSelector = () => {
@@ -110,6 +104,16 @@ export const useTokensListSelector = () => {
   const assetsList = useAssetsListSelector();
 
   return useMemo(() => assetsList.filter(({ artifactUri }) => !isDefined(artifactUri)), [assetsList]);
+};
+
+export const useTokensWithTezosListSelector = () => {
+  const assetsList = useAssetsListSelector();
+  const tezosToken = useTezosTokenSelector();
+
+  return useMemo(
+    () => [tezosToken, ...assetsList].filter(({ artifactUri }) => !isDefined(artifactUri)),
+    [assetsList, tezosToken]
+  );
 };
 
 export const useVisibleTokensListSelector = () => {

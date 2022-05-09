@@ -80,7 +80,7 @@ export const MainStackScreen = () => {
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
-  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
+  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>
@@ -177,7 +177,10 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.SwapScreen}
                 component={SwapScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false)}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                  animationEnabled: false
+                }}
               />
 
               <MainStack.Screen
