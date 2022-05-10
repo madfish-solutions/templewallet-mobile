@@ -59,13 +59,12 @@ export const getQuipuStakingInfo = async (): Promise<QuipuswapStakingInfoRespons
   return quipuStakingApi.get('/list/3').then(r => r.data);
 };
 
-export const loadQuipuApy$ = () =>
-  from(getQuipuStakingInfo()).pipe(
-    switchMap(tokenList => {
-      if (isDefined(tokenList) && isDefined(tokenList.item) && isDefined(tokenList.item.apy)) {
-        return of(tokenList.item.apy);
-      }
+export const loadQuipuApy$ = from(getQuipuStakingInfo()).pipe(
+  switchMap(tokenList => {
+    if (isDefined(tokenList) && isDefined(tokenList.item) && isDefined(tokenList.item.apy)) {
+      return of(tokenList.item.apy);
+    }
 
-      return of(QUIPU_DEFAULT_PERCENTAGE);
-    })
-  );
+    return of(QUIPU_DEFAULT_PERCENTAGE);
+  })
+);

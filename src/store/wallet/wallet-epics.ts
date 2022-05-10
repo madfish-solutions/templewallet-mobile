@@ -51,7 +51,7 @@ const loadQuipuApyEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadQuipuApyActions.submit),
     switchMap(() =>
-      loadQuipuApy$().pipe(
+      loadQuipuApy$.pipe(
         map(apy => loadQuipuApyActions.success(apy)),
         catchError(err => of(loadQuipuApyActions.fail(err.message)))
       )
