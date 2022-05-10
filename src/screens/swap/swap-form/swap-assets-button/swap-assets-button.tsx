@@ -2,16 +2,14 @@ import { useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 import { View } from 'react-native';
 
-import { AssetAmountInterface } from '../../../components/asset-amount-input/asset-amount-input';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
-import { formatSize } from '../../../styles/format-size';
-import { useSwapStyles } from '../swap.styles';
+import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
+import { SwapFormValues } from '../../../../interfaces/swap-asset.interface';
+import { formatSize } from '../../../../styles/format-size';
+import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {
-  const styles = useSwapStyles();
-
   const { values, setFieldValue } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
 
@@ -24,7 +22,7 @@ export const SwapAssetsButton: FC = () => {
   );
 
   return (
-    <View style={styles.swapIconContainer}>
+    <View style={SwapAssetsButtonStyles.container}>
       <TouchableIcon
         onPress={() => swapAction(inputAssets, outputAssets)}
         name={IconNameEnum.SwapArrow}

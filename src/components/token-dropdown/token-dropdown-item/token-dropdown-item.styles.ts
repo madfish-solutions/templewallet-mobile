@@ -4,12 +4,8 @@ import { formatSize } from '../../../styles/format-size';
 export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
-  },
-  placeHolderContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    height: formatSize(36)
+    height: formatSize(40)
   },
   infoContainer: {
     flexGrow: 1,
@@ -20,15 +16,8 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  emptyColumn: {
-    flexDirection: 'column'
-  },
   rightContainer: {
     flexDirection: 'row'
-  },
-  placeholder: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
   },
   symbol: {
     ...typography.numbersRegular15,

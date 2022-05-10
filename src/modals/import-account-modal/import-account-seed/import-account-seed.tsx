@@ -7,6 +7,7 @@ import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
+import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
@@ -19,7 +20,7 @@ import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors'
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
 import { seedToPrivateKey } from '../../../utils/keys.util';
-import { useImportAccountStyles } from '../import-account.styles';
+import { ImportAccountStyles } from '../import-account.styles';
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,
@@ -32,7 +33,6 @@ interface Props {
 }
 
 export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
-  const styles = useImportAccountStyles();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
@@ -58,7 +58,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
           <ScreenContainer isFullScreenMode={true}>
             <View>
               <Divider size={formatSize(12)} />
-              <View style={styles.seedPhraseInputContainer}>
+              <View style={ImportAccountStyles.seedPhraseInputContainer}>
                 <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
                 <FormMnemonicInput name="seedPhrase" />
               </View>
@@ -80,14 +80,14 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
               <Divider size={formatSize(12)} />
             </View>
           </ScreenContainer>
-          <View style={styles.submitButton}>
+          <ButtonsFloatingContainer>
             <ButtonsContainer>
               <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
-          </View>
+          </ButtonsFloatingContainer>
         </>
       )}
     </Formik>

@@ -49,7 +49,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
   useNavigationSetOptions(
     {
       headerTitle: () => {
-        switch (opParams[0].kind) {
+        switch (opParams[0]?.kind) {
           case OpKind.DELEGATION:
             return <HeaderTitle title="Confirm Delegate" />;
           case OpKind.TRANSACTION:

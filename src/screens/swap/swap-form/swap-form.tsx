@@ -15,8 +15,11 @@ import {
 } from 'swap-router-sdk';
 
 import { AssetAmountInterface } from '../../../components/asset-amount-input/asset-amount-input';
+import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
@@ -34,21 +37,17 @@ import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isString } from '../../../utils/is-string';
 import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
-import { useSwapStyles } from '../swap.styles';
 import { getRoutingFeeTransferParams } from '../swap.util';
-import { SwapAssetsButton } from './swap-assets-button';
-import { SwapExchangeRate } from './swap-exchange-rate';
-import { SwapRoute } from './swap-router';
-import { SwapSubmitButton } from './swap-submit-button';
+import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
+import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
+import { SwapPriceUpdateBar } from './swap-price-update-bar/swap-price-update-bar';
+import { useSwapPriceUpdateInfo } from './swap-price-update-bar/swap-price-update-info.hook';
+import { SwapPriceUpdateText } from './swap-price-update-bar/swap-price-update-text';
+import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
 
-interface SwapFormProps {
-  loadingHasFailed: boolean;
-}
-
-export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
-  const styles = useSwapStyles();
+export const SwapForm: FC = () => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -56,6 +55,7 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
+  const priceUpdateInfo = useSwapPriceUpdateInfo(allRoutePairs.block);
   const filteredRoutePairs = useMemo(
     () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
     [allRoutePairs.data]
@@ -63,7 +63,7 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
 
   const [bestTrade, setBestTrade] = useState<Trade>([]);
 
-  const { values, setFieldValue } = useFormikContext<SwapFormValues>();
+  const { values, setFieldValue, isValid, submitCount, submitForm } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
   const inputAssetSlug = inputAssets.asset === emptyToken ? undefined : getTokenSlug(inputAssets.asset);
   const outputAssetSlug = outputAssets.asset === emptyToken ? undefined : getTokenSlug(outputAssets.asset);
@@ -142,6 +142,12 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
   );
 
   const handleSubmit = async () => {
+    submitForm();
+
+    if (!isValid) {
+      return;
+    }
+
     const inputMutezAmount = inputAssets.amount;
 
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
@@ -175,7 +181,15 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
 
   return (
     <>
-      <View style={styles.container}>
+      <SwapPriceUpdateBar
+        nowTimestamp={priceUpdateInfo.nowTimestamp}
+        blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
+      />
+      <ScreenContainer>
+        <SwapPriceUpdateText
+          nowTimestamp={priceUpdateInfo.nowTimestamp}
+          blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
+        />
         <Divider size={formatSize(8)} />
         <FormAssetAmountInput
           name="inputAssets"
@@ -202,8 +216,8 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
           <SwapRoute
             inputAssets={inputAssets}
             outputAssets={outputAssets}
-            bestTrade={bestTrade}
-            loadingHasFailed={loadingHasFailed}
+            trade={bestTrade}
+            loadingHasFailed={allRoutePairs.hasFailed}
           />
 
           <Divider />
@@ -217,8 +231,10 @@ export const SwapForm: FC<SwapFormProps> = ({ loadingHasFailed }) => {
           </View>
         </View>
         <Divider size={formatSize(16)} />
-      </View>
-      <SwapSubmitButton inputAssets={inputAssets} outputAssets={outputAssets} onSubmit={handleSubmit} />
+      </ScreenContainer>
+      <ButtonsFloatingContainer>
+        <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={handleSubmit} />
+      </ButtonsFloatingContainer>
     </>
   );
 };
