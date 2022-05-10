@@ -1,9 +1,9 @@
-import { useField } from 'formik';
-import React, { FC } from 'react';
+import { useField, useFormikContext } from 'formik';
+import React, { FC, useCallback } from 'react';
 
 import { AssetAmountInput, AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from '../../components/asset-amount-input/asset-amount-input.props';
-import { EventFn, emptyFn } from '../../config/general';
+import { emptyFn, EventFn } from '../../config/general';
 import { hasError } from '../../utils/has-error';
 import { ErrorMessage } from '../error-message/error-message';
 
@@ -27,16 +27,19 @@ export const FormAssetAmountInput: FC<Props> = ({
   setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
-  const [field, meta, helpers] = useField<AssetAmountInterface>(name);
+  const formikContext = useFormikContext();
+  const [field, meta] = useField<AssetAmountInterface>(name);
   const isError = hasError(meta);
 
-  const handleValueChange: EventFn<AssetAmountInterface, void> = newValue => {
-    const isSameValue = JSON.stringify(newValue) === JSON.stringify(field.value);
-    if (!isSameValue) {
+  const handleValueChange: EventFn<AssetAmountInterface, void> = useCallback(
+    newValue => {
       onValueChange(newValue);
-      helpers.setValue(newValue);
-    }
-  };
+      formikContext.setFieldValue(name, newValue);
+    },
+    [onValueChange, formikContext.setFieldValue, name]
+  );
+
+  const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
 
   return (
     <>
@@ -51,7 +54,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         toUsdToggle={toUsdToggle}
         selectionOptions={selectionOptions}
         setSearchValue={setSearchValue}
-        onBlur={() => helpers.setTouched(true)}
+        onBlur={handleBlur}
         onValueChange={handleValueChange}
       />
       <ErrorMessage meta={meta} />

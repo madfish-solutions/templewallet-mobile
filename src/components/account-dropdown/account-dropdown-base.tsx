@@ -43,9 +43,7 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<WalletAccountInterfa
   list,
   onValueChange,
   renderValue,
-  renderAccountListItem,
-  autoScroll,
-  comparator
+  renderAccountListItem
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
@@ -58,8 +56,6 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<WalletAccountInterfa
       renderValue={renderValue}
       renderListItem={renderAccountListItem}
       renderActionButtons={ActionButtons}
-      autoScroll={autoScroll}
-      comparator={comparator}
       onValueChange={onValueChange}
       onLongPress={onLongPressHandler}
     />

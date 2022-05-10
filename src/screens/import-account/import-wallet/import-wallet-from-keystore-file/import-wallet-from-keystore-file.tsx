@@ -16,7 +16,6 @@ import {
 import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormFileInput } from '../../../../form/form-file-input';
 import { FormPasswordInput } from '../../../../form/form-password-input';
-import { formatSize } from '../../../../styles/format-size';
 import { showErrorToast } from '../../../../toast/toast.utils';
 import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
 import { ImportWalletProps } from '../import-wallet';
@@ -79,9 +78,7 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
           <View style={styles.seedPhraseInputContainer}>
             <View>
               <Label label="File" description="Import your wallet from an encrypted keystore file (.tez)." />
-              <Divider size={formatSize(20)} />
               <FormFileInput name="keystoreFile" />
-              <Divider size={formatSize(12)} />
               <Label label="File password" description="Please enter a password for keystore file" />
               <FormPasswordInput name="password" />
               <FormCheckbox
