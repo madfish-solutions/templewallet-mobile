@@ -44,6 +44,7 @@ import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
 import {
   loadActivityGroupsActions,
+  loadQuipuApyActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions
 } from '../store/wallet/wallet-actions';
@@ -74,6 +75,7 @@ export const MainStackScreen = () => {
     dispatch(loadTokenBalancesActions.submit());
     dispatch(loadActivityGroupsActions.submit());
     dispatch(loadSelectedBakerActions.submit());
+    dispatch(loadQuipuApyActions.submit());
   };
   const initExchangeRateLoading = () => {
     dispatch(loadExchangeRates.submit());

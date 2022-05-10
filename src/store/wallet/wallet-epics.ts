@@ -44,7 +44,6 @@ const updateDataActions = () => [
   loadTezosBalanceActions.submit(),
   loadTokenBalancesActions.submit(),
   loadActivityGroupsActions.submit(),
-  loadQuipuApyActions.submit(),
   loadSelectedBakerActions.submit()
 ];
 
