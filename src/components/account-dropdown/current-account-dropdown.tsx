@@ -14,14 +14,12 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<WalletAccountInterfac
   value,
   list,
   onValueChange
-}) => {
-  return (
-    <AccountDropdownBase
-      value={value}
-      list={list}
-      renderValue={renderAccountValue}
-      renderAccountListItem={renderAccountListItem}
-      onValueChange={onValueChange}
-    />
-  );
-};
+}) => (
+  <AccountDropdownBase
+    value={value}
+    list={list}
+    renderValue={renderAccountValue}
+    renderAccountListItem={renderAccountListItem}
+    onValueChange={onValueChange}
+  />
+);

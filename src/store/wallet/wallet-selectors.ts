@@ -3,23 +3,20 @@ import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
-import {
-  initialWalletAccountState,
-  WalletAccountStateInterface
-} from '../../interfaces/wallet-account-state.interface';
+import { ActivityGroup } from '../../interfaces/activity.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
-import { walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
+import { getWalletAccountState, walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
-export const useAccountsListSelector = () => {
-  const accounts = useSelector<WalletRootState, WalletAccountStateInterface[]>(({ wallet }) => wallet.accounts);
-
-  return useMemo(() => accounts.map(walletAccountStateToWalletAccount), [accounts]);
-};
+export const useAccountsListSelector = () =>
+  useSelector<WalletRootState, WalletAccountInterface[]>(
+    ({ wallet }) => wallet.accounts.map(walletAccountStateToWalletAccount),
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  );
 
 export const useVisibleAccountsListSelector = () => {
   const accounts = useAccountsListSelector();
@@ -45,34 +42,25 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
-const useSelectedAccountStateSelector = (): WalletAccountStateInterface => {
-  const { accounts, selectedAccountPublicKeyHash } = useSelector<WalletRootState, WalletState>(({ wallet }) => wallet);
+export const useSelectedAccountSelector = (): WalletAccountInterface =>
+  useSelector<WalletRootState, WalletAccountInterface>(
+    ({ wallet }) => {
+      const walletAccountState = getWalletAccountState(wallet.accounts, wallet.selectedAccountPublicKeyHash);
 
-  // TODO: OPTIMIZE SELECTED ACCOUNT SELECTOR ASAP
-  return useMemo(
-    () => ({
-      ...initialWalletAccountState,
-      ...accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
-    }),
-    [accounts, selectedAccountPublicKeyHash]
+      return walletAccountStateToWalletAccount(walletAccountState);
+    },
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
-};
 
-export const useSelectedAccountSelector = (): WalletAccountInterface => {
-  const selectedAccountState = useSelectedAccountStateSelector();
+export const useActivityGroupsSelector = () =>
+  useSelector<WalletRootState, ActivityGroup[]>(
+    ({ wallet }) => {
+      const walletAccountState = getWalletAccountState(wallet.accounts, wallet.selectedAccountPublicKeyHash);
 
-  return useMemo(() => walletAccountStateToWalletAccount(selectedAccountState), [selectedAccountState]);
-};
-
-export const useActivityGroupsSelector = () => {
-  const pendingActivityGroups = useSelectedAccountStateSelector().pendingActivities;
-  const appliedActivityGroups = useSelectedAccountStateSelector().activityGroups.data;
-
-  return useMemo(
-    () => [...pendingActivityGroups, ...appliedActivityGroups],
-    [pendingActivityGroups, appliedActivityGroups]
+      return [...walletAccountState.pendingActivities, ...walletAccountState.activityGroups.data];
+    },
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
-};
 
 export const useTokensMetadataSelector = () =>
   useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
