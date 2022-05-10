@@ -35,16 +35,21 @@ export const TokenDropdownItem: FC<Props> = ({
 
   if (tokenEqualityFn(token, emptyToken)) {
     return (
-      <View style={styles.placeHolderContainer}>
+      <View style={styles.container}>
         <TokenIcon token={token} size={iconSize} />
         <Divider size={formatSize(8)} />
-        <View style={styles.emptyColumn}>
-          <Text style={styles.placeholder}>Select</Text>
-          <Text style={styles.placeholder}>Token</Text>
-        </View>
-        <View style={styles.rightContainer}>
-          <Divider size={formatSize(4)} />
-          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
+            <Text style={styles.name}>Select</Text>
+            <View style={styles.rightContainer}>
+              <Divider size={formatSize(4)} />
+              {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.name}>Token</Text>
+          </View>
         </View>
       </View>
     );
