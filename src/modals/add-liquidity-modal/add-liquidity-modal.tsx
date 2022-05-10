@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -174,9 +175,9 @@ export const AddLiquidityModal = () => {
                   </Text>
                 </View>
               </ScreenContainer>
-              <View style={styles.submitButton}>
+              <ButtonsFloatingContainer>
                 <ButtonLargePrimary title="Add" onPress={submitForm} />
-              </View>
+              </ButtonsFloatingContainer>
               <InsetSubstitute type="bottom" />
             </>
           );

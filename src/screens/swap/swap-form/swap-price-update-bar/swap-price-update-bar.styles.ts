@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from '../../../../styles/create-use-styles';
+import { formatSize } from '../../../../styles/format-size';
 
 export const useSwapPriceUpdateBarStyles = createUseStyles(({ colors }) => ({
   container: {
@@ -21,6 +21,7 @@ export const useSwapPriceUpdateBarStyles = createUseStyles(({ colors }) => ({
   },
   progressBarTextStyle: {
     fontSize: formatSize(11),
+    textAlign: 'center',
     color: colors.gray2
   }
 }));

@@ -1,20 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { StyleSheet } from 'react-native';
 
-export const useImportAccountStyles = createUseStyles(({ colors }) => ({
-  container: {
-    marginHorizontal: formatSize(20),
-    marginVertical: formatSize(24)
-  },
+export const ImportAccountStyles = StyleSheet.create({
   seedPhraseInputContainer: {
     flexGrow: 1
-  },
-  submitButton: {
-    borderTopWidth: formatSize(0.5),
-    borderColor: colors.lines,
-    paddingTop: formatSize(8),
-    paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(8),
-    backgroundColor: colors.pageBG
   }
-}));
+});
