@@ -106,6 +106,9 @@ export const useVisibleAssetListSelector = () => {
   return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
 };
 
+export const useQuipuApySelector = () =>
+  useSelector<WalletRootState, WalletState['quipuApy']>(({ wallet }) => wallet.quipuApy);
+
 export const useTokensListSelector = () => {
   const assetsList = useAssetsListSelector();
 

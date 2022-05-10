@@ -9,6 +9,7 @@ import {
   addPendingOperation,
   addTokenMetadataAction,
   loadActivityGroupsActions,
+  loadQuipuApyActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -85,6 +86,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }));
   });
 
+  builder.addCase(loadQuipuApyActions.success, (state, { payload: quipuApy }) => ({
+    ...state,
+    quipuApy
+  }));
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadata, true)

@@ -2,6 +2,7 @@ import { WalletAccountStateInterface } from '../../interfaces/wallet-account-sta
 import { HIDDEN_WHITELIST_TOKENS, MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { QUIPU_DEFAULT_PERCENTAGE } from '../../utils/quipu-apy.util';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
@@ -11,6 +12,7 @@ export interface WalletState {
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
   isShownDomainName: boolean;
+  quipuApy: number;
 }
 
 export const walletInitialState: WalletState = {
@@ -24,7 +26,8 @@ export const walletInitialState: WalletState = {
     {}
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata),
-  isShownDomainName: false
+  isShownDomainName: false,
+  quipuApy: QUIPU_DEFAULT_PERCENTAGE
 };
 
 export interface WalletRootState {

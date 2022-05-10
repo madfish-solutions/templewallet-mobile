@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -6,8 +6,8 @@ import { delegationApy } from '../../config/general';
 import { QUIPU_SLUG } from '../../config/tokens';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useQuipuApy } from '../../screens/wallet/token-list/token-list-item/use-quipu-apy';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
+import { useQuipuApySelector } from '../../store/wallet/wallet-selectors';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { openUrl } from '../../utils/linking.util';
@@ -20,7 +20,8 @@ interface Props {
 
 export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const styles = useTokenScreenContentContainerStyles();
-  const { formattedApy } = useQuipuApy();
+  const quipuApy = useQuipuApySelector();
+  const formattedApy = useMemo(() => quipuApy.toFixed(2).replace(/[.,]00$/, ''), [quipuApy]);
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
   const isTezos = token.address === '';

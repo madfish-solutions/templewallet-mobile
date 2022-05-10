@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+import { useQuipuApySelector } from '../../../../store/wallet/wallet-selectors';
 import { TokenInterface } from '../../../../token/interfaces/token.interface';
 import { TokenListItem } from './token-list-item';
-import { useQuipuApy } from './use-quipu-apy';
 
 interface Props {
   token: TokenInterface;
@@ -12,7 +12,7 @@ interface Props {
 
 export const QuipuToken: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const { apy } = useQuipuApy();
+  const quipuApy = useQuipuApySelector();
 
-  return <TokenListItem apy={apy} token={token} onPress={() => navigate(ScreensEnum.TokenScreen, { token })} />;
+  return <TokenListItem apy={quipuApy} token={token} onPress={() => navigate(ScreensEnum.TokenScreen, { token })} />;
 };
