@@ -85,6 +85,7 @@ import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UkraineIcon from './assets/ukraine.svg';
+import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
@@ -124,6 +125,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Youves]: YouvesIcon,
+  [IconNameEnum.Vortex]: VortexIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
   [IconNameEnum.QuipuSwapDark]: QuipuSwapDarkIcon,
   [IconNameEnum.DApps]: DAppsIcon,

@@ -28,6 +28,8 @@ export const SwapRouteItem: FC<Props> = ({ tradeOperation, isShowNextArrow = fal
         return IconNameEnum.QuipuSwapDark;
       case DexTypeEnum.Youves:
         return IconNameEnum.Youves;
+      case DexTypeEnum.Vortex:
+        return IconNameEnum.Vortex;
       default:
         return IconNameEnum.SwapTokenPlaceholderIcon;
     }
