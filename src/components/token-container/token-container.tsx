@@ -24,7 +24,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }
             <Text {...getTruncatedProps(styles.symbolText)}>{symbol}</Text>
             {isDefined(apy) && (
               <View style={styles.apyContainer}>
-                <Text style={styles.apyText}>APY: {apy}%</Text>
+                <Text style={styles.apyText}>APY: {apy.toFixed(2).replace(/[.,]00$/, '')}%</Text>
               </View>
             )}
           </View>

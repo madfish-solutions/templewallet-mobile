@@ -56,6 +56,7 @@ export const TokenScreen = () => {
       <TokenScreenContentContainer
         historyComponent={<ActivityGroupsList activityGroups={filteredActivityGroups} />}
         infoComponent={<TokenInfo token={token} />}
+        token={token}
       />
     </>
   );

@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { useFormikContext } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {
   getBestTradeExactInput,
@@ -185,7 +185,11 @@ export const SwapForm: FC = () => {
         nowTimestamp={priceUpdateInfo.nowTimestamp}
         blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
       />
-      <ScreenContainer>
+      <ScreenContainer
+        scrollViewRefreshControl={
+          <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={allRoutePairs.onRefresh} />
+        }
+      >
         <SwapPriceUpdateText
           nowTimestamp={priceUpdateInfo.nowTimestamp}
           blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
