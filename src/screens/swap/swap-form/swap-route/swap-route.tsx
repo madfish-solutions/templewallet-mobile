@@ -19,7 +19,7 @@ interface Props {
 
 export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loadingHasFailed }) => {
   if (loadingHasFailed) {
-    return <SwapRouteInfo text="Exchange rate data loading has failed. \nReload this page or try again later." />;
+    return <SwapRouteInfo text={'Exchange rate data loading has failed. \nReload this page or try again later.'} />;
   }
 
   if (tokenEqualityFn(inputAssets.asset, emptyToken) || tokenEqualityFn(outputAssets.asset, emptyToken)) {

@@ -1,5 +1,13 @@
 import React, { FC } from 'react';
-import { KeyboardAvoidingView, ScrollView, StyleProp, ViewStyle, StatusBar } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
+  ScrollView,
+  ScrollViewProps,
+  StatusBar,
+  StyleProp,
+  ViewStyle
+} from 'react-native';
 
 import { isAndroid } from '../../config/system';
 import { useHeaderHeight } from '../../hooks/use-header-height.hook';
@@ -9,7 +17,8 @@ import { setTestID } from '../../utils/test-id.utils';
 import { useScreenContainerStyles } from './screen-container.styles';
 
 interface Props extends TestIdProps {
-  keyboardBehavior?: 'height' | 'padding' | 'position';
+  keyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
+  scrollViewRefreshControl?: ScrollViewProps['refreshControl'];
   isFullScreenMode?: boolean;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
@@ -17,6 +26,7 @@ interface Props extends TestIdProps {
 
 export const ScreenContainer: FC<Props> = ({
   keyboardBehavior = isAndroid ? 'height' : 'padding',
+  scrollViewRefreshControl,
   isFullScreenMode = false,
   style,
   contentContainerStyle,
@@ -41,6 +51,7 @@ export const ScreenContainer: FC<Props> = ({
           contentContainerStyle
         ]}
         keyboardShouldPersistTaps="handled"
+        refreshControl={scrollViewRefreshControl}
         {...setTestID(testID)}
       >
         {children}
