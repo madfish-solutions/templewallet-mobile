@@ -123,7 +123,7 @@ const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<
   action$.pipe(
     ofType(loadTokensMetadataActions.submit),
     withTokenList(state$),
-    concatMap(tokens =>
+    switchMap(tokens =>
       loadTokensMetadata$(Object.keys(tokens)).pipe(
         map(tokenMetadata => loadTokensMetadataActions.success(tokenMetadata)),
         catchError(err => of(loadTokensMetadataActions.fail(err.message)))
