@@ -11,3 +11,7 @@ export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' 
 export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
 
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
+
+export const quipuStakingApi = axios.create({
+  baseURL: 'https://quipuswap-staking-api-mainnet.production.madservice.xyz/'
+});

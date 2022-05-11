@@ -41,7 +41,7 @@ export const TezosTokenScreen = () => {
       <TokenScreenContentContainer
         historyComponent={<TezosTokenHistory />}
         infoComponent={<TezosTokenInfo />}
-        isTezos
+        token={tezosToken}
       />
     </>
   );

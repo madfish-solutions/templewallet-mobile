@@ -1,29 +1,24 @@
 import React, { FC, ReactElement, useState } from 'react';
-import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View } from 'react-native';
 
-import { delegationApy } from '../../config/general';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { formatSize } from '../../styles/format-size';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ScreenContainer } from '../screen-container/screen-container';
 import { IconSegmentControl } from '../segmented-control/icon-segment-control/icon-segment-control';
+import { TokenHeader } from './token-header';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
 
 interface Props {
   historyComponent: ReactElement;
   infoComponent: ReactElement;
-  isTezos?: boolean;
+  token: TokenInterface;
 }
 
 const historyComponentIndex = 0;
 
-export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, isTezos }) => {
+export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, token }) => {
   const styles = useTokenScreenContentContainerStyles();
-  const { navigate } = useNavigation();
-  const [, isBakerSelected] = useSelectedBakerSelector();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showHistoryComponent = segmentedControlIndex === historyComponentIndex;
@@ -31,20 +26,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        {showHistoryComponent && isTezos === true ? (
-          <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
-            {isBakerSelected ? (
-              <Text style={styles.delegateText}>Rewards & Redelegate</Text>
-            ) : (
-              <Text style={styles.delegateText}>
-                Delegate: <Text style={styles.apyText}>{delegationApy}% APY</Text>
-              </Text>
-            )}
-          </TouchableOpacity>
-        ) : (
-          <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>
-        )}
-
+        <TokenHeader showHistoryComponent={showHistoryComponent} token={token} />
         <IconSegmentControl
           selectedIndex={segmentedControlIndex}
           values={[IconNameEnum.Clock, IconNameEnum.Info]}
