@@ -124,7 +124,11 @@ const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<
     ofType(loadTokensMetadataActions.submit),
     withTokenList(state$),
     switchMap(tokens =>
-      loadTokensMetadata$(Object.keys(tokens)).pipe(
+      loadTokensMetadata$(
+        Object.values(tokens)
+          .filter(x => x.symbol === '???')
+          .map(getTokenSlug)
+      ).pipe(
         map(tokenMetadata => loadTokensMetadataActions.success(tokenMetadata)),
         catchError(err => of(loadTokensMetadataActions.fail(err.message)))
       )
