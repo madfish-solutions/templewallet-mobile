@@ -30,6 +30,10 @@ export const loadTokenMetadataActions = createActions<
   string
 >('assets/LOAD_TOKEN_METADATA');
 
+export const loadTokensMetadataActions = createActions<void, Array<TokenMetadataInterface>, string>(
+  'assets/LOAD_TOKENS_METADATA'
+);
+
 export const addTokenMetadataAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN_METADATA');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');

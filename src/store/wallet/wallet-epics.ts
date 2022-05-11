@@ -20,10 +20,14 @@ import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
+import {
+  loadTokenMetadata$,
+  loadTokensMetadata$,
+  loadTokensWithBalanceMetadata$
+} from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl, withTokenList } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -33,6 +37,7 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
+  loadTokensMetadataActions,
   loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
@@ -114,6 +119,18 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
+const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadTokensMetadataActions.submit),
+    withTokenList(state$),
+    concatMap(tokens =>
+      loadTokensMetadata$(Object.keys(tokens)).pipe(
+        map(tokenMetadata => loadTokensMetadataActions.success(tokenMetadata)),
+        catchError(err => of(loadTokensMetadataActions.fail(err.message)))
+      )
+    )
+  );
+
 const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
@@ -191,6 +208,7 @@ export const walletEpics = combineEpics(
   loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
+  loadTokensMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
