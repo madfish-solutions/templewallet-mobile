@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -75,11 +75,14 @@ export const MainStackScreen = () => {
     dispatch(loadTokenBalancesActions.submit());
     dispatch(loadActivityGroupsActions.submit());
     dispatch(loadSelectedBakerActions.submit());
-    dispatch(loadQuipuApyActions.submit());
   };
   const initExchangeRateLoading = () => {
     dispatch(loadExchangeRates.submit());
   };
+
+  useEffect(() => {
+    dispatch(loadQuipuApyActions.submit());
+  }, []);
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
   useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
