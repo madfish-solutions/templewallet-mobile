@@ -30,7 +30,7 @@ export const loadTokenMetadataActions = createActions<
   string
 >('assets/LOAD_TOKEN_METADATA');
 
-export const loadTokensMetadataActions = createActions<void, Array<TokenMetadataInterface>, string>(
+export const loadUnknownTokensMetadataActions = createActions<void, Array<TokenMetadataInterface>, string>(
   'assets/LOAD_TOKENS_METADATA'
 );
 

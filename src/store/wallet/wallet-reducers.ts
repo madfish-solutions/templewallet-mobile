@@ -12,7 +12,7 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  loadTokensMetadataActions,
+  loadUnknownTokensMetadataActions,
   loadTokenSuggestionActions,
   removeTokenAction,
   setIsDomainAddressShown,
@@ -107,7 +107,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   }));
 
-  builder.addCase(loadTokensMetadataActions.success, (state, { payload }) => ({
+  builder.addCase(loadUnknownTokensMetadataActions.success, (state, { payload }) => ({
     ...state,
     tokensMetadata: payload.reduce(
       (prevState, tokenMetadata) => ({

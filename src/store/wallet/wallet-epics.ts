@@ -15,7 +15,7 @@ import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
-import { getTokenSlug } from '../../token/utils/token.utils';
+import { getTokenSlug, getUnknownTokensSlugs } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
@@ -37,7 +37,7 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  loadTokensMetadataActions,
+  loadUnknownTokensMetadataActions,
   loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
@@ -119,18 +119,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadUnknownTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadTokensMetadataActions.submit),
+    ofType(loadUnknownTokensMetadataActions.submit),
     withTokenList(state$),
     switchMap(tokens =>
-      loadTokensMetadata$(
-        Object.values(tokens)
-          .filter(x => x.symbol === '???')
-          .map(getTokenSlug)
-      ).pipe(
-        map(tokenMetadata => loadTokensMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadTokensMetadataActions.fail(err.message)))
+      loadTokensMetadata$(getUnknownTokensSlugs(tokens)).pipe(
+        map(tokenMetadata => loadUnknownTokensMetadataActions.success(tokenMetadata)),
+        catchError(err => of(loadUnknownTokensMetadataActions.fail(err.message)))
       )
     )
   );
@@ -212,7 +208,7 @@ export const walletEpics = combineEpics(
   loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
-  loadTokensMetadataEpic,
+  loadUnknownTokensMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,

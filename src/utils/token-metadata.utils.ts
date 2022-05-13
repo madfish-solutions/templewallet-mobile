@@ -1,6 +1,6 @@
 import memoize from 'mem';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, filter } from 'rxjs/operators';
 
 import { tokenMetadataApi } from '../api.service';
 import { tokenBalanceMetadata } from '../store/wallet/wallet-state.utils';
@@ -17,56 +17,42 @@ export interface TokenMetadataResponse {
   artifactUri?: string;
 }
 
+const transformDataToTokenMetadata = (
+  token: TokenMetadataResponse | TokenMetadataInterface | null,
+  address: string,
+  id: number
+) =>
+  !isDefined(token)
+    ? null
+    : {
+        id,
+        address,
+        decimals: token.decimals,
+        symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
+        name: token.name ?? token.symbol ?? 'Unknown Token',
+        thumbnailUri: token.thumbnailUri,
+        artifactUri: token.artifactUri
+      };
+
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>
     from(tokenMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
-      map(({ data }) => ({
-        id,
-        address,
-        decimals: data.decimals,
-        symbol: data.symbol ?? data.name?.substring(0, 8) ?? '???',
-        name: data.name ?? data.symbol ?? 'Unknown Token',
-        thumbnailUri: data.thumbnailUri,
-        artifactUri: data.artifactUri
-      }))
+      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
+      filter(isDefined)
     ),
   { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
 );
 
-type DetailedAssetMetdata = {
-  decimals: number;
-  symbol: string;
-  name: string;
-  shouldPreferSymbol?: boolean;
-  thumbnailUri?: string;
-  displayUri?: string;
-  artifactUri?: string;
-};
-
 export const loadTokensMetadata$ = memoize(
   (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tokenMetadataApi.post<Array<DetailedAssetMetdata | null>>('/', slugs)).pipe(
-      map(({ data }) => {
-        const processedData = data.map((token, index) => {
-          if (!isDefined(token)) {
-            return null;
-          }
-
-          return {
-            id: Number(slugs[index].split('_')[1]),
-            address: slugs[index].split('_')[0],
-            decimals: token.decimals,
-            symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
-            name: token.name ?? token.symbol ?? 'Unknown Token',
-            thumbnailUri: token.thumbnailUri,
-            artifactUri: token.artifactUri
-          };
-        });
-
-        const definedData: Array<TokenMetadataInterface> = processedData.filter(isDefined);
-
-        return definedData;
-      })
+    from(tokenMetadataApi.post<Array<TokenMetadataInterface | null>>('/', slugs)).pipe(
+      map(({ data }) =>
+        data
+          .map((token, index) =>
+            transformDataToTokenMetadata(token, slugs[index].split('_')[0], Number(slugs[index].split('_')[1]))
+          )
+          .filter(isDefined)
+      )
     )
 );
 
