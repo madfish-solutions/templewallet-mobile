@@ -17,11 +17,7 @@ export interface TokenMetadataResponse {
   artifactUri?: string;
 }
 
-const transformDataToTokenMetadata = (
-  token: TokenMetadataResponse | TokenMetadataInterface | null,
-  address: string,
-  id: number
-) =>
+const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, address: string, id: number) =>
   !isDefined(token)
     ? null
     : {
@@ -45,12 +41,14 @@ export const loadTokenMetadata$ = memoize(
 
 export const loadTokensMetadata$ = memoize(
   (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tokenMetadataApi.post<Array<TokenMetadataInterface | null>>('/', slugs)).pipe(
+    from(tokenMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
       map(({ data }) =>
         data
-          .map((token, index) =>
-            transformDataToTokenMetadata(token, slugs[index].split('_')[0], Number(slugs[index].split('_')[1]))
-          )
+          .map((token, index) => {
+            const [address, id] = slugs[index].split('_');
+
+            return transformDataToTokenMetadata(token, address, Number(id));
+          })
           .filter(isDefined)
       )
     )
