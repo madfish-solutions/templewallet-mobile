@@ -5,13 +5,8 @@ export type TokenInterface = Omit<AccountTokenInterface, 'slug'> & TokenMetadata
 
 export type TokenPreviewType = Omit<TokenInterface, 'isVisible' | 'balance'>;
 
-export interface EmptyTokenInterface extends TokenInterface {
-  emptyToken: boolean;
-}
-
-export const emptyToken: EmptyTokenInterface = {
+export const emptyToken: TokenInterface = {
   ...emptyTokenMetadata,
   balance: '0',
-  isVisible: true,
-  emptyToken: true
+  isVisible: true
 };

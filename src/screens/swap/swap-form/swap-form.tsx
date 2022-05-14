@@ -125,7 +125,7 @@ export const SwapForm: FC = () => {
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
-      const isEmptyToken = 'emptyToken' in newInputValue.asset;
+      const isEmptyToken = newInputValue.asset.address === '' && newInputValue.asset.symbol !== 'TEZ';
       if (getTokenSlug(newInputValue.asset) === outputAssetSlug && !isEmptyToken) {
         setFieldValue('outputAssets', { asset: emptyToken, amount: undefined });
       }

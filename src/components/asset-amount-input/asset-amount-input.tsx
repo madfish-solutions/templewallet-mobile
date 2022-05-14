@@ -7,7 +7,7 @@ import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { emptyToken, EmptyTokenInterface, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
@@ -26,7 +26,7 @@ import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
 
 export interface AssetAmountInterface {
-  asset: TokenInterface | EmptyTokenInterface;
+  asset: TokenInterface;
   amount?: BigNumber;
 }
 
