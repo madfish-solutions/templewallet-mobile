@@ -49,7 +49,6 @@ export const SwapExchangeRate: FC<Props> = ({
 
     return undefined;
   }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
-
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',
@@ -82,7 +81,7 @@ export const SwapExchangeRate: FC<Props> = ({
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Minimum received</Text>
         <Text style={styles.infoValue}>
-          {minimumReceivedAmount ? `${formatAssetAmount(minimumReceivedAmount)} ${inputAssets.asset.symbol}` : '---'}
+          {minimumReceivedAmount ? `${formatAssetAmount(minimumReceivedAmount)} ${outputAssets.asset.symbol}` : '---'}
         </Text>
       </View>
     </>

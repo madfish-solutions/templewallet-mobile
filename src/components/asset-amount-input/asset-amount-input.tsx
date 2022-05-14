@@ -7,7 +7,7 @@ import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken, EmptyTokenInterface, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
@@ -26,7 +26,7 @@ import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
 
 export interface AssetAmountInterface {
-  asset: TokenInterface;
+  asset: TokenInterface | EmptyTokenInterface;
   amount?: BigNumber;
 }
 
@@ -181,11 +181,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       <Divider size={formatSize(8)} />
 
       <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+        <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
         <TextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"
-          style={conditionalStyle(!editable, styles.disabledInput, styles.numericInput)}
+          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput)]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}
