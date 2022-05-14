@@ -37,6 +37,7 @@ import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import KolibriDappIcon from './assets/kolibri-dapp-icon.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
@@ -177,6 +178,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.Hummer]: HummerIcon,
   [IconNameEnum.LbDappIcon]: LbDappIcon,
+  [IconNameEnum.KolibriDappIcon]: KolibriDappIcon,
   [IconNameEnum.LbTokenIcon]: LbTokenIcon,
   [IconNameEnum.RefreshIcon]: RefreshIcon,
   [IconNameEnum.ChartIcon]: ChartIcon,

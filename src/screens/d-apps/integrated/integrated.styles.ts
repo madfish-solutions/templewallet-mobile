@@ -11,12 +11,16 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
     paddingVertical: formatSize(20),
     backgroundColor: colors.orange
   },
+  kolibriContainer: {
+    backgroundColor: '#46BC94'
+  },
   title: {
     ...typography.body15Semibold,
     color: white
   },
   description: {
     ...typography.caption11Regular,
+    maxWidth: '100%',
     color: greyLight400
   }
 }));

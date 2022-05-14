@@ -61,7 +61,14 @@ export const DApps = () => {
           screenName={ScreensEnum.LiquidityBakingDapp}
           iconName={IconNameEnum.LbDappIcon}
           title="Liquidity Baking"
-          description="Create XTZ/tzBTC & earn XTZ"
+          descriptions={['Create XTZ/tzBTC & earn XTZ']}
+        />
+        <Divider size={formatSize(16)} />
+        <IntegratedDApp
+          screenName={ScreensEnum.LiquidityBakingDapp}
+          iconName={IconNameEnum.KolibriDappIcon}
+          title="Kolibri"
+          descriptions={['is an Tezos based stablecoin', 'built on Collaterialized Debt Positions (CDPs)']}
         />
       </View>
       <Divider size={formatSize(20)} />

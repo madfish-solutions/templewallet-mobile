@@ -81,6 +81,7 @@ export enum IconNameEnum {
   Success = 'Success',
   Hummer = 'Hummer',
   LbDappIcon = 'LbDappIcon',
+  KolibriDappIcon = 'KolibriDappIcon',
   LbTokenIcon = 'LbTokenIcon',
   RefreshIcon = 'RefreshIcon',
   ChartIcon = 'ChartIcon',
