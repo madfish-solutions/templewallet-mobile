@@ -5,10 +5,12 @@ export type ExchangeRateRecord = Record<string, number>;
 
 export interface CurrencyState {
   exchangeRates: LoadableEntityState<ExchangeRateRecord>;
+  quotes: LoadableEntityState<ExchangeRateRecord>;
 }
 
 export const currencyInitialState: CurrencyState = {
-  exchangeRates: createEntity({})
+  exchangeRates: createEntity({}),
+  quotes: createEntity({})
 };
 
 export interface CurrencyRootState {

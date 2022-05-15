@@ -4,9 +4,10 @@ import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRatesSelector, useQuotesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
@@ -18,7 +19,9 @@ import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
-import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
+import { QuoteDropdownItem, renderQuoteListItem } from '../quote-dropdown/quote-dropdown-item/quote-dropdown-item';
+import { quoteEqualityFn } from '../quote-dropdown/quote-equality-fn';
+import { getQuoteSlug } from '../quote-dropdown/quote-item-extractor';
 import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
@@ -53,6 +56,10 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
   />
 );
 
+const renderQuoteValue: DropdownValueComponent<string> = ({ value }) => (
+  <QuoteDropdownItem quote={value} actionIconName={IconNameEnum.TriangleDown} />
+);
+
 const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
@@ -74,13 +81,16 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const amountInputRef = useRef<TextInput>(null);
 
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
+  const [selectedQuote, setSelectedQuote] = useState<string>('TOKEN');
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
   const exchangeRates = useExchangeRatesSelector();
+  const quotes = useQuotesSelector();
   const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
+  const exchangeRateTezos: number | undefined = exchangeRates[TEZ_TOKEN_SLUG];
 
   const hasExchangeRate = isDefined(exchangeRate);
 
@@ -88,19 +98,27 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = (() => {
-      if (isDefined(value.amount)) {
+      if (isDefined(value.amount) && !value.amount.isNaN()) {
         if (isTokenInputType) {
           return mutezToTz(value.amount, value.asset.decimals);
         } else {
+          const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+          const trueExchangeRate = fiatToUsdRate * exchangeRate;
           if (isDefined(inputValueRef.current)) {
-            const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
+            const currentTokenValue = dollarToTokenAmount(
+              inputValueRef.current,
+              value.asset.decimals,
+              trueExchangeRate
+            );
 
             if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
               return inputValueRef.current;
             }
           }
 
-          return tokenToDollarAmount(value.amount, value.asset.decimals, exchangeRate);
+          const tokenAmount = tokenToDollarAmount(value.amount, value.asset.decimals, trueExchangeRate);
+
+          return tokenAmount;
         }
       }
 
@@ -116,9 +134,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     newInputValue => {
       inputValueRef.current = newInputValue;
 
+      const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+      const trueExchangeRate = fiatToUsdRate * exchangeRate;
+
       onValueChange({
         ...value,
-        amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
+        amount: getDefinedAmount(newInputValue, value.asset.decimals, trueExchangeRate, isTokenInputType)
       });
     },
     [value, onValueChange, isTokenInputType]
@@ -132,20 +153,19 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     onFocus
   );
 
-  const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
+  const handleQuoteChange = (quote: string | undefined) => {
     if (isDefined(amountInputRef.current)) {
       amountInputRef.current.focus();
     }
-    setInputTypeIndex(tokenTypeIndex);
+    const isTokenQuote = isDefined(quote) || quote === 'TOKEN';
+    setInputTypeIndex(isTokenQuote ? 0 : 1);
+    setSelectedQuote(quote ?? 'TOKEN');
+    const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+    const trueExchangeRate = fiatToUsdRate * exchangeRate;
 
     onValueChange({
       ...value,
-      amount: getDefinedAmount(
-        inputValueRef.current,
-        value.asset.decimals,
-        exchangeRate,
-        tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
-      )
+      amount: getDefinedAmount(inputValueRef.current, value.asset.decimals, trueExchangeRate, isTokenQuote)
     });
   };
 
@@ -155,8 +175,11 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const asset = newAsset ?? emptyToken;
       const newExchangeRate = exchangeRates[getTokenSlug(asset)];
 
+      const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+      const trueExchangeRate = fiatToUsdRate * newExchangeRate;
+
       onValueChange({
-        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
+        amount: getDefinedAmount(inputValueRef.current, decimals, trueExchangeRate, isTokenInputType),
         asset
       });
     },
@@ -165,17 +188,26 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
+  const quoteList = useMemo(() => ['TOKEN', ...Object.keys(quotes)], [quotes]);
+
   return (
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
         {toUsdToggle && hasExchangeRate && (
-          <TextSegmentControl
-            width={formatSize(158)}
-            selectedIndex={inputTypeIndex}
-            values={['TOKEN', 'USD']}
-            onChange={handleTokenInputTypeChange}
-          />
+          <View style={styles.quoteContainer}>
+            {/* <Divider size={formatSize(40)} /> */}
+            <Dropdown
+              title="Quotes"
+              value={selectedQuote}
+              list={quoteList}
+              equalityFn={quoteEqualityFn}
+              renderValue={renderQuoteValue}
+              renderListItem={renderQuoteListItem}
+              keyExtractor={getQuoteSlug}
+              onValueChange={handleQuoteChange}
+            />
+          </View>
         )}
       </View>
       <Divider size={formatSize(8)} />

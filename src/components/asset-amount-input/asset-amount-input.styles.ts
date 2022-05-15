@@ -46,6 +46,10 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     paddingRight: formatSize(12),
     paddingVertical: formatSize(12)
   },
+  quoteContainer: {
+    width: formatSize(126),
+    paddingRight: formatSize(12)
+  },
   lpDropdownContainer: {
     width: formatSize(162)
   },
