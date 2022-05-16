@@ -46,8 +46,7 @@ import {
   loadActivityGroupsActions,
   loadQuipuApyActions,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
-  loadUnknownTokensMetadataActions
+  loadTokenBalancesActions
 } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
@@ -79,7 +78,6 @@ export const MainStackScreen = () => {
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
-    dispatch(loadUnknownTokensMetadataActions.submit());
   };
 
   useEffect(() => {

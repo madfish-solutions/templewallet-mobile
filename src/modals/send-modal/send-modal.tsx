@@ -30,7 +30,7 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -70,7 +70,7 @@ export const SendModal: FC = () => {
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       assetAmount: {
-        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
+        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,

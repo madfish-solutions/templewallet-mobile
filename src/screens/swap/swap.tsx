@@ -4,7 +4,7 @@ import React, { FC, useMemo } from 'react';
 import { emptyFn } from '../../config/general';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
-import { emptyToken } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken } from '../../token/interfaces/token.interface';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { SwapForm } from './swap-form/swap-form';
 import { swapFormValidationSchema } from './swap-form/swap-form.form';
@@ -21,7 +21,7 @@ export const SwapScreen: FC = () => {
         amount: undefined
       },
       outputAssets: {
-        asset: emptyToken,
+        asset: emptyTezosLikeToken,
         amount: undefined
       },
       bestTrade: [],
