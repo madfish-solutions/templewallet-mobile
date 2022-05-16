@@ -121,10 +121,10 @@ export const SwapForm: FC = () => {
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       setBestTrade(bestTradeExactIn);
-      setFieldValue('outputAssets.amount', bestTradeOutput);
+      setFieldValue('outputAssets.amount', bestTradeOutput, false);
     } else {
       setBestTrade([]);
-      setFieldValue('outputAssets.amount', undefined);
+      setFieldValue('outputAssets.amount', undefined, false);
     }
   }, [inputMutezAmountWithFee, routePairsCombinations, outputAssets.asset]);
 
