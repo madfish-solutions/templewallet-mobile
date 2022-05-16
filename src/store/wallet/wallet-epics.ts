@@ -21,11 +21,7 @@ import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import {
-  loadTokenMetadata$,
-  loadTokensMetadata$,
-  loadTokensWithBalanceMetadata$
-} from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { withSelectedAccount, withSelectedRpcUrl, withTokenList } from '../../utils/wallet.utils';
@@ -83,7 +79,7 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
 
           return forkJoin([
             loadAssetsBalances$(rpcUrl, selectedAccount.publicKeyHash, assetSlugs),
-            loadTokensWithBalanceMetadata$(tokensWithBalance)
+            loadTokensMetadata$(assetSlugs)
           ]);
         }),
         map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
