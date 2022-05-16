@@ -23,8 +23,6 @@ export const NavigationBar: FC = ({ children }) => {
 
   const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName);
 
-  console.log('isShowNavigationBar', isShowNavigationBar, currentRouteName);
-
   useEffect(() => void (!isTablet() && Orientation.lockToPortrait()), []);
 
   useOrientationChange(() => setIsShowTabletNavigation(Dimensions.get('screen').width >= IPAD_MINI_WIDTH));
