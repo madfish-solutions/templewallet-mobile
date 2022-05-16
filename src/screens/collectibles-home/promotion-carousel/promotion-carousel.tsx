@@ -22,7 +22,7 @@ export const PromotionCarousel = () => {
     <View onLayout={handleLayout}>
       <Carousel
         data={promotionCarouselData}
-        windowSize={layoutWidth}
+        windowSize={flooredLayoutWidth}
         sliderWidth={flooredLayoutWidth}
         itemWidth={itemWidth}
         loop={true}
