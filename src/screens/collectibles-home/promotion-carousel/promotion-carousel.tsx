@@ -23,9 +23,10 @@ export const PromotionCarousel = () => {
       <Carousel
         data={promotionCarouselData}
         sliderWidth={flooredLayoutWidth}
-        enableMomentum={true}
-        decelerationRate={0.5}
         itemWidth={itemWidth}
+        enableMomentum={false}
+        decelerationRate={0.5}
+        removeClippedSubviews={true}
         loop={true}
         autoplay={true}
         autoplayInterval={5000}
