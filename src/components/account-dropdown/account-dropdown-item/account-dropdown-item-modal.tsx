@@ -1,8 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 
 import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { CurrentRouteNameContext } from '../../../navigator/current-route-name.context';
 import { formatSize } from '../../../styles/format-size';
+import { useOverloadedColors } from '../../../styles/overloaded-colors';
 import { isDefined } from '../../../utils/is-defined';
 import { getTezosToken } from '../../../utils/wallet.utils';
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
@@ -21,6 +23,9 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
+  const currentRouteName = useContext(CurrentRouteNameContext);
+
+  const colors = useOverloadedColors();
 
   return (
     <View style={styles.root}>
@@ -36,7 +41,9 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
               />
             </HideBalance>
           )}
-          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+          {isDefined(actionIconName) && (
+            <Icon color={colors[currentRouteName].orange} name={actionIconName} size={formatSize(24)} />
+          )}
         </View>
       </View>
     </View>

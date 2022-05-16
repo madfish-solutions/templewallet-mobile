@@ -1,9 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 
+import { CurrentRouteNameContext } from '../../../navigator/current-route-name.context';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
+import { useOverloadedColors } from '../../../styles/overloaded-colors';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';
 import { useHeaderCloseOptionsButtonStyles } from './header-close-options-button.styles';
@@ -11,6 +13,9 @@ import { useHeaderCloseOptionsButtonStyles } from './header-close-options-button
 export const HeaderCloseOptionsButton: FC = () => {
   const styles = useHeaderCloseOptionsButtonStyles();
   const { navigate } = useNavigation();
+
+  const currentRouteName = useContext(CurrentRouteNameContext);
+  const colors = useOverloadedColors();
 
   return (
     <View style={styles.accountActionsContainer}>
@@ -22,7 +27,12 @@ export const HeaderCloseOptionsButton: FC = () => {
         onPress={() => navigate(ScreensEnum.DApps)}
       />
       <View style={styles.verticalLineDivider} /> */}
-      <TouchableIcon size={formatSize(16)} name={IconNameEnum.XCircle} onPress={() => navigate(ScreensEnum.DApps)} />
+      <TouchableIcon
+        color={colors[currentRouteName].orange}
+        size={formatSize(16)}
+        name={IconNameEnum.XCircle}
+        onPress={() => navigate(ScreensEnum.DApps)}
+      />
     </View>
   );
 };
