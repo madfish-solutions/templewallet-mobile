@@ -20,16 +20,16 @@ import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
+import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
-import { useConfirmSyncStyles } from './confirm-sync.styles';
 
 interface ConfirmSyncProps {
   onSubmit: (formValues: ConfirmSyncFormValues) => void;
 }
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
-  const styles = useConfirmSyncStyles();
+  const styles = useSetPasswordScreensCommonStyles();
 
   const { isDisabled, timeleft } = usePasswordLock();
 
@@ -44,61 +44,65 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   return (
     <Formik initialValues={ConfirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>
       {({ submitForm, isValid, values }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <Label label="Password" description="The same password is used to unlock your extension." />
-            <FormPasswordInput
-              isShowPasswordStrengthIndicator
-              name="password"
-              {...(isDisabled && {
-                error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-              })}
-              testID={ConfirmSyncSelectors.PasswordInput}
-            />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <Label label="Password" description="The same password is used to unlock your extension." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                {...(isDisabled && {
+                  error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+                })}
+                testID={ConfirmSyncSelectors.PasswordInput}
+              />
 
-            <View style={styles.checkboxContainer}>
-              <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.UsePreviousPasswordCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Use as App Password</Text>
-              </FormCheckbox>
-            </View>
+              <View style={styles.checkboxContainer}>
+                <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.UsePreviousPasswordCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Use as App Password</Text>
+                </FormCheckbox>
+              </View>
 
-            <View style={styles.checkboxContainer}>
-              <FormBiometryCheckbox name="useBiometry" />
-            </View>
+              <View style={styles.checkboxContainer}>
+                <FormBiometryCheckbox name="useBiometry" />
+              </View>
 
-            <View style={[styles.checkboxContainer, styles.removeMargin]}>
-              <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.AnalyticsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Analytics</Text>
-              </FormCheckbox>
-            </View>
-            <CheckboxLabel>
-              I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-            </CheckboxLabel>
+              <View style={[styles.checkboxContainer, styles.removeMargin]}>
+                <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.AnalyticsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Analytics</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+              </CheckboxLabel>
 
-            {values.usePrevPassword === true && (
-              <>
-                <Divider size={formatSize(8)} />
-                <Disclaimer
-                  texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
-                />
-              </>
-            )}
-          </View>
-          <View>
-            <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.AcceptTermsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Accept terms</Text>
-              </FormCheckbox>
+              {values.usePrevPassword === true && (
+                <>
+                  <Divider size={formatSize(8)} />
+                  <Disclaimer
+                    texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
+                  />
+                  <Divider size={formatSize(8)} />
+                </>
+              )}
             </View>
-            <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-              <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-            </CheckboxLabel>
-            <Divider />
+            <View>
+              <View style={styles.checkboxContainer}>
+                <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.AcceptTermsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Accept terms</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+              </CheckboxLabel>
+            </View>
+          </ScreenContainer>
+          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
             <ButtonLargePrimary
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid || isDisabled}
@@ -107,7 +111,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             />
             <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );
