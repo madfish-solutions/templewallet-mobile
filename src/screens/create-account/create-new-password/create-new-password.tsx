@@ -21,13 +21,13 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
+import { useSetPasswordScreensCommonStyles } from '../../../styles/set-password-screens-common-styles';
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
   createNewPasswordValidationSchema
 } from './create-new-password.form';
 import { CreateNewPasswordCreateAccountSelectors } from './create-new-password.selectors';
-import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
@@ -37,7 +37,7 @@ interface CreateNewPasswordProps {
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
   const dispatch = useDispatch();
 
-  const styles = useCreateNewPasswordStyles();
+  const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
@@ -106,7 +106,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
               </CheckboxLabel>
             </View>
           </ScreenContainer>
-          <View style={styles.submitButton}>
+          <View style={styles.fixedButtonContainer}>
             <ButtonLargePrimary
               title="Create"
               disabled={!isValid}
