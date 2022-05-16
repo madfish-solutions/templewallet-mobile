@@ -16,8 +16,17 @@ export const useNumericInput = (
   onFocus: TextInputProps['onFocus'] = emptyFn
 ) => {
   const [stringValue, setStringValue] = useState('');
+  const [focused, setFocused] = useState(false);
 
-  useEffect(() => void setStringValue(isDefined(value) ? value.toFixed() : ''), [setStringValue, value]);
+  useEffect(() => {
+    if (focused) {
+      if (!isDefined(value)) {
+        setStringValue('');
+      }
+    } else {
+      setStringValue(isDefined(value) ? value.toFixed() : '');
+    }
+  }, [setStringValue, focused, value]);
 
   const handleChange = useCallback(
     (newStringValue: string) => {
@@ -41,14 +50,16 @@ export const useNumericInput = (
 
   const handleFocus = useCallback(
     (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      setFocused(true);
       onFocus(evt);
     },
-    [onFocus]
+    [setFocused, onFocus]
   );
 
   const handleBlur = useCallback(() => {
+    setFocused(false);
     onBlur();
-  }, [onBlur]);
+  }, [setFocused, onBlur]);
 
   return { stringValue, handleBlur, handleFocus, handleChange };
 };
