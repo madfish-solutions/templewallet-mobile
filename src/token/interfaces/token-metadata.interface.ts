@@ -16,5 +16,5 @@ export const emptyTokenMetadata: TokenMetadataInterface = {
   address: '',
   name: '',
   symbol: '',
-  decimals: 0
+  decimals: 6
 };

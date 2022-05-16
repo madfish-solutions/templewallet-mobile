@@ -32,12 +32,6 @@ export const useNumericInput = (
     (newStringValue: string) => {
       let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
 
-      if (normalizedStringValue === '.' || normalizedStringValue === '0.') {
-        setStringValue(normalizedStringValue);
-        onChange(new BigNumber(0));
-
-        return;
-      }
       const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
 
       const indexOfDot = normalizedStringValue.indexOf('.');
