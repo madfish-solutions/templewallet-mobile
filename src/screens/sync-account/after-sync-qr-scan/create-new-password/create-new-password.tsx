@@ -13,13 +13,13 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
+import { useGeneralStyles } from '../../../../styles/general-styles';
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
   createNewPasswordValidationSchema
 } from './create-new-password.form';
 import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
-import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
@@ -35,7 +35,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   onGoBackPress
 }) => {
   const { importWallet } = useShelter();
-  const styles = useCreateNewPasswordStyles();
+  const styles = useGeneralStyles();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
@@ -71,7 +71,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
             />
           </View>
-          <View style={styles.buttonContainer}>
+          <View style={styles.marginTopAuto}>
             <ButtonLargePrimary
               title="Sync"
               disabled={!isValid}

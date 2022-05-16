@@ -1,9 +1,11 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from './create-use-styles';
+import { formatSize } from './format-size';
 
-export const useConfirmSyncStyles = createUseStyles(({ colors, typography }) => ({
-  buttonContainer: {
-    marginTop: 'auto',
+export const useGeneralStyles = createUseStyles(({ colors, typography }) => ({
+  marginTopAuto: {
+    marginTop: 'auto'
+  },
+  fixedButtonContainer: {
     borderTopWidth: formatSize(0.5),
     borderColor: colors.lines,
     paddingTop: formatSize(8),

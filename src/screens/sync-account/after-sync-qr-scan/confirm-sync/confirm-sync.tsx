@@ -20,16 +20,16 @@ import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
+import { useGeneralStyles } from '../../../../styles/general-styles';
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
-import { useConfirmSyncStyles } from './confirm-sync.styles';
 
 interface ConfirmSyncProps {
   onSubmit: (formValues: ConfirmSyncFormValues) => void;
 }
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
-  const styles = useConfirmSyncStyles();
+  const styles = useGeneralStyles();
 
   const { isDisabled, timeleft } = usePasswordLock();
 
@@ -102,7 +102,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               </CheckboxLabel>
             </View>
           </ScreenContainer>
-          <View style={styles.buttonContainer}>
+          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
             <ButtonLargePrimary
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid || isDisabled}
