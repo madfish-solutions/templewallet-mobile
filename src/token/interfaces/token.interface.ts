@@ -10,3 +10,8 @@ export const emptyToken: TokenInterface = {
   balance: '0',
   isVisible: true
 };
+
+export const emptyTezosLikeToken: TokenInterface = {
+  ...emptyToken,
+  decimals: 6
+};
