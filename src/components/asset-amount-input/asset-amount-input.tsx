@@ -196,7 +196,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         <Label label={label} />
         {toUsdToggle && hasExchangeRate && (
           <View style={styles.quoteContainer}>
-            {/* <Divider size={formatSize(40)} /> */}
             <Dropdown
               title="Quotes"
               value={selectedQuote}
