@@ -13,7 +13,7 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { useGeneralStyles } from '../../../../styles/general-styles';
+import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
@@ -35,7 +35,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   onGoBackPress
 }) => {
   const { importWallet } = useShelter();
-  const styles = useGeneralStyles();
+  const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });

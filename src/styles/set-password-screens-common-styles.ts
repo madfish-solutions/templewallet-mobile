@@ -1,7 +1,7 @@
 import { createUseStyles } from './create-use-styles';
 import { formatSize } from './format-size';
 
-export const useGeneralStyles = createUseStyles(({ colors, typography }) => ({
+export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typography }) => ({
   marginTopAuto: {
     marginTop: 'auto'
   },

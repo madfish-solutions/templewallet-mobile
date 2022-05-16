@@ -21,7 +21,7 @@ import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
-import { useGeneralStyles } from '../../../styles/general-styles';
+import { useSetPasswordScreensCommonStyles } from '../../../styles/set-password-screens-common-styles';
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
@@ -37,7 +37,7 @@ interface CreateNewPasswordProps {
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
   const dispatch = useDispatch();
 
-  const styles = useGeneralStyles();
+  const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {

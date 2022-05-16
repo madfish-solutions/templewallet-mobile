@@ -20,7 +20,7 @@ import { FormCheckbox } from '../../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
-import { useGeneralStyles } from '../../../../styles/general-styles';
+import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
 
@@ -29,7 +29,7 @@ interface ConfirmSyncProps {
 }
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
-  const styles = useGeneralStyles();
+  const styles = useSetPasswordScreensCommonStyles();
 
   const { isDisabled, timeleft } = usePasswordLock();
 
