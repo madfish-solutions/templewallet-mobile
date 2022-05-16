@@ -1,10 +1,8 @@
 import memoize from 'mem';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, filter } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 
 import { tokenMetadataApi } from '../api.service';
-import { tokenBalanceMetadata } from '../store/wallet/wallet-state.utils';
-import { TokenBalanceInterface } from '../token/interfaces/token-balance.interface';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
@@ -53,10 +51,3 @@ export const loadTokensMetadata$ = memoize(
       )
     )
 );
-
-export const loadTokensWithBalanceMetadata$ = (tokensWithBalance: TokenBalanceInterface[]) =>
-  forkJoin(
-    tokensWithBalance.map(balance =>
-      loadTokenMetadata$(balance.contract, balance.token_id).pipe(catchError(() => of(tokenBalanceMetadata(balance))))
-    )
-  );

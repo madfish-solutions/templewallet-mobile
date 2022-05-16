@@ -15,20 +15,16 @@ import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
-import { getTokenSlug, getUnknownTokensSlugs } from '../../token/utils/token.utils';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import {
-  loadTokenMetadata$,
-  loadTokensMetadata$,
-  loadTokensWithBalanceMetadata$
-} from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { withSelectedAccount, withSelectedRpcUrl, withTokenList } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -39,7 +35,6 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  loadUnknownTokensMetadataActions,
   loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
@@ -83,7 +78,7 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
 
           return forkJoin([
             loadAssetsBalances$(rpcUrl, selectedAccount.publicKeyHash, assetSlugs),
-            loadTokensWithBalanceMetadata$(tokensWithBalance)
+            loadTokensMetadata$(assetSlugs)
           ]);
         }),
         map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
@@ -128,18 +123,6 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
       loadTokenMetadata$(address, id).pipe(
         map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadUnknownTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(loadUnknownTokensMetadataActions.submit),
-    withTokenList(state$),
-    switchMap(tokens =>
-      loadTokensMetadata$(getUnknownTokensSlugs(tokens)).pipe(
-        map(tokenMetadata => loadUnknownTokensMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadUnknownTokensMetadataActions.fail(err.message)))
       )
     )
   );
@@ -222,7 +205,6 @@ export const walletEpics = combineEpics(
   loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
-  loadUnknownTokensMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
