@@ -15,7 +15,7 @@ import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
-import { getTokenSlug, getUnknownTokensSlugs } from '../../token/utils/token.utils';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
@@ -24,7 +24,7 @@ import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '
 import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { withSelectedAccount, withSelectedRpcUrl, withTokenList } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -35,7 +35,6 @@ import {
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
-  loadUnknownTokensMetadataActions,
   loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
@@ -128,18 +127,6 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadUnknownTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(loadUnknownTokensMetadataActions.submit),
-    withTokenList(state$),
-    switchMap(tokens =>
-      loadTokensMetadata$(getUnknownTokensSlugs(tokens)).pipe(
-        map(tokenMetadata => loadUnknownTokensMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadUnknownTokensMetadataActions.fail(err.message)))
-      )
-    )
-  );
-
 const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
@@ -218,7 +205,6 @@ export const walletEpics = combineEpics(
   loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
-  loadUnknownTokensMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
