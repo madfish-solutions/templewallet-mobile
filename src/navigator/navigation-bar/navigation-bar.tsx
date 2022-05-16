@@ -13,7 +13,7 @@ import { TabBar } from './tab-bar/tab-bar';
 
 const IPAD_MINI_WIDTH = 768;
 
-const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
+const screensWithoutTabBar = [ScreensEnum.ScanQrCode, ScreensEnum.KolibriDapp];
 
 export const NavigationBar: FC = ({ children }) => {
   const isAuthorised = useIsAuthorisedSelector();
@@ -22,6 +22,8 @@ export const NavigationBar: FC = ({ children }) => {
   const [isShowTabletNavigation, setIsShowTabletNavigation] = useState(false);
 
   const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName);
+
+  console.log('isShowNavigationBar', isShowNavigationBar, currentRouteName);
 
   useEffect(() => void (!isTablet() && Orientation.lockToPortrait()), []);
 

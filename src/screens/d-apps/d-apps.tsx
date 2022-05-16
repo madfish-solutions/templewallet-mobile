@@ -65,7 +65,7 @@ export const DApps = () => {
         />
         <Divider size={formatSize(16)} />
         <IntegratedDApp
-          screenName={ScreensEnum.LiquidityBakingDapp}
+          screenName={ScreensEnum.KolibriDapp}
           iconName={IconNameEnum.KolibriDappIcon}
           title="Kolibri"
           descriptions={['is an Tezos based stablecoin', 'built on Collaterialized Debt Positions (CDPs)']}

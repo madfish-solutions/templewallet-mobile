@@ -12,7 +12,7 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
     backgroundColor: colors.orange
   },
   kolibriContainer: {
-    backgroundColor: '#46BC94'
+    backgroundColor: colors.kolibriGreen
   },
   title: {
     ...typography.body15Semibold,

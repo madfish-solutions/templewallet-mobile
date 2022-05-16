@@ -5,6 +5,12 @@ const accentColors = {
   orange: '#FF5B00',
   blue: '#007AFF'
 };
+
+const kolibriDappColors = {
+  kolibriGreen: '#46BC94',
+  kolibriRed: '#F14668'
+};
+
 const accentAlphaColors = {
   orange10: hexa(accentColors.orange, 0.1),
   blue10: hexa(accentColors.blue, 0.1)
@@ -77,7 +83,8 @@ const lightTheme = {
   ...basicLightColors,
   ...basicLightAlphaColors,
   ...graybaseLightColors,
-  ...backgroundLightColors
+  ...backgroundLightColors,
+  ...kolibriDappColors
 };
 
 export type Colors = Record<keyof typeof lightTheme, string>;

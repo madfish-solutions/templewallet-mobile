@@ -24,6 +24,7 @@ import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
 import { ImportAccount } from '../screens/import-account/import-account';
+import { KolibriDapp } from '../screens/kolibri-dapp/kolibri-dapp';
 import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
@@ -168,6 +169,11 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.LiquidityBakingDapp}
                 component={LiquidityBakingDapp}
+                options={generateIntegratedAppOptions(<HeaderModal />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.KolibriDapp}
+                component={KolibriDapp}
                 options={generateIntegratedAppOptions(<HeaderModal />)}
               />
 
