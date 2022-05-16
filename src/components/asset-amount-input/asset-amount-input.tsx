@@ -7,7 +7,7 @@ import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
@@ -152,7 +152,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const handleTokenChange = useCallback(
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
-      const asset = newAsset ?? emptyToken;
+      const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = exchangeRates[getTokenSlug(asset)];
 
       onValueChange({
