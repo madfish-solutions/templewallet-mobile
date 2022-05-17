@@ -21,7 +21,7 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
     zIndex: 1,
     margin: tileMargin,
     borderRadius: formatSize(8),
-    backgroundColor: colors.cardBG
+    backgroundColor: colors.navigation
   },
   contentContainer: {
     ...StyleSheet.absoluteFillObject,
