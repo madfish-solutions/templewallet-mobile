@@ -21,6 +21,14 @@ export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     padding: formatSize(8)
   },
+  shevronContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  shevronText: {
+    ...typography.caption13Semibold,
+    color: colors.gray2
+  },
   logoutButtonText: {
     ...typography.tagline13Tag,
     color: colors.destructive,

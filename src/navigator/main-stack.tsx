@@ -230,7 +230,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.FiatSettings}
                 component={FiatSettings}
-                options={generateScreenOptions(<HeaderTitle title="Fiat Currency" />)}
+                options={generateScreenOptions(<HeaderTitle title="Default currency" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.SecureSettings}
