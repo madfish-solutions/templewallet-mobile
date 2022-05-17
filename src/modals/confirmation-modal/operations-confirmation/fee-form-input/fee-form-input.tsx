@@ -115,7 +115,7 @@ export const FeeFormInput: FC<Props> = ({
               step={1e-6}
               onValueChange={(newValue: number) => {
                 setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(TEZ_TOKEN_METADATA.decimals));
-                !isDefined(values.storageLimitSum) && setFieldValue('storageLimitSum', storageLimitDefaultValue);
+                !isDefined(values.storageLimitSum) && setFieldValue('storageLimitSum', storageLimitDefaultValue, false);
               }}
             />
           )}
