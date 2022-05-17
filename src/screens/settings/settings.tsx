@@ -106,6 +106,14 @@ export const Settings = () => {
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.FiatSettings)}>
+              <WhiteContainerText text="Change fiat currency" />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)}>
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />

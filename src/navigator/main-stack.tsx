@@ -23,6 +23,7 @@ import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
+import { FiatSettings } from '../screens/fiat-settings/fiat-settings';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
@@ -225,6 +226,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.NodeSettings}
                 component={NodeSettings}
                 options={generateScreenOptions(<HeaderTitle title="Default node (RPC)" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.FiatSettings}
+                component={FiatSettings}
+                options={generateScreenOptions(<HeaderTitle title="Fiat Currency" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.SecureSettings}

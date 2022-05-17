@@ -1,8 +1,10 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
+import { useFiatCurrencySelector } from '../store/settings/settings-selectors';
 import { bigIntClamp } from '../utils/big-number.utils';
+import { FIAT_CURRENCIES } from '../utils/exchange-rate.util';
 import { formatAssetAmount } from '../utils/number.util';
 
 interface Props {
@@ -25,6 +27,7 @@ export const FormattedAmount: FC<Props> = ({
   symbol,
   style
 }) => {
+  const fiatCurrency = useFiatCurrencySelector();
   const dollarAmount = amount.isZero()
     ? amount
     : amount.isPositive()
@@ -32,6 +35,10 @@ export const FormattedAmount: FC<Props> = ({
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
 
   const formattedAmount = isDollarValue ? formatAssetAmount(dollarAmount, 2) : formatAssetAmount(amount);
+  const currencySymbol = useMemo(
+    () => ' ' + FIAT_CURRENCIES.find(x => x.name === fiatCurrency)?.symbol,
+    [fiatCurrency]
+  );
 
   const isLessThan = formattedAmount.includes('<');
   const formattedSymbol = symbol !== undefined ? ` ${symbol}` : '';
@@ -42,7 +49,7 @@ export const FormattedAmount: FC<Props> = ({
       {showMinusSign && '- '}
       {showPlusSign && '+ '}
       {formattedAmount}
-      {isDollarValue ? ' $' : formattedSymbol}
+      {isDollarValue ? currencySymbol : formattedSymbol}
     </Text>
   );
 };

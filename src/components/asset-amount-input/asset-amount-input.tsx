@@ -5,6 +5,7 @@ import { Text, TextInput, View } from 'react-native';
 import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useExchangeRatesSelector, useQuotesSelector } from '../../store/currency/currency-selectors';
+import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
@@ -19,9 +20,7 @@ import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
-import { QuoteDropdownItem, renderQuoteListItem } from '../quote-dropdown/quote-dropdown-item/quote-dropdown-item';
-import { quoteEqualityFn } from '../quote-dropdown/quote-equality-fn';
-import { getQuoteSlug } from '../quote-dropdown/quote-item-extractor';
+import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
@@ -56,10 +55,6 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
   />
 );
 
-const renderQuoteValue: DropdownValueComponent<string> = ({ value }) => (
-  <QuoteDropdownItem quote={value} actionIconName={IconNameEnum.TriangleDown} />
-);
-
 const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
@@ -81,10 +76,10 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const amountInputRef = useRef<TextInput>(null);
 
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
-  const [selectedQuote, setSelectedQuote] = useState<string>('TOKEN');
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
 
   const amount = value?.amount ?? new BigNumber(0);
+  const fiatCurrency = useFiatCurrencySelector();
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
   const exchangeRates = useExchangeRatesSelector();
@@ -98,13 +93,13 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = (() => {
-      if (isDefined(value.amount) && !value.amount.isNaN()) {
+      if (isDefined(value.amount)) {
         if (isTokenInputType) {
           return mutezToTz(value.amount, value.asset.decimals);
         } else {
-          const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
-          const trueExchangeRate = fiatToUsdRate * exchangeRate;
           if (isDefined(inputValueRef.current)) {
+            const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
+            const trueExchangeRate = fiatToUsdRate * exchangeRate;
             const currentTokenValue = dollarToTokenAmount(
               inputValueRef.current,
               value.asset.decimals,
@@ -116,9 +111,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             }
           }
 
-          const tokenAmount = tokenToDollarAmount(value.amount, value.asset.decimals, trueExchangeRate);
-
-          return tokenAmount;
+          return tokenToDollarAmount(value.amount, value.asset.decimals, exchangeRate);
         }
       }
 
@@ -134,7 +127,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     newInputValue => {
       inputValueRef.current = newInputValue;
 
-      const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+      const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
       const trueExchangeRate = fiatToUsdRate * exchangeRate;
 
       onValueChange({
@@ -153,19 +146,23 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     onFocus
   );
 
-  const handleQuoteChange = (quote: string | undefined) => {
+  const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
     if (isDefined(amountInputRef.current)) {
       amountInputRef.current.focus();
     }
-    const isTokenQuote = isDefined(quote) || quote === 'TOKEN';
-    setInputTypeIndex(isTokenQuote ? 0 : 1);
-    setSelectedQuote(quote ?? 'TOKEN');
-    const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+    setInputTypeIndex(tokenTypeIndex);
+
+    const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
     const trueExchangeRate = fiatToUsdRate * exchangeRate;
 
     onValueChange({
       ...value,
-      amount: getDefinedAmount(inputValueRef.current, value.asset.decimals, trueExchangeRate, isTokenQuote)
+      amount: getDefinedAmount(
+        inputValueRef.current,
+        value.asset.decimals,
+        trueExchangeRate,
+        tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
+      )
     });
   };
 
@@ -173,9 +170,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
       const asset = newAsset ?? emptyToken;
-      const newExchangeRate = exchangeRates[getTokenSlug(asset)];
 
-      const fiatToUsdRate = quotes[selectedQuote] / exchangeRateTezos;
+      const newExchangeRate = exchangeRates[getTokenSlug(asset)];
+      const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
       const trueExchangeRate = fiatToUsdRate * newExchangeRate;
 
       onValueChange({
@@ -188,25 +185,17 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
-  const quoteList = useMemo(() => ['TOKEN', ...Object.keys(quotes)], [quotes]);
-
   return (
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
         {toUsdToggle && hasExchangeRate && (
-          <View style={styles.quoteContainer}>
-            <Dropdown
-              title="Quotes"
-              value={selectedQuote}
-              list={quoteList}
-              equalityFn={quoteEqualityFn}
-              renderValue={renderQuoteValue}
-              renderListItem={renderQuoteListItem}
-              keyExtractor={getQuoteSlug}
-              onValueChange={handleQuoteChange}
-            />
-          </View>
+          <TextSegmentControl
+            width={formatSize(158)}
+            selectedIndex={inputTypeIndex}
+            values={['TOKEN', fiatCurrency]}
+            onChange={handleTokenInputTypeChange}
+          />
         )}
       </View>
       <Divider size={formatSize(8)} />

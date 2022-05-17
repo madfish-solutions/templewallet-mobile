@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
+import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
 import { SettingsRootState } from './settings-state';
 
 export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>(({ settings }) => settings.theme);
@@ -19,6 +20,9 @@ export const useRpcListSelector = () =>
   useSelector<SettingsRootState, RpcInterface[]>(({ settings }) => settings.rpcList);
 export const useSelectedRpcUrlSelector = () =>
   useSelector<SettingsRootState, string>(({ settings }) => settings.selectedRpcUrl);
+
+export const useFiatCurrencySelector = () =>
+  useSelector<SettingsRootState, FiatCurrenciesEnum>(({ settings }) => settings.fiatCurrency);
 
 export const useFirstAppLaunchSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isFirstAppLaunch);

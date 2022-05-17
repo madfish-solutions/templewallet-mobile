@@ -34,6 +34,7 @@ export enum ScreensEnum {
   ManageAccounts = 'ManageAccounts',
   About = 'About',
   DAppsSettings = 'DAppsSettings',
+  FiatSettings = 'FiatSettings',
   SecureSettings = 'SecureSettings',
   NodeSettings = 'NodeSettings',
   Debug = 'Debug'
@@ -73,6 +74,7 @@ export type ScreensParamList = {
   [ScreensEnum.ManageAccounts]: undefined;
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
+  [ScreensEnum.FiatSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
   [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Debug]: undefined;

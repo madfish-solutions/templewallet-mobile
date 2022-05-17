@@ -4,6 +4,7 @@ import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
+  setFiatCurrency,
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
@@ -37,6 +38,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
+  }));
+  builder.addCase(setFiatCurrency, (state, { payload: fiatCurrency }) => ({
+    ...state,
+    fiatCurrency
   }));
   builder.addCase(resetKeychainOnInstallAction.success, state => ({
     ...state,

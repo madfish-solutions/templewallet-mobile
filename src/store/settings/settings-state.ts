@@ -3,6 +3,7 @@ import { Appearance } from 'react-native';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
+import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
 import { RpcList } from '../../utils/rpc/rpc-list';
 
 export interface SettingsState {
@@ -15,6 +16,7 @@ export interface SettingsState {
   isFirstAppLaunch: boolean;
   userId: string;
   slippage: number;
+  fiatCurrency: FiatCurrenciesEnum;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -26,7 +28,8 @@ export const settingsInitialState: SettingsState = {
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
   userId: nanoid(),
-  slippage: 1.5
+  slippage: 1.5,
+  fiatCurrency: FiatCurrenciesEnum.USD
 };
 
 export interface SettingsRootState {
