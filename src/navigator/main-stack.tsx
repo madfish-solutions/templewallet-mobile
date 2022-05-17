@@ -59,7 +59,7 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
-const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
+const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -77,7 +77,7 @@ export const MainStackScreen = () => {
     dispatch(loadActivityGroupsActions.submit());
     dispatch(loadSelectedBakerActions.submit());
   };
-  const initExchangeRateLoading = () => {
+  const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
   };
 
@@ -86,7 +86,7 @@ export const MainStackScreen = () => {
   }, []);
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
-  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
+  useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>

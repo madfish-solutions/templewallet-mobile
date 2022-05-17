@@ -13,6 +13,6 @@ export const useSwapRouteItem = createUseStyles(({ colors }) => ({
     justifyContent: 'space-between'
   },
   lastTokenContainer: {
-    marginLeft: formatSize(-12)
+    marginLeft: formatSize(-4)
   }
 }));

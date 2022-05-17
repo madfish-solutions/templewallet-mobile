@@ -9,7 +9,7 @@ import { useFiatCurrencySelector } from '../../store/settings/settings-selectors
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
@@ -169,8 +169,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const handleTokenChange = useCallback(
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
-      const asset = newAsset ?? emptyToken;
-
+      const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = exchangeRates[getTokenSlug(asset)];
       const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
       const trueExchangeRate = fiatToUsdRate * newExchangeRate;
@@ -201,11 +200,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       <Divider size={formatSize(8)} />
 
       <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+        <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
         <TextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"
-          style={conditionalStyle(!editable, styles.disabledInput, styles.numericInput)}
+          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput)]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}

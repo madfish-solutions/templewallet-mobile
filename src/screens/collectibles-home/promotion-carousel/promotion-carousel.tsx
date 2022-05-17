@@ -13,7 +13,8 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const itemWidth = useMemo(() => Math.abs(layoutWidth - 2 * formatSize(16)), [layoutWidth]);
+  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+  const itemWidth = useMemo(() => Math.floor(Math.abs(layoutWidth - 2 * formatSize(16))), [layoutWidth]);
 
   const [activeDotIndex, setActiveDotIndex] = useState(0);
 
@@ -21,9 +22,11 @@ export const PromotionCarousel = () => {
     <View onLayout={handleLayout}>
       <Carousel
         data={promotionCarouselData}
-        windowSize={layoutWidth}
-        sliderWidth={layoutWidth}
+        sliderWidth={flooredLayoutWidth}
         itemWidth={itemWidth}
+        enableMomentum={false}
+        decelerationRate={0.5}
+        removeClippedSubviews={true}
         loop={true}
         autoplay={true}
         autoplayInterval={5000}

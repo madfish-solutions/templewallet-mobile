@@ -20,6 +20,7 @@ import { ButtonsFloatingContainer } from '../../../components/button/buttons-flo
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
@@ -31,7 +32,7 @@ import { useSlippageSelector } from '../../../store/settings/settings-selectors'
 import { useSelectedAccountSelector, useTokensWithTezosListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
-import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
@@ -65,8 +66,12 @@ export const SwapForm: FC = () => {
 
   const { values, setFieldValue, isValid, submitCount, submitForm } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
-  const inputAssetSlug = inputAssets.asset === emptyToken ? undefined : getTokenSlug(inputAssets.asset);
-  const outputAssetSlug = outputAssets.asset === emptyToken ? undefined : getTokenSlug(outputAssets.asset);
+  const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
+    ? undefined
+    : getTokenSlug(inputAssets.asset);
+  const outputAssetSlug = tokenEqualityFn(outputAssets.asset, emptyTezosLikeToken)
+    ? undefined
+    : getTokenSlug(outputAssets.asset);
 
   const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
 
@@ -116,17 +121,18 @@ export const SwapForm: FC = () => {
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       setBestTrade(bestTradeExactIn);
-      setFieldValue('outputAssets.amount', bestTradeOutput);
+      setFieldValue('outputAssets.amount', bestTradeOutput, false);
     } else {
       setBestTrade([]);
-      setFieldValue('outputAssets.amount', undefined);
+      setFieldValue('outputAssets.amount', undefined, false);
     }
   }, [inputMutezAmountWithFee, routePairsCombinations, outputAssets.asset]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
-      if (getTokenSlug(newInputValue.asset) === outputAssetSlug) {
-        setFieldValue('outputAssets', { asset: emptyToken, amount: undefined });
+      const isEmptyToken = tokenEqualityFn(newInputValue.asset, emptyTezosLikeToken);
+      if (getTokenSlug(newInputValue.asset) === outputAssetSlug && !isEmptyToken) {
+        setFieldValue('outputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
     },
     [outputAssetSlug, setFieldValue]
@@ -135,7 +141,7 @@ export const SwapForm: FC = () => {
   const handleOutputAssetsValueChange = useCallback(
     (newOutputValue: AssetAmountInterface) => {
       if (getTokenSlug(newOutputValue.asset) === inputAssetSlug) {
-        setFieldValue('inputAssets', { asset: emptyToken, amount: undefined });
+        setFieldValue('inputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
     },
     [inputAssetSlug, setFieldValue]

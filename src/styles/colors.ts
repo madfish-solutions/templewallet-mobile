@@ -3,7 +3,7 @@ import { hexa } from '../utils/style.util';
 
 const accentColors = {
   orange: '#FF5B00',
-  blue: '#007AFF'
+  blue: '#1373E4'
 };
 const accentAlphaColors = {
   orange10: hexa(accentColors.orange, 0.1),
@@ -15,7 +15,7 @@ const basicLightColors = {
   destructive: '#FF3B30',
   black: '#000000',
   white: '#ffffff',
-  peach: '#FF7A00',
+  peach: '#FF5B00',
   liteOrange: '#E5E5EA'
 };
 
@@ -24,8 +24,8 @@ const basicDarkColors: typeof basicLightColors = {
   destructive: '#FF3B30',
   black: '#ffffff',
   white: '#000000',
-  peach: '#FF7A00',
-  liteOrange: '#E5E5EA'
+  peach: '#FF5B00',
+  liteOrange: '#242424'
 };
 
 const basicLightAlphaColors = {
@@ -65,7 +65,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   navigation: '#0d0d0d',
   pageBG: '#171717',
   cardBG: '#202020',
-  accentBG: '#FF6B00',
+  accentBG: '#FF5B00',
   lines: '#242424',
   disabled: '#3a3a3a',
   input: '#2D2D2D'

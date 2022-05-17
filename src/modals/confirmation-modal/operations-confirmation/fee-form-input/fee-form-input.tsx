@@ -43,6 +43,7 @@ export const FeeFormInput: FC<Props> = ({
   const sliderMinValue = basicFees.gasFeeSum.toNumber();
   const sliderMaxValue = basicFees.gasFeeSum.plus(2e-4).toNumber();
   const gasFeeBigNumber = values.gasFeeSum ?? new BigNumber(0);
+  const storageLimitDefaultValue = basicFees.storageLimitSum;
 
   const storageFee = isDefined(values.storageLimitSum)
     ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_METADATA.decimals)
@@ -112,9 +113,10 @@ export const FeeFormInput: FC<Props> = ({
               minimumValue={sliderMinValue}
               maximumValue={sliderMaxValue}
               step={1e-6}
-              onValueChange={(newValue: number) =>
-                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(TEZ_TOKEN_METADATA.decimals))
-              }
+              onValueChange={(newValue: number) => {
+                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(TEZ_TOKEN_METADATA.decimals));
+                !isDefined(values.storageLimitSum) && setFieldValue('storageLimitSum', storageLimitDefaultValue, false);
+              }}
             />
           )}
         </View>

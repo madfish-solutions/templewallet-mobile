@@ -11,6 +11,6 @@ export const useIconTitleNoBgStyles = createUseStyles(({ colors, typography }) =
   text: {
     ...typography.tagline13Tag,
     color: colors.orange,
-    marginLeft: formatSize(2)
+    marginLeft: formatSize(3)
   }
 }));
