@@ -13,6 +13,7 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
+import { formatSize } from '../../../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
 import {
   CreateNewPasswordFormValues,
@@ -55,23 +56,25 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <Divider />
-          <View>
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput
-              isShowPasswordStrengthIndicator
-              name="password"
-              testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
-            />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput
-              name="passwordConfirmation"
-              testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
-            />
-          </View>
-          <View style={styles.marginTopAuto}>
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+              />
+            </View>
+          </ScreenContainer>
+          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
             <ButtonLargePrimary
               title="Sync"
               disabled={!isValid}
@@ -80,7 +83,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
             />
             <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );

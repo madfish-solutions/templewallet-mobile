@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
 import { openUrl } from '../../../../utils/linking.util';
 import { PromotionCarouselItemInterface } from '../promotion-carousel.data';
 import { usePromotionCarouselItemStyles } from './promotion-carousel-item.styles';
 
-export const PromotionCarouselItem: FC<PromotionCarouselItemInterface> = ({ src, link }) => {
+export const PromotionCarouselItem: FC<PromotionCarouselItemInterface> = memo(({ src, link }) => {
   const styles = usePromotionCarouselItemStyles();
 
   return (
@@ -13,4 +13,4 @@ export const PromotionCarouselItem: FC<PromotionCarouselItemInterface> = ({ src,
       <Image style={styles.bannerImage} source={src} />
     </TouchableOpacity>
   );
-};
+});
