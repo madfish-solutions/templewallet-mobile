@@ -5,7 +5,7 @@ export const useSwapRouteInfoStyles = createUseStyles(({ colors }) => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'flex-start'
   },
   text: {
     color: colors.gray2,
