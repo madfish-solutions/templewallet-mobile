@@ -15,7 +15,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       hash,
       timestamp,
       parameters,
-      hasInternals,
       contractBalance,
       sender,
       target,
@@ -23,51 +22,47 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       originatedContract
     } = operation;
 
-    if (!(hasInternals === true && address === target.address)) {
-      const source = sender;
-      let destination: MemberInterface = { address: '' };
-      let amount = '0';
-      let entrypoint = '';
+    const source = sender;
+    let destination: MemberInterface = { address: '' };
+    let amount = '0';
+    let entrypoint = '';
 
-      switch (type) {
-        case ActivityTypeEnum.Transaction:
-          if (address !== target.address && address !== source.address) {
-            continue;
-          }
-          destination = target;
-          amount = operation.amount.toString();
-          entrypoint = extractEntrypoint(parameters);
-          break;
+    switch (type) {
+      case ActivityTypeEnum.Transaction:
+        destination = target;
+        amount = operation.amount.toString();
+        entrypoint = extractEntrypoint(parameters);
+        break;
 
-        case ActivityTypeEnum.Delegation:
-          if (address !== source.address) {
-            continue;
-          }
-          isDefined(newDelegate) && (destination = newDelegate);
-          break;
-
-        case ActivityTypeEnum.Origination:
-          isDefined(originatedContract) && (destination = originatedContract);
-          isDefined(contractBalance) && (amount = contractBalance.toString());
-          break;
-
-        default:
-          console.log(`Ignoring kind ${type}`);
-
+      case ActivityTypeEnum.Delegation:
+        if (address !== source.address) {
           continue;
-      }
+        }
+        isDefined(newDelegate) && (destination = newDelegate);
+        break;
 
-      activities.push({
-        type,
-        hash,
-        status: stringToActivityStatusEnum(status),
-        source,
-        entrypoint,
-        destination,
-        amount: source.address === address ? `-${amount}` : amount,
-        timestamp: new Date(timestamp).getTime()
-      });
+      case ActivityTypeEnum.Origination:
+        isDefined(originatedContract) && (destination = originatedContract);
+        isDefined(contractBalance) && (amount = contractBalance.toString());
+        break;
+
+      default:
+        console.log(`Ignoring kind ${type}`);
+
+        continue;
     }
+
+    activities.push({
+      id: operation.id,
+      type,
+      hash,
+      status: stringToActivityStatusEnum(status),
+      source,
+      entrypoint,
+      destination,
+      amount: source.address === address ? `-${amount}` : amount,
+      timestamp: new Date(timestamp).getTime()
+    });
   }
 
   return activities;

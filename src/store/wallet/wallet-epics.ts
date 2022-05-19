@@ -7,24 +7,22 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { betterCallDevApi, tzktApi } from '../../api.service';
+import { tzktApi } from '../../api.service';
 import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
-import { TzktTokenTransfer } from '../../interfaces/tzkt-token-transfer.interface';
+import { TzktTokenTransfer } from '../../interfaces/tzkt.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
-import { mapTransfersToActivities } from '../../utils/transfer.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
@@ -71,8 +69,8 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
             ...selectedAccount.tokensList.map(token => token.slug),
             ...tokensWithBalance.map(tokenWithBalance =>
               getTokenSlug({
-                address: tokenWithBalance.contract,
-                id: tokenWithBalance.token_id
+                address: tokenWithBalance.token.contract.address,
+                id: tokenWithBalance.token.tokenId
               })
             )
           ]);
@@ -185,15 +183,16 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
         ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
         from(
           tzktApi.get<Array<TzktTokenTransfer>>(
-            `/tokens/transfers?anyof.from.to=${selectedAccount.publicKeyHash},limit=10000`
+            `/tokens/transfers?anyof.from.to=${selectedAccount.publicKeyHash}&limit=10000`
           )
-        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data)))
-        // from(
-        //   betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-        //     `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
-        //     { params: { max: 100, start: 0 } }
-        //   )
-        // ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
+        ).pipe(
+          map(({ data }) =>
+            data.map(transfer => ({
+              ...transfer,
+              amount: transfer.from.address === selectedAccount.publicKeyHash ? `-${transfer.amount}` : transfer.amount
+            }))
+          )
+        )
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
