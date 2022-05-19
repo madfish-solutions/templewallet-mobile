@@ -81,8 +81,13 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       };
     }, state.tokensMetadata);
 
+    const tokensMetadataSlugs = Object.keys(tokensMetadata);
+    const balancesRecordWithMetadata = Object.keys(balancesRecord)
+      .filter(x => tokensMetadataSlugs.some(y => y === x))
+      .reduce((prevState, tokenSlug) => ({ ...prevState, [tokenSlug]: balancesRecord[tokenSlug] }), {});
+
     return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecordWithMetadata)
     }));
   });
 
