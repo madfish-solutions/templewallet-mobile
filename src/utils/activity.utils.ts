@@ -10,15 +10,12 @@ export const groupActivitiesByHash = (operations: Array<ActivityInterface>, tran
     if (operation.type === ActivityTypeEnum.Transaction) {
       const foundTransfer = transfers.find(transfer => transfer.transactionId === operation.id);
       if (isDefined(foundTransfer)) {
-        const newOperation = {
+        return {
           ...operation,
           address: foundTransfer.token.contract.address,
           id: Number(foundTransfer.token.tokenId) ?? 0,
           amount: foundTransfer.amount
         };
-        console.log('newOperation', newOperation);
-
-        return newOperation;
       }
     }
 

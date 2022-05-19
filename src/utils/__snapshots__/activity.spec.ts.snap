@@ -19,42 +19,6 @@ Array [
       "timestamp": 10,
       "type": "transaction",
     },
-    Object {
-      "amount": "1",
-      "destination": Object {
-        "address": "address4",
-        "alias": "alias4",
-      },
-      "entrypoint": "",
-      "hash": "hash2",
-      "source": Object {
-        "address": "address2",
-        "alias": "alias2",
-      },
-      "status": "pending",
-      "timestamp": 9,
-      "type": "transaction",
-    },
-  ],
-  Array [
-    Object {
-      "address": "contractAddress1",
-      "amount": "0",
-      "destination": Object {
-        "address": "address2",
-        "alias": "alias2",
-      },
-      "entrypoint": "transfer",
-      "hash": "hash4",
-      "id": 0,
-      "source": Object {
-        "address": "address4",
-        "alias": "alias4",
-      },
-      "status": "applied",
-      "timestamp": 8,
-      "type": "transaction",
-    },
   ],
   Array [
     Object {
@@ -112,26 +76,6 @@ Array [
       },
       "status": "pending",
       "timestamp": 10,
-      "type": "transaction",
-    },
-  ],
-  Array [
-    Object {
-      "address": "contractAddress1",
-      "amount": "0",
-      "destination": Object {
-        "address": "address2",
-        "alias": "alias2",
-      },
-      "entrypoint": "transfer",
-      "hash": "hash4",
-      "id": 0,
-      "source": Object {
-        "address": "address4",
-        "alias": "alias4",
-      },
-      "status": "applied",
-      "timestamp": 8,
       "type": "transaction",
     },
   ],
