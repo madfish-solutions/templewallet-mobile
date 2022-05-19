@@ -38,7 +38,7 @@ export const loadTokenMetadata$ = memoize(
 );
 
 export const loadTokensMetadata$ = memoize(
-  (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
+  (slugs: Array<string>): Observable<Array<TokenMetadataInterface | null>> =>
     from(tokenMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
       map(({ data }) =>
         data

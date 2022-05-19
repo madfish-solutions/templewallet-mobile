@@ -17,6 +17,7 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
+import { isDefined } from '../../utils/is-defined';
 import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
@@ -81,7 +82,9 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
             loadTokensMetadata$(assetSlugs)
           ]);
         }),
-        map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
+        map(([balancesRecord, metadataList]) =>
+          loadTokenBalancesActions.success({ balancesRecord, metadataList: metadataList.filter(isDefined) })
+        ),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
