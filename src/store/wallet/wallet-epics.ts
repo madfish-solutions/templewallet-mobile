@@ -13,6 +13,7 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { OperationInterface } from '../../interfaces/operation.interface';
+import { TzktTokenTransfer } from '../../interfaces/tzkt-token-transfer.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -178,16 +179,21 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
     switchMap(([, selectedAccount]) =>
       forkJoin([
         from(
-          tzktApi.get<OperationInterface[]>(
+          tzktApi.get<Array<OperationInterface>>(
             `accounts/${selectedAccount.publicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
           )
         ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
         from(
-          betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
-            { params: { max: 100, start: 0 } }
+          tzktApi.get<Array<TzktTokenTransfer>>(
+            `/tokens/transfers?anyof.from.to=${selectedAccount.publicKeyHash},limit=10000`
           )
-        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
+        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data)))
+        // from(
+        //   betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
+        //     `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
+        //     { params: { max: 100, start: 0 } }
+        //   )
+        // ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),

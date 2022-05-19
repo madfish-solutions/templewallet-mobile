@@ -2,13 +2,14 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import { OperationInterface } from '../interfaces/operation.interface';
+import { TzktTokenTransfer } from '../interfaces/tzkt-token-transfer.interface';
 import { isDefined } from './is-defined';
 import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 
-export const mapOperationsToActivities = (address: string, operations: Array<OperationInterface>) => {
+export const mapTokenTransferToActivity = (address: string, tokenTransfers: Array<TzktTokenTransfer>) => {
   const activities: Array<ActivityInterface> = [];
 
-  for (const operation of operations) {
+  for (const tokenTransfer of tokenTransfers) {
     const {
       type,
       status,
@@ -21,7 +22,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       target,
       newDelegate,
       originatedContract
-    } = operation;
+    } = tokenTransfer;
 
     if (!(hasInternals === true && address === target.address)) {
       const source = sender;
