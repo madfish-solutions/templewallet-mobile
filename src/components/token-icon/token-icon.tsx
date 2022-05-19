@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Image, View } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSizeScaled } from '../../styles/format-size';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { formatImgUri, isImgUriSvg } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -16,7 +16,7 @@ interface Props {
   size?: number;
 }
 
-export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
+export const TokenIcon: FC<Props> = ({ token, size = formatSizeScaled(32) }) => {
   const { iconName, thumbnailUri } = token;
 
   return (
