@@ -68,20 +68,6 @@ const mockPendingTransfer: TzktTokenTransfer = {
   transactionId: 221390021
 };
 
-// const mockPendingTransfer: ActivityInterface = {
-//   type: ActivityTypeEnum.Transaction,
-//   status: ActivityStatusEnum.Pending,
-//   hash: 'hash2',
-//   amount: '1',
-//   timestamp: 9,
-//   entrypoint: '',
-//   source: mockMember,
-//   destination: {
-//     address: 'address4',
-//     alias: 'alias4'
-//   }
-// };
-
 const mockAppliedTransfer: TzktTokenTransfer = {
   id: 221390075,
   level: 2330482,
@@ -98,22 +84,6 @@ const mockAppliedTransfer: TzktTokenTransfer = {
   amount: '434827741374364513',
   transactionId: 221390021
 };
-
-// const mockAppliedTransfer: ActivityInterface = {
-//   type: ActivityTypeEnum.Transaction,
-//   status: ActivityStatusEnum.Applied,
-//   hash: 'hash4',
-//   amount: '0',
-//   address: 'contractAddress1',
-//   id: 0,
-//   timestamp: 8,
-//   entrypoint: 'transfer',
-//   source: {
-//     address: 'address4',
-//     alias: 'alias4'
-//   },
-//   destination: mockMember
-// };
 
 export const mockOperations: Array<ActivityInterface> = [
   mockAppliedOperation,
