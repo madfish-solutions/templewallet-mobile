@@ -1,4 +1,4 @@
-export interface TzktAlias {
+interface TzktAlias {
   alias?: string;
   address: string;
 }
