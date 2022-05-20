@@ -178,7 +178,7 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
       forkJoin([
         from(
           tzktApi.get<Array<OperationInterface>>(
-            `accounts/${selectedAccount.publicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
+            `accounts/${selectedAccount.publicKeyHash}/operations?limit=1000&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
           )
         ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
         from(
