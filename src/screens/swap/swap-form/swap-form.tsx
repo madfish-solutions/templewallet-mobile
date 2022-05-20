@@ -64,7 +64,7 @@ export const SwapForm: FC = () => {
 
   const [bestTrade, setBestTrade] = useState<Trade>([]);
 
-  const { values, setFieldValue, isValid, submitCount, submitForm } = useFormikContext<SwapFormValues>();
+  const { values, setFieldValue, isValid, submitCount, submitForm, touched } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined
@@ -150,7 +150,7 @@ export const SwapForm: FC = () => {
   const handleSubmit = async () => {
     submitForm();
 
-    if (!isValid) {
+    if (!isValid || !touched.inputAssets) {
       return;
     }
 
