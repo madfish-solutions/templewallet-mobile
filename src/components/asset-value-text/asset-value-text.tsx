@@ -1,12 +1,11 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
 import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { getDollarValue } from '../../utils/balance.utils';
 import { isDefined } from '../../utils/is-defined';
-import { mutezToTz } from '../../utils/tezos.util';
 import { FormattedAmount } from '../formatted-amount';
 
 interface Props {
@@ -31,11 +30,8 @@ export const AssetValueText: FC<Props> = ({
 
   const hideText = convertToDollar && !isDefined(exchangeRate);
 
-  const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
-  const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
+  const visibleAmount = getDollarValue(amount, asset, convertToDollar ? exchangeRate : 1);
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
-
-  const emptySymbolValue = convertToDollar && asset.symbol === '' ? new BigNumber(0) : visibleAmount;
 
   return (
     <Text style={style}>
@@ -43,7 +39,7 @@ export const AssetValueText: FC<Props> = ({
         ''
       ) : (
         <FormattedAmount
-          amount={emptySymbolValue}
+          amount={visibleAmount}
           isDollarValue={convertToDollar}
           showMinusSign={showMinusSign}
           showPlusSign={false}
