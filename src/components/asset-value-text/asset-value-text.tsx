@@ -35,13 +35,15 @@ export const AssetValueText: FC<Props> = ({
   const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(exchangeRate) : parsedAmount;
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
+  const emptySymbolValue = convertToDollar && asset.symbol === '' ? new BigNumber(0) : visibleAmount;
+
   return (
     <Text style={style}>
       {hideText ? (
         ''
       ) : (
         <FormattedAmount
-          amount={visibleAmount}
+          amount={emptySymbolValue}
           isDollarValue={convertToDollar}
           showMinusSign={showMinusSign}
           showPlusSign={false}
