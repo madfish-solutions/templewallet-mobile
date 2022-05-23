@@ -5,8 +5,6 @@ import { assetAmountValidation } from '../../../form/validation/asset-amount';
 
 export const swapFormValidationSchema: SchemaOf<{
   inputAssets: AssetAmountInterface;
-  outputAssets: AssetAmountInterface;
 }> = object().shape({
-  inputAssets: assetAmountValidation,
-  outputAssets: assetAmountValidation
+  inputAssets: assetAmountValidation
 });
