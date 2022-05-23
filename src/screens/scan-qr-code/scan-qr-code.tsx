@@ -1,3 +1,4 @@
+import { useNavigationState } from '@react-navigation/native';
 import React from 'react';
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -18,6 +19,7 @@ import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
 export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
+  const prevRoute = useNavigationState(state => state.routes[state.routes.length - 1].name);
   const { goBack, navigate } = useNavigation();
   const tezosToken = useTezosTokenSelector();
 
@@ -32,7 +34,11 @@ export const ScanQrCode = () => {
     } else if (isSyncPayload(data)) {
       navigate(ScreensEnum.ConfirmSync, { payload: data });
     } else {
-      beaconDeepLinkHandler(data);
+      if (prevRoute === ScreensEnum.ScanQrCode) {
+        showErrorToast({ description: 'Invalid QR code' });
+      } else {
+        beaconDeepLinkHandler(data);
+      }
     }
   };
 
