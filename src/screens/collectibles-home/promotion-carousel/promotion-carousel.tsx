@@ -27,6 +27,7 @@ export const PromotionCarousel = () => {
         enableMomentum={false}
         decelerationRate={0.5}
         removeClippedSubviews={true}
+        firstItem={1}
         loop={true}
         autoplay={true}
         autoplayInterval={5000}
