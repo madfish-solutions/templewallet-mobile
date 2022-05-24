@@ -27,8 +27,8 @@ export const PromotionCarousel = () => {
         enableMomentum={false}
         decelerationRate={0.5}
         removeClippedSubviews={true}
-        firstItem={1}
         loop={true}
+        firstItem={-1}
         autoplay={true}
         autoplayInterval={5000}
         renderItem={item => <PromotionCarouselItem {...item.item} />}
