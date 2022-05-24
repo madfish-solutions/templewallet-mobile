@@ -53,3 +53,7 @@ export const resetBeacon$ = () => {
 
   return of(0);
 };
+
+const IS_BEACON_PAYLOAD_CHECK = /^tezos:\/\/[?]((type=.*&data=.*)|(data=.*&type=.*))/;
+
+export const isBeaconPayload = (link: string) => IS_BEACON_PAYLOAD_CHECK.test(link);
