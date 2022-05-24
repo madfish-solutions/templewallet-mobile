@@ -11,6 +11,7 @@ import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { isBeaconPayload } from '../../utils/beacon.utils';
 import { isSyncPayload } from '../../utils/sync.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
@@ -31,8 +32,10 @@ export const ScanQrCode = () => {
       showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
     } else if (isSyncPayload(data)) {
       navigate(ScreensEnum.ConfirmSync, { payload: data });
-    } else {
+    } else if (isBeaconPayload(data)) {
       beaconDeepLinkHandler(data);
+    } else {
+      showErrorToast({ description: 'Invalid QR code' });
     }
   };
 
