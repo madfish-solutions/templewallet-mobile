@@ -185,6 +185,10 @@ export const SwapForm: FC = () => {
     dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
   };
 
+  useEffect(() => {
+    console.log('swap form values', values);
+  }, [values]);
+
   return (
     <>
       <SwapPriceUpdateBar

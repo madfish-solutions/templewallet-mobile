@@ -30,8 +30,15 @@ export const SwapScreen: FC = () => {
     []
   );
 
+  // console.log('SwapScreen', sendModalInitialValues);
+
   return (
-    <Formik initialValues={sendModalInitialValues} validationSchema={swapFormValidationSchema} onSubmit={emptyFn}>
+    <Formik
+      validateOnMount
+      initialValues={sendModalInitialValues}
+      validationSchema={swapFormValidationSchema}
+      onSubmit={emptyFn}
+    >
       <SwapForm />
     </Formik>
   );

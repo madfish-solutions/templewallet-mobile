@@ -28,25 +28,23 @@ export const ScanQrCode = () => {
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();
     if (isAuthorised) {
-      if (isValidAddress(data) && Number(tezosToken.balance) > 0) {
-        navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
-      } else if (isValidAddress(data)) {
-        showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
+      if (isValidAddress(data)) {
+        if (Number(tezosToken.balance) > 0) {
+          navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
+        } else {
+          showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
+        }
       } else if (isBeaconPayload(data)) {
         beaconDeepLinkHandler(data);
       } else {
         showErrorToast({ description: 'Invalid QR code' });
       }
-
-      return;
     } else {
       if (isSyncPayload(data)) {
         navigate(ScreensEnum.ConfirmSync, { payload: data });
       } else {
         showErrorToast({ description: 'Invalid QR code' });
       }
-
-      return;
     }
   };
 
