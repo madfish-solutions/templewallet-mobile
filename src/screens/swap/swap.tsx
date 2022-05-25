@@ -30,8 +30,6 @@ export const SwapScreen: FC = () => {
     []
   );
 
-  // console.log('SwapScreen', sendModalInitialValues);
-
   return (
     <Formik
       validateOnMount
