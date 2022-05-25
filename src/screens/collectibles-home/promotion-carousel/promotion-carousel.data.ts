@@ -9,12 +9,12 @@ export interface PromotionCarouselItemInterface {
 
 export const promotionCarouselData: PromotionCarouselItemInterface[] = [
   {
-    src: require('./banners/ukraine.png'),
-    link: supportUkraine
-  },
-  {
     src: require('./banners/yupana.png'),
     link: yupanaLink
+  },
+  {
+    src: require('./banners/ukraine.png'),
+    link: supportUkraine
   },
   {
     src: require('./banners/quipu.png'),
