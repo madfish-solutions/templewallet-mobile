@@ -31,12 +31,7 @@ export const SwapScreen: FC = () => {
   );
 
   return (
-    <Formik
-      validateOnMount
-      initialValues={sendModalInitialValues}
-      validationSchema={swapFormValidationSchema}
-      onSubmit={emptyFn}
-    >
+    <Formik initialValues={sendModalInitialValues} validationSchema={swapFormValidationSchema} onSubmit={emptyFn}>
       <SwapForm />
     </Formik>
   );
