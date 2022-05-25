@@ -10,6 +10,7 @@
     "android:test-flight": "cd android && bundle exec fastlane alpha",
     "ios": "react-native run-ios",
     "ios:pods": "cd ios && pod install",
+    "ios:pods:repo": "cd ios && pod repo add",
     "ios:test-flight": "cd ios && bundle exec fastlane beta",
     "start": "react-native start",
     "test": "jest",

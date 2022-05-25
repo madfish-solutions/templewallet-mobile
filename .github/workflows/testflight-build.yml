@@ -93,6 +93,9 @@ jobs:
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install
 
+      - name: Install Pods Repo
+        run: yarn ios:pods:repo
+
       - name: Install Pods
         run: yarn ios:pods
 
