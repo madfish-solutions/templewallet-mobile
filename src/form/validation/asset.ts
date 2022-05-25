@@ -10,7 +10,7 @@ export const assetValidation: SchemaOf<TokenInterface> = object()
   .required(makeRequiredErrorMessage('Token'))
   .test('is-equal', 'Asset must be selected', (value: TokenInterface) => {
     const isEqual = tokenEqualityFn(value, emptyTezosLikeToken);
-    if (isEqual || !isDefined(value.address) || !isDefined(value.symbol)) {
+    if (isEqual || !isDefined(value.symbol)) {
       return false;
     }
 
