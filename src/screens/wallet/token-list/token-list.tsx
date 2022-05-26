@@ -65,13 +65,13 @@ export const TokenList: FC = () => {
             {isShowTezos && <TezosToken />}
 
             {sortedAssetsList.map(
-              (token, index) =>
+              token =>
                 token.isVisible &&
                 (getTokenSlug(token) === QUIPU_SLUG ? (
-                  <QuipuToken token={token} />
+                  <QuipuToken key={getTokenSlug(token)} token={token} />
                 ) : (
                   <TokenListItem
-                    key={token.address + index}
+                    key={getTokenSlug(token)}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
