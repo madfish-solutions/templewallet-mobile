@@ -18,7 +18,7 @@ export const useTokenMetadataGetter = () => {
             symbol: '???',
             name: `${tokenAddress} ${tokenId}`,
             address: tokenAddress,
-            id: Number(tokenId ?? 0),
+            id: Number(tokenId ?? 0)
           };
     },
     [tokensMetadata]
