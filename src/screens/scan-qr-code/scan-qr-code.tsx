@@ -7,10 +7,11 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useIsAuthorisedSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { isBeaconPayload } from '../../utils/beacon.utils';
 import { isSyncPayload } from '../../utils/sync.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
@@ -20,19 +21,30 @@ export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { goBack, navigate } = useNavigation();
   const tezosToken = useTezosTokenSelector();
+  const isAuthorised = useIsAuthorisedSelector();
 
   usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handleRead = ({ data }: BarCodeReadEvent) => {
     goBack();
-    if (isValidAddress(data) && Number(tezosToken.balance) > 0) {
-      navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
-    } else if (isValidAddress(data)) {
-      showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
-    } else if (isSyncPayload(data)) {
-      navigate(ScreensEnum.ConfirmSync, { payload: data });
+    if (isAuthorised) {
+      if (isValidAddress(data)) {
+        if (Number(tezosToken.balance) > 0) {
+          navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
+        } else {
+          showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
+        }
+      } else if (isBeaconPayload(data)) {
+        beaconDeepLinkHandler(data);
+      } else {
+        showErrorToast({ description: 'Invalid QR code' });
+      }
     } else {
-      beaconDeepLinkHandler(data);
+      if (isSyncPayload(data)) {
+        navigate(ScreensEnum.ConfirmSync, { payload: data });
+      } else {
+        showErrorToast({ description: 'Invalid QR code' });
+      }
     }
   };
 
