@@ -16,7 +16,7 @@ export const PromotionCarousel = () => {
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
   const itemWidth = useMemo(() => Math.floor(Math.abs(layoutWidth - 2 * formatSize(16))), [layoutWidth]);
 
-  const [activeDotIndex, setActiveDotIndex] = useState(0);
+  const [activeDotIndex, setActiveDotIndex] = useState(1);
 
   return (
     <View onLayout={handleLayout}>
@@ -28,6 +28,7 @@ export const PromotionCarousel = () => {
         decelerationRate={0.5}
         removeClippedSubviews={true}
         loop={true}
+        firstItem={-1}
         autoplay={true}
         autoplayInterval={5000}
         renderItem={item => <PromotionCarouselItem {...item.item} />}

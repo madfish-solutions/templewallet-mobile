@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
@@ -7,8 +6,8 @@ import { useFiatCurrencySelector } from '../../store/settings/settings-selectors
 import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { getDollarValue } from '../../utils/balance.utils';
 import { isDefined } from '../../utils/is-defined';
-import { mutezToTz } from '../../utils/tezos.util';
 import { FormattedAmount } from '../formatted-amount';
 
 interface Props {
@@ -38,8 +37,7 @@ export const AssetValueText: FC<Props> = ({
 
   const hideText = convertToDollar && !isDefined(exchangeRate);
 
-  const parsedAmount = mutezToTz(new BigNumber(amount), asset.decimals);
-  const visibleAmount = convertToDollar ? parsedAmount.multipliedBy(trueExchangeRate) : parsedAmount;
+  const visibleAmount = getDollarValue(amount, asset, convertToDollar ? trueExchangeRate : 1);
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
   return (

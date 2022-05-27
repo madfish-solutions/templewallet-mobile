@@ -1,11 +1,12 @@
 import { BigNumber } from 'bignumber.js';
 import { object } from 'yup';
 
+import { assetValidation } from './asset';
 import { bigNumberValidation } from './big-number';
 import { makeRequiredErrorMessage } from './messages';
 
 export const assetAmountValidation = object().shape({
-  asset: object().shape({}).required(makeRequiredErrorMessage('Asset')),
+  asset: assetValidation,
   amount: bigNumberValidation
     .clone()
     .required(makeRequiredErrorMessage('Amount'))
@@ -16,4 +17,8 @@ export const assetAmountValidation = object().shape({
 
       return false;
     })
+});
+
+export const onlyAssetValidation = object().shape({
+  asset: assetValidation
 });

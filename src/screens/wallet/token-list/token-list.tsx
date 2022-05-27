@@ -4,13 +4,10 @@ import { Text, View } from 'react-native';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { QUIPU_SLUG } from '../../../config/tokens';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
@@ -68,13 +65,13 @@ export const TokenList: FC = () => {
             {isShowTezos && <TezosToken />}
 
             {sortedAssetsList.map(
-              (token, index) =>
+              token =>
                 token.isVisible &&
                 (getTokenSlug(token) === QUIPU_SLUG ? (
-                  <QuipuToken token={token} />
+                  <QuipuToken key={getTokenSlug(token)} token={token} />
                 ) : (
                   <TokenListItem
-                    key={token.address + index}
+                    key={getTokenSlug(token)}
                     token={token}
                     onPress={() => navigate(ScreensEnum.TokenScreen, { token })}
                   />
@@ -84,9 +81,6 @@ export const TokenList: FC = () => {
             <Divider />
           </>
         )}
-
-        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
-        <Divider />
       </ScreenContainer>
     </>
   );
