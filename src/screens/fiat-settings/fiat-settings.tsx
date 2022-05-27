@@ -12,7 +12,7 @@ import { FiatCurrenciesEnum, FIAT_CURRENCIES } from '../../utils/exchange-rate.u
 
 export const FiatSettings = () => {
   const dispatch = useDispatch();
-  const selectedRpcUrl = useFiatCurrencySelector();
+  const selectedFiatCurrency = useFiatCurrencySelector();
 
   const radioButtons = useMemo(
     () => FIAT_CURRENCIES.map(currency => ({ label: currency.name, value: currency.name })),
@@ -24,7 +24,7 @@ export const FiatSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup value={selectedRpcUrl} buttons={radioButtons} onChange={handleChange} />
+      <StyledRadioButtonsGroup value={selectedFiatCurrency} buttons={radioButtons} onChange={handleChange} />
       <Divider />
     </ScreenContainer>
   );

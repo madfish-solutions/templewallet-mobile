@@ -1,4 +1,4 @@
-import { switchMap, from, of } from 'rxjs';
+import { from, map } from 'rxjs';
 
 import { templeWalletApi, coingeckoApi } from '../api.service';
 import { CoingeckoQuoteInterface } from '../interfaces/coingecko-quote.interface';
@@ -173,8 +173,8 @@ export const FIAT_CURRENCIES = [
   }
 ];
 
-export const loadExchangeRates$ = from(templeWalletApi.get<Array<ExchangeRateInterface>>('/exchange-rates')).pipe(
-  switchMap(payload => {
+export const loadUsdToTokenRates$ = from(templeWalletApi.get<Array<ExchangeRateInterface>>('/exchange-rates')).pipe(
+  map(payload => {
     const data = payload.data;
     const mappedRates: ExchangeRateRecord = {};
 
@@ -182,16 +182,16 @@ export const loadExchangeRates$ = from(templeWalletApi.get<Array<ExchangeRateInt
       mappedRates[getTokenSlug({ address: tokenAddress, id: tokenId })] = +exchangeRate;
     }
 
-    return of(mappedRates);
+    return mappedRates;
   })
 );
 
-export const loadQuotes$ = from(
+export const loadFiatToTezosRates$ = from(
   coingeckoApi.get<CoingeckoQuoteInterface>(
     `/simple/price?ids=tezos&vs_currencies=${FIAT_CURRENCIES.map(({ apiLabel }) => apiLabel).join(',')}`
   )
 ).pipe(
-  switchMap(({ data }) => {
+  map(({ data }) => {
     const mappedRates: ExchangeRateRecord = {};
     const tezosData = Object.keys(data.tezos);
 
@@ -199,6 +199,6 @@ export const loadQuotes$ = from(
       mappedRates[quote] = +data.tezos[quote];
     }
 
-    return of(mappedRates);
+    return mappedRates;
   })
 );

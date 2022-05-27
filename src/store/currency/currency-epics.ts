@@ -4,14 +4,14 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { loadExchangeRates$, loadQuotes$ } from '../../utils/exchange-rate.util';
+import { loadUsdToTokenRates$, loadFiatToTezosRates$ } from '../../utils/exchange-rate.util';
 import { loadExchangeRates } from './currency-actions';
 
 export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
-    switchMap(() => forkJoin([loadExchangeRates$, loadQuotes$])),
-    map(([exchangeRates, quotes]) => loadExchangeRates.success({ exchangeRates, quotes })),
+    switchMap(() => forkJoin([loadUsdToTokenRates$, loadFiatToTezosRates$])),
+    map(([usdToTokenRates, fiatToTezosRates]) => loadExchangeRates.success({ usdToTokenRates, fiatToTezosRates })),
     catchError(error => of(loadExchangeRates.fail(error)))
   );
 

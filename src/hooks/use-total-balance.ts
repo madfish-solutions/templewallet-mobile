@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useState } from 'react';
 
-import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
+import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { useVisibleTokensListSelector, useTezosTokenSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
@@ -10,7 +10,7 @@ import { tzToMutez } from '../utils/tezos.util';
 
 export const useTotalBalance = () => {
   const [totalBalance, setTotalBalance] = useState(new BigNumber(0));
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
   const visibleTokens = useVisibleTokensListSelector();
   const tezosToken = useTezosTokenSelector();
 

@@ -1,14 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
-import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
+import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { mutezToTz } from '../utils/tezos.util';
 
 export const useSortedAssetsList = (filteredAssetsList: TokenInterface[]) => {
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
 
   return useMemo(
     () =>

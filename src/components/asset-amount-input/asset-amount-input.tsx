@@ -4,11 +4,10 @@ import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { useExchangeRatesSelector, useQuotesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRate } from '../../store/currency/currency-selectors';
 import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
@@ -77,17 +76,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
+  const fiatCurrency = useFiatCurrencySelector();
 
   const amount = value?.amount ?? new BigNumber(0);
-  const fiatCurrency = useFiatCurrencySelector();
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
-  const exchangeRates = useExchangeRatesSelector();
-  const quotes = useQuotesSelector();
-  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
-  const exchangeRateTezos: number | undefined = exchangeRates[TEZ_TOKEN_SLUG];
-
-  const hasExchangeRate = isDefined(exchangeRate);
+  const { hasExchangeRate, exchangeRate, exchangeRateGetter } = useExchangeRate(value.asset);
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -98,13 +92,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           return mutezToTz(value.amount, value.asset.decimals);
         } else {
           if (isDefined(inputValueRef.current)) {
-            const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
-            const trueExchangeRate = fiatToUsdRate * exchangeRate;
-            const currentTokenValue = dollarToTokenAmount(
-              inputValueRef.current,
-              value.asset.decimals,
-              trueExchangeRate
-            );
+            const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
 
             if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
               return inputValueRef.current;
@@ -127,12 +115,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     newInputValue => {
       inputValueRef.current = newInputValue;
 
-      const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
-      const trueExchangeRate = fiatToUsdRate * exchangeRate;
-
       onValueChange({
         ...value,
-        amount: getDefinedAmount(newInputValue, value.asset.decimals, trueExchangeRate, isTokenInputType)
+        amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
       });
     },
     [value, onValueChange, isTokenInputType]
@@ -152,15 +137,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     }
     setInputTypeIndex(tokenTypeIndex);
 
-    const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
-    const trueExchangeRate = fiatToUsdRate * exchangeRate;
-
     onValueChange({
       ...value,
       amount: getDefinedAmount(
         inputValueRef.current,
         value.asset.decimals,
-        trueExchangeRate,
+        exchangeRate,
         tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
       )
     });
@@ -170,16 +152,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
       const asset = newAsset ?? emptyTezosLikeToken;
-      const newExchangeRate = exchangeRates[getTokenSlug(asset)];
-      const fiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
-      const trueExchangeRate = fiatToUsdRate * newExchangeRate;
+      const newExchangeRate = exchangeRateGetter(asset);
 
       onValueChange({
-        amount: getDefinedAmount(inputValueRef.current, decimals, trueExchangeRate, isTokenInputType),
+        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
         asset
       });
     },
-    [exchangeRates, onValueChange, isTokenInputType]
+    [onValueChange, isTokenInputType, exchangeRateGetter]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);

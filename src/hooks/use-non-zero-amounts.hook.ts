@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
-import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
+import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../store/wallet/wallet-actions';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
@@ -14,7 +14,7 @@ import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 export const useNonZeroAmounts = (group: ActivityGroup) => {
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
 
   return useMemo(() => {
     const amounts = [];
