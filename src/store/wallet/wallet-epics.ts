@@ -7,21 +7,17 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { tzktApi } from '../../api.service';
-import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ParamsWithKind } from '../../interfaces/op-params.interface';
-import { OperationInterface } from '../../interfaces/operation.interface';
-import { TzktTokenTransfer } from '../../interfaces/tzkt.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { mapOperationsToActivities } from '../../utils/operation.utils';
 import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokenOperations$, loadTokenTransfers$ } from '../../utils/token-operations.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
@@ -176,23 +172,8 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
       forkJoin([
-        from(
-          tzktApi.get<Array<OperationInterface>>(
-            `accounts/${selectedAccount.publicKeyHash}/operations?limit=1000&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
-          )
-        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
-        from(
-          tzktApi.get<Array<TzktTokenTransfer>>(
-            `/tokens/transfers?anyof.from.to=${selectedAccount.publicKeyHash}&limit=10000`
-          )
-        ).pipe(
-          map(({ data }) =>
-            data.map(transfer => ({
-              ...transfer,
-              amount: transfer.from.address === selectedAccount.publicKeyHash ? `-${transfer.amount}` : transfer.amount
-            }))
-          )
-        )
+        loadTokenOperations$(selectedAccount.publicKeyHash),
+        loadTokenTransfers$(selectedAccount.publicKeyHash)
       ]).pipe(
         map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),

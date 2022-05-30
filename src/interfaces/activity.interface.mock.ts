@@ -95,9 +95,12 @@ export const mockTransfers: Array<TzktTokenTransfer> = [mockPendingTransfer, moc
 
 export const mockAppliedActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
   [mockAppliedOperation, mockAppliedDelegationOperation],
-  []
+  [mockAppliedTransfer]
 );
-export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesByHash([mockPendingOperation], []);
+export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
+  [mockPendingOperation],
+  [mockPendingTransfer]
+);
 
 export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
   {

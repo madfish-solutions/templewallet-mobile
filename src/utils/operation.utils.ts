@@ -50,8 +50,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
         break;
 
       default:
-        console.log(`Ignoring kind ${type}`);
-
         continue;
     }
 
