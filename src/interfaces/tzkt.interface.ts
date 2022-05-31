@@ -5,7 +5,7 @@ interface TzktAlias {
 
 export interface TzktTokenTransfer {
   amount: string;
-  from: TzktAlias;
+  from?: TzktAlias;
   id: number;
   level: number;
   timestamp: string;

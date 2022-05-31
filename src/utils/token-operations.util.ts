@@ -5,6 +5,7 @@ import { tzktApi } from '../api.service';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { OperationInterface } from '../interfaces/operation.interface';
 import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
+import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 
 const limitOperations = 1000;
@@ -28,7 +29,8 @@ export const loadTokenTransfers$ = (publicKeyHash: string) =>
     map(({ data }) =>
       data.map(transfer => ({
         ...transfer,
-        amount: transfer.from.address === publicKeyHash ? `-${transfer.amount}` : transfer.amount
+        amount:
+          isDefined(transfer.from) && transfer.from.address === publicKeyHash ? `-${transfer.amount}` : transfer.amount
       }))
     )
   );
