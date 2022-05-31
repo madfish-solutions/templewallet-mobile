@@ -27,7 +27,7 @@ export const useExchangeRate = <T extends { address?: string; id?: number }>(ass
 
   const hasExchangeRate = isDefined(exchangeRate);
 
-  const exchangeRateGetter = useCallback(
+  const getExchangeRate = useCallback(
     (newAsset: TokenInterface): number => {
       const newExchangeRate = exchangeRates[getTokenSlug(newAsset)];
       const newFiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
@@ -39,7 +39,7 @@ export const useExchangeRate = <T extends { address?: string; id?: number }>(ass
   );
 
   return {
-    exchangeRateGetter,
+    getExchangeRate,
     hasExchangeRate,
     exchangeRate: trueExchangeRate
   };

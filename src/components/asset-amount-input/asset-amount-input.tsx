@@ -81,7 +81,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
-  const { hasExchangeRate, exchangeRate, exchangeRateGetter } = useExchangeRate(value.asset);
+  const { hasExchangeRate, exchangeRate, getExchangeRate } = useExchangeRate(value.asset);
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -152,14 +152,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
       const asset = newAsset ?? emptyTezosLikeToken;
-      const newExchangeRate = exchangeRateGetter(asset);
+      const newExchangeRate = getExchangeRate(asset);
 
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
         asset
       });
     },
-    [onValueChange, isTokenInputType, exchangeRateGetter]
+    [onValueChange, isTokenInputType, getExchangeRate]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
