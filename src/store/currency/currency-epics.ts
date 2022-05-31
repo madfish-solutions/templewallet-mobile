@@ -10,9 +10,12 @@ import { loadExchangeRates } from './currency-actions';
 export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
-    switchMap(() => forkJoin([loadUsdToTokenRates$, loadFiatToTezosRates$])),
-    map(([usdToTokenRates, fiatToTezosRates]) => loadExchangeRates.success({ usdToTokenRates, fiatToTezosRates })),
-    catchError(error => of(loadExchangeRates.fail(error)))
+    switchMap(() =>
+      forkJoin([loadUsdToTokenRates$, loadFiatToTezosRates$]).pipe(
+        map(([usdToTokenRates, fiatToTezosRates]) => loadExchangeRates.success({ usdToTokenRates, fiatToTezosRates })),
+        catchError(error => of(loadExchangeRates.fail(error)))
+      )
+    )
   );
 
 export const currencyEpics = combineEpics(loadExchangeRatesEpic);
