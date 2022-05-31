@@ -2,6 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
+import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
 
 export const changeTheme = createAction<ThemesEnum>('settings/CHANGE_THEME');
 
@@ -14,4 +15,5 @@ export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE
 
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
+export const setFiatCurrency = createAction<FiatCurrenciesEnum>('settings/SET_FIAT_CURRENCY');
 export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');

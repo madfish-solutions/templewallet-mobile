@@ -15,7 +15,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
 import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
 import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
@@ -29,7 +29,7 @@ export const LiquidityBakingDapp = () => {
   const { navigate } = useNavigation();
   const styles = useLiquidityBakingDappStyles();
   const assetsList = useAssetsListSelector();
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
 
   const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 

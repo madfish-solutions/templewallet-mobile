@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRate } from '../../store/currency/currency-selectors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
 import { getDollarValue } from '../../utils/balance.utils';
 import { isDefined } from '../../utils/is-defined';
 import { FormattedAmount } from '../formatted-amount';
@@ -25,8 +24,7 @@ export const AssetValueText: FC<Props> = ({
   showSymbol = true,
   convertToDollar = false
 }) => {
-  const exchangeRates = useExchangeRatesSelector();
-  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
+  const { exchangeRate } = useExchangeRate(asset);
 
   const hideText = convertToDollar && !isDefined(exchangeRate);
 

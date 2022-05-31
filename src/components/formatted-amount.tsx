@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
+import { useCurrentFiatCurrencyMetadataSelector } from '../store/settings/settings-selectors';
 import { bigIntClamp } from '../utils/big-number.utils';
 import { formatAssetAmount } from '../utils/number.util';
 
@@ -25,6 +26,7 @@ export const FormattedAmount: FC<Props> = ({
   symbol,
   style
 }) => {
+  const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
   const dollarAmount = amount.isZero()
     ? amount
     : amount.isPositive()
@@ -42,7 +44,7 @@ export const FormattedAmount: FC<Props> = ({
       {showMinusSign && '- '}
       {showPlusSign && '+ '}
       {formattedAmount}
-      {isDollarValue ? ' $' : formattedSymbol}
+      {isDollarValue ? fiatSymbol : formattedSymbol}
     </Text>
   );
 };

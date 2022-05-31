@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { formatAssetAmount } from '../../utils/number.util';
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const AssetEquityText: FC<Props> = ({ asset, style }) => {
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
   const styles = useAssetEquityTextStyles();
 
   const exchangeRate = exchangeRates[getTokenSlug(asset)];

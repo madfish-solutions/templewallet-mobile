@@ -4,7 +4,8 @@ import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useExchangeRate } from '../../store/currency/currency-selectors';
+import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -75,14 +76,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
+  const fiatCurrency = useFiatCurrencySelector();
 
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
-  const exchangeRates = useExchangeRatesSelector();
-  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
-
-  const hasExchangeRate = isDefined(exchangeRate);
+  const { hasExchangeRate, exchangeRate, getExchangeRate } = useExchangeRate(value.asset);
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -153,14 +152,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     (newAsset?: TokenInterface) => {
       const decimals = newAsset?.decimals ?? 0;
       const asset = newAsset ?? emptyTezosLikeToken;
-      const newExchangeRate = exchangeRates[getTokenSlug(asset)];
+      const newExchangeRate = getExchangeRate(asset);
 
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
         asset
       });
     },
-    [exchangeRates, onValueChange, isTokenInputType]
+    [onValueChange, isTokenInputType, getExchangeRate]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
@@ -173,7 +172,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
-            values={['TOKEN', 'USD']}
+            values={['TOKEN', fiatCurrency]}
             onChange={handleTokenInputTypeChange}
           />
         )}

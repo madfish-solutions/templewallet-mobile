@@ -7,14 +7,17 @@ import { currencyInitialState, CurrencyState } from './currency-state';
 export const currencyReducers = createReducer<CurrencyState>(currencyInitialState, builder => {
   builder.addCase(loadExchangeRates.submit, state => ({
     ...state,
-    exchangeRates: createEntity(state.exchangeRates.data, true)
+    usdToTokenRates: createEntity(state.usdToTokenRates.data, true),
+    fiatToTezosRates: createEntity(state.fiatToTezosRates.data, true)
   }));
   builder.addCase(loadExchangeRates.success, (state, { payload }) => ({
     ...state,
-    exchangeRates: createEntity(payload)
+    usdToTokenRates: createEntity(payload.usdToTokenRates),
+    fiatToTezosRates: createEntity(payload.fiatToTezosRates)
   }));
   builder.addCase(loadExchangeRates.fail, (state, { payload }) => ({
     ...state,
-    exchangeRates: createEntity(state.exchangeRates.data, false, payload)
+    usdToTokenRates: createEntity(state.usdToTokenRates.data, false, payload),
+    fiatToTezosRates: createEntity(state.fiatToTezosRates.data, false, payload)
   }));
 });
