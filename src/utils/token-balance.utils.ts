@@ -20,8 +20,8 @@ const getTokenBalances = (account: string) =>
 
 export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
   from(getTokenBalances(accountPublicKeyHash)).pipe(
-    switchMap(initialResponse => {
-      return of(initialResponse.data);
+    map(initialResponse => {
+      return initialResponse.data;
     })
   );
 
