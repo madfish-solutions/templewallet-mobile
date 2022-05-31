@@ -3,41 +3,25 @@ import { BigNumber } from 'bignumber.js';
 import { forkJoin, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { betterCallDevApi } from '../api.service';
-import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
+import { tzktApi } from '../api.service';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
+import { TzktAccountTokenBalance } from '../interfaces/tzkt.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
-const size = 10;
+const limit = 10000;
 
-const getTokenBalances = (accountPublicKeyHash: string, offset: number) =>
-  betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-    `/account/${CURRENT_NETWORK_ID}/${accountPublicKeyHash}/token_balances`,
-    { params: { size, offset } }
-  );
+const getTokenBalances = (account: string) =>
+  tzktApi.get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
+    params: { limit, account }
+  });
 
 export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
-  from(getTokenBalances(accountPublicKeyHash, 0)).pipe(
-    switchMap(initialResponse => {
-      if (initialResponse.data.total > size) {
-        const numberOfAdditionalRequests = Math.floor(initialResponse.data.total / size);
-
-        return forkJoin(
-          new Array(numberOfAdditionalRequests)
-            .fill(0)
-            .map((_, index) => getTokenBalances(accountPublicKeyHash, (index + 1) * size))
-        ).pipe(
-          map(restResponses => [
-            ...initialResponse.data.balances,
-            ...restResponses.map(restResponse => restResponse.data.balances).flat()
-          ])
-        );
-      } else {
-        return of(initialResponse.data.balances);
-      }
+  from(getTokenBalances(accountPublicKeyHash)).pipe(
+    map(initialResponse => {
+      return initialResponse.data;
     })
   );
 

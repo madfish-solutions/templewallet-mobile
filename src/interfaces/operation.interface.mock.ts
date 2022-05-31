@@ -12,8 +12,9 @@ const mockTarget = {
   alias: 'alias4'
 };
 
-export const mockOperations: OperationInterface[] = [
+export const mockOperations: Array<OperationInterface> = [
   {
+    id: 0,
     type: ActivityTypeEnum.Transaction,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
@@ -35,6 +36,7 @@ export const mockOperations: OperationInterface[] = [
     }
   },
   {
+    id: 1,
     type: ActivityTypeEnum.Delegation,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
@@ -56,6 +58,7 @@ export const mockOperations: OperationInterface[] = [
     }
   },
   {
+    id: 2,
     type: ActivityTypeEnum.Origination,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',

@@ -5,7 +5,7 @@ import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 import { TokenMetadataInterface } from '../interfaces/token-metadata.interface';
 
-export const getTokenSlug = <T extends { address?: string; id?: number }>({ address, id }: T) =>
+export const getTokenSlug = <T extends { address?: string; id?: number | string }>({ address, id }: T) =>
   isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;
 
 export const getUnknownTokensSlugs = (tokens: Record<string, TokenMetadataInterface>) =>

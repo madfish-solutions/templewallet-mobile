@@ -3,6 +3,7 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { MemberInterface } from './member.interface';
 
 export interface OperationInterface {
+  id: number;
   type: ActivityTypeEnum;
   status: ActivityStatusEnum;
   hash: string;

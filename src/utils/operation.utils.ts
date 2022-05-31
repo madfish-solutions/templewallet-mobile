@@ -5,8 +5,8 @@ import { OperationInterface } from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
 import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 
-export const mapOperationsToActivities = (address: string, operations: OperationInterface[]) => {
-  const activities: ActivityInterface[] = [];
+export const mapOperationsToActivities = (address: string, operations: Array<OperationInterface>) => {
+  const activities: Array<ActivityInterface> = [];
 
   for (const operation of operations) {
     const {
@@ -15,7 +15,6 @@ export const mapOperationsToActivities = (address: string, operations: Operation
       hash,
       timestamp,
       parameters,
-      hasInternals,
       contractBalance,
       sender,
       target,
@@ -23,51 +22,47 @@ export const mapOperationsToActivities = (address: string, operations: Operation
       originatedContract
     } = operation;
 
-    if (!(hasInternals === true && address === target.address)) {
-      const source = sender;
-      let destination: MemberInterface = { address: '' };
-      let amount = '0';
-      let entrypoint = '';
+    const source = sender;
+    let destination: MemberInterface = { address: '' };
+    let amount = '0';
+    let entrypoint = '';
 
-      switch (type) {
-        case ActivityTypeEnum.Transaction:
-          if (address !== target.address && address !== source.address) {
-            continue;
-          }
-          destination = target;
-          amount = operation.amount.toString();
-          entrypoint = extractEntrypoint(parameters);
-          break;
-
-        case ActivityTypeEnum.Delegation:
-          if (address !== source.address) {
-            continue;
-          }
-          isDefined(newDelegate) && (destination = newDelegate);
-          break;
-
-        case ActivityTypeEnum.Origination:
-          isDefined(originatedContract) && (destination = originatedContract);
-          isDefined(contractBalance) && (amount = contractBalance.toString());
-          break;
-
-        default:
-          console.log(`Ignoring kind ${type}`);
-
+    switch (type) {
+      case ActivityTypeEnum.Transaction:
+        if (address !== target.address && address !== source.address) {
           continue;
-      }
+        }
+        destination = target;
+        amount = operation.amount.toString();
+        entrypoint = extractEntrypoint(parameters);
+        break;
 
-      activities.push({
-        type,
-        hash,
-        status: stringToActivityStatusEnum(status),
-        source,
-        entrypoint,
-        destination,
-        amount: source.address === address ? `-${amount}` : amount,
-        timestamp: new Date(timestamp).getTime()
-      });
+      case ActivityTypeEnum.Delegation:
+        if (address !== source.address) {
+          continue;
+        }
+        isDefined(newDelegate) && (destination = newDelegate);
+        break;
+
+      case ActivityTypeEnum.Origination:
+        isDefined(originatedContract) && (destination = originatedContract);
+        isDefined(contractBalance) && (amount = contractBalance.toString());
+        break;
+
+      default:
+        continue;
     }
+
+    activities.push({
+      type,
+      hash,
+      status: stringToActivityStatusEnum(status),
+      source,
+      entrypoint,
+      destination,
+      amount: source.address === address ? `-${amount}` : amount,
+      timestamp: new Date(timestamp).getTime()
+    });
   }
 
   return activities;
