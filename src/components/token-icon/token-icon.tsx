@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Image, View } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 
@@ -18,6 +18,7 @@ interface Props {
 
 export const TokenIcon: FC<Props> = ({ token, size = formatSizeScaled(32) }) => {
   const { iconName, thumbnailUri } = token;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
     <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
@@ -27,7 +28,15 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSizeScaled(32) }) => 
         isImgUriSvg(thumbnailUri) ? (
           <SvgCssUri width={size} height={size} uri={thumbnailUri} />
         ) : (
-          <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
+          <>
+            {isLoading && <Icon name={IconNameEnum.NoNameToken} size={size} />}
+            <Image
+              style={[isLoading && TokenIconStyles.hidden]}
+              onLoadStart={() => setIsLoading(true)}
+              onLoadEnd={() => setIsLoading(false)}
+              source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }}
+            />
+          </>
         )
       ) : (
         <Icon name={IconNameEnum.NoNameToken} size={size} />
