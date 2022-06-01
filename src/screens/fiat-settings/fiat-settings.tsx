@@ -19,7 +19,7 @@ export const FiatSettings = () => {
   const radioButtons = useMemo(
     () =>
       FIAT_CURRENCIES.map(currency => ({
-        label: `${currency.symbol} ${currency.name} (${currency.fullname})`,
+        label: `${currency.symbol}  ${currency.name} (${currency.fullname})`,
         value: currency.name
       })),
     []
