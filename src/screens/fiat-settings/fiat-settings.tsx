@@ -9,13 +9,19 @@ import { setFiatCurrency } from '../../store/settings/settings-actions';
 import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { FiatCurrenciesEnum, FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
+import { useFiatSettingsStyles } from './fiat-settings.styles';
 
 export const FiatSettings = () => {
   const dispatch = useDispatch();
   const selectedFiatCurrency = useFiatCurrencySelector();
+  const styles = useFiatSettingsStyles();
 
   const radioButtons = useMemo(
-    () => FIAT_CURRENCIES.map(currency => ({ label: currency.name, value: currency.name })),
+    () =>
+      FIAT_CURRENCIES.map(currency => ({
+        label: `${currency.symbol}  ${currency.name} (${currency.fullname})`,
+        value: currency.name
+      })),
     []
   );
 
@@ -24,7 +30,12 @@ export const FiatSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup value={selectedFiatCurrency} buttons={radioButtons} onChange={handleChange} />
+      <StyledRadioButtonsGroup
+        labelStyle={styles.label}
+        value={selectedFiatCurrency}
+        buttons={radioButtons}
+        onChange={handleChange}
+      />
       <Divider />
     </ScreenContainer>
   );

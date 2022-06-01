@@ -82,6 +82,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
   const { hasExchangeRate, exchangeRate, getExchangeRate } = useExchangeRate(value.asset);
+  const validExchangeRate = useMemo(() => exchangeRate ?? 1, [exchangeRate]);
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -92,14 +93,18 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           return mutezToTz(value.amount, value.asset.decimals);
         } else {
           if (isDefined(inputValueRef.current)) {
-            const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
+            const currentTokenValue = dollarToTokenAmount(
+              inputValueRef.current,
+              value.asset.decimals,
+              validExchangeRate
+            );
 
             if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
               return inputValueRef.current;
             }
           }
 
-          return tokenToDollarAmount(value.amount, value.asset.decimals, exchangeRate);
+          return tokenToDollarAmount(value.amount, value.asset.decimals, validExchangeRate);
         }
       }
 
@@ -109,7 +114,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     inputValueRef.current = newNumericInputValue;
 
     return newNumericInputValue;
-  }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+  }, [value.amount, isTokenInputType, value.asset.decimals, validExchangeRate]);
 
   const onChange = useCallback(
     newInputValue => {
@@ -117,7 +122,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
       onValueChange({
         ...value,
-        amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
+        amount: getDefinedAmount(newInputValue, value.asset.decimals, validExchangeRate, isTokenInputType)
       });
     },
     [value, onValueChange, isTokenInputType]
@@ -142,7 +147,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       amount: getDefinedAmount(
         inputValueRef.current,
         value.asset.decimals,
-        exchangeRate,
+        validExchangeRate,
         tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
       )
     });
@@ -155,7 +160,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const newExchangeRate = getExchangeRate(asset);
 
       onValueChange({
-        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate, isTokenInputType),
+        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),
         asset
       });
     },

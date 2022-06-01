@@ -69,7 +69,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.FiatSettings)}>
-              <WhiteContainerText text="Default Currencies" />
+              <WhiteContainerText text="Default Currency" />
               <View style={styles.shevronContainer}>
                 <Text style={styles.shevronText}>{fiatCurrency}</Text>
                 <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />

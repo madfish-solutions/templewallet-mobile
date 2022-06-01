@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { RadioButtonProps, RadioGroup } from 'react-native-radio-buttons-group';
 
 import { EventFn } from '../../config/general';
@@ -19,9 +19,10 @@ export interface RadioButtonsGroupProps<T extends string> {
 interface Props<T extends string> extends RadioButtonsGroupProps<T> {
   value: T;
   onChange: EventFn<T>;
+  labelStyle?: ViewStyle;
 }
 
-export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange }: Props<T>) => {
+export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange, labelStyle }: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
@@ -30,7 +31,7 @@ export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onCh
       buttons.map(radioButton => ({
         ...radioButton,
         id: radioButton.value,
-        labelStyle: styles.label,
+        labelStyle: [styles.label, labelStyle],
         containerStyle: styles.itemContainer,
         color: colors.orange,
         selected: radioButton.value === value

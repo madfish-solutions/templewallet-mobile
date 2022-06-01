@@ -17,8 +17,8 @@ export const useFiatToTezosRates = () =>
 export const useExchangeRate = <T extends { address?: string; id?: number }>(asset: T) => {
   const exchangeRates = useUsdToTokenRates();
   const quotes = useFiatToTezosRates();
-  const exchangeRate: number = exchangeRates[getTokenSlug(asset)] ?? 1;
-  const exchangeRateTezos: number = exchangeRates[TEZ_TOKEN_SLUG] ?? 1;
+  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(asset)];
+  const exchangeRateTezos: number | undefined = exchangeRates[TEZ_TOKEN_SLUG];
 
   const fiatCurrency = useFiatCurrencySelector();
 
@@ -28,7 +28,10 @@ export const useExchangeRate = <T extends { address?: string; id?: number }>(ass
   const hasExchangeRate = isDefined(exchangeRate);
 
   const getExchangeRate = useCallback(
-    (newAsset: TokenInterface): number => {
+    (newAsset: TokenInterface): number | undefined => {
+      if (!exchangeRate) {
+        return;
+      }
       const newExchangeRate = exchangeRates[getTokenSlug(newAsset)];
       const newFiatToUsdRate = quotes[fiatCurrency.toLowerCase()] / exchangeRateTezos;
       const newTrueExchangeRate = newFiatToUsdRate * newExchangeRate;
@@ -41,6 +44,6 @@ export const useExchangeRate = <T extends { address?: string; id?: number }>(ass
   return {
     getExchangeRate,
     hasExchangeRate,
-    exchangeRate: trueExchangeRate
+    exchangeRate: isNaN(trueExchangeRate) ? undefined : trueExchangeRate
   };
 };
