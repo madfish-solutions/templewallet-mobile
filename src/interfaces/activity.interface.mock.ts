@@ -95,10 +95,12 @@ export const mockTransfers: Array<TzktTokenTransfer> = [mockPendingTransfer, moc
 
 export const mockAppliedActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
   [mockAppliedOperation, mockAppliedDelegationOperation],
+  [],
   [mockAppliedTransfer]
 );
 export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
   [mockPendingOperation],
+  [],
   [mockPendingTransfer]
 );
 
