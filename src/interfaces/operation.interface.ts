@@ -9,6 +9,7 @@ export interface OperationInterface {
   hash: string;
   block: string;
   amount: number;
+  level?: number;
   timestamp: string;
   parameters?: string;
   hasInternals?: boolean;

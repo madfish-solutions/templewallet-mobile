@@ -17,7 +17,7 @@ import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
-import { loadTokenOperations$, loadTokenTransfers$ } from '../../utils/token-operations.util';
+import { loadIncomingTransfers$, loadTokenOperations$, loadTokenTransfers$ } from '../../utils/token-operations.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
@@ -173,9 +173,12 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
     switchMap(([, selectedAccount]) =>
       forkJoin([
         loadTokenOperations$(selectedAccount.publicKeyHash),
+        loadIncomingTransfers$(selectedAccount.publicKeyHash),
         loadTokenTransfers$(selectedAccount.publicKeyHash)
       ]).pipe(
-        map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
+        map(([operations, incomingTransfers, transfers]) =>
+          groupActivitiesByHash(operations, incomingTransfers, transfers)
+        ),
         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
         catchError(err => of(loadActivityGroupsActions.fail(err.message)))
       )

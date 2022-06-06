@@ -9,6 +9,7 @@ import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 
 const limitOperations = 1000;
+const limitIncomingTransactions = 10000;
 const limitTransfers = 10000;
 
 const getTokenOperations = (account: string) =>
@@ -16,11 +17,21 @@ const getTokenOperations = (account: string) =>
     `accounts/${account}/operations?limit=${limitOperations}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
   );
 
+const getIncomingTransaction = (account: string) =>
+  tzktApi.get<Array<OperationInterface>>(
+    `operations/transactions?sender.ne=${account}&target.ne=${account}&limit=${limitIncomingTransactions}&entrypoint=transfer&parameter.to=${account}`
+  );
+
 const getTokenTransfers = (account: string) =>
   tzktApi.get<Array<TzktTokenTransfer>>(`/tokens/transfers?anyof.from.to=${account}&limit=${limitTransfers}`);
 
 export const loadTokenOperations$ = (accountPublicKeyHash: string) =>
   from(getTokenOperations(accountPublicKeyHash)).pipe(
+    map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
+  );
+
+export const loadIncomingTransfers$ = (accountPublicKeyHash: string) =>
+  from(getIncomingTransaction(accountPublicKeyHash)).pipe(
     map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
   );
 
