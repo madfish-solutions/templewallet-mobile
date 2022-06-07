@@ -12,7 +12,6 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TokenIcon } from '../../components/token-icon/token-icon';
-import { emptyFn } from '../../config/general';
 import { useDomainName } from '../../hooks/use-domain-name.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { toggleDomainAddressShown } from '../../store/wallet/wallet-actions';
@@ -43,6 +42,7 @@ export const ReceiveModal: FC = () => {
   return (
     <ScreenContainer contentContainerStyle={styles.rootContainer}>
       <ModalStatusBar />
+      <Divider size={formatSize(16)} />
       <View style={styles.tokenContainer}>
         <TokenIcon token={token} />
         <Divider size={formatSize(8)} />
@@ -85,11 +85,7 @@ export const ReceiveModal: FC = () => {
       <Divider />
 
       <View style={styles.buttonsContainer}>
-        <ButtonMedium title="SHARE" iconName={IconNameEnum.Share} disabled={true} onPress={emptyFn} />
-        <Divider size={formatSize(8)} />
         <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={handleCopyButtonPress} />
-        <Divider size={formatSize(8)} />
-        <ButtonMedium title="AMOUNT" iconName={IconNameEnum.Tag} disabled={true} onPress={emptyFn} />
       </View>
     </ScreenContainer>
   );

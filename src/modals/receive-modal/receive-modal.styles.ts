@@ -46,6 +46,6 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     color: colors.blue
   },
   buttonsContainer: {
-    flexDirection: 'row'
+    width: '100%'
   }
 }));
