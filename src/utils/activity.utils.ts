@@ -5,12 +5,15 @@ import { isDefined } from './is-defined';
 
 export const groupActivitiesByHash = (
   operations: Array<ActivityInterface>,
-  incomingTransfers: Array<ActivityInterface>,
+  fa12Operations: Array<ActivityInterface>,
+  fa2Operations: Array<ActivityInterface>,
   transfers: Array<TzktTokenTransfer>
 ) => {
   const result: ActivityGroup[] = [];
 
-  const allOperations = [...incomingTransfers, ...operations].sort((b, a) => a.level ?? 0 - (b.level ?? 0));
+  const allOperations = [...fa12Operations, ...fa2Operations, ...operations].sort(
+    (b, a) => a.level ?? 0 - (b.level ?? 0)
+  );
 
   const enrichedOperations: Array<ActivityInterface> = allOperations.map(operation => {
     if (operation.type === ActivityTypeEnum.Transaction) {

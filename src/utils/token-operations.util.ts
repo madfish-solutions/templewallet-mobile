@@ -17,9 +17,14 @@ const getTokenOperations = (account: string) =>
     `accounts/${account}/operations?limit=${limitOperations}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
   );
 
-const getIncomingTransaction = (account: string) =>
+const getFa12IncomingOperations = (account: string) =>
   tzktApi.get<Array<OperationInterface>>(
     `operations/transactions?sender.ne=${account}&target.ne=${account}&limit=${limitIncomingTransactions}&entrypoint=transfer&parameter.to=${account}`
+  );
+
+const getFa2IncomingOperations = (account: string) =>
+  tzktApi.get<Array<OperationInterface>>(
+    `operations/transactions?sender.ne=${account}&target.ne=${account}&limit=${limitIncomingTransactions}&entrypoint=transfer&parameter.[*].txs.[*].to_=${account}`
   );
 
 const getTokenTransfers = (account: string) =>
@@ -30,8 +35,13 @@ export const loadTokenOperations$ = (accountPublicKeyHash: string) =>
     map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
   );
 
-export const loadIncomingTransfers$ = (accountPublicKeyHash: string) =>
-  from(getIncomingTransaction(accountPublicKeyHash)).pipe(
+export const loadIncomingFa12Operations$ = (accountPublicKeyHash: string) =>
+  from(getFa12IncomingOperations(accountPublicKeyHash)).pipe(
+    map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
+  );
+
+export const loadIncomingFa2Operations$ = (accountPublicKeyHash: string) =>
+  from(getFa2IncomingOperations(accountPublicKeyHash)).pipe(
     map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
   );
 
