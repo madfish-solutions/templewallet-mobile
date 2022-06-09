@@ -10,15 +10,17 @@ import { formatSize } from '../../../../styles/format-size';
 import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {
-  const { values, setFieldValue } = useFormikContext<SwapFormValues>();
+  const { values, setValues } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
 
   const swapAction = useCallback(
     (inputAsset: AssetAmountInterface, outputAsset: AssetAmountInterface) => {
-      setFieldValue('inputAssets', { asset: outputAsset.asset, amount: undefined });
-      setFieldValue('outputAssets', { asset: inputAsset.asset, amount: undefined });
+      setValues({
+        inputAssets: { asset: outputAsset.asset, amount: undefined },
+        outputAssets: { asset: inputAsset.asset, amount: undefined }
+      });
     },
-    [outputAssets, inputAssets]
+    [inputAssets, outputAssets]
   );
 
   return (

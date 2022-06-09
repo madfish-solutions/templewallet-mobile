@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
-import { useFormikContext } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,11 @@ import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSlippageSelector } from '../../../store/settings/settings-selectors';
-import { useSelectedAccountSelector, useTokensWithTezosListSelector } from '../../../store/wallet/wallet-selectors';
+import {
+  useSelectedAccountSelector,
+  useTezosTokenSelector,
+  useTokensWithTezosListSelector
+} from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/token.interface';
@@ -41,6 +45,7 @@ import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../conf
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
+import { swapFormValidationSchema } from './swap-form.form';
 import { SwapPriceUpdateBar } from './swap-price-update-bar/swap-price-update-bar';
 import { useSwapPriceUpdateInfo } from './swap-price-update-bar/swap-price-update-info.hook';
 import { SwapPriceUpdateText } from './swap-price-update-bar/swap-price-update-text';
@@ -64,8 +69,58 @@ export const SwapForm: FC = () => {
 
   const [bestTrade, setBestTrade] = useState<Trade>([]);
 
-  const { values, setFieldValue, isValid, submitCount, submitForm, touched } = useFormikContext<SwapFormValues>();
+  const handleSubmit = async () => {
+    const inputMutezAmount = inputAssets.amount;
+
+    const inputAssetSlug = getTokenSlug(inputAssets.asset);
+    const outputAssetSlug = getTokenSlug(outputAssets.asset);
+
+    const analyticsProperties = {
+      inputAsset: inputAssetSlug,
+      outputAsset: outputAssetSlug
+    };
+
+    trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
+    const routingFeeOpParams = await getRoutingFeeTransferParams(
+      inputMutezAmount,
+      bestTradeWithSlippageTolerance,
+      selectedAccount.publicKeyHash,
+      tezos
+    );
+    const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
+
+    const opParams: Array<ParamsWithKind> = [...routingFeeOpParams, ...tradeOpParams].map(transferParams => ({
+      ...transferParams,
+      kind: OpKind.TRANSACTION
+    }));
+
+    if (opParams.length === 0) {
+      showErrorToast({ description: 'Transaction params not loaded' });
+    }
+
+    dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
+  };
+
+  const tezosToken = useTezosTokenSelector();
+
+  const formik = useFormik<SwapFormValues>({
+    initialValues: {
+      inputAssets: {
+        asset: tezosToken,
+        amount: undefined
+      },
+      outputAssets: {
+        asset: emptyTezosLikeToken,
+        amount: undefined
+      }
+    },
+    validationSchema: swapFormValidationSchema,
+    onSubmit: handleSubmit
+  });
+
+  const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
   const { inputAssets, outputAssets } = values;
+
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined
     : getTokenSlug(inputAssets.asset);
@@ -147,46 +202,8 @@ export const SwapForm: FC = () => {
     [inputAssetSlug, setFieldValue]
   );
 
-  const handleSubmit = async () => {
-    submitForm();
-
-    if (!isValid || !touched.inputAssets) {
-      return;
-    }
-
-    const inputMutezAmount = inputAssets.amount;
-
-    const inputAssetSlug = getTokenSlug(inputAssets.asset);
-    const outputAssetSlug = getTokenSlug(outputAssets.asset);
-
-    const analyticsProperties = {
-      inputAsset: inputAssetSlug,
-      outputAsset: outputAssetSlug
-    };
-
-    trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
-    const routingFeeOpParams = await getRoutingFeeTransferParams(
-      inputMutezAmount,
-      bestTradeWithSlippageTolerance,
-      selectedAccount.publicKeyHash,
-      tezos
-    );
-    const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
-
-    const opParams: Array<ParamsWithKind> = [...routingFeeOpParams, ...tradeOpParams].map(transferParams => ({
-      ...transferParams,
-      kind: OpKind.TRANSACTION
-    }));
-
-    if (opParams.length === 0) {
-      showErrorToast({ description: 'Transaction params not loaded' });
-    }
-
-    dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
-  };
-
   return (
-    <>
+    <FormikProvider value={formik}>
       <SwapPriceUpdateBar
         nowTimestamp={priceUpdateInfo.nowTimestamp}
         blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
@@ -243,8 +260,8 @@ export const SwapForm: FC = () => {
         <Divider size={formatSize(16)} />
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={handleSubmit} />
+        <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
       </ButtonsFloatingContainer>
-    </>
+    </FormikProvider>
   );
 };
