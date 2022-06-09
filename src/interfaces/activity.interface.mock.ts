@@ -95,14 +95,36 @@ export const mockTransfers: Array<TzktTokenTransfer> = [mockPendingTransfer, moc
 
 export const mockAppliedActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
   [mockAppliedOperation, mockAppliedDelegationOperation],
+  [],
+  [],
   [mockAppliedTransfer]
 );
 export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
   [mockPendingOperation],
+  [],
+  [],
   [mockPendingTransfer]
 );
 
 export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
+  {
+    amount: '1',
+    destination: {
+      address: 'address4',
+      alias: 'alias4'
+    },
+    entrypoint: '',
+    hash: 'hash',
+    id: 0,
+    level: undefined,
+    source: {
+      address: 'address1',
+      alias: 'alias1'
+    },
+    status: ActivityStatusEnum.Applied,
+    timestamp: 1628380800000,
+    type: ActivityTypeEnum.Transaction
+  },
   {
     amount: 'contractBalance',
     destination: {
@@ -115,6 +137,8 @@ export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
       address: 'address1',
       alias: 'alias1'
     },
+    id: 2,
+    level: undefined,
     status: ActivityStatusEnum.Applied,
     timestamp: 1628380800000,
     type: ActivityTypeEnum.Origination
@@ -127,6 +151,8 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
     destination: { address: 'address4', alias: 'alias4' },
     entrypoint: '',
     hash: 'hash',
+    id: 0,
+    level: undefined,
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
     timestamp: 1628380800000,
@@ -137,6 +163,8 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
     destination: { address: 'address7', alias: 'alias7' },
     entrypoint: '',
     hash: 'hash',
+    id: 1,
+    level: undefined,
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
     timestamp: 1628380800000,
@@ -147,6 +175,8 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
     destination: { address: 'address0', alias: 'alias0' },
     entrypoint: '',
     hash: 'hash',
+    id: 2,
+    level: undefined,
     source: { address: 'address1', alias: 'alias1' },
     status: ActivityStatusEnum.Applied,
     timestamp: 1628380800000,

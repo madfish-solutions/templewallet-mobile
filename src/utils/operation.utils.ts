@@ -10,6 +10,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
 
   for (const operation of operations) {
     const {
+      id,
       type,
       status,
       hash,
@@ -18,6 +19,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       contractBalance,
       sender,
       target,
+      level,
       newDelegate,
       originatedContract
     } = operation;
@@ -29,9 +31,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
 
     switch (type) {
       case ActivityTypeEnum.Transaction:
-        if (address !== target.address && address !== source.address) {
-          continue;
-        }
         destination = target;
         amount = operation.amount.toString();
         entrypoint = extractEntrypoint(parameters);
@@ -54,11 +53,13 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
     }
 
     activities.push({
+      id,
       type,
       hash,
       status: stringToActivityStatusEnum(status),
       source,
       entrypoint,
+      level,
       destination,
       amount: source.address === address ? `-${amount}` : amount,
       timestamp: new Date(timestamp).getTime()

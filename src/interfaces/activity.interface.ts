@@ -13,6 +13,7 @@ export interface ActivityInterface {
   entrypoint?: string;
   source: MemberInterface;
   destination: MemberInterface;
+  level?: number;
 }
 
 export type ActivityGroup = ActivityInterface[];

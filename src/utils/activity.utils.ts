@@ -3,10 +3,19 @@ import { ActivityGroup, ActivityInterface, emptyActivity } from '../interfaces/a
 import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
 import { isDefined } from './is-defined';
 
-export const groupActivitiesByHash = (operations: Array<ActivityInterface>, transfers: Array<TzktTokenTransfer>) => {
+export const groupActivitiesByHash = (
+  operations: Array<ActivityInterface>,
+  fa12Operations: Array<ActivityInterface>,
+  fa2Operations: Array<ActivityInterface>,
+  transfers: Array<TzktTokenTransfer>
+) => {
   const result: ActivityGroup[] = [];
 
-  const enrichedOperations: Array<ActivityInterface> = operations.map(operation => {
+  const allOperations = [...fa12Operations, ...fa2Operations, ...operations].sort(
+    (b, a) => a.level ?? 0 - (b.level ?? 0)
+  );
+
+  const enrichedOperations: Array<ActivityInterface> = allOperations.map(operation => {
     if (operation.type === ActivityTypeEnum.Transaction) {
       const foundTransfer = transfers.find(transfer => transfer.transactionId === operation.id);
       if (isDefined(foundTransfer)) {
