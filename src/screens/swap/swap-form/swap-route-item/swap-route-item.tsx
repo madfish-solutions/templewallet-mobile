@@ -32,7 +32,7 @@ export const SwapRouteItem: FC<Props> = ({ tradeOperation, isShowNextArrow = fal
         return IconNameEnum.Vortex;
       case DexTypeEnum.Spicy:
       case DexTypeEnum.SpicyWrap:
-        return IconNameEnum.Vortex;
+        return IconNameEnum.Spicy;
       default:
         return IconNameEnum.SwapTokenPlaceholderIcon;
     }
