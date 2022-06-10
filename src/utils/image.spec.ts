@@ -52,7 +52,7 @@ describe('image utils', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 };
       const assetSlug = `${collectible.address}_${collectible.id}`;
       expect(formatCollectibleObjktMediumUri(assetSlug)).toEqual(
-        `https://assets.objkt.media/file/assets-001/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/464017/thumb288`
+        `https://assets.objkt.media/file/assets-003/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/464017/thumb288`
       );
     });
   });
