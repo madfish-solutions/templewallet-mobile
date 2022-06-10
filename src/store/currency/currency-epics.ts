@@ -13,7 +13,7 @@ export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
     switchMap(() =>
       forkJoin([loadUsdToTokenRates$, loadFiatToTezosRates$]).pipe(
         map(([usdToTokenRates, fiatToTezosRates]) => loadExchangeRates.success({ usdToTokenRates, fiatToTezosRates })),
-        catchError(error => of(loadExchangeRates.fail(error)))
+        catchError(error => of(loadExchangeRates.fail(error.message)))
       )
     )
   );
