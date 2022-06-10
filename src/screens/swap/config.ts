@@ -11,5 +11,7 @@ export const KNOWN_DEX_TYPES = [
   DexTypeEnum.LiquidityBaking,
   DexTypeEnum.QuipuSwapTokenToTokenDex,
   DexTypeEnum.Youves,
-  DexTypeEnum.Vortex
+  DexTypeEnum.Vortex,
+  DexTypeEnum.Spicy,
+  DexTypeEnum.SpicyWrap
 ];
