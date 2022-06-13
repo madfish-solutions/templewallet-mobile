@@ -21,7 +21,7 @@ export const useFilteredActivityGroups = () => {
       for (const activityGroup of activityGroups) {
         for (const activity of activityGroup) {
           const { source, destination } = activity;
-          const { symbol, name, address } = getTokenMetadata(getTokenSlug(activity));
+          const { symbol, name, address, id } = getTokenMetadata(getTokenSlug(activity));
 
           if (
             symbol.toLowerCase().includes(lowerCaseSearchValue) ||
@@ -30,6 +30,11 @@ export const useFilteredActivityGroups = () => {
             source.address.toLowerCase().includes(lowerCaseSearchValue) ||
             destination.address.toLowerCase().includes(lowerCaseSearchValue)
           ) {
+            result.push(activityGroup);
+            break;
+          }
+
+          if (`${address.toLowerCase()}_${id}` === lowerCaseSearchValue) {
             result.push(activityGroup);
             break;
           }

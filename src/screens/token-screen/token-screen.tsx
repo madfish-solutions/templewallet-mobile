@@ -41,7 +41,7 @@ export const TokenScreen = () => {
     dispatch(loadActivityGroupsActions.submit());
   }, []);
 
-  useEffect(() => setSearchValue(token.address), [token]);
+  useEffect(() => setSearchValue(`${token.address}_${token.id}`), [token]);
 
   return (
     <>
