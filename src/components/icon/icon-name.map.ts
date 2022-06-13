@@ -67,6 +67,7 @@ import TelegramIcon from './assets/socials/telegram.svg';
 import TwitterIcon from './assets/socials/twitter.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
+import SpicyIcon from './assets/spicy.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
@@ -124,6 +125,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
+  [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.Youves]: YouvesIcon,
   [IconNameEnum.Vortex]: VortexIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,
