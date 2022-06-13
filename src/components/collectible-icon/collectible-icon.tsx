@@ -43,7 +43,6 @@ const getFirstFallback = (
 export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
   const styles = useCollectibleIconStyles();
   const [isLoaded, setIsLoaded] = useState(false);
-  // const [isLoadingFailed, setIsLoadingFailed] = useState(false);
   const [isLoadingFailed, setIsLoadingFailed] = useState(
     collectibleLoadStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
   );
