@@ -8,6 +8,7 @@ export interface TokenMetadataInterface {
   decimals: number;
   iconName?: IconNameEnum;
   thumbnailUri?: string;
+  displayUri?: string;
   artifactUri?: string;
 }
 
