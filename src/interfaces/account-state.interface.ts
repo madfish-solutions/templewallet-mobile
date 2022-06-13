@@ -1,3 +1,4 @@
+import { VisibilityEnum } from '../enums/visibility.enum';
 import { createEntity } from '../store/create-entity';
 import { LoadableEntityState } from '../store/types';
 import { HIDDEN_WHITELIST_TOKENS, MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
@@ -18,8 +19,16 @@ export const initialAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: createEntity('0'),
   tokensList: [
-    ...MAINNET_TOKENS_METADATA.map(token => ({ slug: getTokenSlug(token), balance: '0', isVisible: true })),
-    ...HIDDEN_WHITELIST_TOKENS.map(token => ({ slug: getTokenSlug(token), balance: '0', isVisible: false }))
+    ...MAINNET_TOKENS_METADATA.map(token => ({
+      slug: getTokenSlug(token),
+      balance: '0',
+      visibility: VisibilityEnum.Visible
+    })),
+    ...HIDDEN_WHITELIST_TOKENS.map(token => ({
+      slug: getTokenSlug(token),
+      balance: '0',
+      visibility: VisibilityEnum.Initial
+    }))
   ],
   removedTokensList: [],
   activityGroups: createEntity([]),

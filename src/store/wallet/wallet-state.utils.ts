@@ -1,10 +1,9 @@
+import { VisibilityEnum } from '../../enums/visibility.enum';
 import {
   initialWalletAccountState,
   WalletAccountStateInterface
 } from '../../interfaces/wallet-account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
-import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { isDefined } from '../../utils/is-defined';
 import { WalletState } from './wallet-state';
 
@@ -34,23 +33,6 @@ export const updateAccountState = (
   )
 });
 
-export const tokenBalanceMetadata = ({
-  token_id,
-  contract,
-  name,
-  symbol,
-  decimals,
-  thumbnail_uri
-}: TokenBalanceInterface): TokenMetadataInterface => ({
-  ...emptyTokenMetadata,
-  id: token_id,
-  address: contract,
-  thumbnailUri: thumbnail_uri,
-  ...(isDefined(name) && { name }),
-  ...(isDefined(symbol) && { symbol }),
-  ...(isDefined(decimals) && { decimals })
-});
-
 export const pushOrUpdateTokensBalances = (
   initialTokensList: AccountTokenInterface[],
   balances: Record<string, string>
@@ -69,7 +51,9 @@ export const pushOrUpdateTokensBalances = (
     }
   }
 
-  result.push(...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, isVisible: true })));
+  result.push(
+    ...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, visibility: VisibilityEnum.Visible }))
+  );
 
   return result;
 };
@@ -79,7 +63,10 @@ export const toggleTokenVisibility = (tokensList: AccountTokenInterface[], slug:
 
   for (const token of tokensList) {
     if (token.slug === slug) {
-      result.push({ ...token, isVisible: !token.isVisible });
+      result.push({
+        ...token,
+        visibility: token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hided : VisibilityEnum.Visible
+      });
     } else {
       result.push(token);
     }

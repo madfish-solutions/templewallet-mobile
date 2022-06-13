@@ -6,6 +6,7 @@ import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { isIOS } from '../config/system';
+import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
@@ -48,6 +49,8 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
+
+  useStorageMigration();
 
   useAppStateStatus({
     onAppInactiveState: show,

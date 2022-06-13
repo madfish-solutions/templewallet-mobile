@@ -1,8 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { VisibilityEnum } from '../../enums/visibility.enum';
 import { initialAccountState } from '../../interfaces/account-state.interface';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
@@ -14,6 +16,7 @@ import {
   loadTokenBalancesActions,
   loadTokenMetadataActions,
   loadTokenSuggestionActions,
+  migrateAssetsVisibility,
   removeTokenAction,
   setIsDomainAddressShown,
   setSelectedAccountAction,
@@ -31,6 +34,25 @@ import {
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
+  builder.addCase(migrateAssetsVisibility, state => ({
+    ...state,
+    accounts: state.accounts.map(account => ({
+      ...account,
+      tokensList: account.tokensList.map(asset => {
+        if (isDefined(asset.isVisible)) {
+          const assetCopy = {
+            ...asset,
+            visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.Initial
+          };
+          delete assetCopy.isVisible;
+
+          return assetCopy;
+        }
+
+        return asset;
+      })
+    }))
+  }));
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
