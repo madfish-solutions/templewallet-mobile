@@ -42,7 +42,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         if (isDefined(asset.isVisible)) {
           const assetCopy = {
             ...asset,
-            visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.Initial
+            visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden
           };
           delete assetCopy.isVisible;
 

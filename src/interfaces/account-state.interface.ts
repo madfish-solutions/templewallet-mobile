@@ -27,7 +27,7 @@ export const initialAccountState: AccountStateInterface = {
     ...HIDDEN_WHITELIST_TOKENS.map(token => ({
       slug: getTokenSlug(token),
       balance: '0',
-      visibility: VisibilityEnum.Initial
+      visibility: VisibilityEnum.InitiallyHidden
     }))
   ],
   removedTokensList: [],

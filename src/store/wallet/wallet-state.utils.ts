@@ -65,7 +65,7 @@ export const toggleTokenVisibility = (tokensList: AccountTokenInterface[], slug:
     if (token.slug === slug) {
       result.push({
         ...token,
-        visibility: token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hided : VisibilityEnum.Visible
+        visibility: token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hidden : VisibilityEnum.Visible
       });
     } else {
       result.push(token);

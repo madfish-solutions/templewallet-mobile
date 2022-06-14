@@ -1,5 +1,5 @@
 export enum VisibilityEnum {
-  Initial = 'initial',
+  InitiallyHidden = 'InitiallyHidden',
   Visible = 'visible',
-  Hided = 'hided'
+  Hidden = 'hidden'
 }

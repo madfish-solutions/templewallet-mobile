@@ -75,7 +75,7 @@ export const useAssetsListSelector = (): TokenInterface[] => {
       selectedAccount.tokensList
         .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
         .map(({ slug, balance, visibility }) => {
-          if (visibility === VisibilityEnum.Initial && Number(balance) > 0) {
+          if (visibility === VisibilityEnum.InitiallyHidden && Number(balance) > 0) {
             return {
               balance,
               visibility: VisibilityEnum.Visible,
