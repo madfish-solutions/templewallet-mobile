@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
+import { VisibilityEnum } from '../../enums/visibility.enum';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
@@ -73,11 +74,21 @@ export const useAssetsListSelector = (): TokenInterface[] => {
     () =>
       selectedAccount.tokensList
         .filter(item => selectedAccount.removedTokensList.indexOf(item.slug) === -1)
-        .map(({ slug, balance, isVisible }) => ({
-          balance,
-          isVisible,
-          ...getTokenMetadata(slug)
-        })),
+        .map(({ slug, balance, visibility }) => {
+          if (visibility === VisibilityEnum.InitiallyHidden && Number(balance) > 0) {
+            return {
+              balance,
+              visibility: VisibilityEnum.Visible,
+              ...getTokenMetadata(slug)
+            };
+          }
+
+          return {
+            balance,
+            visibility,
+            ...getTokenMetadata(slug)
+          };
+        }),
     [selectedAccount.tokensList, getTokenMetadata, selectedAccount.removedTokensList]
   );
 };
@@ -85,7 +96,7 @@ export const useAssetsListSelector = (): TokenInterface[] => {
 export const useVisibleAssetListSelector = () => {
   const tokensList = useAssetsListSelector();
 
-  return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
+  return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
 };
 
 export const useQuipuApySelector = () =>
@@ -110,7 +121,7 @@ export const useTokensWithTezosListSelector = () => {
 export const useVisibleTokensListSelector = () => {
   const tokensList = useTokensListSelector();
 
-  return useMemo(() => tokensList.filter(({ isVisible }) => isVisible), [tokensList]);
+  return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
 };
 
 export const useCollectiblesListSelector = () => {
@@ -122,7 +133,10 @@ export const useCollectiblesListSelector = () => {
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();
 
-  return useMemo(() => collectiblesList.filter(({ isVisible }) => isVisible), [collectiblesList]);
+  return useMemo(
+    () => collectiblesList.filter(({ visibility }) => visibility === VisibilityEnum.Visible),
+    [collectiblesList]
+  );
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {

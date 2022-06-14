@@ -6,6 +6,7 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Divider } from '../../../components/divider/divider';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { QUIPU_SLUG } from '../../../config/tokens';
+import { VisibilityEnum } from '../../../enums/visibility.enum';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
@@ -66,7 +67,7 @@ export const TokenList: FC = () => {
 
             {sortedAssetsList.map(
               token =>
-                token.isVisible &&
+                token.visibility === VisibilityEnum.Visible &&
                 (getTokenSlug(token) === QUIPU_SLUG ? (
                   <QuipuToken key={getTokenSlug(token)} token={token} />
                 ) : (

@@ -7,6 +7,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { Switch } from '../../../components/switch/switch';
 import { TokenContainer } from '../../../components/token-container/token-container';
+import { VisibilityEnum } from '../../../enums/visibility.enum';
 import { removeTokenAction, toggleTokenVisibilityAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
@@ -37,7 +38,10 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
     <TokenContainer token={asset}>
       <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={handleTrashIconPress} />
       <Divider size={formatSize(16)} />
-      <Switch value={asset.isVisible} onChange={() => dispatch(toggleTokenVisibilityAction(slug))} />
+      <Switch
+        value={asset.visibility === VisibilityEnum.Visible}
+        onChange={() => dispatch(toggleTokenVisibilityAction(slug))}
+      />
     </TokenContainer>
   );
 };
