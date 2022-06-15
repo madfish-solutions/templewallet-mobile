@@ -14,14 +14,31 @@ interface LoadStrategy {
 }
 
 const collectibleLoadStrategy: Array<LoadStrategy> = [
-  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' },
-  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' },
+  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
+  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
   { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
   { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
   { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
 ];
 
-type ImageRequestObject = { assetSlug: string; displayUri?: string; artifactUri?: string; thumbnailUri?: string };
+interface MetadataFormats {
+  dimensions: {
+    unit: string;
+    value: string;
+  };
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  uri: string;
+}
+
+type ImageRequestObject = {
+  assetSlug: string;
+  displayUri?: string;
+  artifactUri?: string;
+  thumbnailUri?: string;
+  formats?: Array<MetadataFormats>;
+};
 
 const getFirstFallback = (
   strategy: Array<LoadStrategy>,
@@ -32,7 +49,11 @@ const getFirstFallback = (
     const isArtifactUri = isDefined(metadata.artifactUri) && strategyItem.field === 'artifactUri';
     const isDisplayUri = isDefined(metadata.displayUri) && strategyItem.field === 'displayUri';
     const isThumbnailUri = isDefined(metadata.thumbnailUri) && strategyItem.field === 'thumbnailUri';
-    if ((isArtifactUri || isDisplayUri || isThumbnailUri) && !currentState[strategyItem.type]) {
+    const isObjktMed =
+      isDefined(metadata.formats) &&
+      metadata.formats.some(x => x.mimeType === 'image/gif') &&
+      strategyItem.type === 'objktMed';
+    if ((isArtifactUri || isDisplayUri || isThumbnailUri || isObjktMed) && !currentState[strategyItem.type]) {
       return strategyItem;
     }
   }
