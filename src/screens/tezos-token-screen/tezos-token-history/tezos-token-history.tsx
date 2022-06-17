@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { ActivityGroupsList } from '../../../components/activity-groups-list/activity-groups-list';
 import { ActivityGroup } from '../../../interfaces/activity.interface';
@@ -8,9 +8,7 @@ import { isDefined } from '../../../utils/is-defined';
 export const TezosTokenHistory = () => {
   const activityGroups = useActivityGroupsSelector();
 
-  const [filteredActivityGroups, setFilteredActivityGroupsList] = useState<ActivityGroup[]>([]);
-
-  useEffect(() => {
+  const filteredActivityGroups = useMemo(() => {
     const result: ActivityGroup[] = [];
 
     for (const activityGroup of activityGroups) {
@@ -22,12 +20,8 @@ export const TezosTokenHistory = () => {
       }
     }
 
-    setFilteredActivityGroupsList(result);
+    return result;
   }, [activityGroups]);
 
-  return (
-    <>
-      <ActivityGroupsList activityGroups={filteredActivityGroups} />
-    </>
-  );
+  return <ActivityGroupsList activityGroups={filteredActivityGroups} />;
 };
