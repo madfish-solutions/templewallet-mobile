@@ -64,7 +64,10 @@ export const useActivityGroupsSelector = () =>
   );
 
 export const useTokensMetadataSelector = () =>
-  useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
+  useSelector<WalletRootState, WalletState['tokensMetadata']>(
+    ({ wallet }) => wallet.tokensMetadata,
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  );
 
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccount = useSelectedAccountSelector();
