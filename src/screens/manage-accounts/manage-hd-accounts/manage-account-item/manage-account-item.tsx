@@ -33,7 +33,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const { navigate } = useNavigation();
   const styles = useManageAccountItemStyles();
 
-  const tezosToken = getTezosToken(account.tezosBalance.data);
+  const tezosToken = getTezosToken(account.tezosBalance);
   const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 
   return (

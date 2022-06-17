@@ -21,6 +21,7 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
+  const tezosToken = getTezosToken(account.tezosBalance);
 
   return (
     <View style={styles.root}>
@@ -30,10 +31,7 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
           <WalletAddress disabled={true} publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText
-                asset={getTezosToken(account?.tezosBalance.data)}
-                amount={getTezosToken(account?.tezosBalance.data).balance}
-              />
+              <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
             </HideBalance>
           )}
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}

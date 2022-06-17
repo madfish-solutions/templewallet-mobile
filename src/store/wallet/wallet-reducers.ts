@@ -76,18 +76,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosBalanceActions.submit, state =>
-    updateCurrentAccountState(state, currentAccount => ({
-      tezosBalance: createEntity(currentAccount.tezosBalance.data, true)
-    }))
-  );
-  builder.addCase(loadTezosBalanceActions.success, (state, { payload: balance }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(balance, false) }))
-  );
-  builder.addCase(loadTezosBalanceActions.fail, (state, { payload: error }) =>
-    updateCurrentAccountState(state, account => ({
-      tezosBalance: createEntity(account.tezosBalance.data, false, error)
-    }))
+  builder.addCase(loadTezosBalanceActions.success, (state, { payload: tezosBalance }) =>
+    updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesRecord, metadataList } }) => {

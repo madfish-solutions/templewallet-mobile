@@ -140,9 +140,9 @@ export const useVisibleCollectiblesListSelector = () => {
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {
-  const balance = useSelectedAccountSelector().tezosBalance.data;
+  const tezosBalance = useSelectedAccountSelector().tezosBalance;
 
-  return useMemo(() => getTezosToken(balance), [balance]);
+  return useMemo(() => getTezosToken(tezosBalance), [tezosBalance]);
 };
 
 export const useAddTokenSuggestionSelector = () =>
