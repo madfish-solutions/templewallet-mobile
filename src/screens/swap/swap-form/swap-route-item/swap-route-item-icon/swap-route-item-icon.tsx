@@ -16,7 +16,9 @@ const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug }) => {
 
   const tokenMetadata = getTokenMetadata(tokenSlug);
 
-  return <TokenIcon token={tokenMetadata} size={formatSize(24)} />;
+  return (
+    <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={formatSize(24)} />
+  );
 };
 
 interface SwapRouteItemIconProps {

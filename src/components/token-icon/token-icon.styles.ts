@@ -2,9 +2,15 @@ import { StyleSheet } from 'react-native';
 
 export const TokenIconStyles = StyleSheet.create({
   container: {
-    overflow: 'hidden'
+    overflow: 'hidden',
+    position: 'relative'
   },
-  hidden: {
-    display: 'none'
+  hiddenImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 1,
+    height: 1,
+    opacity: 0
   }
 });

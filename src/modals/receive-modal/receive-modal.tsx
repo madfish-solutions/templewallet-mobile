@@ -44,7 +44,7 @@ export const ReceiveModal: FC = () => {
       <ModalStatusBar />
       <Divider size={formatSize(16)} />
       <View style={styles.tokenContainer}>
-        <TokenIcon token={token} />
+        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
         <Divider size={formatSize(8)} />
         <View style={styles.tokenInfoContainer}>
           <Text style={styles.tokenSymbol}>{symbol}</Text>

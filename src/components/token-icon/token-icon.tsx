@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react';
-import { Image, View } from 'react-native';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { Image, ImageSourcePropType, View } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 
 import { formatSizeScaled } from '../../styles/format-size';
@@ -11,14 +11,23 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
 
-interface Props {
-  token: TokenMetadataInterface;
+interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
   size?: number;
 }
 
-export const TokenIcon: FC<Props> = ({ token, size = formatSizeScaled(32) }) => {
-  const { iconName, thumbnailUri } = token;
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSizeScaled(32) }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFailed, setIsFailed] = useState(false);
+
+  const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
+  const style = useMemo(() => [isShowPlaceholder && TokenIconStyles.hiddenImage], [isShowPlaceholder]);
+  const source = useMemo<ImageSourcePropType>(
+    () => (isString(thumbnailUri) ? { uri: formatImgUri(thumbnailUri), width: size, height: size } : {}),
+    [thumbnailUri, size]
+  );
+
+  const handleError = useCallback(() => setIsFailed(true), []);
+  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
   return (
     <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
@@ -29,13 +38,8 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSizeScaled(32) }) => 
           <SvgCssUri width={size} height={size} uri={thumbnailUri} />
         ) : (
           <>
-            {isLoading && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-            <Image
-              style={[isLoading && TokenIconStyles.hidden]}
-              onLoadStart={() => setIsLoading(true)}
-              onLoadEnd={() => setIsLoading(false)}
-              source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }}
-            />
+            {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
+            <Image style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
           </>
         )
       ) : (
