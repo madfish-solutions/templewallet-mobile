@@ -45,10 +45,6 @@ export const TokenList: FC = () => {
     () => filterTezos(tezosToken.balance, isHideZeroBalance, searchValue),
     [tezosToken.balance, isHideZeroBalance, searchValue]
   );
-  const isShowPlaceholder = useMemo(
-    () => !isShowTezos && sortedAssetsList.length === 0,
-    [isShowTezos, sortedAssetsList.length]
-  );
 
   const flatListData = useMemo<FlatListItem[]>(
     () => [...((isShowTezos ? [TEZ_TOKEN_SLUG] : []) as Array<typeof TEZ_TOKEN_SLUG>), ...sortedAssetsList],
@@ -90,11 +86,12 @@ export const TokenList: FC = () => {
       </View>
 
       <View style={styles.contentContainerStyle} testID={TokenListSelectors.TokenList}>
-        {isShowPlaceholder ? (
-          <DataPlaceholder text="No records found." />
-        ) : (
-          <FlatList data={flatListData} renderItem={renderFlatListItem} keyExtractor={keyExtractor} />
-        )}
+        <FlatList
+          data={flatListData}
+          renderItem={renderFlatListItem}
+          keyExtractor={keyExtractor}
+          ListEmptyComponent={<DataPlaceholder text="No records found." />}
+        />
       </View>
     </>
   );
