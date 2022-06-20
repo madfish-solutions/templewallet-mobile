@@ -8,7 +8,7 @@ import { ActivityGroup } from './activity.interface';
 
 export interface AccountStateInterface {
   isVisible: boolean;
-  tezosBalance: LoadableEntityState<string>;
+  tezosBalance: string;
   tokensList: AccountTokenInterface[];
   removedTokensList: string[];
   activityGroups: LoadableEntityState<ActivityGroup[]>;
@@ -17,7 +17,7 @@ export interface AccountStateInterface {
 
 export const initialAccountState: AccountStateInterface = {
   isVisible: true,
-  tezosBalance: createEntity('0'),
+  tezosBalance: '0',
   tokensList: [
     ...MAINNET_TOKENS_METADATA.map(token => ({
       slug: getTokenSlug(token),
@@ -37,7 +37,7 @@ export const initialAccountState: AccountStateInterface = {
 
 export const emptyAccountState: AccountStateInterface = {
   isVisible: true,
-  tezosBalance: createEntity('0'),
+  tezosBalance: '0',
   tokensList: [],
   removedTokensList: [],
   activityGroups: createEntity([]),

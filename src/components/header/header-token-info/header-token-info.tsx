@@ -14,14 +14,13 @@ interface Props {
 export const HeaderTokenInfo: FC<Props> = ({ token }) => {
   const styles = useHeaderTokenInfoStyles();
 
-  const { name, symbol } = token;
-  const subtitle = isString(name) ? name : symbol;
+  const subtitle = isString(token.name) ? token.name : token.symbol;
 
   return (
     <View style={styles.container}>
-      <TokenIcon token={token} />
+      <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
       <View style={styles.textContainer}>
-        <Text {...getTruncatedProps(styles.title)}>{symbol}</Text>
+        <Text {...getTruncatedProps(styles.title)}>{token.symbol}</Text>
         <Text {...getTruncatedProps(styles.subtitle)}>{subtitle}</Text>
       </View>
     </View>

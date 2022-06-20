@@ -64,7 +64,10 @@ export const useActivityGroupsSelector = () =>
   );
 
 export const useTokensMetadataSelector = () =>
-  useSelector<WalletRootState, WalletState['tokensMetadata']>(({ wallet }) => wallet.tokensMetadata);
+  useSelector<WalletRootState, WalletState['tokensMetadata']>(
+    ({ wallet }) => wallet.tokensMetadata,
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  );
 
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccount = useSelectedAccountSelector();
@@ -140,9 +143,9 @@ export const useVisibleCollectiblesListSelector = () => {
 };
 
 export const useTezosTokenSelector = (): TokenInterface => {
-  const balance = useSelectedAccountSelector().tezosBalance.data;
+  const tezosBalance = useSelectedAccountSelector().tezosBalance;
 
-  return useMemo(() => getTezosToken(balance), [balance]);
+  return useMemo(() => getTezosToken(tezosBalance), [tezosBalance]);
 };
 
 export const useAddTokenSuggestionSelector = () =>

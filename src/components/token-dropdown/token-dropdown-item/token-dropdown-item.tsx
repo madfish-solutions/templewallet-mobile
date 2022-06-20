@@ -31,12 +31,10 @@ export const TokenDropdownItem: FC<Props> = ({
 }) => {
   const styles = useTokenDropdownItemStyles();
 
-  const { symbol, name } = token;
-
   if (tokenEqualityFn(token, emptyToken)) {
     return (
       <View style={styles.container}>
-        <TokenIcon token={token} size={iconSize} />
+        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconSize} />
         <Divider size={formatSize(8)} />
 
         <View style={styles.infoContainer}>
@@ -57,12 +55,12 @@ export const TokenDropdownItem: FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <TokenIcon token={token} size={iconSize} />
+      <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconSize} />
       <Divider size={formatSize(8)} />
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <Text {...getTruncatedProps(styles.symbol)}>{symbol}</Text>
+          <Text {...getTruncatedProps(styles.symbol)}>{token.symbol}</Text>
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (
@@ -75,7 +73,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          <Text {...getTruncatedProps(styles.name)}>{name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>
 
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />

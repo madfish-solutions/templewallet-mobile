@@ -5,7 +5,7 @@ import { mockAppliedActivityGroups, mockPendingActivityGroups } from './activity
 
 export const mockAccountState: AccountStateInterface = {
   isVisible: true,
-  tezosBalance: createEntity('100'),
+  tezosBalance: '100',
   tokensList: mockAccountTokens,
   removedTokensList: [],
   activityGroups: createEntity(mockAppliedActivityGroups),

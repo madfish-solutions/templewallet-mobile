@@ -23,24 +23,21 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   actionIconName
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const { publicKeyHash, name } = account;
+  const tezosToken = getTezosToken(account.tezosBalance);
 
   return (
     <View style={styles.root}>
-      <RobotIcon seed={publicKeyHash} />
+      <RobotIcon seed={account.publicKeyHash} />
       <View style={styles.infoContainer}>
         <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <Text {...getTruncatedProps(styles.name)}>{name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <WalletAddress publicKeyHash={publicKeyHash} />
+          <WalletAddress publicKeyHash={account.publicKeyHash} />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText
-                asset={getTezosToken(account?.tezosBalance.data)}
-                amount={getTezosToken(account?.tezosBalance.data).balance}
-              />
+              <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
             </HideBalance>
           )}
         </View>
