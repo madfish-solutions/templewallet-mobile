@@ -24,7 +24,7 @@ export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loading
   if (loadingHasFailed) {
     showErrorToast({ description: errorMessage });
 
-    return <SwapRouteInfo text={errorMessage} />;
+    return <SwapRouteInfo text={`Exchange rate data loading has failed. \n${errorMessage}`} />;
   }
 
   if (
