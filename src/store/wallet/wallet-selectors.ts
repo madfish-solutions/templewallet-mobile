@@ -11,7 +11,7 @@ import { isDefined } from '../../utils/is-defined';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { getWalletAccountState, walletAccountStateToWalletAccount } from '../../utils/wallet-account-state.utils';
 import { getTezosToken } from '../../utils/wallet.utils';
-import { WalletRootState, WalletState } from './wallet-state';
+import { WalletRootState } from './wallet-state';
 
 export const useAccountsListSelector = () =>
   useSelector<WalletRootState, WalletAccountInterface[]>(
@@ -60,12 +60,6 @@ export const useActivityGroupsSelector = () =>
 
       return [...walletAccountState.pendingActivities, ...walletAccountState.activityGroups.data];
     },
-    (left, right) => JSON.stringify(left) === JSON.stringify(right)
-  );
-
-export const useTokensMetadataSelector = () =>
-  useSelector<WalletRootState, WalletState['tokensMetadata']>(
-    ({ wallet }) => wallet.tokensMetadata,
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
 
@@ -144,6 +138,3 @@ export const useTezosTokenSelector = (): TokenInterface => {
 
   return useMemo(() => getTezosToken(tezosBalance), [tezosBalance]);
 };
-
-export const useAddTokenSuggestionSelector = () =>
-  useSelector<WalletRootState, WalletState['addTokenSuggestion']>(({ wallet }) => wallet.addTokenSuggestion);

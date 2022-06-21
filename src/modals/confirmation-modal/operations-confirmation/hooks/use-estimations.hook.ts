@@ -1,10 +1,10 @@
+import { ParamsWithKind } from '@taquito/taquito';
 import { useEffect, useState } from 'react';
 import { from, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-toolkit.hook';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
-import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
 

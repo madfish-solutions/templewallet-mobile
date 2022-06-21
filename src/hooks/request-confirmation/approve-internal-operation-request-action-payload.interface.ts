@@ -1,4 +1,5 @@
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
+import { ParamsWithKind } from '@taquito/taquito';
+
 import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 
 export interface ApproveInternalOperationRequestActionPayloadInterface {

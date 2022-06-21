@@ -14,8 +14,9 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { addTokenMetadataAction } from '../../../store/wallet/wallet-actions';
-import { useAddTokenSuggestionSelector } from '../../../store/wallet/wallet-selectors';
+import { addTokensMetadataAction } from '../../../store/token/tokens-metadata-actions';
+import { useAddTokenSuggestionSelector } from '../../../store/token/tokens-metadata-selectors';
+import { addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
@@ -34,8 +35,11 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
   };
 
   const onSubmit = (data: AddTokenInfoFormValues) => {
-    const tokenMetadata = { ...initialValues, ...data };
-    dispatch(addTokenMetadataAction({ ...tokenMetadata, decimals: tokenMetadata.decimals.toNumber() }));
+    const tokenMetadata = { ...initialValues, ...data, decimals: data.decimals.toNumber() };
+
+    dispatch(addTokenAction(tokenMetadata));
+    dispatch(addTokensMetadataAction([tokenMetadata]));
+
     showSuccessToast({ description: 'Token successfully added' });
     onFormSubmitted();
   };

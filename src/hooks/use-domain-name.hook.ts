@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { EMPTY_PUBLIC_KEY_HASH } from '../config/system';
+import { setIsDomainAddressShown } from '../store/settings/settings-actions';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { tezosDomainsResolver } from '../utils/dns.utils';
 import { isDefined } from '../utils/is-defined';
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
-import { setIsDomainAddressShown } from '../store/settings/settings-actions';
 
 // minimal memoization implementation
 

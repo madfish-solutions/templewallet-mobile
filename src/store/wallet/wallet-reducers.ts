@@ -2,19 +2,16 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { initialAccountState } from '../../interfaces/account-state.interface';
-import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
 import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
   addPendingOperation,
-  addTokenMetadataAction,
+  addTokenAction,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
-  loadTokenMetadataActions,
-  loadTokenSuggestionActions,
   migrateAssetsVisibility,
   removeTokenAction,
   setSelectedAccountAction,
@@ -69,57 +66,20 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesRecord, metadataList } }) => {
-    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata) => {
-      const slug = getTokenSlug(tokenMetadata);
-
-      return {
-        ...prevState,
-        [slug]: {
-          ...prevState[slug],
-          ...tokenMetadata
-        }
-      };
-    }, state.tokensMetadata);
-
-    return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
+  builder.addCase(loadTokenBalancesActions.success, (state, { payload: balancesRecord }) =>
+    updateCurrentAccountState(state, currentAccount => ({
       tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
-    }));
-  });
+    }))
+  );
 
-  builder.addCase(loadTokenSuggestionActions.submit, state => ({
-    ...state,
-    addTokenSuggestion: createEntity(emptyTokenMetadata, true)
-  }));
-  builder.addCase(loadTokenSuggestionActions.success, (state, { payload: tokenMetadata }) => ({
-    ...state,
-    addTokenSuggestion: createEntity(tokenMetadata, false)
-  }));
-  builder.addCase(loadTokenSuggestionActions.fail, (state, { payload: error }) => ({
-    ...state,
-    addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
-  }));
-
-  builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
-    ...state,
-    tokensMetadata: {
-      ...state.tokensMetadata,
-      [getTokenSlug(tokenMetadata)]: tokenMetadata
-    }
-  }));
-
-  builder.addCase(addTokenMetadataAction, (state, { payload: tokenMetadata }) => {
+  builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);
 
     return {
       ...updateCurrentAccountState(state, currentAccount => ({
         tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
         removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-      })),
-      tokensMetadata: {
-        ...state.tokensMetadata,
-        [slug]: tokenMetadata
-      }
+      }))
     };
   });
   builder.addCase(removeTokenAction, (state, { payload: slug }) =>

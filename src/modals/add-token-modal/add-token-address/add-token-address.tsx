@@ -14,7 +14,7 @@ import { EmptyFn } from '../../../config/general';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
-import { loadTokenSuggestionActions } from '../../../store/wallet/wallet-actions';
+import { loadTokenSuggestionActions } from '../../../store/token/tokens-metadata-actions';
 import { useAssetsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';

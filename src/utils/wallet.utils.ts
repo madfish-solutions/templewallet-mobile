@@ -1,22 +1,14 @@
+import { ParamsWithKind } from '@taquito/taquito';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { Shelter } from '../shelter/shelter';
 import { SettingsRootState } from '../store/settings/settings-state';
 import { WalletRootState } from '../store/wallet/wallet-state';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
-
-export const withTokenList =
-  <T>(state$: Observable<WalletRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (_, { wallet }): Record<string, TokenMetadataInterface> => wallet.tokensMetadata)
-    );
 
 export const withSelectedAccount =
   <T>(state$: Observable<WalletRootState>) =>

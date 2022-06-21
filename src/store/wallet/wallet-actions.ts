@@ -12,25 +12,10 @@ export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_
 export const updateWalletAccountAction = createAction<WalletAccountInterface>('wallet/UPDATE_WALLET_ACCOUNT');
 
 // TODO: extract AssetsState
-export const loadTokenBalancesActions = createActions<
-  void,
-  { balancesRecord: Record<string, string>; metadataList: TokenMetadataInterface[] },
-  string
->('assets/LOAD_TOKENS');
+export const loadTokenBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
-export const loadTokenSuggestionActions = createActions<
-  Pick<TokenMetadataInterface, 'id' | 'address'>,
-  TokenMetadataInterface,
-  string
->('assets/LOAD_TOKEN_SUGGESTION');
-export const loadTokenMetadataActions = createActions<
-  Pick<TokenMetadataInterface, 'id' | 'address'>,
-  TokenMetadataInterface,
-  string
->('assets/LOAD_TOKEN_METADATA');
-
-export const addTokenMetadataAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN_METADATA');
+export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
 

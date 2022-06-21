@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
@@ -8,14 +8,13 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import {
   loadIncomingFa12Operations$,
   loadIncomingFa2Operations$,
@@ -27,13 +26,12 @@ import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.util
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
+import { addTokensMetadataAction } from '../token/tokens-metadata-actions';
 import {
-  addTokenMetadataAction,
+  addTokenAction,
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
-  loadTokenMetadataActions,
-  loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -68,7 +66,10 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
             loadTokensMetadata$(assetSlugs)
           ]);
         }),
-        map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
+        concatMap(([balancesRecord, metadataList]) => [
+          loadTokenBalancesActions.success(balancesRecord),
+          addTokensMetadataAction(metadataList)
+        ]),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -83,33 +84,6 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
       loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
         map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenSuggestionActions.submit),
-    toPayload(),
-    switchMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        concatMap(tokenMetadata => [
-          loadTokenSuggestionActions.success(tokenMetadata),
-          loadTokenMetadataActions.success(tokenMetadata)
-        ]),
-        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenMetadataActions.submit),
-    toPayload(),
-    concatMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )
     )
   );
@@ -179,13 +153,11 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
   );
 
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addTokenMetadataAction), concatMap(updateDataActions));
+  action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
   loadTokenBalancesEpic,
-  loadTokenSuggestionEpic,
-  loadTokenMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,
