@@ -4,7 +4,6 @@ import { VisibilityEnum } from '../../enums/visibility.enum';
 import { initialAccountState } from '../../interfaces/account-state.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
-import { createEntity } from '../create-entity';
 import {
   addHdAccountAction,
   addPendingOperation,
@@ -100,28 +99,16 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(loadActivityGroupsActions.submit, state =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(account.activityGroups.data, true)
-    }))
-  );
   builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
     updateCurrentAccountState(state, account => ({
       ...account,
-      activityGroups: createEntity(activityGroups),
+      activityGroups,
       pendingActivities: account.pendingActivities.filter(
         pendingActivityGroup =>
           !activityGroups.some(
             completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
           ) && !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
       )
-    }))
-  );
-  builder.addCase(loadActivityGroupsActions.fail, (state, { payload: error }) =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(account.activityGroups.data, false, error)
     }))
   );
 });

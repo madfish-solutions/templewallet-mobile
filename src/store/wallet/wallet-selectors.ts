@@ -58,7 +58,7 @@ export const useActivityGroupsSelector = () =>
     ({ wallet }) => {
       const walletAccountState = getWalletAccountState(wallet.accounts, wallet.selectedAccountPublicKeyHash);
 
-      return [...walletAccountState.pendingActivities, ...walletAccountState.activityGroups.data];
+      return [...walletAccountState.pendingActivities, ...walletAccountState.activityGroups];
     },
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
