@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 
 import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
 import { useDomainName } from '../../hooks/use-domain-name.hook';
-import { toggleDomainAddressShown } from '../../store/wallet/wallet-actions';
-import { useIsShownDomainName } from '../../store/wallet/wallet-selectors';
+import { toggleDomainAddressShown } from '../../store/settings/settings-actions';
+import { useIsShownDomainName } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isString } from '../../utils/is-string';

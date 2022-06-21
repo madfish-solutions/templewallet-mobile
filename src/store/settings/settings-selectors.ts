@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { FiatCurrenciesEnum, FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
-import { SettingsRootState } from './settings-state';
+import { SettingsRootState, SettingsState } from './settings-state';
 
 export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>(({ settings }) => settings.theme);
 
@@ -38,3 +38,6 @@ export const useFirstAppLaunchSelector = () =>
 export const useUserIdSelector = () => useSelector<SettingsRootState, string>(({ settings }) => settings.userId);
 
 export const useSlippageSelector = () => useSelector<SettingsRootState, number>(({ settings }) => settings.slippage);
+
+export const useIsShownDomainName = () =>
+  useSelector<SettingsRootState, SettingsState['isShownDomainName']>(({ settings }) => settings.isShownDomainName);

@@ -11,7 +11,6 @@ export interface WalletState {
   selectedAccountPublicKeyHash: string;
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
-  isShownDomainName: boolean;
   quipuApy: number;
 }
 
@@ -26,7 +25,6 @@ export const walletInitialState: WalletState = {
     {}
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata),
-  isShownDomainName: false,
   quipuApy: QUIPU_DEFAULT_PERCENTAGE
 };
 

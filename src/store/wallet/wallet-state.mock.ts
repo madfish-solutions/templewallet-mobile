@@ -14,6 +14,5 @@ export const mockWalletState: WalletState = {
     [getTokenSlug(mockFA2TokenMetadata)]: mockFA2TokenMetadata
   },
   addTokenSuggestion: createEntity(mockFA1_2TokenMetadata),
-  isShownDomainName: false,
   quipuApy: QUIPU_DEFAULT_PERCENTAGE
 };
