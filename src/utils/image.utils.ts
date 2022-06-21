@@ -24,3 +24,8 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
 
   return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${address}/${id}/thumb288`;
 };
+
+export const formatCollectibleObjktArtifactUri = (artifactUri: string) =>
+  `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${
+    artifactUri.includes('ipfs://') ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri
+  }/artifact`;
