@@ -16,9 +16,19 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params?: any;
 }
 
-export const TabBarButton: FC<Props> = ({ label, iconName, iconWidth, routeName, focused, disabled = false }) => {
+export const TabBarButton: FC<Props> = ({
+  label,
+  iconName,
+  iconWidth,
+  routeName,
+  focused,
+  disabled = false,
+  params
+}) => {
   const colors = useColors();
   const styles = useTabBarButtonStyles();
   const { navigate } = useNavigation();
@@ -31,8 +41,10 @@ export const TabBarButton: FC<Props> = ({ label, iconName, iconWidth, routeName,
     return value;
   }, [colors, focused, disabled]);
 
+  // console.log(routeName, params);
+
   return (
-    <TouchableOpacity style={styles.container} disabled={disabled} onPress={() => navigate(routeName)}>
+    <TouchableOpacity style={styles.container} disabled={disabled} onPress={() => navigate(routeName, params)}>
       <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>

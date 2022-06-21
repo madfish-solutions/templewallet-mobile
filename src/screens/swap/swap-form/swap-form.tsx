@@ -53,7 +53,11 @@ import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
 
-export const SwapForm: FC = () => {
+interface SwapFormProps {
+  secondToken?: TokenInterface;
+}
+
+export const SwapForm: FC<SwapFormProps> = ({ secondToken }) => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -110,7 +114,7 @@ export const SwapForm: FC = () => {
         amount: undefined
       },
       outputAssets: {
-        asset: emptyTezosLikeToken,
+        asset: secondToken ?? emptyTezosLikeToken,
         amount: undefined
       }
     },

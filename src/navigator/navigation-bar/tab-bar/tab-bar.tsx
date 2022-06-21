@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
@@ -9,6 +10,7 @@ import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
   ScreensEnum,
+  ScreensParamList,
   settingsStackScreens,
   swapStackScreens,
   walletStackScreens
@@ -22,6 +24,9 @@ interface Props {
 
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
+  const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.SwapScreen>>();
+
+  console.log(params);
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
@@ -48,6 +53,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.SwapScreen}
+          params={isDefined(params) ? params.token : undefined}
           focused={isStackFocused(swapStackScreens)}
         />
         <DebugTapListener>
