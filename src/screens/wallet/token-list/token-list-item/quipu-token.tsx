@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
-import { useQuipuApySelector } from '../../../../store/wallet/wallet-selectors';
+import { useQuipuApySelector } from '../../../../store/d-apps/d-apps-selectors';
 import { TokenInterface } from '../../../../token/interfaces/token.interface';
 import { TokenListItem } from './token-list-item';
 

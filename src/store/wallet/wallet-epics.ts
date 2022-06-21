@@ -13,7 +13,6 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
@@ -31,7 +30,6 @@ import { navigateAction } from '../root-state.actions';
 import {
   addTokenMetadataAction,
   loadActivityGroupsActions,
-  loadQuipuApyActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   loadTokenMetadataActions,
@@ -46,17 +44,6 @@ const updateDataActions = () => [
   loadActivityGroupsActions.submit(),
   loadSelectedBakerActions.submit()
 ];
-
-const loadQuipuApyEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadQuipuApyActions.submit),
-    switchMap(() =>
-      loadQuipuApy$.pipe(
-        map(apy => loadQuipuApyActions.success(apy)),
-        catchError(err => of(loadQuipuApyActions.fail(err.message)))
-      )
-    )
-  );
 
 const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -196,7 +183,6 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
-  loadQuipuApyEpic,
   loadTokenBalancesEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,

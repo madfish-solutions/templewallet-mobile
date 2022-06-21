@@ -19,8 +19,6 @@ export const loadTokenBalancesActions = createActions<
 >('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
-export const loadQuipuApyActions = createActions<void, number, string>('assets/LOAD_QUIPU_APY');
-
 export const loadTokenSuggestionActions = createActions<
   Pick<TokenMetadataInterface, 'id' | 'address'>,
   TokenMetadataInterface,
