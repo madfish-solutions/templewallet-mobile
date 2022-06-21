@@ -14,8 +14,8 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { addTokensMetadataAction } from '../../../store/token/tokens-metadata-actions';
-import { useAddTokenSuggestionSelector } from '../../../store/token/tokens-metadata-selectors';
+import { addTokensMetadataAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
+import { useAddTokenSuggestionSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
 import { addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';

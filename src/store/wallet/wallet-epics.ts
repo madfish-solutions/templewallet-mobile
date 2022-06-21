@@ -26,7 +26,7 @@ import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.util
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
-import { addTokensMetadataAction } from '../token/tokens-metadata-actions';
+import { addTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addTokenAction,
   loadActivityGroupsActions,

@@ -21,8 +21,8 @@ import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
-import { tokensMetadataReducers } from './token/tokens-metadata-reducers';
-import { TokensMetadataRootState } from './token/tokens-metadata-state';
+import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
+import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 

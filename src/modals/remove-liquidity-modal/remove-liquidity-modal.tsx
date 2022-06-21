@@ -20,8 +20,8 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useLiquidityBakingContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
-import { loadTokenMetadataActions } from '../../store/token/tokens-metadata-actions';
-import { useTokensMetadataSelector } from '../../store/token/tokens-metadata-selectors';
+import { loadTokenMetadataActions } from '../../store/tokens-metadata/tokens-metadata-actions';
+import { useTokensMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
