@@ -4,6 +4,7 @@ import { Trade } from 'swap-router-sdk';
 
 import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
 import { tokenEqualityFn } from '../../../../components/token-dropdown/token-equality-fn';
+import { showErrorToast } from '../../../../toast/toast.utils';
 import { emptyTezosLikeToken } from '../../../../token/interfaces/token.interface';
 import { isDefined } from '../../../../utils/is-defined';
 import { SwapRouteInfo } from '../swap-route-info/swap-route-info';
@@ -17,9 +18,13 @@ interface Props {
   loadingHasFailed: boolean;
 }
 
+const errorMessage = 'Pull to refresh or try again later';
+
 export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loadingHasFailed }) => {
   if (loadingHasFailed) {
-    return <SwapRouteInfo text={'Exchange rate data loading has failed. \nReload this page or try again later.'} />;
+    showErrorToast({ description: errorMessage });
+
+    return <SwapRouteInfo text={`Exchange rate data loading has failed. \n${errorMessage}`} />;
   }
 
   if (
