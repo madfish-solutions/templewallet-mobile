@@ -13,6 +13,8 @@ interface Props {
   appMetadata: AppMetadata;
 }
 
+const iconSize = formatSize(36);
+
 export const AppMetadataConnectionView: FC<Props> = ({ appMetadata }) => {
   const styles = useAppMetadataConnectionViewStyles();
 
@@ -21,7 +23,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ appMetadata }) => {
       <Divider size={formatSize(16)} />
       <View style={styles.headerContainer}>
         <View style={styles.appContainer}>
-          <AppMetadataIcon appMetadata={appMetadata} size={formatSize(36)} />
+          <AppMetadataIcon appMetadata={appMetadata} size={iconSize} maxWidth={iconSize} maxHeight={iconSize} />
           <Divider size={formatSize(8)} />
           <Text style={styles.nameText}>{appMetadata.name}</Text>
         </View>
