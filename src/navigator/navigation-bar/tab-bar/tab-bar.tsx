@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
@@ -6,17 +5,21 @@ import { DebugTapListener } from '../../../components/debug-tap-listener/debug-t
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { formatSize } from '../../../styles/format-size';
+import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
   ScreensEnum,
-  ScreensParamList,
   settingsStackScreens,
   swapStackScreens,
   walletStackScreens
 } from '../../enums/screens.enum';
+import { useNavigation } from '../../hooks/use-navigation.hook';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
+
+type RouteType = { params?: { token: TokenInterface } };
+type RouteParams = { name: string } & RouteType;
 
 interface Props {
   currentRouteName: ScreensEnum;
@@ -24,10 +27,11 @@ interface Props {
 
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
-  const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.SwapScreen>>();
 
-  console.log(params);
+  const { getState } = useNavigation();
 
+  const routes = getState().routes[0].state?.routes;
+  const route = getTokenParams(routes as RouteParams[]);
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
@@ -53,7 +57,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.SwapScreen}
-          params={isDefined(params) ? params.token : undefined}
+          params={isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? route.params : undefined}
           focused={isStackFocused(swapStackScreens)}
         />
         <DebugTapListener>
@@ -69,4 +73,17 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
       <InsetSubstitute type="bottom" />
     </View>
   );
+};
+
+const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
+  let result = null;
+  if (Array.isArray(routes) && isDefined(routes)) {
+    for (const route of routes) {
+      if (route.name === ScreensEnum.TokenScreen) {
+        result = route;
+      }
+    }
+  }
+
+  return result;
 };

@@ -5,7 +5,7 @@ import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
-import { ScreensEnum } from '../../../enums/screens.enum';
+import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
@@ -16,8 +16,7 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params?: any;
+  params?: ScreensParamList[ScreensEnum.TokenScreen];
 }
 
 export const TabBarButton: FC<Props> = ({
@@ -40,8 +39,6 @@ export const TabBarButton: FC<Props> = ({
 
     return value;
   }, [colors, focused, disabled]);
-
-  // console.log(routeName, params);
 
   return (
     <TouchableOpacity style={styles.container} disabled={disabled} onPress={() => navigate(routeName, params)}>
