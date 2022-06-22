@@ -22,6 +22,8 @@ export const SwapRouteItem: FC<Props> = ({ tradeOperation, isShowNextArrow = fal
       case DexTypeEnum.LiquidityBaking:
         return IconNameEnum.LiquidityBaking;
       case DexTypeEnum.Plenty:
+      case DexTypeEnum.PlentyStableSwap:
+      case DexTypeEnum.PlentyCtez:
         return IconNameEnum.Plenty;
       case DexTypeEnum.QuipuSwap:
       case DexTypeEnum.QuipuSwapTokenToTokenDex:
