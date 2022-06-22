@@ -153,3 +153,6 @@ export const useAddTokenSuggestionSelector = () =>
 
 export const useIsShownDomainName = () =>
   useSelector<WalletRootState, WalletState['isShownDomainName']>(({ wallet }) => wallet.isShownDomainName);
+
+export const useHideZeroBalances = () =>
+  useSelector<WalletRootState, WalletState['hideZeroBalances']>(({ wallet }) => wallet.hideZeroBalances);

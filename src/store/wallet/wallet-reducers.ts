@@ -20,6 +20,7 @@ import {
   removeTokenAction,
   setIsDomainAddressShown,
   setSelectedAccountAction,
+  setZeroBalancesShown,
   toggleDomainAddressShown,
   toggleTokenVisibilityAction,
   updateWalletAccountAction
@@ -56,6 +57,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
+  }));
+  builder.addCase(setZeroBalancesShown, (state, { payload: hideZeroBalances }) => ({
+    ...state,
+    hideZeroBalances
   }));
   builder.addCase(toggleDomainAddressShown, state => ({
     ...state,

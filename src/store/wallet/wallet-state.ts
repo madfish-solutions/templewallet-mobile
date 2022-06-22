@@ -12,6 +12,7 @@ export interface WalletState {
   tokensMetadata: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
   isShownDomainName: boolean;
+  hideZeroBalances: boolean;
   quipuApy: number;
 }
 
@@ -27,6 +28,7 @@ export const walletInitialState: WalletState = {
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata),
   isShownDomainName: false,
+  hideZeroBalances: false,
   quipuApy: QUIPU_DEFAULT_PERCENTAGE
 };
 

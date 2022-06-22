@@ -43,6 +43,8 @@ export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDI
 export const toggleDomainAddressShown = createAction<void>('wallet/TOGGLE_DOMAIN_ADDRESS_SHOWN');
 export const setIsDomainAddressShown = createAction<boolean>('wallet/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
+export const setZeroBalancesShown = createAction<boolean>('wallet/SET_ZERO_BALANCES_SHOWN');
+
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
