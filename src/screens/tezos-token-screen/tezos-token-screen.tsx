@@ -9,7 +9,7 @@ import { TokenScreenContentContainer } from '../../components/token-screen-conte
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { loadActivityGroupsActions, loadTezosBalanceActions } from '../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
@@ -18,7 +18,7 @@ import { TezosTokenInfo } from './tezos-token-info/tezos-token-info';
 export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   usePageAnalytic(ScreensEnum.TezosTokenScreen);
 

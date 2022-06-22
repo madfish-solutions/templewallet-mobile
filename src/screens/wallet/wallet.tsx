@@ -19,7 +19,7 @@ import {
 } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
-  useTezosTokenSelector,
+  useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -34,7 +34,7 @@ export const Wallet = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   usePageAnalytic(ScreensEnum.Wallet);
 

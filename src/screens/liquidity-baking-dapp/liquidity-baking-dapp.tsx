@@ -16,7 +16,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContract } from '../../op-params/liquidity-baking/contracts';
 import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
 import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
-import { useAssetsListSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
@@ -33,7 +33,7 @@ export const LiquidityBakingDapp = () => {
 
   const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 
-  const aToken = useTezosTokenSelector() ?? emptyToken;
+  const aToken = useSelectedAccountTezosTokenSelector();
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
   const aTokenPool = lpContract.storage.xtzPool;

@@ -1,12 +1,15 @@
-import { WalletAccountStateInterface } from '../../interfaces/wallet-account-state.interface';
+import { AccountStateInterface } from '../../interfaces/account-state.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 
 export interface WalletState {
-  accounts: WalletAccountStateInterface[];
+  accounts: AccountInterface[];
+  accountsStateRecord: Record<string, AccountStateInterface>;
   selectedAccountPublicKeyHash: string;
 }
 
 export const walletInitialState: WalletState = {
   accounts: [],
+  accountsStateRecord: {},
   selectedAccountPublicKeyHash: ''
 };
 

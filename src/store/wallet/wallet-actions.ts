@@ -3,13 +3,17 @@ import { createAction } from '@reduxjs/toolkit';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
 export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
-export const updateWalletAccountAction = createAction<WalletAccountInterface>('wallet/UPDATE_WALLET_ACCOUNT');
+
+export const updateAccountAction = createAction<AccountInterface>('wallet/UPDATE_ACCOUNT');
+
+export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisible: boolean }>(
+  'wallet/SET_ACCOUNT_VISIBILITY'
+);
 
 // TODO: extract AssetsState
 export const loadTokenBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');

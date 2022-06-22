@@ -22,7 +22,7 @@ import {
   loadTokenTransfers$
 } from '../../utils/token-operations.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -47,12 +47,13 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     withSelectedAccount(state$),
+    withSelectedAccountState(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) =>
+    switchMap(([[[, selectedAccount], selectedAccountState], rpcUrl]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
         switchMap(tokensWithBalance => {
           const assetSlugs = uniq([
-            ...selectedAccount.tokensList.map(token => token.slug),
+            ...selectedAccountState.tokensList.map(token => token.slug),
             ...tokensWithBalance.map(tokenWithBalance =>
               getTokenSlug({
                 address: tokenWithBalance.token.contract.address,

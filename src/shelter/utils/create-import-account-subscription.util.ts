@@ -1,7 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, of, Subject, switchMap } from 'rxjs';
 
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
 import { getPublicKeyAndHash$ } from '../../utils/keys.util';
@@ -9,7 +9,7 @@ import { Shelter } from '../shelter';
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<{ privateKey: string; name: string }>,
-  accounts: Array<WalletAccountInterface>,
+  accounts: AccountInterface[],
   dispatch: Dispatch,
   goBack: () => void
 ) =>

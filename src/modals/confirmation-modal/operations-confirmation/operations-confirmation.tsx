@@ -10,7 +10,7 @@ import { Divider } from '../../../components/divider/divider';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EventFn } from '../../../config/general';
-import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../../interfaces/account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
@@ -24,7 +24,7 @@ import { useOperationsConfirmationStyles } from './operations-confirmation.style
 import { OperationsPreview } from './operations-preview/operations-preview';
 
 interface Props {
-  sender: WalletAccountInterface;
+  sender: AccountInterface;
   opParams: ParamsWithKind[];
   isLoading: boolean;
   onSubmit: EventFn<ParamsWithKind[]>;

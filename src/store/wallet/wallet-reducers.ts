@@ -1,9 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { VisibilityEnum } from '../../enums/visibility.enum';
 import { initialAccountState } from '../../interfaces/account-state.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
 import {
   addHdAccountAction,
   addPendingOperation,
@@ -11,11 +9,11 @@ import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
-  migrateAssetsVisibility,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
-  updateWalletAccountAction
+  updateAccountAction,
+  setAccountVisibility
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -27,35 +25,42 @@ import {
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(migrateAssetsVisibility, state => ({
-    ...state,
-    accounts: state.accounts.map(account => ({
-      ...account,
-      tokensList: account.tokensList.map(asset => {
-        if (isDefined(asset.isVisible)) {
-          const assetCopy = {
-            ...asset,
-            visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden
-          };
-          delete assetCopy.isVisible;
-
-          return assetCopy;
-        }
-
-        return asset;
-      })
-    }))
-  }));
+  // TODO: write whole migration
+  // builder.addCase(migrateAssetsVisibility, state => ({
+  //   ...state,
+  //   accounts: state.accounts.map(account => ({
+  //     ...account,
+  //     tokensList: account.tokensList.map(asset => {
+  //       if (isDefined(asset.isVisible)) {
+  //         const assetCopy = {
+  //           ...asset,
+  //           visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden
+  //         };
+  //         delete assetCopy.isVisible;
+  //
+  //         return assetCopy;
+  //       }
+  //
+  //       return asset;
+  //     })
+  //   }))
+  // }));
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
   }));
-  builder.addCase(updateWalletAccountAction, (state, { payload: updatedAccount }) => ({
+  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,
     accounts: state.accounts.map(item =>
       item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
     )
   }));
+  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) =>
+    updateAccountState(state, publicKeyHash, account => ({
+      ...account,
+      isVisible
+    }))
+  );
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
@@ -74,12 +79,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);
 
-    return {
-      ...updateCurrentAccountState(state, currentAccount => ({
-        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
-        removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-      }))
-    };
+    return updateCurrentAccountState(state, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
+      removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
+    }));
   });
   builder.addCase(removeTokenAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
