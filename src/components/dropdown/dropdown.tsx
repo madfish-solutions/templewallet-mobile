@@ -1,9 +1,10 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback } from 'react';
+import React, { FC, memo, useCallback, useMemo, useState } from 'react';
 import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
+import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { SearchInput } from '../search-input/search-input';
@@ -51,7 +52,10 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
+const ITEM_HEIGHT = 50;
+
 const DropdownComponent = <T extends unknown>({
+  autoScroll,
   value,
   list,
   title,
@@ -66,6 +70,7 @@ const DropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const [ref, setRef] = useState<FlatList<T> | null>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = 0.7 * useWindowDimensions().height;
@@ -90,6 +95,14 @@ const DropdownComponent = <T extends unknown>({
     [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
   );
 
+  useMemo(() => {
+    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || autoScroll !== true) {
+      return void 0;
+    }
+    const index = list.findIndex(item => equalityFn(item, value)) ?? 0;
+    ref.scrollToIndex({ index: index >= 0 ? index : 0, animated: true });
+  }, [ref, value, list, autoScroll]);
+
   return (
     <>
       <TouchableOpacity
@@ -106,6 +119,11 @@ const DropdownComponent = <T extends unknown>({
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList
             data={list}
+            ref={ref => {
+              setRef(ref);
+            }}
+            getItemLayout={(_, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+            initialScrollIndex={isDefined(value) && autoScroll === true ? list.indexOf(value) : 0}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
