@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Image, ImageSourcePropType, View } from 'react-native';
+import { View } from 'react-native';
+import FastImage, { Source } from 'react-native-fast-image';
 import { SvgCssUri } from 'react-native-svg';
 
 import { formatSizeScaled } from '../../styles/format-size';
@@ -20,10 +21,13 @@ export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSize
   const [isFailed, setIsFailed] = useState(false);
 
   const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
-  const style = useMemo(() => [isShowPlaceholder && TokenIconStyles.hiddenImage], [isShowPlaceholder]);
-  const source = useMemo<ImageSourcePropType>(
-    () => (isString(thumbnailUri) ? { uri: formatImgUri(thumbnailUri), width: size, height: size } : {}),
-    [thumbnailUri, size]
+  const style = useMemo(
+    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
+    [isShowPlaceholder, size]
+  );
+  const source = useMemo<Source>(
+    () => (isString(thumbnailUri) ? { uri: formatImgUri(thumbnailUri) } : {}),
+    [thumbnailUri]
   );
 
   const handleError = useCallback(() => setIsFailed(true), []);
@@ -39,7 +43,7 @@ export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSize
         ) : (
           <>
             {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-            <Image style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
+            <FastImage style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
           </>
         )
       ) : (

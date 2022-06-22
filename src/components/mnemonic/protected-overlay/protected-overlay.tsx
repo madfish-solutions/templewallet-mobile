@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
@@ -19,7 +20,7 @@ export const ProtectedOverlay: FC<Props> = ({ onPress }) => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.protectedBackground} source={require('./protected-background.gif')} />
+      <FastImage style={styles.protectedBackground} source={require('./protected-background.gif')} />
       <TouchableOpacity style={styles.touchableOpacity} onPress={onPress}>
         <Icon name={IconNameEnum.Lock} size={formatSize(40)} color={colors.black} />
         <Divider size={formatSize(12)} />

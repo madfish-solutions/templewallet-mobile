@@ -24,7 +24,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ appMetadata }) => {
       <View style={styles.headerContainer}>
         <View style={styles.appContainer}>
           <View style={styles.templeLogoContainer}>
-            <AppMetadataIcon appMetadata={appMetadata} size={iconSize} maxWidth={iconSize} maxHeight={iconSize} />
+            <AppMetadataIcon appMetadata={appMetadata} size={iconSize} />
           </View>
           <Divider size={formatSize(8)} />
           <Text style={styles.nameText}>{appMetadata.name}</Text>
