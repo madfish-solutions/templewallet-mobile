@@ -2,7 +2,12 @@ import React, { FC, useState } from 'react';
 import { Image, View } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
-import { formatCollectibleObjktBigUri, formatCollectibleObjktMediumUri, formatImgUri } from '../../utils/image.utils';
+import {
+  formatCollectibleObjktArtifactUri,
+  formatCollectibleObjktBigUri,
+  formatCollectibleObjktMediumUri,
+  formatImgUri
+} from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { CollectibleIconProps } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
@@ -16,6 +21,7 @@ interface LoadStrategy {
 const collectibleLoadStrategy: Array<LoadStrategy> = [
   { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
   { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
+  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
   { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
   { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
   { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
@@ -50,8 +56,8 @@ const getFirstFallback = (
     const isDisplayUri = isDefined(metadata.displayUri) && strategyItem.field === 'displayUri';
     const isThumbnailUri = isDefined(metadata.thumbnailUri) && strategyItem.field === 'thumbnailUri';
     const isObjktMed =
-      isDefined(metadata.formats) &&
-      metadata.formats.some(x => x.mimeType === 'image/gif') &&
+      ((isDefined(metadata.formats) && metadata.formats.some(x => x.mimeType === 'image/gif')) ||
+        !isDefined(metadata.formats)) &&
       strategyItem.type === 'objktMed';
     if ((isArtifactUri || isDisplayUri || isThumbnailUri || isObjktMed) && !currentState[strategyItem.type]) {
       return strategyItem;

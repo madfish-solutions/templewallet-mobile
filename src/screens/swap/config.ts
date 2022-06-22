@@ -8,6 +8,8 @@ export const ROUTING_FEE_RATIO = (100 - ROUTING_FEE_PERCENT) / 100;
 export const KNOWN_DEX_TYPES = [
   DexTypeEnum.QuipuSwap,
   DexTypeEnum.Plenty,
+  DexTypeEnum.PlentyStableSwap,
+  DexTypeEnum.PlentyCtez,
   DexTypeEnum.LiquidityBaking,
   DexTypeEnum.QuipuSwapTokenToTokenDex,
   DexTypeEnum.Youves,

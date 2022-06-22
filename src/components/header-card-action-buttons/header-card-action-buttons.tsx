@@ -41,6 +41,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         />
       </View>
       <Divider size={formatSize(8)} />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
+      </View>
+      <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
         onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}
@@ -51,10 +55,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           iconName={IconNameEnum.ArrowUp}
           onPress={() => navigate(ModalsEnum.Send, { token })}
         />
-      </View>
-      <Divider size={formatSize(8)} />
-      <View style={styles.buttonContainer}>
-        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
       </View>
     </ButtonsContainer>
   );
