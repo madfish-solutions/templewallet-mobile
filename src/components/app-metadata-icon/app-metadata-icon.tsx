@@ -9,11 +9,20 @@ import { RobotIcon } from '../robot-icon/robot-icon';
 interface Props {
   appMetadata: AppMetadata;
   size?: number;
+  maxWidth?: number;
+  maxHeight?: number;
 }
 
-export const AppMetadataIcon: FC<Props> = ({ appMetadata, size = formatSize(44) }) =>
+const defaultIconSize = formatSize(44);
+
+export const AppMetadataIcon: FC<Props> = ({
+  appMetadata,
+  size,
+  maxWidth = defaultIconSize,
+  maxHeight = defaultIconSize
+}) =>
   isDefined(appMetadata.icon) ? (
-    <AvatarImage uri={appMetadata.icon} size={size} />
+    <AvatarImage uri={appMetadata.icon} size={size} maxWidth={maxWidth} maxHeight={maxHeight} />
   ) : (
     <RobotIcon seed={appMetadata.senderId} size={size} />
   );
