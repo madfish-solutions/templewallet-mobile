@@ -1,5 +1,5 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useState } from 'react';
 import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -95,12 +95,16 @@ const DropdownComponent = <T extends unknown>({
     [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
   );
 
-  useMemo(() => {
+  const scroll = useCallback(() => {
     if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || autoScroll !== true) {
       return void 0;
     }
-    const index = list.findIndex(item => equalityFn(item, value)) ?? 0;
-    ref.scrollToIndex({ index: index >= 0 ? index : 0, animated: true });
+    const foundIndex = list.findIndex(item => equalityFn(item, value));
+    const index = foundIndex > -1 ? foundIndex : 0;
+    if (foundIndex >= list.length) {
+      return void 0;
+    }
+    ref.scrollToIndex({ index, animated: true });
   }, [ref, value, list, autoScroll]);
 
   return (
@@ -108,7 +112,11 @@ const DropdownComponent = <T extends unknown>({
       <TouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
-        onPress={dropdownBottomSheetController.open}
+        onPress={() => {
+          scroll();
+
+          return dropdownBottomSheetController.open();
+        }}
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
@@ -130,7 +138,9 @@ const DropdownComponent = <T extends unknown>({
           />
         </View>
 
-        {renderActionButtons({ onPress: () => dropdownBottomSheetController.close() })}
+        {renderActionButtons({
+          onPress: () => dropdownBottomSheetController.close()
+        })}
       </BottomSheet>
     </>
   );
