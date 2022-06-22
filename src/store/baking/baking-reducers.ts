@@ -10,7 +10,7 @@ export const bakingReducers = createReducer<BakingState>(bakingInitialState, bui
     ...state,
     selectedBaker
   }));
-  builder.addCase(loadSelectedBakerActions.fail, (state) => ({
+  builder.addCase(loadSelectedBakerActions.fail, state => ({
     ...state,
     selectedBaker: emptyBaker
   }));

@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { SearchInput } from '../../components/search-input/search-input';
