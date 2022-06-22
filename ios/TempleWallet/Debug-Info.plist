@@ -59,18 +59,6 @@
 		<true/>
 		<key>NSPinnedDomains</key>
 		<dict>
-			<key>api.templewallet.com</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<false/>
-				<key>NSPinnedLeafIdentities</key>
-				<array>
-					<dict>
-						<key>SPKI-SHA256-BASE64</key>
-						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
-					</dict>
-				</array>
-			</dict>
 			<key>madfish.solutions</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
@@ -83,18 +71,30 @@
 					</dict>
 				</array>
 			</dict>
-			<key>metadata.templewallet.com</key>
+			<key>api.templewallet.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<false/>
+			    <key>NSIncludesSubdomains</key>
+            	<false/>
 				<key>NSPinnedLeafIdentities</key>
 				<array>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
-						<string>Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</string>
+						<string>HmXjbcD5xBzFkB6zazm4HYPZhM4g2kjIhbT8XWZrAFU=</string>
 					</dict>
 				</array>
 			</dict>
+			<key>metadata.templewallet.com</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <false/>
+                <key>NSPinnedLeafIdentities</key>
+                <array>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>Zk+qFVHfqFmRIHuANosn6VqicocSsNbx04kH+kLaeMs=</string>
+                    </dict>
+                </array>
+            </dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
