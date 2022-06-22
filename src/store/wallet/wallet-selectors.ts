@@ -6,7 +6,6 @@ import { VisibilityEnum } from '../../enums/visibility.enum';
 import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import { AccountStateInterface } from '../../interfaces/account-state.interface';
 import { AccountInterface } from '../../interfaces/account.interface';
-import { ActivityGroup } from '../../interfaces/activity.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
@@ -15,10 +14,7 @@ import { getTezosToken } from '../../utils/wallet.utils';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useAccountsListSelector = () =>
-  useSelector<WalletRootState, WalletState['accounts']>(
-    ({ wallet }) => wallet.accounts,
-    (left, right) => JSON.stringify(left) === JSON.stringify(right)
-  );
+  useSelector<WalletRootState, WalletState['accounts']>(({ wallet }) => wallet.accounts);
 
 export const useVisibleAccountsListSelector = () =>
   useSelector<WalletRootState, WalletState['accounts']>(
@@ -45,26 +41,21 @@ export const useIsAuthorisedSelector = () => {
 };
 
 export const useSelectedAccountSelector = () =>
-  useSelector<WalletRootState, AccountInterface>(
-    ({ wallet }) => getSelectedAccount(wallet),
-    (left, right) => JSON.stringify(left) === JSON.stringify(right)
-  );
+  useSelector<WalletRootState, AccountInterface>(({ wallet }) => getSelectedAccount(wallet));
 
 export const useSelectedAccountStateSelector = () =>
-  useSelector<WalletRootState, AccountStateInterface>(
-    ({ wallet }) => getAccountState(wallet, wallet.selectedAccountPublicKeyHash),
-    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  useSelector<WalletRootState, AccountStateInterface>(({ wallet }) =>
+    getAccountState(wallet, wallet.selectedAccountPublicKeyHash)
   );
 
-export const useActivityGroupsSelector = () =>
-  useSelector<WalletRootState, ActivityGroup[]>(
-    ({ wallet }) => {
-      const accountState = getAccountState(wallet, wallet.selectedAccountPublicKeyHash);
+export const useActivityGroupsSelector = () => {
+  const selectedAccountState = useSelectedAccountStateSelector();
 
-      return [...accountState.pendingActivities, ...accountState.activityGroups];
-    },
-    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  return useMemo(
+    () => [...selectedAccountState.pendingActivities, ...selectedAccountState.activityGroups],
+    [selectedAccountState.pendingActivities, selectedAccountState.activityGroups]
   );
+};
 
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccountState = useSelectedAccountStateSelector();

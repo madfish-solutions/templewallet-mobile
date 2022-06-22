@@ -6,17 +6,13 @@ import { loadBakersListActions, loadSelectedBakerActions } from './baking-action
 import { bakingInitialState, BakingState } from './baking-state';
 
 export const bakingReducers = createReducer<BakingState>(bakingInitialState, builder => {
-  builder.addCase(loadSelectedBakerActions.submit, state => ({
+  builder.addCase(loadSelectedBakerActions.success, (state, { payload: selectedBaker }) => ({
     ...state,
-    selectedBaker: createEntity(state.selectedBaker.data, true)
+    selectedBaker
   }));
-  builder.addCase(loadSelectedBakerActions.success, (state, { payload: baker }) => ({
+  builder.addCase(loadSelectedBakerActions.fail, (state) => ({
     ...state,
-    selectedBaker: createEntity(baker, false)
-  }));
-  builder.addCase(loadSelectedBakerActions.fail, (state, { payload: error }) => ({
-    ...state,
-    selectedBaker: createEntity(emptyBaker, false, error)
+    selectedBaker: emptyBaker
   }));
 
   builder.addCase(loadBakersListActions.submit, state => ({
