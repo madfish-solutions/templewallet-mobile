@@ -8,8 +8,10 @@ import {
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
   setIsBiometricsEnabled,
+  setIsDomainAddressShown,
   setSelectedRpcUrl,
-  setSlippage
+  setSlippage,
+  toggleDomainAddressShown
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -50,5 +52,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setSlippage, (state, { payload: slippage }) => ({
     ...state,
     slippage
+  }));
+
+  builder.addCase(toggleDomainAddressShown, state => ({
+    ...state,
+    isShownDomainName: !state.isShownDomainName
+  }));
+  builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
+    ...state,
+    isShownDomainName
   }));
 });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -11,15 +11,10 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import {
-  loadActivityGroupsActions,
-  loadTezosBalanceActions,
-  loadTokenBalancesActions,
-  setSelectedAccountAction
-} from '../../store/wallet/wallet-actions';
+import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
-  useTezosTokenSelector,
+  useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -34,15 +29,9 @@ export const Wallet = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   usePageAnalytic(ScreensEnum.Wallet);
-
-  useEffect(() => {
-    dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokenBalancesActions.submit());
-    dispatch(loadActivityGroupsActions.submit());
-  }, []);
 
   return (
     <>

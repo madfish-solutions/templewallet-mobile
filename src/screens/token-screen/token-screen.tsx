@@ -1,6 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
@@ -12,7 +11,6 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -20,7 +18,6 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
-  const dispatch = useDispatch();
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const tokensList = useTokensListSelector();
   const token = useMemo(
@@ -35,11 +32,6 @@ export const TokenScreen = () => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
   usePageAnalytic(ScreensEnum.TokenScreen);
-
-  useEffect(() => {
-    dispatch(loadTokenBalancesActions.submit());
-    dispatch(loadActivityGroupsActions.submit());
-  }, []);
 
   useEffect(() => setSearchValue(`${token.address}_${token.id}`), [token]);
 

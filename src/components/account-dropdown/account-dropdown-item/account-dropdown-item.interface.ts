@@ -1,8 +1,8 @@
-import { WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../../interfaces/account.interface';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 
 export interface AccountDropdownItemProps {
-  account?: WalletAccountInterface;
+  account?: AccountInterface;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
 }

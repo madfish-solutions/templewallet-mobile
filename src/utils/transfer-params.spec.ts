@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-import { mockWalletAccount } from '../interfaces/wallet-account.interface.mock';
+import { mockHdAccount } from '../interfaces/account.interface.mock';
 import { mockFA1_2Contract, mockFA2Contract, mockToolkitMethods } from '../mocks/tezos.mock';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { mockFA1_2TokenMetadata, mockFA2TokenMetadata } from '../token/interfaces/token-metadata.interface.mock';
@@ -21,7 +21,7 @@ describe('getTransferParams$', () => {
     getTransferParams$(
       TEZ_TOKEN_METADATA,
       mockRpcUrl,
-      mockWalletAccount,
+      mockHdAccount,
       'receiverPublicKeyHash',
       mockInputAmount
     ).subscribe(
@@ -40,13 +40,13 @@ describe('getTransferParams$', () => {
     getTransferParams$(
       mockFA1_2TokenMetadata,
       mockRpcUrl,
-      mockWalletAccount,
+      mockHdAccount,
       'receiverPublicKeyHash',
       mockInputAmount
     ).subscribe(
       rxJsTestingHelper(() => {
         expect(mockFA1_2Contract.methods.transfer).toBeCalledWith(
-          mockWalletAccount.publicKeyHash,
+          mockHdAccount.publicKeyHash,
           'receiverPublicKeyHash',
           mockInputAmount
         );
@@ -63,14 +63,14 @@ describe('getTransferParams$', () => {
     getTransferParams$(
       mockFA2TokenMetadata,
       mockRpcUrl,
-      mockWalletAccount,
+      mockHdAccount,
       'receiverPublicKeyHash',
       mockInputAmount
     ).subscribe(
       rxJsTestingHelper(() => {
         expect(mockFA2Contract.methods.transfer).toBeCalledWith([
           {
-            from_: mockWalletAccount.publicKeyHash,
+            from_: mockHdAccount.publicKeyHash,
             txs: [
               {
                 to_: 'receiverPublicKeyHash',

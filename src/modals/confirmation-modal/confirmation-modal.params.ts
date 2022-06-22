@@ -1,7 +1,7 @@
 import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
+import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
 
 export type ConfirmationModalParams = InternalOperationsConfirmationModalParams | DAppOperationsConfirmationModalParams;
 

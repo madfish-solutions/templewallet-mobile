@@ -17,6 +17,7 @@ export interface SettingsState {
   userId: string;
   slippage: number;
   fiatCurrency: FiatCurrenciesEnum;
+  isShownDomainName: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -29,7 +30,8 @@ export const settingsInitialState: SettingsState = {
   isFirstAppLaunch: true,
   userId: nanoid(),
   slippage: 1.5,
-  fiatCurrency: FiatCurrenciesEnum.USD
+  fiatCurrency: FiatCurrenciesEnum.USD,
+  isShownDomainName: false
 };
 
 export interface SettingsRootState {

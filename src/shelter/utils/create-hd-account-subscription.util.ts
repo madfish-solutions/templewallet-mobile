@@ -1,13 +1,13 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { Subject, switchMap } from 'rxjs';
 
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { Shelter } from '../shelter';
 
 export const createHdAccountSubscription = (
   createHdAccount$: Subject<unknown>,
-  accounts: Array<WalletAccountInterface>,
+  accounts: AccountInterface[],
   dispatch: Dispatch
 ) =>
   createHdAccount$

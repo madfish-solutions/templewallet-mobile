@@ -1,19 +1,13 @@
-import { omit } from 'lodash-es';
+import { AccountStateInterface, initialAccountState } from '../interfaces/account-state.interface';
+import { AccountInterface, initialAccount } from '../interfaces/account.interface';
+import { WalletState } from '../store/wallet/wallet-state';
 
-import { initialWalletAccountState, WalletAccountStateInterface } from '../interfaces/wallet-account-state.interface';
-import { initialWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
-
-export const walletAccountStateToWalletAccount = (
-  walletAccountState: WalletAccountStateInterface
-): WalletAccountInterface => ({
-  ...initialWalletAccount,
-  ...omit(walletAccountState, ['activityGroups', 'pendingActivities'])
+export const getSelectedAccount = (wallet: WalletState): AccountInterface => ({
+  ...initialAccount,
+  ...wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash)
 });
 
-export const getWalletAccountState = (
-  accounts: WalletAccountStateInterface[],
-  selectedAccountPublicKeyHash: string
-): WalletAccountStateInterface => ({
-  ...initialWalletAccountState,
-  ...accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash)
+export const getAccountState = (wallet: WalletState, publicKeyHash: string): AccountStateInterface => ({
+  ...initialAccountState,
+  ...wallet.accountsStateRecord[publicKeyHash]
 });

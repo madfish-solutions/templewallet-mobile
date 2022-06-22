@@ -11,7 +11,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
-import { emptyWalletAccount, WalletAccountInterface } from '../../../interfaces/wallet-account.interface';
+import { AccountInterface, emptyAccount } from '../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
@@ -31,9 +31,9 @@ export const ManageHdAccounts = () => {
   const hdAccounts = useHdAccountListSelector();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
-  const [managedAccount, setManagedAccount] = useState(emptyWalletAccount);
+  const [managedAccount, setManagedAccount] = useState(emptyAccount);
 
-  const handleRevealButtonPress = (account: WalletAccountInterface) => {
+  const handleRevealButtonPress = (account: AccountInterface) => {
     setManagedAccount(account);
     revealSelectBottomSheetController.open();
   };

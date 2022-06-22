@@ -1,4 +1,4 @@
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
@@ -24,11 +24,11 @@ export type ModalsParamList = {
   [ModalsEnum.Receive]: { token: TokenMetadataInterface };
   [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
   [ModalsEnum.AddToken]: undefined;
-  [ModalsEnum.RenameAccount]: { account: WalletAccountInterface };
+  [ModalsEnum.RenameAccount]: { account: AccountInterface };
   [ModalsEnum.SelectBaker]: undefined;
   [ModalsEnum.Confirmation]: ConfirmationModalParams;
-  [ModalsEnum.RevealSeedPhrase]: { account?: WalletAccountInterface };
-  [ModalsEnum.RevealPrivateKey]: { account: WalletAccountInterface };
+  [ModalsEnum.RevealSeedPhrase]: { account?: AccountInterface };
+  [ModalsEnum.RevealPrivateKey]: { account: AccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };

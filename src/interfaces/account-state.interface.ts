@@ -1,6 +1,4 @@
 import { VisibilityEnum } from '../enums/visibility.enum';
-import { createEntity } from '../store/create-entity';
-import { LoadableEntityState } from '../store/types';
 import { HIDDEN_WHITELIST_TOKENS, MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
@@ -11,7 +9,7 @@ export interface AccountStateInterface {
   tezosBalance: string;
   tokensList: AccountTokenInterface[];
   removedTokensList: string[];
-  activityGroups: LoadableEntityState<ActivityGroup[]>;
+  activityGroups: ActivityGroup[];
   pendingActivities: ActivityGroup[];
 }
 
@@ -31,7 +29,7 @@ export const initialAccountState: AccountStateInterface = {
     }))
   ],
   removedTokensList: [],
-  activityGroups: createEntity([]),
+  activityGroups: [],
   pendingActivities: []
 };
 
@@ -40,6 +38,6 @@ export const emptyAccountState: AccountStateInterface = {
   tezosBalance: '0',
   tokensList: [],
   removedTokensList: [],
-  activityGroups: createEntity([]),
+  activityGroups: [],
   pendingActivities: []
 };

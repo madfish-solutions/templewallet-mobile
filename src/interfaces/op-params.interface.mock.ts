@@ -1,6 +1,4 @@
-import { OpKind } from '@taquito/taquito';
-
-import { ParamsWithKind } from './op-params.interface';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 
 export const mockDelegationParams: ParamsWithKind = {
   kind: OpKind.DELEGATION,

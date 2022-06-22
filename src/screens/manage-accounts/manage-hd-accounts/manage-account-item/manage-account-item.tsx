@@ -12,28 +12,29 @@ import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
-import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
-import { updateWalletAccountAction } from '../../../../store/wallet/wallet-actions';
+import { setAccountVisibility } from '../../../../store/wallet/wallet-actions';
+import { useIsVisibleSelector, useTezosTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTruncatedProps } from '../../../../utils/style.util';
-import { getTezosToken } from '../../../../utils/wallet.utils';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
-  account: WalletAccountInterface;
-  selectedAccount: WalletAccountInterface;
-  onRevealButtonPress: EventFn<WalletAccountInterface>;
+  account: AccountInterface;
+  selectedAccount: AccountInterface;
+  onRevealButtonPress: EventFn<AccountInterface>;
 }
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const styles = useManageAccountItemStyles();
+  const tezosToken = useTezosTokenSelector(account.publicKeyHash);
+  const isVisible = useIsVisibleSelector(account.publicKeyHash);
 
-  const tezosToken = getTezosToken(account.tezosBalance);
   const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 
   return (
@@ -68,9 +69,16 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
             }
           >
             <Switch
-              value={account.isVisible}
+              value={isVisible}
               disabled={isVisibilitySwitchDisabled}
-              onChange={isVisible => dispatch(updateWalletAccountAction({ ...account, isVisible }))}
+              onChange={newIsVisible =>
+                dispatch(
+                  setAccountVisibility({
+                    publicKeyHash: account.publicKeyHash,
+                    isVisible: newIsVisible
+                  })
+                )
+              }
             />
           </View>
         </View>

@@ -1,9 +1,9 @@
 import { object, SchemaOf } from 'yup';
 
-import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
+import { AccountInterface } from '../../../../interfaces/account.interface';
 
 export interface PermissionRequestConfirmationFormValues {
-  approver: WalletAccountInterface;
+  approver: AccountInterface;
 }
 
 export const permissionRequestConfirmationModalValidationSchema: SchemaOf<PermissionRequestConfirmationFormValues> =

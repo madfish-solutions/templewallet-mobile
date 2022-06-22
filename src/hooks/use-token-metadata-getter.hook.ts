@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useTokensMetadataSelector } from '../store/wallet/wallet-selectors';
+import { useTokensMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 

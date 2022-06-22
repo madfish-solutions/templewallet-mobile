@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadDAppsListActions, loadPermissionsActions } from './d-apps-actions';
+import { loadDAppsListActions, loadPermissionsActions, loadQuipuApyActions } from './d-apps-actions';
 import { dAppsInitialState, DAppsState } from './d-apps-state';
 
 export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builder => {
@@ -29,5 +29,10 @@ export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builde
   builder.addCase(loadDAppsListActions.fail, (state, { payload: error }) => ({
     ...state,
     dappsList: createEntity([], false, error)
+  }));
+
+  builder.addCase(loadQuipuApyActions.success, (state, { payload: quipuApy }) => ({
+    ...state,
+    quipuApy
   }));
 });

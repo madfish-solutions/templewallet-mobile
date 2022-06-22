@@ -43,9 +43,9 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { loadQuipuApyActions } from '../store/d-apps/d-apps-actions';
 import {
   loadActivityGroupsActions,
-  loadQuipuApyActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions
 } from '../store/wallet/wallet-actions';

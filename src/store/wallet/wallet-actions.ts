@@ -3,36 +3,23 @@ import { createAction } from '@reduxjs/toolkit';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ActivityGroup } from '../../interfaces/activity.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
 export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
-export const updateWalletAccountAction = createAction<WalletAccountInterface>('wallet/UPDATE_WALLET_ACCOUNT');
+
+export const updateAccountAction = createAction<AccountInterface>('wallet/UPDATE_ACCOUNT');
+
+export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisible: boolean }>(
+  'wallet/SET_ACCOUNT_VISIBILITY'
+);
 
 // TODO: extract AssetsState
-export const loadTokenBalancesActions = createActions<
-  void,
-  { balancesRecord: Record<string, string>; metadataList: TokenMetadataInterface[] },
-  string
->('assets/LOAD_TOKENS');
+export const loadTokenBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
-export const loadQuipuApyActions = createActions<void, number, string>('assets/LOAD_QUIPU_APY');
-
-export const loadTokenSuggestionActions = createActions<
-  Pick<TokenMetadataInterface, 'id' | 'address'>,
-  TokenMetadataInterface,
-  string
->('assets/LOAD_TOKEN_SUGGESTION');
-export const loadTokenMetadataActions = createActions<
-  Pick<TokenMetadataInterface, 'id' | 'address'>,
-  TokenMetadataInterface,
-  string
->('assets/LOAD_TOKEN_METADATA');
-
-export const addTokenMetadataAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN_METADATA');
+export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
 
@@ -40,8 +27,6 @@ export const sendAssetActions = createActions<SendAssetActionPayloadInterface, s
 
 export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
 export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
-export const toggleDomainAddressShown = createAction<void>('wallet/TOGGLE_DOMAIN_ADDRESS_SHOWN');
-export const setIsDomainAddressShown = createAction<boolean>('wallet/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;

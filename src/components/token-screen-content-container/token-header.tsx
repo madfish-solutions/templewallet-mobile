@@ -7,7 +7,7 @@ import { QUIPU_SLUG } from '../../config/tokens';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
-import { useQuipuApySelector } from '../../store/wallet/wallet-selectors';
+import { useQuipuApySelector } from '../../store/d-apps/d-apps-selectors';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { openUrl } from '../../utils/linking.util';

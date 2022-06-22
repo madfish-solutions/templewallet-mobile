@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
@@ -21,7 +21,7 @@ interface Props {
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
   const errorMessage =
