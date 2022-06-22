@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
@@ -8,15 +8,13 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import {
   loadIncomingFa12Operations$,
   loadIncomingFa2Operations$,
@@ -24,18 +22,16 @@ import {
   loadTokenTransfers$
 } from '../../utils/token-operations.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
+import { addTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
-  addTokenMetadataAction,
+  addTokenAction,
   loadActivityGroupsActions,
-  loadQuipuApyActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
-  loadTokenMetadataActions,
-  loadTokenSuggestionActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -47,27 +43,17 @@ const updateDataActions = () => [
   loadSelectedBakerActions.submit()
 ];
 
-const loadQuipuApyEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadQuipuApyActions.submit),
-    switchMap(() =>
-      loadQuipuApy$.pipe(
-        map(apy => loadQuipuApyActions.success(apy)),
-        catchError(err => of(loadQuipuApyActions.fail(err.message)))
-      )
-    )
-  );
-
 const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokenBalancesActions.submit),
     withSelectedAccount(state$),
+    withSelectedAccountState(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) =>
+    switchMap(([[[, selectedAccount], selectedAccountState], rpcUrl]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
         switchMap(tokensWithBalance => {
           const assetSlugs = uniq([
-            ...selectedAccount.tokensList.map(token => token.slug),
+            ...selectedAccountState.tokensList.map(token => token.slug),
             ...tokensWithBalance.map(tokenWithBalance =>
               getTokenSlug({
                 address: tokenWithBalance.token.contract.address,
@@ -81,7 +67,10 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
             loadTokensMetadata$(assetSlugs)
           ]);
         }),
-        map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
+        concatMap(([balancesRecord, metadataList]) => [
+          loadTokenBalancesActions.success(balancesRecord),
+          addTokensMetadataAction(metadataList)
+        ]),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )
@@ -96,33 +85,6 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
       loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
         map(balance => loadTezosBalanceActions.success(balance)),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenSuggestionActions.submit),
-    toPayload(),
-    switchMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        concatMap(tokenMetadata => [
-          loadTokenSuggestionActions.success(tokenMetadata),
-          loadTokenMetadataActions.success(tokenMetadata)
-        ]),
-        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenMetadataActions.submit),
-    toPayload(),
-    concatMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )
     )
   );
@@ -192,14 +154,11 @@ const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<
   );
 
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addTokenMetadataAction), concatMap(updateDataActions));
+  action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
   loadTezosBalanceEpic,
-  loadQuipuApyEpic,
   loadTokenBalancesEpic,
-  loadTokenSuggestionEpic,
-  loadTokenMetadataEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   loadActivityGroupsEpic,

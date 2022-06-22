@@ -10,3 +10,6 @@ export const usePermissionsSelector = () =>
 const useDAppsSelector = () => useSelector<DAppsRootState, DAppsState>(({ dApps }) => dApps);
 
 export const useDAppsListSelector = () => useDAppsSelector().dappsList.data;
+
+export const useQuipuApySelector = () =>
+  useSelector<DAppsRootState, DAppsState['quipuApy']>(({ dApps }) => dApps.quipuApy);

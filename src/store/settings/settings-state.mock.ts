@@ -13,5 +13,6 @@ export const mockSettingsState: SettingsState = {
   isFirstAppLaunch: true,
   userId: '0',
   slippage: 1.5,
-  fiatCurrency: FiatCurrenciesEnum.USD
+  fiatCurrency: FiatCurrenciesEnum.USD,
+  isShownDomainName: false
 };

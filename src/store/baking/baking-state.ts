@@ -3,12 +3,12 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface BakingState {
-  selectedBaker: LoadableEntityState<BakerInterface>;
+  selectedBaker: BakerInterface;
   bakersList: LoadableEntityState<BakerInterface[]>;
 }
 
 export const bakingInitialState: BakingState = {
-  selectedBaker: createEntity(emptyBaker),
+  selectedBaker: emptyBaker,
   bakersList: createEntity([])
 };
 

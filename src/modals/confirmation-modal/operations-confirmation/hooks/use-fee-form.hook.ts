@@ -1,11 +1,10 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
-import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz } from '../../../../utils/tezos.util';
 

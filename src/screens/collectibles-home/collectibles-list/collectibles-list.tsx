@@ -17,26 +17,14 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const { layoutWidth, handleLayout } = useLayoutSizes();
 
   const smallCardSize = useMemo(() => (1 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
-  const bigCardSize = useMemo(() => (2 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
-
-  const [first, second, third, ...rest] = collectiblesList;
 
   return collectiblesList.length === 0 ? (
     <DataPlaceholder text="Not found any NFT" />
   ) : (
-    <>
-      <View style={CollectiblesListStyles.rowContainer} onLayout={handleLayout}>
-        <TouchableCollectibleIcon collectible={first} size={bigCardSize} />
-        <View>
-          <TouchableCollectibleIcon collectible={second} size={smallCardSize} />
-          <TouchableCollectibleIcon collectible={third} size={smallCardSize} />
-        </View>
-      </View>
-      <View style={CollectiblesListStyles.rowContainer}>
-        {rest.map(collectible => (
-          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={smallCardSize} />
-        ))}
-      </View>
-    </>
+    <View style={CollectiblesListStyles.rowContainer} onLayout={handleLayout}>
+      {collectiblesList.map(collectible => (
+        <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={smallCardSize} />
+      ))}
+    </View>
   );
 };

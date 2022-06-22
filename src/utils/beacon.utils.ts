@@ -1,8 +1,8 @@
 import { TezosOperationType } from '@airgap/beacon-sdk';
+import { ParamsWithKind } from '@taquito/taquito';
 import { of } from 'rxjs';
 
 import { BeaconHandler } from '../beacon/beacon-handler';
-import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { SemiPartialTezosOperation } from '../types/semi-partial-tezos-operation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

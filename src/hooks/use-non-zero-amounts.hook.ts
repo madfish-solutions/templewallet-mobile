@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { loadTokenMetadataActions } from '../store/wallet/wallet-actions';
+import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metadata-actions';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';

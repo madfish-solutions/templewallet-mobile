@@ -24,7 +24,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
-  useTezosTokenSelector,
+  useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector,
   useVisibleAssetListSelector
 } from '../../store/wallet/wallet-selectors';
@@ -49,7 +49,7 @@ export const SendModal: FC = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);

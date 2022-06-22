@@ -14,8 +14,9 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { TokenIcon } from '../../components/token-icon/token-icon';
 import { useDomainName } from '../../hooks/use-domain-name.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { toggleDomainAddressShown } from '../../store/wallet/wallet-actions';
-import { useIsShownDomainName, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { toggleDomainAddressShown } from '../../store/settings/settings-actions';
+import { useIsShownDomainName } from '../../store/settings/settings-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';

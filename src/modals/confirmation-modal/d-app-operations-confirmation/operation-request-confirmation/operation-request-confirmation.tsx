@@ -7,7 +7,7 @@ import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { Divider } from '../../../../components/divider/divider';
 import { ApproveOperationRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
+import { emptyAccount } from '../../../../interfaces/account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { navigateAction } from '../../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../../store/settings/settings-selectors';
@@ -62,7 +62,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveOperationRequest);
 
   const sender = useMemo(
-    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
+    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyAccount,
     [accounts, message.sourceAddress]
   );
 

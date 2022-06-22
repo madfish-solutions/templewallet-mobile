@@ -31,7 +31,7 @@ import { navigateAction } from '../../../store/root-state.actions';
 import { useSlippageSelector } from '../../../store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
-  useTezosTokenSelector,
+  useSelectedAccountTezosTokenSelector,
   useTokensWithTezosListSelector
 } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -101,7 +101,7 @@ export const SwapForm: FC = () => {
     dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
   };
 
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   const formik = useFormik<SwapFormValues>({
     initialValues: {

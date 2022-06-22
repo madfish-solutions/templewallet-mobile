@@ -7,7 +7,7 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useIsAuthorisedSelector, useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -20,7 +20,7 @@ import { useScanQrCodeStyles } from './scan-qr-code.styles';
 export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { goBack, navigate } = useNavigation();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
 
   usePageAnalytic(ScreensEnum.ScanQrCode);

@@ -1,12 +1,11 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { TransferParams } from '@taquito/taquito/dist/types/operations/types';
 import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ParamsWithKind } from '../interfaces/op-params.interface';
+import { AccountInterface } from '../interfaces/account.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
@@ -15,7 +14,7 @@ import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 export const getTransferParams$ = (
   asset: TokenMetadataInterface,
   rpcUrl: string,
-  sender: WalletAccountInterface,
+  sender: AccountInterface,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> => {

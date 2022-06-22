@@ -1,8 +1,5 @@
 import { VisibilityEnum } from '../../enums/visibility.enum';
-import {
-  initialWalletAccountState,
-  WalletAccountStateInterface
-} from '../../interfaces/wallet-account-state.interface';
+import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { WalletState } from './wallet-state';
@@ -17,21 +14,27 @@ export const isPendingOperationOutdated = (addedAt: number) => {
 
 export const updateCurrentAccountState = (
   state: WalletState,
-  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
+  updateFn: (currentAccountState: AccountStateInterface) => Partial<AccountStateInterface>
 ): WalletState => updateAccountState(state, state.selectedAccountPublicKeyHash, updateFn);
 
 export const updateAccountState = (
   state: WalletState,
   accountPublicKeyHash: string,
-  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
-): WalletState => ({
-  ...state,
-  accounts: state.accounts.map(account =>
-    account.publicKeyHash === accountPublicKeyHash
-      ? { ...account, ...updateFn({ ...initialWalletAccountState, ...account }) }
-      : account
-  )
-});
+  updateFn: (accountState: AccountStateInterface) => Partial<AccountStateInterface>
+): WalletState => {
+  const accountState = state.accountsStateRecord[accountPublicKeyHash];
+
+  return {
+    ...state,
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [accountPublicKeyHash]: {
+        ...accountState,
+        ...updateFn({ ...initialAccountState, ...accountState })
+      }
+    }
+  };
+};
 
 export const pushOrUpdateTokensBalances = (
   initialTokensList: AccountTokenInterface[],

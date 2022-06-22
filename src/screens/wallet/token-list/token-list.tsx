@@ -9,7 +9,10 @@ import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.h
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useTezosTokenSelector, useVisibleTokensListSelector } from '../../../store/wallet/wallet-selectors';
+import {
+  useSelectedAccountTezosTokenSelector,
+  useVisibleTokensListSelector
+} from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
@@ -35,7 +38,7 @@ export const TokenList: FC = () => {
   const styles = useTokenListStyles();
   const { navigate } = useNavigation();
 
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
     useFilteredAssetsList(visibleTokensList);

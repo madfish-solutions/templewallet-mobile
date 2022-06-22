@@ -6,8 +6,6 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: colors.pageBG,
-    paddingTop: formatSize(8),
-    paddingBottom: formatSize(16),
     paddingLeft: formatSize(16)
   },
   headerContainer: {

@@ -1,10 +1,9 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ActivityGroup, emptyActivity } from '../interfaces/activity.interface';
-import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { invertSign } from './number.util';
 import { getParamPreview } from './param-preview.utils';
 
