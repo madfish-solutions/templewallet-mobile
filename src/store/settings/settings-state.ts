@@ -18,6 +18,7 @@ export interface SettingsState {
   slippage: number;
   fiatCurrency: FiatCurrenciesEnum;
   isShownDomainName: boolean;
+  hideZeroBalances: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -31,7 +32,8 @@ export const settingsInitialState: SettingsState = {
   userId: nanoid(),
   slippage: 1.5,
   fiatCurrency: FiatCurrenciesEnum.USD,
-  isShownDomainName: false
+  isShownDomainName: false,
+  hideZeroBalances: false
 };
 
 export interface SettingsRootState {

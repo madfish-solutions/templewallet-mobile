@@ -5,7 +5,7 @@ import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
 import { QUIPU_SLUG } from '../../../config/tokens';
-import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
+import { useFilteredAssetsListMemo } from '../../../hooks/use-filtered-assets-list.hook';
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -41,7 +41,7 @@ export const TokenList: FC = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
-    useFilteredAssetsList(visibleTokensList);
+    useFilteredAssetsListMemo(visibleTokensList);
   const sortedAssetsList = useSortedAssetsList(filteredAssetsList);
 
   const isShowTezos = useMemo(

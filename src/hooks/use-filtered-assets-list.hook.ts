@@ -1,15 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setZeroBalancesShown } from '../store/wallet/wallet-actions';
-import { useHideZeroBalances } from '../store/wallet/wallet-selectors';
+import { setZeroBalancesShown } from '../store/settings/settings-actions';
+import { useHideZeroBalances } from '../store/settings/settings-selectors';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
-export const useFilteredAssetsList = (assetsList: TokenInterface[], overrideHide?: boolean) => {
-  const memoryState = useHideZeroBalances();
-  const isHideZeroBalance = overrideHide !== undefined ? overrideHide : memoryState;
+export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
   const dispatch = useDispatch();
   const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
     () => assetsList.filter(asset => isNonZeroBalance(asset)),
@@ -53,4 +51,11 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], overrideHide
     searchValue,
     setSearchValue
   };
+};
+
+export const useFilteredAssetsListMemo = (assetsList: TokenInterface[]) => {
+  const isHideZeroBalance = useHideZeroBalances();
+  const memoHook = useFilteredAssetsList(assetsList, isHideZeroBalance);
+
+  return memoHook;
 };

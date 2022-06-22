@@ -20,7 +20,7 @@ export const ManageTokens = () => {
   const { navigate } = useNavigation();
 
   const tokensList = useTokensListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList, false);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList);
 
   return (
     <>

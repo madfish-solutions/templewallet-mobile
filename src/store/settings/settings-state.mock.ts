@@ -14,5 +14,6 @@ export const mockSettingsState: SettingsState = {
   userId: '0',
   slippage: 1.5,
   fiatCurrency: FiatCurrenciesEnum.USD,
-  isShownDomainName: false
+  isShownDomainName: false,
+  hideZeroBalances: false
 };

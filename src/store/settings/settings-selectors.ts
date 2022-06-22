@@ -41,3 +41,6 @@ export const useSlippageSelector = () => useSelector<SettingsRootState, number>(
 
 export const useIsShownDomainName = () =>
   useSelector<SettingsRootState, SettingsState['isShownDomainName']>(({ settings }) => settings.isShownDomainName);
+
+export const useHideZeroBalances = () =>
+  useSelector<SettingsRootState, SettingsState['hideZeroBalances']>(({ settings }) => settings.hideZeroBalances);

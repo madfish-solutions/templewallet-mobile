@@ -20,7 +20,7 @@ export const ManageCollectibles = () => {
   const { navigate } = useNavigation();
 
   const collectiblesList = useCollectiblesListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectiblesList, false);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectiblesList);
 
   return (
     <>
