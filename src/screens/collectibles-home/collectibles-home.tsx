@@ -24,7 +24,7 @@ export const CollectiblesHome = () => {
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
   const visibleCollectiblesList = useVisibleCollectiblesListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList, false);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);
 
   const [isSearchMode] = useState(false);
 
