@@ -102,7 +102,6 @@ const DropdownComponent = <T extends unknown>({
     if (foundIndex >= list.length) {
       return void 0;
     }
-    console.log(index);
     ref.scrollToIndex({ index, animated: true });
   }, [ref, value, list]);
 
