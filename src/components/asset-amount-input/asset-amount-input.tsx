@@ -210,7 +210,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             title="Assets"
             value={value.asset}
             list={assetsList}
-            autoScroll
             isSearchable={isSearchable}
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}

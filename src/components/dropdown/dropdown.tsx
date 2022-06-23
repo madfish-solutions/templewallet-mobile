@@ -21,7 +21,6 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
   onLongPress?: EmptyFn;
-  autoScroll?: boolean;
 }
 
 export interface DropdownValueProps<T> {
@@ -55,7 +54,6 @@ export type DropdownActionButtonsComponent = FC<{
 const ITEM_HEIGHT = 50;
 
 const DropdownComponent = <T extends unknown>({
-  autoScroll,
   value,
   list,
   title,
@@ -96,7 +94,7 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || autoScroll !== true) {
+    if (!isDefined(ref) || !isDefined(value) || !isDefined(list)) {
       return void 0;
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));
@@ -104,8 +102,9 @@ const DropdownComponent = <T extends unknown>({
     if (foundIndex >= list.length) {
       return void 0;
     }
+    console.log(index);
     ref.scrollToIndex({ index, animated: true });
-  }, [ref, value, list, autoScroll]);
+  }, [ref, value, list]);
 
   return (
     <>
@@ -131,7 +130,6 @@ const DropdownComponent = <T extends unknown>({
               setRef(ref);
             }}
             getItemLayout={(_, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-            initialScrollIndex={isDefined(value) && autoScroll === true ? list.indexOf(value) : 0}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}

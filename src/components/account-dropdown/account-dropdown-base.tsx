@@ -49,7 +49,6 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<WalletAccountInterfa
 
   return (
     <Dropdown
-      autoScroll
       title="Accounts"
       value={value}
       list={list}
