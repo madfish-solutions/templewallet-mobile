@@ -12,6 +12,25 @@ const limitOperations = 1000;
 const limitIncomingTransactions = 10000;
 const limitTransfers = 10000;
 
+const limit = 10;
+
+export const getTokenTransfersNew = (
+  account: string,
+  contractAddress: string,
+  tokenId = '0',
+  lastLevel: number | null
+) =>
+  tzktApi.get<Array<OperationInterface>>(
+    `tokens/transfers?anyof.from.to=${account}&sort.desc=level&limit=${limit}&token.contract=${contractAddress}&token.tokenId=${tokenId}` +
+      (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
+  );
+
+export const getTezosOperationsNew = (account: string, lastLevel: number | null) =>
+  tzktApi.get<Array<OperationInterface>>(
+    `accounts/${account}/operations?limit=${limit}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
+      (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
+  );
+
 const getTokenOperations = (account: string) =>
   tzktApi.get<Array<OperationInterface>>(
     `accounts/${account}/operations?limit=${limitOperations}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
