@@ -4,6 +4,7 @@ import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimension
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
+import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -25,6 +26,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
 
 export interface DropdownValueProps<T> {
   value?: T;
+  itemHeight?: number;
   list: T[];
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
@@ -51,12 +53,11 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const ITEM_HEIGHT = 50;
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
   title,
+  itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
   setSearchValue,
@@ -128,7 +129,7 @@ const DropdownComponent = <T extends unknown>({
             ref={ref => {
               setRef(ref);
             }}
-            getItemLayout={(_, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+            getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}

@@ -214,6 +214,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
+            itemHeight={formatSize(64)}
             renderListItem={renderTokenListItem}
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
