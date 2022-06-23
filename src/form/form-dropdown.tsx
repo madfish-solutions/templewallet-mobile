@@ -6,7 +6,6 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props<T> extends DropdownProps<T> {
   name: string;
-  itemHeight?: number;
 }
 
 export const FormDropdown = <T extends unknown>({

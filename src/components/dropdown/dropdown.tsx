@@ -16,6 +16,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   title: string;
   list: T[];
   isSearchable?: boolean;
+  itemHeight?: number;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
