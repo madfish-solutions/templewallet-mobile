@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { setZeroBalancesShown } from '../store/settings/settings-actions';
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
-export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHideZeroBalance = false) => {
-  const [isHideZeroBalance, setIsHideZeroBalance] = useState(initialIsHideZeroBalance);
+export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
+  const dispatch = useDispatch();
   const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
     () => assetsList.filter(asset => isNonZeroBalance(asset)),
     [assetsList]
@@ -37,10 +39,14 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], initialIsHid
     }
   }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
 
+  const handleHideZeroBalanceChange = useCallback((value: boolean) => {
+    dispatch(setZeroBalancesShown(value));
+  }, []);
+
   return {
     filteredAssetsList,
     isHideZeroBalance,
-    setIsHideZeroBalance,
+    setIsHideZeroBalance: handleHideZeroBalanceChange,
     searchValue,
     setSearchValue
   };
