@@ -54,10 +54,10 @@ import { SwapRoute } from './swap-route/swap-route';
 const selectionOptions = { start: 0, end: 0 };
 
 interface SwapFormProps {
-  secondToken?: TokenInterface;
+  inputToken?: TokenInterface;
 }
 
-export const SwapForm: FC<SwapFormProps> = ({ secondToken }) => {
+export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -110,11 +110,11 @@ export const SwapForm: FC<SwapFormProps> = ({ secondToken }) => {
   const formik = useFormik<SwapFormValues>({
     initialValues: {
       inputAssets: {
-        asset: tezosToken,
+        asset: inputToken ?? tezosToken,
         amount: undefined
       },
       outputAssets: {
-        asset: secondToken ?? emptyTezosLikeToken,
+        asset: emptyTezosLikeToken,
         amount: undefined
       }
     },

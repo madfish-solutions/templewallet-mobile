@@ -62,7 +62,7 @@ export type ScreensParamList = {
   [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
-  [ScreensEnum.SwapScreen]: { token?: TokenInterface };
+  [ScreensEnum.SwapScreen]: { inputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
   [ScreensEnum.SwapQuestionsScreen]: undefined;
 

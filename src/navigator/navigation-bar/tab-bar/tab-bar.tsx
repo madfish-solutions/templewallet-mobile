@@ -57,7 +57,11 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.SwapScreen}
-          params={isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? route.params : undefined}
+          params={
+            isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
+              ? { inputToken: route.params?.token }
+              : undefined
+          }
           focused={isStackFocused(swapStackScreens)}
         />
         <DebugTapListener>

@@ -10,5 +10,5 @@ export const SwapScreen: FC = () => {
   usePageAnalytic(ScreensEnum.SwapScreen);
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.SwapScreen>>();
 
-  return <SwapForm secondToken={isDefined(params) ? params.token : undefined} />;
+  return <SwapForm inputToken={isDefined(params) ? params.inputToken : undefined} />;
 };

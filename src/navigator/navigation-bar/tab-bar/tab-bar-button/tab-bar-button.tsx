@@ -16,7 +16,7 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
-  params?: ScreensParamList[ScreensEnum.TokenScreen];
+  params?: ScreensParamList[ScreensEnum.SwapScreen];
 }
 
 export const TabBarButton: FC<Props> = ({
