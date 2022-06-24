@@ -28,13 +28,10 @@ export const TokenScreen = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
-  // const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
   usePageAnalytic(ScreensEnum.TokenScreen);
-
-  // useEffect(() => setSearchValue(`${token.address}_${token.id}`), [token]);
 
   return (
     <>

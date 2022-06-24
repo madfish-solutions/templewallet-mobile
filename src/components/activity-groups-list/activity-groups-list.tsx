@@ -52,10 +52,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, loadMore = empty
         stickySectionHeadersEnabled={true}
         contentContainerStyle={styles.sectionListContentContainer}
         onEndReachedThreshold={0.01}
-        onEndReached={() => {
-          console.log('loading');
-          loadMore();
-        }}
+        onEndReached={loadMore}
         keyExtractor={(item, index) => item[0].hash + index}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}

@@ -30,9 +30,7 @@ export const useGeneralActivity = (): UseActivityInterface => {
       return;
     }
     const localLastItem = outcomingOperations.data[outcomingOperations.data.length - 1];
-    console.log('use-general-activity outcomingOperations.data', outcomingOperations.data.length, lastId);
     if (!isDefined(localLastItem)) {
-      console.log(localLastItem);
       setIsAllLoaded(true);
 
       return;
