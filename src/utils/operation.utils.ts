@@ -1,7 +1,9 @@
+import { BigNumber } from 'bignumber.js';
+
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
-import { OperationInterface } from '../interfaces/operation.interface';
+import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
 import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 
@@ -15,7 +17,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       status,
       hash,
       timestamp,
-      parameters,
+      entrypoint,
       contractBalance,
       sender,
       target,
@@ -27,13 +29,11 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
     const source = sender;
     let destination: MemberInterface = { address: '' };
     let amount = '0';
-    let entrypoint = '';
 
     switch (type) {
       case ActivityTypeEnum.Transaction:
         destination = target;
         amount = operation.amount.toString();
-        entrypoint = extractEntrypoint(parameters);
         break;
 
       case ActivityTypeEnum.Delegation:
@@ -69,16 +69,67 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
   return activities;
 };
 
-export const extractEntrypoint = (operationParameters?: string): string => {
-  try {
-    if (isDefined(operationParameters)) {
-      const entrypoint = operationParameters.match(/{"entrypoint":"[^"]*/g)?.map(i => i.slice(15));
+export const mapOperationsFa12ToActivities = (address: string, operations: Array<OperationFa12Interface>) => {
+  const activities: Array<ActivityInterface> = [];
 
-      if (isDefined(entrypoint) && isDefined(entrypoint[0])) {
-        return entrypoint[0];
+  for (const operation of operations) {
+    const { id, type, status, hash, timestamp, entrypoint, sender, target, level, parameter } = operation;
+
+    const source = sender;
+    const amount = parameter.value.to;
+
+    activities.push({
+      id,
+      type,
+      hash,
+      status: stringToActivityStatusEnum(status),
+      source,
+      entrypoint,
+      level,
+      destination: target,
+      amount: source.address === address ? `-${amount}` : amount,
+      timestamp: new Date(timestamp).getTime()
+    });
+  }
+
+  return activities;
+};
+
+export const mapOperationsFa2ToActivities = (address: string, operations: Array<OperationFa2Interface>) => {
+  const activities: Array<ActivityInterface> = [];
+
+  for (const operation of operations) {
+    const { id, type, status, hash, timestamp, entrypoint, sender, target, level, parameter } = operation;
+
+    const source = sender;
+    let amount = '0';
+    if (parameter.value.length > 0) {
+      if (parameter.value[0].from_ === address) {
+        amount = parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
       }
+      parameter.value.forEach(param => {
+        const val = param.txs.find(tx => {
+          return tx.to_ === address && (amount = tx.amount);
+        });
+        if (isDefined(val)) {
+          amount = val.amount;
+        }
+      });
     }
-  } catch {}
 
-  return '';
+    activities.push({
+      id,
+      type,
+      hash,
+      status: stringToActivityStatusEnum(status),
+      source,
+      entrypoint,
+      level,
+      destination: target,
+      amount: source.address === address ? `-${amount}` : amount,
+      timestamp: new Date(timestamp).getTime()
+    });
+  }
+
+  return activities;
 };

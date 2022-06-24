@@ -1,25 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ActivityGroup } from '../interfaces/activity.interface';
+import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
-import { mapOperationsToActivities } from '../utils/operation.utils';
-import { getTokenTransfersNew } from '../utils/token-operations.util';
+import { mapOperationsFa12ToActivities, mapOperationsFa2ToActivities } from '../utils/operation.utils';
+import { getTokenFa12Operations, getTokenFa2Operations } from '../utils/token-operations.util';
 
-export const useTokenActivity = (contractAddress: string, tokenId = '0') => {
+export const useTokenActivity = (contractAddress: string, tokenId?: string) => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(async () => {
-    const result = await getTokenTransfersNew(publicKeyHash, contractAddress, tokenId, lastLevel);
-    const { data: operations } = result;
-
-    const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
+    const loadedActivities = isDefined(tokenId)
+      ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
+      : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
     const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
-
     setActivities(prevValue => [...prevValue, ...activityGroups]);
   }, [publicKeyHash, setActivities, lastLevel]);
 
@@ -40,4 +38,27 @@ export const useTokenActivity = (contractAddress: string, tokenId = '0') => {
     handleUpdate,
     activities
   };
+};
+
+const loadFa2Activity = async (
+  publicKeyHash: string,
+  contractAddress: string,
+  tokenId: string,
+  lastLevel: number | null
+): Promise<Array<ActivityInterface>> => {
+  const result = await getTokenFa2Operations(publicKeyHash, contractAddress, tokenId, lastLevel);
+  const { data: operations } = result;
+
+  return mapOperationsFa2ToActivities(publicKeyHash, operations);
+};
+
+const loadFa12Activity = async (
+  publicKeyHash: string,
+  contractAddress: string,
+  lastLevel: number | null
+): Promise<Array<ActivityInterface>> => {
+  const result = await getTokenFa12Operations(publicKeyHash, contractAddress, lastLevel);
+  const { data: operations } = result;
+
+  return mapOperationsFa12ToActivities(publicKeyHash, operations);
 };
