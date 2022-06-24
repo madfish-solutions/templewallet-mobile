@@ -9,6 +9,7 @@ import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.h
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
   useSelectedAccountTezosTokenSelector,
   useVisibleTokensListSelector
@@ -40,8 +41,9 @@ export const TokenList: FC = () => {
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
+  const isHideZeroBalanceMemo = useHideZeroBalances();
   const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
-    useFilteredAssetsList(visibleTokensList);
+    useFilteredAssetsList(visibleTokensList, isHideZeroBalanceMemo);
   const sortedAssetsList = useSortedAssetsList(filteredAssetsList);
 
   const isShowTezos = useMemo(
