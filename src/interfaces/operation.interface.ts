@@ -32,6 +32,15 @@ interface Fa2OpParams {
   from_: 'tz1h85hgb9hk4MmLuouLcWWna4wBLtqCq4Ta';
 }
 
+export type ParamterFa12 = {
+  entrypoint: string;
+  value: {
+    to: string;
+    from: string;
+    value: string;
+  };
+};
+
 export interface OperationFa12Interface extends OperationInterface {
   parameter: {
     entrypoint: string;
@@ -43,9 +52,11 @@ export interface OperationFa12Interface extends OperationInterface {
   };
 }
 
+export type ParamterFa2 = {
+  entrypoint: string;
+  value: Array<Fa2OpParams>;
+};
+
 export interface OperationFa2Interface extends OperationInterface {
-  parameter: {
-    entrypoint: string;
-    value: Array<Fa2OpParams>;
-  };
+  parameter: ParamterFa2;
 }

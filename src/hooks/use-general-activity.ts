@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
+import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
@@ -15,7 +17,7 @@ import {
   getTokenOperations
 } from '../utils/token-operations.util';
 
-export const useGeneralActivity = () => {
+export const useGeneralActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastId, setLastId] = useState<null | number>(null);
@@ -27,14 +29,26 @@ export const useGeneralActivity = () => {
     if (outcomingOperations.data.length < 0) {
       return;
     }
-    const localLastId = outcomingOperations.data[outcomingOperations.data.length - 1].id;
+    const localLastItem = outcomingOperations.data[outcomingOperations.data.length - 1];
+    console.log('use-general-activity outcomingOperations.data', outcomingOperations.data.length, lastId);
+    if (!isDefined(localLastItem)) {
+      console.log(localLastItem);
+      setIsAllLoaded(true);
+
+      return;
+    }
+    const localLastId = localLastItem.id;
     const incomingOperationsFa12 = await getFa12IncomingOperations(publicKeyHash, localLastId, lastId);
     const incomingOperationsFa2 = await getFa2IncomingOperations(publicKeyHash, localLastId, lastId);
     const { data: operations } = outcomingOperations;
     const { data: operationsFa12 } = incomingOperationsFa12;
     const { data: operationsFa2 } = incomingOperationsFa2;
 
-    setIsAllLoaded(operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0);
+    if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
+      setIsAllLoaded(true);
+
+      return;
+    }
 
     const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
     const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationsFa12);
@@ -46,17 +60,17 @@ export const useGeneralActivity = () => {
     const activityGroups = transformActivityInterfaceToActivityGroups(allOperations);
 
     setActivities(prevValue => [...prevValue, ...activityGroups]);
-  }, [publicKeyHash, setActivities, setLastId]);
+  }, [publicKeyHash, setActivities, lastId]);
 
   useEffect(() => {
     loadPrimaryOperations();
   }, [loadPrimaryOperations]);
 
   const handleUpdate = () => {
-    if (isDefined(activities) && activities.length > 0) {
+    if (isDefined(activities) && activities.length > 0 && !isAllLoaded && activities.length >= OPERATION_LIMIT) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
-        setLastId(lastActivityGroup[0].level ?? null);
+        setLastId(lastActivityGroup[0].id ?? null);
       }
     }
   };

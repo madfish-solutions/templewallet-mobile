@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
+import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
 import { mapOperationsToActivities } from '../utils/operation.utils';
 import { getTezosOperations } from '../utils/token-operations.util';
 
-export const useTezosTokenActivity = () => {
+export const useTezosTokenActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
@@ -31,7 +33,7 @@ export const useTezosTokenActivity = () => {
   }, [loadLastActivity]);
 
   const handleUpdate = () => {
-    if (isDefined(activities) && activities.length > 0) {
+    if (isDefined(activities) && activities.length > 0 && !isAllLoaded && activities.length >= OPERATION_LIMIT) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
         setLastLevel(lastActivityGroup[0].level ?? null);

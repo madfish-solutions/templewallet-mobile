@@ -9,7 +9,7 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
   // const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
-  const { activities } = useGeneralActivity();
+  const { activities, handleUpdate } = useGeneralActivity();
 
   usePageAnalytic(ScreensEnum.Activity);
 
@@ -17,7 +17,7 @@ export const Activity = () => {
     <>
       {/* <SearchInput placeholder="Search" onChangeText={setSearchValue} /> */}
       {/* <ActivityGroupsList activityGroups={filteredActivityGroups} /> */}
-      <ActivityGroupsList activityGroups={activities} />
+      <ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />
     </>
   );
 };

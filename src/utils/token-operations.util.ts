@@ -32,13 +32,13 @@ export const getTokenFa2Operations = (
   lastLevel: number | null
 ) =>
   tzktApi.get<Array<OperationFa2Interface>>(
-    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.[*].in=[{%22from_%22:%22${account}%22,%22txs%22:[{%22token_id%22:%22${tokenId}%22}]},{%22txs%22:[{%22to_%22:%22${account}%22,%22token_id%22:%22${tokenId}%22}]}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.[*].in=[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
 export const getTokenFa12Operations = (account: string, contractAddress: string, lastLevel: number | null) =>
   tzktApi.get<Array<OperationFa12Interface>>(
-    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.in=[{%22from%22:%22${account}%22},{%22to%22:%22${account}%22}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.in=[{"from":"${account}"},{"to":"${account}"}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
@@ -50,7 +50,7 @@ export const getTezosOperations = (account: string, lastLevel: number | null) =>
 
 export const getTokenOperations = (account: string, lastId: number | null) =>
   tzktApi.get<Array<OperationInterface>>(
-    `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
+    `accounts/${account}/operations?limit=${OPERATION_LIMIT}&sort=1&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
       (isDefined(lastId) ? `&lastId=${lastId}` : '')
   );
 

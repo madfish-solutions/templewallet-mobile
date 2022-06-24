@@ -4,7 +4,7 @@ import { ActivityGroupsList } from '../../../components/activity-groups-list/act
 import { useTezosTokenActivity } from '../../../hooks/use-tezos-token-activity.hook';
 
 export const TezosTokenHistory = () => {
-  const { activities } = useTezosTokenActivity();
+  const { activities, handleUpdate } = useTezosTokenActivity();
   // const activityGroups = useActivityGroupsSelector();
 
   // const filteredActivityGroups = useMemo(() => {
@@ -22,6 +22,6 @@ export const TezosTokenHistory = () => {
   //   return result;
   // }, [activityGroups]);
 
-  return <ActivityGroupsList activityGroups={activities} />;
+  return <ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />;
   // return <Text>Todo Tezos</Text>;
 };

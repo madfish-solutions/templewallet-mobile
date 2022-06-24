@@ -27,7 +27,7 @@ export const TokenScreen = () => {
   );
 
   const selectedAccount = useSelectedAccountSelector();
-  const { activities } = useTokenActivity(initialToken.address, initialToken.id.toString());
+  const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
   // const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
@@ -47,7 +47,7 @@ export const TokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer
-        historyComponent={<ActivityGroupsList activityGroups={activities} />}
+        historyComponent={<ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />}
         infoComponent={<TokenInfo token={token} />}
         token={token}
       />

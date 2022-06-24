@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { SectionList, Text } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
 import { isTheSameDay, isToday, isYesterday } from '../../utils/date.utils';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -9,9 +10,10 @@ import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
 interface Props {
   activityGroups: ActivityGroup[];
+  loadMore?: () => void;
 }
 
-export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
+export const ActivityGroupsList: FC<Props> = ({ activityGroups, loadMore = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
 
   const sections = useMemo(() => {
@@ -49,6 +51,11 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
         sections={sections}
         stickySectionHeadersEnabled={true}
         contentContainerStyle={styles.sectionListContentContainer}
+        onEndReachedThreshold={0.01}
+        onEndReached={() => {
+          console.log('loading');
+          loadMore();
+        }}
         keyExtractor={(item, index) => item[0].hash + index}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}

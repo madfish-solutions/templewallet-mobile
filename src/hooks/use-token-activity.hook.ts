@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
+import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
 import { mapOperationsFa12ToActivities, mapOperationsFa2ToActivities } from '../utils/operation.utils';
 import { getTokenFa12Operations, getTokenFa2Operations } from '../utils/token-operations.util';
 
-export const useTokenActivity = (contractAddress: string, tokenId?: string) => {
+export const useTokenActivity = (contractAddress: string, tokenId?: string): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
@@ -29,7 +31,7 @@ export const useTokenActivity = (contractAddress: string, tokenId?: string) => {
   }, [loadLastActivity]);
 
   const handleUpdate = () => {
-    if (isDefined(activities) && activities.length > 0) {
+    if (isDefined(activities) && activities.length > 0 && !isAllLoaded && activities.length >= OPERATION_LIMIT) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
         setLastLevel(lastActivityGroup[0].level ?? null);
