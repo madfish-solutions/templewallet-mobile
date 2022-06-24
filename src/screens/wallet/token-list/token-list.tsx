@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -9,6 +10,7 @@ import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.h
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
   useSelectedAccountTezosTokenSelector,
@@ -36,14 +38,20 @@ const keyExtractor = (item: FlatListItem) => {
 };
 
 export const TokenList: FC = () => {
+  const dispatch = useDispatch();
   const styles = useTokenListStyles();
   const { navigate } = useNavigation();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const isHideZeroBalanceMemo = useHideZeroBalances();
-  const { filteredAssetsList, isHideZeroBalance, setIsHideZeroBalance, searchValue, setSearchValue } =
-    useFilteredAssetsList(visibleTokensList, isHideZeroBalanceMemo);
+  const handleHideZeroBalanceChange = useCallback((value: boolean) => {
+    dispatch(setZeroBalancesShown(value));
+  }, []);
+  const { filteredAssetsList, isHideZeroBalance, searchValue, setSearchValue } = useFilteredAssetsList(
+    visibleTokensList,
+    isHideZeroBalanceMemo
+  );
   const sortedAssetsList = useSortedAssetsList(filteredAssetsList);
 
   const isShowTezos = useMemo(
@@ -80,7 +88,7 @@ export const TokenList: FC = () => {
             value={isHideZeroBalance}
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
-            onChange={setIsHideZeroBalance}
+            onChange={handleHideZeroBalanceChange}
           >
             <Divider size={formatSize(4)} />
             <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
