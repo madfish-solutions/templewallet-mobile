@@ -24,9 +24,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isBiometricsEnabled
   }));
 
-  builder.addCase(setZeroBalancesShown, (state, { payload: setZeroBalancesShown }) => ({
+  builder.addCase(setZeroBalancesShown, (state, { payload: hideZeroBalances }) => ({
     ...state,
-    setZeroBalancesShown
+    hideZeroBalances
   }));
 
   builder.addCase(setIsAnalyticsEnabled, (state, { payload: isAnalyticsEnabled }) => ({
