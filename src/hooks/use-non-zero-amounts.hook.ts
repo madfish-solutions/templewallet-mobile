@@ -21,12 +21,12 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
     let positiveAmountSum = new BigNumber(0);
     let negativeAmountSum = new BigNumber(0);
 
-    for (const { address, id, amount } of group) {
-      const slug = getTokenSlug({ address, id });
+    for (const { address, tokenId, amount } of group) {
+      const slug = getTokenSlug({ address, tokenId });
       const { decimals, symbol, name } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];
       if (isString(address) && !isString(name)) {
-        dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
+        dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
       }
 
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);

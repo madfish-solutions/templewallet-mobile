@@ -2,6 +2,7 @@
 // import { map } from 'rxjs/operators';
 
 import { tzktApi } from '../api.service';
+import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
 // import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
@@ -11,8 +12,6 @@ import { isDefined } from './is-defined';
 // const limitOperations = 1000;
 // const limitIncomingTransactions = 10000;
 // const limitTransfers = 10000;
-
-const limit = 10;
 
 // all operations
 // https://api.tzkt.io/v1/accounts/tz1h85hgb9hk4MmLuouLcWWna4wBLtqCq4Ta/operations?type=delegation%2Corigination%2Ctransaction%2Creveal&lastId=270281840&limit=40&sort=1&quote=usd
@@ -33,25 +32,25 @@ export const getTokenFa2Operations = (
   lastLevel: number | null
 ) =>
   tzktApi.get<Array<OperationFa2Interface>>(
-    `operations/transactions?entrypoint=transfer&status=applied&parameter.[*].in=[{%22from_%22:%22${account}%22,%22txs%22:[{%22token_id%22:%22${tokenId}%22}]},{%22txs%22:[{%22to_%22:%22${account}%22,%22token_id%22:%22${tokenId}%22}]}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.[*].in=[{%22from_%22:%22${account}%22,%22txs%22:[{%22token_id%22:%22${tokenId}%22}]},{%22txs%22:[{%22to_%22:%22${account}%22,%22token_id%22:%22${tokenId}%22}]}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
 export const getTokenFa12Operations = (account: string, contractAddress: string, lastLevel: number | null) =>
   tzktApi.get<Array<OperationFa12Interface>>(
-    `operations/transactions?entrypoint=transfer&status=applied&parameter.in=[{%22from%22:%22${account}%22},{%22to%22:%22${account}%22}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.in=[{%22from%22:%22${account}%22},{%22to%22:%22${account}%22}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
 export const getTezosOperations = (account: string, lastLevel: number | null) =>
   tzktApi.get<Array<OperationInterface>>(
-    `accounts/${account}/operations?limit=${limit}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
+    `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
 export const getTokenOperations = (account: string, lastId: number | null) =>
   tzktApi.get<Array<OperationInterface>>(
-    `accounts/${account}/operations?limit=${limit}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
+    `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
       (isDefined(lastId) ? `&lastId=${lastId}` : '')
   );
 

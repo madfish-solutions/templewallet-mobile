@@ -27,7 +27,7 @@ export const TokenScreen = () => {
   );
 
   const selectedAccount = useSelectedAccountSelector();
-  const { activities } = useTokenActivity(token.address, token.id.toString());
+  const { activities } = useTokenActivity(initialToken.address, initialToken.id.toString());
   // const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);

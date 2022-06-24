@@ -39,18 +39,20 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
     return result;
   }, [activityGroups]);
 
-  const isShowPlaceholder = activityGroups.length === 0;
+  const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
   return isShowPlaceholder ? (
     <DataPlaceholder text="No Activity records were found" />
   ) : (
-    <SectionList
-      sections={sections}
-      stickySectionHeadersEnabled={true}
-      contentContainerStyle={styles.sectionListContentContainer}
-      keyExtractor={(item, index) => item[0].hash + index}
-      renderItem={({ item }) => <ActivityGroupItem group={item} />}
-      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-    />
+    <>
+      <SectionList
+        sections={sections}
+        stickySectionHeadersEnabled={true}
+        contentContainerStyle={styles.sectionListContentContainer}
+        keyExtractor={(item, index) => item[0].hash + index}
+        renderItem={({ item }) => <ActivityGroupItem group={item} />}
+        renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+      />
+    </>
   );
 };

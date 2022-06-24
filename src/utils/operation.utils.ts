@@ -79,6 +79,7 @@ export const mapOperationsFa12ToActivities = (address: string, operations: Array
     const amount = parameter.value.to;
 
     activities.push({
+      address: target.address,
       id,
       type,
       hash,
@@ -103,22 +104,27 @@ export const mapOperationsFa2ToActivities = (address: string, operations: Array<
 
     const source = sender;
     let amount = '0';
+    let tokenId = '0';
     if (parameter.value.length > 0) {
       if (parameter.value[0].from_ === address) {
         amount = parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
+        tokenId = parameter.value[0].txs[0].token_id;
       }
-      parameter.value.forEach(param => {
+      for (const param of parameter.value) {
         const val = param.txs.find(tx => {
           return tx.to_ === address && (amount = tx.amount);
         });
         if (isDefined(val)) {
           amount = val.amount;
+          tokenId = val.token_id;
         }
-      });
+      }
     }
 
     activities.push({
+      address: target.address,
       id,
+      tokenId,
       type,
       hash,
       status: stringToActivityStatusEnum(status),
