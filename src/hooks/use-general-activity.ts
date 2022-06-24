@@ -19,6 +19,7 @@ export const useGeneralActivity = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastId, setLastId] = useState<null | number>(null);
+  const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadPrimaryOperations = useCallback(async () => {
@@ -32,6 +33,8 @@ export const useGeneralActivity = () => {
     const { data: operations } = outcomingOperations;
     const { data: operationsFa12 } = incomingOperationsFa12;
     const { data: operationsFa2 } = incomingOperationsFa2;
+
+    setIsAllLoaded(operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0);
 
     const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
     const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationsFa12);
@@ -60,6 +63,7 @@ export const useGeneralActivity = () => {
 
   return {
     handleUpdate,
-    activities
+    activities,
+    isAllLoaded
   };
 };

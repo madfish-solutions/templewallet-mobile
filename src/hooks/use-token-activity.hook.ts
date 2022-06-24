@@ -11,12 +11,15 @@ export const useTokenActivity = (contractAddress: string, tokenId?: string) => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
+  const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(async () => {
     const loadedActivities = isDefined(tokenId)
       ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
       : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
+
+    setIsAllLoaded(loadedActivities.length === 0);
     const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
     setActivities(prevValue => [...prevValue, ...activityGroups]);
   }, [publicKeyHash, setActivities, lastLevel]);
@@ -36,7 +39,8 @@ export const useTokenActivity = (contractAddress: string, tokenId?: string) => {
 
   return {
     handleUpdate,
-    activities
+    activities,
+    isAllLoaded
   };
 };
 

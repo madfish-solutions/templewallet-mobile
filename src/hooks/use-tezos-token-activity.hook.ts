@@ -11,11 +11,14 @@ export const useTezosTokenActivity = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
+  const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(async () => {
     const result = await getTezosOperations(publicKeyHash, lastLevel);
     const { data: operations } = result;
+
+    setIsAllLoaded(operations.length === 0);
 
     const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
     const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
@@ -38,6 +41,7 @@ export const useTezosTokenActivity = () => {
 
   return {
     handleUpdate,
-    activities
+    activities,
+    isAllLoaded
   };
 };
