@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Image, View } from 'react-native';
+import { View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { formatSize } from '../../styles/format-size';
 import {
@@ -69,7 +70,6 @@ const getFirstFallback = (
 
 export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
   const styles = useCollectibleIconStyles();
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isLoadingFailed, setIsLoadingFailed] = useState(
     collectibleLoadStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
   );
@@ -92,17 +92,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
       }}
     >
       {isDefined(collectible) && isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri) && (
-        <Image
-          style={styles.image}
-          source={{
-            uri: imageSrc,
-            width: size,
-            height: size
-          }}
-          blurRadius={isLoaded ? 0 : 5}
-          onError={handleLoadingFailed}
-          onLoadEnd={() => setIsLoaded(true)}
-        />
+        <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
       )}
     </View>
   );

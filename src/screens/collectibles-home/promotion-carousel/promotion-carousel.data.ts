@@ -1,27 +1,27 @@
-import { ImageSourcePropType } from 'react-native';
+import { Source } from 'react-native-fast-image';
 
 import { madfishLink, quipuLink, supportUkraine, yupanaLink } from '../../../config/socials';
 
 export interface PromotionCarouselItemInterface {
-  src: ImageSourcePropType;
+  source: Source;
   link: string;
 }
 
 export const promotionCarouselData: PromotionCarouselItemInterface[] = [
   {
-    src: require('./banners/yupana.png'),
+    source: require('./banners/yupana.png'),
     link: yupanaLink
   },
   {
-    src: require('./banners/ukraine.png'),
+    source: require('./banners/ukraine.png'),
     link: supportUkraine
   },
   {
-    src: require('./banners/quipu.png'),
+    source: require('./banners/quipu.png'),
     link: quipuLink
   },
   {
-    src: require('./banners/madfish.png'),
+    source: require('./banners/madfish.png'),
     link: madfishLink
   }
 ];
