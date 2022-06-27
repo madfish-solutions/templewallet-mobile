@@ -7,10 +7,11 @@ import { catchError, map } from 'rxjs/operators';
 import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from '../../../../interfaces/account.interface';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
+import { showWarningToast } from '../../../../toast/toast.utils';
+import { copyStringToClipboard } from '../../../../utils/clipboard.utils';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const tezos = useReadOnlyTezosToolkit(sender);
 
@@ -27,8 +28,12 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           }))
         ),
         catchError(error => {
-          setError(error.toString());
           Sentry.captureException(error);
+          showWarningToast({
+            title: 'Warning! The transaction is likely to fail!',
+            description: 'Tap to copy error logs',
+            onPress: () => copyStringToClipboard(error.toString())
+          });
 
           return of([]);
         })
@@ -41,5 +46,5 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
     return () => subscription.unsubscribe();
   }, []);
 
-  return { data, isLoading, error };
+  return { data, isLoading };
 };
