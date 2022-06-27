@@ -11,6 +11,7 @@ import { CustomToast } from './toast/custom-toast';
 
 type CustomToastProps = ToastConfigParams<{
   operationHash: string;
+  estimationError: string;
 }>;
 
 const config = {
@@ -25,11 +26,18 @@ const config = {
       onPress={onPress}
     />
   ),
-  [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress }: CustomToastProps) => (
-    <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Error} onPress={onPress} />
+  [ToastTypeEnum.Error]: ({ hide, text1, text2, onPress, props }: CustomToastProps) => (
+    <CustomToast
+      title={text1}
+      description={text2}
+      toastType={ToastTypeEnum.Error}
+      estimationError={props?.estimationError}
+      hide={hide}
+      onPress={onPress}
+    />
   ),
   [ToastTypeEnum.Warning]: ({ hide, text1, text2, onPress }: CustomToastProps) => (
-    <CustomToast title={text1} description={text2} hide={hide} toastType={ToastTypeEnum.Warning} onPress={onPress} />
+    <CustomToast title={text1} description={text2} toastType={ToastTypeEnum.Warning} hide={hide} onPress={onPress} />
   )
 };
 

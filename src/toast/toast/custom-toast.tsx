@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
+import { CopyEstimationErrorButton } from '../../components/icon/copy-estimation-error-button/copy-estimation-error-button';
 import { ExternalLinkButton } from '../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -22,10 +23,19 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
+  estimationError?: string;
   onPress: EmptyFn;
 }
 
-export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
+export const CustomToast: FC<Props> = ({
+  title,
+  description,
+  hide,
+  toastType,
+  operationHash,
+  estimationError,
+  onPress
+}) => {
   const styles = useToastStyles();
   const colors = useColors();
 
@@ -57,14 +67,25 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
                 {title}
               </Text>
             )}
-            <Text
-              numberOfLines={!isString(title) ? 2 : 1}
-              style={[styles.description, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}
-            >
-              {description}
-            </Text>
+            <View style={styles.row}>
+              <Text
+                numberOfLines={!isString(title) ? 2 : 1}
+                style={[
+                  styles.description,
+                  { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }
+                ]}
+              >
+                {description}
+              </Text>
+              {isDefined(estimationError) && (
+                <>
+                  <Divider size={formatSize(4)} />
+                  <CopyEstimationErrorButton estimationError={estimationError} />
+                </>
+              )}
+            </View>
             {isDefined(operationHash) && (
-              <View style={styles.operationHashBlock}>
+              <View style={styles.row}>
                 <Text style={styles.description}>Operation hash:</Text>
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />

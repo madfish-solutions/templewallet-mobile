@@ -31,7 +31,7 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
     flex: 1,
     marginVertical: 10
   },
-  operationHashBlock: {
+  row: {
     flexDirection: 'row'
   },
   iconLeft: {
