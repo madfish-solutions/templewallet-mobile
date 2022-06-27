@@ -15,6 +15,7 @@ const mockTarget = {
 export const mockOperations: Array<OperationInterface> = [
   {
     id: 0,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Transaction,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
@@ -36,6 +37,7 @@ export const mockOperations: Array<OperationInterface> = [
   },
   {
     id: 1,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Delegation,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
@@ -57,6 +59,7 @@ export const mockOperations: Array<OperationInterface> = [
   },
   {
     id: 2,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Origination,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',

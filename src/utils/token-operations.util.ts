@@ -11,13 +11,13 @@ export const getTokenFa2Operations = (
   lastLevel: number | null
 ) =>
   tzktApi.get<Array<OperationFa2Interface>>(
-    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.[*].in=[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&parameter.[*].in=[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
 export const getTokenFa12Operations = (account: string, contractAddress: string, lastLevel: number | null) =>
   tzktApi.get<Array<OperationFa12Interface>>(
-    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&status=applied&parameter.in=[{"from":"${account}"},{"to":"${account}"}]&sort.desc=level&target=${contractAddress}` +
+    `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&parameter.in=[{"from":"${account}"},{"to":"${account}"}]&sort.desc=level&target=${contractAddress}` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
@@ -35,12 +35,12 @@ export const getTokenOperations = (account: string, lastId: number | null) =>
 
 export const getFa12IncomingOperations = (account: string, lowerId: number, upperId: number | null) =>
   tzktApi.get<Array<OperationFa12Interface>>(
-    `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&status=applied&id.gt=${lowerId}&entrypoint=transfer&parameter.to=${account}` +
+    `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&id.gt=${lowerId}&entrypoint=transfer&parameter.to=${account}` +
       (isDefined(upperId) ? `&id.lt=${upperId}` : '')
   );
 
 export const getFa2IncomingOperations = (account: string, lowerId: number, upperId: number | null) =>
   tzktApi.get<Array<OperationFa2Interface>>(
-    `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&status=applied&id.gt=${lowerId}&entrypoint=transfer&parameter.[*].txs.[*].to_=${account}` +
+    `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&id.gt=${lowerId}&entrypoint=transfer&parameter.[*].txs.[*].to_=${account}` +
       (isDefined(upperId) ? `&id.lt=${upperId}` : '')
   );
