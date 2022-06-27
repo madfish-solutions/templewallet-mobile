@@ -35,7 +35,7 @@ export const ScanQrCode = () => {
           showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
         }
       } else if (isBeaconPayload(data)) {
-        beaconDeepLinkHandler(data);
+        beaconDeepLinkHandler(navigate, data);
       } else {
         showErrorToast({ description: 'Invalid QR code' });
       }
