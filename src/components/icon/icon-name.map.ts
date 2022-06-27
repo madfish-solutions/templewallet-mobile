@@ -32,6 +32,7 @@ import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
+import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
@@ -107,6 +108,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GMid]: GMidIcon,
   [IconNameEnum.GHigh]: GHighIcon,
   [IconNameEnum.Globe]: GlobeIcon,
+  [IconNameEnum.HourGlasses]: HourGlassesIcon,
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
