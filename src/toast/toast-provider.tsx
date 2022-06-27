@@ -11,7 +11,7 @@ import { CustomToast } from './toast/custom-toast';
 
 type CustomToastProps = ToastConfigParams<{
   operationHash: string;
-  estimationError: string;
+  isEstimationError: boolean;
 }>;
 
 const config = {
@@ -31,7 +31,7 @@ const config = {
       title={text1}
       description={text2}
       toastType={ToastTypeEnum.Error}
-      estimationError={props?.estimationError}
+      isEstimationError={props?.isEstimationError}
       hide={hide}
       onPress={onPress}
     />

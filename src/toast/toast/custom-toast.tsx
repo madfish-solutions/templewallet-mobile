@@ -2,12 +2,12 @@ import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from '../../components/divider/divider';
-import { CopyEstimationErrorButton } from '../../components/icon/copy-estimation-error-button/copy-estimation-error-button';
 import { ExternalLinkButton } from '../../components/icon/external-link-button/external-link-button';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../config/general';
+import { white } from '../../config/styles';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
@@ -23,7 +23,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
-  estimationError?: string;
+  isEstimationError?: boolean;
   onPress: EmptyFn;
 }
 
@@ -33,7 +33,7 @@ export const CustomToast: FC<Props> = ({
   hide,
   toastType,
   operationHash,
-  estimationError,
+  isEstimationError,
   onPress
 }) => {
   const styles = useToastStyles();
@@ -77,11 +77,10 @@ export const CustomToast: FC<Props> = ({
               >
                 {description}
               </Text>
-              {isDefined(estimationError) && (
-                <>
-                  <Divider size={formatSize(4)} />
-                  <CopyEstimationErrorButton estimationError={estimationError} />
-                </>
+              {isEstimationError === true && (
+                <View style={styles.iconContainer}>
+                  <Icon name={IconNameEnum.Copy} color={white} />
+                </View>
               )}
             </View>
             {isDefined(operationHash) && (
