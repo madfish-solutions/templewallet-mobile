@@ -53,7 +53,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, loadMore = empty
         contentContainerStyle={styles.sectionListContentContainer}
         onEndReachedThreshold={0.01}
         onEndReached={loadMore}
-        keyExtractor={(item, index) => item[0].hash + index}
+        keyExtractor={item => item[0].hash}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       />
