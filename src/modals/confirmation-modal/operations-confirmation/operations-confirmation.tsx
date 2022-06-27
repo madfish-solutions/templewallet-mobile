@@ -16,6 +16,7 @@ import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
+import { EstimationWarning } from './estimation-warning/estimation-warning';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -87,6 +88,13 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
               <Text style={styles.loadingMessage}>Loading...</Text>
             ) : (
               <>
+                {estimations.error !== '' && (
+                  <>
+                    <Divider size={formatSize(12)} />
+                    <EstimationWarning errorMessage={estimations.error} />
+                    <Divider />
+                  </>
+                )}
                 <Text style={styles.sectionTitle}>Account</Text>
                 <Divider />
 

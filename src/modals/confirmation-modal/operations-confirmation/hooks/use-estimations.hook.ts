@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import { ParamsWithKind } from '@taquito/taquito';
 import { useEffect, useState } from 'react';
 import { from, of } from 'rxjs';
@@ -6,10 +7,10 @@ import { catchError, map } from 'rxjs/operators';
 import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from '../../../../interfaces/account.interface';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
-import { showErrorToast } from '../../../../toast/toast.utils';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const tezos = useReadOnlyTezosToolkit(sender);
 
@@ -25,8 +26,9 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
             minimalFeePerStorageByteMutez
           }))
         ),
-        catchError(() => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+        catchError(error => {
+          setError(error.toString());
+          Sentry.captureException(error);
 
           return of([]);
         })
@@ -39,5 +41,5 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
     return () => subscription.unsubscribe();
   }, []);
 
-  return { data, isLoading };
+  return { data, isLoading, error };
 };
