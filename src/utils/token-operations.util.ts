@@ -24,7 +24,7 @@ export const getTokenFa12Operations = (account: string, contractAddress: string,
 export const getTezosOperations = (account: string, lastLevel: number | null) =>
   tzktApi.get<Array<OperationInterface>>(
     `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
-      (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
+      (isDefined(lastLevel) ? `&lastId=${lastLevel}` : '')
   );
 
 export const getTokenOperations = (account: string, lastId: number | null) =>

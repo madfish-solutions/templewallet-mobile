@@ -22,7 +22,7 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
     let negativeAmountSum = new BigNumber(0);
 
     for (const { address, tokenId, amount } of group) {
-      const slug = getTokenSlug({ address, tokenId });
+      const slug = getTokenSlug({ address, id: tokenId });
       const { decimals, symbol, name } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];
       if (isString(address) && !isString(name)) {

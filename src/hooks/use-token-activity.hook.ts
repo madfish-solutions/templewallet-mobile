@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
+import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
 import { mapOperationsFa12ToActivities, mapOperationsFa2ToActivities } from '../utils/operation.utils';
 import { getTokenFa12Operations, getTokenFa2Operations } from '../utils/token-operations.util';
+import { useTokenType } from './use-token-type';
 
-export const useTokenActivity = (contractAddress: string, tokenId?: string): UseActivityInterface => {
+export const useTokenActivity = (contractAddress: string, tokenId: string): UseActivityInterface => {
+  const { tokenType, loading } = useTokenType(contractAddress);
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const [lastLevel, setLastLevel] = useState<null | number>(null);
@@ -17,21 +19,26 @@ export const useTokenActivity = (contractAddress: string, tokenId?: string): Use
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(async () => {
-    const loadedActivities = isDefined(tokenId)
-      ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
-      : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
+    if (loading) {
+      return;
+    }
+
+    const loadedActivities =
+      tokenType === TokenTypeEnum.FA_2
+        ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
+        : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
 
     setIsAllLoaded(loadedActivities.length === 0);
     const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
     setActivities(prevValue => [...prevValue, ...activityGroups]);
-  }, [publicKeyHash, setActivities, lastLevel]);
+  }, [publicKeyHash, setActivities, lastLevel, loading, tokenType]);
 
   useEffect(() => {
     loadLastActivity();
   }, [loadLastActivity]);
 
   const handleUpdate = () => {
-    if (isDefined(activities) && activities.length > 0 && !isAllLoaded && activities.length >= OPERATION_LIMIT) {
+    if (isDefined(activities) && activities.length > 0 && !isAllLoaded) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
         setLastLevel(lastActivityGroup[0].level ?? null);
