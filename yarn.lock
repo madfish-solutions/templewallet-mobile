@@ -3190,57 +3190,50 @@
     "@types/react-test-renderer" ">=16.9.0"
     react-error-boundary "^3.1.0"
 
-"@tezos-domains/core@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/core/-/core-1.12.0.tgz#3ca139fd531053d0e022521de3453fdfff6c801e"
-  integrity sha512-hlywq0r0xcm6SC6xFhis/mpkV0LND9zHXgoxVLjJdVzCoyPnOdV2101jYb8hqP3d1KQBhX+bGRc5uhIwgjO+iA==
+"@tezos-domains/core@1.17.1", "@tezos-domains/core@^1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/core/-/core-1.17.1.tgz#de2ab7c29fef08c78b3512d8925f60587fb06121"
+  integrity sha512-I0OZmL9nUqi0RNIipdEgPtQdfURKHnVNanTioM1jLYCi55ZtW7mJ7y5VkFn2IQCcijEv0EoVfgfgmHQ//411IQ==
   dependencies:
     idna-uts46-hx "^3.3.0"
 
-"@tezos-domains/core@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/core/-/core-1.9.0.tgz#24acce47a70197d5b6b62e9ef9b3caf6ab2bb5be"
-  integrity sha512-AP2pO3zL3vngHxBOqt8uTR8BH545vXsWU0PY1/35k4U42U59eLZ5/I0QNKgQRpiRdSrAbejMpny3L4ebs9YC4g==
+"@tezos-domains/manager@^1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/manager/-/manager-1.17.1.tgz#6a92fba1e9811d8518349b808348f1ab4f8a2b98"
+  integrity sha512-j/Qfk29l0xaqlPi/9kD8GVf2T3rA6lVcvADKzKnS3P2BYIfYk/ZETV9r9vHDFQLlSySvG/nYV3Wk45votqommw==
   dependencies:
-    idna-uts46-hx "^3.3.0"
-
-"@tezos-domains/manager@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/manager/-/manager-1.12.0.tgz#04c93b7f18b323abf80c89a4ecbb21e88e4da25a"
-  integrity sha512-o5z/L6WzRN3CrNoMtLEHGWod9TvsqbXWf1rLGf7x0YuYfWEwO4pj+/uEa/P1GxDVtJUVluhL62oz5WDe4yX+NQ==
-  dependencies:
-    "@tezos-domains/core" "^1.12.0"
-    "@tezos-domains/taquito" "^1.12.0"
+    "@tezos-domains/core" "^1.17.1"
+    "@tezos-domains/taquito" "^1.17.1"
     "@types/sha.js" "^2.4.0"
     bignumber.js "^9.0.2"
     sha.js "^2.4.11"
 
-"@tezos-domains/resolver@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/resolver/-/resolver-1.12.0.tgz#3ab652c253f59c5033364f1ad325d81fb2d872c9"
-  integrity sha512-hn6qhv8vA4Q3OSHOUvVflbzf/DJ1SaWSdZv8OwapVxL+m2JiAzutUFALjh0awjJ447XgTM3WHxFQY8S5mMCfKg==
+"@tezos-domains/resolver@^1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/resolver/-/resolver-1.17.1.tgz#1e78699e2a3d3a15db2bb099e8e223a5808cc7d8"
+  integrity sha512-NWC3GkytaGNKq5es6KujEB8MsT3FigwfHHpdrcPrDlb7k4cJZ9oGRHXVjt0TzEvJ+ooRgVzuCY8QVob+ElalSg==
   dependencies:
-    "@tezos-domains/core" "^1.12.0"
+    "@tezos-domains/core" "^1.17.1"
     node-cache "^5.1.2"
 
-"@tezos-domains/taquito-client@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito-client/-/taquito-client-1.12.0.tgz#abb0e463f2be17273d5ca5e2359f30410005945f"
-  integrity sha512-FDWsRaX/IXYd4E3PvMKI9029tee6QCqqVxuu2yW9n40VQeStaG8noE1xT3h1MGhCpWuPVTEL4Ho+jm3j87S6iQ==
+"@tezos-domains/taquito-client@1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito-client/-/taquito-client-1.17.1.tgz#c018e2997be5375eef8e58c888eef1fcb9073f80"
+  integrity sha512-snzMK4aPm0dHS2zZdcM5M3hfzxLtygu73HTw64ljGJm/UNO21G5VtBHFGQhy7p6mmE/OmiRm6eNQ8MZ8n73U0A==
   dependencies:
-    "@tezos-domains/core" "^1.12.0"
-    "@tezos-domains/manager" "^1.12.0"
-    "@tezos-domains/resolver" "^1.12.0"
-    "@tezos-domains/taquito" "^1.12.0"
+    "@tezos-domains/core" "^1.17.1"
+    "@tezos-domains/manager" "^1.17.1"
+    "@tezos-domains/resolver" "^1.17.1"
+    "@tezos-domains/taquito" "^1.17.1"
     bignumber.js "^9.0.2"
     node-cache "^5.1.2"
 
-"@tezos-domains/taquito@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito/-/taquito-1.12.0.tgz#125780f44f93582233fbfb73487733f42583f0a1"
-  integrity sha512-3s9//qFdkZS4newxDZlWw4grKf64fswOaGBpQyr/I2r0NFSGmsXyG+wNXLXkpULsYslSRJPkcbUXxm997jbk5A==
+"@tezos-domains/taquito@^1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@tezos-domains/taquito/-/taquito-1.17.1.tgz#2c09e986efed8942c5591680cd118df2f0ba4a15"
+  integrity sha512-nYZQEIk8mR3IMTBAG/roFzB3Ok8F/66u+AJrtt4tLMxVkawVdeRdwMQan+C40a900xuA1OT1jnlA9gMtxicgjQ==
   dependencies:
-    "@tezos-domains/core" "^1.12.0"
+    "@tezos-domains/core" "^1.17.1"
     bignumber.js "^9.0.2"
     node-cache "^5.1.2"
 
