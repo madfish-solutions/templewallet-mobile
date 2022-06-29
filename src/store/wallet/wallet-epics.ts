@@ -123,27 +123,6 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
       )
     )
   );
-
-// const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-//   action$.pipe(
-//     ofType(loadActivityGroupsActions.submit),
-//     withSelectedAccount(state$),
-//     switchMap(([, selectedAccount]) =>
-//       forkJoin([
-//         loadTokenOperations$(selectedAccount.publicKeyHash),
-//         loadIncomingFa12Operations$(selectedAccount.publicKeyHash),
-//         loadIncomingFa2Operations$(selectedAccount.publicKeyHash),
-//         loadTokenTransfers$(selectedAccount.publicKeyHash)
-//       ]).pipe(
-//         map(([operations, fa12Operations, fa2Operations, transfers]) =>
-//           groupActivitiesByHash(operations, fa12Operations, fa2Operations, transfers)
-//         ),
-//         map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
-//         catchError(err => of(loadActivityGroupsActions.fail(err.message)))
-//       )
-//     )
-//   );
-
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
