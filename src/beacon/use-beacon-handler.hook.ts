@@ -9,17 +9,14 @@ import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { isDefined } from '../utils/is-defined';
 import { BeaconHandler, isBeaconMessage } from './beacon-handler';
 
-export const beaconDeepLinkHandler = async (
-  navigate: (modal: ModalsEnum, params: unknown) => void,
-  url: string | null
-) => {
+export const beaconDeepLinkHandler = async (url: string | null, onValidDataCallback: () => void) => {
   try {
     const searchParams = new URL(url ?? '').searchParams;
     const type = searchParams.get('type');
     const data = searchParams.get('data');
 
     if (type === 'tzip10' && isDefined(data)) {
-      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message: {}, loading: true });
+      onValidDataCallback();
       const json = await new Serializer().deserialize(data);
       if (isBeaconMessage(json)) {
         await BeaconHandler.addPeer(json);
@@ -32,7 +29,10 @@ export const useBeaconHandler = () => {
   const { navigate } = useNavigation();
 
   useEffect(() => {
-    const listener = ({ url }: { url: string | null }) => beaconDeepLinkHandler(navigate, url ?? '');
+    const listener = ({ url }: { url: string | null }) =>
+      beaconDeepLinkHandler(url ?? '', () =>
+        navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message: null, loading: true })
+      );
 
     let emitter: EmitterSubscription;
 

@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { isDefined } from '../../../utils/is-defined';
 import { DAppOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { LoadingRequest } from './loading-request/loading-request';
 import { OperationRequestConfirmation } from './operation-request-confirmation/operation-request-confirmation';
@@ -12,7 +13,7 @@ import { SignPayloadRequestConfirmation } from './sign-payload-request-confirmat
 type Props = Omit<DAppOperationsConfirmationModalParams, 'type'>;
 
 export const DAppOperationsConfirmation: FC<Props> = ({ message, loading = false }) => {
-  if (loading) {
+  if (loading || !isDefined(message)) {
     return <LoadingRequest />;
   }
   switch (message.type) {
