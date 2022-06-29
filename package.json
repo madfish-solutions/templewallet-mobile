@@ -44,7 +44,7 @@
     "@reduxjs/toolkit": "^1.6.2",
     "@segment/analytics-react-native": "^2.1.11",
     "@segment/sovran-react-native": "^0.2.6",
-    "@sentry/react-native": "^3.2.7",
+    "@sentry/react-native": "^4.0.2",
     "@taquito/local-forging": "12.1.1",
     "@taquito/signer": "12.1.1",
     "@taquito/tzip12": "12.1.1",
