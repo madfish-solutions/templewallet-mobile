@@ -34,7 +34,7 @@ import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/toke
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
-import { isAddressValid } from '../../utils/taquito.util';
+import { isValidAddress } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -94,7 +94,7 @@ export const SendModal: FC = () => {
       console.log(address);
       if (address !== null) {
         receiverPublicKeyHash = address;
-      } else if (!isAddressValid(receiverPublicKeyHash)) {
+      } else if (!isValidAddress(receiverPublicKeyHash)) {
         showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
 
         return;
