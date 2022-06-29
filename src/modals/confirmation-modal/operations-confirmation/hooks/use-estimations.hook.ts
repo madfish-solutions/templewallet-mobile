@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import { ParamsWithKind } from '@taquito/taquito';
 import { useEffect, useState } from 'react';
 import { from, of } from 'rxjs';
@@ -7,6 +8,7 @@ import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-t
 import { AccountInterface } from '../../../../interfaces/account.interface';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
+import { copyStringToClipboard } from '../../../../utils/clipboard.utils';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
@@ -25,8 +27,14 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
             minimalFeePerStorageByteMutez
           }))
         ),
-        catchError(() => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+        catchError(error => {
+          Sentry.captureException(error);
+          showErrorToast({
+            title: 'Warning!',
+            description: 'The transaction is likely to fail!',
+            isCopyButtonVisible: true,
+            onPress: () => copyStringToClipboard(error.toString())
+          });
 
           return of([]);
         })
