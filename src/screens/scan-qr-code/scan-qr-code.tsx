@@ -4,6 +4,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
+import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -35,7 +36,13 @@ export const ScanQrCode = () => {
           showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
         }
       } else if (isBeaconPayload(data)) {
-        beaconDeepLinkHandler(data);
+        beaconDeepLinkHandler(data, () =>
+          navigate(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.DAppOperations,
+            message: null,
+            loading: true
+          })
+        );
       } else {
         showErrorToast({ description: 'Invalid QR code' });
       }

@@ -12,5 +12,6 @@ export interface InternalOperationsConfirmationModalParams {
 
 export interface DAppOperationsConfirmationModalParams {
   type: ConfirmationTypeEnum.DAppOperations;
-  message: BeaconRequestOutputMessage;
+  message: BeaconRequestOutputMessage | null;
+  loading?: boolean;
 }
