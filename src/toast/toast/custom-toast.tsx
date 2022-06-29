@@ -23,7 +23,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
-  isEstimationError?: boolean;
+  isCopyButtonVisible?: boolean;
   onPress: EmptyFn;
 }
 
@@ -33,7 +33,7 @@ export const CustomToast: FC<Props> = ({
   hide,
   toastType,
   operationHash,
-  isEstimationError,
+  isCopyButtonVisible,
   onPress
 }) => {
   const styles = useToastStyles();
@@ -77,7 +77,7 @@ export const CustomToast: FC<Props> = ({
               >
                 {description}
               </Text>
-              {isEstimationError === true && (
+              {isCopyButtonVisible === true && (
                 <View style={styles.iconContainer}>
                   <Icon name={IconNameEnum.Copy} color={white} />
                 </View>

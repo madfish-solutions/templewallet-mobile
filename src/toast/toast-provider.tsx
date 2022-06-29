@@ -11,7 +11,7 @@ import { CustomToast } from './toast/custom-toast';
 
 type CustomToastProps = ToastConfigParams<{
   operationHash: string;
-  isEstimationError: boolean;
+  isCopyButtonVisible: boolean;
 }>;
 
 const config = {
@@ -31,7 +31,7 @@ const config = {
       title={text1}
       description={text2}
       toastType={ToastTypeEnum.Error}
-      isEstimationError={props?.isEstimationError}
+      isCopyButtonVisible={props?.isCopyButtonVisible}
       hide={hide}
       onPress={onPress}
     />

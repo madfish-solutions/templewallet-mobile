@@ -32,7 +32,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           showErrorToast({
             title: 'Warning!',
             description: 'The transaction is likely to fail!',
-            isEstimationError: true,
+            isCopyButtonVisible: true,
             onPress: () => copyStringToClipboard(error.toString())
           });
 
