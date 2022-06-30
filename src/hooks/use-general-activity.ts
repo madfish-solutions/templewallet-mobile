@@ -20,62 +20,60 @@ import {
 export const useGeneralActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
-  const [lastId, setLastId] = useState<null | number>(null);
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  const loadPrimaryOperations = useCallback(async () => {
-    const outcomingOperations = await getTokenOperations(publicKeyHash, lastId);
-    if (outcomingOperations.data.length < 0) {
-      return;
-    }
-    const localLastItem = outcomingOperations.data[outcomingOperations.data.length - 1];
-    if (!isDefined(localLastItem)) {
-      setIsAllLoaded(true);
+  const loadOperations = useCallback(
+    async (upperId: number | null) => {
+      const operations = await getTokenOperations(publicKeyHash, upperId);
+      if (operations.length === 0) {
+        return;
+      }
+      const localLastItem = operations[operations.length - 1];
+      if (!isDefined(localLastItem)) {
+        setIsAllLoaded(true);
 
-      return;
-    }
-    const localLastId = localLastItem.id;
-    const incomingOperationsFa12 = await getFa12IncomingOperations(publicKeyHash, localLastId, lastId);
-    const incomingOperationsFa2 = await getFa2IncomingOperations(publicKeyHash, localLastId, lastId);
-    const { data: operations } = outcomingOperations;
-    const { data: operationsFa12 } = incomingOperationsFa12;
-    const { data: operationsFa2 } = incomingOperationsFa2;
+        return;
+      }
+      const lowerId = localLastItem.id;
+      const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, upperId);
+      const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, upperId);
 
-    if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
-      setIsAllLoaded(true);
+      if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
+        setIsAllLoaded(true);
 
-      return;
-    }
+        return;
+      }
 
-    const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
-    const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationsFa12);
-    const loadedActivitiesFa2 = mapOperationsFa2ToActivities(publicKeyHash, operationsFa2);
+      const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
+      const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationsFa12);
+      const loadedActivitiesFa2 = mapOperationsFa2ToActivities(publicKeyHash, operationsFa2);
 
-    const allOperations = [...loadedActivitiesFa12, ...loadedActivitiesFa2, ...loadedActivities].sort(
-      (b, a) => a.level ?? 0 - (b.level ?? 0)
-    );
-    const activityGroups = transformActivityInterfaceToActivityGroups(allOperations);
+      const allOperations = [...loadedActivitiesFa12, ...loadedActivitiesFa2, ...loadedActivities].sort(
+        (b, a) => a.level ?? 0 - (b.level ?? 0)
+      );
+      const activityGroups = transformActivityInterfaceToActivityGroups(allOperations);
 
-    setActivities(prevValue => [...prevValue, ...activityGroups]);
-  }, [publicKeyHash, setActivities, lastId]);
+      setActivities(prevValue => [...prevValue, ...activityGroups]);
+    },
+    [publicKeyHash, setActivities]
+  );
 
   useEffect(() => {
-    loadPrimaryOperations();
-  }, [loadPrimaryOperations]);
+    loadOperations(null);
+  }, [loadOperations]);
 
   const handleUpdate = () => {
     if (isDefined(activities) && activities.length > 0 && !isAllLoaded && activities.length >= OPERATION_LIMIT) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
-        setLastId(lastActivityGroup[0].id ?? null);
+        loadOperations(lastActivityGroup[0].id ?? null);
       }
     }
   };
 
   return {
     handleUpdate,
-    activities,
-    isAllLoaded
+    activities
   };
 };

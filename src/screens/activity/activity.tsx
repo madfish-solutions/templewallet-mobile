@@ -10,5 +10,5 @@ export const Activity = () => {
 
   usePageAnalytic(ScreensEnum.Activity);
 
-  return <ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />;
+  return <ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />;
 };

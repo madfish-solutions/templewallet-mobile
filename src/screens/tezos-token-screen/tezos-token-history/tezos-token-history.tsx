@@ -6,5 +6,5 @@ import { useTezosTokenActivity } from '../../../hooks/use-tezos-token-activity.h
 export const TezosTokenHistory = () => {
   const { activities, handleUpdate } = useTezosTokenActivity();
 
-  return <ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />;
+  return <ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />;
 };

@@ -10,10 +10,10 @@ import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
 interface Props {
   activityGroups: ActivityGroup[];
-  loadMore?: () => void;
+  handleUpdate?: () => void;
 }
 
-export const ActivityGroupsList: FC<Props> = ({ activityGroups, loadMore = emptyFn }) => {
+export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
 
   const sections = useMemo(() => {
@@ -52,7 +52,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, loadMore = empty
         stickySectionHeadersEnabled={true}
         contentContainerStyle={styles.sectionListContentContainer}
         onEndReachedThreshold={0.01}
-        onEndReached={loadMore}
+        onEndReached={handleUpdate}
         keyExtractor={item => item[0].hash}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}

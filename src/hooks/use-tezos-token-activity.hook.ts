@@ -11,38 +11,38 @@ import { getTezosOperations } from '../utils/token-operations.util';
 export const useTezosTokenActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
-  const [lastId, setLastId] = useState<null | number>(null);
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  const loadLastActivity = useCallback(async () => {
-    const result = await getTezosOperations(publicKeyHash, lastId);
-    const { data: operations } = result;
+  const loadLastActivity = useCallback(
+    async (lastId: number | null) => {
+      const operations = await getTezosOperations(publicKeyHash, lastId);
 
-    setIsAllLoaded(operations.length === 0);
+      setIsAllLoaded(operations.length === 0);
 
-    const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
-    const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
+      const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
+      const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
 
-    setActivities(prevValue => [...prevValue, ...activityGroups]);
-  }, [publicKeyHash, setActivities, lastId]);
+      setActivities(prevValue => [...prevValue, ...activityGroups]);
+    },
+    [publicKeyHash, setActivities]
+  );
 
   useEffect(() => {
-    loadLastActivity();
+    loadLastActivity(null);
   }, [loadLastActivity]);
 
   const handleUpdate = () => {
     if (isDefined(activities) && activities.length > 0 && !isAllLoaded) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
-        setLastId(lastActivityGroup[0].id ?? null);
+        loadLastActivity(lastActivityGroup[0].id ?? null);
       }
     }
   };
 
   return {
     handleUpdate,
-    activities,
-    isAllLoaded
+    activities
   };
 };

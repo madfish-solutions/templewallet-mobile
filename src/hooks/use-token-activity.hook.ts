@@ -14,42 +14,43 @@ export const useTokenActivity = (contractAddress: string, tokenId: string): UseA
   const { tokenType, loading } = useTokenType(contractAddress);
   const { publicKeyHash } = useSelectedAccountSelector();
 
-  const [lastLevel, setLastLevel] = useState<null | number>(null);
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  const loadLastActivity = useCallback(async () => {
-    if (loading) {
-      return;
-    }
+  const loadLastActivity = useCallback(
+    async (lastLevel: number | null) => {
+      if (loading) {
+        return;
+      }
 
-    const loadedActivities =
-      tokenType === TokenTypeEnum.FA_2
-        ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
-        : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
+      const loadedActivities =
+        tokenType === TokenTypeEnum.FA_2
+          ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel)
+          : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel);
 
-    setIsAllLoaded(loadedActivities.length === 0);
-    const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
-    setActivities(prevValue => [...prevValue, ...activityGroups]);
-  }, [publicKeyHash, setActivities, lastLevel, loading, tokenType]);
+      setIsAllLoaded(loadedActivities.length === 0);
+      const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
+      setActivities(prevValue => [...prevValue, ...activityGroups]);
+    },
+    [publicKeyHash, setActivities, loading, tokenType]
+  );
 
   useEffect(() => {
-    loadLastActivity();
+    loadLastActivity(null);
   }, [loadLastActivity]);
 
   const handleUpdate = () => {
     if (isDefined(activities) && activities.length > 0 && !isAllLoaded) {
       const lastActivityGroup = activities[activities.length - 1];
       if (lastActivityGroup.length > 0) {
-        setLastLevel(lastActivityGroup[0].level ?? null);
+        loadLastActivity(lastActivityGroup[0].level ?? null);
       }
     }
   };
 
   return {
     handleUpdate,
-    activities,
-    isAllLoaded
+    activities
   };
 };
 
@@ -59,8 +60,7 @@ const loadFa2Activity = async (
   tokenId: string,
   lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
-  const result = await getTokenFa2Operations(publicKeyHash, contractAddress, tokenId, lastLevel);
-  const { data: operations } = result;
+  const operations = await getTokenFa2Operations(publicKeyHash, contractAddress, tokenId, lastLevel);
 
   return mapOperationsFa2ToActivities(publicKeyHash, operations);
 };
@@ -70,8 +70,7 @@ const loadFa12Activity = async (
   contractAddress: string,
   lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
-  const result = await getTokenFa12Operations(publicKeyHash, contractAddress, lastLevel);
-  const { data: operations } = result;
+  const operations = await getTokenFa12Operations(publicKeyHash, contractAddress, lastLevel);
 
   return mapOperationsFa12ToActivities(publicKeyHash, operations);
 };
