@@ -111,7 +111,7 @@
     "redux-persist": "^6.0.0",
     "rxjs": "^7.4.0",
     "stream-browserify": "^3.0.0",
-    "swap-router-sdk": "1.14.0-beta",
+    "swap-router-sdk": "1.15.1",
     "text-encoding": "^0.7.0",
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.1",
