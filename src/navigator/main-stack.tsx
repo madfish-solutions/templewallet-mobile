@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -43,7 +43,6 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadQuipuApyActions } from '../store/d-apps/d-apps-actions';
 import {
   loadActivityGroupsActions,
   loadTezosBalanceActions,
@@ -80,10 +79,6 @@ export const MainStackScreen = () => {
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
   };
-
-  useEffect(() => {
-    dispatch(loadQuipuApyActions.submit());
-  }, []);
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
