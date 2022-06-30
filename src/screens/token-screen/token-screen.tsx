@@ -44,7 +44,7 @@ export const TokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer
-        historyComponent={<ActivityGroupsList loadMore={handleUpdate} activityGroups={activities} />}
+        historyComponent={<ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />}
         infoComponent={<TokenInfo token={token} />}
         token={token}
       />
