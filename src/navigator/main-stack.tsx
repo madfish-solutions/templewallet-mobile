@@ -43,11 +43,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import {
-  loadActivityGroupsActions,
-  loadTezosBalanceActions,
-  loadTokenBalancesActions
-} from '../store/wallet/wallet-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
