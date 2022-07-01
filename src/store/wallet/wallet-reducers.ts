@@ -11,7 +11,8 @@ import {
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
-  setAccountVisibility
+  setAccountVisibility,
+  loadRenderTokenBalanceActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -72,6 +73,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
     }))
   );
+
+  builder.addCase(loadRenderTokenBalanceActions.success, (state, { payload: { slug, balance } }) => {
+    return updateCurrentAccountState(state, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: balance })
+    }));
+  });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);

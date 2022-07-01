@@ -18,6 +18,10 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
 export const loadTokenBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
+export const loadRenderTokenBalanceActions = createActions<string, { slug: string; balance: string }, string>(
+  'assets/LOAD_RENDER_TOKENS_BALANCE'
+);
+
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
