@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
@@ -29,9 +29,9 @@ export const TokenScreen = () => {
     [tokensList, initialToken]
   );
 
-  useMemo(() => {
+  useEffect(() => {
     dispatch(loadRenderTokenBalanceActions.submit(getTokenSlug(token)));
-  }, []);
+  }, [dispatch]);
 
   const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());

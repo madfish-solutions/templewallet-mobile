@@ -36,6 +36,25 @@ export const updateAccountState = (
   };
 };
 
+export const pushNewTokenBalances = (initialTokensList: AccountTokenInterface[], balances: Record<string, string>) => {
+  const localBalances: Record<string, string> = { ...balances };
+  const result: AccountTokenInterface[] = [];
+
+  for (const token of initialTokensList) {
+    const balance = localBalances[token.slug];
+    if (isDefined(balance)) {
+      delete localBalances[token.slug];
+    }
+    result.push(token);
+  }
+
+  result.push(
+    ...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, visibility: VisibilityEnum.Visible }))
+  );
+
+  return result;
+};
+
 export const pushOrUpdateTokensBalances = (
   initialTokensList: AccountTokenInterface[],
   balances: Record<string, string>

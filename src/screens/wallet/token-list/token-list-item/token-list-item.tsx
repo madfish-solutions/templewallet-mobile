@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -9,6 +9,7 @@ import { TokenContainer } from '../../../../components/token-container/token-con
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { EmptyFn } from '../../../../config/general';
 import { loadRenderTokenBalanceActions } from '../../../../store/wallet/wallet-actions';
+import { TEZ_TOKEN_SLUG } from '../../../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { useTokenListItemStyles } from './token-list-item.styles';
 
@@ -20,9 +21,12 @@ export const TokenListItem: FC<Props> = ({ token, apy, onPress }) => {
   const styles = useTokenListItemStyles();
   const dispatch = useDispatch();
 
-  useMemo(() => {
-    dispatch(loadRenderTokenBalanceActions.submit(getTokenSlug(token)));
-  }, []);
+  useEffect(() => {
+    const slug = getTokenSlug(token);
+    if (slug !== TEZ_TOKEN_SLUG) {
+      dispatch(loadRenderTokenBalanceActions.submit(getTokenSlug(token)));
+    }
+  }, [dispatch]);
 
   return (
     <TouchableOpacity onPress={onPress}>

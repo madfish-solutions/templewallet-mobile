@@ -41,11 +41,13 @@ const loadRenderTokenBalanceEpic = (action$: Observable<Action>, state$: Observa
     toPayload(),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[assetSlug, selectedAccount], rpcUrl]) =>
-      loadAssetBalance$(rpcUrl, selectedAccount.publicKeyHash, assetSlug).pipe(
-        map(tokenBalance => loadTokenBalancesActions.success({ slug: assetSlug, balance: tokenBalance ?? '0' }))
-      )
-    )
+    concatMap(([[assetSlug, selectedAccount], rpcUrl]) => {
+      return loadAssetBalance$(rpcUrl, selectedAccount.publicKeyHash, assetSlug).pipe(
+        map(tokenBalance => {
+          return loadRenderTokenBalanceActions.success({ slug: assetSlug, balance: tokenBalance ?? '0' });
+        })
+      );
+    })
   );
 
 const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
@@ -68,7 +70,12 @@ const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<R
 
           return loadTokensMetadata$(assetSlugs);
         }),
-        map(metadataList => addTokensMetadataAction(metadataList)),
+        concatMap(metadataList => [
+          addTokensMetadataAction(metadataList),
+          loadTokenBalancesActions.success(
+            metadataList.reduce((prev, cur) => ({ ...prev, [`${cur.address}_${cur.id}`]: '0' }), {})
+          )
+        ]),
         catchError(err => of(loadTokenBalancesActions.fail(err.message)))
       )
     )

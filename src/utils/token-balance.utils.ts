@@ -35,7 +35,7 @@ type cachedAssetBalance = {
 };
 
 const cachedResults: Record<string, cachedAssetBalance> = {
-  // KT1234654645: 123
+  // tz123456_KT1234654645: {time: <timestamp>, value: <balance>}
 };
 
 const CACHE_TIME = 1000 * 60; // 1 minute
@@ -69,27 +69,8 @@ export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSl
 
       return returnValue;
     }),
-    catchError(() => of(undefined))
+    catchError(() => {
+      return of(undefined);
+    })
   );
 };
-
-// export const loadAssetsBalances$ = (rpcUrl: string, publicKeyHash: string, assetSlugs: string[]) =>
-//   forkJoin(
-//     assetSlugs.map(assetSlug =>
-//       loadAssetBalance$(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount), publicKeyHash, assetSlug)
-//     )
-//   ).pipe(
-//     map((balancesList: (string | undefined)[]) => {
-//       const balancesRecord: Record<string, string> = {};
-
-//       for (let index = 0; index < assetSlugs.length; index++) {
-//         const balance = balancesList[index];
-
-//         if (isDefined(balance)) {
-//           balancesRecord[assetSlugs[index]] = balance;
-//         }
-//       }
-
-//       return balancesRecord;
-//     })
-//   );

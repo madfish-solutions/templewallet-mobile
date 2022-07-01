@@ -16,6 +16,7 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
+  pushNewTokenBalances,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -70,7 +71,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
   builder.addCase(loadTokenBalancesActions.success, (state, { payload: balancesRecord }) =>
     updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
+      tokensList: pushNewTokenBalances(currentAccount.tokensList, balancesRecord)
     }))
   );
 
