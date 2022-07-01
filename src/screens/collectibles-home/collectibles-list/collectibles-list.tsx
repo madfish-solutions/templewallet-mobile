@@ -1,9 +1,7 @@
-import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
+import React, { FC } from 'react';
+import { Dimensions, View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
-import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
@@ -14,16 +12,15 @@ interface Props {
 }
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
-  const { layoutWidth, handleLayout } = useLayoutSizes();
-
-  const smallCardSize = useMemo(() => (1 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
+  const { width } = Dimensions.get('window');
+  const itemWidth = (width - 36) / 3;
 
   return collectiblesList.length === 0 ? (
     <DataPlaceholder text="Not found any NFT" />
   ) : (
-    <View style={CollectiblesListStyles.rowContainer} onLayout={handleLayout}>
+    <View style={CollectiblesListStyles.rowContainer}>
       {collectiblesList.map(collectible => (
-        <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={smallCardSize} />
+        <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemWidth} />
       ))}
     </View>
   );

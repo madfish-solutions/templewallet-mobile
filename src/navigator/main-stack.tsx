@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -43,12 +43,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadQuipuApyActions } from '../store/d-apps/d-apps-actions';
-import {
-  loadActivityGroupsActions,
-  loadTezosBalanceActions,
-  loadTokenBalancesActions
-} from '../store/wallet/wallet-actions';
+import { loadTezosBalanceActions, loadTokenBalancesActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
@@ -74,16 +69,11 @@ export const MainStackScreen = () => {
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokenBalancesActions.submit());
-    dispatch(loadActivityGroupsActions.submit());
     dispatch(loadSelectedBakerActions.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
   };
-
-  useEffect(() => {
-    dispatch(loadQuipuApyActions.submit());
-  }, []);
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);

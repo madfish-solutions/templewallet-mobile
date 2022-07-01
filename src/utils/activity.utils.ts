@@ -9,8 +9,6 @@ export const groupActivitiesByHash = (
   fa2Operations: Array<ActivityInterface>,
   transfers: Array<TzktTokenTransfer>
 ) => {
-  const result: ActivityGroup[] = [];
-
   const allOperations = [...fa12Operations, ...fa2Operations, ...operations].sort(
     (b, a) => a.level ?? 0 - (b.level ?? 0)
   );
@@ -31,7 +29,13 @@ export const groupActivitiesByHash = (
     return operation;
   });
 
-  const activities = enrichedOperations.sort((a, b) => b.timestamp - a.timestamp);
+  return transformActivityInterfaceToActivityGroups(enrichedOperations);
+};
+
+export const transformActivityInterfaceToActivityGroups = (activites: ActivityInterface[]) => {
+  const result: ActivityGroup[] = [];
+
+  const activities = activites.sort((a, b) => b.timestamp - a.timestamp);
   let prevActivity: ActivityInterface = emptyActivity;
 
   for (const activity of activities) {

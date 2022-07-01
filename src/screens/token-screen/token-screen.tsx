@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
@@ -9,7 +9,7 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
+import { useTokenActivity } from '../../hooks/use-token-activity.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -27,13 +27,11 @@ export const TokenScreen = () => {
   );
 
   const selectedAccount = useSelectedAccountSelector();
-  const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
+  const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
   usePageAnalytic(ScreensEnum.TokenScreen);
-
-  useEffect(() => setSearchValue(`${token.address}_${token.id}`), [token]);
 
   return (
     <>
@@ -46,7 +44,7 @@ export const TokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer
-        historyComponent={<ActivityGroupsList activityGroups={filteredActivityGroups} />}
+        historyComponent={<ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />}
         infoComponent={<TokenInfo token={token} />}
         token={token}
       />
