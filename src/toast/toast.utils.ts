@@ -9,6 +9,7 @@ interface ToastProps {
   title?: string;
   onPress?: EmptyFn;
   operationHash?: string;
+  isCopyButtonVisible?: boolean;
 }
 
 const DEFAULT_ERROR_MESSAGE = 'Warning! The transaction is likely to fail!';
@@ -23,7 +24,7 @@ const TAQUITO_500_ERROR_MESSAGE = 'Http error response: (500)';
  */
 const JSON_PARSE_ERROR = 'JSON Parse error: Unexpected';
 
-export const showErrorToast = ({ description, title, onPress }: ToastProps) => {
+export const showErrorToast = ({ description, title, onPress, isCopyButtonVisible }: ToastProps) => {
   const slicedErrorMessage = description.slice(0, 26);
 
   if (description === TAQUITO_MISSED_BLOCK_ERROR_MESSAGE) {
@@ -52,7 +53,10 @@ export const showErrorToast = ({ description, title, onPress }: ToastProps) => {
     type: ToastTypeEnum.Error,
     text1: title,
     text2: errorMessageFilter(description),
-    onPress
+    onPress,
+    props: {
+      isCopyButtonVisible
+    }
   });
 };
 

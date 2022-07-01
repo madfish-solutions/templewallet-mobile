@@ -10,13 +10,11 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { loadQuipuApy$ } from '../../utils/quipu-apy.util';
 import { navigateAction } from '../root-state.actions';
 import {
   abortRequestAction,
   loadDAppsListActions,
   loadPermissionsActions,
-  loadQuipuApyActions,
   removePermissionAction
 } from './d-apps-actions';
 
@@ -101,21 +99,4 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadQuipuApyEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadQuipuApyActions.submit),
-    switchMap(() =>
-      loadQuipuApy$.pipe(
-        map(apy => loadQuipuApyActions.success(apy)),
-        catchError(err => of(loadQuipuApyActions.fail(err.message)))
-      )
-    )
-  );
-
-export const dAppsEpics = combineEpics(
-  loadPermissionsEpic,
-  removePermissionEpic,
-  abortRequestEpic,
-  loadDAppsListEpic,
-  loadQuipuApyEpic
-);
+export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic, loadDAppsListEpic);

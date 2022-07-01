@@ -96,6 +96,7 @@ export const SendModal: FC = () => {
         console.log(e);
       }
       setIsLoading(false);
+      console.log(address);
       if (address !== null) {
         receiverPublicKeyHash = address;
       } else if (!isValidAddress(receiverPublicKeyHash)) {

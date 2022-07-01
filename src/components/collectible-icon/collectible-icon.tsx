@@ -10,7 +10,7 @@ import {
   formatImgUri
 } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
-import { CollectibleIconProps } from './collectible-icon.props';
+import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
 interface LoadStrategy {
@@ -19,7 +19,16 @@ interface LoadStrategy {
   field: 'thumbnailUri' | 'artifactUri' | 'displayUri' | 'assetSlug';
 }
 
-const collectibleLoadStrategy: Array<LoadStrategy> = [
+const collectibleBigLoadStrategy: Array<LoadStrategy> = [
+  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
+  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
+  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
+  { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
+  { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
+  { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
+];
+
+const collectibleThumbnailLoadStrategy: Array<LoadStrategy> = [
   { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
   { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
   { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
@@ -68,15 +77,21 @@ const getFirstFallback = (
   return strategy[0];
 };
 
-export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
+export const CollectibleIcon: FC<CollectibleIconProps> = ({
+  collectible,
+  size,
+  iconSize = CollectibleIconSize.SMALL
+}) => {
   const styles = useCollectibleIconStyles();
+  const actualLoadingStrategy =
+    iconSize === CollectibleIconSize.SMALL ? collectibleThumbnailLoadStrategy : collectibleBigLoadStrategy;
   const [isLoadingFailed, setIsLoadingFailed] = useState(
-    collectibleLoadStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
+    actualLoadingStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
   );
   const assetSlug = `${collectible?.address}_${collectible?.id}`;
 
   const imageRequestObject = { ...collectible, assetSlug };
-  const currentFallback = getFirstFallback(collectibleLoadStrategy, isLoadingFailed, imageRequestObject);
+  const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
   const imageSrc = currentFallback.uri(imageRequestObject[currentFallback.field] ?? assetSlug);
 
   const handleLoadingFailed = () => {

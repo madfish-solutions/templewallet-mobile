@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { QUIPU_SLUG } from '../../../config/tokens';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
@@ -22,7 +21,6 @@ import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { filterTezos } from '../../../utils/filter.util';
 import { SearchContainer } from './search-container/search-container';
-import { QuipuToken } from './token-list-item/quipu-token';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
@@ -67,12 +65,6 @@ export const TokenList: FC = () => {
     ({ item }) => {
       if (item === TEZ_TOKEN_SLUG) {
         return <TezosToken />;
-      }
-
-      const slug = getTokenSlug(item);
-
-      if (slug === QUIPU_SLUG) {
-        return <QuipuToken token={item} />;
       }
 
       return <TokenListItem token={item} onPress={() => navigate(ScreensEnum.TokenScreen, { token: item })} />;
