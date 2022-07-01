@@ -8,7 +8,7 @@ export const mockFA1_2Contract = {
   },
   parameterSchema: {
     ExtractSignatures: () => [
-      ['transfer', 'address', 'address', 'nat'],
+      ['transfer', 'address', 'pair'],
       ['approve', 'address', 'nat'],
       ['getAllowance', 'address', 'address', 'contract'],
       ['getBalance', 'address', 'contract'],

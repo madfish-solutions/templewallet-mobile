@@ -17,7 +17,7 @@ const signatureAssertionFactory = (name: string, args: string[]) => (contract: C
 const FA_1_2_TOKEN_METHODS_ASSERTIONS: TokenMethodsAssertionInterface[] = [
   {
     name: 'transfer',
-    assertionFn: signatureAssertionFactory('transfer', ['address', 'address', 'nat'])
+    assertionFn: signatureAssertionFactory('transfer', ['address', 'pair'])
   },
   {
     name: 'approve',
