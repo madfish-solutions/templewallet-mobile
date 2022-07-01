@@ -1,7 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { AccountInterface } from '../../interfaces/account.interface';
-import { ActivityGroup } from '../../interfaces/activity.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
@@ -24,9 +23,6 @@ export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
 
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
-
-export const loadActivityGroupsActions = createActions<void, ActivityGroup[], string>('wallet/LOAD_ACTIVITY_GROUPS');
-export const addPendingOperation = createAction<ActivityGroup>('wallet/ADD_PENDING_OPERATION');
 
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;

@@ -10,6 +10,7 @@ const mockMember = {
 };
 
 const mockAppliedOperation: ActivityInterface = {
+  id: 0,
   type: ActivityTypeEnum.Transaction,
   status: ActivityStatusEnum.Applied,
   hash: 'hash1',
@@ -25,6 +26,7 @@ const mockAppliedOperation: ActivityInterface = {
 };
 
 const mockPendingOperation: ActivityInterface = {
+  id: 1,
   type: ActivityTypeEnum.Transaction,
   status: ActivityStatusEnum.Pending,
   hash: 'hash2',
@@ -39,6 +41,7 @@ const mockPendingOperation: ActivityInterface = {
 };
 
 const mockAppliedDelegationOperation: ActivityInterface = {
+  id: 2,
   type: ActivityTypeEnum.Delegation,
   status: ActivityStatusEnum.Applied,
   hash: 'hash3',
@@ -113,7 +116,7 @@ export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
       address: 'address4',
       alias: 'alias4'
     },
-    entrypoint: '',
+    entrypoint: 'transfer',
     hash: 'hash',
     id: 0,
     level: undefined,
@@ -131,7 +134,7 @@ export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
       address: 'address0',
       alias: 'alias0'
     },
-    entrypoint: '',
+    entrypoint: 'transfer',
     hash: 'hash',
     source: {
       address: 'address1',
@@ -149,7 +152,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-1',
     destination: { address: 'address4', alias: 'alias4' },
-    entrypoint: '',
+    entrypoint: 'transfer',
     hash: 'hash',
     id: 0,
     level: undefined,
@@ -161,7 +164,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-0',
     destination: { address: 'address7', alias: 'alias7' },
-    entrypoint: '',
+    entrypoint: 'transfer',
     hash: 'hash',
     id: 1,
     level: undefined,
@@ -173,7 +176,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-contractBalance',
     destination: { address: 'address0', alias: 'alias0' },
-    entrypoint: '',
+    entrypoint: 'transfer',
     hash: 'hash',
     id: 2,
     level: undefined,

@@ -5,3 +5,4 @@ export const emptyFn = () => void 0;
 export const emptyComponent = () => null;
 
 export const delegationApy = 6;
+export const OPERATION_LIMIT = 10;

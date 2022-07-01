@@ -2,15 +2,12 @@ import { VisibilityEnum } from '../enums/visibility.enum';
 import { HIDDEN_WHITELIST_TOKENS, MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
-import { ActivityGroup } from './activity.interface';
 
 export interface AccountStateInterface {
   isVisible: boolean;
   tezosBalance: string;
   tokensList: AccountTokenInterface[];
   removedTokensList: string[];
-  activityGroups: ActivityGroup[];
-  pendingActivities: ActivityGroup[];
 }
 
 export const initialAccountState: AccountStateInterface = {
@@ -28,16 +25,12 @@ export const initialAccountState: AccountStateInterface = {
       visibility: VisibilityEnum.InitiallyHidden
     }))
   ],
-  removedTokensList: [],
-  activityGroups: [],
-  pendingActivities: []
+  removedTokensList: []
 };
 
 export const emptyAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: '0',
   tokensList: [],
-  removedTokensList: [],
-  activityGroups: [],
-  pendingActivities: []
+  removedTokensList: []
 };

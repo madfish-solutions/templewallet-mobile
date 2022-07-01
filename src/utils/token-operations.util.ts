@@ -1,57 +1,58 @@
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
-
 import { tzktApi } from '../api.service';
+import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { OperationInterface } from '../interfaces/operation.interface';
-import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
+import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
-import { mapOperationsToActivities } from './operation.utils';
 
-const limitOperations = 1000;
-const limitIncomingTransactions = 10000;
-const limitTransfers = 10000;
-
-const getTokenOperations = (account: string) =>
-  tzktApi.get<Array<OperationInterface>>(
-    `accounts/${account}/operations?limit=${limitOperations}&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
-  );
-
-const getFa12IncomingOperations = (account: string) =>
-  tzktApi.get<Array<OperationInterface>>(
-    `operations/transactions?sender.ne=${account}&target.ne=${account}&limit=${limitIncomingTransactions}&entrypoint=transfer&parameter.to=${account}`
-  );
-
-const getFa2IncomingOperations = (account: string) =>
-  tzktApi.get<Array<OperationInterface>>(
-    `operations/transactions?sender.ne=${account}&target.ne=${account}&limit=${limitIncomingTransactions}&entrypoint=transfer&parameter.[*].txs.[*].to_=${account}`
-  );
-
-const getTokenTransfers = (account: string) =>
-  tzktApi.get<Array<TzktTokenTransfer>>(`/tokens/transfers?anyof.from.to=${account}&limit=${limitTransfers}`);
-
-export const loadTokenOperations$ = (accountPublicKeyHash: string) =>
-  from(getTokenOperations(accountPublicKeyHash)).pipe(
-    map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
-  );
-
-export const loadIncomingFa12Operations$ = (accountPublicKeyHash: string) =>
-  from(getFa12IncomingOperations(accountPublicKeyHash)).pipe(
-    map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
-  );
-
-export const loadIncomingFa2Operations$ = (accountPublicKeyHash: string) =>
-  from(getFa2IncomingOperations(accountPublicKeyHash)).pipe(
-    map(({ data }) => mapOperationsToActivities(accountPublicKeyHash, data))
-  );
-
-export const loadTokenTransfers$ = (publicKeyHash: string) =>
-  from(getTokenTransfers(publicKeyHash)).pipe(
-    map(({ data }) =>
-      data.map(transfer => ({
-        ...transfer,
-        amount:
-          isDefined(transfer.from) && transfer.from.address === publicKeyHash ? `-${transfer.amount}` : transfer.amount
-      }))
+export const getTokenFa2Operations = async (
+  account: string,
+  contractAddress: string,
+  tokenId = '0',
+  lastLevel: number | null
+) =>
+  (
+    await tzktApi.get<Array<OperationFa2Interface>>(
+      `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&parameter.[*].in=[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]&sort.desc=level&target=${contractAddress}` +
+        (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
     )
-  );
+  ).data;
+
+export const getTokenFa12Operations = async (account: string, contractAddress: string, lastLevel: number | null) =>
+  (
+    await tzktApi.get<Array<OperationFa12Interface>>(
+      `operations/transactions?limit=${OPERATION_LIMIT}&entrypoint=transfer&parameter.in=[{"from":"${account}"},{"to":"${account}"}]&sort.desc=level&target=${contractAddress}` +
+        (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
+    )
+  ).data;
+
+export const getTezosOperations = async (account: string, lastLevel: number | null) =>
+  (
+    await tzktApi.get<Array<OperationInterface>>(
+      `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
+        (isDefined(lastLevel) ? `&lastId=${lastLevel}` : '')
+    )
+  ).data;
+
+export const getTokenOperations = async (account: string, lastId: number | null) =>
+  (
+    await tzktApi.get<Array<OperationInterface>>(
+      `accounts/${account}/operations?limit=${OPERATION_LIMIT}&sort=1&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
+        (isDefined(lastId) ? `&lastId=${lastId}` : '')
+    )
+  ).data;
+
+export const getFa12IncomingOperations = async (account: string, lowerId: number, upperId: number | null) =>
+  (
+    await tzktApi.get<Array<OperationFa12Interface>>(
+      `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&id.gt=${lowerId}&entrypoint=transfer&parameter.to=${account}` +
+        (isDefined(upperId) ? `&id.lt=${upperId}` : '')
+    )
+  ).data;
+
+export const getFa2IncomingOperations = async (account: string, lowerId: number, upperId: number | null) =>
+  (
+    await tzktApi.get<Array<OperationFa2Interface>>(
+      `operations/transactions?sender.ne=${account}&target.ne=${account}&initiator.ne=${account}&id.gt=${lowerId}&entrypoint=transfer&parameter.[*].txs.[*].to_=${account}` +
+        (isDefined(upperId) ? `&id.lt=${upperId}` : '')
+    )
+  ).data;

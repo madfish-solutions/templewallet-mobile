@@ -48,15 +48,6 @@ export const useSelectedAccountStateSelector = () =>
     getAccountState(wallet, wallet.selectedAccountPublicKeyHash)
   );
 
-export const useActivityGroupsSelector = () => {
-  const selectedAccountState = useSelectedAccountStateSelector();
-
-  return useMemo(
-    () => [...selectedAccountState.pendingActivities, ...selectedAccountState.activityGroups],
-    [selectedAccountState.pendingActivities, selectedAccountState.activityGroups]
-  );
-};
-
 export const useAssetsListSelector = (): TokenInterface[] => {
   const selectedAccountState = useSelectedAccountStateSelector();
   const getTokenMetadata = useTokenMetadataGetter();

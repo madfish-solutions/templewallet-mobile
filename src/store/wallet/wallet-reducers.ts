@@ -4,9 +4,7 @@ import { initialAccountState } from '../../interfaces/account-state.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import {
   addHdAccountAction,
-  addPendingOperation,
   addTokenAction,
-  loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   removeTokenAction,
@@ -17,7 +15,6 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
-  isPendingOperationOutdated,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -92,26 +89,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-    }))
-  );
-
-  builder.addCase(addPendingOperation, (state, { payload }) =>
-    updateAccountState(state, payload[0].source.address, account => ({
-      ...account,
-      pendingActivities: [payload, ...account.pendingActivities]
-    }))
-  );
-
-  builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups,
-      pendingActivities: account.pendingActivities.filter(
-        pendingActivityGroup =>
-          !activityGroups.some(
-            completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
-          ) && !isPendingOperationOutdated(pendingActivityGroup[0].timestamp)
-      )
     }))
   );
 });
