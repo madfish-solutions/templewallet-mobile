@@ -12,7 +12,7 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useTokenActivity } from '../../hooks/use-token-activity.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { loadRenderTokenBalanceActions } from '../../store/wallet/wallet-actions';
+import { loadTokenBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -30,7 +30,7 @@ export const TokenScreen = () => {
   );
 
   useEffect(() => {
-    dispatch(loadRenderTokenBalanceActions.submit(getTokenSlug(token)));
+    dispatch(loadTokenBalanceActions.submit(getTokenSlug(token)));
   }, [dispatch]);
 
   const selectedAccount = useSelectedAccountSelector();

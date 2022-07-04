@@ -2,7 +2,7 @@ import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -13,7 +13,7 @@ import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import { loadTokensMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokensMetadata$, withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
@@ -22,61 +22,67 @@ import { navigateAction } from '../root-state.actions';
 import { addTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addTokenAction,
-  loadRenderTokenBalanceActions,
+  loadTokenBalanceActions,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
+  loadTokensWithBalancesActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
 
 const updateDataActions = () => [
   loadTezosBalanceActions.submit(),
-  loadTokenBalancesActions.submit(),
+  loadTokensWithBalancesActions.submit(),
   loadSelectedBakerActions.submit()
 ];
 
-const loadRenderTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadRenderTokenBalanceActions.submit),
+    ofType(loadTokenBalanceActions.submit),
     toPayload(),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     concatMap(([[assetSlug, selectedAccount], rpcUrl]) => {
       return loadAssetBalance$(rpcUrl, selectedAccount.publicKeyHash, assetSlug).pipe(
         map(tokenBalance => {
-          return loadRenderTokenBalanceActions.success({ slug: assetSlug, balance: tokenBalance ?? '0' });
+          return loadTokenBalanceActions.success({ slug: assetSlug, balance: tokenBalance ?? '0' });
         })
       );
     })
   );
 
-const loadTokenBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadTokenBalancesActions.submit),
+    ofType(loadTokensWithBalancesActions.submit),
     withSelectedAccount(state$),
     withSelectedAccountState(state$),
-    switchMap(([[, selectedAccount], selectedAccountState]) =>
+    withMetadataSlugs(state$),
+    switchMap(([[[, selectedAccount], selectedAccountState], metadataRecord]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
         switchMap(tokensWithBalance => {
-          const assetSlugs = uniq([
-            ...selectedAccountState.tokensList.map(token => token.slug),
-            ...tokensWithBalance.map(tokenWithBalance =>
-              getTokenSlug({
-                address: tokenWithBalance.token.contract.address,
-                id: tokenWithBalance.token.tokenId
-              })
-            )
-          ]);
+          const tokensSlugs = tokensWithBalance.map(tokenWithBalance =>
+            getTokenSlug({
+              address: tokenWithBalance.token.contract.address,
+              id: tokenWithBalance.token.tokenId
+            })
+          );
 
-          return loadTokensMetadata$(assetSlugs);
+          const tokenSlugsInMemory = (selectedAccountState.tokensList ?? []).map(token => token.slug);
+          const loadedMetadataSlugs = Object.keys(metadataRecord);
+
+          const assetSlugs = uniq([...tokenSlugsInMemory, ...tokensSlugs]).filter(
+            x => !loadedMetadataSlugs.includes(x)
+          );
+
+          return forkJoin([
+            of(tokensSlugs.reduce((prev, cur) => ({ ...prev, [cur]: '0' }), {})),
+            loadTokensMetadata$(assetSlugs)
+          ]);
         }),
-        concatMap(metadataList => [
-          addTokensMetadataAction(metadataList),
-          loadTokenBalancesActions.success(
-            metadataList.reduce((prev, cur) => ({ ...prev, [`${cur.address}_${cur.id}`]: '0' }), {})
-          )
+        concatMap(([balancesRecord, metadataList]) => [
+          loadTokensWithBalancesActions.success(balancesRecord),
+          addTokensMetadataAction(metadataList)
         ]),
-        catchError(err => of(loadTokenBalancesActions.fail(err.message)))
+        catchError(err => of(loadTokensWithBalancesActions.fail(err.message)))
       )
     )
   );
@@ -141,9 +147,9 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
-  loadRenderTokenBalanceEpic,
+  loadTokenBalanceEpic,
   loadTezosBalanceEpic,
-  loadTokenBalancesEpic,
+  loadTokensWithBalancesEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
   addTokenMetadataEpic

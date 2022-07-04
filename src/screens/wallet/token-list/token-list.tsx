@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -7,8 +7,6 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Divider } from '../../../components/divider/divider';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useSortedAssetsList } from '../../../hooks/use-sorted-assets-list.hook';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
@@ -35,14 +33,22 @@ const keyExtractor = (item: FlatListItem) => {
   return getTokenSlug(item);
 };
 
+const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
+  if (item === TEZ_TOKEN_SLUG) {
+    return <TezosToken />;
+  }
+
+  return <TokenListItem token={item} />;
+};
+
 export const TokenList: FC = () => {
   const dispatch = useDispatch();
   const styles = useTokenListStyles();
-  const { navigate } = useNavigation();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const isHideZeroBalanceMemo = useHideZeroBalances();
+  const [itemsCount, setItemsCount] = useState<number>(10);
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);
@@ -58,18 +64,11 @@ export const TokenList: FC = () => {
   );
 
   const flatListData = useMemo<FlatListItem[]>(
-    () => [...((isShowTezos ? [TEZ_TOKEN_SLUG] : []) as Array<typeof TEZ_TOKEN_SLUG>), ...sortedAssetsList],
-    [isShowTezos, sortedAssetsList]
-  );
-  const renderFlatListItem: ListRenderItem<FlatListItem> = useCallback(
-    ({ item }) => {
-      if (item === TEZ_TOKEN_SLUG) {
-        return <TezosToken />;
-      }
-
-      return <TokenListItem token={item} onPress={() => navigate(ScreensEnum.TokenScreen, { token: item })} />;
-    },
-    [navigate]
+    () =>
+      [...((isShowTezos ? [TEZ_TOKEN_SLUG] : []) as Array<typeof TEZ_TOKEN_SLUG>), ...sortedAssetsList].filter(
+        (_, index) => index < itemsCount
+      ),
+    [isShowTezos, sortedAssetsList, itemsCount]
   );
 
   return (
@@ -96,6 +95,8 @@ export const TokenList: FC = () => {
           renderItem={renderFlatListItem}
           keyExtractor={keyExtractor}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => setItemsCount(itemsCount + 10)}
         />
       </View>
     </>

@@ -15,10 +15,10 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
 );
 
 // TODO: extract AssetsState
-export const loadTokenBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');
+export const loadTokensWithBalancesActions = createActions<void, Record<string, string>, string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
-export const loadRenderTokenBalanceActions = createActions<string, { slug: string; balance: string }, string>(
+export const loadTokenBalanceActions = createActions<string, { slug: string; balance: string }, string>(
   'assets/LOAD_RENDER_TOKENS_BALANCE'
 );
 
