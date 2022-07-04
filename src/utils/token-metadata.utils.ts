@@ -3,7 +3,7 @@ import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tokenMetadataApi } from '../api.service';
-import { TokensMetadataRootState, TokensMetadataState } from '../store/tokens-metadata/tokens-metadata-state';
+import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
