@@ -7,6 +7,7 @@ import { AccountDropdownItem } from '../../../components/account-dropdown/accoun
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../../../components/divider/divider';
+import { LoadingPlaceholder } from '../../../components/loading-placeholder/loading-placeholder';
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EventFn } from '../../../config/general';
@@ -84,7 +85,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
           <ScreenContainer>
             {children}
             {estimations.isLoading ? (
-              <Text style={styles.loadingMessage}>Loading...</Text>
+              <LoadingPlaceholder text="Operation is loading..." />
             ) : (
               <>
                 <Text style={styles.sectionTitle}>Account</Text>

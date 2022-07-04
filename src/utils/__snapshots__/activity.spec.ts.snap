@@ -11,6 +11,7 @@ Array [
       },
       "entrypoint": "",
       "hash": "hash2",
+      "id": 1,
       "source": Object {
         "address": "address2",
         "alias": "alias2",
@@ -28,6 +29,7 @@ Array [
         "alias": "alias3",
       },
       "hash": "hash3",
+      "id": 2,
       "source": Object {
         "address": "address2",
         "alias": "alias2",
@@ -47,6 +49,7 @@ Array [
       },
       "entrypoint": "transfer",
       "hash": "hash1",
+      "id": 0,
       "source": Object {
         "address": "address2",
         "alias": "alias2",
@@ -70,6 +73,7 @@ Array [
       },
       "entrypoint": "",
       "hash": "hash2",
+      "id": 1,
       "source": Object {
         "address": "address2",
         "alias": "alias2",
@@ -87,6 +91,7 @@ Array [
         "alias": "alias3",
       },
       "hash": "hash3",
+      "id": 2,
       "source": Object {
         "address": "address2",
         "alias": "alias2",
@@ -106,6 +111,7 @@ Array [
       },
       "entrypoint": "transfer",
       "hash": "hash1",
+      "id": 0,
       "source": Object {
         "address": "address2",
         "alias": "alias2",

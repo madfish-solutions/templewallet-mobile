@@ -7,6 +7,7 @@ import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../config/general';
+import { white } from '../../config/styles';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
@@ -22,10 +23,19 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
+  isCopyButtonVisible?: boolean;
   onPress: EmptyFn;
 }
 
-export const CustomToast: FC<Props> = ({ title, description, hide, toastType, operationHash, onPress }) => {
+export const CustomToast: FC<Props> = ({
+  title,
+  description,
+  hide,
+  toastType,
+  operationHash,
+  isCopyButtonVisible,
+  onPress
+}) => {
   const styles = useToastStyles();
   const colors = useColors();
 
@@ -57,14 +67,24 @@ export const CustomToast: FC<Props> = ({ title, description, hide, toastType, op
                 {title}
               </Text>
             )}
-            <Text
-              numberOfLines={!isString(title) ? 2 : 1}
-              style={[styles.description, { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }]}
-            >
-              {description}
-            </Text>
+            <View style={styles.row}>
+              <Text
+                numberOfLines={!isString(title) ? 2 : 1}
+                style={[
+                  styles.description,
+                  { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }
+                ]}
+              >
+                {description}
+              </Text>
+              {isCopyButtonVisible === true && (
+                <View style={styles.iconContainer}>
+                  <Icon name={IconNameEnum.Copy} color={white} />
+                </View>
+              )}
+            </View>
             {isDefined(operationHash) && (
-              <View style={styles.operationHashBlock}>
+              <View style={styles.row}>
                 <Text style={styles.description}>Operation hash:</Text>
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />

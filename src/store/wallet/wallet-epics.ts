@@ -11,16 +11,9 @@ import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmat
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { groupActivitiesByHash } from '../../utils/activity.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { loadTokensMetadata$ } from '../../utils/token-metadata.utils';
-import {
-  loadIncomingFa12Operations$,
-  loadIncomingFa2Operations$,
-  loadTokenOperations$,
-  loadTokenTransfers$
-} from '../../utils/token-operations.util';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
@@ -29,7 +22,6 @@ import { navigateAction } from '../root-state.actions';
 import { addTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addTokenAction,
-  loadActivityGroupsActions,
   loadTezosBalanceActions,
   loadTokenBalancesActions,
   sendAssetActions,
@@ -39,7 +31,6 @@ import {
 const updateDataActions = () => [
   loadTezosBalanceActions.submit(),
   loadTokenBalancesActions.submit(),
-  loadActivityGroupsActions.submit(),
   loadSelectedBakerActions.submit()
 ];
 
@@ -132,27 +123,6 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
       )
     )
   );
-
-const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(loadActivityGroupsActions.submit),
-    withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) =>
-      forkJoin([
-        loadTokenOperations$(selectedAccount.publicKeyHash),
-        loadIncomingFa12Operations$(selectedAccount.publicKeyHash),
-        loadIncomingFa2Operations$(selectedAccount.publicKeyHash),
-        loadTokenTransfers$(selectedAccount.publicKeyHash)
-      ]).pipe(
-        map(([operations, fa12Operations, fa2Operations, transfers]) =>
-          groupActivitiesByHash(operations, fa12Operations, fa2Operations, transfers)
-        ),
-        map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
-        catchError(err => of(loadActivityGroupsActions.fail(err.message)))
-      )
-    )
-  );
-
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
@@ -161,6 +131,5 @@ export const walletEpics = combineEpics(
   loadTokenBalancesEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
-  loadActivityGroupsEpic,
   addTokenMetadataEpic
 );

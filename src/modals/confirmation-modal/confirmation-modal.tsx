@@ -26,7 +26,7 @@ const ConfirmationModalContent: FC = () => {
     case ConfirmationTypeEnum.InternalOperations:
       return <InternalOperationsConfirmation opParams={params.opParams} />;
     case ConfirmationTypeEnum.DAppOperations:
-      return <DAppOperationsConfirmation message={params.message} />;
+      return <DAppOperationsConfirmation loading={params.loading} message={params.message} />;
     default:
       return (
         <ScreenContainer isFullScreenMode={true}>
