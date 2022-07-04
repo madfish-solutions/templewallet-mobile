@@ -3,7 +3,7 @@ import React, { FC, memo, useCallback, useState } from 'react';
 import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
+import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
@@ -61,7 +61,7 @@ const DropdownComponent = <T extends unknown>({
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
-  setSearchValue,
+  setSearchValue = emptyFn,
   equalityFn,
   renderValue,
   renderListItem,
@@ -124,7 +124,9 @@ const DropdownComponent = <T extends unknown>({
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
+          {isSearchable && (
+            <SearchInput placeholder="Search assets" onChangeText={setSearchValue} onBlur={() => setSearchValue('')} />
+          )}
           <FlatList
             data={list}
             ref={ref => {

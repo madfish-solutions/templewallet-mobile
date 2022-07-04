@@ -6,7 +6,7 @@ import GorhomBottomSheet, {
 import { Portal } from '@gorhom/portal';
 import { max } from 'lodash-es';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
-import { BackHandler, Text, View } from 'react-native';
+import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -44,7 +44,10 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
     [styles.backdrop]
   );
 
-  const handleChange = (index: number) => setIsOpened(index !== -1);
+  const handleChange = (index: number) => {
+    setIsOpened(index !== -1);
+    Keyboard.dismiss();
+  };
 
   useEffect(() => {
     if (isOpened) {
