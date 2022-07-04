@@ -35,7 +35,7 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <AppMetadataIcon appMetadata={permission.appMetadata} />
+        <AppMetadataIcon appMetadata={permission.appMetadata} size={formatSize(34)} />
         <Divider size={formatSize(8)} />
         <View>
           <Text style={styles.nameText}>{permission.appMetadata.name}</Text>

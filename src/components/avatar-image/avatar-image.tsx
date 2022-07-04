@@ -12,5 +12,11 @@ interface Props {
 export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16) }) => {
   const styles = useAvatarImageStyles();
 
-  return <FastImage source={{ uri }} style={[styles.icon, { maxWidth: size, maxHeight: size }]} />;
+  return (
+    <FastImage
+      style={[styles.icon, { width: size, height: size }]}
+      source={{ uri }}
+      resizeMode={FastImage.resizeMode.cover}
+    />
+  );
 };
