@@ -33,6 +33,8 @@ const keyExtractor = (item: FlatListItem) => {
   return getTokenSlug(item);
 };
 
+const limit = 10;
+
 const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
   if (item === TEZ_TOKEN_SLUG) {
     return <TezosToken />;
@@ -48,7 +50,7 @@ export const TokenList: FC = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const isHideZeroBalanceMemo = useHideZeroBalances();
-  const [itemsCount, setItemsCount] = useState<number>(10);
+  const [itemsCount, setItemsCount] = useState(limit);
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);
@@ -96,7 +98,7 @@ export const TokenList: FC = () => {
           keyExtractor={keyExtractor}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
           onEndReachedThreshold={0.5}
-          onEndReached={() => setItemsCount(itemsCount + 10)}
+          onEndReached={() => setItemsCount(itemsCount + limit)}
         />
       </View>
     </>
