@@ -15,10 +15,11 @@ const signatureAssertionFactory = (name: string, args: string[]) => (contract: C
 };
 
 const FA_1_2_TOKEN_METHODS_ASSERTIONS: TokenMethodsAssertionInterface[] = [
-  {
-    name: 'transfer',
-    assertionFn: signatureAssertionFactory('transfer', ['address', 'pair'])
-  },
+  // TODO: investigate why different FA 1.2 tokens have different transfer schema
+  // {
+  //   name: 'transfer',
+  //   assertionFn: signatureAssertionFactory('transfer', ['address', 'pair'])
+  // },
   {
     name: 'approve',
     assertionFn: signatureAssertionFactory('approve', ['address', 'nat'])
