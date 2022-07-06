@@ -16,6 +16,8 @@ import { currencyReducers } from './currency/currency-reducers';
 import { CurrencyRootState } from './currency/currency-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
+import { exolixReducers } from './exolix/exolix-reducers';
+import { ExolixRootState } from './exolix/exolix-state';
 import { rootStateReducer } from './root-state.reducers';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
@@ -32,7 +34,8 @@ export type RootState = WalletRootState &
   SettingsRootState &
   DAppsRootState &
   CurrencyRootState &
-  SecurityRootState;
+  SecurityRootState &
+  ExolixRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -56,7 +59,8 @@ const rootReducer = rootStateReducer<RootState>({
   settings: settingsReducers,
   security: securityReducers,
   dApps: dAppsReducers,
-  currency: currencyReducers
+  currency: currencyReducers,
+  exolix: exolixReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
