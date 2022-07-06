@@ -1,4 +1,4 @@
-import { combineEpics } from 'redux-observable';
+import { combineEpics, Epic } from 'redux-observable';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
@@ -12,11 +12,10 @@ import {
   setExolixStepAction
 } from './exolix-actions';
 
-const loadExolixCurrenciesEpic = (action$: Observable<Action>) =>
+const loadExolixCurrenciesEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExolixCurrenciesAction.submit),
     switchMap(() =>
-      // () => loadExolixCurrencies$().pipe(map(({ data }) => loadExolixCurrenciesAction.success(data)))
       from(loadExolixCurrencies()).pipe(
         map(currencies => loadExolixCurrenciesAction.success(currencies)),
         catchError(() => EMPTY)
@@ -24,7 +23,7 @@ const loadExolixCurrenciesEpic = (action$: Observable<Action>) =>
     )
   );
 
-const refreshExolixExchangeDataEpic = (action$: Observable<Action>) =>
+const refreshExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(refreshExolixExchangeDataAction),
     toPayload(),
@@ -36,7 +35,7 @@ const refreshExolixExchangeDataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadExolixExchangeDataEpic = (action$: Observable<Action>) =>
+const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExolixExchangeDataActions.submit),
     toPayload(),
