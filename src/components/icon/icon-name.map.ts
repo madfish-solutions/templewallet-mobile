@@ -23,6 +23,7 @@ import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
+import ExolixIcon from './assets/exolix.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
@@ -139,6 +140,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/
+  [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
