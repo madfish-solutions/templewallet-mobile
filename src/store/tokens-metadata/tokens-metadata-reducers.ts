@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
+import { setNewTokensMetadata } from '../migration/migration-actions';
 import { addTokensMetadataAction, loadTokenSuggestionActions } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
@@ -37,5 +38,11 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
   builder.addCase(loadTokenSuggestionActions.fail, (state, { payload: error }) => ({
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
+  }));
+
+  // MIGRATIONS
+  builder.addCase(setNewTokensMetadata, (state, { payload: metadataRecord }) => ({
+    ...state,
+    metadataRecord
   }));
 });
