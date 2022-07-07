@@ -1,10 +1,10 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import React, { FC, useMemo } from 'react';
-import { Text } from 'react-native';
 
 import { useExolixStep } from '../../store/exolix/exolix-selectors';
 import { HeaderBackButton } from './header-back-button/header-back-button';
 import { HeaderProgress } from './header-progress/header-progress';
+import { HeaderTitle } from './header-title/header-title';
 
 export const exolixScreenOptions = (): StackNavigationOptions => ({
   headerTitleAlign: 'center',
@@ -31,7 +31,7 @@ const TitleComponent: FC = () => {
     }
   }, [step]);
 
-  return <Text>{text}</Text>;
+  return <HeaderTitle title={text} />;
 };
 
 const Stepper: FC = () => {

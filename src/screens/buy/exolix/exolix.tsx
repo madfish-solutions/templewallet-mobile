@@ -14,12 +14,14 @@ import { ApproveStep } from './approve-step';
 import { EXOLIX_CONTACT_LINK } from './config';
 import { ExchangeStep } from './exchange-step';
 import { ExolixSelectors } from './exolix.selectors';
+import { useExolixStyles } from './exolix.styles';
 import { InitialStep } from './initial-step';
 // import { ExolixSelectors } from './exolix.selectors';
 
 // const steps = ['step 1', 'step 2', 'step 3', 'step 4'];
 
 export const Exolix: FC = () => {
+  const styles = useExolixStyles();
   const { trackEvent } = useAnalytics();
   // const { publicKeyHash } = useSelectedAccountSelector();
   const step = useExolixStep();
@@ -48,15 +50,6 @@ export const Exolix: FC = () => {
 
   return (
     <View>
-      <Disclaimer
-        title="Note"
-        texts={[
-          'For DOGE: transfer network - MainNet DOGE.',
-          'Please, deposit only DOGE (MainNet).',
-          'Otherwise, you may lose your assets',
-          'permanently.'
-        ]}
-      />
       {step === 0 && <InitialStep isError={isError} setIsError={setIsError} />}
       {step === 1 && <ApproveStep isError={isError} setIsError={setIsError} />}
       {(step === 2 || step === 3 || step === 4) && <ExchangeStep isError={isError} setIsError={setIsError} />}
@@ -70,10 +63,6 @@ export const Exolix: FC = () => {
           <Text>Support</Text>
         </TouchableOpacity>
       )}
-      {/* <Text>
-        The token exchange feature is provided by a third party. The Temple wallet is not responsible for the work of
-        third-party services.
-      </Text> */}
     </View>
   );
 };

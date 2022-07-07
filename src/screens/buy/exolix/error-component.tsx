@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { ErrorDisclaimerMessage } from '../../../components/error-disclaimer-message/error-disclaimer-message';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { restartExolixTopupAction } from '../../../store/exolix/exolix-actions';
@@ -62,13 +63,13 @@ export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
           </View>
         </>
       )}
-      <ButtonLargePrimary
-        title="Top Up Again"
-        onPress={handleRestart}
-        testID={ExolixSelectors.TopupFirstStepSubmitAgain}
-      >
-        Top Up Again
-      </ButtonLargePrimary>
+      <ButtonsFloatingContainer>
+        <ButtonLargePrimary
+          title="Top Up Again"
+          onPress={handleRestart}
+          testID={ExolixSelectors.TopupFirstStepSubmitAgain}
+        />
+      </ButtonsFloatingContainer>
     </>
   );
 };
