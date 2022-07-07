@@ -18,6 +18,7 @@ export const mockFA1_2Contract = {
 };
 
 export const mockFA2Contract = {
+  address: 'FA2ContractAddress',
   methods: {
     update_operators: jest.fn(),
     transfer: jest.fn(),
