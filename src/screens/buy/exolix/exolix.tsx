@@ -57,7 +57,6 @@ export const Exolix: FC = () => {
           'permanently.'
         ]}
       />
-      {/* <Stepper style={{ marginTop: '64px' }} steps={steps} currentStep={step} /> */}
       {step === 0 && <InitialStep isError={isError} setIsError={setIsError} />}
       {step === 1 && <ApproveStep isError={isError} setIsError={setIsError} />}
       {(step === 2 || step === 3 || step === 4) && <ExchangeStep isError={isError} setIsError={setIsError} />}
@@ -71,10 +70,10 @@ export const Exolix: FC = () => {
           <Text>Support</Text>
         </TouchableOpacity>
       )}
-      <Text>
+      {/* <Text>
         The token exchange feature is provided by a third party. The Temple wallet is not responsible for the work of
         third-party services.
-      </Text>
+      </Text> */}
     </View>
   );
 };

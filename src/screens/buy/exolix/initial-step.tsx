@@ -31,7 +31,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   return (
     <>
-      {isError ? (
+      {!isError ? (
         <View>
           <Text>
             The token exchange feature is provided by a third party. The Temple wallet is not responsible for the work
