@@ -19,8 +19,8 @@
     </domain-config>
     <domain-config>
         <domain includeSubdomains="true">madfish.solutions</domain>
-        <pin-set expiration="2022-09-05">
-            <pin digest="SHA-256">QuRofWwt2K7JdCBDYDLIReSkGI3JVBnEEy2cqLD1t2M=</pin>
+        <pin-set expiration="2023-09-06">
+            <pin digest="SHA-256">LWIi2TCKzQZg8xK1WIAvL/Y1olGGnC8ex5m7j2chYqk=</pin>
         </pin-set>
     </domain-config>
 </network-security-config>
