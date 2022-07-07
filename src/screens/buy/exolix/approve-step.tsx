@@ -1,10 +1,13 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { loadExolixExchangeDataActions } from '../../../store/exolix/exolix-actions';
+import { ExchangeDataStatusEnum } from '../../../interfaces/exolix.interface';
+import { loadExolixExchangeDataActions, setExolixStepAction } from '../../../store/exolix/exolix-actions';
 import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
+import { isDefined } from '../../../utils/is-defined';
 import { ErrorComponent } from './error-component';
+import useTopUpUpdate from './use-topup-update.hook';
 
 interface ApproveStepProps {
   isError: boolean;
@@ -16,6 +19,22 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
   const exchangeData = useExolixExchangeData();
   const dispatch = useDispatch();
   // TODO: swap-form copy formik
+
+  useTopUpUpdate(setIsError);
+
+  useEffect(() => {
+    if (isDefined(exchangeData)) {
+      if (exchangeData.status === ExchangeDataStatusEnum.CONFIRMATION) {
+        dispatch(setExolixStepAction(2));
+      }
+      if (exchangeData.status === ExchangeDataStatusEnum.EXCHANGING) {
+        dispatch(setExolixStepAction(3));
+      }
+      if (exchangeData.status === ExchangeDataStatusEnum.OVERDUE) {
+        setIsError(true);
+      }
+    }
+  }, [exchangeData, dispatch, setIsError]);
 
   const handleUpdateExchangeData = useCallback(() => {
     dispatch(

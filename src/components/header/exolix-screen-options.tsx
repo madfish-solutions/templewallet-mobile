@@ -18,10 +18,11 @@ const TitleComponent: FC = () => {
 
   const text = useMemo(() => {
     switch (step) {
-      case 1:
+      case 0:
         return 'Enter exchange details';
-      case 2:
+      case 1:
         return 'Deposit';
+      case 2:
       case 3:
         return 'Convertation';
       case 4:
@@ -36,5 +37,5 @@ const TitleComponent: FC = () => {
 const Stepper: FC = () => {
   const step = useExolixStep();
 
-  return <HeaderProgress current={step} total={4} />;
+  return <HeaderProgress current={step < 3 ? step + 1 : step} total={4} />;
 };

@@ -1,7 +1,7 @@
 import { CurrenciesInterface, ExchangeDataInterface } from '../../interfaces/exolix.interface';
 
 export const exolixInitialState: ExolixState = {
-  step: 1,
+  step: 0,
   exchangeData: null,
   currencies: []
 };
