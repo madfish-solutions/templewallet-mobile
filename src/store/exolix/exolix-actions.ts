@@ -13,3 +13,5 @@ export const loadExolixExchangeDataActions = createActions<ExchangePayload, Exch
 );
 
 export const refreshExolixExchangeDataAction = createAction<string>('exolix/REFRESH_EXCHANGE_DATA');
+
+export const restartExolixTopupAction = createAction<void>('exolix/RESTART_TOPUP');

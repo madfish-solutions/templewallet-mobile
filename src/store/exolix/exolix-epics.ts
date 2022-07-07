@@ -42,7 +42,7 @@ const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
     switchMap(requestPayload =>
       from(submitExolixExchange(requestPayload)).pipe(
         map(({ data }) => data),
-        concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(1)]),
+        concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(2)]),
         catchError(() => EMPTY)
       )
     )
