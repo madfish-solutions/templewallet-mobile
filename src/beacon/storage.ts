@@ -1,5 +1,4 @@
-import { Storage, StorageKey, StorageKeyReturnType } from '@airgap/beacon-sdk';
-import { defaultValues } from '@airgap/beacon-sdk/dist/cjs/types/storage/StorageKeyReturnDefaults';
+import { defaultValues, Storage, StorageKey, StorageKeyReturnType } from '@airgap/beacon-sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { isDefined } from '../utils/is-defined';

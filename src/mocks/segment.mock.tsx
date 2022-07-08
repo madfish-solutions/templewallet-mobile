@@ -1,5 +1,7 @@
+import { mockComponent } from './component.mock';
+
 jest.mock('@segment/analytics-react-native', () => ({
-  AnalyticsProvider: () => jest.fn(),
+  ...mockComponent('AnalyticsProvider'),
   createClient: () => jest.fn()
 }));
 

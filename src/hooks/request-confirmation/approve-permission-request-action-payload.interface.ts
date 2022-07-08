@@ -1,4 +1,4 @@
-import { PermissionRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { PermissionRequestOutput } from '@airgap/beacon-sdk';
 
 export interface ApprovePermissionRequestActionPayloadInterface {
   message: PermissionRequestOutput;
