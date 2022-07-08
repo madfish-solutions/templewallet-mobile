@@ -65,7 +65,10 @@ export const CheckAppEpic = (action$: Observable<Action>, state$: StateObservabl
 
           let isForceUpdateNeeded = false;
           for (let i = 0; i < 3; i++) {
-            if (parseInt(splittedCurrentVersion[i], 10) < parseInt(splittedMinVersion[i], 10)) {
+            const diff = parseInt(splittedCurrentVersion[i], 10) - parseInt(splittedMinVersion[i], 10);
+            if (diff > 0) {
+              break;
+            } else if (diff < 0) {
               isForceUpdateNeeded = true;
               break;
             }
