@@ -31,7 +31,7 @@ export const TokenScreen = () => {
 
   useEffect(() => {
     dispatch(loadTokenBalanceActions.submit(getTokenSlug(token)));
-  }, [dispatch]);
+  }, []);
 
   const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
