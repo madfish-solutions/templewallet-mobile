@@ -91,26 +91,32 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   );
 
   // MIGRATIONS
-  builder.addCase(deleteOldTokensMetadata, state => ({
-    ...state,
-    tokensMetadata: undefined
-  }));
-  builder.addCase(deleteOldTokenSuggestion, state => ({
-    ...state,
-    addTokenSuggestion: undefined
-  }));
-  builder.addCase(deleteOldIsShownDomainName, state => ({
-    ...state,
-    isShownDomainName: undefined
-  }));
-  builder.addCase(deleteOldQuipuApy, state => ({
-    ...state,
-    quipuApy: undefined
-  }));
+  builder.addCase(deleteOldTokensMetadata, state => {
+    const stateCopy = { ...state };
+    delete stateCopy.tokensMetadata;
+
+    return stateCopy;
+  });
+  builder.addCase(deleteOldTokenSuggestion, state => {
+    const stateCopy = { ...state };
+    delete stateCopy.addTokenSuggestion;
+
+    return stateCopy;
+  });
+  builder.addCase(deleteOldIsShownDomainName, state => {
+    const stateCopy = { ...state };
+    delete stateCopy.isShownDomainName;
+
+    return stateCopy;
+  });
+  builder.addCase(deleteOldQuipuApy, state => {
+    const stateCopy = { ...state };
+    delete stateCopy.quipuApy;
+
+    return stateCopy;
+  });
   builder.addCase(migrateAccountsState, state => {
-    if (state.accounts[0]?.isVisible === undefined) {
-      return state;
-    } else {
+    if ('isVisible' in state.accounts[0]) {
       const accounts: AccountInterface[] = [];
       const accountsStateRecord: Record<string, AccountStateInterface> = {};
 
@@ -119,27 +125,31 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
           isVisible: account.isVisible ?? initialAccountState.isVisible,
           tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
           tokensList:
-            account.tokensList?.map(token =>
-              isDefined(token.isVisible)
-                ? {
-                    ...token,
-                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
-                    isVisible: undefined
-                  }
-                : token
-            ) ?? initialAccountState.tokensList,
+            account.tokensList?.map(asset => {
+              if (isDefined(asset.isVisible)) {
+                const assetCopy = {
+                  ...asset,
+                  visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden
+                };
+                delete assetCopy.isVisible;
+
+                return assetCopy;
+              }
+
+              return asset;
+            }) ?? initialAccountState.tokensList,
           removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
         };
 
-        accounts.push({
-          ...account,
-          isVisible: undefined,
-          tezosBalance: undefined,
-          tokensList: undefined,
-          removedTokensList: undefined,
-          activityGroups: undefined,
-          pendingActivities: undefined
-        });
+        const accountCopy = { ...account };
+        delete accountCopy.isVisible;
+        delete accountCopy.tezosBalance;
+        delete accountCopy.tokensList;
+        delete accountCopy.removedTokensList;
+        delete accountCopy.activityGroups;
+        delete accountCopy.pendingActivities;
+
+        accounts.push(accountCopy);
       }
 
       return {
@@ -147,6 +157,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         accounts,
         accountsStateRecord
       };
+    } else {
+      return state;
     }
   });
 });

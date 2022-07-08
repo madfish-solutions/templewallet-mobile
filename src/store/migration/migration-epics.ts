@@ -23,7 +23,7 @@ const migrateTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Ob
     ofType(migrateTokensMetadata),
     withLatestFrom(state$),
     concatMap(([, rootState]) => {
-      if (rootState.wallet.tokensMetadata !== undefined) {
+      if ('tokensMetadata' in rootState.wallet && rootState.wallet.tokensMetadata !== undefined) {
         return [deleteOldTokensMetadata(), setNewTokensMetadata(rootState.wallet.tokensMetadata)];
       }
 
@@ -36,7 +36,7 @@ const migrateTokenSuggestionEpic: Epic = (action$: Observable<Action>, state$: O
     ofType(migrateTokenSuggestion),
     withLatestFrom(state$),
     map(([, rootState]) => {
-      if (rootState.wallet.addTokenSuggestion !== undefined) {
+      if ('addTokenSuggestion' in rootState.wallet) {
         return deleteOldTokenSuggestion();
       }
 
@@ -49,7 +49,7 @@ const migrateIsShownDomainNameEpic: Epic = (action$: Observable<Action>, state$:
     ofType(migrateIsShownDomainName),
     withLatestFrom(state$),
     map(([, rootState]) => {
-      if (rootState.wallet.isShownDomainName !== undefined) {
+      if ('isShownDomainName' in rootState.wallet) {
         return deleteOldIsShownDomainName();
       }
 
@@ -62,7 +62,7 @@ const migrateQuipuApyEpic: Epic = (action$: Observable<Action>, state$: Observab
     ofType(migrateQuipuApy),
     withLatestFrom(state$),
     map(([, rootState]) => {
-      if (rootState.wallet.quipuApy !== undefined) {
+      if ('quipuApy' in rootState.wallet) {
         return deleteOldQuipuApy();
       }
 
