@@ -34,9 +34,7 @@ type cachedAssetBalance = {
   value?: string;
 };
 
-const cachedResults: Record<string, cachedAssetBalance> = {
-  // tz123456_KT1234654645: {time: <timestamp>, value: <balance>}
-};
+const cachedResults: Record<string, cachedAssetBalance> = {};
 
 const CACHE_TIME = 1000 * 60; // 1 minute
 

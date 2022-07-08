@@ -108,7 +108,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     quipuApy: undefined
   }));
   builder.addCase(migrateAccountsState, state => {
-    if (state.accounts[0].isVisible === undefined) {
+    if (state.accounts[0]?.isVisible === undefined) {
       return state;
     } else {
       const accounts: AccountInterface[] = [];
