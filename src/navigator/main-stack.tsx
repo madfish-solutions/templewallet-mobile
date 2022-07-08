@@ -53,7 +53,7 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
+const DATA_REFRESH_INTERVAL = 30 * 1000;
 const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
