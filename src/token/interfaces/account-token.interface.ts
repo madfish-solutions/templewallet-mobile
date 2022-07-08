@@ -4,6 +4,7 @@ export interface AccountTokenInterface {
   slug: string;
   balance: string;
   visibility: VisibilityEnum;
-  //remove after migration to visibility
+
+  /** @deprecated */
   isVisible?: boolean;
 }

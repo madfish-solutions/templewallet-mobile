@@ -1,20 +1,32 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { initialAccountState } from '../../interfaces/account-state.interface';
+import { VisibilityEnum } from '../../enums/visibility.enum';
+import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
+import {
+  deleteOldIsShownDomainName,
+  deleteOldQuipuApy,
+  deleteOldTokensMetadata,
+  deleteOldTokenSuggestion,
+  migrateAccountsState
+} from '../migration/migration-actions';
 import {
   addHdAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
+  loadTokensWithBalancesActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
-  setAccountVisibility
+  setAccountVisibility,
+  loadTokenBalanceActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
+  pushNewTokenBalances,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -22,26 +34,6 @@ import {
 } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  // TODO: write whole migration
-  // builder.addCase(migrateAssetsVisibility, state => ({
-  //   ...state,
-  //   accounts: state.accounts.map(account => ({
-  //     ...account,
-  //     tokensList: account.tokensList.map(asset => {
-  //       if (isDefined(asset.isVisible)) {
-  //         const assetCopy = {
-  //           ...asset,
-  //           visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden
-  //         };
-  //         delete assetCopy.isVisible;
-  //
-  //         return assetCopy;
-  //       }
-  //
-  //       return asset;
-  //     })
-  //   }))
-  // }));
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
@@ -67,11 +59,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: balancesRecord }) =>
+  builder.addCase(loadTokensWithBalancesActions.success, (state, { payload: balancesRecord }) =>
     updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
+      tokensList: pushNewTokenBalances(currentAccount.tokensList, balancesRecord)
     }))
   );
+
+  builder.addCase(loadTokenBalanceActions.success, (state, { payload: { slug, balance } }) => {
+    return updateCurrentAccountState(state, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: balance })
+    }));
+  });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);
@@ -91,4 +89,64 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
     }))
   );
+
+  // MIGRATIONS
+  builder.addCase(deleteOldTokensMetadata, state => ({
+    ...state,
+    tokensMetadata: undefined
+  }));
+  builder.addCase(deleteOldTokenSuggestion, state => ({
+    ...state,
+    addTokenSuggestion: undefined
+  }));
+  builder.addCase(deleteOldIsShownDomainName, state => ({
+    ...state,
+    isShownDomainName: undefined
+  }));
+  builder.addCase(deleteOldQuipuApy, state => ({
+    ...state,
+    quipuApy: undefined
+  }));
+  builder.addCase(migrateAccountsState, state => {
+    if (state.accounts[0]?.isVisible === undefined) {
+      return state;
+    } else {
+      const accounts: AccountInterface[] = [];
+      const accountsStateRecord: Record<string, AccountStateInterface> = {};
+
+      for (const account of state.accounts) {
+        accountsStateRecord[account.publicKeyHash] = {
+          isVisible: account.isVisible ?? initialAccountState.isVisible,
+          tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
+          tokensList:
+            account.tokensList?.map(token =>
+              isDefined(token.isVisible)
+                ? {
+                    ...token,
+                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
+                    isVisible: undefined
+                  }
+                : token
+            ) ?? initialAccountState.tokensList,
+          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
+        };
+
+        accounts.push({
+          ...account,
+          isVisible: undefined,
+          tezosBalance: undefined,
+          tokensList: undefined,
+          removedTokensList: undefined,
+          activityGroups: undefined,
+          pendingActivities: undefined
+        });
+      }
+
+      return {
+        ...state,
+        accounts,
+        accountsStateRecord
+      };
+    }
+  });
 });

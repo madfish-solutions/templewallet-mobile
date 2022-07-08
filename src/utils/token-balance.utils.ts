@@ -1,6 +1,5 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { forkJoin, from, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { tzktApi } from '../api.service';
@@ -30,8 +29,24 @@ export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
     map(balance => balance.toFixed())
   );
 
-const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug: string) => {
+type cachedAssetBalance = {
+  time: number;
+  value?: string;
+};
+
+const cachedResults: Record<string, cachedAssetBalance> = {};
+
+const CACHE_TIME = 1000 * 60; // 1 minute
+
+export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSlug: string) => {
+  const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
+
+  const cachedRecord = cachedResults[`${publicKeyHash}_${assetSlug}`];
+
+  if (isDefined(cachedRecord) && Date.now() - cachedRecord.time < CACHE_TIME && isDefined(cachedRecord.value)) {
+    return of(cachedRecord.value);
+  }
 
   return from(tezos.contract.at(assetAddress)).pipe(
     switchMap(contract => {
@@ -43,28 +58,17 @@ const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug
         return contract.views.getBalance(publicKeyHash).read();
       }
     }),
-    map((balance: BigNumber) => (balance.isNaN() ? undefined : balance.toFixed())),
-    catchError(() => of(undefined))
-  );
-};
+    map((balance: BigNumber) => {
+      const returnValue = balance.isNaN() ? undefined : balance.toFixed();
+      cachedResults[`${publicKeyHash}_${assetSlug}`] = {
+        time: Date.now(),
+        value: returnValue
+      };
 
-export const loadAssetsBalances$ = (rpcUrl: string, publicKeyHash: string, assetSlugs: string[]) =>
-  forkJoin(
-    assetSlugs.map(assetSlug =>
-      loadAssetBalance$(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount), publicKeyHash, assetSlug)
-    )
-  ).pipe(
-    map((balancesList: (string | undefined)[]) => {
-      const balancesRecord: Record<string, string> = {};
-
-      for (let index = 0; index < assetSlugs.length; index++) {
-        const balance = balancesList[index];
-
-        if (isDefined(balance)) {
-          balancesRecord[assetSlugs[index]] = balance;
-        }
-      }
-
-      return balancesRecord;
+      return returnValue;
+    }),
+    catchError(() => {
+      return of(undefined);
     })
   );
+};
