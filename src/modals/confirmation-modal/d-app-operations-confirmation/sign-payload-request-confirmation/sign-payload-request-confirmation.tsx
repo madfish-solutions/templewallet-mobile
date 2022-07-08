@@ -1,5 +1,4 @@
-import { BeaconMessageType } from '@airgap/beacon-sdk';
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';

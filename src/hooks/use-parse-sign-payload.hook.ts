@@ -1,4 +1,4 @@
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { SignPayloadRequestOutput } from '@airgap/beacon-sdk';
 import { useEffect, useState } from 'react';
 
 import { getParsedSignPayload } from '../utils/get-parsed-sign-payload.utils';

@@ -46,7 +46,14 @@ export const pushOrUpdateTokensBalances = (
   for (const token of initialTokensList) {
     const balance = localBalances[token.slug];
     if (isDefined(balance)) {
-      result.push({ ...token, balance });
+      result.push({
+        ...token,
+        balance,
+        visibility:
+          balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
+            ? VisibilityEnum.Visible
+            : token.visibility
+      });
 
       delete localBalances[token.slug];
     } else {
@@ -55,7 +62,11 @@ export const pushOrUpdateTokensBalances = (
   }
 
   result.push(
-    ...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, visibility: VisibilityEnum.Visible }))
+    ...Object.entries(localBalances).map(([slug, balance]) => ({
+      slug,
+      balance,
+      visibility: balance === '0' ? VisibilityEnum.InitiallyHidden : VisibilityEnum.Visible
+    }))
   );
 
   return result;

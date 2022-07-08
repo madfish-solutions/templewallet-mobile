@@ -5,6 +5,8 @@ import ReactNativeBiometrics, { BiometryType } from 'react-native-biometrics';
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
 import { BiometryAvailabilityContext } from './biometry-availability.context';
 
+const rnBiometrics = new ReactNativeBiometrics();
+
 const biometryUnavailableErrorList = ['BIOMETRIC_ERROR_NO_HARDWARE', 'Unsupported android version'];
 
 export const BiometryAvailabilityProvider: FC = ({ children }) => {
@@ -12,7 +14,8 @@ export const BiometryAvailabilityProvider: FC = ({ children }) => {
   const [biometryType, setBiometryType] = useState<BiometryType>();
 
   const updateBiometryAvailability = () => {
-    ReactNativeBiometrics.isSensorAvailable()
+    rnBiometrics
+      .isSensorAvailable()
       .then(result => {
         setIsHardwareAvailable(!biometryUnavailableErrorList.includes(result.error ?? ''));
         setBiometryType(result.biometryType);
