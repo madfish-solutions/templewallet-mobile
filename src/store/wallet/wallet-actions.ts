@@ -28,5 +28,3 @@ export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');
-
-export const migrateAssetsVisibility = createAction('migration/MIGRATE_ASSETS_VISIBILITY');
