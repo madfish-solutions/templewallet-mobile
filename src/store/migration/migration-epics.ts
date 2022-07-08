@@ -5,6 +5,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { RootState } from '../create-store';
+import { emptyAction } from '../root-state.actions';
 import {
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,
@@ -39,7 +40,7 @@ const migrateTokenSuggestionEpic: Epic = (action$: Observable<Action>, state$: O
         return deleteOldTokenSuggestion();
       }
 
-      return undefined;
+      return emptyAction();
     })
   );
 
@@ -52,7 +53,7 @@ const migrateIsShownDomainNameEpic: Epic = (action$: Observable<Action>, state$:
         return deleteOldIsShownDomainName();
       }
 
-      return undefined;
+      return emptyAction();
     })
   );
 
@@ -65,7 +66,7 @@ const migrateQuipuApyEpic: Epic = (action$: Observable<Action>, state$: Observab
         return deleteOldQuipuApy();
       }
 
-      return undefined;
+      return emptyAction();
     })
   );
 
