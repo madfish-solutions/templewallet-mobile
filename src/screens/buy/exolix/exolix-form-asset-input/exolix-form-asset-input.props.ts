@@ -6,13 +6,26 @@ import { ExolixAssetAmountInterface } from './exolix-asset-amount-input';
 
 export interface ExolixFormAssetAmountInputProps {
   name: string;
-  value: ExolixAssetAmountInterface;
+
   label: string;
   assetsList: CurrenciesInterface[];
-  frozenBalance?: string;
   isError?: boolean;
   editable?: boolean;
-  toUsdToggle?: boolean;
+  isSearchable?: boolean;
+  selectionOptions?: TextInputProps['selection'];
+  setSearchValue?: EventFn<string>;
+  onBlur?: EmptyFn;
+  onFocus?: TextInputProps['onFocus'];
+  onValueChange?: EventFn<ExolixAssetAmountInterface>;
+}
+
+export interface ExolixAssetAmountInputProps {
+  value: ExolixAssetAmountInterface;
+  name: string;
+  label: string;
+  assetsList: CurrenciesInterface[];
+  isError?: boolean;
+  editable?: boolean;
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
   setSearchValue?: EventFn<string>;

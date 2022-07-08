@@ -11,11 +11,8 @@ export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = (
   name,
   label,
   assetsList,
-  frozenBalance,
   editable,
-  toUsdToggle = true,
   isSearchable = false,
-  selectionOptions = undefined,
   setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
@@ -36,15 +33,13 @@ export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = (
   return (
     <>
       <ExolixAssetAmountInput
+        name={name}
         value={field.value}
         label={label}
         assetsList={assetsList}
-        frozenBalance={frozenBalance}
         isError={isError}
         isSearchable={isSearchable}
         editable={editable}
-        toUsdToggle={toUsdToggle}
-        selectionOptions={selectionOptions}
         setSearchValue={setSearchValue}
         onBlur={handleBlur}
         onValueChange={handleValueChange}

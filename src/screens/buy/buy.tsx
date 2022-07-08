@@ -23,7 +23,7 @@ const TABS = [
 ];
 
 export const Buy = () => {
-  const [tab, setTab] = useState(TABS[1]);
+  const [tab, setTab] = useState(TABS[0]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
 

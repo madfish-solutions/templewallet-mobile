@@ -1,5 +1,5 @@
-import BigNumber from 'bignumber.js';
-import { useFormik } from 'formik';
+import { BigNumber } from 'bignumber.js';
+import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -9,15 +9,17 @@ import { ButtonsFloatingContainer } from '../../../components/button/buttons-flo
 import { Disclaimer } from '../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../components/divider/divider';
 import { BlackTextLink } from '../../../components/text-link/black-text-link';
-import { TextLink } from '../../../components/text-link/text-link';
+// import { CurrenciesInterface } from '../../../interfaces/exolix.interface';
 import { loadExolixExchangeDataActions } from '../../../store/exolix/exolix-actions';
-import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
+// import { useExolixCurrencies, useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { ErrorComponent } from './error-component';
+import { ExolixFormAssetAmountInput } from './exolix-form-asset-input/exolix-form-asset-input';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from './exolix-topup.form';
 import { useExolixStyles } from './exolix.styles';
-import { initialData } from './initial-step.data';
+import { initialData, outputCoin } from './initial-step.data';
+import { useFilteredCurrenciesList } from './use-filtered-currencies-list.hook';
 
 interface InitialStepProps {
   isError: boolean;
@@ -26,18 +28,16 @@ interface InitialStepProps {
 
 export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useExolixStyles();
-  const step = useExolixStep();
-  const exchangeData = useExolixExchangeData();
+  const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const dispatch = useDispatch();
   const { publicKeyHash } = useSelectedAccountSelector();
-  // TODO: swap-form copy formik
 
   const handleSubmit = useCallback(() => {
     dispatch(
       loadExolixExchangeDataActions.submit({
-        coinFrom: values.coinFrom.code,
-        coinTo: 'XTZ',
-        amount: (values.amount ?? new BigNumber(0)).toNumber(),
+        coinFrom: values.coinFrom.asset.code,
+        coinTo: outputCoin.code,
+        amount: (values.coinFrom.amount ?? new BigNumber(0)).toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
       })
@@ -49,8 +49,14 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
+  const { values, isValid, submitForm } = formik;
 
-  const { values, setFieldValue, isValid, submitForm } = formik;
+  // console.log(values);
+
+  // const handleInputAssetsValueChange = (value: ExolixAssetAmountInterface) => {
+  //   setFieldValue('coinFrom', value.asset);
+  //   setFieldValue('amount', value.amount);
+  // };
 
   return (
     <>
@@ -68,7 +74,22 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                 ]}
               />
               <Divider size={formatSize(28)} />
-              {/* Two inputs */}
+              <FormikProvider value={formik}>
+                <ExolixFormAssetAmountInput
+                  name="coinFrom"
+                  label="Send"
+                  isSearchable
+                  assetsList={filteredCurrenciesList}
+                  setSearchValue={setSearchValue}
+                />
+                <ExolixFormAssetAmountInput
+                  name="coinTo"
+                  label="Get"
+                  editable={false}
+                  assetsList={filteredCurrenciesList}
+                  setSearchValue={setSearchValue}
+                />
+              </FormikProvider>
               {/* Exchange rate */}
               {/* horizontal divider */}
             </View>

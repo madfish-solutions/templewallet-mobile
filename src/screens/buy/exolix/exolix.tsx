@@ -1,8 +1,10 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
-import { Disclaimer } from '../../../components/disclaimer/disclaimer';
+// import { Disclaimer } from '../../../components/disclaimer/disclaimer';
+import { loadExolixCurrenciesAction } from '../../../store/exolix/exolix-actions';
 import { useExolixStep } from '../../../store/exolix/exolix-selectors';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
@@ -14,15 +16,16 @@ import { ApproveStep } from './approve-step';
 import { EXOLIX_CONTACT_LINK } from './config';
 import { ExchangeStep } from './exchange-step';
 import { ExolixSelectors } from './exolix.selectors';
-import { useExolixStyles } from './exolix.styles';
+// import { useExolixStyles } from './exolix.styles';
 import { InitialStep } from './initial-step';
 // import { ExolixSelectors } from './exolix.selectors';
 
 // const steps = ['step 1', 'step 2', 'step 3', 'step 4'];
 
 export const Exolix: FC = () => {
-  const styles = useExolixStyles();
+  // const styles = useExolixStyles();
   const { trackEvent } = useAnalytics();
+  const dispatch = useDispatch();
   // const { publicKeyHash } = useSelectedAccountSelector();
   const step = useExolixStep();
   const [isError, setIsError] = useState(false);
@@ -30,6 +33,10 @@ export const Exolix: FC = () => {
   //   `topup_exchange_data_state_${publicKeyHash}`,
   //   null
   // );
+
+  useEffect(() => {
+    dispatch(loadExolixCurrenciesAction.submit());
+  }, []);
 
   const handleTrackSupportSubmit = useCallback(() => {
     let event: ExolixSelectors;

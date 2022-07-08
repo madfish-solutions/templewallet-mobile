@@ -18,18 +18,20 @@ import { ExolixTokenDropdownItem, renderExolixTokenListItem } from '../exolix-to
 import { initialData } from '../initial-step.data';
 import { useExolixAssetAmountInputStyles } from './exolix-asset-amount-input.styles';
 import { ExolixAssetValueText } from './exolix-asset-value-text';
-import { ExolixFormAssetAmountInputProps } from './exolix-form-asset-input.props';
+import { ExolixAssetAmountInputProps } from './exolix-form-asset-input.props';
 
 export interface ExolixAssetAmountInterface {
   asset: CurrenciesInterface;
   amount?: BigNumber;
+  min?: number;
+  max?: number;
 }
 
 const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }) => (
   <ExolixTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
 );
 
-const AssetAmountInputComponent: FC<ExolixFormAssetAmountInputProps> = ({
+const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
   value,
   label,
   assetsList,
@@ -52,12 +54,14 @@ const AssetAmountInputComponent: FC<ExolixFormAssetAmountInputProps> = ({
   const inputValueRef = useRef<BigNumber>();
 
   const numericInputValue = useMemo(() => {
-    const newNumericInputValue = (() => value.amount)();
+    const newNumericInputValue = amount;
 
     inputValueRef.current = newNumericInputValue;
 
     return newNumericInputValue;
-  }, [value.amount]);
+  }, [amount]);
+
+  console.log(value);
 
   const onChange = useCallback(
     newInputValue => {
@@ -123,7 +127,7 @@ const AssetAmountInputComponent: FC<ExolixFormAssetAmountInputProps> = ({
             list={assetsList}
             isSearchable={isSearchable}
             setSearchValue={setSearchValue}
-            equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom).code}
+            equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
             renderValue={renderTokenValue}
             renderListItem={renderExolixTokenListItem}
             keyExtractor={(token: CurrenciesInterface) => token.code}
@@ -136,20 +140,33 @@ const AssetAmountInputComponent: FC<ExolixFormAssetAmountInputProps> = ({
       <View style={styles.footerContainer}>
         <ExolixAssetValueText amount={amount} asset={value.asset} style={styles.equivalentValueText} />
         <View style={styles.balanceContainer}>
-          <View style={styles.balanceRow}>
-            <Text style={styles.balanceDescription}>{'Min:'}</Text>
-            <Divider size={formatSize(4)} />
-            <HideBalance style={styles.balanceValueText}>
-              <ExolixAssetValueText amount={value.min} asset={value.asset} style={styles.balanceValueText} />
-            </HideBalance>
-          </View>
-          <View style={styles.balanceRow}>
-            <Text style={styles.balanceDescription}>{'Max:'}</Text>
-            <Divider size={formatSize(4)} />
-            <HideBalance style={styles.balanceValueText}>
-              <ExolixAssetValueText amount={value.max} asset={value.asset} style={styles.balanceValueText} />
-            </HideBalance>
-          </View>
+          {isDefined(value.min) && (
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceDescription}>{'Min:'}</Text>
+              <Divider size={formatSize(4)} />
+              <HideBalance style={styles.balanceValueText}>
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.min)}
+                  asset={value.asset}
+                  style={styles.balanceValueText}
+                />
+              </HideBalance>
+            </View>
+          )}
+
+          {isDefined(value.max) && (
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceDescription}>{'Max:'}</Text>
+              <Divider size={formatSize(4)} />
+              <HideBalance style={styles.balanceValueText}>
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.max)}
+                  asset={value.asset}
+                  style={styles.balanceValueText}
+                />
+              </HideBalance>
+            </View>
+          )}
         </View>
       </View>
     </>
