@@ -1,5 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
@@ -11,6 +12,7 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useTokenActivity } from '../../hooks/use-token-activity.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
+import { loadTokenBalanceActions } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -19,12 +21,17 @@ import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const dispatch = useDispatch();
   const tokensList = useTokensListSelector();
   const token = useMemo(
     () =>
       tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
     [tokensList, initialToken]
   );
+
+  useEffect(() => {
+    dispatch(loadTokenBalanceActions.submit(getTokenSlug(token)));
+  }, [dispatch]);
 
   const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());

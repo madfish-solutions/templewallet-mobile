@@ -16,15 +16,17 @@ import {
   addHdAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
+  loadTokensWithBalancesActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
-  setAccountVisibility
+  setAccountVisibility,
+  loadTokenBalanceActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
+  pushNewTokenBalances,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -57,11 +59,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: balancesRecord }) =>
+  builder.addCase(loadTokensWithBalancesActions.success, (state, { payload: balancesRecord }) =>
     updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
+      tokensList: pushNewTokenBalances(currentAccount.tokensList, balancesRecord)
     }))
   );
+
+  builder.addCase(loadTokenBalanceActions.success, (state, { payload: { slug, balance } }) => {
+    return updateCurrentAccountState(state, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: balance })
+    }));
+  });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);
@@ -100,7 +108,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     quipuApy: undefined
   }));
   builder.addCase(migrateAccountsState, state => {
-    if (state.accounts[0].isVisible === undefined) {
+    if (state.accounts[0]?.isVisible === undefined) {
       return state;
     } else {
       const accounts: AccountInterface[] = [];
