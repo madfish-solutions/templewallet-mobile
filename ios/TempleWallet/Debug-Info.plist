@@ -63,7 +63,7 @@
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
-				<key>NSPinnedLeafIdentities</key>
+				<key>NSPinnedCAIdentities</key>
 				<array>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
