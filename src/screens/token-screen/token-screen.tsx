@@ -22,6 +22,7 @@ import { TokenInfo } from './token-info/token-info';
 export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const dispatch = useDispatch();
+  const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const token = useMemo(
     () =>
@@ -30,10 +31,14 @@ export const TokenScreen = () => {
   );
 
   useEffect(() => {
-    dispatch(loadTokenBalanceActions.submit(getTokenSlug(token)));
+    dispatch(
+      loadTokenBalanceActions.submit({
+        publicKeyHash: selectedAccount.publicKeyHash,
+        slug: getTokenSlug(token)
+      })
+    );
   }, []);
 
-  const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
