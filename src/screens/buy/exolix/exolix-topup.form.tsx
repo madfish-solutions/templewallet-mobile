@@ -3,14 +3,21 @@ import { object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from '../../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../../form/validation/messages';
+import { CurrenciesInterface } from '../../../interfaces/exolix.interface';
 
 export interface ExolixTopupFormValues {
-  coinFrom: string;
+  coinFrom: CurrenciesInterface;
   amount?: BigNumber;
 }
 
 export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = object().shape({
-  coinFrom: string().required(),
+  coinFrom: object()
+    .shape({
+      name: string(),
+      icon: string(),
+      code: string().required()
+    })
+    .required(),
   amount: bigNumberValidation
     .clone()
     .required(makeRequiredErrorMessage('Amount'))

@@ -17,6 +17,7 @@ import { formatSize } from '../../../styles/format-size';
 import { ErrorComponent } from './error-component';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from './exolix-topup.form';
 import { useExolixStyles } from './exolix.styles';
+import { initialData } from './initial-step.data';
 
 interface InitialStepProps {
   isError: boolean;
@@ -34,7 +35,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const handleSubmit = useCallback(() => {
     dispatch(
       loadExolixExchangeDataActions.submit({
-        coinFrom: values.coinFrom,
+        coinFrom: values.coinFrom.code,
         coinTo: 'XTZ',
         amount: (values.amount ?? new BigNumber(0)).toNumber(),
         withdrawalAddress: publicKeyHash,
@@ -44,14 +45,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   }, [dispatch]);
 
   const formik = useFormik<ExolixTopupFormValues>({
-    initialValues: {
-      coinFrom: 'BTC'
-    },
+    initialValues: initialData,
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
 
-  const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
+  const { values, setFieldValue, isValid, submitForm } = formik;
 
   return (
     <>
