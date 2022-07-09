@@ -1,4 +1,4 @@
-import * as Keychain from 'react-native-keychain';
+import Keychain from 'react-native-keychain';
 import { BehaviorSubject, of } from 'rxjs';
 
 import { mockHdAccount } from '../interfaces/account.interface.mock';
