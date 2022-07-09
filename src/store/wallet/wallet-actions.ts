@@ -18,6 +18,9 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
 export const loadTokensWithBalancesActions = createActions<void, string[], string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
+export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(
+  'assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE'
+);
 export const loadTokenBalanceActions = createActions<
   { publicKeyHash: string; slug: string },
   { publicKeyHash: string; slug: string; balance: string },

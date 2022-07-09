@@ -23,6 +23,7 @@ import { navigateAction } from '../root-state.actions';
 import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addTokenAction,
+  highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
   loadTokenBalanceActions,
   loadTokensWithBalancesActions,
@@ -35,6 +36,26 @@ const updateDataActions = () => [
   loadTokensWithBalancesActions.submit(),
   loadSelectedBakerActions.submit()
 ];
+
+const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(highPriorityLoadTokenBalanceAction),
+    toPayload(),
+    withSelectedRpcUrl(state$),
+    switchMap(([payload, rpcUrl]) =>
+      loadAssetBalance$(rpcUrl, payload.publicKeyHash, payload.slug).pipe(
+        map(balance =>
+          isDefined(balance)
+            ? loadTokenBalanceActions.success({
+                publicKeyHash: payload.publicKeyHash,
+                slug: payload.slug,
+                balance
+              })
+            : loadTokenBalanceActions.fail(`${payload.slug} balance load FAILED`)
+        )
+      )
+    )
+  );
 
 const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -60,7 +81,7 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
             );
           }
 
-          return of(loadTokenBalanceActions.fail(`${payload.slug} balance load SKIPPED`));
+          return of(loadTokenBalanceActions.fail(`${payload.slug} balance load SKIPPED`)).pipe(delay(5));
         })
       )
     )
@@ -82,11 +103,11 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
             })
           );
 
-          const tokenSlugsInMemory = (selectedAccountState.tokensList ?? []).map(token => token.slug);
-          const loadedMetadataSlugs = Object.keys(metadataRecord);
+          const accountTokensSlugs = (selectedAccountState.tokensList ?? []).map(token => token.slug);
+          const existingMetadataSlugs = Object.keys(metadataRecord);
 
-          const allTokensSlugs = uniq([...tokenSlugsInMemory, ...tokensWithBalancesSlugs]);
-          const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !loadedMetadataSlugs.includes(x));
+          const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
+          const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
 
           return [
             loadTokensWithBalancesActions.success(tokensWithBalancesSlugs),
@@ -164,6 +185,7 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
+  highPriorityLoadTokenBalanceEpic,
   loadTokenBalanceEpic,
   loadTezosBalanceEpic,
   loadTokensWithBalancesEpic,
