@@ -1,11 +1,10 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
-import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz } from '../../../../utils/tezos.util';
 
@@ -74,9 +73,9 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
     () => ({
       formInitialValues: estimationWasSuccessful ? basicFees : {},
       formValidationSchema: object().shape({
-        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee is required', value => {
+        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee must be positive', value => {
           if (estimationWasSuccessful) {
-            return isDefined(value) && value instanceof BigNumber && value.gte(0);
+            return isDefined(value) && value instanceof BigNumber && value.isGreaterThan(0);
           }
 
           return true;

@@ -1,4 +1,4 @@
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { SignPayloadRequestOutput } from '@airgap/beacon-sdk';
 import { Uint8ArrayConsumer } from '@taquito/local-forging';
 import { valueDecoder } from '@taquito/local-forging/dist/lib/michelson/codec';
 import { emitMicheline } from '@taquito/michel-codec';

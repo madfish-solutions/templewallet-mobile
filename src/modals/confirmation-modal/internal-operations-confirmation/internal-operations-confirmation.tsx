@@ -9,10 +9,9 @@ import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-
 import { StacksEnum } from '../../../navigator/enums/stacks.enum';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { addPendingOperation, waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
+import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { showSuccessToast } from '../../../toast/toast.utils';
-import { paramsToPendingActions } from '../../../utils/params-to-actions.util';
 import { sendTransaction$ } from '../../../utils/wallet.utils';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
@@ -32,11 +31,7 @@ const approveInternalOperationRequest = ({
         title: 'Success!'
       });
 
-      return [
-        navigateAction(StacksEnum.MainStack),
-        waitForOperationCompletionAction({ opHash: hash, sender }),
-        addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
-      ];
+      return [navigateAction(StacksEnum.MainStack), waitForOperationCompletionAction({ opHash: hash, sender })];
     })
   );
 
@@ -49,7 +44,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
   useNavigationSetOptions(
     {
       headerTitle: () => {
-        switch (opParams[0].kind) {
+        switch (opParams[0]?.kind) {
           case OpKind.DELEGATION:
             return <HeaderTitle title="Confirm Delegate" />;
           case OpKind.TRANSACTION:

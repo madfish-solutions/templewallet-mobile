@@ -1,14 +1,16 @@
+import * as Sentry from '@sentry/react-native';
+import { ParamsWithKind } from '@taquito/taquito';
 import { useEffect, useState } from 'react';
 import { from, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from '../../../../hooks/use-read-only-tezos-toolkit.hook';
+import { AccountInterface } from '../../../../interfaces/account.interface';
 import { EstimationInterface } from '../../../../interfaces/estimation.interface';
-import { ParamsWithKind } from '../../../../interfaces/op-params.interface';
-import { WalletAccountInterface } from '../../../../interfaces/wallet-account.interface';
 import { showErrorToast } from '../../../../toast/toast.utils';
+import { copyStringToClipboard } from '../../../../utils/clipboard.utils';
 
-export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsWithKind[]) => {
+export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const tezos = useReadOnlyTezosToolkit(sender);
@@ -25,8 +27,14 @@ export const useEstimations = (sender: WalletAccountInterface, opParams: ParamsW
             minimalFeePerStorageByteMutez
           }))
         ),
-        catchError(() => {
-          showErrorToast({ description: 'Warning! The transaction is likely to fail!' });
+        catchError(error => {
+          Sentry.captureException(error);
+          showErrorToast({
+            title: 'Warning!',
+            description: 'The transaction is likely to fail!',
+            isCopyButtonVisible: true,
+            onPress: () => copyStringToClipboard(error.toString())
+          });
 
           return of([]);
         })

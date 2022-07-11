@@ -5,32 +5,63 @@ import { emptyFn, EmptyFn } from '../config/general';
 
 enum BasicAppStateStatus {
   Active = 'active',
+  Inactive = 'inactive',
   Background = 'background'
 }
 
-export const useAppStateStatus = (onAppActiveState: EmptyFn, onAppBackgroundState: EmptyFn = emptyFn) => {
+interface AppStateStatusProps {
+  onAppActiveState?: EmptyFn;
+  onAppInactiveState?: EmptyFn;
+  onAppBackgroundState?: EmptyFn;
+}
+
+export const useAppStateStatus = ({
+  onAppActiveState = emptyFn,
+  onAppInactiveState = emptyFn,
+  onAppBackgroundState = emptyFn
+}: AppStateStatusProps) => {
   const prevAppState = useRef<BasicAppStateStatus>(BasicAppStateStatus.Active);
+  const mountedRef = useRef(true);
 
   const handleAppStateChange = (newAppState: AppStateStatus) => {
-    if (prevAppState.current === BasicAppStateStatus.Background && newAppState === BasicAppStateStatus.Active) {
+    if (!mountedRef.current) {
+      return null;
+    }
+
+    if (newAppState === prevAppState.current) {
+      return null;
+    }
+
+    if (newAppState === BasicAppStateStatus.Active) {
       onAppActiveState();
+      prevAppState.current = BasicAppStateStatus.Active;
     }
 
-    if (prevAppState.current === BasicAppStateStatus.Active && newAppState === BasicAppStateStatus.Background) {
+    if (newAppState === BasicAppStateStatus.Inactive) {
+      onAppInactiveState();
+      prevAppState.current = BasicAppStateStatus.Inactive;
+    }
+
+    if (newAppState === BasicAppStateStatus.Background) {
       onAppBackgroundState();
-    }
-
-    // Other states are optional on different platforms, so they are ignored
-    if (newAppState === BasicAppStateStatus.Active || newAppState === BasicAppStateStatus.Background) {
-      prevAppState.current = newAppState as BasicAppStateStatus;
+      prevAppState.current = BasicAppStateStatus.Background;
     }
   };
 
-  useEffect(onAppActiveState, []);
+  useEffect(() => {
+    onAppActiveState();
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
-    AppState.addEventListener('change', handleAppStateChange);
+    const listener = AppState.addEventListener('change', handleAppStateChange);
 
-    return () => AppState.removeEventListener('change', handleAppStateChange);
+    return () => {
+      mountedRef.current = false;
+      listener.remove();
+    };
   }, []);
 };

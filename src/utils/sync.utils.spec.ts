@@ -1,6 +1,5 @@
-import { NativeModules } from 'react-native';
-
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
+import { mockReactNativeThemis } from '../mocks/react-native-themis.mock';
 import { isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
 
 const prefixB64 = Buffer.from(TEMPLE_SYNC_PREFIX).toString('base64');
@@ -13,6 +12,8 @@ const validParsed: SyncPayloadInterface = {
   mnemonic: 'elbow blood dial initial shaft average upgrade erupt spray basket fall uncle',
   hdAccountsLength: 3
 };
+
+const FAILED_TO_DECRYPT_ERROR = 'Failed to decrypt sync payload';
 
 describe('isSyncPayload', () => {
   it('should false when random payload', () => {
@@ -37,19 +38,17 @@ describe('parseSyncPayload', () => {
     await expect(parseSyncPayload('10101010', '01010')).rejects.toThrowError('Payload is not Temple Sync payload');
   });
   it('should throw error when only prefix', async () => {
-    await expect(parseSyncPayload(prefixB64, validPassword)).rejects.toThrowError('Failed to decrypt sync payload');
+    await expect(parseSyncPayload(prefixB64, validPassword)).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should throw error when pseudo valid payload', async () => {
-    await expect(parseSyncPayload(pseudoValidPayload, validPassword)).rejects.toThrowError(
-      'Failed to decrypt sync payload'
-    );
+    await expect(parseSyncPayload(pseudoValidPayload, validPassword)).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should throw error when valid payload and invalid password', async () => {
-    await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError('Failed to decrypt sync payload');
+    await expect(parseSyncPayload(pseudoValidPayload, '01010')).rejects.toThrowError(FAILED_TO_DECRYPT_ERROR);
   });
   it('should parse when payload and password valid', async () => {
-    NativeModules.Aes.decrypt = jest.fn(() =>
-      Promise.resolve(JSON.stringify([validParsed.mnemonic, validParsed.hdAccountsLength]))
+    mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64.mockResolvedValueOnce(
+      JSON.stringify([validParsed.mnemonic, validParsed.hdAccountsLength])
     );
 
     await expect(parseSyncPayload(validPayload, validPassword)).resolves.toEqual(validParsed);

@@ -10,6 +10,12 @@ export const featureRequest = 'https://madfish.canny.io/feature-requests';
 export const website = 'https://templewallet.com';
 export const repository = 'https://github.com/madfish-solutions/templewallet-mobile';
 export const privacyPolicy = 'https://templewallet.com/privacy';
+export const analyticsCollecting = 'https://templewallet.com/analytics-collecting';
 export const termsOfUse = 'https://templewallet.com/terms';
 export const contact = 'https://templewallet.com/contact';
 export const delegationManual = 'https://youtu.be/iFH8WEfuaDI';
+
+export const supportUkraine = 'https://donate.tezos.org.ua';
+export const yupanaLink = 'https://yupana.finance/';
+export const quipuLink = 'https://quipuswap.com/';
+export const madfishLink = 'https://story.madfish.solutions/';

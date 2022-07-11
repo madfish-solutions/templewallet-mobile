@@ -2,9 +2,15 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
+import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { isIOS } from '../config/system';
+import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
+import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
+import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -19,8 +25,12 @@ import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
+import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
+import { ForceUpdate } from '../screens/force-update/force-update';
+import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useIsAppCheckFailed, useIsForceUpdateNeeded } from '../store/security/security-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -40,9 +50,20 @@ export const RootStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const colors = useColors();
 
+  useStorageMigration();
+
+  useAppStateStatus({
+    onAppInactiveState: show,
+    onAppActiveState: hide
+  });
+
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   useQuickActions();
+  const isPasscode = useDevicePasscode();
+  const isForceUpdateNeeded = useIsForceUpdateNeeded();
+  const isAppCheckFailed = useIsAppCheckFailed();
+  useResetKeychainOnInstall();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
@@ -102,7 +123,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={useModalOptions('Select Baker')}
+              options={{ ...useModalOptions('Select Baker'), gestureEnabled: isIOS }}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
@@ -155,6 +176,9 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {isAuthorised && isLocked && <EnterPassword />}
+      {!isPasscode && <PassCode />}
+      {isForceUpdateNeeded && <ForceUpdate />}
+      {isAppCheckFailed && <AppCheckWarning />}
     </NavigationContainer>
   );
 };

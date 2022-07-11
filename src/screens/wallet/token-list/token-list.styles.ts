@@ -3,7 +3,9 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
   contentContainerStyle: {
-    paddingRight: 0,
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: colors.pageBG,
     paddingLeft: formatSize(16)
   },
   headerContainer: {

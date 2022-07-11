@@ -21,9 +21,10 @@ import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { changeTheme } from '../../store/settings/settings-actions';
-import { useThemeSelector } from '../../store/settings/settings-selectors';
+import { useFiatCurrencySelector, useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { SettingsHeader } from './settings-header/settings-header';
 import { useSettingsStyles } from './settings.styles';
 
@@ -32,11 +33,14 @@ export const Settings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
+  const fiatCurrency = useFiatCurrencySelector();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
+
+  usePageAnalytic(ScreensEnum.Settings);
 
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
@@ -64,6 +68,14 @@ export const Settings = () => {
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.FiatSettings)}>
+              <WhiteContainerText text="Default Currency" />
+              <View style={styles.shevronContainer}>
+                <Text style={styles.shevronText}>{fiatCurrency}</Text>
+                <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              </View>
+            </WhiteContainerAction>
+            <WhiteContainerDivider />
             <WhiteContainerAction disabled={true}>
               <WhiteContainerText text="Appearance" />
 
@@ -88,7 +100,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.DAppsSettings)}>
-              <WhiteContainerText text="DApps" />
+              <WhiteContainerText text="Authorized DApps" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>

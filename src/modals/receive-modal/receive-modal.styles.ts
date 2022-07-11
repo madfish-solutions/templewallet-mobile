@@ -9,6 +9,18 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
   tokenContainer: {
     flexDirection: 'row'
   },
+  iconContainer: {
+    width: formatSize(22),
+    height: formatSize(22),
+    marginLeft: formatSize(8),
+    paddingHorizontal: formatSize(4),
+    paddingVertical: formatSize(2),
+    backgroundColor: colors.blue10,
+    borderRadius: formatSize(4)
+  },
+  pkhWrapper: {
+    flexDirection: 'row'
+  },
   tokenInfoContainer: {
     justifyContent: 'center'
   },
@@ -34,6 +46,6 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     color: colors.blue
   },
   buttonsContainer: {
-    flexDirection: 'row'
+    width: '100%'
   }
 }));

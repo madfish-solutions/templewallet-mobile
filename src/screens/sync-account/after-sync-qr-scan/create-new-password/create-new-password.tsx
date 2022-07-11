@@ -13,8 +13,14 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { CreateNewPasswordFormValues, createNewPasswordValidationSchema } from './create-new-password.form';
-import { useCreateNewPasswordStyles } from './create-new-password.styles';
+import { formatSize } from '../../../../styles/format-size';
+import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
+import {
+  CreateNewPasswordFormValues,
+  createNewPasswordInitialValues,
+  createNewPasswordValidationSchema
+} from './create-new-password.form';
+import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
@@ -30,7 +36,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   onGoBackPress
 }) => {
   const { importWallet } = useShelter();
-  const styles = useCreateNewPasswordStyles();
+  const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
@@ -45,28 +51,39 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
 
   return (
     <Formik
-      initialValues={{
-        password: '',
-        passwordConfirmation: ''
-      }}
+      initialValues={createNewPasswordInitialValues}
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <Divider />
-          <View>
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" />
-          </View>
-          <View style={styles.buttonContainer}>
-            <ButtonLargePrimary title="Sync" disabled={!isValid} onPress={submitForm} />
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+              />
+            </View>
+          </ScreenContainer>
+          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
+            <ButtonLargePrimary
+              title="Sync"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );

@@ -1,12 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { StyleSheet } from 'react-native';
 
-export const useImportAccountStyles = createUseStyles(() => ({
-  container: {
-    marginHorizontal: formatSize(20),
-    marginVertical: formatSize(24)
-  },
+export const ImportAccountStyles = StyleSheet.create({
   seedPhraseInputContainer: {
     flexGrow: 1
   }
-}));
+});

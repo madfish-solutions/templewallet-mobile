@@ -2,9 +2,9 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useCurrentFiatCurrencyMetadataSelector } from '../../store/settings/settings-selectors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { useAssetEquityTextStyles } from './asset-equity-text.styles';
 
@@ -15,19 +15,17 @@ interface Props {
 }
 
 export const AssetEquityText: FC<Props> = ({ asset, style }) => {
-  const exchangeRates = useExchangeRatesSelector();
   const styles = useAssetEquityTextStyles();
+  const { symbol } = useCurrentFiatCurrencyMetadataSelector();
 
-  const exchangeRate = exchangeRates[getTokenSlug(asset)];
+  const formattedExchangeRate = formatAssetAmount(new BigNumber(asset.exchangeRate ?? 0), 2);
 
-  const visibleAmount = formatAssetAmount(new BigNumber(exchangeRate), 2);
-  const visibleSymbol = asset.symbol;
-
-  return exchangeRate ? (
+  return isDefined(asset.exchangeRate) ? (
     <Text style={style}>
-      <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{visibleSymbol}</Text>
-      <Text style={style}> ≈ $ </Text>
-      <Text style={[style, styles.numberText]}>{visibleAmount}</Text>
+      <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{asset.symbol}</Text>
+      <Text style={style}> ≈ </Text>
+      <Text style={[style, styles.numberText]}>{formattedExchangeRate}</Text>
+      <Text style={style}>{symbol}</Text>
     </Text>
   ) : null;
 };

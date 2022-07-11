@@ -31,10 +31,15 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
     flex: 1,
     marginVertical: 10
   },
-  operationHashBlock: {
+  row: {
     flexDirection: 'row'
   },
   iconLeft: {
     margin: formatSize(10)
+  },
+  iconContainer: {
+    padding: formatSize(4),
+    marginLeft: formatSize(4),
+    borderRadius: formatSize(4)
   }
 }));

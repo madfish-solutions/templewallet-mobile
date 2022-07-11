@@ -1,22 +1,28 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { initialAccountState } from '../../interfaces/account-state.interface';
-import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
+import { VisibilityEnum } from '../../enums/visibility.enum';
+import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
+import { AccountInterface } from '../../interfaces/account.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { createEntity } from '../create-entity';
+import { isDefined } from '../../utils/is-defined';
+import {
+  deleteOldIsShownDomainName,
+  deleteOldQuipuApy,
+  deleteOldTokensMetadata,
+  deleteOldTokenSuggestion,
+  migrateAccountsState
+} from '../migration/migration-actions';
 import {
   addHdAccountAction,
-  addPendingOperation,
-  addTokenMetadataAction,
-  loadActivityGroupsActions,
+  addTokenAction,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
-  loadTokenMetadataActions,
-  loadTokenSuggestionActions,
+  loadTokensActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
-  updateWalletAccountAction
+  updateAccountAction,
+  setAccountVisibility,
+  loadTokensBalancesArrayActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -31,83 +37,55 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     ...state,
     accounts: [...state.accounts, { ...account, ...initialAccountState }]
   }));
-  builder.addCase(updateWalletAccountAction, (state, { payload: updatedAccount }) => ({
+  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,
     accounts: state.accounts.map(item =>
       item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
     )
   }));
+  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) =>
+    updateAccountState(state, publicKeyHash, account => ({
+      ...account,
+      isVisible
+    }))
+  );
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosBalanceActions.submit, state =>
-    updateCurrentAccountState(state, currentAccount => ({
-      tezosBalance: createEntity(currentAccount.tezosBalance.data, true)
-    }))
-  );
-  builder.addCase(loadTezosBalanceActions.success, (state, { payload: balance }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance: createEntity(balance, false) }))
-  );
-  builder.addCase(loadTezosBalanceActions.fail, (state, { payload: error }) =>
-    updateCurrentAccountState(state, account => ({
-      tezosBalance: createEntity(account.tezosBalance.data, false, error)
-    }))
+  builder.addCase(loadTezosBalanceActions.success, (state, { payload: tezosBalance }) =>
+    updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokenBalancesActions.success, (state, { payload: { balancesRecord, metadataList } }) => {
-    const tokensMetadata = metadataList.reduce((prevState, tokenMetadata) => {
-      const slug = getTokenSlug(tokenMetadata);
+  builder.addCase(loadTokensActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
+    updateCurrentAccountState(state, currentAccount => {
+      const newTokensSlugs = tokensWithBalancesSlugs.filter(
+        newTokenSlug => currentAccount.tokensList.findIndex(existingToken => existingToken.slug === newTokenSlug) === -1
+      );
 
       return {
-        ...prevState,
-        [slug]: {
-          ...prevState[slug],
-          ...tokenMetadata
-        }
+        tokensList: [
+          ...currentAccount.tokensList,
+          ...newTokensSlugs.map(slug => ({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }))
+        ]
       };
-    }, state.tokensMetadata);
+    })
+  );
 
-    return updateCurrentAccountState({ ...state, tokensMetadata }, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, balancesRecord)
-    }));
-  });
+  builder.addCase(loadTokensBalancesArrayActions.success, (state, { payload: { publicKeyHash, data } }) =>
+    updateAccountState(state, publicKeyHash, account => ({
+      tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
+    }))
+  );
 
-  builder.addCase(loadTokenSuggestionActions.submit, state => ({
-    ...state,
-    addTokenSuggestion: createEntity(emptyTokenMetadata, true)
-  }));
-  builder.addCase(loadTokenSuggestionActions.success, (state, { payload: tokenMetadata }) => ({
-    ...state,
-    addTokenSuggestion: createEntity(tokenMetadata, false)
-  }));
-  builder.addCase(loadTokenSuggestionActions.fail, (state, { payload: error }) => ({
-    ...state,
-    addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
-  }));
-
-  builder.addCase(loadTokenMetadataActions.success, (state, { payload: tokenMetadata }) => ({
-    ...state,
-    tokensMetadata: {
-      ...state.tokensMetadata,
-      [getTokenSlug(tokenMetadata)]: tokenMetadata
-    }
-  }));
-
-  builder.addCase(addTokenMetadataAction, (state, { payload: tokenMetadata }) => {
+  builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);
 
-    return {
-      ...updateCurrentAccountState(state, currentAccount => ({
-        tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
-        removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-      })),
-      tokensMetadata: {
-        ...state.tokensMetadata,
-        [slug]: tokenMetadata
-      }
-    };
+    return updateCurrentAccountState(state, currentAccount => ({
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, [{ slug, balance: '0' }]),
+      removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
+    }));
   });
   builder.addCase(removeTokenAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
@@ -120,35 +98,63 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(addPendingOperation, (state, { payload }) =>
-    updateAccountState(state, payload[0].source.address, account => ({
-      ...account,
-      pendingActivities: [payload, ...account.pendingActivities]
-    }))
-  );
+  // MIGRATIONS
+  builder.addCase(deleteOldTokensMetadata, state => ({
+    ...state,
+    tokensMetadata: undefined
+  }));
+  builder.addCase(deleteOldTokenSuggestion, state => ({
+    ...state,
+    addTokenSuggestion: undefined
+  }));
+  builder.addCase(deleteOldIsShownDomainName, state => ({
+    ...state,
+    isShownDomainName: undefined
+  }));
+  builder.addCase(deleteOldQuipuApy, state => ({
+    ...state,
+    quipuApy: undefined
+  }));
+  builder.addCase(migrateAccountsState, state => {
+    if (state.accounts[0]?.isVisible === undefined) {
+      return state;
+    } else {
+      const accounts: AccountInterface[] = [];
+      const accountsStateRecord: Record<string, AccountStateInterface> = {};
 
-  builder.addCase(loadActivityGroupsActions.submit, state =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(account.activityGroups.data, true)
-    }))
-  );
-  builder.addCase(loadActivityGroupsActions.success, (state, { payload: activityGroups }) =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(activityGroups),
-      pendingActivities: account.pendingActivities.filter(
-        pendingActivityGroup =>
-          !activityGroups.some(
-            completedActivityGroup => completedActivityGroup[0].hash === pendingActivityGroup[0].hash
-          )
-      )
-    }))
-  );
-  builder.addCase(loadActivityGroupsActions.fail, (state, { payload: error }) =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      activityGroups: createEntity(account.activityGroups.data, false, error)
-    }))
-  );
+      for (const account of state.accounts) {
+        accountsStateRecord[account.publicKeyHash] = {
+          isVisible: account.isVisible ?? initialAccountState.isVisible,
+          tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
+          tokensList:
+            account.tokensList?.map(token =>
+              isDefined(token.isVisible)
+                ? {
+                    ...token,
+                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
+                    isVisible: undefined
+                  }
+                : token
+            ) ?? initialAccountState.tokensList,
+          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
+        };
+
+        accounts.push({
+          ...account,
+          isVisible: undefined,
+          tezosBalance: undefined,
+          tokensList: undefined,
+          removedTokensList: undefined,
+          activityGroups: undefined,
+          pendingActivities: undefined
+        });
+      }
+
+      return {
+        ...state,
+        accounts,
+        accountsStateRecord
+      };
+    }
+  });
 });

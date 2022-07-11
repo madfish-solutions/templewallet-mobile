@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { mockReactNativeQuickActions } from '../mocks/react-native-quick-actions.mock';
-import { mockDeviceEventEmitter } from '../mocks/react-native.mock';
+import { mockDeviceEventEmitter, mockDeviceEventEmitterInstance } from '../mocks/react-native.mock';
 import { useQuickActions } from './use-quick-actions.hook';
 
 describe('useQuickActions', () => {
@@ -19,7 +19,7 @@ describe('useQuickActions', () => {
     expect(mockDeviceEventEmitter.addListener).toBeCalled();
 
     expect(mockReactNativeQuickActions.clearShortcutItems).not.toBeCalled();
-    expect(mockDeviceEventEmitter.removeListener).not.toBeCalled();
+    expect(mockDeviceEventEmitterInstance.remove).not.toBeCalled();
   });
 
   it('should clear shortcut items and remove quick action shortcut listener on unmount', () => {
@@ -28,6 +28,6 @@ describe('useQuickActions', () => {
     unmount();
 
     expect(mockReactNativeQuickActions.clearShortcutItems).toBeCalled();
-    expect(mockDeviceEventEmitter.removeListener).toBeCalled();
+    expect(mockDeviceEventEmitterInstance.remove).toBeCalled();
   });
 });

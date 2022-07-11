@@ -1,18 +1,104 @@
 import React, { FC, useState } from 'react';
-import { Image, View } from 'react-native';
+import { View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { formatSize } from '../../styles/format-size';
-import { formatCollectibleUri, formatImgUri } from '../../utils/image.utils';
+import {
+  formatCollectibleObjktArtifactUri,
+  formatCollectibleObjktBigUri,
+  formatCollectibleObjktMediumUri,
+  formatImgUri
+} from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
-import { CollectibleIconProps } from './collectible-icon.props';
+import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
-export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
-  const styles = useCollectibleIconStyles();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoadingFailed, setIsLoadingFailed] = useState(false);
+interface LoadStrategy {
+  type: string;
+  uri: (value: string) => string;
+  field: 'thumbnailUri' | 'artifactUri' | 'displayUri' | 'assetSlug';
+}
 
-  return isDefined(collectible) && isDefined(collectible.thumbnailUri) ? (
+const collectibleBigLoadStrategy: Array<LoadStrategy> = [
+  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
+  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
+  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
+  { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
+  { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
+  { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
+];
+
+const collectibleThumbnailLoadStrategy: Array<LoadStrategy> = [
+  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
+  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
+  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
+  { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
+  { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
+  { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
+];
+
+interface MetadataFormats {
+  dimensions: {
+    unit: string;
+    value: string;
+  };
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  uri: string;
+}
+
+type ImageRequestObject = {
+  assetSlug: string;
+  displayUri?: string;
+  artifactUri?: string;
+  thumbnailUri?: string;
+  formats?: Array<MetadataFormats>;
+};
+
+const getFirstFallback = (
+  strategy: Array<LoadStrategy>,
+  currentState: Record<string, boolean>,
+  metadata: ImageRequestObject
+): LoadStrategy => {
+  for (const strategyItem of strategy) {
+    const isArtifactUri = isDefined(metadata.artifactUri) && strategyItem.field === 'artifactUri';
+    const isDisplayUri = isDefined(metadata.displayUri) && strategyItem.field === 'displayUri';
+    const isThumbnailUri = isDefined(metadata.thumbnailUri) && strategyItem.field === 'thumbnailUri';
+    const isObjktMed =
+      ((isDefined(metadata.formats) && metadata.formats.some(x => x.mimeType === 'image/gif')) ||
+        !isDefined(metadata.formats)) &&
+      strategyItem.type === 'objktMed';
+    if ((isArtifactUri || isDisplayUri || isThumbnailUri || isObjktMed) && !currentState[strategyItem.type]) {
+      return strategyItem;
+    }
+  }
+
+  return strategy[0];
+};
+
+export const CollectibleIcon: FC<CollectibleIconProps> = ({
+  collectible,
+  size,
+  iconSize = CollectibleIconSize.SMALL
+}) => {
+  const styles = useCollectibleIconStyles();
+  const actualLoadingStrategy =
+    iconSize === CollectibleIconSize.SMALL ? collectibleThumbnailLoadStrategy : collectibleBigLoadStrategy;
+  const [isLoadingFailed, setIsLoadingFailed] = useState(
+    actualLoadingStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
+  );
+  const assetSlug = `${collectible?.address}_${collectible?.id}`;
+
+  const imageRequestObject = { ...collectible, assetSlug };
+  const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
+  const imageSrc = currentFallback.uri(imageRequestObject[currentFallback.field] ?? assetSlug);
+
+  const handleLoadingFailed = () => {
+    setIsLoadingFailed(prevState => ({ ...prevState, [currentFallback.type]: true }));
+  };
+
+  return (
     <View
       style={{
         width: size,
@@ -20,19 +106,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size })
         padding: formatSize(4)
       }}
     >
-      {isDefined(collectible.artifactUri) ? (
-        <Image
-          style={styles.image}
-          source={{
-            uri: isLoadingFailed ? formatImgUri(collectible.thumbnailUri) : formatCollectibleUri(collectible),
-            width: size,
-            height: size
-          }}
-          blurRadius={isLoaded ? 0 : 5}
-          onError={() => setIsLoadingFailed(true)}
-          onLoadEnd={() => setIsLoaded(true)}
-        />
-      ) : null}
+      {isDefined(collectible) && isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri) && (
+        <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
+      )}
     </View>
-  ) : null;
+  );
 };

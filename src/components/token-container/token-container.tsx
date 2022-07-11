@@ -12,23 +12,21 @@ import { useTokenContainerStyles } from './token-container.styles';
 export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }) => {
   const styles = useTokenContainerStyles();
 
-  const { symbol, name } = token;
-
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        <TokenIcon token={token} />
+        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
         <Divider size={formatSize(8)} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
-            <Text {...getTruncatedProps(styles.symbolText)}>{symbol}</Text>
+            <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
             {isDefined(apy) && (
               <View style={styles.apyContainer}>
-                <Text style={styles.apyText}>APY: {apy}%</Text>
+                <Text style={styles.apyText}>APY: {Math.round(apy)}%</Text>
               </View>
             )}
           </View>
-          <Text {...getTruncatedProps(styles.nameText)}>{name}</Text>
+          <Text {...getTruncatedProps(styles.nameText)}>{token.name}</Text>
         </View>
         <Divider size={formatSize(8)} />
       </View>

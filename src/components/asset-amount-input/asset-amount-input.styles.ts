@@ -19,20 +19,38 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   inputContainerError: {
     borderColor: colors.destructive
   },
+  inputPadding: {
+    width: formatSize(12)
+  },
+  disabledPadding: {
+    backgroundColor: colors.lines,
+    borderBottomLeftRadius: formatSize(8),
+    borderTopLeftRadius: formatSize(8)
+  },
   numericInput: {
     ...typography.numbersMedium22,
     color: colors.black,
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: formatSize(12),
-    paddingVertical: formatSize(12),
+    paddingTop: formatSize(12),
+    paddingBottom: formatSize(12),
     borderColor: colors.lines,
     borderRightWidth: formatSize(0.5)
+  },
+  disabledInput: {
+    ...typography.numbersMedium22,
+    color: colors.gray2,
+    backgroundColor: colors.lines,
+    borderColor: colors.lines
   },
   dropdownContainer: {
     width: formatSize(126),
     paddingRight: formatSize(12),
     paddingVertical: formatSize(12)
+  },
+  quoteContainer: {
+    width: formatSize(126),
+    paddingRight: formatSize(12)
   },
   lpDropdownContainer: {
     width: formatSize(162)

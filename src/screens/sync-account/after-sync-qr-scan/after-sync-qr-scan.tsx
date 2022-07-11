@@ -1,9 +1,13 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { enterPassword } from '../../../store/security/security-actions';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
+import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
@@ -18,20 +22,40 @@ export const AfterSyncQRScan = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
-  const handleConfirmSyncFormSubmit = ({ usePrevPassword, password, useBiometry }: ConfirmSyncFormValues) => {
+  const dispatch = useDispatch();
+  usePageAnalytic(ScreensEnum.ConfirmSync);
+
+  const handleConfirmSyncFormSubmit = ({
+    usePrevPassword,
+    password,
+    analytics,
+    useBiometry: useBiometryValue
+  }: ConfirmSyncFormValues) => {
+    dispatch(setIsAnalyticsEnabled(analytics));
+
     parseSyncPayload(payload, password)
       .then(res => {
-        setUseBiometry(useBiometry === true);
+        setUseBiometry(useBiometryValue === true);
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
 
         if (usePrevPassword === true) {
-          importWallet({ seedPhrase: res.mnemonic, password, useBiometry, hdAccountsLength: res.hdAccountsLength });
+          dispatch(enterPassword.success());
+          importWallet({
+            seedPhrase: res.mnemonic,
+            password,
+            useBiometry: useBiometryValue,
+            hdAccountsLength: res.hdAccountsLength
+          });
         } else {
           setInnerScreenIndex(1);
         }
       })
-      .catch(e => showErrorToast({ description: e.message }));
+      .catch(e => {
+        dispatch(enterPassword.fail());
+
+        return showErrorToast({ description: e.message });
+      });
   };
 
   return (

@@ -1,16 +1,16 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
-import { WalletAccountInterface } from '../interfaces/wallet-account.interface';
+import { AccountInterface } from '../interfaces/account.interface';
 import { isString } from '../utils/is-string';
 
-export const useFilteredAccountList = (accountList: WalletAccountInterface[]) => {
+export const useFilteredAccountList = (accountList: AccountInterface[]) => {
   const [searchValue, setSearchValue] = useState<string>();
 
-  const [filteredAccountList, setFilteredAccountList] = useState<WalletAccountInterface[]>(accountList);
+  const [filteredAccountList, setFilteredAccountList] = useState<AccountInterface[]>(accountList);
 
   useEffect(() => {
-    const result: WalletAccountInterface[] = [];
+    const result: AccountInterface[] = [];
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();

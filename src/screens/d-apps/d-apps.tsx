@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
+import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
@@ -11,6 +13,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
@@ -26,6 +29,18 @@ export const DApps = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>();
 
+  usePageAnalytic(ScreensEnum.DApps);
+
+  const tabletMode = isTablet();
+
+  const texts = useMemo(
+    () =>
+      tabletMode
+        ? ['Other DApps are third-party websites. They should be used at your own risk.']
+        : ['Other DApps are third-party websites.', 'They should be used at your own risk.'],
+    [tabletMode]
+  );
+
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchQuery)) {
       return DAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -37,7 +52,7 @@ export const DApps = () => {
   return (
     <>
       <InsetSubstitute type="top" />
-      <SearchInput placeholder="Search token" onChangeText={setSearchQuery} />
+      <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} />
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Integrated</Text>
       <Divider size={formatSize(20)} />
@@ -51,18 +66,19 @@ export const DApps = () => {
       </View>
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Others</Text>
+      <Divider size={formatSize(8)} />
+      <View style={styles.dappBlockWrapper}>
+        <Disclaimer texts={texts} />
+      </View>
       <Divider size={formatSize(16)} />
-      {sortedDAppsList.length ? (
-        <FlatList
-          data={sortedDAppsList}
-          renderItem={item => <OthersDApp item={item} />}
-          keyExtractor={item => item.name}
-          numColumns={2}
-          contentContainerStyle={styles.container}
-        />
-      ) : (
-        <DataPlaceholder text="No records found." />
-      )}
+      <FlatList
+        data={sortedDAppsList}
+        renderItem={item => <OthersDApp item={item} />}
+        keyExtractor={item => item.name}
+        numColumns={2}
+        contentContainerStyle={styles.container}
+        ListEmptyComponent={<DataPlaceholder text="No records found." />}
+      />
     </>
   );
 };

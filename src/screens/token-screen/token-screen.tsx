@@ -10,17 +10,19 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
+import { useTokenActivity } from '../../hooks/use-token-activity.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { loadActivityGroupsActions, loadTokenBalancesActions } from '../../store/wallet/wallet-actions';
+import { highPriorityLoadTokenBalanceAction } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
-  const dispatch = useDispatch();
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const dispatch = useDispatch();
+  const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const token = useMemo(
     () =>
@@ -28,17 +30,20 @@ export const TokenScreen = () => {
     [tokensList, initialToken]
   );
 
-  const selectedAccount = useSelectedAccountSelector();
-  const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
+  useEffect(() => {
+    dispatch(
+      highPriorityLoadTokenBalanceAction({
+        publicKeyHash: selectedAccount.publicKeyHash,
+        slug: getTokenSlug(token)
+      })
+    );
+  }, []);
+
+  const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
-  useEffect(() => {
-    dispatch(loadTokenBalancesActions.submit());
-    dispatch(loadActivityGroupsActions.submit());
-  }, []);
-
-  useEffect(() => setSearchValue(token.address), [token]);
+  usePageAnalytic(ScreensEnum.TokenScreen);
 
   return (
     <>
@@ -51,8 +56,9 @@ export const TokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer
-        historyComponent={<ActivityGroupsList activityGroups={filteredActivityGroups} />}
+        historyComponent={<ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />}
         infoComponent={<TokenInfo token={token} />}
+        token={token}
       />
     </>
   );

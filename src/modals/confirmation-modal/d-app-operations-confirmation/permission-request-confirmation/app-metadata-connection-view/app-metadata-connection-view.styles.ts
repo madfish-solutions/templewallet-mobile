@@ -14,7 +14,7 @@ export const useAppMetadataConnectionViewStyles = createUseStyles(({ colors, typ
     ...typography.caption13Semibold,
     color: colors.black
   },
-  templeLogoContainer: {
+  logoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     width: formatSize(36),

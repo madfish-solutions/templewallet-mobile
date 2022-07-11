@@ -3,9 +3,11 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
+import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
@@ -18,7 +20,7 @@ import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors'
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
 import { seedToPrivateKey } from '../../../utils/keys.util';
-import { useImportAccountStyles } from '../import-account.styles';
+import { ImportAccountStyles } from '../import-account.styles';
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,
@@ -31,7 +33,6 @@ interface Props {
 }
 
 export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
-  const styles = useImportAccountStyles();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
@@ -53,38 +54,41 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
       onSubmit={onSubmit}
     >
       {({ values, submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <View style={styles.seedPhraseInputContainer}>
-              <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
-              <FormMnemonicInput name="seedPhrase" />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <View style={ImportAccountStyles.seedPhraseInputContainer}>
+                <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
+                <FormMnemonicInput name="seedPhrase" />
+              </View>
+              <AndroidKeyboardDisclaimer />
+              <Divider size={formatSize(12)} />
+              <Label
+                label="Derivation"
+                isOptional
+                description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+              />
+              <ImportAccountSeedDerivationPathForm formValues={values} />
+              <Divider size={formatSize(12)} />
+              <Label
+                label="Password"
+                isOptional
+                description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
+              />
+              <FormPasswordInput name="password" />
+              <Divider size={formatSize(12)} />
             </View>
-            <Divider size={formatSize(12)} />
-            <Label
-              label="Derivation"
-              isOptional
-              description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
-            />
-            <ImportAccountSeedDerivationPathForm formValues={values} />
-            <Divider size={formatSize(12)} />
-            <Label
-              label="Password"
-              isOptional
-              description={'Used for additional mnemonic derivation.\nThat is NOT a wallet password.'}
-            />
-            <FormPasswordInput name="password" />
-            <Divider size={formatSize(12)} />
-          </View>
-          <View>
+          </ScreenContainer>
+          <ButtonsFloatingContainer>
             <ButtonsContainer>
               <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
+          </ButtonsFloatingContainer>
+        </>
       )}
     </Formik>
   );

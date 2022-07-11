@@ -2,10 +2,10 @@ import { FormikProps } from 'formik/dist/types';
 import React, { FC, useEffect, useMemo } from 'react';
 
 import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
+import { Disclaimer } from '../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
 import { ModalStatusBar } from '../../../components/modal-status-bar/modal-status-bar';
-import { RevealAttention } from '../../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
@@ -49,7 +49,10 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
       />
       <RevealSeedPhraseView publicKeyHash={values.account.publicKeyHash} />
       <Divider size={formatSize(16)} />
-      <RevealAttention />
+      <Disclaimer
+        title="Attention!"
+        texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+      />
     </ScreenContainer>
   );
 };

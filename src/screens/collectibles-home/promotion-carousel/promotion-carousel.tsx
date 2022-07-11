@@ -13,27 +13,30 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const itemWidth = useMemo(() => Math.abs(layoutWidth - 2 * formatSize(16)), [layoutWidth]);
+  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+  const itemWidth = useMemo(() => Math.floor(Math.abs(layoutWidth - 2 * formatSize(16))), [layoutWidth]);
 
-  const [activeDotIndex, setActiveDotIndex] = useState(0);
+  const [activeDotIndex, setActiveDotIndex] = useState(1);
 
   return (
     <View onLayout={handleLayout}>
       <Carousel
         data={promotionCarouselData}
-        windowSize={layoutWidth}
-        sliderWidth={layoutWidth}
+        sliderWidth={flooredLayoutWidth}
         itemWidth={itemWidth}
+        enableMomentum={false}
+        decelerationRate={0.5}
+        removeClippedSubviews={true}
         loop={true}
+        firstItem={-1}
         autoplay={true}
-        renderItem={item => (
-          <PromotionCarouselItem backgroundColor={item.item.backgroundColor} emojisArray={item.item.emojisArray} />
-        )}
+        autoplayInterval={5000}
+        renderItem={item => <PromotionCarouselItem {...item.item} />}
         onSnapToItem={index => setActiveDotIndex(index)}
       />
       <Divider />
       <Pagination
-        dotsLength={promotionCarouselData.length}
+        dotsLength={4}
         activeDotIndex={activeDotIndex}
         containerStyle={styles.paginationContainer}
         dotStyle={styles.paginationDot}

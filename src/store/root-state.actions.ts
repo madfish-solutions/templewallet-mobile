@@ -5,7 +5,10 @@ import { NavigationArgsType } from '../interfaces/navigation-args.type';
 import { NavigationParamList } from '../navigator/hooks/use-navigation.hook';
 import { createActions } from './create-actions';
 
-export const rootStateResetAction = createActions('root/RESET');
+export const emptyAction = createAction('root/EMPTY_ACTION');
+
+export const resetApplicationAction = createActions('root/RESET_APPLICATION');
+export const resetKeychainOnInstallAction = createActions('root/RESET_KEYCHAIN_ON_INSTALL');
 
 export const untypedNavigateAction =
   createAction<NavigationArgsType<ParamListBase, keyof ParamListBase>>('navigation/NAVIGATE');

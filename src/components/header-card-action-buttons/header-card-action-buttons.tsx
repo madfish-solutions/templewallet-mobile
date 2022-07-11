@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useTezosTokenSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { showErrorToast, showWarningToast } from '../../toast/toast.utils';
+import { showErrorToast } from '../../toast/toast.utils';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { ButtonMedium } from '../button/button-medium/button-medium';
@@ -21,7 +21,7 @@ interface Props {
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
   const errorMessage =
@@ -33,11 +33,17 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   return (
     <ButtonsContainer>
-      <ButtonMedium
-        title="RECEIVE"
-        iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { token })}
-      />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium
+          title="RECEIVE"
+          iconName={IconNameEnum.ArrowDown}
+          onPress={() => navigate(ModalsEnum.Receive, { token })}
+        />
+      </View>
+      <Divider size={formatSize(8)} />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
+      </View>
       <Divider size={formatSize(8)} />
       <View
         style={styles.buttonContainer}
@@ -49,18 +55,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           iconName={IconNameEnum.ArrowUp}
           onPress={() => navigate(ModalsEnum.Send, { token })}
         />
-      </View>
-      <Divider size={formatSize(8)} />
-      <View
-        style={styles.buttonContainer}
-        onTouchStart={() =>
-          void showWarningToast({
-            title: 'Work in progress...',
-            description: 'you will be available to swap crypto soon.'
-          })
-        }
-      >
-        <ButtonMedium title="Swap" iconName={IconNameEnum.SwapArrow} disabled={true} onPress={emptyFn} />
       </View>
     </ButtonsContainer>
   );

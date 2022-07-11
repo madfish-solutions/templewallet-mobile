@@ -1,5 +1,4 @@
-import { BeaconMessageType } from '@airgap/beacon-sdk';
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';
@@ -17,7 +16,7 @@ import { ScreenContainer } from '../../../../components/screen-container/screen-
 import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
 import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from '../../../../hooks/use-parse-sign-payload.hook';
-import { emptyWalletAccount } from '../../../../interfaces/wallet-account.interface';
+import { emptyAccount } from '../../../../interfaces/account.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { Shelter } from '../../../../shelter/shelter';
@@ -65,7 +64,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
   const approver = useMemo(
-    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyWalletAccount,
+    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyAccount,
     [accounts, message.sourceAddress]
   );
 

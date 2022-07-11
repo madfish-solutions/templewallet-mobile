@@ -3,15 +3,18 @@ import {
   BeaconErrorType,
   BeaconRequestOutputMessage,
   P2PPairingRequest,
-  BeaconResponseInputMessage
+  BeaconResponseInputMessage,
+  PeerInfo,
+  WalletClient
 } from '@airgap/beacon-sdk';
-import { ExtendedPeerInfo, PeerInfo } from '@airgap/beacon-sdk/dist/cjs/types/PeerInfo';
+import { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
 import * as sodium from 'libsodium-wrappers';
 
 import { EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
 import { BeaconStorage } from './storage';
-import { WalletClient } from './wallet-client';
+
+const WALLET_CLIENT_ERROR = 'Wallet client not defined!';
 
 export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
@@ -54,7 +57,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient?.respond(message);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static getPermissions = () => {
@@ -62,15 +65,15 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.getPermissions();
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static getPeers = () => {
     if (BeaconHandler._walletClient) {
-      return BeaconHandler._walletClient.getPeers();
+      return BeaconHandler._walletClient.getPeers() as Promise<P2PPairingRequest[]>;
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removePermission = (accountIdentifier: string) => {
@@ -78,7 +81,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removePermission(accountIdentifier);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removeAllPermissions = () => {
@@ -87,12 +90,12 @@ export class BeaconHandler {
     }
   };
 
-  public static removePeer = (peer: ExtendedPeerInfo) => {
+  public static removePeer = (peer: ExtendedP2PPairingResponse) => {
     if (isDefined(BeaconHandler._walletClient)) {
       return BeaconHandler._walletClient.removePeer(peer, true);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
   public static removeAllPeers = () => {
@@ -100,7 +103,7 @@ export class BeaconHandler {
       return BeaconHandler._walletClient.removeAllPeers(true);
     }
 
-    throw new Error('Wallet client not defined!');
+    return Promise.reject(WALLET_CLIENT_ERROR);
   };
 }
 

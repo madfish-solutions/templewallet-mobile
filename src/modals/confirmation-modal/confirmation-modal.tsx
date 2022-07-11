@@ -6,6 +6,7 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
 import { InternalOperationsConfirmation } from './internal-operations-confirmation/internal-operations-confirmation';
 
@@ -19,11 +20,13 @@ export const ConfirmationModal: FC = () => (
 const ConfirmationModalContent: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirmation>>().params;
 
+  usePageAnalytic(ModalsEnum.AddToken);
+
   switch (params.type) {
     case ConfirmationTypeEnum.InternalOperations:
       return <InternalOperationsConfirmation opParams={params.opParams} />;
     case ConfirmationTypeEnum.DAppOperations:
-      return <DAppOperationsConfirmation message={params.message} />;
+      return <DAppOperationsConfirmation loading={params.loading} message={params.message} />;
     default:
       return (
         <ScreenContainer isFullScreenMode={true}>

@@ -1,4 +1,4 @@
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { SignPayloadRequestOutput } from '@airgap/beacon-sdk';
 import { useEffect, useState } from 'react';
 
 import { getParsedSignPayload } from '../utils/get-parsed-sign-payload.utils';
@@ -8,10 +8,7 @@ export const useParseSignPayload = (message: SignPayloadRequestOutput) => {
   const [payloadPreview, setPayloadPreview] = useState('');
   const isPayloadParsed = isString(payloadPreview);
 
-  useEffect(
-    () => void getParsedSignPayload(message).then(payloadPreview => setPayloadPreview(payloadPreview)),
-    [message]
-  );
+  useEffect(() => void getParsedSignPayload(message).then(payload => setPayloadPreview(payload)), [message]);
 
   return { payloadPreview, isPayloadParsed };
 };

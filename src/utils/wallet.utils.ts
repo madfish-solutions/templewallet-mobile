@@ -1,25 +1,40 @@
+import { ParamsWithKind } from '@taquito/taquito';
+import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { ParamsWithKind } from '../interfaces/op-params.interface';
-import { emptyWalletAccount, WalletAccountInterface } from '../interfaces/wallet-account.interface';
+import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
+import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
 import { Shelter } from '../shelter/shelter';
 import { SettingsRootState } from '../store/settings/settings-state';
+import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { WalletRootState } from '../store/wallet/wallet-state';
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
+import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { emptyToken } from '../token/interfaces/token.interface';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =
   <T>(state$: Observable<WalletRootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, WalletAccountInterface] => {
-        const { selectedAccountPublicKeyHash, accounts } = wallet;
+      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
         const selectedAccount =
-          accounts.find(({ publicKeyHash }) => publicKeyHash === selectedAccountPublicKeyHash) ?? emptyWalletAccount;
+          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
+          emptyAccount;
 
         return [value, selectedAccount];
+      })
+    );
+
+export const withSelectedAccountState =
+  <T>(state$: Observable<WalletRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { wallet }): [T, AccountStateInterface] => {
+        const selectedAccountState =
+          wallet.accountsStateRecord[wallet.selectedAccountPublicKeyHash] ?? emptyAccountState;
+
+        return [value, selectedAccountState];
       })
     );
 
@@ -28,7 +43,7 @@ export const withSelectedRpcUrl =
   (observable$: Observable<T>) =>
     observable$.pipe(withLatestFrom(state$, (value, { settings }): [T, string] => [value, settings.selectedRpcUrl]));
 
-export const sendTransaction$ = (rpcUrl: string, sender: WalletAccountInterface, opParams: ParamsWithKind[]) =>
+export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opParams: ParamsWithKind[]) =>
   Shelter.getSigner$(sender.publicKeyHash).pipe(
     switchMap(signer => {
       const tezos = createTezosToolkit(rpcUrl);
@@ -44,8 +59,15 @@ export const sendTransaction$ = (rpcUrl: string, sender: WalletAccountInterface,
     })
   );
 
-export const getTezosToken = (balance: string): TokenInterface => ({
-  ...emptyToken,
-  ...TEZ_TOKEN_METADATA,
-  balance
-});
+export const useTezosToken = (balance: string) => {
+  const metadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+
+  return useMemo(
+    () => ({
+      ...emptyToken,
+      ...metadata,
+      balance
+    }),
+    [metadata, balance]
+  );
+};

@@ -16,20 +16,23 @@ import { currencyReducers } from './currency/currency-reducers';
 import { CurrencyRootState } from './currency/currency-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
-import { debugReducers } from './debug/debug-reducers';
-import { DebugRootState } from './debug/debug-state';
 import { rootStateReducer } from './root-state.reducers';
+import { securityReducers } from './security/security-reducers';
+import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
+import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
+import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
 import { WalletRootState } from './wallet/wallet-state';
 
 export type RootState = WalletRootState &
+  TokensMetadataRootState &
   BakingRootState &
   SettingsRootState &
   DAppsRootState &
   CurrencyRootState &
-  DebugRootState;
+  SecurityRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -48,11 +51,12 @@ const persistConfig: PersistConfig<RootState> = {
 
 const rootReducer = rootStateReducer<RootState>({
   wallet: walletReducers,
+  tokensMetadata: tokensMetadataReducers,
   baking: bakingReducers,
   settings: settingsReducers,
+  security: securityReducers,
   dApps: dAppsReducers,
-  currency: currencyReducers,
-  debug: debugReducers
+  currency: currencyReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

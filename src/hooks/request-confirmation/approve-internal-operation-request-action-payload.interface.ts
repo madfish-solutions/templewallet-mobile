@@ -1,8 +1,9 @@
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
-import { WalletAccountInterface } from '../../interfaces/wallet-account.interface';
+import { ParamsWithKind } from '@taquito/taquito';
+
+import { AccountInterface } from '../../interfaces/account.interface';
 
 export interface ApproveInternalOperationRequestActionPayloadInterface {
   rpcUrl: string;
-  sender: WalletAccountInterface;
+  sender: AccountInterface;
   opParams: ParamsWithKind[];
 }

@@ -1,19 +1,22 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { useExchangeRatesSelector } from '../../store/currency/currency-selectors';
+import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-getter.hook';
+import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
-import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
+import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
+import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
@@ -30,6 +33,18 @@ export interface AssetAmountInterface {
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 
+const getDefinedAmount = (
+  amount: BigNumber | undefined,
+  decimals: number,
+  exchangeRate: number,
+  isTokenInputType: boolean
+) =>
+  isDefined(amount)
+    ? isTokenInputType
+      ? tzToMutez(amount, decimals)
+      : dollarToTokenAmount(amount, decimals, exchangeRate)
+    : undefined;
+
 const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => (
   <TokenDropdownItem
     token={value}
@@ -39,12 +54,17 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
   />
 );
 
-export const AssetAmountInput: FC<AssetAmountInputProps> = ({
+const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
   assetsList,
   frozenBalance,
   isError = false,
+  toUsdToggle = true,
+  editable = true,
+  isSearchable = false,
+  selectionOptions = undefined,
+  setSearchValue = emptyFn,
   onBlur,
   onFocus,
   onValueChange
@@ -56,13 +76,14 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
 
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
   const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
+  const fiatCurrency = useFiatCurrencySelector();
 
   const amount = value?.amount ?? new BigNumber(0);
   const isLiquidityProviderToken = isDefined(frozenBalance);
 
-  const exchangeRates = useExchangeRatesSelector();
-  const exchangeRate: number | undefined = exchangeRates[getTokenSlug(value.asset)];
-  const hasExchangeRate = isDefined(exchangeRate);
+  const getTokenExchangeRate = useTokenExchangeRateGetter();
+  const hasExchangeRate = isDefined(value.asset.exchangeRate);
+  const exchangeRate = value.asset.exchangeRate ?? 1;
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -75,7 +96,7 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           if (isDefined(inputValueRef.current)) {
             const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
 
-            if (currentTokenValue.isEqualTo(value.amount)) {
+            if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
               return inputValueRef.current;
             }
           }
@@ -90,14 +111,26 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     inputValueRef.current = newNumericInputValue;
 
     return newNumericInputValue;
-  }, [value.amount, value.asset.decimals, exchangeRate]);
+  }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+
+  const onChange = useCallback(
+    newInputValue => {
+      inputValueRef.current = newInputValue;
+
+      onValueChange({
+        ...value,
+        amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
+      });
+    },
+    [value, onValueChange, isTokenInputType]
+  );
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     numericInputValue,
     value.asset.decimals,
+    onChange,
     onBlur,
-    onFocus,
-    newInputValue => (inputValueRef.current = newInputValue)
+    onFocus
   );
 
   const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
@@ -105,19 +138,30 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
+
+    onValueChange({
+      ...value,
+      amount: getDefinedAmount(
+        inputValueRef.current,
+        value.asset.decimals,
+        exchangeRate,
+        tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
+      )
+    });
   };
 
-  useEffect(
-    () =>
-      void onValueChange({
-        ...value,
-        amount: isDefined(inputValueRef.current)
-          ? isTokenInputType
-            ? tzToMutez(inputValueRef.current, value.asset.decimals)
-            : dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate)
-          : undefined
-      }),
-    [inputValueRef.current, value.asset.decimals, exchangeRate, isTokenInputType]
+  const handleTokenChange = useCallback(
+    (newAsset?: TokenInterface) => {
+      const decimals = newAsset?.decimals ?? 0;
+      const asset = newAsset ?? emptyTezosLikeToken;
+      const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
+
+      onValueChange({
+        amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),
+        asset
+      });
+    },
+    [onValueChange, isTokenInputType, getTokenExchangeRate]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
@@ -126,11 +170,11 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {hasExchangeRate && (
+        {toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
-            values={['TOKEN', 'USD']}
+            values={['TOKEN', fiatCurrency]}
             onChange={handleTokenInputTypeChange}
           />
         )}
@@ -138,13 +182,16 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
       <Divider size={formatSize(8)} />
 
       <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+        <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
         <TextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"
-          style={styles.numericInput}
+          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput)]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
+          editable={editable}
+          selection={selectionOptions}
           autoCapitalize="words"
           keyboardType="numeric"
           onBlur={handleBlur}
@@ -160,10 +207,13 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
             title="Assets"
             value={value.asset}
             list={assetsList}
+            isSearchable={isSearchable}
+            setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            onValueChange={newAsset => onValueChange({ ...value, asset: newAsset ?? emptyToken })}
+            keyExtractor={getTokenSlug}
+            onValueChange={handleTokenChange}
           />
         </View>
       </View>
@@ -195,15 +245,19 @@ export const AssetAmountInput: FC<AssetAmountInputProps> = ({
           <View style={styles.balanceRow}>
             <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
             <Divider size={formatSize(4)} />
-            <AssetValueText
-              amount={value.asset.balance}
-              asset={value.asset}
-              style={styles.balanceValueText}
-              convertToDollar={!isTokenInputType}
-            />
+            <HideBalance style={styles.balanceValueText}>
+              <AssetValueText
+                amount={value.asset.balance}
+                asset={value.asset}
+                style={styles.balanceValueText}
+                convertToDollar={!isTokenInputType}
+              />
+            </HideBalance>
           </View>
         </View>
       </View>
     </>
   );
 };
+
+export const AssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;

@@ -1,20 +1,17 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { EMPTY, forkJoin, merge, of, Subject } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
 
-import { EventFn } from '../config/general';
-import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
-import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast, showWarningToast } from '../toast/toast.utils';
-import { getPublicKeyAndHash$ } from '../utils/keys.util';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
-import { Shelter } from './shelter';
+import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
+import { createImportAccountSubscription } from './utils/create-import-account-subscription.util';
+import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
+import { importWalletSubscription } from './utils/import-wallet-subscription.util';
+import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
 
 export const useShelter = () => {
   const dispatch = useDispatch();
@@ -30,103 +27,11 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
-      importWallet$
-        .pipe(
-          switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
-            forkJoin([
-              Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
-              useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
-            ])
-          )
-        )
-        .subscribe(([accounts, isPasswordSaved]) => {
-          if (accounts !== undefined) {
-            const firstAccount = accounts[0];
-            dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
-
-            for (const account of accounts) {
-              dispatch(addHdAccountAction(account));
-            }
-
-            isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
-          }
-        }),
-      createHdAccount$
-        .pipe(switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)))
-        .subscribe(publicData => {
-          if (publicData !== undefined) {
-            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addHdAccountAction(publicData));
-          }
-        }),
-      createImportedAccount$
-        .pipe(
-          switchMap(({ privateKey, name }) =>
-            getPublicKeyAndHash$(privateKey).pipe(
-              switchMap(([publicKey]) => {
-                for (const account of accounts) {
-                  if (account.publicKey === publicKey) {
-                    showWarningToast({ description: 'Account already exist' });
-
-                    return of(undefined);
-                  }
-                }
-
-                return Shelter.createImportedAccount$(privateKey, name);
-              }),
-              catchError(() => {
-                showErrorToast({
-                  title: 'Failed to import account.',
-                  description: 'This may happen because provided Key is invalid.'
-                });
-
-                return of(undefined);
-              })
-            )
-          )
-        )
-        .subscribe(publicData => {
-          if (publicData !== undefined) {
-            dispatch(setSelectedAccountAction(publicData.publicKeyHash));
-            dispatch(addHdAccountAction(publicData));
-            showSuccessToast({ description: 'Account Imported!' });
-            goBack();
-          }
-        }),
-
-      merge(
-        revealSecretKey$.pipe(
-          switchMap(({ publicKeyHash, successCallback }) =>
-            Shelter.revealSecretKey$(publicKeyHash).pipe(
-              map((secretKey): [string | undefined, EventFn<string>] => [secretKey, successCallback])
-            )
-          )
-        ),
-        revealSeedPhrase$.pipe(
-          switchMap(({ successCallback }) =>
-            Shelter.revealSeedPhrase$()
-              .pipe(catchError(() => of(undefined)))
-              .pipe(map((seedPhrase): [string | undefined, EventFn<string>] => [seedPhrase, successCallback]))
-          )
-        )
-      ).subscribe(([value, successCallback]) => value !== undefined && successCallback(value)),
-
-      enableBiometryPassword$
-        .pipe(
-          switchMap(password =>
-            Shelter.isPasswordCorrect(password) ? Shelter.enableBiometryPassword$(password) : of(false)
-          )
-        )
-        .subscribe(isPasswordSaved => {
-          if (isPasswordSaved === false) {
-            showErrorToast({ description: 'Wrong password, please, try again' });
-          } else {
-            showSuccessToast({ description: 'Successfully enabled!' });
-
-            dispatch(setIsBiometricsEnabled(true));
-            navigate(StacksEnum.MainStack);
-          }
-        })
+      importWalletSubscription(importWallet$, dispatch),
+      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
+      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
+      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
+      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());

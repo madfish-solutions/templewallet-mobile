@@ -3,15 +3,16 @@ import { Formik } from 'formik';
 import React from 'react';
 
 import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
+import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { RevealAttention } from '../../components/reveal-attention/reveal-attention';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { emptyFn } from '../../config/general';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import {
   RevealPrivateKeyModalFormValues,
   revealPrivateKeyModalValidationSchema
@@ -24,6 +25,8 @@ export const RevealPrivateKeyModal = () => {
   const accounts = useAccountsListSelector();
 
   const RevealPrivateKeyModalInitialValues: RevealPrivateKeyModalFormValues = { account };
+
+  usePageAnalytic(ModalsEnum.RevealPrivateKey);
 
   return (
     <Formik
@@ -43,7 +46,10 @@ export const RevealPrivateKeyModal = () => {
           <Label label="Private Key" description="Current account key. Keep it in secret." />
           <RevealPrivateKeyView publicKeyHash={values.account.publicKeyHash} />
           <Divider size={formatSize(16)} />
-          <RevealAttention />
+          <Disclaimer
+            title="Attention!"
+            texts={['DO NOT share this set of chars with anyone!', 'It can be used to steal your current account.']}
+          />
         </ScreenContainer>
       )}
     </Formik>

@@ -1,21 +1,14 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
-import { SearchInput } from '../../components/search-input/search-input';
-import { useFilteredActivityGroups } from '../../hooks/use-filtered-activity-groups.hook';
-import { loadActivityGroupsActions } from '../../store/wallet/wallet-actions';
+import { useGeneralActivity } from '../../hooks/use-general-activity';
+import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
-  const dispatch = useDispatch();
-  const { filteredActivityGroups, setSearchValue } = useFilteredActivityGroups();
+  const { activities, handleUpdate } = useGeneralActivity();
 
-  useEffect(() => void dispatch(loadActivityGroupsActions.submit()), []);
+  usePageAnalytic(ScreensEnum.Activity);
 
-  return (
-    <>
-      <SearchInput placeholder="Search" onChangeText={setSearchValue} />
-      <ActivityGroupsList activityGroups={filteredActivityGroups} />
-    </>
-  );
+  return <ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />;
 };

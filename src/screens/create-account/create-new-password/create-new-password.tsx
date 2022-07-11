@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
@@ -13,19 +14,20 @@ import { InsetSubstitute } from '../../../components/inset-substitute/inset-subs
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
-import { privacyPolicy, termsOfUse } from '../../../config/socials';
+import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
+import { useSetPasswordScreensCommonStyles } from '../../../styles/set-password-screens-common-styles';
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
   createNewPasswordValidationSchema
 } from './create-new-password.form';
 import { CreateNewPasswordCreateAccountSelectors } from './create-new-password.selectors';
-import { useCreateNewPasswordStyles } from './create-new-password.styles';
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
@@ -33,11 +35,15 @@ interface CreateNewPasswordProps {
 }
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
-  const styles = useCreateNewPasswordStyles();
+  const dispatch = useDispatch();
+
+  const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password, useBiometry }: CreateNewPasswordFormValues) =>
+  const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+    dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
+  };
 
   useNavigationSetOptions(
     {
@@ -54,37 +60,53 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Divider size={formatSize(12)} />
-            <Label label="Password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" testID={CreateNewPasswordCreateAccountSelectors.PasswordInput} />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Divider size={formatSize(12)} />
+              <Label label="Password" description="A password is used to protect the wallet." />
+              <FormPasswordInput
+                isShowPasswordStrengthIndicator
+                name="password"
+                testID={CreateNewPasswordCreateAccountSelectors.PasswordInput}
+              />
 
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput
-              name="passwordConfirmation"
-              testID={CreateNewPasswordCreateAccountSelectors.RepeatPasswordInput}
-            />
+              <Label label="Repeat Password" description="Please enter the password again." />
+              <FormPasswordInput
+                name="passwordConfirmation"
+                testID={CreateNewPasswordCreateAccountSelectors.RepeatPasswordInput}
+              />
 
-            <View style={styles.checkboxContainer}>
-              <FormBiometryCheckbox name="useBiometry" />
+              <View style={styles.checkboxContainer}>
+                <FormBiometryCheckbox name="useBiometry" />
+              </View>
+
+              <View style={[styles.checkboxContainer, styles.removeMargin]}>
+                <FormCheckbox name="analytics" testID={CreateNewPasswordCreateAccountSelectors.AnalyticsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Analytics</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+              </CheckboxLabel>
             </View>
-          </View>
-          <Divider />
-
-          <View>
-            <View style={styles.checkboxContainer}>
-              <FormCheckbox name="acceptTerms" testID={CreateNewPasswordCreateAccountSelectors.AcceptTermsCheckbox}>
-                <Divider size={formatSize(8)} />
-                <Text style={styles.checkboxText}>Accept terms</Text>
-              </FormCheckbox>
-            </View>
-            <CheckboxLabel>
-              I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Usage</TextLink> and{' '}
-              <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-            </CheckboxLabel>
-
             <Divider />
+
+            <View>
+              <View style={styles.checkboxContainer}>
+                <FormCheckbox name="acceptTerms" testID={CreateNewPasswordCreateAccountSelectors.AcceptTermsCheckbox}>
+                  <Divider size={formatSize(8)} />
+                  <Text style={styles.checkboxText}>Accept terms</Text>
+                </FormCheckbox>
+              </View>
+              <CheckboxLabel>
+                I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+              </CheckboxLabel>
+            </View>
+          </ScreenContainer>
+          <View style={styles.fixedButtonContainer}>
             <ButtonLargePrimary
               title="Create"
               disabled={!isValid}
@@ -93,7 +115,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
             />
             <InsetSubstitute type="bottom" />
           </View>
-        </ScreenContainer>
+        </>
       )}
     </Formik>
   );

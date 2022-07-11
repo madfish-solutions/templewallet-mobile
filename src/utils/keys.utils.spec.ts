@@ -8,12 +8,12 @@ it('getDerivationPath should return derivation path, passing account index', () 
 
 it('seedToPrivateKey should return private key, passing seed and derivation path', () => {
   expect(
-    seedToPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
+    seedToPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
   ).toEqual(mockAccountCredentials.privateKey);
 });
 
 it('seedToHDPrivateKey should return private key, passing seed without derivation path', () => {
-  expect(seedToPrivateKey(new Buffer(mockAccountCredentials.seedPhrase), '')).toEqual(
+  expect(seedToPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), '')).toEqual(
     mockAccountCredentials.privateKeyWithoutDerivationPath
   );
 });
@@ -27,6 +27,6 @@ it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing priv
   );
 });
 
-it('generateSeed should generate seed', () => {
-  expect(generateSeed()).toEqual(mockAccountCredentials.seed);
+it('generateSeed should generate seed', async () => {
+  await expect(generateSeed()).resolves.toEqual(mockAccountCredentials.seed);
 });

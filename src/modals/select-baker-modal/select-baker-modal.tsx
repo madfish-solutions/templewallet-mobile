@@ -1,7 +1,8 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -25,6 +26,7 @@ import { useBakersListSelector, useSelectedBakerSelector } from '../../store/bak
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
@@ -58,6 +60,8 @@ export const SelectBakerModal: FC = () => {
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
 
   const debouncedSetSearchValue = debounce(setSearchValue);
+
+  usePageAnalytic(ModalsEnum.SelectBaker);
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {

@@ -2,7 +2,9 @@
           package="com.templewallet">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- used for debug and for api/rpc calls of blockchain -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- used for analytics -->
 
     <application
             android:name=".MainApplication"
@@ -10,7 +12,8 @@
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:allowBackup="false"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
                 android:name=".MainActivity"

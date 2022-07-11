@@ -1,13 +1,14 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
-import { isAndroid } from '../../config/system';
-import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
+import { useDomainName } from '../../hooks/use-domain-name.hook';
+import { toggleDomainAddressShown } from '../../store/settings/settings-actions';
+import { useIsShownDomainName } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { tezosDomainsResolver } from '../../utils/dns.utils';
 import { isString } from '../../utils/is-string';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -20,24 +21,17 @@ interface Props {
 
 export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
   const styles = useWalletAddressStyles();
-  const [domainName, setDomainName] = useState('');
-  const [isShownDomainName, setIsShownDomainName] = useState(false);
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const resolver = tezosDomainsResolver(tezos);
+  const dispatch = useDispatch();
+  const isShownDomainName = useIsShownDomainName();
+  const domainName = useDomainName(publicKeyHash);
 
-  const updateDomainReverseName = async (pkh: string) => {
-    setDomainName((await resolver.resolveAddressToName(pkh)) ?? '');
-  };
-
-  useEffect(() => {
-    setIsShownDomainName(false);
-    updateDomainReverseName(publicKeyHash);
-  }, [publicKeyHash]);
+  if (publicKeyHash === EMPTY_PUBLIC_KEY_HASH) {
+    return null;
+  }
 
   return (
     <View style={styles.pkhWrapper}>
-      {isShownDomainName ? (
+      {isShownDomainName && isString(domainName) ? (
         <TouchableOpacity
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
@@ -54,7 +48,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
           size={formatSize(16)}
           style={styles.iconContainer}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-          onPress={() => setIsShownDomainName(!isShownDomainName)}
+          onPress={() => dispatch(toggleDomainAddressShown())}
         />
       ) : null}
     </View>

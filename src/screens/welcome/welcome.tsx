@@ -12,12 +12,15 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
+
+  usePageAnalytic(ScreensEnum.Welcome);
 
   return (
     <ScreenContainer isFullScreenMode={true}>

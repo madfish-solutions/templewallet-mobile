@@ -24,15 +24,17 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
-  useTezosTokenSelector,
+  useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector,
   useVisibleAssetListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
+import { isValidAddress } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -48,7 +50,7 @@ export const SendModal: FC = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
-  const tezosToken = useTezosTokenSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
@@ -64,10 +66,12 @@ export const SendModal: FC = () => {
   );
   const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
 
+  usePageAnalytic(ModalsEnum.Send);
+
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       assetAmount: {
-        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyToken,
+        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
@@ -83,13 +87,18 @@ export const SendModal: FC = () => {
     ownAccount,
     transferBetweenOwnAccounts
   }: SendModalFormValues) => {
-    if (isTezosDomainNameValid(receiverPublicKeyHash)) {
+    if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
       setIsLoading(true);
-      const address = await resolver.resolveNameToAddress(receiverPublicKeyHash);
+      let address = null;
+      try {
+        address = await resolver.resolveNameToAddress(receiverPublicKeyHash);
+      } catch (e) {
+        console.log(e);
+      }
       setIsLoading(false);
       if (address !== null) {
         receiverPublicKeyHash = address;
-      } else {
+      } else if (!isValidAddress(receiverPublicKeyHash)) {
         showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
 
         return;

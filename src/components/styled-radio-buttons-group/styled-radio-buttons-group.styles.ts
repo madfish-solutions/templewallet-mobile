@@ -10,7 +10,7 @@ export const useStyledRadioButtonsGroupStyles = createUseStyles(({ colors, typog
     flexDirection: 'row-reverse',
     justifyContent: 'space-around',
     width: '100%',
-    paddingVertical: formatSize(6)
+    height: formatSize(44)
   },
   label: {
     ...typography.body15Semibold,

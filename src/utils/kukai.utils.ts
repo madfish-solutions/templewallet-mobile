@@ -1,34 +1,10 @@
 import { entropyToMnemonic } from 'bip39';
 import * as forge from 'node-forge';
-import { NativeModules } from 'react-native';
 import scrypt from 'react-native-scrypt';
 
-import { AES_ALGORITHM } from './crypto.util';
 import { isDefined } from './is-defined';
 
-const decrypt = async (chiphertext: string, password: string, salt: string, version: number) => {
-  if (version === 1) {
-    return decrypt_v1(chiphertext, password, salt);
-  } else if (version === 2 || version === 3) {
-    return decrypt_v2(chiphertext, password, salt);
-  } else {
-    throw new Error('Unrecognized encryption format');
-  }
-};
-
-const decrypt_v1 = async (ciphertext: string, password: string, salt: string | null) => {
-  try {
-    if (!isDefined(password) || !isDefined(salt)) {
-      throw new Error('Missing password or salt');
-    }
-    const key = await NativeModules.Aes.pbkdf2(password, salt, 10000, 32, 512);
-    const plaintext = await NativeModules.Aes.decrypt(ciphertext, key, salt, AES_ALGORITHM);
-
-    return Buffer.from(plaintext);
-  } catch (e) {
-    return null;
-  }
-};
+export const KUKAI_VERSION_ERROR = 'Unsupported kukai version';
 
 const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
   try {
@@ -68,12 +44,15 @@ const bumpIV = (salt: string, bumps: number) => {
 
 export const decryptSeedPhrase = async (json: string, pwd: string) => {
   const walletData = JSON.parse(json);
+  if (walletData.version === 1 || walletData.version === 2) {
+    throw new Error(KUKAI_VERSION_ERROR);
+  }
   if (
     (walletData.walletType === 4 && walletData.version === 3) ||
     (walletData.walletType === 0 && walletData.version === 3)
   ) {
     const iv = bumpIV(walletData.iv, 1);
-    const entropy = await decrypt(walletData.encryptedEntropy, pwd, iv, 3);
+    const entropy = await decrypt_v2(walletData.encryptedEntropy, pwd, iv);
     if (!isDefined(entropy) || (typeof entropy === 'string' && entropy === '')) {
       throw new Error('Failed to decrypt entropy. Make sure the password is correct');
     }

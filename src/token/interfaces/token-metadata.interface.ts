@@ -8,7 +8,11 @@ export interface TokenMetadataInterface {
   decimals: number;
   iconName?: IconNameEnum;
   thumbnailUri?: string;
+  displayUri?: string;
   artifactUri?: string;
+
+  // Stored as separate Record
+  exchangeRate?: number;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

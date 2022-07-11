@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
-import { Image, View } from 'react-native';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { View } from 'react-native';
+import FastImage, { Source } from 'react-native-fast-image';
 import { SvgCssUri } from 'react-native-svg';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSizeScaled } from '../../styles/format-size';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { formatImgUri, isImgUriSvg } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -11,13 +12,26 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
 
-interface Props {
-  token: TokenMetadataInterface;
+interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
   size?: number;
 }
 
-export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
-  const { iconName, thumbnailUri } = token;
+export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSizeScaled(32) }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFailed, setIsFailed] = useState(false);
+
+  const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
+  const style = useMemo(
+    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
+    [isShowPlaceholder, size]
+  );
+  const source = useMemo<Source>(
+    () => (isString(thumbnailUri) ? { uri: formatImgUri(thumbnailUri) } : {}),
+    [thumbnailUri]
+  );
+
+  const handleError = useCallback(() => setIsFailed(true), []);
+  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
   return (
     <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
@@ -27,7 +41,10 @@ export const TokenIcon: FC<Props> = ({ token, size = formatSize(32) }) => {
         isImgUriSvg(thumbnailUri) ? (
           <SvgCssUri width={size} height={size} uri={thumbnailUri} />
         ) : (
-          <Image source={{ uri: formatImgUri(thumbnailUri), width: size, height: size }} />
+          <>
+            {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
+            <FastImage style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
+          </>
         )
       ) : (
         <Icon name={IconNameEnum.NoNameToken} size={size} />

@@ -1,7 +1,6 @@
 import { AppMetadata } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 
-import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { AvatarImage } from '../avatar-image/avatar-image';
 import { RobotIcon } from '../robot-icon/robot-icon';
@@ -11,9 +10,10 @@ interface Props {
   size?: number;
 }
 
-export const AppMetadataIcon: FC<Props> = ({ appMetadata, size = formatSize(44) }) =>
-  isDefined(appMetadata.icon) ? (
+export const AppMetadataIcon: FC<Props> = ({ appMetadata, size }) => {
+  return isDefined(appMetadata.icon) ? (
     <AvatarImage uri={appMetadata.icon} size={size} />
   ) : (
     <RobotIcon seed={appMetadata.senderId} size={size} />
   );
+};

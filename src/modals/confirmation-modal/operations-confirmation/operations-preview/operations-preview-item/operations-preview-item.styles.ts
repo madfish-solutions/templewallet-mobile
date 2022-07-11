@@ -12,11 +12,16 @@ export const useOperationsPreviewItemStyles = createUseStyles(({ colors, typogra
   },
   infoContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexShrink: 1
   },
   description: {
     ...typography.caption13Regular,
-    color: colors.black
+    color: colors.black,
+    flexShrink: 1
+  },
+  hashContainer: {
+    flexShrink: 0
   },
   contentWrapper: {
     flexDirection: 'row',

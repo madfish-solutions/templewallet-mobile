@@ -11,3 +11,8 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   password: passwordValidation,
   passwordConfirmation: passwordConfirmationValidation
 });
+
+export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
+  password: '',
+  passwordConfirmation: ''
+};

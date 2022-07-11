@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Image } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { formatSize } from '../../styles/format-size';
 import { useAvatarImageStyles } from './avatar-image.styles';
@@ -9,8 +9,14 @@ interface Props {
   size?: number;
 }
 
-export const AvatarImage: FC<Props> = ({ uri, size = formatSize(44) }) => {
+export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16) }) => {
   const styles = useAvatarImageStyles();
 
-  return <Image source={{ uri, width: size, height: size }} style={styles.icon} />;
+  return (
+    <FastImage
+      style={[styles.icon, { width: size, height: size }]}
+      source={{ uri }}
+      resizeMode={FastImage.resizeMode.cover}
+    />
+  );
 };

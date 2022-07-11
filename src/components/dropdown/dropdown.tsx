@@ -1,17 +1,23 @@
 import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC } from 'react';
-import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { FC, memo, useCallback, useState } from 'react';
+import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
-import { emptyComponent, EmptyFn, EventFn } from '../../config/general';
+import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
+import { formatSize } from '../../styles/format-size';
+import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
+import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
-export interface DropdownProps<T> {
+export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
   title: string;
   list: T[];
+  isSearchable?: boolean;
+  itemHeight?: number;
+  setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
@@ -21,6 +27,7 @@ export interface DropdownProps<T> {
 
 export interface DropdownValueProps<T> {
   value?: T;
+  itemHeight?: number;
   list: T[];
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
@@ -47,57 +54,97 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-export const Dropdown = <T extends unknown>({
+const DropdownComponent = <T extends unknown>({
   value,
   list,
   title,
+  itemHeight = formatSize(64),
   disabled = false,
+  isSearchable = false,
+  setSearchValue = emptyFn,
   equalityFn,
   renderValue,
   renderListItem,
   renderActionButtons = emptyComponent,
+  keyExtractor,
   onValueChange,
   onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const [ref, setRef] = useState<FlatList<T> | null>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = 0.7 * useWindowDimensions().height;
 
-  const createDropdownItemPressHandler = (item: T) => () => {
-    onValueChange(item);
-    dropdownBottomSheetController.close();
-  };
+  const renderItem = useCallback(
+    ({ item, index }: ListRenderItemInfo<T>) => {
+      const isSelected = equalityFn(item, value);
+
+      const handlePress = () => {
+        onValueChange(item);
+        dropdownBottomSheetController.close();
+      };
+
+      return (
+        <BottomSheetTouchableOpacity key={index} onPress={handlePress}>
+          <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+            {renderListItem({ item, isSelected })}
+          </DropdownItemContainer>
+        </BottomSheetTouchableOpacity>
+      );
+    },
+    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
+  );
+
+  const scroll = useCallback(() => {
+    if (!isDefined(ref) || !isDefined(value) || !isDefined(list)) {
+      return void 0;
+    }
+    const foundIndex = list.findIndex(item => equalityFn(item, value));
+    const index = foundIndex > -1 ? foundIndex : 0;
+    if (foundIndex >= list.length) {
+      return void 0;
+    }
+    ref.scrollToIndex({ index, animated: true });
+  }, [ref, value, list]);
 
   return (
     <>
       <TouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
-        onPress={dropdownBottomSheetController.open}
+        onPress={() => {
+          scroll();
+
+          return dropdownBottomSheetController.open();
+        }}
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
       </TouchableOpacity>
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.contentContainer}>
-            {list.map((item, index) => {
-              const isSelected = equalityFn(item, value);
+        <View style={styles.contentContainer}>
+          {isSearchable && (
+            <SearchInput placeholder="Search assets" onChangeText={setSearchValue} onBlur={() => setSearchValue('')} />
+          )}
+          <FlatList
+            data={list}
+            ref={ref => {
+              setRef(ref);
+            }}
+            getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
+            contentContainerStyle={styles.flatListContentContainer}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+          />
+        </View>
 
-              return (
-                <BottomSheetTouchableOpacity key={index} onPress={createDropdownItemPressHandler(item)}>
-                  <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
-                    {renderListItem({ item, isSelected })}
-                  </DropdownItemContainer>
-                </BottomSheetTouchableOpacity>
-              );
-            })}
-          </View>
-        </ScrollView>
-
-        {renderActionButtons({ onPress: () => dropdownBottomSheetController.close() })}
+        {renderActionButtons({
+          onPress: () => dropdownBottomSheetController.close()
+        })}
       </BottomSheet>
     </>
   );
 };
+
+export const Dropdown = memo(DropdownComponent) as typeof DropdownComponent;

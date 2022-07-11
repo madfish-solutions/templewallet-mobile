@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
-import { useExchangeRatesSelector } from '../store/currency/currency-selectors';
-import { loadTokenMetadataActions } from '../store/wallet/wallet-actions';
+import { useUsdToTokenRates } from '../store/currency/currency-selectors';
+import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metadata-actions';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
@@ -14,19 +14,19 @@ import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 export const useNonZeroAmounts = (group: ActivityGroup) => {
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
-  const exchangeRates = useExchangeRatesSelector();
+  const exchangeRates = useUsdToTokenRates();
 
   return useMemo(() => {
     const amounts = [];
     let positiveAmountSum = new BigNumber(0);
     let negativeAmountSum = new BigNumber(0);
 
-    for (const { address, id, amount } of group) {
-      const slug = getTokenSlug({ address, id });
+    for (const { address, tokenId, amount } of group) {
+      const slug = getTokenSlug({ address, id: tokenId });
       const { decimals, symbol, name } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];
       if (isString(address) && !isString(name)) {
-        dispatch(loadTokenMetadataActions.submit({ address, id: id ?? 0 }));
+        dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
       }
 
       const parsedAmount = mutezToTz(new BigNumber(amount), decimals);

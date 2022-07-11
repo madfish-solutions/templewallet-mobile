@@ -12,6 +12,7 @@ export const FormDropdown = <T extends unknown>({
   name,
   title,
   list,
+  itemHeight,
   equalityFn,
   renderValue,
   renderListItem,
@@ -25,6 +26,7 @@ export const FormDropdown = <T extends unknown>({
         title={title}
         value={field.value}
         list={list}
+        itemHeight={itemHeight}
         equalityFn={equalityFn}
         renderValue={renderValue}
         renderListItem={renderListItem}

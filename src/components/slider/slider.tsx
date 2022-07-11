@@ -10,6 +10,8 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSliderStyles } from './slider.styles';
 
+const CALCULATION_LATENCY = 200;
+
 type Props = Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'> &
   Required<Pick<SliderProps, 'value' | 'onValueChange'>>;
 
@@ -17,7 +19,8 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
   const colors = useColors();
   const styles = useSliderStyles();
 
-  const debouncedValueChange = debounce(onValueChange);
+  const debouncedValueChange = debounce(onValueChange, CALCULATION_LATENCY);
+  const middleValue = (maximumValue + minimumValue) / 2;
 
   return (
     <>
@@ -33,9 +36,13 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
         onValueChange={debouncedValueChange}
       />
       <View style={styles.bottomContainer}>
-        <Icon size={formatSize(24)} name={IconNameEnum.GLow} color={colors.gray1} />
-        <Icon size={formatSize(32)} name={IconNameEnum.GMid} color={colors.gray1} />
-        <Icon size={formatSize(24)} name={IconNameEnum.GHigh} color={colors.gray1} />
+        <Icon size={formatSize(value < middleValue ? 32 : 24)} name={IconNameEnum.GLow} color={colors.gray1} />
+        <Icon
+          size={formatSize(value >= middleValue && value < maximumValue ? 32 : 24)}
+          name={IconNameEnum.GMid}
+          color={colors.gray1}
+        />
+        <Icon size={formatSize(value === maximumValue ? 32 : 24)} name={IconNameEnum.GHigh} color={colors.gray1} />
       </View>
     </>
   );

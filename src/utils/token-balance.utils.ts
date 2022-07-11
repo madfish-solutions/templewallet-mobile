@@ -1,53 +1,58 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { forkJoin, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { betterCallDevApi } from '../api.service';
-import { GetAccountTokenBalancesResponseInterface } from '../interfaces/get-account-token-balances-response.interface';
+import { tzktApi } from '../api.service';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
+import { TzktAccountTokenBalance } from '../interfaces/tzkt.interface';
 import { getTokenType } from '../token/utils/token.utils';
+import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from './rpc/tezos-toolkit.utils';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
-const size = 10;
+const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwKS';
 
-const getTokenBalances = (accountPublicKeyHash: string, offset: number) =>
-  betterCallDevApi.get<GetAccountTokenBalancesResponseInterface>(
-    `/account/${CURRENT_NETWORK_ID}/${accountPublicKeyHash}/token_balances`,
-    { params: { size, offset } }
-  );
+const limit = 300;
+
+const getTokenBalances = (account: string, isCollectible: boolean) =>
+  tzktApi.get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
+    params: {
+      account,
+      'token.metadata.artifactUri.null': !isCollectible,
+      'token.contract.ne': TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS,
+      'sort.desc': 'balance',
+      limit
+    }
+  });
 
 export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
-  from(getTokenBalances(accountPublicKeyHash, 0)).pipe(
-    switchMap(initialResponse => {
-      if (initialResponse.data.total > size) {
-        const numberOfAdditionalRequests = Math.floor(initialResponse.data.total / size);
-
-        return forkJoin(
-          new Array(numberOfAdditionalRequests)
-            .fill(0)
-            .map((_, index) => getTokenBalances(accountPublicKeyHash, (index + 1) * size))
-        ).pipe(
-          map(restResponses => [
-            ...initialResponse.data.balances,
-            ...restResponses.map(restResponse => restResponse.data.balances).flat()
-          ])
-        );
-      } else {
-        return of(initialResponse.data.balances);
-      }
-    })
+  forkJoin([getTokenBalances(accountPublicKeyHash, false), getTokenBalances(accountPublicKeyHash, true)]).pipe(
+    map(responses => responses.map(response => response.data).flat())
   );
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
-    map(balance => balance.toFixed()),
-    catchError(() => '0')
+    map(balance => balance.toFixed())
   );
 
-const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug: string) => {
+type cachedAssetBalance = {
+  time: number;
+  value?: string;
+};
+
+const cachedResults: Record<string, cachedAssetBalance> = {};
+
+const CACHE_TIME = 1000 * 60; // 1 minute
+
+export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSlug: string) => {
+  const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
+
+  const cachedRecord = cachedResults[`${publicKeyHash}_${assetSlug}`];
+
+  if (isDefined(cachedRecord) && Date.now() - cachedRecord.time < CACHE_TIME && isDefined(cachedRecord.value)) {
+    return of(cachedRecord.value);
+  }
 
   return from(tezos.contract.at(assetAddress)).pipe(
     switchMap(contract => {
@@ -59,24 +64,17 @@ const loadAssetBalance$ = (tezos: TezosToolkit, publicKeyHash: string, assetSlug
         return contract.views.getBalance(publicKeyHash).read();
       }
     }),
-    map((balance: BigNumber) => (balance.isNaN() ? '0' : balance.toFixed())),
-    catchError(() => '0')
-  );
-};
+    map((balance: BigNumber) => {
+      const returnValue = balance.isNaN() ? undefined : balance.toFixed();
+      cachedResults[`${publicKeyHash}_${assetSlug}`] = {
+        time: Date.now(),
+        value: returnValue
+      };
 
-export const loadAssetsBalances$ = (rpcUrl: string, publicKeyHash: string, assetSlugs: string[]) =>
-  forkJoin(
-    assetSlugs.map(assetSlug =>
-      loadAssetBalance$(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount), publicKeyHash, assetSlug)
-    )
-  ).pipe(
-    map(balancesList => {
-      const balancesRecord: Record<string, string> = {};
-
-      for (let index = 0; index < assetSlugs.length; index++) {
-        balancesRecord[assetSlugs[index]] = balancesList[index] ?? '0';
-      }
-
-      return balancesRecord;
+      return returnValue;
+    }),
+    catchError(() => {
+      return of(undefined);
     })
   );
+};

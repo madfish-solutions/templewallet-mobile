@@ -30,14 +30,6 @@ export const useRemoveLiquidityModalStyles = createUseStyles(({ colors, typograp
     ...typography.numbersMedium13,
     color: colors.gray2
   },
-  submitButton: {
-    borderTopWidth: formatSize(0.5),
-    borderColor: colors.lines,
-    paddingTop: formatSize(8),
-    paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(8),
-    backgroundColor: colors.pageBG
-  },
   iconCentered: {
     justifyContent: 'center',
     alignItems: 'center'

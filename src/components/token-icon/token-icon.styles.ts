@@ -1,11 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-
 export const TokenIconStyles = StyleSheet.create({
   container: {
-    marginVertical: formatSize(4),
-    marginHorizontal: formatSize(4),
-    overflow: 'hidden'
+    overflow: 'hidden',
+    position: 'relative'
+  },
+  hiddenImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 1,
+    height: 1,
+    opacity: 0
   }
 });

@@ -1,10 +1,11 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React from 'react';
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
+import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
 import { Divider } from '../../components/divider/divider';
 import { HeaderTitle } from '../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
@@ -13,24 +14,27 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
-  const { layoutWidth, handleLayout } = useLayoutSizes();
+  const { width } = Dimensions.get('window');
+  const itemWidth = width - 32;
   const { navigate } = useNavigation();
+
+  usePageAnalytic(ModalsEnum.CollectibleModal);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={collectible.name} /> }, [collectible]);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
       <ModalStatusBar />
-      <View onLayout={handleLayout}>
-        <CollectibleIcon collectible={collectible} size={layoutWidth} />
+      <View>
+        <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
         <Divider size={formatSize(16)} />
         <CollectibleInfoItem name="Name">{collectible.name}</CollectibleInfoItem>
         <CollectibleInfoItem name="Amount">{collectible.balance}</CollectibleInfoItem>

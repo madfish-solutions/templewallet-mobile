@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { SectionList, Text } from 'react-native';
 
+import { emptyFn } from '../../config/general';
 import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
 import { isTheSameDay, isToday, isYesterday } from '../../utils/date.utils';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -9,9 +10,10 @@ import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
 interface Props {
   activityGroups: ActivityGroup[];
+  handleUpdate?: () => void;
 }
 
-export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
+export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
 
   const sections = useMemo(() => {
@@ -39,18 +41,22 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups }) => {
     return result;
   }, [activityGroups]);
 
-  const isShowPlaceholder = activityGroups.length === 0;
+  const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
   return isShowPlaceholder ? (
     <DataPlaceholder text="No Activity records were found" />
   ) : (
-    <SectionList
-      sections={sections}
-      stickySectionHeadersEnabled={true}
-      contentContainerStyle={styles.sectionListContentContainer}
-      keyExtractor={(item, index) => item[0].hash + index}
-      renderItem={({ item }) => <ActivityGroupItem group={item} />}
-      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-    />
+    <>
+      <SectionList
+        sections={sections}
+        stickySectionHeadersEnabled={true}
+        contentContainerStyle={styles.sectionListContentContainer}
+        onEndReachedThreshold={0.01}
+        onEndReached={handleUpdate}
+        keyExtractor={item => item[0].hash}
+        renderItem={({ item }) => <ActivityGroupItem group={item} />}
+        renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+      />
+    </>
   );
 };

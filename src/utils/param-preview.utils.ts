@@ -1,8 +1,7 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
-import { ParamsWithKind } from '../interfaces/op-params.interface';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
 import { isDefined } from './is-defined';
 import { tzToMutez } from './tezos.util';

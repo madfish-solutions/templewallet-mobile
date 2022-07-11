@@ -15,8 +15,9 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { FormTextInput } from '../../form/form-text-input';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { updateWalletAccountAction } from '../../store/wallet/wallet-actions';
+import { updateAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 
 export const RenameAccountModal = () => {
@@ -29,9 +30,11 @@ export const RenameAccountModal = () => {
   };
 
   const onSubmit = ({ name }: RenameAccountModalFormValues) => {
-    dispatch(updateWalletAccountAction({ ...account, name }));
+    dispatch(updateAccountAction({ ...account, name }));
     goBack();
   };
+
+  usePageAnalytic(ModalsEnum.Receive);
 
   return (
     <Formik

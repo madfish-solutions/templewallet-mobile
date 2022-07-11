@@ -1,67 +1,75 @@
-import {
-  initialWalletAccountState,
-  WalletAccountStateInterface
-} from '../../interfaces/wallet-account-state.interface';
+import { VisibilityEnum } from '../../enums/visibility.enum';
+import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
+import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
-import { TokenBalanceInterface } from '../../token/interfaces/token-balance.interface';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { isDefined } from '../../utils/is-defined';
 import { WalletState } from './wallet-state';
+
+const MAX_PENDING_OPERATION_DISPLAY_TIME = 4 * 3600000;
+
+export const isPendingOperationOutdated = (addedAt: number) => {
+  const currentTime = new Date().getTime();
+
+  return currentTime - addedAt > MAX_PENDING_OPERATION_DISPLAY_TIME;
+};
 
 export const updateCurrentAccountState = (
   state: WalletState,
-  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
+  updateFn: (currentAccountState: AccountStateInterface) => Partial<AccountStateInterface>
 ): WalletState => updateAccountState(state, state.selectedAccountPublicKeyHash, updateFn);
 
 export const updateAccountState = (
   state: WalletState,
   accountPublicKeyHash: string,
-  updateFn: (currentAccount: WalletAccountStateInterface) => Partial<WalletAccountStateInterface>
-): WalletState => ({
-  ...state,
-  accounts: state.accounts.map(account =>
-    account.publicKeyHash === accountPublicKeyHash
-      ? { ...account, ...updateFn({ ...initialWalletAccountState, ...account }) }
-      : account
-  )
-});
+  updateFn: (accountState: AccountStateInterface) => Partial<AccountStateInterface>
+): WalletState => {
+  const accountState = state.accountsStateRecord[accountPublicKeyHash];
 
-export const tokenBalanceMetadata = ({
-  token_id,
-  contract,
-  name,
-  symbol,
-  decimals,
-  thumbnail_uri
-}: TokenBalanceInterface): TokenMetadataInterface => ({
-  ...emptyTokenMetadata,
-  id: token_id,
-  address: contract,
-  thumbnailUri: thumbnail_uri,
-  ...(isDefined(name) && { name }),
-  ...(isDefined(symbol) && { symbol }),
-  ...(isDefined(decimals) && { decimals })
-});
+  return {
+    ...state,
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [accountPublicKeyHash]: {
+        ...accountState,
+        ...updateFn({ ...initialAccountState, ...accountState })
+      }
+    }
+  };
+};
 
 export const pushOrUpdateTokensBalances = (
   initialTokensList: AccountTokenInterface[],
-  balances: Record<string, string>
+  newBalances: TokenBalanceResponse[]
 ) => {
-  const localBalances: Record<string, string> = { ...balances };
   const result: AccountTokenInterface[] = [];
 
   for (const token of initialTokensList) {
-    const balance = localBalances[token.slug];
-    if (isDefined(balance)) {
-      result.push({ ...token, balance });
+    const indexOfToken = newBalances.findIndex(({ slug }) => slug === token.slug);
 
-      delete localBalances[token.slug];
-    } else {
+    if (indexOfToken === -1) {
       result.push(token);
+    } else {
+      const balance = newBalances[indexOfToken].balance;
+
+      result.push({
+        ...token,
+        balance,
+        visibility:
+          balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
+            ? VisibilityEnum.Visible
+            : token.visibility
+      });
+
+      newBalances.splice(indexOfToken, 1);
     }
   }
 
-  result.push(...Object.entries(localBalances).map(([slug, balance]) => ({ slug, balance, isVisible: true })));
+  result.push(
+    ...newBalances.map(({ slug, balance }) => ({
+      slug,
+      balance,
+      visibility: balance === '0' ? VisibilityEnum.InitiallyHidden : VisibilityEnum.Visible
+    }))
+  );
 
   return result;
 };
@@ -71,7 +79,10 @@ export const toggleTokenVisibility = (tokensList: AccountTokenInterface[], slug:
 
   for (const token of tokensList) {
     if (token.slug === slug) {
-      result.push({ ...token, isVisible: !token.isVisible });
+      result.push({
+        ...token,
+        visibility: token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hidden : VisibilityEnum.Visible
+      });
     } else {
       result.push(token);
     }

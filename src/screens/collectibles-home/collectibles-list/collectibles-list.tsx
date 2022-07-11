@@ -1,11 +1,11 @@
 import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
+import { Dimensions, FlatList, ListRenderItem, View } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
-import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
+import { sliceIntoChunks } from '../../../utils/array.utils';
+import { createGetItemLayout } from '../../../utils/flat-list.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
@@ -13,30 +13,33 @@ interface Props {
   collectiblesList: TokenInterface[];
 }
 
+const ITEMS_PER_ROW = 3;
+
+const windowWidth = Dimensions.get('window').width;
+const ITEM_SIZE = (windowWidth - 36) / ITEMS_PER_ROW;
+
+const renderItem: ListRenderItem<TokenInterface[]> = ({ item }) => (
+  <View style={CollectiblesListStyles.rowContainer}>
+    {item.map(collectible => (
+      <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={ITEM_SIZE} />
+    ))}
+  </View>
+);
+
+const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
+
+const getItemLayout = createGetItemLayout<TokenInterface[]>(ITEM_SIZE);
+
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
-  const { layoutWidth, handleLayout } = useLayoutSizes();
+  const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
-  const smallCardSize = useMemo(() => (1 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
-  const bigCardSize = useMemo(() => (2 / 3) * layoutWidth - formatSize(0.5), [layoutWidth]);
-
-  const [first, second, third, ...rest] = collectiblesList;
-
-  return collectiblesList.length === 0 ? (
-    <DataPlaceholder text="Not found any NFT" />
-  ) : (
-    <>
-      <View style={CollectiblesListStyles.rowContainer} onLayout={handleLayout}>
-        <TouchableCollectibleIcon collectible={first} size={bigCardSize} />
-        <View>
-          <TouchableCollectibleIcon collectible={second} size={smallCardSize} />
-          <TouchableCollectibleIcon collectible={third} size={smallCardSize} />
-        </View>
-      </View>
-      <View style={CollectiblesListStyles.rowContainer}>
-        {rest.map(collectible => (
-          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={smallCardSize} />
-        ))}
-      </View>
-    </>
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
+    />
   );
 };

@@ -4,7 +4,8 @@ import { formatSize } from '../../../styles/format-size';
 export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: formatSize(40)
   },
   infoContainer: {
     flexGrow: 1,

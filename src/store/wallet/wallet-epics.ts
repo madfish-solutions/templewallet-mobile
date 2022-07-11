@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
@@ -7,66 +7,124 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { betterCallDevApi, tzktApi } from '../../api.service';
-import { ActivityTypeEnum } from '../../enums/activity-type.enum';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { GetAccountTokenTransfersResponseInterface } from '../../interfaces/get-account-token-transfers-response.interface';
-import { ParamsWithKind } from '../../interfaces/op-params.interface';
-import { OperationInterface } from '../../interfaces/operation.interface';
+import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { StacksEnum } from '../../navigator/enums/stacks.enum';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { groupActivitiesByHash } from '../../utils/activity.utils';
-import { mapOperationsToActivities } from '../../utils/operation.utils';
-import { paramsToPendingActions } from '../../utils/params-to-actions.util';
-import { createReadOnlyTezosToolkit, CURRENT_NETWORK_ID } from '../../utils/rpc/tezos-toolkit.utils';
-import { loadAssetsBalances$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
-import { loadTokenMetadata$, loadTokensWithBalanceMetadata$ } from '../../utils/token-metadata.utils';
+import { sliceIntoChunks } from '../../utils/array.utils';
+import { isDefined } from '../../utils/is-defined';
+import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
+import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import { withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
-import { mapTransfersToActivities } from '../../utils/transfer.utils';
-import { sendTransaction$, withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
+import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
-  addPendingOperation,
-  addTokenMetadataAction,
-  approveInternalOperationRequestAction,
-  loadActivityGroupsActions,
+  addTokenAction,
+  highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
-  loadTokenBalancesActions,
-  loadTokenMetadataActions,
-  loadTokenSuggestionActions,
+  loadTokensBalancesArrayActions,
+  loadTokensActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
 
-const loadTokenAssetsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const updateDataActions = () => [
+  loadTezosBalanceActions.submit(),
+  loadTokensActions.submit(),
+  loadSelectedBakerActions.submit()
+];
+
+const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadTokenBalancesActions.submit),
-    withSelectedAccount(state$),
+    ofType(highPriorityLoadTokenBalanceAction),
+    toPayload(),
     withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) =>
+    switchMap(([payload, rpcUrl]) =>
+      loadAssetBalance$(rpcUrl, payload.publicKeyHash, payload.slug).pipe(
+        map(balance =>
+          isDefined(balance)
+            ? loadTokensBalancesArrayActions.success({
+                publicKeyHash: payload.publicKeyHash,
+                data: [{ slug: payload.slug, balance }]
+              })
+            : loadTokensBalancesArrayActions.fail(`${payload.slug} balance load FAILED`)
+        )
+      )
+    )
+  );
+
+const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadTokensBalancesArrayActions.submit),
+    toPayload(),
+    concatMap(payload =>
+      of(payload).pipe(
+        withSelectedAccount(state$),
+        withSelectedRpcUrl(state$),
+        switchMap(([[payload, selectedAccount], rpcUrl]) => {
+          if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
+            return forkJoin(
+              payload.slugs.map(slug =>
+                loadAssetBalance$(rpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
+              )
+            ).pipe(
+              delay(100),
+              map(data =>
+                loadTokensBalancesArrayActions.success({
+                  publicKeyHash: payload.publicKeyHash,
+                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance))
+                })
+              )
+            );
+          }
+
+          return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(
+            delay(5)
+          );
+        })
+      )
+    )
+  );
+
+const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadTokensActions.submit),
+    withSelectedAccount(state$),
+    withSelectedAccountState(state$),
+    withMetadataSlugs(state$),
+    switchMap(([[[, selectedAccount], selectedAccountState], metadataRecord]) =>
       loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
-        switchMap(tokensWithBalance => {
-          const assetSlugs = uniq([
-            ...selectedAccount.tokensList.map(token => token.slug),
-            ...tokensWithBalance.map(tokenWithBalance =>
-              getTokenSlug({
-                address: tokenWithBalance.contract,
-                id: tokenWithBalance.token_id
+        concatMap(tokensWithBalance => {
+          const tokensWithBalancesSlugs = tokensWithBalance.map(tokenWithBalance =>
+            getTokenSlug({
+              address: tokenWithBalance.token.contract.address,
+              id: tokenWithBalance.token.tokenId
+            })
+          );
+
+          const accountTokensSlugs = (selectedAccountState.tokensList ?? []).map(token => token.slug);
+          const existingMetadataSlugs = Object.keys(metadataRecord);
+
+          const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
+          const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
+
+          return [
+            loadTokensActions.success(tokensWithBalancesSlugs),
+            loadTokensMetadataAction(assetWithoutMetadataSlugs),
+            ...sliceIntoChunks(allTokensSlugs, 3).map(slugs =>
+              loadTokensBalancesArrayActions.submit({
+                publicKeyHash: selectedAccount.publicKeyHash,
+                slugs
               })
             )
-          ]);
-
-          return forkJoin([
-            loadAssetsBalances$(rpcUrl, selectedAccount.publicKeyHash, assetSlugs),
-            loadTokensWithBalanceMetadata$(tokensWithBalance)
-          ]);
+          ];
         }),
-        map(([balancesRecord, metadataList]) => loadTokenBalancesActions.success({ balancesRecord, metadataList })),
-        catchError(err => of(loadTokenBalancesActions.fail(err.message)))
+        catchError(err => of(loadTokensActions.fail(err.message)))
       )
     )
   );
@@ -84,33 +142,6 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
     )
   );
 
-const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenSuggestionActions.submit),
-    toPayload(),
-    switchMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        concatMap(tokenMetadata => [
-          loadTokenSuggestionActions.success(tokenMetadata),
-          loadTokenMetadataActions.success(tokenMetadata)
-        ]),
-        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadTokenMetadataActions.submit),
-    toPayload(),
-    concatMap(({ id, address }) =>
-      loadTokenMetadata$(address, id).pipe(
-        map(tokenMetadata => loadTokenMetadataActions.success(tokenMetadata)),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
-      )
-    )
-  );
-
 const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
@@ -123,32 +154,6 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
         map(opParams =>
           navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
         )
-      )
-    )
-  );
-
-const approveInternalOperationRequestEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(approveInternalOperationRequestAction),
-    toPayload(),
-    withSelectedAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[opParams, sender], rpcUrl]) =>
-      sendTransaction$(rpcUrl, sender, opParams).pipe(
-        switchMap(({ hash }) => {
-          showSuccessToast({ description: 'Successfully sent!' });
-
-          return [
-            navigateAction(StacksEnum.MainStack),
-            waitForOperationCompletionAction({ opHash: hash, sender }),
-            addPendingOperation(paramsToPendingActions(opParams, hash, sender.publicKeyHash))
-          ];
-        }),
-        catchError(err => {
-          showErrorToast({ description: err.message });
-
-          return EMPTY;
-        })
       )
     )
   );
@@ -171,12 +176,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
           }
         }),
         delay(BCD_INDEXING_DELAY),
-        concatMap(() => [
-          loadTezosBalanceActions.submit(),
-          loadTokenBalancesActions.submit(),
-          loadActivityGroupsActions.submit(),
-          loadSelectedBakerActions.submit()
-        ]),
+        concatMap(updateDataActions),
         catchError(err => {
           showErrorToast({ description: err.message });
 
@@ -185,51 +185,15 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
       )
     )
   );
-
-const loadActivityGroupsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(loadActivityGroupsActions.submit),
-    withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) =>
-      forkJoin([
-        from(
-          tzktApi.get<OperationInterface[]>(
-            `accounts/${selectedAccount.publicKeyHash}/operations?limit=100&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`
-          )
-        ).pipe(map(({ data }) => mapOperationsToActivities(selectedAccount.publicKeyHash, data))),
-        from(
-          betterCallDevApi.get<GetAccountTokenTransfersResponseInterface>(
-            `/tokens/${CURRENT_NETWORK_ID}/transfers/${selectedAccount.publicKeyHash}`,
-            { params: { max: 100, start: 0 } }
-          )
-        ).pipe(map(({ data }) => mapTransfersToActivities(selectedAccount.publicKeyHash, data.transfers)))
-      ]).pipe(
-        map(([operations, transfers]) => groupActivitiesByHash(operations, transfers)),
-        map(activityGroups => loadActivityGroupsActions.success(activityGroups)),
-        catchError(err => of(loadActivityGroupsActions.fail(err.message)))
-      )
-    )
-  );
-
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(addTokenMetadataAction),
-    concatMap(() => [
-      loadTezosBalanceActions.submit(),
-      loadTokenBalancesActions.submit(),
-      loadActivityGroupsActions.submit(),
-      loadSelectedBakerActions.submit()
-    ])
-  );
+  action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
+  highPriorityLoadTokenBalanceEpic,
+  loadTokenBalanceEpic,
   loadTezosBalanceEpic,
-  loadTokenAssetsEpic,
-  loadTokenSuggestionEpic,
-  loadTokenMetadataEpic,
+  loadTokensWithBalancesEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
-  loadActivityGroupsEpic,
-  approveInternalOperationRequestEpic,
   addTokenMetadataEpic
 );

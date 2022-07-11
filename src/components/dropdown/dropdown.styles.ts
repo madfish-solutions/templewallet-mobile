@@ -6,10 +6,12 @@ export const useDropdownStyles = createUseStyles(({ colors }) => ({
     flexGrow: 1,
     flexShrink: 1
   },
-  scrollView: {
+  contentContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: colors.pageBG
   },
-  contentContainer: {
+  flatListContentContainer: {
     justifyContent: 'space-between',
     padding: formatSize(8)
   }

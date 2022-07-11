@@ -6,21 +6,24 @@ import { useDispatch } from 'react-redux';
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { generateIntegratedAppOptions } from '../components/header/generate-integrated-dapp-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
+import { HeaderAction } from '../components/header/header-action/header-actions';
 import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
-import { emptyComponent } from '../config/general';
+import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useAuthorisedTimerEffect } from '../hooks/use-authorized-timer-effect.hook';
+import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
+import { Buy } from '../screens/buy/buy';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
 import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
+import { FiatSettings } from '../screens/fiat-settings/fiat-settings';
 import { ImportAccount } from '../screens/import-account/import-account';
 import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
@@ -29,6 +32,9 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
+import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
+import { SwapScreen } from '../screens/swap/swap';
 import { AfterSyncQRScan } from '../screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { SyncInstructions } from '../screens/sync-account/sync-instructions/sync-instructions';
 import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
@@ -37,11 +43,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import {
-  loadActivityGroupsActions,
-  loadTezosBalanceActions,
-  loadTokenBalancesActions
-} from '../store/wallet/wallet-actions';
+import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
@@ -52,7 +54,7 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 const MainStack = createStackNavigator<ScreensParamList>();
 
 const DATA_REFRESH_INTERVAL = 60 * 1000;
-const EXCHANGE_RATE_REFRESH_INTERVAL = 5 * 60 * 1000;
+const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -62,19 +64,19 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
+  useFirebaseApp();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokenBalancesActions.submit());
-    dispatch(loadActivityGroupsActions.submit());
+    dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
   };
-  const initExchangeRateLoading = () => {
+  const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
-  useAuthorisedTimerEffect(initExchangeRateLoading, EXCHANGE_RATE_REFRESH_INTERVAL);
+  useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>
@@ -160,11 +162,33 @@ export const MainStackScreen = () => {
                 options={generateIntegratedAppOptions(<HeaderModal />)}
               />
 
+              {/** Buy stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.Buy}
+                component={Buy}
+                options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
+              />
+
               {/** Swap stack **/}
               <MainStack.Screen
-                name={ScreensEnum.Swap}
-                component={emptyComponent}
-                options={{ animationEnabled: false }}
+                name={ScreensEnum.SwapScreen}
+                component={SwapScreen}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                  animationEnabled: false
+                }}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SwapSettingsScreen}
+                component={SwapSettingsScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SwapQuestionsScreen}
+                component={SwapQuestionsScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Settings stack **/}
@@ -186,12 +210,17 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.DAppsSettings}
                 component={DAppsSettings}
-                options={generateScreenOptions(<HeaderTitle title="DApps" />)}
+                options={generateScreenOptions(<HeaderTitle title="Authorized DApps" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NodeSettings}
                 component={NodeSettings}
                 options={generateScreenOptions(<HeaderTitle title="Default node (RPC)" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.FiatSettings}
+                component={FiatSettings}
+                options={generateScreenOptions(<HeaderTitle title="Default currency" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.SecureSettings}

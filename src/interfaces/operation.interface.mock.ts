@@ -12,15 +12,16 @@ const mockTarget = {
   alias: 'alias4'
 };
 
-export const mockOperations: OperationInterface[] = [
+export const mockOperations: Array<OperationInterface> = [
   {
+    id: 0,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Transaction,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
     block: 'block',
     amount: 1,
     timestamp: new Date(2021, 7, 8, 0, 0, 0).toISOString(),
-    parameters: 'parameters',
     hasInternals: true,
     contractBalance: 'contractBalance',
     sender: mockMember,
@@ -35,13 +36,14 @@ export const mockOperations: OperationInterface[] = [
     }
   },
   {
+    id: 1,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Delegation,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
     block: 'block',
     amount: 1,
     timestamp: new Date(2021, 7, 8, 0, 0, 0).toISOString(),
-    parameters: 'parameters',
     hasInternals: true,
     contractBalance: 'contractBalance',
     sender: mockMember,
@@ -56,13 +58,14 @@ export const mockOperations: OperationInterface[] = [
     }
   },
   {
+    id: 2,
+    entrypoint: 'transfer',
     type: ActivityTypeEnum.Origination,
     status: ActivityStatusEnum.Applied,
     hash: 'hash',
     block: 'block',
     amount: 1,
     timestamp: new Date(2021, 7, 8, 0, 0, 0).toISOString(),
-    parameters: 'parameters',
     hasInternals: true,
     contractBalance: 'contractBalance',
     sender: mockMember,

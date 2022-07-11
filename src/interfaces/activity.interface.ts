@@ -8,11 +8,13 @@ export interface ActivityInterface {
   hash: string;
   amount: string;
   address?: string;
-  id?: number;
+  id: number;
+  tokenId?: string;
   timestamp: number;
   entrypoint?: string;
   source: MemberInterface;
   destination: MemberInterface;
+  level?: number;
 }
 
 export type ActivityGroup = ActivityInterface[];

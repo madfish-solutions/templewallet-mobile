@@ -1,9 +1,11 @@
+#import <Firebase.h>
 #import "AppDelegate.h"
 #import "Orientation.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTLinkingManager.h>
 
 #import "RNBootSplash.h"
 #import "RNQuickActionManager.h"
@@ -27,10 +29,37 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+@interface AppAttestProviderFactory : NSObject<FIRAppCheckProviderFactory>
+@end
+
+@implementation AppAttestProviderFactory
+
+- (nullable id<FIRAppCheckProvider>)createProviderWithApp:(nonnull FIRApp *)app {
+  return [[FIRAppAttestProvider alloc] initWithApp:app];
+}
+
+@end
+
 @implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)application shouldAllowExtensionPointIdentifier:(NSString *)extensionPointIdentifier {
+    if ([extensionPointIdentifier isEqualToString: UIApplicationKeyboardExtensionPointIdentifier]) {
+        return NO;
+    }
+    return YES;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#if DEBUG
+  FIRAppCheckDebugProviderFactory *providerFactory = [[FIRAppCheckDebugProviderFactory alloc] init];
+#else
+  AppAttestProviderFactory *providerFactory = [[AppAttestProviderFactory alloc] init];
+#endif
+[FIRAppCheck setAppCheckProviderFactory:providerFactory];
+
+[FIRApp configure];
+
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
@@ -72,6 +101,13 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
   return [Orientation getOrientation];
+}
+
+- (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
 }
 
 @end

@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Image, ListRenderItemInfo, Text, TouchableOpacity } from 'react-native';
+import { ListRenderItemInfo, Text, TouchableOpacity } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
@@ -19,11 +20,11 @@ export const OthersDApp: FC<Props> = ({ item }) => {
   const [imageLoadError, setImageLoadError] = useState(false);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.website)}>
+    <TouchableOpacity style={styles.container} onPress={() => openUrl(item.item.dappUrl)}>
       {imageLoadError ? (
         <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
       ) : (
-        <Image style={styles.logo} source={{ uri: item.item.logo }} onError={() => setImageLoadError(true)} />
+        <FastImage style={styles.logo} source={{ uri: item.item.logo }} onError={() => setImageLoadError(true)} />
       )}
       <Divider size={formatSize(8)} />
       <Text {...getTruncatedProps(styles.text)}>{item.item.name}</Text>
