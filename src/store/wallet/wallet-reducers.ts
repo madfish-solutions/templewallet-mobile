@@ -16,13 +16,13 @@ import {
   addHdAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
-  loadTokensWithBalancesActions,
+  loadTokensActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokenBalanceActions
+  loadTokensBalancesArrayActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -58,7 +58,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokensWithBalancesActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
+  builder.addCase(loadTokensActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
     updateCurrentAccountState(state, currentAccount => {
       const newTokensSlugs = tokensWithBalancesSlugs.filter(
         newTokenSlug => currentAccount.tokensList.findIndex(existingToken => existingToken.slug === newTokenSlug) === -1
@@ -73,9 +73,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     })
   );
 
-  builder.addCase(loadTokenBalanceActions.success, (state, { payload: { publicKeyHash, slug, balance } }) =>
+  builder.addCase(loadTokensBalancesArrayActions.success, (state, { payload: { publicKeyHash, data } }) =>
     updateAccountState(state, publicKeyHash, account => ({
-      tokensList: pushOrUpdateTokensBalances(account.tokensList, { [slug]: balance })
+      tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
     }))
   );
 
@@ -83,7 +83,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     const slug = getTokenSlug(tokenMetadata);
 
     return updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: '0' }),
+      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, [{ slug, balance: '0' }]),
       removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
     }));
   });

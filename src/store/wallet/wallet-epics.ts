@@ -2,15 +2,17 @@ import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { sliceIntoChunks } from '../../utils/array.utils';
 import { isDefined } from '../../utils/is-defined';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
@@ -25,15 +27,15 @@ import {
   addTokenAction,
   highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
-  loadTokenBalanceActions,
-  loadTokensWithBalancesActions,
+  loadTokensBalancesArrayActions,
+  loadTokensActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
 
 const updateDataActions = () => [
   loadTezosBalanceActions.submit(),
-  loadTokensWithBalancesActions.submit(),
+  loadTokensActions.submit(),
   loadSelectedBakerActions.submit()
 ];
 
@@ -46,12 +48,11 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
       loadAssetBalance$(rpcUrl, payload.publicKeyHash, payload.slug).pipe(
         map(balance =>
           isDefined(balance)
-            ? loadTokenBalanceActions.success({
+            ? loadTokensBalancesArrayActions.success({
                 publicKeyHash: payload.publicKeyHash,
-                slug: payload.slug,
-                balance
+                data: [{ slug: payload.slug, balance }]
               })
-            : loadTokenBalanceActions.fail(`${payload.slug} balance load FAILED`)
+            : loadTokensBalancesArrayActions.fail(`${payload.slug} balance load FAILED`)
         )
       )
     )
@@ -59,7 +60,7 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
 
 const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadTokenBalanceActions.submit),
+    ofType(loadTokensBalancesArrayActions.submit),
     toPayload(),
     concatMap(payload =>
       of(payload).pipe(
@@ -67,21 +68,24 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
         withSelectedRpcUrl(state$),
         switchMap(([[payload, selectedAccount], rpcUrl]) => {
           if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
-            return loadAssetBalance$(rpcUrl, payload.publicKeyHash, payload.slug).pipe(
+            return forkJoin(
+              payload.slugs.map(slug =>
+                loadAssetBalance$(rpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
+              )
+            ).pipe(
               delay(100),
-              map(balance =>
-                isDefined(balance)
-                  ? loadTokenBalanceActions.success({
-                      publicKeyHash: payload.publicKeyHash,
-                      slug: payload.slug,
-                      balance
-                    })
-                  : loadTokenBalanceActions.fail(`${payload.slug} balance load FAILED`)
+              map(data =>
+                loadTokensBalancesArrayActions.success({
+                  publicKeyHash: payload.publicKeyHash,
+                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance))
+                })
               )
             );
           }
 
-          return of(loadTokenBalanceActions.fail(`${payload.slug} balance load SKIPPED`)).pipe(delay(5));
+          return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(
+            delay(5)
+          );
         })
       )
     )
@@ -89,7 +93,7 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
 
 const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadTokensWithBalancesActions.submit),
+    ofType(loadTokensActions.submit),
     withSelectedAccount(state$),
     withSelectedAccountState(state$),
     withMetadataSlugs(state$),
@@ -110,17 +114,17 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
           const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
 
           return [
-            loadTokensWithBalancesActions.success(tokensWithBalancesSlugs),
+            loadTokensActions.success(tokensWithBalancesSlugs),
             loadTokensMetadataAction(assetWithoutMetadataSlugs),
-            ...allTokensSlugs.map(slug =>
-              loadTokenBalanceActions.submit({
+            ...sliceIntoChunks(allTokensSlugs, 3).map(slugs =>
+              loadTokensBalancesArrayActions.submit({
                 publicKeyHash: selectedAccount.publicKeyHash,
-                slug
+                slugs
               })
             )
           ];
         }),
-        catchError(err => of(loadTokensWithBalancesActions.fail(err.message)))
+        catchError(err => of(loadTokensActions.fail(err.message)))
       )
     )
   );

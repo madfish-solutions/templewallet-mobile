@@ -2,6 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
+import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
@@ -14,16 +15,15 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
   'wallet/SET_ACCOUNT_VISIBILITY'
 );
 
-// TODO: extract AssetsState
-export const loadTokensWithBalancesActions = createActions<void, string[], string>('assets/LOAD_TOKENS');
+export const loadTokensActions = createActions<void, string[], string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
 export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(
   'assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE'
 );
-export const loadTokenBalanceActions = createActions<
-  { publicKeyHash: string; slug: string },
-  { publicKeyHash: string; slug: string; balance: string },
+export const loadTokensBalancesArrayActions = createActions<
+  { publicKeyHash: string; slugs: string[] },
+  { publicKeyHash: string; data: TokenBalanceResponse[] },
   string
 >('assets/LOAD_TOKEN_BALANCE');
 
