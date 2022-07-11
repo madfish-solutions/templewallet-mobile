@@ -21,8 +21,8 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useLiquidityBakingContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/tokens-metadata/tokens-metadata-actions';
-import { useTokensMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
-import { useAssetsListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useTokenMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
+import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
   LIQUIDITY_BAKING_LP_SLUG,
@@ -30,7 +30,6 @@ import {
   LIQUIDITY_BAKING_LP_TOKEN_ID
 } from '../../token/data/token-slugs';
 import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -53,13 +52,11 @@ export const RemoveLiquidityModal = () => {
 
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
-  const assetsList = useAssetsListSelector();
-  const tokensMetadataRecord = useTokensMetadataSelector();
+  const lpTokenMetadata = useTokenMetadataSelector(LIQUIDITY_BAKING_LP_SLUG);
 
   const lpToken: TokenInterface = {
     ...emptyToken,
-    ...tokensMetadataRecord[LIQUIDITY_BAKING_LP_SLUG],
-    ...assetsList.find(token => getTokenSlug(token) === LIQUIDITY_BAKING_LP_SLUG)
+    ...lpTokenMetadata
   };
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {

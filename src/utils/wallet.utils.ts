@@ -1,4 +1,5 @@
 import { ParamsWithKind } from '@taquito/taquito';
+import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
@@ -6,9 +7,10 @@ import { AccountStateInterface, emptyAccountState } from '../interfaces/account-
 import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
 import { Shelter } from '../shelter/shelter';
 import { SettingsRootState } from '../store/settings/settings-state';
+import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { WalletRootState } from '../store/wallet/wallet-state';
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../token/interfaces/token.interface';
+import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { emptyToken } from '../token/interfaces/token.interface';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =
@@ -57,8 +59,15 @@ export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opPar
     })
   );
 
-export const getTezosToken = (balance: string): TokenInterface => ({
-  ...emptyToken,
-  ...TEZ_TOKEN_METADATA,
-  balance
-});
+export const useTezosToken = (balance: string) => {
+  const metadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+
+  return useMemo(
+    () => ({
+      ...emptyToken,
+      ...metadata,
+      balance
+    }),
+    [metadata, balance]
+  );
+};

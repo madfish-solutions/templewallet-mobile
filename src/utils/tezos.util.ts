@@ -1,7 +1,8 @@
 import { validateAddress, ValidationResult } from '@taquito/utils';
 import { BigNumber } from 'bignumber.js';
 
-import { TokenInterface, TokenPreviewType } from '../token/interfaces/token.interface';
+import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TokenInterface } from '../token/interfaces/token.interface';
 import { isDefined } from './is-defined';
 
 export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
@@ -20,7 +21,7 @@ export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
   return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
-export const isCollectible = <T extends TokenPreviewType>(asset: T) => isDefined(asset.artifactUri);
+export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isDefined(asset.artifactUri);
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 

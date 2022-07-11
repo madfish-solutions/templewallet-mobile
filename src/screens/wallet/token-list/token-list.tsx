@@ -88,7 +88,7 @@ export const TokenList: FC = () => {
           renderItem={renderFlatListItem}
           keyExtractor={keyExtractor}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
-          windowSize={13}
+          windowSize={11}
           updateCellsBatchingPeriod={150}
         />
       </View>

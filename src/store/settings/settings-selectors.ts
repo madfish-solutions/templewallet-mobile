@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 
 import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ThemesEnum } from '../../interfaces/theme.enum';
-import { FiatCurrenciesEnum, FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
+import { FIAT_CURRENCIES, FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
+import { getFiatToUsdRate } from '../../utils/token-metadata.utils';
+import { RootState } from '../create-store';
 import { SettingsRootState, SettingsState } from './settings-state';
 
 export const useThemeSelector = () => useSelector<SettingsRootState, ThemesEnum>(({ settings }) => settings.theme);
@@ -24,6 +26,9 @@ export const useSelectedRpcUrlSelector = () =>
 
 export const useFiatCurrencySelector = () =>
   useSelector<SettingsRootState, FiatCurrenciesEnum>(({ settings }) => settings.fiatCurrency);
+
+export const useFiatToUsdRateSelector = () =>
+  useSelector<RootState, number | undefined>(state => getFiatToUsdRate(state));
 
 export const useCurrentFiatCurrencyMetadataSelector = () => {
   const fiatCurrency = useFiatCurrencySelector();
