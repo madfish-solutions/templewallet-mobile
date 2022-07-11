@@ -13,6 +13,10 @@ export const useExolixStyles = createUseStyles(({ colors, typography }) => ({
     backgroundColor: colors.pageBG,
     justifyContent: 'space-between'
   },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',

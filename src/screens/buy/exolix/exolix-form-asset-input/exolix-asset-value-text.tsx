@@ -2,26 +2,16 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { FormattedAmount } from '../../../../components/formatted-amount';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+// import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { isDefined } from '../../../../utils/is-defined';
+import { formatAssetAmount } from '../../../../utils/number.util';
 
 interface Props {
-  amount: BigNumber;
-  asset: CurrenciesInterface;
+  amount?: BigNumber;
+  // asset: CurrenciesInterface;
   style?: StyleProp<TextStyle>;
 }
 
-export const ExolixAssetValueText: FC<Props> = ({ amount, asset, style }) => {
-  return (
-    <Text style={style}>
-      <FormattedAmount
-        amount={amount}
-        isDollarValue={false}
-        showMinusSign={false}
-        showPlusSign={false}
-        symbol={asset.code}
-        style={style}
-      />
-    </Text>
-  );
+export const ExolixAssetValueText: FC<Props> = ({ amount, style }) => {
+  return <Text style={style}>{formatAssetAmount(isDefined(amount) ? amount : new BigNumber(0))}</Text>;
 };

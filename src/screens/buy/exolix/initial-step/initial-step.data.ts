@@ -12,7 +12,7 @@ export const initialData = {
       icon: 'https://exolix.com/icons/coins/BTC.png'
     },
     amount: undefined,
-    min: undefined,
+    min: 0,
     max: undefined
   },
   coinTo: {

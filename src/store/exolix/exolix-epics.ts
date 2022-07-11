@@ -1,10 +1,15 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { EMPTY, from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from '../../utils/exolix.util';
+import {
+  // loadExolixCurrencies$,
+  loadExolixCurrencies,
+  loadExolixExchangeData,
+  submitExolixExchange
+} from '../../utils/exolix.util';
 import {
   loadExolixCurrenciesAction,
   loadExolixExchangeDataActions,
@@ -18,7 +23,7 @@ const loadExolixCurrenciesEpic: Epic = (action$: Observable<Action>) =>
     switchMap(() =>
       from(loadExolixCurrencies()).pipe(
         map(currencies => loadExolixCurrenciesAction.success(currencies)),
-        catchError(() => EMPTY)
+        catchError(() => of(loadExolixCurrenciesAction.fail()))
       )
     )
   );
@@ -30,7 +35,7 @@ const refreshExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
     switchMap(id =>
       from(loadExolixExchangeData(id)).pipe(
         map(({ data: exchangeData }) => loadExolixExchangeDataActions.success(exchangeData)),
-        catchError(() => EMPTY)
+        catchError(() => of(loadExolixExchangeDataActions.fail()))
       )
     )
   );
@@ -43,7 +48,7 @@ const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
       from(submitExolixExchange(requestPayload)).pipe(
         map(({ data }) => data),
         concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(2)]),
-        catchError(() => EMPTY)
+        catchError(() => of(loadExolixExchangeDataActions.fail()))
       )
     )
   );

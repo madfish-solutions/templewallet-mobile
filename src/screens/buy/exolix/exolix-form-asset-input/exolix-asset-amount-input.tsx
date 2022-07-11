@@ -15,7 +15,7 @@ import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { ExolixTokenDropdownItem, renderExolixTokenListItem } from '../exolix-token-dropdown-item/exolix-dropdown-item';
-import { initialData } from '../initial-step.data';
+import { initialData } from '../initial-step/initial-step.data';
 import { useExolixAssetAmountInputStyles } from './exolix-asset-amount-input.styles';
 import { ExolixAssetValueText } from './exolix-asset-value-text';
 import { ExolixAssetAmountInputProps } from './exolix-form-asset-input.props';
@@ -60,8 +60,6 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
 
     return newNumericInputValue;
   }, [amount]);
-
-  console.log(value);
 
   const onChange = useCallback(
     newInputValue => {
@@ -121,49 +119,45 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
         <Divider size={formatSize(8)} />
 
         <View style={styles.dropdownContainer}>
-          <Dropdown
-            title="Assets"
-            value={value.asset}
-            list={assetsList}
-            isSearchable={isSearchable}
-            setSearchValue={setSearchValue}
-            equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
-            renderValue={renderTokenValue}
-            renderListItem={renderExolixTokenListItem}
-            keyExtractor={(token: CurrenciesInterface) => token.code}
-            onValueChange={handleTokenChange}
-          />
+          {editable || assetsList.length === 0 ? (
+            <Dropdown
+              title="Assets"
+              value={value.asset}
+              list={assetsList}
+              isSearchable={isSearchable}
+              setSearchValue={setSearchValue}
+              equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
+              renderValue={renderTokenValue}
+              renderListItem={renderExolixTokenListItem}
+              keyExtractor={(token: CurrenciesInterface) => token.code}
+              onValueChange={handleTokenChange}
+            />
+          ) : (
+            <ExolixTokenDropdownItem token={value.asset} iconSize={formatSize(32)} />
+          )}
         </View>
       </View>
       <Divider size={formatSize(8)} />
 
       <View style={styles.footerContainer}>
-        <ExolixAssetValueText amount={amount} asset={value.asset} style={styles.equivalentValueText} />
+        <View style={styles.balanceContainer}>
+          {isDefined(value.max) && (
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceDescription}>{'Max:'}</Text>
+              <Divider size={formatSize(4)} />
+              <HideBalance style={styles.balanceValueText}>
+                <ExolixAssetValueText amount={new BigNumber(value.max)} style={styles.balanceValueText} />
+              </HideBalance>
+            </View>
+          )}
+        </View>
         <View style={styles.balanceContainer}>
           {isDefined(value.min) && (
             <View style={styles.balanceRow}>
               <Text style={styles.balanceDescription}>{'Min:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
-                <ExolixAssetValueText
-                  amount={new BigNumber(value.min)}
-                  asset={value.asset}
-                  style={styles.balanceValueText}
-                />
-              </HideBalance>
-            </View>
-          )}
-
-          {isDefined(value.max) && (
-            <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Max:'}</Text>
-              <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
-                <ExolixAssetValueText
-                  amount={new BigNumber(value.max)}
-                  asset={value.asset}
-                  style={styles.balanceValueText}
-                />
+                <ExolixAssetValueText amount={new BigNumber(value.min)} style={styles.balanceValueText} />
               </HideBalance>
             </View>
           )}

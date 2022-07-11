@@ -10,7 +10,7 @@ import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../utils/style.util';
-import { initialData } from '../initial-step.data';
+import { initialData } from '../initial-step/initial-step.data';
 import { useExolixTokenDropdownItemStyles } from './exolix-dropdown-item.styles';
 
 interface Props {
@@ -25,7 +25,7 @@ export const ExolixTokenDropdownItem: FC<Props> = ({ token, actionIconName, icon
   if (!isDefined(token)) {
     return (
       <View style={styles.container}>
-        <TokenIcon thumbnailUri={initialData.coinFrom.icon} size={iconSize} />
+        <TokenIcon thumbnailUri={initialData.coinFrom.asset.icon} size={iconSize} />
         <Divider size={formatSize(8)} />
 
         <View style={styles.infoContainer}>

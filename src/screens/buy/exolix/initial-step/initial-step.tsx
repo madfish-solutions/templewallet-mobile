@@ -1,25 +1,31 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from '../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../components/divider/divider';
-import { BlackTextLink } from '../../../components/text-link/black-text-link';
-// import { CurrenciesInterface } from '../../../interfaces/exolix.interface';
-import { loadExolixExchangeDataActions } from '../../../store/exolix/exolix-actions';
-// import { useExolixCurrencies, useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { ErrorComponent } from './error-component';
-import { ExolixFormAssetAmountInput } from './exolix-form-asset-input/exolix-form-asset-input';
-import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from './exolix-topup.form';
-import { useExolixStyles } from './exolix.styles';
+import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
+import { Divider } from '../../../../components/divider/divider';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { BlackTextLink } from '../../../../components/text-link/black-text-link';
+import { RateInterface } from '../../../../interfaces/exolix.interface';
+import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
+import { loadExolixExchangeDataActions } from '../../../../store/exolix/exolix-actions';
+import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
+import { formatSize } from '../../../../styles/format-size';
+import { loadExolixRate } from '../../../../utils/exolix.util';
+import { isDefined } from '../../../../utils/is-defined';
+import { ErrorComponent } from '../error-component';
+import { ExolixAssetAmountInterface } from '../exolix-form-asset-input/exolix-asset-amount-input';
+import { ExolixFormAssetAmountInput } from '../exolix-form-asset-input/exolix-form-asset-input';
+import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../exolix-topup.form';
+import { useExolixStyles } from '../exolix.styles';
+import { useFilteredCurrenciesList } from '../use-filtered-currencies-list.hook';
 import { initialData, outputCoin } from './initial-step.data';
-import { useFilteredCurrenciesList } from './use-filtered-currencies-list.hook';
+import { loadMinMaxFields } from './initial-step.utils';
 
 interface InitialStepProps {
   isError: boolean;
@@ -31,6 +37,15 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const dispatch = useDispatch();
   const { publicKeyHash } = useSelectedAccountSelector();
+
+  const prices = useUsdToTokenRates();
+  const tezPrice = useMemo(() => {
+    if (isDefined(prices) && isDefined(prices.tezos)) {
+      return prices.tezos;
+    } else {
+      return 1;
+    }
+  }, [prices]);
 
   const handleSubmit = useCallback(() => {
     dispatch(
@@ -49,14 +64,23 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
-  const { values, isValid, submitForm } = formik;
+  const { values, isValid, submitForm, setFieldValue } = formik;
 
-  // console.log(values);
+  useEffect(() => {
+    loadMinMaxFields(setFieldValue, values.coinFrom.asset.code, tezPrice);
+  }, [values.coinFrom.asset.code, tezPrice]);
 
-  // const handleInputAssetsValueChange = (value: ExolixAssetAmountInterface) => {
-  //   setFieldValue('coinFrom', value.asset);
-  //   setFieldValue('amount', value.amount);
-  // };
+  const handleInputAmountChange = (asset: ExolixAssetAmountInterface) => {
+    const requestData = {
+      coinFrom: asset.asset.code,
+      coinTo: initialData.coinTo.asset.code, // TEZ
+      amount: isDefined(asset.amount) ? asset.amount.toNumber() : 0
+    };
+
+    loadExolixRate(requestData).then((responseData: RateInterface) => {
+      setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
+    });
+  };
 
   return (
     <>
@@ -80,8 +104,14 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   label="Send"
                   isSearchable
                   assetsList={filteredCurrenciesList}
+                  onValueChange={handleInputAmountChange}
                   setSearchValue={setSearchValue}
                 />
+                <Divider size={formatSize(8)} />
+                <View style={styles.iconContainer}>
+                  <Icon name={IconNameEnum.ArrowDown} size={formatSize(24)} />
+                </View>
+                <Divider size={formatSize(8)} />
                 <ExolixFormAssetAmountInput
                   name="coinTo"
                   label="Get"

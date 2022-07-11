@@ -54,23 +54,23 @@ const coinList = [
 export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>> => {
   let page = 1;
   let result = await loadCurrency(page);
-  const totalData = result.data;
+  let totalData = result.data;
   while (isDefined(result) && isDefined(result.data) && result.data.length === currenciesLimit) {
     page++;
     result = await loadCurrency(page);
     if (isDefined(result) && isDefined(result.data)) {
-      totalData.concat(result.data);
+      totalData = totalData.concat(result.data);
     }
   }
 
-  return new Promise(resolve => resolve(totalData.filter(currency => coinList.includes(currency.code))));
+  return totalData.filter(currency => coinList.includes(currency.code));
 };
 
 export const loadCurrency = async (page = 1) =>
   (await exolixApi.get<CurrenciesRequestInterface>('/currencies', { params: { size: currenciesLimit, page } })).data;
 
-export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; amount: number }) => {
-  return exolixApi
+export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; amount: number }) =>
+  exolixApi
     .get('/rate', { params: data })
     .then(r => r.data as RateInterface)
     .catch(error => {
@@ -78,7 +78,6 @@ export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; a
         return error.response.data;
       }
     });
-};
 
 export const submitExolixExchange = (data: {
   coinFrom: string;

@@ -60,6 +60,6 @@ export interface CurrenciesRequestInterface {
 
 export interface RateInterface {
   toAmount: number;
-  rate: number;
+  rate: number | null;
   minAmount: number;
 }

@@ -18,7 +18,6 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
   const step = useExolixStep();
   const exchangeData = useExolixExchangeData();
   const dispatch = useDispatch();
-  // TODO: swap-form copy formik
 
   useTopUpUpdate(setIsError);
 
