@@ -22,9 +22,9 @@ import { ErrorComponent } from '../error-component';
 import { ExolixAssetAmountInterface } from '../exolix-form-asset-input/exolix-asset-amount-input';
 import { ExolixFormAssetAmountInput } from '../exolix-form-asset-input/exolix-form-asset-input';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../exolix-topup.form';
-import { useExolixStyles } from '../exolix.styles';
 import { useFilteredCurrenciesList } from '../use-filtered-currencies-list.hook';
 import { initialData, outputCoin } from './initial-step.data';
+import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields } from './initial-step.utils';
 
 interface InitialStepProps {
@@ -33,7 +33,7 @@ interface InitialStepProps {
 }
 
 export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
-  const styles = useExolixStyles();
+  const styles = useInitialStepStyles();
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const dispatch = useDispatch();
   const { publicKeyHash } = useSelectedAccountSelector();
@@ -120,8 +120,10 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   setSearchValue={setSearchValue}
                 />
               </FormikProvider>
-              {/* Exchange rate */}
-              {/* horizontal divider */}
+              <View style={styles.exchangeContainer}>
+                <Text>Exchange Rate</Text>
+                <Text>---</Text>
+              </View>
             </View>
             <View>
               <View>

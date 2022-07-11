@@ -141,23 +141,23 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
 
       <View style={styles.footerContainer}>
         <View style={styles.balanceContainer}>
-          {isDefined(value.max) && (
-            <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Max:'}</Text>
-              <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
-                <ExolixAssetValueText amount={new BigNumber(value.max)} style={styles.balanceValueText} />
-              </HideBalance>
-            </View>
-          )}
-        </View>
-        <View style={styles.balanceContainer}>
           {isDefined(value.min) && (
             <View style={styles.balanceRow}>
               <Text style={styles.balanceDescription}>{'Min:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
                 <ExolixAssetValueText amount={new BigNumber(value.min)} style={styles.balanceValueText} />
+              </HideBalance>
+            </View>
+          )}
+        </View>
+        <View style={styles.balanceContainer}>
+          {isDefined(value.max) && (
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceDescription}>{'Max:'}</Text>
+              <Divider size={formatSize(4)} />
+              <HideBalance style={styles.balanceValueText}>
+                <ExolixAssetValueText amount={new BigNumber(value.max)} style={styles.balanceValueText} />
               </HideBalance>
             </View>
           )}
