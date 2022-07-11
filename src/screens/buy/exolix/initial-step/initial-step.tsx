@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -47,17 +47,20 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     }
   }, [prices]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = () => {
+    if (!isDefined(values.coinFrom.amount)) {
+      return;
+    }
     dispatch(
       loadExolixExchangeDataActions.submit({
         coinFrom: values.coinFrom.asset.code,
         coinTo: outputCoin.code,
-        amount: (values.coinFrom.amount ?? new BigNumber(0)).toNumber(),
+        amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
       })
     );
-  }, [dispatch]);
+  };
 
   const formik = useFormik<ExolixTopupFormValues>({
     initialValues: initialData,

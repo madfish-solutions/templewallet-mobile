@@ -8,7 +8,7 @@ export const setExolixStepAction = createAction<number>('exolix/SET_STEP');
 export const loadExolixCurrenciesAction = createActions<void, Array<CurrenciesInterface>, void>(
   'exolix/LOAD_CURRENCIES'
 );
-export const loadExolixExchangeDataActions = createActions<ExchangePayload, ExchangeDataInterface, void>(
+export const loadExolixExchangeDataActions = createActions<ExchangePayload, ExchangeDataInterface | null, void>(
   'exolix/LOAD_EXCHANGE_DATA'
 );
 

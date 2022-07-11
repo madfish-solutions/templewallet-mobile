@@ -1,14 +1,34 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import React, { FC, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { loadExolixExchangeDataActions, setExolixStepAction } from '../../store/exolix/exolix-actions';
 import { useExolixStep } from '../../store/exolix/exolix-selectors';
-import { HeaderBackButton } from './header-back-button/header-back-button';
+import { IconNameEnum } from '../icon/icon-name.enum';
+import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';
 
+export const BackButton: FC = () => {
+  const step = useExolixStep();
+  const dispatch = useDispatch();
+  const { goBack } = useNavigation();
+
+  const handleOnPress = () => {
+    if (step > 0) {
+      dispatch(setExolixStepAction(0));
+      dispatch(loadExolixExchangeDataActions.success(null));
+    }
+    goBack();
+  };
+
+  return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={handleOnPress} />;
+};
+
 export const exolixScreenOptions = (): StackNavigationOptions => ({
   headerTitleAlign: 'center',
-  headerLeft: () => <HeaderBackButton />,
+  headerLeft: () => <BackButton />,
   headerTitle: () => <TitleComponent />,
   headerRight: () => <Stepper />
 });

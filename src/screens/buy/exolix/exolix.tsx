@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useState } from 'react';
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { useExolixStep } from '../../../store/exolix/exolix-selectors';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
@@ -35,7 +36,7 @@ export const Exolix: FC = () => {
   }, [step, trackEvent]);
 
   return (
-    <View>
+    <ScreenContainer isFullScreenMode>
       {step === 0 && <InitialStep isError={isError} setIsError={setIsError} />}
       {step === 1 && <ApproveStep isError={isError} setIsError={setIsError} />}
       {(step === 2 || step === 3 || step === 4) && <ExchangeStep isError={isError} setIsError={setIsError} />}
@@ -49,6 +50,6 @@ export const Exolix: FC = () => {
           <Text>Support</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </ScreenContainer>
   );
 };
