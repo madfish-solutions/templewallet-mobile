@@ -71,17 +71,14 @@ export const DApps = () => {
         <Disclaimer texts={texts} />
       </View>
       <Divider size={formatSize(16)} />
-      {sortedDAppsList.length ? (
-        <FlatList
-          data={sortedDAppsList}
-          renderItem={item => <OthersDApp item={item} />}
-          keyExtractor={item => item.name}
-          numColumns={2}
-          contentContainerStyle={styles.container}
-        />
-      ) : (
-        <DataPlaceholder text="No records found." />
-      )}
+      <FlatList
+        data={sortedDAppsList}
+        renderItem={item => <OthersDApp item={item} />}
+        keyExtractor={item => item.name}
+        numColumns={2}
+        contentContainerStyle={styles.container}
+        ListEmptyComponent={<DataPlaceholder text="No records found." />}
+      />
     </>
   );
 };

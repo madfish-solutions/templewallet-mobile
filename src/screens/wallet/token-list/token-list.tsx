@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, FlatListProps, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
@@ -12,7 +12,7 @@ import {
   useSelectedAccountTezosTokenSelector,
   useVisibleTokensListSelector
 } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
+import { formatSize, formatSizeScaled } from '../../../styles/format-size';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
@@ -39,6 +39,15 @@ const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
 
   return <TokenListItem token={item} />;
 };
+
+// padding size + icon size
+const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
+
+const getItemLayout: FlatListProps<FlatListItem>['getItemLayout'] = (_, index) => ({
+  length: ITEM_HEIGHT,
+  offset: ITEM_HEIGHT * index,
+  index
+});
 
 export const TokenList: FC = () => {
   const dispatch = useDispatch();
@@ -90,6 +99,7 @@ export const TokenList: FC = () => {
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
           windowSize={11}
           updateCellsBatchingPeriod={150}
+          getItemLayout={getItemLayout}
         />
       </View>
     </>
