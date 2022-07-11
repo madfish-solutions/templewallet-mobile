@@ -1,5 +1,4 @@
-import { BeaconMessageType } from '@airgap/beacon-sdk';
-import { PermissionRequestOutput } from '@airgap/beacon-sdk/dist/cjs/types/beacon/messages/BeaconRequestOutputMessage';
+import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { from } from 'rxjs';

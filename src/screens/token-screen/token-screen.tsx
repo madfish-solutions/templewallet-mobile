@@ -12,7 +12,7 @@ import { TokenEquityValue } from '../../components/token-equity-value/token-equi
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
 import { useTokenActivity } from '../../hooks/use-token-activity.hook';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { loadTokenBalanceActions } from '../../store/wallet/wallet-actions';
+import { highPriorityLoadTokenBalanceAction } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -22,6 +22,7 @@ import { TokenInfo } from './token-info/token-info';
 export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
   const dispatch = useDispatch();
+  const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const token = useMemo(
     () =>
@@ -30,10 +31,14 @@ export const TokenScreen = () => {
   );
 
   useEffect(() => {
-    dispatch(loadTokenBalanceActions.submit(getTokenSlug(token)));
+    dispatch(
+      highPriorityLoadTokenBalanceAction({
+        publicKeyHash: selectedAccount.publicKeyHash,
+        slug: getTokenSlug(token)
+      })
+    );
   }, []);
 
-  const selectedAccount = useSelectedAccountSelector();
   const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);

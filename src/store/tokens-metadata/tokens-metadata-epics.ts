@@ -1,13 +1,14 @@
 import { combineEpics } from 'redux-observable';
 import { Observable, of } from 'rxjs';
-import { catchError, concatMap, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
 import {
   addTokensMetadataAction,
   loadTokenMetadataActions,
+  loadTokensMetadataAction,
   loadTokenSuggestionActions
 } from './tokens-metadata-actions';
 
@@ -41,4 +42,16 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const tokensMetadataEpics = combineEpics(loadTokenSuggestionEpic, loadTokenMetadataEpic);
+const loadTokensMetadataEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadTokensMetadataAction),
+    toPayload(),
+    switchMap(slugs =>
+      loadTokensMetadata$(slugs).pipe(
+        map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
+        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
+      )
+    )
+  );
+
+export const tokensMetadataEpics = combineEpics(loadTokenSuggestionEpic, loadTokenMetadataEpic, loadTokensMetadataEpic);

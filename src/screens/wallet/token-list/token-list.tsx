@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -88,9 +88,8 @@ export const TokenList: FC = () => {
           renderItem={renderFlatListItem}
           keyExtractor={keyExtractor}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
-          windowSize={5}
-          updateCellsBatchingPeriod={100}
-          removeClippedSubviews={true}
+          windowSize={13}
+          updateCellsBatchingPeriod={150}
         />
       </View>
     </>

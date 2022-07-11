@@ -26,7 +26,6 @@ import {
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
-  pushNewTokenBalances,
   pushOrUpdateTokensBalances,
   toggleTokenVisibility,
   updateAccountState,
@@ -59,17 +58,26 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokensWithBalancesActions.success, (state, { payload: balancesRecord }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushNewTokenBalances(currentAccount.tokensList, balancesRecord)
-    }))
+  builder.addCase(loadTokensWithBalancesActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
+    updateCurrentAccountState(state, currentAccount => {
+      const newTokensSlugs = tokensWithBalancesSlugs.filter(
+        newTokenSlug => currentAccount.tokensList.findIndex(existingToken => existingToken.slug === newTokenSlug) === -1
+      );
+
+      return {
+        tokensList: [
+          ...currentAccount.tokensList,
+          ...newTokensSlugs.map(slug => ({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }))
+        ]
+      };
+    })
   );
 
-  builder.addCase(loadTokenBalanceActions.success, (state, { payload: { slug, balance } }) => {
-    return updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, { [slug]: balance })
-    }));
-  });
+  builder.addCase(loadTokenBalanceActions.success, (state, { payload: { publicKeyHash, slug, balance } }) =>
+    updateAccountState(state, publicKeyHash, account => ({
+      tokensList: pushOrUpdateTokensBalances(account.tokensList, { [slug]: balance })
+    }))
+  );
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const slug = getTokenSlug(tokenMetadata);

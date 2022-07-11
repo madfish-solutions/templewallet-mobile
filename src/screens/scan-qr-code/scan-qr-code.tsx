@@ -20,7 +20,7 @@ import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
 export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
-  const { goBack, navigate } = useNavigation();
+  const { navigate, goBack } = useNavigation();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
 
@@ -36,12 +36,18 @@ export const ScanQrCode = () => {
           showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
         }
       } else if (isBeaconPayload(data)) {
-        beaconDeepLinkHandler(data, () =>
-          navigate(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.DAppOperations,
-            message: null,
-            loading: true
-          })
+        beaconDeepLinkHandler(
+          data,
+          () =>
+            navigate(ModalsEnum.Confirmation, {
+              type: ConfirmationTypeEnum.DAppOperations,
+              message: null,
+              loading: true
+            }),
+          errorMessage => {
+            goBack();
+            showErrorToast({ description: errorMessage });
+          }
         );
       } else {
         showErrorToast({ description: 'Invalid QR code' });

@@ -40,7 +40,9 @@ const removePermissionEpic = (action$: Observable<Action>) =>
             peers.map(peer =>
               from(getSenderId(peer.publicKey)).pipe(
                 map(peerSenderId =>
-                  senderId === peerSenderId ? BeaconHandler.removePeer({ ...peer, senderId: peerSenderId }) : EMPTY
+                  senderId === peerSenderId
+                    ? BeaconHandler.removePeer({ ...peer, type: 'p2p-pairing-response', senderId: peerSenderId })
+                    : EMPTY
                 )
               )
             )
