@@ -12,6 +12,7 @@ export interface ExolixTopupFormValues {
     min?: number;
     max?: number;
   };
+  rate: number;
   coinTo: {
     asset: CurrenciesInterface;
     amount?: BigNumber;
@@ -30,16 +31,37 @@ export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = 
     amount: bigNumberValidation
       .clone()
       .required(makeRequiredErrorMessage('Amount'))
-      .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-        if (value instanceof BigNumber) {
-          return value.gt(0);
-        }
+      .test({
+        name: 'is-greater-than',
+        exclusive: false,
+        params: {},
+        message: 'Should be greater than Min amount',
+        test: function (value: unknown) {
+          if (value instanceof BigNumber) {
+            return value.gt(this.parent.min);
+          }
 
-        return false;
+          return false;
+        }
+      })
+      .test({
+        name: 'is-lesser-than',
+        exclusive: false,
+        params: {},
+        message: 'Should be lesser than Max amount',
+        test: function (value: unknown) {
+          if (value instanceof BigNumber) {
+            return value.lt(this.parent.max);
+          }
+
+          return false;
+        }
       }),
+
     min: number(),
     max: number()
   }),
+  rate: number().required(),
   coinTo: object().shape({
     asset: object()
       .shape({
@@ -48,15 +70,6 @@ export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = 
         code: string().required()
       })
       .required(),
-    amount: bigNumberValidation
-      .clone()
-      .required(makeRequiredErrorMessage('Amount'))
-      .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
-        if (value instanceof BigNumber) {
-          return value.gt(0);
-        }
-
-        return false;
-      })
+    amount: bigNumberValidation.clone().required(makeRequiredErrorMessage('Amount'))
   })
 });

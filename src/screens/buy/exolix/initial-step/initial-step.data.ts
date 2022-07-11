@@ -15,6 +15,7 @@ export const initialData = {
     min: 0,
     max: undefined
   },
+  rate: 0,
   coinTo: {
     asset: outputCoin,
     amount: undefined

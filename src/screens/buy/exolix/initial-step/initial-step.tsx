@@ -79,6 +79,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
     loadExolixRate(requestData).then((responseData: RateInterface) => {
       setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
+      setFieldValue('rate', isDefined(responseData.rate) ? responseData.rate : 0);
     });
   };
 
@@ -122,7 +123,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
               </FormikProvider>
               <View style={styles.exchangeContainer}>
                 <Text>Exchange Rate</Text>
-                <Text>---</Text>
+                <Text>{values.rate === 0 ? '---' : values.rate}</Text>
               </View>
             </View>
             <View>
