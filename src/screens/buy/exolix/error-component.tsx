@@ -51,8 +51,6 @@ export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
 
   usePageAnalytic(ScreensEnum.Exolix, ExolixSelectors.TopupFirstStepTransactionOverdue);
 
-  // TODO: swap-form copy formik
-
   const handleRestart = useCallback(() => {
     dispatch(restartExolixTopupAction());
     setIsError(false);

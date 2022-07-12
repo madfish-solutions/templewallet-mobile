@@ -19,6 +19,7 @@ import { useColors } from '../../../styles/use-colors';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
+import { truncateLongAddress } from '../../../utils/exolix.util';
 import { isDefined } from '../../../utils/is-defined';
 import { openUrl } from '../../../utils/linking.util';
 import { EXOLIX_CONTACT_LINK } from './config';
@@ -27,7 +28,6 @@ import { ErrorComponent } from './error-component';
 import { ExolixTokenDropdownItem } from './exolix-token-dropdown-item/exolix-dropdown-item';
 import { ExolixSelectors } from './exolix.selectors';
 import { useExolixStyles } from './exolix.styles';
-import { initialData } from './initial-step/initial-step.data';
 import useTopUpUpdate from './use-topup-update.hook';
 
 interface ApproveStepProps {
@@ -133,7 +133,14 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <View style={styles.rowCenterContainer}>
             <Text style={styles.depositText}>Deposit BTC address:</Text>
             <Divider size={formatSize(8)} />
-            <ExolixTokenDropdownItem token={initialData.coinFrom.asset} iconSize={formatSize(32)} />
+            <ExolixTokenDropdownItem
+              token={{
+                code: exchangeData.coinFrom.coinCode,
+                name: exchangeData.coinFrom.coinName,
+                icon: exchangeData.coinFrom.icon
+              }}
+              iconSize={formatSize(32)}
+            />
           </View>
           <Divider size={formatSize(8)} />
           <TouchableOpacity style={styles.addressContainer} onPress={handleCopyTransactionPress}>
@@ -169,11 +176,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <View style={styles.footerContainer}>
             <Text>Recepient address</Text>
             <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyTransactionPress}>
-              <Text style={styles.publicKeyHash}>
-                {exchangeData.withdrawalAddress.length > 10
-                  ? exchangeData.withdrawalAddress.slice(0, 5) + '...' + exchangeData.withdrawalAddress.slice(-5)
-                  : exchangeData.withdrawalAddress}
-              </Text>
+              <Text style={styles.publicKeyHash}>{truncateLongAddress(exchangeData.withdrawalAddress)}</Text>
             </TouchableOpacity>
           </View>
           <Divider size={formatSize(16)} />
@@ -195,7 +198,6 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           >
             <Text style={styles.actionsContainer}>SUPPORT</Text>
           </TouchableOpacity>
-          <View style={styles.rowCenterContainer} />
         </ScreenContainer>
       ) : !isDefined(exchangeData) ? (
         <Text>Loading</Text>

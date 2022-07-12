@@ -48,7 +48,8 @@ export const useExolixStyles = createUseStyles(({ colors, typography }) => ({
   },
   footerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    height: formatSize(24)
   },
   rowContainer: {
     flexDirection: 'row'
