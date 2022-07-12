@@ -113,6 +113,18 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                 <>
                   <CopyRow title="Transaction ID" data={exchangeData.id} />
                   <View style={styles.footerContainer}>
+                    <Text style={styles.infoText}>Sent time</Text>
+                    <Text>
+                      {new Date(exchangeData.createdAt).toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </Text>
+                  </View>
+                  <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>You send</Text>
                     <Text>
                       {exchangeData.amount} {exchangeData.coinFrom.coinCode}
