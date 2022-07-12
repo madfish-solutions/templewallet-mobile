@@ -9,7 +9,7 @@ import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.en
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
-import { TokenPreviewType } from '../../../../../token/interfaces/token.interface';
+import { TokenMetadataInterface } from '../../../../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../../../../token/utils/token.utils';
 import { isDefined } from '../../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../../utils/style.util';
@@ -25,7 +25,7 @@ interface PreviewDataInterface {
   description: string;
   hash?: string;
   contract?: string;
-  token?: { tokenData: TokenPreviewType; amount: string };
+  token?: { tokenData: TokenMetadataInterface; amount: string };
 }
 
 interface ParamsPreviewDataInterface {

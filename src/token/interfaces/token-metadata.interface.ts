@@ -10,6 +10,9 @@ export interface TokenMetadataInterface {
   thumbnailUri?: string;
   displayUri?: string;
   artifactUri?: string;
+
+  // Stored as separate Record
+  exchangeRate?: number;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

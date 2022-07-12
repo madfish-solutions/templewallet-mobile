@@ -3,14 +3,15 @@ import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { VisibilityEnum } from '../../enums/visibility.enum';
-import { useTokenMetadataGetter } from '../../hooks/use-token-metadata-getter.hook';
 import { AccountStateInterface } from '../../interfaces/account-state.interface';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
-import { getSelectedAccount, getAccountState } from '../../utils/wallet-account-state.utils';
-import { getTezosToken } from '../../utils/wallet.utils';
+import { getTokenMetadata } from '../../utils/token-metadata.utils';
+import { getAccountState, getSelectedAccount } from '../../utils/wallet-account-state.utils';
+import { useTezosToken } from '../../utils/wallet.utils';
+import { RootState } from '../create-store';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useAccountsListSelector = () =>
@@ -41,39 +42,34 @@ export const useIsAuthorisedSelector = () => {
 };
 
 export const useSelectedAccountSelector = () =>
-  useSelector<WalletRootState, AccountInterface>(({ wallet }) => getSelectedAccount(wallet));
-
-export const useSelectedAccountStateSelector = () =>
-  useSelector<WalletRootState, AccountStateInterface>(({ wallet }) =>
-    getAccountState(wallet, wallet.selectedAccountPublicKeyHash)
+  useSelector<WalletRootState, AccountInterface>(
+    ({ wallet }) => getSelectedAccount(wallet),
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
 
-export const useAssetsListSelector = (): TokenInterface[] => {
-  const selectedAccountState = useSelectedAccountStateSelector();
-  const getTokenMetadata = useTokenMetadataGetter();
+export const useAssetsListSelector = (): TokenInterface[] =>
+  useSelector<RootState, TokenInterface[]>(
+    state => {
+      const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
 
-  return useMemo<TokenInterface[]>(
-    () =>
-      selectedAccountState.tokensList
+      return selectedAccountState.tokensList
         .filter(item => selectedAccountState.removedTokensList.indexOf(item.slug) === -1)
-        .map(({ slug, balance, visibility }) => {
-          if (visibility === VisibilityEnum.InitiallyHidden && Number(balance) > 0) {
-            return {
-              balance,
-              visibility: VisibilityEnum.Visible,
-              ...getTokenMetadata(slug)
-            };
-          }
+        .map(token => {
+          const visibility =
+            token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
+              ? VisibilityEnum.Visible
+              : token.visibility;
+          const metadata = getTokenMetadata(state, token.slug);
 
           return {
-            balance,
+            ...metadata,
             visibility,
-            ...getTokenMetadata(slug)
+            balance: token.balance
           };
-        }),
-    [selectedAccountState.tokensList, getTokenMetadata, selectedAccountState.removedTokensList]
+        });
+    },
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
-};
 
 export const useVisibleAssetListSelector = () => {
   const tokensList = useAssetsListSelector();
@@ -132,7 +128,7 @@ export const useTezosTokenSelector = (publicKeyHash: string) => {
     return accountState.tezosBalance;
   });
 
-  return useMemo(() => getTezosToken(tezosBalance), [tezosBalance]);
+  return useTezosToken(tezosBalance);
 };
 
 export const useSelectedAccountTezosTokenSelector = () => {

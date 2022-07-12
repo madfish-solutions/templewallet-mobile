@@ -1,7 +1,7 @@
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
+import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
-import { isDefined } from '../../utils/is-defined';
 import { WalletState } from './wallet-state';
 
 const MAX_PENDING_OPERATION_DISPLAY_TIME = 4 * 3600000;
@@ -38,14 +38,18 @@ export const updateAccountState = (
 
 export const pushOrUpdateTokensBalances = (
   initialTokensList: AccountTokenInterface[],
-  balances: Record<string, string>
+  newBalances: TokenBalanceResponse[]
 ) => {
-  const localBalances: Record<string, string> = { ...balances };
   const result: AccountTokenInterface[] = [];
 
   for (const token of initialTokensList) {
-    const balance = localBalances[token.slug];
-    if (isDefined(balance)) {
+    const indexOfToken = newBalances.findIndex(({ slug }) => slug === token.slug);
+
+    if (indexOfToken === -1) {
+      result.push(token);
+    } else {
+      const balance = newBalances[indexOfToken].balance;
+
       result.push({
         ...token,
         balance,
@@ -55,14 +59,12 @@ export const pushOrUpdateTokensBalances = (
             : token.visibility
       });
 
-      delete localBalances[token.slug];
-    } else {
-      result.push(token);
+      newBalances.splice(indexOfToken, 1);
     }
   }
 
   result.push(
-    ...Object.entries(localBalances).map(([slug, balance]) => ({
+    ...newBalances.map(({ slug, balance }) => ({
       slug,
       balance,
       visibility: balance === '0' ? VisibilityEnum.InitiallyHidden : VisibilityEnum.Visible

@@ -3,8 +3,10 @@ import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tokenMetadataApi } from '../api.service';
+import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 
@@ -15,16 +17,6 @@ export interface TokenMetadataResponse {
   thumbnailUri?: string;
   artifactUri?: string;
 }
-
-export const withMetadataSlugs =
-  <T>(state$: Observable<TokensMetadataRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
-        value,
-        tokensMetadata.metadataRecord
-      ])
-    );
 
 const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, address: string, id: number) =>
   !isDefined(token)
@@ -38,6 +30,62 @@ const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, addre
         thumbnailUri: token.thumbnailUri,
         artifactUri: token.artifactUri
       };
+
+export const normalizeTokenMetadata = (slug: string, rawMetadata?: TokenMetadataInterface): TokenMetadataInterface => {
+  const [tokenAddress, tokenId] = slug.split('_');
+
+  return slug === TEZ_TOKEN_SLUG
+    ? TEZ_TOKEN_METADATA
+    : rawMetadata ?? {
+        ...emptyTokenMetadata,
+        symbol: '???',
+        name: `${tokenAddress} ${tokenId}`,
+        address: tokenAddress,
+        id: Number(tokenId ?? 0)
+      };
+};
+
+export const getFiatToUsdRate = (state: RootState) => {
+  const fiatExchangeRates = state.currency.fiatToTezosRates.data;
+  const fiatCurrency = state.settings.fiatCurrency;
+  const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
+
+  const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
+  const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
+
+  if (isDefined(fiatExchangeRate) && isDefined(exchangeRateTezos)) {
+    return fiatExchangeRate / exchangeRateTezos;
+  }
+
+  return undefined;
+};
+
+export const getTokenExchangeRate = (state: RootState, slug: string) => {
+  const tokenUsdExchangeRate = state.currency.usdToTokenRates.data[slug];
+  const fiatToUsdRate = getFiatToUsdRate(state);
+
+  return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
+};
+
+export const getTokenMetadata = (state: RootState, slug: string) => {
+  const tokenMetadata = normalizeTokenMetadata(slug, state.tokensMetadata.metadataRecord[slug]);
+  const exchangeRate = getTokenExchangeRate(state, slug);
+
+  return {
+    ...tokenMetadata,
+    exchangeRate
+  };
+};
+
+export const withMetadataSlugs =
+  <T>(state$: Observable<TokensMetadataRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
+        value,
+        tokensMetadata.metadataRecord
+      ])
+    );
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>

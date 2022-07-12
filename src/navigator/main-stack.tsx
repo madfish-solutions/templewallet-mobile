@@ -45,7 +45,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadTezosBalanceActions, loadTokensWithBalancesActions } from '../store/wallet/wallet-actions';
+import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
@@ -70,7 +70,7 @@ export const MainStackScreen = () => {
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokensWithBalancesActions.submit());
+    dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
   };
   const initLongRefreshLoading = () => {
