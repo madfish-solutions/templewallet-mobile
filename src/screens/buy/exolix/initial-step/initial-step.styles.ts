@@ -31,6 +31,10 @@ export const useInitialStepStyles = createUseStyles(({ colors, typography }) => 
     textAlign: 'center',
     color: colors.black
   },
+  exchangeRate: {
+    ...typography.caption13Regular,
+    color: colors.gray1
+  },
   thirdParty: {
     ...typography.caption11Regular,
     textAlign: 'center',

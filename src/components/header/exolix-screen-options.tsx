@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { loadExolixExchangeDataActions, setExolixStepAction } from '../../store/exolix/exolix-actions';
+import { restartExolixTopupAction } from '../../store/exolix/exolix-actions';
 import { useExolixStep } from '../../store/exolix/exolix-selectors';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { HeaderButton } from './header-button/header-button';
@@ -17,8 +17,7 @@ export const BackButton: FC = () => {
 
   const handleOnPress = () => {
     if (step > 0) {
-      dispatch(setExolixStepAction(0));
-      dispatch(loadExolixExchangeDataActions.success(null));
+      dispatch(restartExolixTopupAction());
     }
     goBack();
   };

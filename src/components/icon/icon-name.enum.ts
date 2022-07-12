@@ -73,6 +73,7 @@ export enum IconNameEnum {
   Search = 'Search',
   XSearch = 'XSearch',
   Alert = 'Alert',
+  AlertMonochrome = 'AlertMonochrome',
   Edit = 'Edit',
   Trash = 'Trash',
   TouchId = 'TouchId',

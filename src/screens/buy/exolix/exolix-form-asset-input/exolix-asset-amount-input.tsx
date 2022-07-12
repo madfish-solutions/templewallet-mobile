@@ -7,7 +7,6 @@ import { Dropdown, DropdownValueComponent } from '../../../../components/dropdow
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
-import { emptyFn } from '../../../../config/general';
 import { useNumericInput } from '../../../../hooks/use-numeric-input.hook';
 import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 import { formatSize } from '../../../../styles/format-size';
@@ -37,9 +36,7 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
   assetsList,
   isError = false,
   editable = true,
-  isSearchable = false,
   selectionOptions = undefined,
-  setSearchValue = emptyFn,
   onBlur,
   onFocus,
   onValueChange
@@ -119,13 +116,11 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
         <Divider size={formatSize(8)} />
 
         <View style={styles.dropdownContainer}>
-          {editable || assetsList.length === 0 ? (
+          {editable && assetsList.length !== 0 ? (
             <Dropdown
               title="Assets"
               value={value.asset}
               list={assetsList}
-              isSearchable={isSearchable}
-              setSearchValue={setSearchValue}
               equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
               renderValue={renderTokenValue}
               renderListItem={renderExolixTokenListItem}

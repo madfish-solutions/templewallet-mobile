@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import AlertShield from './assets/alert-shield.svg';
 import AlertIcon from './assets/alert.svg';
 import AppCheckAlertIcon from './assets/app-check-alert.svg';
@@ -171,6 +172,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Search]: SearchIcon,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
+  [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,

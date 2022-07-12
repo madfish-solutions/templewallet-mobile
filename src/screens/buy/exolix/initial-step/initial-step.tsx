@@ -10,6 +10,7 @@ import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../../components/divider/divider';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../components/text-link/black-text-link';
 import { RateInterface } from '../../../../interfaces/exolix.interface';
 import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
@@ -90,7 +91,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     <>
       {!isError ? (
         <>
-          <View style={styles.initialStepContainer}>
+          <ScreenContainer isFullScreenMode>
             <View>
               <Disclaimer
                 title="Note"
@@ -125,8 +126,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                 />
               </FormikProvider>
               <View style={styles.exchangeContainer}>
-                <Text>Exchange Rate</Text>
-                <Text>{values.rate === 0 ? '---' : values.rate}</Text>
+                <Text style={styles.exchangeRate}>Exchange Rate</Text>
+                <Text>
+                  {values.rate === 0
+                    ? '---'
+                    : `1 ${values.coinFrom.asset.code} ≈ ${values.rate} ${values.coinTo.asset.code}`}
+                </Text>
               </View>
             </View>
             <View>
@@ -146,7 +151,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                 work of third-party services.
               </Text>
             </View>
-          </View>
+          </ScreenContainer>
           <ButtonsFloatingContainer>
             <ButtonLargePrimary disabled={!isValid} title="Top Up" onPress={submitForm} />
           </ButtonsFloatingContainer>

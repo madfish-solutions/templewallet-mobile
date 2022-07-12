@@ -11,9 +11,10 @@ export const useErrorDisclaimerMessageStyles = createUseStyles(({ colors, typogr
   },
   title: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.white
   },
   content: {
-    flexShrink: 1
+    flexShrink: 1,
+    color: colors.white
   }
 }));
