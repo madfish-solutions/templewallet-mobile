@@ -30,7 +30,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
     >
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
-          <AvatarImage uri={baker.logo} />
+          <AvatarImage size={formatSize(32)} uri={baker.logo} />
           <Divider size={formatSize(10)} />
           <Text style={styles.nameText}>{baker.name}</Text>
         </View>
