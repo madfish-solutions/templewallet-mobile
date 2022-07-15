@@ -1,5 +1,6 @@
-import React, { FC, useMemo } from 'react';
-import { Dimensions, FlatList, ListRenderItem, View } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
@@ -15,23 +16,26 @@ interface Props {
 
 const ITEMS_PER_ROW = 3;
 
-const windowWidth = Dimensions.get('window').width;
-const ITEM_SIZE = (windowWidth - 36) / ITEMS_PER_ROW;
-
-const renderItem: ListRenderItem<TokenInterface[]> = ({ item }) => (
-  <View style={CollectiblesListStyles.rowContainer}>
-    {item.map(collectible => (
-      <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={ITEM_SIZE} />
-    ))}
-  </View>
-);
-
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
-const getItemLayout = createGetItemLayout<TokenInterface[]>(ITEM_SIZE);
-
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
+  const windowWidth = useWindowDimensions().width;
+  const itemSize = (isTablet() ? windowWidth - 236 : windowWidth - 36) / ITEMS_PER_ROW;
+
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
+
+  const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
+
+  const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
+    ({ item }) => (
+      <View style={CollectiblesListStyles.rowContainer}>
+        {item.map(collectible => (
+          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemSize} />
+        ))}
+      </View>
+    ),
+    [itemSize]
+  );
 
   return (
     <FlatList
