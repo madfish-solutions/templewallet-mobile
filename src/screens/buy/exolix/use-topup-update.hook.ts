@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { emptyFn } from '../../../config/general';
 import { refreshExolixExchangeDataAction } from '../../../store/exolix/exolix-actions';
 import { useExolixExchangeData } from '../../../store/exolix/exolix-selectors';
 import { isDefined } from '../../../utils/is-defined';
@@ -15,29 +16,32 @@ const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
     [dispatch]
   );
   const isAlive = useRef(false);
+  const timeoutId = useRef(setTimeout(emptyFn, 0));
 
-  useEffect(() => {
-    let timeoutId = setTimeout(async function repeat() {
-      isAlive.current = true;
-      if (!isDefined(exchangeData)) {
-        setIsError(true);
+  const repeat = async () => {
+    isAlive.current = true;
+    if (!isDefined(exchangeData)) {
+      setIsError(true);
 
+      return;
+    }
+    try {
+      setExchangeData(exchangeData.id);
+      if (!isAlive.current) {
         return;
       }
-      try {
-        setExchangeData(exchangeData.id);
-        if (!isAlive.current) {
-          return;
-        }
-        timeoutId = setTimeout(repeat, 3000);
-      } catch (e) {
-        setIsError(true);
-      }
-    }, 3000);
+      timeoutId.current = setTimeout(repeat, 3000);
+    } catch (e) {
+      setIsError(true);
+    }
+  };
+
+  useEffect(() => {
+    timeoutId.current = setTimeout(repeat, 3000);
 
     return () => {
       isAlive.current = false;
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId.current);
     };
   }, [exchangeData, setExchangeData, setIsError]);
 };
