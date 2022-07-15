@@ -15,11 +15,9 @@ const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
     },
     [dispatch]
   );
-  const isAlive = useRef(false);
   const timeoutId = useRef(setTimeout(emptyFn, 0));
 
-  const repeat = async () => {
-    isAlive.current = true;
+  const repeat = () => {
     if (!isDefined(exchangeData)) {
       setIsError(true);
 
@@ -27,9 +25,6 @@ const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
     }
     try {
       setExchangeData(exchangeData.id);
-      if (!isAlive.current) {
-        return;
-      }
       timeoutId.current = setTimeout(repeat, 3000);
     } catch (e) {
       setIsError(true);
@@ -40,7 +35,6 @@ const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
     timeoutId.current = setTimeout(repeat, 3000);
 
     return () => {
-      isAlive.current = false;
       clearTimeout(timeoutId.current);
     };
   }, [exchangeData, setExchangeData, setIsError]);
