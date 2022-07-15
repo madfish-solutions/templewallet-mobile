@@ -1,7 +1,6 @@
-import React, { FC, useMemo, useState } from 'react';
-import { Dimensions, FlatList, ListRenderItem, View } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { OrientationType, useOrientationChange } from 'react-native-orientation-locker';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
@@ -20,23 +19,22 @@ const ITEMS_PER_ROW = 3;
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
-  const windowWidth = Dimensions.get('window').width;
-  const ITEM_SIZE = (isTablet() ? windowWidth - 236 : windowWidth - 36) / ITEMS_PER_ROW;
-  const [, setOrientation] = useState(OrientationType['FACE-DOWN']);
+  const windowWidth = useWindowDimensions().width;
+  const itemSize = (isTablet() ? windowWidth - 236 : windowWidth - 36) / ITEMS_PER_ROW;
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
-  // just for recalculation of item size
-  useOrientationChange(orientation => (isTablet() ? setOrientation(orientation) : void 0));
+  const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
 
-  const getItemLayout = createGetItemLayout<TokenInterface[]>(ITEM_SIZE);
-
-  const renderItem: ListRenderItem<TokenInterface[]> = ({ item }) => (
-    <View style={CollectiblesListStyles.rowContainer}>
-      {item.map(collectible => (
-        <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={ITEM_SIZE} />
-      ))}
-    </View>
+  const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
+    ({ item }) => (
+      <View style={CollectiblesListStyles.rowContainer}>
+        {item.map(collectible => (
+          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemSize} />
+        ))}
+      </View>
+    ),
+    [itemSize]
   );
 
   return (
