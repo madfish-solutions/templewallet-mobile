@@ -10,44 +10,27 @@ import { ErrorDisclaimerMessage } from '../../../components/error-disclaimer-mes
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { restartExolixTopupAction } from '../../../store/exolix/exolix-actions';
-import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
+import { useExolixExchangeData } from '../../../store/exolix/exolix-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
-import { useAnalytics, usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { openUrl } from '../../../utils/linking.util';
 import { EXOLIX_CONTACT_LINK } from './config';
 import { ExolixSelectors } from './exolix.selectors';
 import { useExolixStyles } from './exolix.styles';
+import { useSupportTrack } from './use-support-track';
 
 interface ErrorComponentProps {
   setIsError: (b: boolean) => void;
 }
 
 export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
-  const { trackEvent } = useAnalytics();
-  const step = useExolixStep();
   const exchangeData = useExolixExchangeData();
   const dispatch = useDispatch();
 
   const styles = useExolixStyles();
 
-  const handleTrackSupportSubmit = useCallback(() => {
-    let event: ExolixSelectors;
-    switch (step) {
-      case 2:
-        event = ExolixSelectors.TopupSecondStepSupport;
-        break;
-      case 3:
-        event = ExolixSelectors.TopupThirdStepSupport;
-        break;
-      default:
-        event = ExolixSelectors.TopupFourthStepSubmit;
-        break;
-    }
-
-    return trackEvent(event, AnalyticsEventCategory.ButtonPress);
-  }, [step, trackEvent]);
+  const handleTrackSupportSubmit = useSupportTrack();
 
   usePageAnalytic(ScreensEnum.Exolix, ExolixSelectors.TopupFirstStepTransactionOverdue);
 
@@ -68,7 +51,6 @@ export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
               <Text style={styles.headerText}>the exchange process will begin automatically</Text>
             </View>
             <Divider size={formatSize(16)} />
-            <View>{/* counter */}</View>
             <Divider size={formatSize(16)} />
             <ErrorDisclaimerMessage title={'Transaction is overdue'}>
               <Text style={styles.description}>Please, create a new exchange unless</Text>

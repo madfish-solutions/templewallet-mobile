@@ -11,8 +11,6 @@ import { ExchangeDataStatusEnum } from '../../../interfaces/exolix.interface';
 import { restartExolixTopupAction, setExolixStepAction } from '../../../store/exolix/exolix-actions';
 import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { openUrl } from '../../../utils/linking.util';
 import { EXOLIX_CONTACT_LINK } from './config';
@@ -20,6 +18,7 @@ import { CopyRow } from './copy-row';
 import { ErrorComponent } from './error-component';
 import { ExolixSelectors } from './exolix.selectors';
 import { useExolixStyles } from './exolix.styles';
+import { useSupportTrack } from './use-support-track';
 import useTopUpUpdate from './use-topup-update.hook';
 
 interface ExchangeStepProps {
@@ -33,24 +32,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
   const exchangeData = useExolixExchangeData();
   const dispatch = useDispatch();
 
-  const { trackEvent } = useAnalytics();
-
-  const handleTrackSupportSubmit = useCallback(() => {
-    let event: ExolixSelectors;
-    switch (step) {
-      case 2:
-        event = ExolixSelectors.TopupSecondStepSupport;
-        break;
-      case 3:
-        event = ExolixSelectors.TopupThirdStepSupport;
-        break;
-      default:
-        event = ExolixSelectors.TopupFourthStepSubmit;
-        break;
-    }
-
-    return trackEvent(event, AnalyticsEventCategory.ButtonPress);
-  }, [step, trackEvent]);
+  const handleTrackSupportSubmit = useSupportTrack();
 
   useTopUpUpdate(setIsError);
 

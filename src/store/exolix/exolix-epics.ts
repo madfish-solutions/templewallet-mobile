@@ -4,12 +4,7 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import {
-  // loadExolixCurrencies$,
-  loadExolixCurrencies,
-  loadExolixExchangeData,
-  submitExolixExchange
-} from '../../utils/exolix.util';
+import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from '../../utils/exolix.util';
 import {
   loadExolixCurrenciesAction,
   loadExolixExchangeDataActions,
