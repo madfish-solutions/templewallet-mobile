@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { CryptoTopup } from './crypto-topup';
 import { Debit } from './debit';
 
 const TABS = [
   {
     id: 0,
-    name: 'Crypto'
+    name: 'Crypto',
+    component: <CryptoTopup />
   },
   {
     id: 1,
@@ -22,7 +23,7 @@ const TABS = [
 ];
 
 export const Buy = () => {
-  const [tab, setTab] = useState(TABS[1]);
+  const [tab, setTab] = useState(TABS[0]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
 
@@ -34,12 +35,6 @@ export const Buy = () => {
         <TextSegmentControl selectedIndex={tab.id} values={TABS.map(x => x.name)} onChange={handleTabChange} />
         {tab.component}
       </View>
-      {!tab.component && (
-        <DataPlaceholder
-          text={`Soon!
-We are working on that.`}
-        />
-      )}
       <Disclaimer
         title="Disclaimer"
         texts={[
