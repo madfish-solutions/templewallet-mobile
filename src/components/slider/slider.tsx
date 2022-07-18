@@ -1,6 +1,5 @@
 import RNSlider, { SliderProps } from '@react-native-community/slider';
-import { debounce } from 'lodash-es';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { greyLight200, orangeLight200 } from '../../config/styles';
@@ -10,8 +9,6 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSliderStyles } from './slider.styles';
 
-const CALCULATION_LATENCY = 200;
-
 type Props = Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'> &
   Required<Pick<SliderProps, 'value' | 'onValueChange'>>;
 
@@ -19,13 +16,12 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
   const colors = useColors();
   const styles = useSliderStyles();
 
-  const debouncedValueChange = debounce(onValueChange, CALCULATION_LATENCY);
-  const middleValue = (maximumValue + minimumValue) / 2;
+  const middleValue = useMemo(() => (maximumValue + minimumValue) / 2, [minimumValue, maximumValue]);
 
   return (
     <>
       <RNSlider
-        value={value}
+        value={minimumValue}
         style={styles.slider}
         step={step}
         minimumValue={minimumValue}
@@ -33,7 +29,7 @@ export const Slider: FC<Props> = ({ value, minimumValue = 0, maximumValue = 100,
         minimumTrackTintColor={orangeLight200}
         thumbTintColor={orangeLight200}
         maximumTrackTintColor={greyLight200}
-        onValueChange={debouncedValueChange}
+        onValueChange={onValueChange}
       />
       <View style={styles.bottomContainer}>
         <Icon size={formatSize(value < middleValue ? 32 : 24)} name={IconNameEnum.GLow} color={colors.gray1} />
