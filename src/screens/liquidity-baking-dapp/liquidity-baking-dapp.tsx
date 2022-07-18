@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
 
+import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
 import { ButtonLargeWhite } from '../../components/button/button-large/button-large-white/button-large-white';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
@@ -10,6 +11,7 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { useContractActivity } from '../../hooks/use-contract-activity';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -37,7 +39,10 @@ export const LiquidityBakingDapp = () => {
   const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
 
   const aTokenPool = lpContract.storage.xtzPool;
+
   const bTokenPool = lpContract.storage.tokenPool;
+
+  const { activities, handleUpdate } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
@@ -52,6 +57,8 @@ export const LiquidityBakingDapp = () => {
     return result.isNaN() ? new BigNumber(0) : result;
   }, [exchangeRates, aTokenPool, bTokenPool]);
 
+  const apy = useMemo(() => estimateLiquidityBakingAPY(aTokenPool)?.toFixed(2), [aTokenPool]);
+
   return (
     <>
       <HeaderCard>
@@ -65,6 +72,10 @@ export const LiquidityBakingDapp = () => {
           <View>
             <Text style={styles.priceTitle}>TVL</Text>
             <FormattedAmount style={styles.priceValue} amount={volumePrice} isDollarValue={true} />
+          </View>
+          <View>
+            <Text style={styles.priceTitle}>APY</Text>
+            <Text style={styles.priceValue}>{apy}%</Text>
           </View>
         </View>
         <Divider size={formatSize(8)} />
@@ -96,7 +107,22 @@ export const LiquidityBakingDapp = () => {
           </View>
         </ButtonsContainer>
       </HeaderCard>
+      <Text style={styles.sectionHeaderText}>My Recent Transactions</Text>
+      <ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />
       <ScreenContainer />
     </>
   );
+};
+
+const estimateLiquidityBakingAPY = (xtzPool: BigNumber) => {
+  let xtzPool_ = new BigNumber(0);
+  try {
+    xtzPool_ = new BigNumber(xtzPool);
+  } catch (err) {
+    return null;
+  }
+
+  const annualSubsidy = new BigNumber(2.5 * 2 * 60 * 24 * 365 * 1000000);
+
+  return xtzPool_.plus(annualSubsidy).div(xtzPool_).minus(1).div(2).times(100);
 };

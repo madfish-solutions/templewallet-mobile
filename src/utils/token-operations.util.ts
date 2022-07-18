@@ -1,8 +1,25 @@
 import { tzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
+import {
+  OperationFa12Interface,
+  OperationFa2Interface,
+  OperationInterface,
+  OperationLiquidityBakingInterface
+} from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
+
+export const getContractOperations = <T>(account: string, contractAddress: string, lastLevel: number | null) =>
+  tzktApi.get<Array<T>>(
+    `accounts/${contractAddress}/operations?type=transaction&limit=40&sort=1&quote=usd&initiator=${account}` +
+      (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
+  );
+
+export const getLiquidityBakingOperations = async (
+  account: string,
+  contractAddress: string,
+  lastLevel: number | null
+) => (await getContractOperations<OperationLiquidityBakingInterface>(account, contractAddress, lastLevel)).data;
 
 export const getTokenFa2Operations = async (
   account: string,
