@@ -20,7 +20,7 @@ const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getToke
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const windowWidth = useWindowDimensions().width;
-  const itemSize = (isTablet() ? windowWidth - 236 : windowWidth - 36) / ITEMS_PER_ROW;
+  const itemSize = (isTablet() ? windowWidth - 248 : windowWidth - 36) / ITEMS_PER_ROW;
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
