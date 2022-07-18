@@ -35,7 +35,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
       <View style={styles.bakerCard}>
         <View style={styles.upperContainer}>
           <View style={styles.bakerContainer}>
-            <AvatarImage uri={baker.logo} />
+            <AvatarImage size={formatSize(44)} uri={baker.logo} />
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText}>{baker.name}</Text>
