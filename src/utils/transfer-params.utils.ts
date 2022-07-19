@@ -24,21 +24,35 @@ export const getTransferParams$ = (
     ? from(createReadOnlyTezosToolkit(rpcUrl, sender).contract.at(address)).pipe(
         map(contract =>
           getTokenType(contract) === TokenTypeEnum.FA_2
-            ? contract.methods.transfer([
-                {
-                  from_: sender.publicKeyHash,
-                  txs: [
+            ? {
+                to: contract.address,
+                amount: 0,
+                parameter: {
+                  entrypoint: 'transfer',
+                  value: [
                     {
-                      to_: receiverPublicKeyHash,
-                      token_id: id,
-                      amount
+                      prim: 'Pair',
+                      args: [
+                        { string: sender.publicKeyHash },
+                        [
+                          {
+                            prim: 'Pair',
+                            args: [
+                              { string: receiverPublicKeyHash },
+                              {
+                                prim: 'Pair',
+                                args: [{ int: new BigNumber(id).toFixed() }, { int: amount.toFixed() }]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
                     }
                   ]
                 }
-              ])
-            : contract.methods.transfer(sender.publicKeyHash, receiverPublicKeyHash, amount)
-        ),
-        map(contractMethod => contractMethod.toTransferParams())
+              }
+            : contract.methods.transfer(sender.publicKeyHash, receiverPublicKeyHash, amount).toTransferParams()
+        )
       )
     : of({
         amount: amount.toNumber(),

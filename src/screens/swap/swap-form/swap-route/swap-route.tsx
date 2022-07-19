@@ -1,9 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 import { Trade } from 'swap-router-sdk';
 
 import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
 import { tokenEqualityFn } from '../../../../components/token-dropdown/token-equality-fn';
+import { CurrentRouteNameContext } from '../../../../navigator/current-route-name.context';
+import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
+import { useIsAuthorisedSelector } from '../../../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../../../toast/toast.utils';
 import { emptyTezosLikeToken } from '../../../../token/interfaces/token.interface';
 import { isDefined } from '../../../../utils/is-defined';
@@ -21,7 +24,10 @@ interface Props {
 const errorMessage = 'Pull to refresh or try again later';
 
 export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loadingHasFailed }) => {
-  if (loadingHasFailed) {
+  const currentRouteName = useContext(CurrentRouteNameContext);
+  const isAuthorised = useIsAuthorisedSelector();
+
+  if (loadingHasFailed && currentRouteName === ScreensEnum.SwapScreen && isAuthorised) {
     showErrorToast({ description: errorMessage });
 
     return <SwapRouteInfo text={`Exchange rate data loading has failed. \n${errorMessage}`} />;
