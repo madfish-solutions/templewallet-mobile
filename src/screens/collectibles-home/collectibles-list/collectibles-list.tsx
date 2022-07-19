@@ -20,13 +20,15 @@ const ITEMS_PER_ROW = 3;
 
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
-const TABBAR_MARGINS = 36;
-const SIDEBAR_MARGINS = 48;
+const TABBAR_MARGINS = 60;
+const SIDEBAR_MARGINS = 120;
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const windowWidth = useWindowDimensions().width;
   const itemSize =
-    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
+    (isTablet()
+      ? formatSize(windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS))
+      : formatSize(windowWidth - TABBAR_MARGINS)) / ITEMS_PER_ROW;
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
@@ -36,11 +38,7 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
     ({ item }) => (
       <View style={CollectiblesListStyles.rowContainer}>
         {item.map(collectible => (
-          <TouchableCollectibleIcon
-            key={getTokenSlug(collectible)}
-            collectible={collectible}
-            size={formatSize(itemSize)}
-          />
+          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemSize} />
         ))}
       </View>
     ),
