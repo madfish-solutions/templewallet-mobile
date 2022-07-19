@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import AlertShield from './assets/alert-shield.svg';
 import AlertIcon from './assets/alert.svg';
 import AppCheckAlertIcon from './assets/app-check-alert.svg';
@@ -23,6 +24,7 @@ import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
+import ExolixIcon from './assets/exolix.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
@@ -139,6 +141,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/
+  [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
@@ -169,6 +172,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Search]: SearchIcon,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
+  [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
   [IconNameEnum.Edit]: EditIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,

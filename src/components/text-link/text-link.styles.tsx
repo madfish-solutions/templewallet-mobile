@@ -5,5 +5,10 @@ export const useTextLinkStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption11Semibold,
     color: colors.blue,
     textDecorationLine: 'underline'
+  },
+  blackText: {
+    ...typography.caption11Semibold,
+    color: colors.black,
+    textDecorationLine: 'underline'
   }
 }));

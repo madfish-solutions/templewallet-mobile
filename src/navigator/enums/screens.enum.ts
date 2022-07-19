@@ -28,6 +28,7 @@ export enum ScreensEnum {
 
   /** Buy stack **/
   Buy = 'Buy',
+  Exolix = 'Exolix',
 
   /** Settings stack **/
   Settings = 'Settings',
@@ -68,6 +69,7 @@ export type ScreensParamList = {
 
   /** Buy stack **/
   [ScreensEnum.Buy]: undefined;
+  [ScreensEnum.Exolix]: undefined;
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
@@ -88,7 +90,9 @@ export const walletStackScreens = [
   ScreensEnum.Delegation,
   ScreensEnum.ManageAssets,
   ScreensEnum.Activity,
-  ScreensEnum.ScanQrCode
+  ScreensEnum.ScanQrCode,
+  ScreensEnum.Buy,
+  ScreensEnum.Exolix
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
 export const swapStackScreens = [
