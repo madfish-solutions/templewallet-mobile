@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { FieldMetaProps } from 'formik';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -30,13 +31,16 @@ const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }
   <ExolixTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
 );
 
-const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
+const AssetAmountInputComponent: FC<
+  ExolixAssetAmountInputProps & { meta: FieldMetaProps<ExolixAssetAmountInterface> }
+> = ({
   value,
   label,
   assetsList,
   isError = false,
   editable = true,
   selectionOptions = undefined,
+  meta,
   onBlur,
   onFocus,
   onValueChange
@@ -44,9 +48,15 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
   const styles = useExolixAssetAmountInputStyles();
   const colors = useColors();
 
+  const error: string | Record<string, string> = (meta.touched && meta.error) || {};
+  const errorStr = (typeof error === 'string' ? error : error[Object.keys(error)[0]]) || ' ';
+
+  const isMinError = errorStr === 'min';
+  const isMaxError = errorStr === 'max';
+
   const amountInputRef = useRef<TextInput>(null);
 
-  const amount = value?.amount ?? new BigNumber(0);
+  const amount = value?.amount;
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -138,10 +148,13 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
         <View style={styles.balanceContainer}>
           {isDefined(value.min) && (
             <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Min:'}</Text>
+              <Text style={[styles.balanceDescription, conditionalStyle(isMinError, styles.textError)]}>{'Min:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
-                <ExolixAssetValueText amount={new BigNumber(value.min)} style={styles.balanceValueText} />
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.min)}
+                  style={[styles.balanceValueText, conditionalStyle(isMinError, styles.textError)]}
+                />
               </HideBalance>
             </View>
           )}
@@ -149,10 +162,13 @@ const AssetAmountInputComponent: FC<ExolixAssetAmountInputProps> = ({
         <View style={styles.balanceContainer}>
           {isDefined(value.max) && (
             <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Max:'}</Text>
+              <Text style={[styles.balanceDescription, conditionalStyle(isMaxError, styles.textError)]}>{'Max:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
-                <ExolixAssetValueText amount={new BigNumber(value.max)} style={styles.balanceValueText} />
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.max)}
+                  style={[styles.balanceValueText, conditionalStyle(isMaxError, styles.textError)]}
+                />
               </HideBalance>
             </View>
           )}

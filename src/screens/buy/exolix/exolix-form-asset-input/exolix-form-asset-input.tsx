@@ -2,7 +2,6 @@ import { useField, useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 
 import { emptyFn, EventFn } from '../../../../config/general';
-import { ErrorMessage } from '../../../../form/error-message/error-message';
 import { hasError } from '../../../../utils/has-error';
 import { ExolixAssetAmountInput, ExolixAssetAmountInterface } from './exolix-asset-amount-input';
 import { ExolixFormAssetAmountInputProps } from './exolix-form-asset-input.props';
@@ -31,20 +30,18 @@ export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = (
   const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
 
   return (
-    <>
-      <ExolixAssetAmountInput
-        name={name}
-        value={field.value}
-        label={label}
-        assetsList={assetsList}
-        isError={isError}
-        isSearchable={isSearchable}
-        editable={editable}
-        setSearchValue={setSearchValue}
-        onBlur={handleBlur}
-        onValueChange={handleValueChange}
-      />
-      <ErrorMessage meta={meta} />
-    </>
+    <ExolixAssetAmountInput
+      name={name}
+      value={field.value}
+      label={label}
+      assetsList={assetsList}
+      isError={isError}
+      meta={meta}
+      isSearchable={isSearchable}
+      editable={editable}
+      setSearchValue={setSearchValue}
+      onBlur={handleBlur}
+      onValueChange={handleValueChange}
+    />
   );
 };
