@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
+import { OperationLiquidityBakingInterface } from '../interfaces/operation.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
 import { mapOperationLiquidityBakingToActivity } from '../utils/operation.utils';
-import { getLiquidityBakingOperations } from '../utils/token-operations.util';
+import { getContractOperations } from '../utils/token-operations.util';
 
 export const useContractActivity = (contractAddress: string): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
@@ -49,7 +50,11 @@ const loadContractActivity = async (
   contractAddress: string,
   lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
-  const operations = await getLiquidityBakingOperations(publicKeyHash, contractAddress, lastLevel);
+  const operations = await getContractOperations<OperationLiquidityBakingInterface>(
+    publicKeyHash,
+    contractAddress,
+    lastLevel
+  ).then(x => x.data);
 
   return mapOperationLiquidityBakingToActivity(publicKeyHash, operations);
 };

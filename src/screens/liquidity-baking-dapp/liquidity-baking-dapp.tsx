@@ -24,6 +24,7 @@ import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/dat
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
@@ -112,17 +113,4 @@ export const LiquidityBakingDapp = () => {
       <ScreenContainer />
     </>
   );
-};
-
-const estimateLiquidityBakingAPY = (xtzPool: BigNumber) => {
-  let xtzPool_ = new BigNumber(0);
-  try {
-    xtzPool_ = new BigNumber(xtzPool);
-  } catch (err) {
-    return null;
-  }
-
-  const annualSubsidy = new BigNumber(2.5 * 2 * 60 * 24 * 365 * 1000000);
-
-  return xtzPool_.plus(annualSubsidy).div(xtzPool_).minus(1).div(2).times(100);
 };
