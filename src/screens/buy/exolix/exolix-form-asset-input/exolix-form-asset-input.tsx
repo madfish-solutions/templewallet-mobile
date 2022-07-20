@@ -9,7 +9,7 @@ import { ExolixFormAssetAmountInputProps } from './exolix-form-asset-input.props
 export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = ({
   name,
   label,
-  assetsList,
+  assetsList = [],
   editable,
   isSearchable = false,
   setSearchValue = emptyFn,

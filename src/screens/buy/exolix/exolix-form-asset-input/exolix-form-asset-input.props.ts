@@ -8,7 +8,7 @@ export interface ExolixFormAssetAmountInputProps {
   name: string;
 
   label: string;
-  assetsList: CurrenciesInterface[];
+  assetsList?: CurrenciesInterface[];
   isError?: boolean;
   editable?: boolean;
   isSearchable?: boolean;
