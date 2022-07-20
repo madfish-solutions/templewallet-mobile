@@ -12,8 +12,8 @@ export interface ExolixTopupFormValues {
     min?: number;
     max?: number;
   };
-  rate?: number;
-  coinTo?: {
+  rate: number;
+  coinTo: {
     asset: CurrenciesInterface;
     amount?: BigNumber;
   };

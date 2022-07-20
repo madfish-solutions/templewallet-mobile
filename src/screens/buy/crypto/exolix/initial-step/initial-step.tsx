@@ -165,7 +165,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                 <Text style={styles.exchangeRateValue}>
                   {values.rate === 0
                     ? '---'
-                    : `1 ${values.coinFrom.asset.code} ≈ ${values.rate} ${values.coinTo?.asset.code}`}
+                    : `1 ${values.coinFrom.asset.code} ≈ ${values.rate} ${values.coinTo.asset.code}`}
                 </Text>
               </View>
             </View>
