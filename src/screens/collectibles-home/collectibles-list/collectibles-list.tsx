@@ -3,6 +3,8 @@ import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-nativ
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
+import { SIDEBAR_WIDTH } from '../../../config/styles';
+import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { sliceIntoChunks } from '../../../utils/array.utils';
@@ -18,9 +20,15 @@ const ITEMS_PER_ROW = 3;
 
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
+const TABBAR_MARGINS = 60;
+const SIDEBAR_MARGINS = 120;
+
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const windowWidth = useWindowDimensions().width;
-  const itemSize = (isTablet() ? windowWidth - 236 : windowWidth - 36) / ITEMS_PER_ROW;
+  const itemSize =
+    (isTablet()
+      ? formatSize(windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS))
+      : formatSize(windowWidth - TABBAR_MARGINS)) / ITEMS_PER_ROW;
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
