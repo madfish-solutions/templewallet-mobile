@@ -91,6 +91,7 @@ import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
+import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
@@ -142,6 +143,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
+  [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,

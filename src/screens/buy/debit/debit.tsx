@@ -8,9 +8,12 @@ import { useSignedMoonPayUrl } from '../../../hooks/use-signed-moonpay-url';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
+import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
+import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../../utils/linking.util';
 
 export const Debit = () => {
+  const { trackEvent } = useAnalytics();
   const { navigate } = useNavigation();
   const { signedMoonPayUrl, isMoonPayError, isMoonPayDisabled } = useSignedMoonPayUrl();
   const { minAliceBobExchangeAmount, maxAliceBobExchangeAmount, isAliceBobError, isAliceBobDisabled } =
@@ -22,16 +25,20 @@ export const Debit = () => {
       <TopUpOption
         title="Buy TEZ with MoonPay"
         iconName={IconNameEnum.MoonPay}
-        onPress={() => openUrl(signedMoonPayUrl)}
+        onPress={async () => {
+          await trackEvent('MOONPAY_TOPUP_OPTION_PRESS', AnalyticsEventCategory.ButtonPress);
+          await openUrl(signedMoonPayUrl);
+        }}
         disabled={isMoonPayDisabled}
         isError={isMoonPayError}
       />
       <TopUpOption
         title="Buy TEZ with Alice-Bob (UAH only)"
         iconName={IconNameEnum.AliceBob}
-        onPress={() =>
-          navigate(ScreensEnum.AliceBob, { min: minAliceBobExchangeAmount, max: maxAliceBobExchangeAmount })
-        }
+        onPress={async () => {
+          await trackEvent('ALICE_BOB_TOPUP_OPTION_PRESS', AnalyticsEventCategory.ButtonPress);
+          navigate(ScreensEnum.AliceBob, { min: minAliceBobExchangeAmount, max: maxAliceBobExchangeAmount });
+        }}
         disabled={isAliceBobDisabled}
         isError={isAliceBobError}
       />

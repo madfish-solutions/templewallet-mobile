@@ -3,10 +3,13 @@ import React, { FC, useCallback } from 'react';
 
 import { emptyFn, EventFn } from '../../../../config/general';
 import { hasError } from '../../../../utils/has-error';
-import { ExolixAssetAmountInput, ExolixAssetAmountInterface } from './exolix-asset-amount-input';
-import { ExolixFormAssetAmountInputProps } from './exolix-form-asset-input.props';
+import { TopUpAssetAmountInput } from '../top-up-asset-amount-input/top-up-asset-amount-input';
+import {
+  TopUpAssetAmountInterface,
+  TopUpFormAssetAmountInputProps
+} from '../top-up-asset-amount-input/top-up-asset-amount-input.props';
 
-export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = ({
+export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   name,
   label,
   assetsList = [],
@@ -16,10 +19,10 @@ export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = (
   onValueChange = emptyFn
 }) => {
   const formikContext = useFormikContext();
-  const [field, meta] = useField<ExolixAssetAmountInterface>(name);
+  const [field, meta] = useField<TopUpAssetAmountInterface>(name);
   const isError = hasError(meta);
 
-  const handleValueChange: EventFn<ExolixAssetAmountInterface, void> = useCallback(
+  const handleValueChange: EventFn<TopUpAssetAmountInterface, void> = useCallback(
     newValue => {
       onValueChange(newValue);
       formikContext.setFieldValue(name, newValue);
@@ -30,7 +33,7 @@ export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = (
   const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
 
   return (
-    <ExolixAssetAmountInput
+    <TopUpAssetAmountInput
       name={name}
       value={field.value}
       label={label}

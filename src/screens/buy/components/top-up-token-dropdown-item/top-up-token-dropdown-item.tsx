@@ -12,7 +12,7 @@ import { TOPUP_TOKENS } from '../../../../utils/exolix.util';
 import { isDefined } from '../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../utils/style.util';
 import { initialData } from '../../crypto/exolix/initial-step/initial-step.data';
-import { useTopUpTokenDropdownItemStyles } from './exolix-dropdown-item.styles';
+import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
 
 interface Props {
   token?: CurrenciesInterface;
@@ -26,6 +26,7 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
   const topupIcon = TOPUP_TOKENS.find(
     x => x.code === (isDefined(token) ? token.code : initialData.coinFrom.asset.code)
   );
+
   if (!isDefined(token)) {
     return (
       <View style={styles.container}>
@@ -51,7 +52,11 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
   return (
     <View style={styles.container}>
       {!isDefined(topupIcon) ? (
-        <Icon name={IconNameEnum.TezToken} size={iconSize} />
+        token.code === 'UAH' ? (
+          <Icon name={IconNameEnum.Uah} size={iconSize} />
+        ) : (
+          <Icon name={IconNameEnum.TezToken} size={iconSize} />
+        )
       ) : (
         <StaticTokenIcon source={topupIcon.icon} size={iconSize} />
       )}

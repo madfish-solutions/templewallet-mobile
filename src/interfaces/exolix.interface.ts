@@ -49,7 +49,7 @@ export interface ExchangePayload {
 }
 
 export interface CurrenciesInterface {
-  icon: string;
+  icon?: string;
   name: string;
   code: string;
 }

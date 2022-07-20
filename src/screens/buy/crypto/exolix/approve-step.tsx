@@ -4,28 +4,28 @@ import { View, Text } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
 
-import { ButtonMedium } from '../../../components/button/button-medium/button-medium';
-import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from '../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { BlackTextLink } from '../../../components/text-link/black-text-link';
-import { ExchangeDataStatusEnum } from '../../../interfaces/exolix.interface';
-import { restartExolixTopupAction, setExolixStepAction } from '../../../store/exolix/exolix-actions';
-import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from '../../../utils/clipboard.utils';
-import { truncateLongAddress } from '../../../utils/exolix.util';
-import { isDefined } from '../../../utils/is-defined';
-import { openUrl } from '../../../utils/linking.util';
+import { ButtonMedium } from '../../../../components/button/button-medium/button-medium';
+import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
+import { Divider } from '../../../../components/divider/divider';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../../components/screen-container/screen-container';
+import { BlackTextLink } from '../../../../components/text-link/black-text-link';
+import { ExchangeDataStatusEnum } from '../../../../interfaces/exolix.interface';
+import { restartExolixTopupAction, setExolixStepAction } from '../../../../store/exolix/exolix-actions';
+import { useExolixExchangeData, useExolixStep } from '../../../../store/exolix/exolix-selectors';
+import { formatSize } from '../../../../styles/format-size';
+import { useColors } from '../../../../styles/use-colors';
+import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
+import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from '../../../../utils/clipboard.utils';
+import { truncateLongAddress } from '../../../../utils/exolix.util';
+import { isDefined } from '../../../../utils/is-defined';
+import { openUrl } from '../../../../utils/linking.util';
+import { Countdown } from '../../components/countdown/countdown';
+import { TopUpTokenDropdownItem } from '../../components/top-up-token-dropdown-item/top-up-token-dropdown-item';
 import { EXOLIX_CONTACT_LINK } from './config';
-import { Countdown } from './countdown/countdown';
 import { ErrorComponent } from './error-component';
-import { ExolixTokenDropdownItem } from './exolix-token-dropdown-item/exolix-dropdown-item';
 import { ExolixSelectors } from './exolix.selectors';
 import { useExolixStyles } from './exolix.styles';
 import useTopUpUpdate from './use-topup-update.hook';
@@ -139,7 +139,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <View style={styles.rowCenterContainer}>
             <Text style={styles.depositText}>Deposit BTC address:</Text>
             <Divider size={formatSize(8)} />
-            <ExolixTokenDropdownItem
+            <TopUpTokenDropdownItem
               token={{
                 code: exchangeData.coinFrom.coinCode,
                 name: exchangeData.coinFrom.coinName,
