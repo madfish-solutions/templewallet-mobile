@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { templeWalletApi } from '../api.service';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { templeWalletApi } from '../../../api.service';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 
 const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
 const API_KEY = 'pk_live_PrSDks3YtrreqFifd0BsIji7xPXjSGx';

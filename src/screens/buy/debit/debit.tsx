@@ -2,15 +2,15 @@ import React from 'react';
 
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TopUpOption } from '../../../components/top-up-option/top-up-option';
-import { useAliceBobPairInfo } from '../../../hooks/use-alice-bob-pair-info';
-import { useSignedMoonPayUrl } from '../../../hooks/use-signed-moonpay-url';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../../utils/linking.util';
+import { TopUpOption } from '../components/top-up-option/top-up-option';
+import { useAliceBobPairInfo } from '../hooks/use-alice-bob-pair-info';
+import { useSignedMoonPayUrl } from '../hooks/use-signed-moonpay-url';
 
 export const Debit = () => {
   const { trackEvent } = useAnalytics();

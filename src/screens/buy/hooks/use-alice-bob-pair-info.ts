@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { templeWalletApi } from '../api.service';
+import { templeWalletApi } from '../../../api.service';
 
 export const useAliceBobPairInfo = () => {
   const [minAliceBobExchangeAmount, setMinAliceBobExchangeAmount] = useState(0);

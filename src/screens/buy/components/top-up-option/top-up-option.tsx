@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { showErrorToast } from '../../toast/toast.utils';
-import { isDefined } from '../../utils/is-defined';
-import { Divider } from '../divider/divider';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { WhiteContainer } from '../white-container/white-container';
+import { Divider } from '../../../../components/divider/divider';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { WhiteContainer } from '../../../../components/white-container/white-container';
+import { formatSize } from '../../../../styles/format-size';
+import { useColors } from '../../../../styles/use-colors';
+import { showErrorToast } from '../../../../toast/toast.utils';
+import { isDefined } from '../../../../utils/is-defined';
 import { useTopUpOptionStyles } from './top-up-option.styles';
 
 const TEMPORARILY_UNAVAILABLE_MESSAGE = 'Sorry, service is temporarily unavailable. Try again later!';
