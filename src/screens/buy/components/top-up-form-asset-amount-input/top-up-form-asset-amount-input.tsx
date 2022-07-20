@@ -2,28 +2,24 @@ import { useField, useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 
 import { emptyFn, EventFn } from '../../../../config/general';
-import { ErrorMessage } from '../../../../form/error-message/error-message';
 import { hasError } from '../../../../utils/has-error';
-import { TopUpAssetAmountInput } from '../top-up-asset-amount-input/top-up-asset-amount-input';
-import {
-  TopUpAssetAmountInterface,
-  TopUpFormAssetAmountInputProps
-} from '../top-up-asset-amount-input/top-up-asset-amount-input.props';
+import { ExolixAssetAmountInput, ExolixAssetAmountInterface } from './exolix-asset-amount-input';
+import { ExolixFormAssetAmountInputProps } from './exolix-form-asset-input.props';
 
-export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
+export const ExolixFormAssetAmountInput: FC<ExolixFormAssetAmountInputProps> = ({
   name,
   label,
-  assetsList,
+  assetsList = [],
   editable,
   isSearchable = false,
   setSearchValue = emptyFn,
   onValueChange = emptyFn
 }) => {
   const formikContext = useFormikContext();
-  const [field, meta] = useField<TopUpAssetAmountInterface>(name);
+  const [field, meta] = useField<ExolixAssetAmountInterface>(name);
   const isError = hasError(meta);
 
-  const handleValueChange: EventFn<TopUpAssetAmountInterface, void> = useCallback(
+  const handleValueChange: EventFn<ExolixAssetAmountInterface, void> = useCallback(
     newValue => {
       onValueChange(newValue);
       formikContext.setFieldValue(name, newValue);
@@ -34,20 +30,18 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
 
   return (
-    <>
-      <TopUpAssetAmountInput
-        name={name}
-        value={field.value}
-        label={label}
-        assetsList={assetsList}
-        isError={isError}
-        isSearchable={isSearchable}
-        editable={editable}
-        setSearchValue={setSearchValue}
-        onBlur={handleBlur}
-        onValueChange={handleValueChange}
-      />
-      <ErrorMessage meta={meta} />
-    </>
+    <ExolixAssetAmountInput
+      name={name}
+      value={field.value}
+      label={label}
+      assetsList={assetsList}
+      isError={isError}
+      meta={meta}
+      isSearchable={isSearchable}
+      editable={editable}
+      setSearchValue={setSearchValue}
+      onBlur={handleBlur}
+      onValueChange={handleValueChange}
+    />
   );
 };

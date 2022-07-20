@@ -35,6 +35,10 @@ export const useInitialStepStyles = createUseStyles(({ colors, typography }) => 
     ...typography.caption13Regular,
     color: colors.gray1
   },
+  exchangeRateValue: {
+    ...typography.numbersRegular13,
+    color: colors.black
+  },
   thirdParty: {
     ...typography.caption11Regular,
     textAlign: 'center',

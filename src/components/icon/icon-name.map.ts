@@ -18,6 +18,7 @@ import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CloudIcon from './assets/cloud.svg';
+import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
 import DAppsIcon from './assets/dapps.svg';
 import DealIcon from './assets/deal.svg';
@@ -56,6 +57,7 @@ import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
+import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
@@ -151,8 +153,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
   [IconNameEnum.Share]: ShareIcon,
   [IconNameEnum.Copy]: CopyIcon,
+  [IconNameEnum.CopyBold]: CopyBoldIcon,
   [IconNameEnum.Tag]: TagIcon,
   [IconNameEnum.QrScanner]: QrScannerIcon,
+  [IconNameEnum.QrScannerBold]: QrScannerBoldIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
   [IconNameEnum.Check]: CheckIcon,
   [IconNameEnum.Lock]: LockIcon,

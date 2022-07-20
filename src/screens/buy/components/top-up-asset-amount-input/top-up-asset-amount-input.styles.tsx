@@ -19,6 +19,9 @@ export const useTopUpAssetAmountInputStyles = createUseStyles(({ colors, typogra
   inputContainerError: {
     borderColor: colors.destructive
   },
+  textError: {
+    color: colors.destructive
+  },
   inputPadding: {
     width: formatSize(12)
   },

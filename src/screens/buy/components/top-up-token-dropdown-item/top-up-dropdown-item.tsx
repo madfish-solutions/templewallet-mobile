@@ -5,9 +5,10 @@ import { Divider } from '../../../../components/divider/divider';
 import { DropdownListItemComponent } from '../../../../components/dropdown/dropdown';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { TokenIcon } from '../../../../components/token-icon/token-icon';
+import { StaticTokenIcon } from '../../../../components/static-token-icon/static-token-icon';
 import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 import { formatSize } from '../../../../styles/format-size';
+import { TOPUP_TOKENS } from '../../../../utils/exolix.util';
 import { isDefined } from '../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../utils/style.util';
 import { initialData } from '../../crypto/exolix/initial-step/initial-step.data';
@@ -22,10 +23,13 @@ interface Props {
 export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconSize = formatSize(40) }) => {
   const styles = useTopUpTokenDropdownItemStyles();
 
+  const topupIcon = TOPUP_TOKENS.find(
+    x => x.code === (isDefined(token) ? token.code : initialData.coinFrom.asset.code)
+  );
   if (!isDefined(token)) {
     return (
       <View style={styles.container}>
-        <TokenIcon thumbnailUri={initialData.coinFrom.asset.icon} size={iconSize} />
+        <Icon name={IconNameEnum.TezToken} size={iconSize} />
         <Divider size={formatSize(8)} />
 
         <View style={styles.infoContainer}>
@@ -46,7 +50,11 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
 
   return (
     <View style={styles.container}>
-      <TokenIcon thumbnailUri={token.icon} size={iconSize} />
+      {!isDefined(topupIcon) ? (
+        <Icon name={IconNameEnum.TezToken} size={iconSize} />
+      ) : (
+        <StaticTokenIcon source={topupIcon.icon} size={iconSize} />
+      )}
       <Divider size={formatSize(8)} />
 
       <View style={styles.infoContainer}>

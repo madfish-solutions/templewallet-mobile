@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { FieldMetaProps } from 'formik';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -13,33 +14,49 @@ import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
-import { initialData } from '../../crypto/exolix/initial-step/initial-step.data';
-import { TopUpTokenDropdownItem, renderTopUpTokenListItem } from '../top-up-token-dropdown-item/top-up-dropdown-item';
-import { TopUpAssetAmountInputProps } from './top-up-asset-amount-input.props';
-import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styles';
-import { TopUpAssetValueText } from './top-up-asset-value-text';
+import { ExolixTokenDropdownItem, renderExolixTokenListItem } from '../exolix-token-dropdown-item/exolix-dropdown-item';
+import { initialData } from '../initial-step/initial-step.data';
+import { useExolixAssetAmountInputStyles } from './exolix-asset-amount-input.styles';
+import { ExolixAssetValueText } from './exolix-asset-value-text';
+import { ExolixAssetAmountInputProps } from './exolix-form-asset-input.props';
+
+export interface ExolixAssetAmountInterface {
+  asset: CurrenciesInterface;
+  amount?: BigNumber;
+  min?: number;
+  max?: number;
+}
 
 const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }) => (
-  <TopUpTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
+  <ExolixTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
 );
 
-const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps> = ({
+const AssetAmountInputComponent: FC<
+  ExolixAssetAmountInputProps & { meta: FieldMetaProps<ExolixAssetAmountInterface> }
+> = ({
   value,
   label,
-  assetsList = [],
+  assetsList,
   isError = false,
   editable = true,
   selectionOptions = undefined,
+  meta,
   onBlur,
   onFocus,
   onValueChange
 }) => {
-  const styles = useTopUpAssetAmountInputStyles();
+  const styles = useExolixAssetAmountInputStyles();
   const colors = useColors();
+
+  const error: string | Record<string, string> = (meta.touched && meta.error) || {};
+  const errorStr = (typeof error === 'string' ? error : error[Object.keys(error)[0]]) || ' ';
+
+  const isMinError = errorStr === 'min';
+  const isMaxError = errorStr === 'max';
 
   const amountInputRef = useRef<TextInput>(null);
 
-  const amount = value?.amount ?? new BigNumber(0);
+  const amount = value?.amount;
 
   const inputValueRef = useRef<BigNumber>();
 
@@ -116,12 +133,12 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps> = ({
               list={assetsList}
               equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
               renderValue={renderTokenValue}
-              renderListItem={renderTopUpTokenListItem}
+              renderListItem={renderExolixTokenListItem}
               keyExtractor={(token: CurrenciesInterface) => token.code}
               onValueChange={handleTokenChange}
             />
           ) : (
-            <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} />
+            <ExolixTokenDropdownItem token={value.asset} iconSize={formatSize(32)} />
           )}
         </View>
       </View>
@@ -131,10 +148,13 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps> = ({
         <View style={styles.balanceContainer}>
           {isDefined(value.min) && (
             <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Min:'}</Text>
+              <Text style={[styles.balanceDescription, conditionalStyle(isMinError, styles.textError)]}>{'Min:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
-                <TopUpAssetValueText amount={new BigNumber(value.min)} style={styles.balanceValueText} />
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.min)}
+                  style={[styles.balanceValueText, conditionalStyle(isMinError, styles.textError)]}
+                />
               </HideBalance>
             </View>
           )}
@@ -142,10 +162,13 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps> = ({
         <View style={styles.balanceContainer}>
           {isDefined(value.max) && (
             <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{'Max:'}</Text>
+              <Text style={[styles.balanceDescription, conditionalStyle(isMaxError, styles.textError)]}>{'Max:'}</Text>
               <Divider size={formatSize(4)} />
               <HideBalance style={styles.balanceValueText}>
-                <TopUpAssetValueText amount={new BigNumber(value.max)} style={styles.balanceValueText} />
+                <ExolixAssetValueText
+                  amount={new BigNumber(value.max)}
+                  style={[styles.balanceValueText, conditionalStyle(isMaxError, styles.textError)]}
+                />
               </HideBalance>
             </View>
           )}
@@ -155,4 +178,4 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps> = ({
   );
 };
 
-export const TopUpAssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;
+export const ExolixAssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;
