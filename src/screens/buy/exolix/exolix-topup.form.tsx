@@ -35,10 +35,10 @@ export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = 
         name: 'is-greater-than',
         exclusive: false,
         params: {},
-        message: 'Should be greater than Min amount',
+        message: 'min',
         test: function (value: unknown) {
           if (value instanceof BigNumber) {
-            return value.gt(this.parent.min);
+            return value.gte(this.parent.min);
           }
 
           return false;
@@ -48,7 +48,7 @@ export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = 
         name: 'is-lesser-than',
         exclusive: false,
         params: {},
-        message: 'Should be lesser than Max amount',
+        message: 'max',
         test: function (value: unknown) {
           if (value instanceof BigNumber) {
             return value.lt(this.parent.max);

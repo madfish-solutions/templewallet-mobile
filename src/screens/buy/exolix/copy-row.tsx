@@ -3,10 +3,7 @@ import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { truncateLongAddress } from '../../../utils/exolix.util';
 import { isDefined } from '../../../utils/is-defined';
@@ -19,7 +16,6 @@ interface CopyRowProps {
 
 export const CopyRow: FC<CopyRowProps> = ({ title = 'Transaction ID:', data }) => {
   const styles = useExolixStyles();
-  const colors = useColors();
 
   const handleCopyDataPress = () => isDefined(data) && copyStringToClipboard(data);
 
@@ -34,10 +30,6 @@ export const CopyRow: FC<CopyRowProps> = ({ title = 'Transaction ID:', data }) =
         <View style={styles.rowContainer}>
           <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyDataPress}>
             <Text style={styles.publicKeyHash}>{truncateLongAddress(data)}</Text>
-          </TouchableOpacity>
-          <Divider size={formatSize(4)} />
-          <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyDataPress}>
-            <Icon name={IconNameEnum.Copy} width={formatSize(24)} color={colors.blue} />
           </TouchableOpacity>
         </View>
       </View>

@@ -8,9 +8,9 @@ import { ButtonMedium } from '../../../components/button/button-medium/button-me
 import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Disclaimer } from '../../../components/disclaimer/disclaimer';
 import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { BlackTextLink } from '../../../components/text-link/black-text-link';
 import { ExchangeDataStatusEnum } from '../../../interfaces/exolix.interface';
 import { restartExolixTopupAction, setExolixStepAction } from '../../../store/exolix/exolix-actions';
 import { useExolixExchangeData, useExolixStep } from '../../../store/exolix/exolix-selectors';
@@ -91,26 +91,36 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
               'Otherwise the transaction will fail and you will',
               'have to contact Support'
             ]}
-          />
+          >
+            <View>
+              <Text style={styles.disclaimerText}>You need to send the exact amount of</Text>
+              <Text style={styles.disclaimerText}>cryptocurrency to the deposit address.</Text>
+              <Text style={styles.disclaimerText}>Otherwise the transaction will fail and you will</Text>
+              <View style={styles.disclaimerRow}>
+                <Text style={styles.disclaimerText}>have to contact </Text>
+                <BlackTextLink url={EXOLIX_CONTACT_LINK}>Support</BlackTextLink>
+              </View>
+            </View>
+          </Disclaimer>
           <Divider size={formatSize(16)} />
           <View>
             <View style={styles.footerContainer}>
               <Text style={styles.infoText}>Send by one transaction</Text>
-              <Text>
+              <Text style={styles.textValue}>
                 {exchangeData.amount} {exchangeData.coinFrom.coinCode}
               </Text>
             </View>
             <Divider size={formatSize(8)} />
             <View style={styles.footerContainer}>
               <Text style={styles.infoText}>You get</Text>
-              <Text>
+              <Text style={styles.textValue}>
                 {exchangeData.amountTo} {exchangeData.coinTo.coinCode}
               </Text>
             </View>
             <Divider size={formatSize(8)} />
             <View style={styles.footerContainer}>
               <Text style={styles.infoText}>Fixed rate</Text>
-              <Text>
+              <Text style={styles.textValue}>
                 1 {exchangeData.coinFrom.coinCode} ≈ {exchangeData.rate} {exchangeData.coinTo.coinCode}
               </Text>
             </View>
@@ -120,10 +130,6 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
               <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyTransactionPress}>
                   <Text style={styles.publicKeyHash}>{exchangeData.id}</Text>
-                </TouchableOpacity>
-                <Divider size={formatSize(4)} />
-                <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyTransactionPress}>
-                  <Icon name={IconNameEnum.Copy} width={formatSize(24)} color={colors.blue} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -149,11 +155,11 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <Divider size={formatSize(8)} />
           <View style={styles.rowCenterContainer}>
             <View style={styles.buttonsContainer}>
-              <ButtonMedium title="COPY" iconName={IconNameEnum.Copy} onPress={handleCopyAddressPress} />
+              <ButtonMedium title="COPY" iconName={IconNameEnum.CopyBold} onPress={handleCopyAddressPress} />
             </View>
             <Divider size={formatSize(8)} />
             <View style={styles.buttonsContainer}>
-              <ButtonMedium title="QR CODE" iconName={IconNameEnum.QrScanner} onPress={() => setShowQr(!showQr)} />
+              <ButtonMedium title="QR CODE" iconName={IconNameEnum.QrScannerBold} onPress={() => setShowQr(!showQr)} />
             </View>
           </View>
           <Divider size={formatSize(16)} />
@@ -174,7 +180,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <ButtonsFloatingContainer />
           <Divider size={formatSize(8)} />
           <View style={styles.footerContainer}>
-            <Text>Recepient address</Text>
+            <Text style={styles.infoText}>Recepient address</Text>
             <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyTransactionPress}>
               <Text style={styles.publicKeyHash}>{truncateLongAddress(exchangeData.withdrawalAddress)}</Text>
             </TouchableOpacity>
