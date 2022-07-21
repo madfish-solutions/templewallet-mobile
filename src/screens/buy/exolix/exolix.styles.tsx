@@ -11,6 +11,14 @@ export const useExolixStyles = createUseStyles(({ colors, typography }) => ({
     justifyContent: 'center',
     alignContent: 'center'
   },
+  disclaimerText: {
+    ...typography.caption13Regular,
+    color: colors.black
+  },
+  disclaimerRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   headerText: {
     ...typography.caption13Regular,
     textAlign: 'center',
@@ -69,6 +77,10 @@ export const useExolixStyles = createUseStyles(({ colors, typography }) => ({
   infoText: {
     ...typography.caption13Regular,
     color: colors.gray1
+  },
+  textValue: {
+    ...typography.numbersRegular13,
+    color: colors.black
   },
   depositText: {
     ...typography.body15Semibold,

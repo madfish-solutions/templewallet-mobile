@@ -12,6 +12,7 @@ import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../components/text-link/black-text-link';
+import { emptyFn } from '../../../../config/general';
 import { RateInterface } from '../../../../interfaces/exolix.interface';
 import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from '../../../../store/exolix/exolix-actions';
@@ -32,6 +33,45 @@ interface InitialStepProps {
   isError: boolean;
   setIsError: (b: boolean) => void;
 }
+
+const getTranslationTexts = (currency: string) => {
+  if (currency === 'DOGE') {
+    return [
+      'for DOGE: transfer network - MainNet DOGE.',
+      'Please, deposit only DOGE (MainNet).',
+      'Otherwise, you may lose your assets',
+      'permanently.'
+    ];
+  }
+  if (currency === 'MATIC') {
+    return [
+      'for MATIC: transfer network - Ethereum (ETH).',
+      'Please, deposit only MATIC (ERC20).',
+      'Otherwise, you may lose your assets',
+      'permanently.'
+    ];
+  }
+  if (currency === 'USDT') {
+    return [
+      'for USDT: transfer network - Ethereum (ETH)',
+      'ERC20.',
+      'Please, deposit only USDT (ERC20).',
+      'Otherwise, you may lose your assets',
+      'permanently.'
+    ];
+  }
+  if (currency === 'CAKE') {
+    return [
+      'for CAKE: transfer network - Binance Smart',
+      'Chain (BSC).',
+      'Please, deposit only CAKE (BEP20).',
+      'Otherwise, you may lose your assets',
+      'permanently.'
+    ];
+  }
+
+  return undefined;
+};
 
 export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
@@ -87,21 +127,16 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     });
   };
 
+  const currency = values.coinFrom.asset.code;
+  const disclaimerTexts = getTranslationTexts(currency);
+
   return (
     <>
       {!isError ? (
         <>
           <ScreenContainer isFullScreenMode>
             <View>
-              <Disclaimer
-                title="Note"
-                texts={[
-                  'For DOGE: transfer network - MainNet DOGE.',
-                  'Please, deposit only DOGE (MainNet).',
-                  'Otherwise, you may lose your assets',
-                  'permanently.'
-                ]}
-              />
+              {isDefined(disclaimerTexts) && <Disclaimer title="Note" texts={disclaimerTexts} />}
               <Divider size={formatSize(28)} />
               <FormikProvider value={formik}>
                 <ExolixFormAssetAmountInput
@@ -121,13 +156,13 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   name="coinTo"
                   label="Get"
                   editable={false}
-                  assetsList={filteredCurrenciesList}
-                  setSearchValue={setSearchValue}
+                  assetsList={[]}
+                  setSearchValue={emptyFn}
                 />
               </FormikProvider>
               <View style={styles.exchangeContainer}>
                 <Text style={styles.exchangeRate}>Exchange Rate</Text>
-                <Text>
+                <Text style={styles.exchangeRateValue}>
                   {values.rate === 0
                     ? '---'
                     : `1 ${values.coinFrom.asset.code} ≈ ${values.rate} ${values.coinTo.asset.code}`}

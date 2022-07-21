@@ -73,14 +73,14 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                   <CopyRow title="Transaction ID" data={exchangeData.id} />
                   <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>You send</Text>
-                    <Text>
+                    <Text style={styles.textValue}>
                       {exchangeData.amount} {exchangeData.coinFrom.coinCode}
                     </Text>
                   </View>
                   <Divider size={formatSize(8)} />
                   <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>You receive</Text>
-                    <Text>
+                    <Text style={styles.textValue}>
                       {exchangeData.amountTo} {exchangeData.coinTo.coinCode}
                     </Text>
                   </View>
@@ -96,7 +96,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                   <CopyRow title="Transaction ID" data={exchangeData.id} />
                   <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>Sent time</Text>
-                    <Text>
+                    <Text style={styles.textValue}>
                       {new Date(exchangeData.createdAt).toLocaleString('en-GB', {
                         day: 'numeric',
                         month: 'long',
@@ -108,7 +108,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                   </View>
                   <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>You send</Text>
-                    <Text>
+                    <Text style={styles.textValue}>
                       {exchangeData.amount} {exchangeData.coinFrom.coinCode}
                     </Text>
                   </View>
@@ -120,7 +120,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
                   />
                   <View style={styles.footerContainer}>
                     <Text style={styles.infoText}>You receive</Text>
-                    <Text>
+                    <Text style={styles.textValue}>
                       {exchangeData.amountTo} {exchangeData.coinTo.coinCode}
                     </Text>
                   </View>
@@ -155,7 +155,7 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
           )}
         </>
       ) : !isDefined(exchangeData) ? (
-        <Text>Loading</Text>
+        <Text style={styles.textValue}>Loading</Text>
       ) : (
         <ErrorComponent setIsError={setIsError} />
       )}
