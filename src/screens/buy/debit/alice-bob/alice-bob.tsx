@@ -21,6 +21,7 @@ import { openUrl } from '../../../../utils/linking.util';
 import { TopUpFormAssetAmountInput } from '../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
 import { AliceBobTopupFormValidationSchema, AliceBobTopupFormValues } from './alice-bob-topup.form';
 import { useAliceBobStyles } from './alice-bob.styles';
+import { ALICE_BOB_PRIVACY_LINK, ALICE_BOB_TERMS_OF_USE_LINK } from './config';
 
 export const AliceBob: FC = () => {
   const { min, max } = useRoute<RouteProp<ScreensParamList, ScreensEnum.AliceBob>>().params;
@@ -36,7 +37,7 @@ export const AliceBob: FC = () => {
       if (isDefined(exchangeInfo.amount)) {
         try {
           setIsLoading(true);
-          await trackEvent('ALICE_BOB_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+          trackEvent('ALICE_BOB_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
             amount: exchangeInfo.amount.toString()
           });
 
@@ -85,15 +86,11 @@ export const AliceBob: FC = () => {
           <View>
             <Text style={styles.termsOfUse}>By clicking Exchange you agree with</Text>
             <View style={styles.row}>
-              <BlackTextLink url="https://oval-rhodium-33f.notion.site/End-User-License-Agreement-Abex-Eng-6124123e256d456a83cffc3b2977c4dc">
-                Terms of Use
-              </BlackTextLink>
+              <BlackTextLink url={ALICE_BOB_TERMS_OF_USE_LINK}>Terms of Use</BlackTextLink>
               <Divider size={formatSize(4)} />
               <Text style={styles.termsOfUse}>and</Text>
               <Divider size={formatSize(4)} />
-              <BlackTextLink url="https://oval-rhodium-33f.notion.site/Privacy-Policy-Abex-Eng-d70fa7cc134341a3ac4fd04816358b9e">
-                Privacy Policy
-              </BlackTextLink>
+              <BlackTextLink url={ALICE_BOB_PRIVACY_LINK}>Privacy Policy</BlackTextLink>
             </View>
           </View>
           <Divider size={formatSize(16)} />
