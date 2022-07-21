@@ -26,7 +26,7 @@ import { ALICE_BOB_PRIVACY_LINK, ALICE_BOB_TERMS_OF_USE_LINK } from './config';
 export const AliceBob: FC = () => {
   const { min, max } = useRoute<RouteProp<ScreensParamList, ScreensEnum.AliceBob>>().params;
   const { trackEvent } = useAnalytics();
-  const selectedAccount = useSelectedAccountSelector();
+  const { publicKeyHash } = useSelectedAccountSelector();
   const userId = useUserIdSelector();
   const styles = useAliceBobStyles();
 
@@ -44,7 +44,7 @@ export const AliceBob: FC = () => {
           const result = await templeWalletApi.get<{ url: string }>('/alice-bob-sign', {
             params: {
               amount: exchangeInfo.amount.toString(),
-              walletAddress: selectedAccount.publicKeyHash,
+              walletAddress: publicKeyHash,
               userId
             }
           });
@@ -54,7 +54,7 @@ export const AliceBob: FC = () => {
         } catch {}
       }
     },
-    [userId, selectedAccount.publicKeyHash]
+    [userId, publicKeyHash]
   );
 
   const formik = useFormik<AliceBobTopupFormValues>({
