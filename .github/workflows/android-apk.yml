@@ -7,7 +7,7 @@ on:
       - development
 
 jobs:
-  build-android:
+  android-apk:
     name: Create new Android apk build and upload it
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-       name: Write secrets to google-services.json
+      - name: Write secrets to google-services.json
         run: |
           cat << EOF > ./android/app/google-services.json
           ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
@@ -64,7 +64,7 @@ jobs:
           export LC_ALL=en_US.UTF-8
           export LANG=en_US.UTF-8
           cd android && ./decrypt_script.sh
-          yarn android:release
+          yarn android:release:apk
         env:
           BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
