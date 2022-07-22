@@ -1,10 +1,9 @@
 name: Android Apk
 
 on:
-  pull_request:
-    branches:
-      - master
-      - development
+  push:
+    tags:
+      - '*'
 
 jobs:
   android-apk:
@@ -22,12 +21,6 @@ jobs:
       - name: Prepare changelog
         id: changelog
         run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
-
-      - name: Install SSH key to get acces to repository with Certificates and Provisioning profiles
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
