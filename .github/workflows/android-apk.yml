@@ -8,8 +8,9 @@ on:
 
 jobs:
   build-android:
+    name: Create new Android apk build and upload it
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Clone repository
         uses: actions/checkout@v2
 
