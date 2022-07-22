@@ -6,4 +6,4 @@ export const tezosDomainsResolver = (tezos: TezosToolkit) =>
   new TaquitoTezosDomainsClient({ network: 'mainnet', tezos }).resolver;
 
 export const isTezosDomainNameValid = (domain: string) =>
-  new TezosDomainsValidator().validateDomainName(domain) === DomainNameValidationResult.VALID;
+  new TezosDomainsValidator().validateDomainName(domain, { minLevel: 2 }) === DomainNameValidationResult.VALID;
