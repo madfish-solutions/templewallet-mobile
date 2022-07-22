@@ -18,6 +18,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
+      
+      - name: Prepare changelog
+        id: changelog
+        run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
+
+      - name: Install SSH key to get acces to repository with Certificates and Provisioning profiles
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -56,9 +66,6 @@ jobs:
           TEMPLE_WALLET_EXOLIX_API_KEY=${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
           EOF
 
-      - name: Install Android Gemfile dependencies
-        run: cd android && bundle install
-
       - name: Build Android Apk
         run: |
           export LC_ALL=en_US.UTF-8
@@ -71,9 +78,11 @@ jobs:
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
 
