@@ -6,8 +6,8 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { CryptoTopup } from './crypto-topup';
-import { Debit } from './debit';
+import { CryptoTopup } from './crypto/crypto-topup';
+import { Debit } from './debit/debit';
 
 const TABS = [
   {

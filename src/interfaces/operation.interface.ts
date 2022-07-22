@@ -32,7 +32,7 @@ interface Fa2OpParams {
   from_: 'tz1h85hgb9hk4MmLuouLcWWna4wBLtqCq4Ta';
 }
 
-export type ParamterFa12 = {
+export type ParameterFa12 = {
   entrypoint: string;
   value: {
     to: string;
@@ -41,15 +41,20 @@ export type ParamterFa12 = {
   };
 };
 
-export interface OperationFa12Interface extends OperationInterface {
-  parameter: {
-    entrypoint: string;
-    value: {
-      to: string;
-      from: string;
-      value: string;
-    };
+export type ParameterLiquidityBaking = {
+  entrypoint: string;
+  value: {
+    target: string;
+    quantity: string; // can be 'number' or '-number
   };
+};
+
+export interface OperationFa12Interface extends OperationInterface {
+  parameter: ParameterFa12;
+}
+
+export interface OperationLiquidityBakingInterface extends OperationInterface {
+  parameter: ParameterLiquidityBaking | ParameterFa12;
 }
 
 export type ParamterFa2 = {

@@ -29,6 +29,7 @@ export enum ScreensEnum {
   /** Buy stack **/
   Buy = 'Buy',
   Exolix = 'Exolix',
+  AliceBob = 'AliceBob',
 
   /** Settings stack **/
   Settings = 'Settings',
@@ -70,6 +71,7 @@ export type ScreensParamList = {
   /** Buy stack **/
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.AliceBob]: { min: number; max: number };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

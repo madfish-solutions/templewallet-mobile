@@ -18,7 +18,8 @@ import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
-import { Exolix } from '../screens/buy/exolix/exolix';
+import { Exolix } from '../screens/buy/crypto/exolix/exolix';
+import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
@@ -168,6 +169,12 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
+                options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.AliceBob}
+                component={AliceBob}
                 options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
               />
 
