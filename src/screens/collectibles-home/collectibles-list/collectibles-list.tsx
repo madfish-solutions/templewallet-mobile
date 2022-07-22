@@ -20,7 +20,7 @@ const ITEMS_PER_ROW = 3;
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
 const TABBAR_MARGINS = 32;
-const SIDEBAR_MARGINS = 48;
+const SIDEBAR_MARGINS = 51;
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const windowWidth = useWindowDimensions().width;
