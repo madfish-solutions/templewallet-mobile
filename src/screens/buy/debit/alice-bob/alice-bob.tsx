@@ -1,5 +1,4 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -64,7 +63,7 @@ export const AliceBob: FC = () => {
           code: 'UAH',
           name: 'Hryvnia'
         },
-        amount: new BigNumber(0),
+        amount: undefined,
         min,
         max
       }
