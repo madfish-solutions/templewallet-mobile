@@ -35,15 +35,17 @@ export const TopUpOption: FC<Props> = ({ title, iconName, disabled, isError, onP
 
   return (
     <>
-      <WhiteContainer>
-        <View style={styles.providerLogo}>
-          <Icon name={iconName} width={formatSize(160)} height={formatSize(40)} color={colors.black} />
-        </View>
-        <View style={styles.divider} />
-        <TouchableOpacity style={styles.textContainer} onPress={handlePress}>
-          <Text style={[styles.actionsContainer, isDefined(disabled) && disabled && styles.disabled]}>{title}</Text>
-        </TouchableOpacity>
-      </WhiteContainer>
+      <TouchableOpacity onPress={handlePress}>
+        <WhiteContainer>
+          <View style={styles.providerLogo}>
+            <Icon name={iconName} width={formatSize(160)} height={formatSize(40)} color={colors.black} />
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.textContainer}>
+            <Text style={[styles.actionsContainer, isDefined(disabled) && disabled && styles.disabled]}>{title}</Text>
+          </View>
+        </WhiteContainer>
+      </TouchableOpacity>
       <Divider size={formatSize(16)} />
     </>
   );
