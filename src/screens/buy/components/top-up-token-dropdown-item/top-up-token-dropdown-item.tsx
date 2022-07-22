@@ -26,10 +26,6 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
   const topupIcon = TOPUP_TOKENS.find(
     x => x.code === (isDefined(token) ? token.code : initialData.coinFrom.asset.code)
   );
-
-  const topupIcon = TOPUP_TOKENS.find(
-    x => x.code === (isDefined(token) ? token.code : initialData.coinFrom.asset.code)
-  );
   if (!isDefined(token)) {
     return (
       <View style={styles.container}>

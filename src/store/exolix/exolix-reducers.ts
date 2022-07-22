@@ -9,7 +9,10 @@ import {
 import { exolixInitialState, ExolixState } from './exolix-state';
 
 export const exolixReducers = createReducer<ExolixState>(exolixInitialState, builder => {
-  builder.addCase(restartExolixTopupAction, () => exolixInitialState);
+  builder.addCase(restartExolixTopupAction, ({ currencies }) => ({
+    ...exolixInitialState,
+    currencies
+  }));
 
   builder.addCase(setExolixStepAction, (state, { payload: step }) => ({
     ...state,
