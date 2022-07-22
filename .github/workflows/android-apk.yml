@@ -32,9 +32,44 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-      - name: Build Android Release
+
+       name: Write secrets to google-services.json
         run: |
-          yarn android:release:apk
+          cat << EOF > ./android/app/google-services.json
+          ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
+          EOF
+
+      - name: Write secrets to GoogleService-Info.plist
+        run: |
+          cat << EOF > ./ios/GoogleService-Info.plist
+          ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
+          EOF
+
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          READ_ONLY_SIGNER_PUBLIC_KEY=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
+          READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+          TEMPLE_WALLET_API=${{ secrets.TEMPLE_WALLET_API }}
+          SEGMENT_ANALYTICS_KEY=${{ secrets.SEGMENT_ANALYTICS_KEY }}
+          TEMPLE_WALLET_EXOLIX_API_KEY=${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
+          EOF
+
+      - name: Install Android Gemfile dependencies
+        run: cd android && bundle install
+
+      - name: Build Android Apk
+        run: |
+          export LC_ALL=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          cd android && ./decrypt_script.sh
+          yarn android:release
+        env:
+          BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
