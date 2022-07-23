@@ -13,3 +13,5 @@ export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
 };
 
 export const useBakersListSelector = () => useBakingSelector().bakersList.data;
+
+export const useBakerRewardsListSelector = () => useBakingSelector().bakerRewardsList.data;
