@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from '../../../../styles/create-use-styles';
+import { formatSize } from '../../../../styles/format-size';
 
-export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
+export const useTopUpOptionStyles = createUseStyles(({ colors, typography }) => ({
   textContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -21,11 +21,8 @@ export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.orange,
     justifyContent: 'center'
   },
-  logoutButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: formatSize(8)
+  disabled: {
+    color: colors.gray1
   },
   providerLogo: {
     justifyContent: 'center',
