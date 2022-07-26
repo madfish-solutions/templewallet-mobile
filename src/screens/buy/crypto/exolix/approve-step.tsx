@@ -34,6 +34,8 @@ interface ApproveStepProps {
   setIsError: (b: boolean) => void;
 }
 
+const FORTY_FIVE_MINUTES_IN_MS = 45 * 60 * 1000;
+
 export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
   const styles = useExolixStyles();
   const step = useExolixStep();
@@ -79,7 +81,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           </View>
           <Divider size={formatSize(16)} />
           <View>
-            <Countdown endTimestamp={new Date(exchangeData.createdAt).getTime() + 2700000} />
+            <Countdown endTimestamp={new Date(exchangeData.createdAt).getTime() + FORTY_FIVE_MINUTES_IN_MS} />
           </View>
           <Divider size={formatSize(16)} />
           <Disclaimer
