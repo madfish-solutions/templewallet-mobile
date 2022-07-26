@@ -46,6 +46,11 @@ jobs:
           TEMPLE_WALLET_EXOLIX_API_KEY=${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
           EOF
 
+      - name: Update gradle.properties
+        run: |
+          cd android && sed 's/^MYAPP_UPLOAD_KEY_PASSWORD=*/MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.KEYSTORE_KEY }}/g'
+          cd android && sed 's/^MYAPP_UPLOAD_STORE_PASSWORD=*/MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.KEYSTORE_KEY }}/g'
+
       - name: Build Android Apk
         run: |
           cd android && ./decrypt_script.sh
