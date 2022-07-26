@@ -10,6 +10,7 @@ jobs:
   android-apk:
     name: Create new Android apk build and upload it
     runs-on: ubuntu-latest
+    environment: fastlane
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
@@ -47,7 +48,11 @@ jobs:
 
       - name: Build Android Apk
         run: |
+          cd android && ./decrypt_script.sh
           yarn android:release:apk
+        env:
+          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
 
       - name: Release
         uses: marvinpinto/action-automatic-releases@latest
