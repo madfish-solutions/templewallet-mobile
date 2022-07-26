@@ -40,23 +40,5 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   cellValueText: {
     ...typography.numbersRegular15,
     color: colors.black
-  },
-
-  rewardsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: formatSize(12),
-    paddingHorizontal: formatSize(20),
-    borderBottomWidth: formatSize(0.5),
-    borderColor: colors.lines
-  },
-  rewardsText: {
-    ...typography.body15Semibold,
-    color: colors.black
-  },
-
-  descriptionText: {
-    ...typography.caption11Regular,
-    color: colors.black
   }
 }));

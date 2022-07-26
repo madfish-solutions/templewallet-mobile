@@ -16,7 +16,6 @@ export const DelegationScreen = () => {
   const [selectedBaker, isBakerSelected] = useSelectedBakerSelector();
 
   const bakerRewardsList = useBakerRewardsListSelector();
-  console.log(bakerRewardsList);
 
   const handleDelegatePress = () => navigate(ModalsEnum.SelectBaker);
 
@@ -27,7 +26,11 @@ export const DelegationScreen = () => {
   return (
     <>
       {isBakerSelected ? (
-        <SelectedBakerScreen baker={selectedBaker} onRedelegatePress={handleDelegatePress} />
+        <SelectedBakerScreen
+          baker={selectedBaker}
+          bakerRewardsList={bakerRewardsList}
+          onRedelegatePress={handleDelegatePress}
+        />
       ) : (
         <AboutDelegationScreen onDelegatePress={handleDelegatePress} />
       )}
