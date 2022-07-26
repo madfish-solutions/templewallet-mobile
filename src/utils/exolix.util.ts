@@ -73,7 +73,7 @@ export const loadCurrency = async (page = 1) =>
 
 export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; amount: number }) =>
   exolixApi
-    .get('/rate', { params: data })
+    .get('/rate', { params: { ...data, rateType: 'fixed' } })
     .then(r => r.data as RateInterface)
     .catch(error => {
       if (isDefined(error.response)) {
@@ -87,7 +87,7 @@ export const submitExolixExchange = (data: {
   amount: number;
   withdrawalAddress: string;
   withdrawalExtraId: string;
-}) => exolixApi.post<ExchangeDataInterface>('/transactions', data);
+}) => exolixApi.post<ExchangeDataInterface>('/transactions', { ...data, rateType: 'fixed' });
 
 export const loadExolixExchangeData = (exchangeId: string) =>
   exolixApi.get<ExchangeDataInterface>(`/transactions/${exchangeId}`);

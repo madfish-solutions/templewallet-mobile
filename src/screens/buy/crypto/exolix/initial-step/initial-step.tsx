@@ -81,8 +81,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const prices = useUsdToTokenRates();
   const tezPrice = useMemo(() => {
-    if (isDefined(prices) && isDefined(prices.tezos)) {
-      return prices.tezos;
+    if (isDefined(prices) && isDefined(prices.tez)) {
+      return prices.tez;
     } else {
       return 1;
     }
@@ -122,8 +122,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     };
 
     loadExolixRate(requestData).then((responseData: RateInterface) => {
-      setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
-      setFieldValue('rate', isDefined(responseData.rate) ? responseData.rate : 0);
+      if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
+        setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
+      }
+      if (isDefined(responseData.rate)) {
+        setFieldValue('rate', responseData.rate);
+      }
     });
   };
 
@@ -160,6 +164,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   setSearchValue={emptyFn}
                 />
               </FormikProvider>
+              <Divider size={formatSize(16)} />
               <View style={styles.exchangeContainer}>
                 <Text style={styles.exchangeRate}>Exchange Rate</Text>
                 <Text style={styles.exchangeRateValue}>
@@ -168,6 +173,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                     : `1 ${values.coinFrom.asset.code} ≈ ${values.rate} ${values.coinTo.asset.code}`}
                 </Text>
               </View>
+              <Divider size={formatSize(16)} />
             </View>
             <View>
               <View>
