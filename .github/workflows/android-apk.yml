@@ -1,9 +1,10 @@
 name: Android Apk
 
 on:
-  push:
-    tags:
-      - '*'
+  pull_request:
+    branches:
+      - master
+      - development
 
 jobs:
   android-apk:
@@ -17,10 +18,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      
-      - name: Prepare changelog
-        id: changelog
-        run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -37,17 +34,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Write secrets to google-services.json
-        run: |
-          cat << EOF > ./android/app/google-services.json
-          ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
-          EOF
-
-      - name: Write secrets to GoogleService-Info.plist
-        run: |
-          cat << EOF > ./ios/GoogleService-Info.plist
-          ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
-          EOF
 
       - name: Create .env file
         run: |
@@ -65,11 +51,6 @@ jobs:
           export LANG=en_US.UTF-8
           cd android && ./decrypt_script.sh
           yarn android:release:apk
-        env:
-          BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
-          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
-          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Release
         uses: marvinpinto/action-automatic-releases@latest
