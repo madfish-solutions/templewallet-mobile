@@ -1,10 +1,9 @@
 name: Android Apk
 
 on:
-  pull_request:
-    branches:
-      - master
-      - development
+  push:
+    tags:
+      - '*'
 
 jobs:
   android-apk:
