@@ -1,11 +1,10 @@
 name: Android Apk
 
 on:
-  pull_request:
-    branches:
-      - master
-      - development
-
+  push:
+    tags:
+      - '*'
+      
 jobs:
   android-apk:
     name: Create new Android apk build and upload it
