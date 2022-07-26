@@ -51,6 +51,11 @@ jobs:
           export LANG=en_US.UTF-8
           cd android && ./decrypt_script.sh
           yarn android:release:apk
+        env:
+          BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Release
         uses: marvinpinto/action-automatic-releases@latest
