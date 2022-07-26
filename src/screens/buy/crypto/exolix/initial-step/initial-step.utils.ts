@@ -10,7 +10,7 @@ const avgCommission = 300;
 type setFieldType = (field: 'coinFrom.max' | 'coinFrom.min', value: BigNumber | number) => void;
 
 // executed only once per changed pair to determine min, max
-export const loadMinMaxFields = (setFieldValue: setFieldType, inputAssetCode = 'BTC', tezPrice = 1) => {
+export const loadMinMaxFields = (setFieldValue: setFieldType, inputAssetCode = 'BTC', tezPrice: number) => {
   // TEZ to coin
   const forwardExchangeData = {
     coinTo: inputAssetCode,
