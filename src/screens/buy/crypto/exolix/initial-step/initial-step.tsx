@@ -81,8 +81,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const prices = useUsdToTokenRates();
   const tezPrice = useMemo(() => {
-    if (isDefined(prices) && isDefined(prices.tezos)) {
-      return prices.tezos;
+    if (isDefined(prices) && isDefined(prices.tez)) {
+      return prices.tez;
     } else {
       return 1;
     }
@@ -122,10 +122,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     };
 
     loadExolixRate(requestData).then((responseData: RateInterface) => {
-      if (isDefined(responseData.toAmount)) {
+      if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
         setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
       }
-      setFieldValue('rate', isDefined(responseData.rate) ? responseData.rate : 0);
+      if (isDefined(responseData.rate)) {
+        setFieldValue('rate', responseData.rate);
+      }
     });
   };
 
