@@ -102,14 +102,14 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Delegated:</Text>
-              <Text style={styles.cellValueText}>
+              <Text style={styles.textBlack}>
                 {normalizedBalance.lt(1) ? '<1' : normalizedBalance.decimalPlaces(0, BigNumber.ROUND_FLOOR).toString()}
                 {' TEZ'}
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Rewards & Luck:</Text>
-              <Text style={styles.cellValueText}>
+              <Text style={styles.textBlack}>
                 {normalizedRewards.toString() + ' TEZ '}
                 <Text style={luckTextStyle}>
                   ({luckPercentage.gt(0) ? '+' : ''}
@@ -119,14 +119,14 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Baker fee:</Text>
-              <Text style={styles.cellValueText}>
+              <Text style={styles.textBlack}>
                 {`${bakerFeePart * 100}% `}
                 <Text style={styles.textGray}>({normalizedBakerFee.toString()} TEZ)</Text>
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Expected payout:</Text>
-              <Text style={styles.cellValueText}>
+              <Text style={styles.textBlack}>
                 {cycleStatus === CycleStatus.FUTURE
                   ? '‒'
                   : normalizedRewards.minus(normalizedBakerFee).toString() + ' TEZ'}
@@ -134,7 +134,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Efficiency:</Text>
-              <Text style={cycleStatus === CycleStatus.FUTURE ? styles.cellValueText : efficiencyTextStyle}>
+              <Text style={cycleStatus === CycleStatus.FUTURE ? styles.textBlack : efficiencyTextStyle}>
                 {cycleStatus === CycleStatus.FUTURE ? '‒' : efficiencyPercentage.decimalPlaces(2).toString() + '%'}
               </Text>
             </View>
@@ -142,7 +142,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
         </View>
 
         <View style={styles.rightContainer}>
-          <View style={styles.cycleInfoContainer}>
+          <View style={styles.rowAlignCenter}>
             <Text>{reward.cycle}</Text>
             <Divider size={formatSize(4)} />
             <Icon name={getCycleStatusIcon(cycleStatus)} size={formatSize(16)} />

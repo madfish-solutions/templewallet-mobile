@@ -21,7 +21,7 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
     ...typography.caption13Semibold,
     color: colors.black
   },
-  cycleInfoContainer: {
+  rowAlignCenter: {
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -32,18 +32,10 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
     ...typography.caption11Regular,
     color: colors.gray1
   },
-  cellValueText: {
-    ...typography.numbersRegular15,
-    color: colors.black
-  },
   detailsButtonText: {
     ...typography.caption13Semibold,
     color: colors.destructive,
     marginRight: formatSize(6)
-  },
-  detailTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
   },
   row: {
     flexDirection: 'row'

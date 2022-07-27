@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import { BigNumber } from 'bignumber.js';
 
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
