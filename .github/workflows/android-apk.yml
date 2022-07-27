@@ -1,10 +1,9 @@
 name: Android Apk
 
 on:
-  pull_request:
-    branches:
-      - master
-      - development
+  push:
+    tags:
+      - '*'
       
 jobs:
   android-apk:
@@ -61,7 +60,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
+          prerelease: false
           files: |
             android/app/build/outputs/apk/release/app-release.apk
 
