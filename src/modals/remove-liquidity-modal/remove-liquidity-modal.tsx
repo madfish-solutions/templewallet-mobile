@@ -55,7 +55,7 @@ export const RemoveLiquidityModal = () => {
   const styles = useRemoveLiquidityModalStyles();
 
   const lpToken = useMemo(
-    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === LIQUIDITY_BAKING_LP_SLUG),
+    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken,
     [tokensList]
   );
 
@@ -84,7 +84,7 @@ export const RemoveLiquidityModal = () => {
 
   const removeLiquidityModalInitialValues = useMemo<RemoveLiquidityModalFormValues>(
     () => ({
-      lpToken: { asset: lpToken ?? emptyToken, amount: undefined },
+      lpToken: { asset: lpToken, amount: undefined },
       aToken: { asset: aToken, amount: undefined },
       bToken: { asset: bToken, amount: undefined }
     }),
@@ -96,7 +96,7 @@ export const RemoveLiquidityModal = () => {
   useEffect(
     () =>
       void (
-        lpToken?.address === emptyToken.address &&
+        lpToken.address === emptyToken.address &&
         dispatch(
           loadTokenMetadataActions.submit({
             address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
@@ -106,10 +106,6 @@ export const RemoveLiquidityModal = () => {
       ),
     [lpToken]
   );
-
-  if (!lpToken) {
-    return null;
-  }
 
   return (
     <>
