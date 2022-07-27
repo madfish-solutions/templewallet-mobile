@@ -63,10 +63,17 @@ export const ExchangeStep: FC<ExchangeStepProps> = ({ isError, setIsError }) => 
           <ScreenContainer>
             <View>
               <Divider size={formatSize(16)} />
-              <View style={styles.header}>
-                <Text style={styles.headerText}>Please, wait. The convertation process will take from 15</Text>
-                <Text style={styles.headerText}>min to 2 hours.</Text>
-              </View>
+              {step < 3 ? (
+                <View style={styles.header}>
+                  <Text style={styles.headerText}>Please, wait. The convertation process will take from 15</Text>
+                  <Text style={styles.headerText}>min to 2 hours.</Text>
+                </View>
+              ) : (
+                <View style={styles.header}>
+                  <Text style={styles.headerText}>Please, check your funds in your wallet.</Text>
+                  <Text style={styles.headerText}>The exchange process is completed.</Text>
+                </View>
+              )}
               <Divider size={formatSize(16)} />
               {step < 3 ? (
                 <>
