@@ -21,15 +21,15 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useLiquidityBakingContract } from '../../op-params/liquidity-baking/contracts';
 import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/tokens-metadata/tokens-metadata-actions';
-import { useTokenMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import {
   LIQUIDITY_BAKING_LP_SLUG,
   LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
   LIQUIDITY_BAKING_LP_TOKEN_ID
 } from '../../token/data/token-slugs';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
+import { emptyToken } from '../../token/interfaces/token.interface';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { findExchangeRate, findLpToTokenOutput, findTokenToLpInput } from '../../utils/dex.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -43,6 +43,7 @@ export const RemoveLiquidityModal = () => {
     useRoute<RouteProp<ModalsParamList, ModalsEnum.RemoveLiquidity>>().params;
   const lpContract = useLiquidityBakingContract(lpContractAddress);
   const dispatch = useDispatch();
+  const tokensList = useTokensListSelector();
 
   const { navigate } = useNavigation();
 
@@ -52,12 +53,12 @@ export const RemoveLiquidityModal = () => {
 
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useRemoveLiquidityModalStyles();
-  const lpTokenMetadata = useTokenMetadataSelector(LIQUIDITY_BAKING_LP_SLUG);
 
-  const lpToken: TokenInterface = {
-    ...emptyToken,
-    ...lpTokenMetadata
-  };
+  const token = useMemo(
+    () =>
+      tokensList.find(candidateToken => getTokenSlug(candidateToken) === LIQUIDITY_BAKING_LP_SLUG) ?? { ...emptyToken },
+    [tokensList]
+  );
 
   const onSubmitHandler = (values: RemoveLiquidityModalFormValues) => {
     if (
@@ -84,11 +85,11 @@ export const RemoveLiquidityModal = () => {
 
   const removeLiquidityModalInitialValues = useMemo<RemoveLiquidityModalFormValues>(
     () => ({
-      lpToken: { asset: lpToken, amount: undefined },
+      lpToken: { asset: token, amount: undefined },
       aToken: { asset: aToken, amount: undefined },
       bToken: { asset: bToken, amount: undefined }
     }),
-    [lpToken, aToken, bToken]
+    [token, aToken, bToken]
   );
 
   usePageAnalytic(ModalsEnum.RemoveLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
@@ -96,7 +97,7 @@ export const RemoveLiquidityModal = () => {
   useEffect(
     () =>
       void (
-        lpToken.address === emptyToken.address &&
+        token.address === emptyToken.address &&
         dispatch(
           loadTokenMetadataActions.submit({
             address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
@@ -104,7 +105,7 @@ export const RemoveLiquidityModal = () => {
           })
         )
       ),
-    [lpToken]
+    [token]
   );
 
   return (
