@@ -5,6 +5,7 @@ export const useRobotIconStyles = createUseStyles(({ colors }) => ({
   icon: {
     borderColor: colors.lines,
     borderRadius: formatSize(8),
-    borderWidth: formatSize(1)
+    borderWidth: formatSize(1),
+    overflow: 'hidden'
   }
 }));

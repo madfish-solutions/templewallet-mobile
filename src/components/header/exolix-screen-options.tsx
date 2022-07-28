@@ -48,5 +48,5 @@ const TitleComponent: FC = () => {
 const Stepper: FC = () => {
   const step = useExolixStep();
 
-  return <HeaderProgress current={step} total={4} />;
+  return <HeaderProgress current={step + 1 < 4 ? step + 1 : 4} total={4} />;
 };
