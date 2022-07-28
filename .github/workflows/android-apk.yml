@@ -1,9 +1,11 @@
 name: Android Apk
 
 on:
-  push:
-    tags:
-      - '*'
+  pull_request:
+    branches:
+      - master
+      - development
+
       
 jobs:
   android-apk:
@@ -46,7 +48,7 @@ jobs:
 
       - name: Update gradle.properties
         run: |
-          cd android && sed -i 's/^MYAPP_UPLOAD_KEY_PASSWORD=*/MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.KEYSTORE_KEY }}/g' gradle.properties && sed -i 's/^MYAPP_UPLOAD_STORE_PASSWORD=*/MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.KEYSTORE_KEY }}/g' gradle.properties
+          cd android && sed -i 's/^MYAPP_UPLOAD_KEY_PASSWORD=*/MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.SIGNING_PASSWORD }}/g' gradle.properties && sed -i 's/^MYAPP_UPLOAD_STORE_PASSWORD=*/MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.SIGNING_PASSWORD }}/g' gradle.properties
 
       - name: Build Android Apk
         run: |
