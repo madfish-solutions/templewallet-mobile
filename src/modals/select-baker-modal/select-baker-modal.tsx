@@ -59,15 +59,20 @@ export const SelectBakerModal: FC = () => {
   const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const recommendedBakers = useMemo(
-    () => bakersList.filter(baker => baker.address === recommendedBakerAddress),
-    [bakersList]
-  );
-
-  const [filteredBakersList, setFilteredBakersList] = useState(bakersList);
+  const [allBakers, setFilteredBakersList] = useState(bakersList);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
+
+  const recommendedBakers = useMemo(
+    () => allBakers.filter(baker => baker.address === recommendedBakerAddress),
+    [allBakers]
+  );
+
+  const filteredBakersList = useMemo(
+    () => allBakers.filter(baker => baker.address !== recommendedBakerAddress),
+    [allBakers]
+  );
 
   const debouncedSetSearchValue = debounce(setSearchValue);
 
@@ -117,49 +122,20 @@ export const SelectBakerModal: FC = () => {
   const sortedBakersList = useMemo(() => {
     switch (sortValue) {
       case BakersSortFieldEnum.Rank:
-        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
-          return [
-            ...recommendedBakers,
-            ...filteredBakersList.filter(baker => baker.address !== recommendedBakerAddress)
-          ];
-        } else {
-          return filteredBakersList;
-        }
+        return filteredBakersList;
       case BakersSortFieldEnum.Fee:
-        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
-          return [
-            ...recommendedBakers,
-            ...filteredBakersList
-              .filter(baker => baker.address !== recommendedBakerAddress)
-              .sort((a, b) => a.fee - b.fee)
-          ];
-        } else {
-          return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
-        }
+        return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
       case BakersSortFieldEnum.Staking:
-        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
-          return [
-            ...recommendedBakers,
-            ...filteredBakersList
-              .filter(baker => baker.address !== recommendedBakerAddress)
-              .sort((a, b) => b.stakingBalance - a.stakingBalance)
-          ];
-        } else {
-          return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
-        }
+        return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
       default:
-        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
-          return [
-            ...recommendedBakers,
-            ...filteredBakersList
-              .filter(baker => baker.address !== recommendedBakerAddress)
-              .sort((a, b) => b.freeSpace - a.freeSpace)
-          ];
-        } else {
-          return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
-        }
+        return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
     }
   }, [filteredBakersList, sortValue]);
+
+  const finalBakersList = useMemo(
+    () => recommendedBakers.concat(sortedBakersList),
+    [recommendedBakers, sortedBakersList]
+  );
 
   return (
     <>
@@ -192,7 +168,7 @@ export const SelectBakerModal: FC = () => {
       </View>
 
       <FlatList
-        data={sortedBakersList}
+        data={finalBakersList}
         renderItem={({ item }) => (
           <BakerListItem item={item} selected={item.address === selectedBaker?.address} onPress={setSelectedBaker} />
         )}
