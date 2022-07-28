@@ -26,11 +26,14 @@ import { useBakersListSelector, useSelectedBakerSelector } from '../../store/bak
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
+
+export const recommendedBakerAddress = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -51,8 +54,15 @@ export const SelectBakerModal: FC = () => {
   const revealSelectBottomSheetController = useBottomSheetController();
   const [currentBaker] = useSelectedBakerSelector();
 
+  const { trackEvent } = useAnalytics();
+
   const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
+
+  const recommendedBakers = useMemo(
+    () => bakersList.filter(baker => baker.address === recommendedBakerAddress),
+    [bakersList]
+  );
 
   const [filteredBakersList, setFilteredBakersList] = useState(bakersList);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
@@ -65,6 +75,10 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
+      if (selectedBaker.address === recommendedBakerAddress) {
+        trackEvent('EVERSTAKE_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+      }
+
       if (currentBaker.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
@@ -103,13 +117,47 @@ export const SelectBakerModal: FC = () => {
   const sortedBakersList = useMemo(() => {
     switch (sortValue) {
       case BakersSortFieldEnum.Rank:
-        return filteredBakersList;
+        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
+          return [
+            ...recommendedBakers,
+            ...filteredBakersList.filter(baker => baker.address !== recommendedBakerAddress)
+          ];
+        } else {
+          return filteredBakersList;
+        }
       case BakersSortFieldEnum.Fee:
-        return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
+        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
+          return [
+            ...recommendedBakers,
+            ...filteredBakersList
+              .filter(baker => baker.address !== recommendedBakerAddress)
+              .sort((a, b) => a.fee - b.fee)
+          ];
+        } else {
+          return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
+        }
       case BakersSortFieldEnum.Staking:
-        return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
+        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
+          return [
+            ...recommendedBakers,
+            ...filteredBakersList
+              .filter(baker => baker.address !== recommendedBakerAddress)
+              .sort((a, b) => b.stakingBalance - a.stakingBalance)
+          ];
+        } else {
+          return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
+        }
       default:
-        return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
+        if (filteredBakersList.find(baker => baker.address === recommendedBakerAddress)) {
+          return [
+            ...recommendedBakers,
+            ...filteredBakersList
+              .filter(baker => baker.address !== recommendedBakerAddress)
+              .sort((a, b) => b.freeSpace - a.freeSpace)
+          ];
+        } else {
+          return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
+        }
     }
   }, [filteredBakersList, sortValue]);
 

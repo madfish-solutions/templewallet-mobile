@@ -15,8 +15,11 @@ import { AccountInterface } from '../../../interfaces/account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
+import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
+import { recommendedBakerAddress } from '../../select-baker-modal/select-baker-modal';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -35,6 +38,8 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
+  const { trackEvent } = useAnalytics();
+
   const estimations = useEstimations(sender, opParams);
   const {
     opParamsWithFees,
@@ -48,6 +53,10 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   } = useFeeForm(opParams, estimations.data);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
+    if (opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === recommendedBakerAddress) {
+      trackEvent('EVERSTAKE_BAKER_DELEGATION', AnalyticsEventCategory.FormSubmit);
+    }
+
     // Remove revealGasGee from sum
     // Taquito will add it byself
     gasFeeSum = gasFeeSum?.minus(revealGasFee);

@@ -15,6 +15,25 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   containerSelected: {
     borderColor: colors.orange
   },
+  containerPaddingWithRecommended: {
+    paddingHorizontal: formatSize(6),
+    paddingBottom: formatSize(6),
+    paddingTop: formatSize(26)
+  },
+  recommendedContainer: {
+    position: 'absolute',
+    left: -2,
+    top: -2,
+    backgroundColor: colors.blue,
+    borderTopStartRadius: formatSize(10),
+    borderBottomEndRadius: formatSize(10)
+  },
+  recommendedText: {
+    ...typography.tagline13Tag,
+    paddingHorizontal: formatSize(12),
+    paddingVertical: formatSize(2),
+    color: colors.white
+  },
   upperContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between'
