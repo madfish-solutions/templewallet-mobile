@@ -47,6 +47,8 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
         amount = operation.amount.toString();
         const fa2Parameter = parameter as ParamterFa2;
         const fa12Parameter = parameter as ParameterFa12;
+        const bakingParameter = parameter as ParameterLiquidityBaking;
+
         if (
           isDefined(fa2Parameter) &&
           fa2Parameter.value.length > 0 &&
@@ -68,8 +70,34 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
             }
           }
         } else if (isDefined(fa12Parameter) && isDefined(fa12Parameter.value.value)) {
+          if (fa12Parameter.entrypoint === 'approve') {
+            continue;
+          }
+          if (isDefined(fa12Parameter.value.from)) {
+            if (fa12Parameter.value.from === address) {
+              source.address = address;
+            }
+          }
+          if (isDefined(fa12Parameter.value.to)) {
+            if (fa12Parameter.value.to === address) {
+              source.address = fa12Parameter.value.from;
+            }
+          }
           contractAddress = target.address;
           amount = fa12Parameter.value.value;
+        } else if (isDefined(bakingParameter) && isDefined(bakingParameter.value.quantity)) {
+          contractAddress = target.address;
+          const tokenOrTezAmount =
+            isDefined(parameter) && isDefined((parameter as ParameterFa12).value.value)
+              ? (parameter as ParameterFa12).value.value
+              : amount.toString();
+          amount =
+            isDefined(parameter) && isDefined((parameter as ParameterLiquidityBaking).value.quantity)
+              ? (parameter as ParameterLiquidityBaking).value.quantity
+              : target.address === address ||
+                (isDefined(parameter) && (parameter as ParameterFa12).value.to === address)
+              ? tokenOrTezAmount
+              : `-${tokenOrTezAmount}`;
         }
         break;
 
