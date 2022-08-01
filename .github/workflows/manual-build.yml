@@ -1,10 +1,15 @@
-name: Testflight build
+name: Manual build
 
 on:
   workflow_dispatch:
     inputs:
       buildNumber:
         description: 'Build number'
+        required: true
+      isGithubRelease:
+        type: boolean
+        description: 'Make Github release?'
+        default: false
         required: true
 
 jobs:
@@ -90,6 +95,15 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Create Github release
+        if: ${{ github.event.inputs.isGithubRelease == 'true' }}
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
 
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install
