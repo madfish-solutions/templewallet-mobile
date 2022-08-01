@@ -14,7 +14,7 @@ import { useUserIdSelector } from '../../../../store/settings/settings-selectors
 import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
+import { useAnalytics, usePageAnalytic } from '../../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../../utils/is-defined';
 import { openUrl } from '../../../../utils/linking.util';
 import { TopUpFormAssetAmountInput } from '../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
@@ -28,6 +28,8 @@ export const AliceBob: FC = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const userId = useUserIdSelector();
   const styles = useAliceBobStyles();
+
+  usePageAnalytic(ScreensEnum.AliceBob);
 
   const [isLoading, setIsLoading] = useState(false);
 

@@ -35,9 +35,8 @@ const TitleComponent: FC = () => {
       case 1:
         return 'Deposit';
       case 2:
-      case 3:
         return 'Convertation';
-      case 4:
+      case 3:
       default:
         return 'Completed';
     }
@@ -49,5 +48,5 @@ const TitleComponent: FC = () => {
 const Stepper: FC = () => {
   const step = useExolixStep();
 
-  return <HeaderProgress current={step < 3 ? step + 1 : step} total={4} />;
+  return <HeaderProgress current={step + 1 < 4 ? step + 1 : 4} total={4} />;
 };
