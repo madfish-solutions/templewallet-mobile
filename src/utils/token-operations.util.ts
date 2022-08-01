@@ -6,7 +6,7 @@ import { isDefined } from './is-defined';
 
 export const getContractOperations = <T>(account: string, contractAddress: string, lastLevel: number | null) =>
   tzktApi.get<Array<T>>(
-    `accounts/${contractAddress}/operations?type=transaction&limit=40&sort=1&quote=usd&initiator=${account}` +
+    `accounts/${contractAddress}/operations?type=transaction&limit=40&sort=1&quote=usd&initiator=${account}&entrypoint=mintOrBurn` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );
 
