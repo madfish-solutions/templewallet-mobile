@@ -49,12 +49,7 @@ const loadContractActivity = async (
   publicKeyHash: string,
   contractAddress: string,
   lastLevel: number | null
-): Promise<Array<ActivityInterface>> => {
-  const operations = await getContractOperations<OperationLiquidityBakingInterface>(
-    publicKeyHash,
-    contractAddress,
-    lastLevel
-  ).then(x => x.data);
-
-  return mapOperationLiquidityBakingToActivity(publicKeyHash, operations);
-};
+): Promise<Array<ActivityInterface>> =>
+  await getContractOperations<OperationLiquidityBakingInterface>(publicKeyHash, contractAddress, lastLevel).then(x =>
+    mapOperationLiquidityBakingToActivity(publicKeyHash, x.data)
+  );

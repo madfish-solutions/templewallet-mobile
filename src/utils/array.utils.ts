@@ -8,3 +8,6 @@ export const sliceIntoChunks = <T>(array: T[], chunkSize: number) => {
 
   return result;
 };
+
+export const deduplicate = <T>(arr: T[], filterPredicate: (a: T, b: T) => boolean) =>
+  arr.filter((value, index, self) => index === self.findIndex(t => filterPredicate(t, value)));

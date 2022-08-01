@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
-import { useGeneralActivity } from '../../hooks/use-general-activity';
+import { useGeneralActivity } from '../../hooks/use-general-activity.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 

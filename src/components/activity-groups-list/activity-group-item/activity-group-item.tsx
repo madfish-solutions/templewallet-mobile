@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { useHashOperation } from '../../../hooks/use-hash-operation.hook';
 import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
 import { formatSize } from '../../../styles/format-size';
@@ -22,9 +21,8 @@ interface Props {
 
 export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
-  const hashGroup = useHashOperation(group[0].hash);
 
-  const nonZeroAmounts = useNonZeroAmounts(hashGroup[0] ?? group);
+  const nonZeroAmounts = useNonZeroAmounts(group);
 
   const firstActivity = group[0] ?? emptyActivity;
 

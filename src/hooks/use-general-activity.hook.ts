@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
+import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
+import { deduplicate } from '../utils/array.utils';
 import { isDefined } from '../utils/is-defined';
 import {
   mapOperationsFa12ToActivities,
@@ -14,6 +16,7 @@ import {
 import {
   getFa12IncomingOperations,
   getFa2IncomingOperations,
+  getOperationGroupByHash,
   getTokenOperations
 } from '../utils/token-operations.util';
 
@@ -29,7 +32,13 @@ export const useGeneralActivity = (): UseActivityInterface => {
       if (operations.length === 0) {
         return;
       }
-      const localLastItem = operations[operations.length - 1];
+      const filteredOperations = deduplicate<OperationInterface>(operations, (a, b) => a.hash === b.hash);
+      const operationGroups = (
+        await Promise.all(
+          filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(x.hash).then(x => x.data))
+        )
+      ).flat();
+      const localLastItem = operationGroups[operationGroups.length - 1];
       if (!isDefined(localLastItem)) {
         setIsAllLoaded(true);
 
@@ -39,15 +48,28 @@ export const useGeneralActivity = (): UseActivityInterface => {
       const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, upperId);
       const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, upperId);
 
-      if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
+      const filteredOperationsFa12 = deduplicate<OperationInterface>(operationsFa12, (a, b) => a.hash === b.hash);
+      const operationGroupsFa12 = (
+        await Promise.all(
+          filteredOperationsFa12.map(x => getOperationGroupByHash<OperationFa12Interface>(x.hash).then(x => x.data))
+        )
+      ).flat();
+      const filteredOperationsFa2 = deduplicate<OperationInterface>(operationsFa2, (a, b) => a.hash === b.hash);
+      const operationGroupsFa2 = (
+        await Promise.all(
+          filteredOperationsFa2.map(x => getOperationGroupByHash<OperationFa2Interface>(x.hash).then(x => x.data))
+        )
+      ).flat();
+
+      if (operationGroups.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
         setIsAllLoaded(true);
 
         return;
       }
 
-      const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
-      const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationsFa12);
-      const loadedActivitiesFa2 = mapOperationsFa2ToActivities(publicKeyHash, operationsFa2);
+      const loadedActivities = mapOperationsToActivities(publicKeyHash, operationGroups);
+      const loadedActivitiesFa12 = mapOperationsFa12ToActivities(publicKeyHash, operationGroupsFa12);
+      const loadedActivitiesFa2 = mapOperationsFa2ToActivities(publicKeyHash, operationGroupsFa2);
 
       const allOperations = [...loadedActivitiesFa12, ...loadedActivitiesFa2, ...loadedActivities].sort(
         (b, a) => a.level ?? 0 - (b.level ?? 0)

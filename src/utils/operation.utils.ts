@@ -58,6 +58,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           contractAddress = target.address;
           if (fa2Parameter.value[0].from_ === address) {
             amount = fa2Parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
+            source.address = address;
             tokenId = fa2Parameter.value[0].txs[0].token_id;
           }
           for (const param of fa2Parameter.value) {

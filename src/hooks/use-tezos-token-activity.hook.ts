@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
+import { OperationInterface, OperationLiquidityBakingInterface } from '../interfaces/operation.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
+import { deduplicate } from '../utils/array.utils';
 import { isDefined } from '../utils/is-defined';
 import { mapOperationsToActivities } from '../utils/operation.utils';
-import { getTezosOperations } from '../utils/token-operations.util';
+import { getOperationGroupByHash, getTezosOperations } from '../utils/token-operations.util';
 
 export const useTezosTokenActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
@@ -18,9 +20,19 @@ export const useTezosTokenActivity = (): UseActivityInterface => {
     async (lastId: number | null) => {
       const operations = await getTezosOperations(publicKeyHash, lastId);
 
-      setIsAllLoaded(operations.length === 0);
+      const filteredOperations = deduplicate<OperationInterface>(operations, (a, b) => a.hash === b.hash);
 
-      const loadedActivities = mapOperationsToActivities(publicKeyHash, operations);
+      setIsAllLoaded(filteredOperations.length === 0);
+
+      const operationGroups = (
+        await Promise.all(
+          filteredOperations.map(x =>
+            getOperationGroupByHash<OperationLiquidityBakingInterface>(x.hash).then(x => x.data)
+          )
+        )
+      ).flat();
+
+      const loadedActivities = mapOperationsToActivities(publicKeyHash, operationGroups);
       const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
 
       setActivities(prevValue => [...prevValue, ...activityGroups]);

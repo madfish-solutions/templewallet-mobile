@@ -26,8 +26,7 @@ export const useHashOperation = (hash: string) => {
   return activities;
 };
 
-const loadContractActivity = async (publicKeyHash: string, hash: string): Promise<Array<ActivityInterface>> => {
-  const operations = await getOperationGroupByHash<OperationLiquidityBakingInterface>(hash).then(x => x.data);
-
-  return mapOperationsToActivities(publicKeyHash, operations);
-};
+const loadContractActivity = async (publicKeyHash: string, hash: string): Promise<Array<ActivityInterface>> =>
+  await getOperationGroupByHash<OperationLiquidityBakingInterface>(hash).then(x =>
+    mapOperationsToActivities(publicKeyHash, x.data)
+  );
