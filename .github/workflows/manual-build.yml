@@ -6,11 +6,10 @@ on:
       buildNumber:
         description: 'Build number'
         required: true
-      isGithubRelease:
-        type: boolean
-        description: 'Make Github release?'
-        default: false
-        required: true
+      githubReleaseVersion:
+        description: 'Github release version'
+        default: ''
+        required: false
 
 jobs:
   testflight-build:
@@ -97,11 +96,11 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Create Github release
-        if: ${{ github.event.inputs.isGithubRelease == 'true' }}
+        if: ${{ github.event.inputs.githubReleaseVersion != '' }}
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "latest"
+          automatic_release_tag: ${{ github.event.inputs.githubReleaseVersion }}(${{ github.event.inputs.buildNumber }})
           prerelease: false
           files: |
             android/app/build/outputs/apk/release/app-release.apk
