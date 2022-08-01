@@ -1,5 +1,6 @@
 import { OpKind } from '@taquito/taquito';
 import React, { FC } from 'react';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { everstakeApi } from '../../../api.service';
@@ -27,14 +28,17 @@ const approveInternalOperationRequest = ({
   opParams
 }: ApproveInternalOperationRequestActionPayloadInterface) =>
   sendTransaction$(rpcUrl, sender, opParams).pipe(
-    switchMap(({ hash }) => {
-      if (opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === recommendedBakerAddress) {
-        everstakeApi.post('/delegations', {
-          link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
-          delegations: [hash]
-        });
-      }
-
+    switchMap(({ hash }) =>
+      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === recommendedBakerAddress
+        ? of(
+            everstakeApi.post('/delegations', {
+              link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
+              delegations: [hash]
+            })
+          ).pipe(switchMap(() => of(hash)))
+        : of(hash)
+    ),
+    switchMap(hash => {
       showSuccessToast({
         operationHash: hash,
         description: 'Transaction request sent! Confirming...',
