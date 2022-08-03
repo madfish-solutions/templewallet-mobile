@@ -33,7 +33,7 @@ import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
-export const recommendedBakerAddress = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
+export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -65,12 +65,12 @@ export const SelectBakerModal: FC = () => {
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
 
   const recommendedBakers = useMemo(
-    () => allBakers.filter(baker => baker.address === recommendedBakerAddress),
+    () => allBakers.filter(baker => baker.address === RECOMMENDED_BAKER_ADDRESS),
     [allBakers]
   );
 
   const filteredBakersList = useMemo(
-    () => allBakers.filter(baker => baker.address !== recommendedBakerAddress),
+    () => allBakers.filter(baker => baker.address !== RECOMMENDED_BAKER_ADDRESS),
     [allBakers]
   );
 
@@ -80,8 +80,8 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
-      if (selectedBaker.address === recommendedBakerAddress) {
-        trackEvent('EVERSTAKE_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+      if (selectedBaker.address === RECOMMENDED_BAKER_ADDRESS) {
+        trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
       }
 
       if (currentBaker.address === selectedBaker.address) {

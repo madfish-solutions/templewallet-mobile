@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import React, { FC } from 'react';
 import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { everstakeApi } from '../../../api.service';
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
@@ -16,7 +16,7 @@ import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selecto
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from '../../../utils/env.utils';
 import { sendTransaction$ } from '../../../utils/wallet.utils';
-import { recommendedBakerAddress } from '../../select-baker-modal/select-baker-modal';
+import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
@@ -29,13 +29,13 @@ const approveInternalOperationRequest = ({
 }: ApproveInternalOperationRequestActionPayloadInterface) =>
   sendTransaction$(rpcUrl, sender, opParams).pipe(
     switchMap(({ hash }) =>
-      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === recommendedBakerAddress
+      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === RECOMMENDED_BAKER_ADDRESS
         ? of(
             everstakeApi.post('/delegations', {
               link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
               delegations: [hash]
             })
-          ).pipe(switchMap(() => of(hash)))
+          ).pipe(map(() => hash))
         : of(hash)
     ),
     switchMap(hash => {

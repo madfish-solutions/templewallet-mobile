@@ -19,7 +19,7 @@ import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
-import { recommendedBakerAddress } from '../../select-baker-modal/select-baker-modal';
+import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -53,8 +53,8 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   } = useFeeForm(opParams, estimations.data);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
-    if (opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === recommendedBakerAddress) {
-      trackEvent('EVERSTAKE_BAKER_DELEGATION', AnalyticsEventCategory.FormSubmit);
+    if (opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === RECOMMENDED_BAKER_ADDRESS) {
+      trackEvent('RECOMMENDED_BAKER_DELEGATION', AnalyticsEventCategory.FormSubmit);
     }
 
     // Remove revealGasGee from sum
