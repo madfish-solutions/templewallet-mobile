@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { TEMPLE_WALLET_API, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
+import { TEMPLE_WALLET_API, TEMPLE_WALLET_EVERSTAKE_API_KEY, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
 
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
 
@@ -16,5 +16,13 @@ export const exolixApi = axios.create({
   baseURL: 'https://exolix.com/api/v2',
   headers: {
     Authorization: TEMPLE_WALLET_EXOLIX_API_KEY
+  }
+});
+
+export const everstakeApi = axios.create({
+  baseURL: 'https://aff-api.everstake.one/temple',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
   }
 });
