@@ -2,9 +2,15 @@ export enum IconNameEnum {
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',
+  ArrowLeft = 'ArrowLeft',
+  DetailsArrowUp = 'DetailsArrowUp',
+  DetailsArrowDown = 'DetailsArrowDown',
+  CycleStatusInProgress = 'CycleStatusInProgress',
+  CycleStatusUnlocked = 'CycleStatusUnlocked',
+  CycleStatusLocked = 'CycleStatusLocked',
+  CycleStatusFuture = 'CycleStatusFuture',
   BookOpen = 'BookOpen',
   Terminal = 'Terminal',
-  ArrowLeft = 'ArrowLeft',
   Download = 'Download',
   Diez = 'Diez',
   FaceId = 'FaceId',
@@ -95,5 +101,9 @@ export enum IconNameEnum {
   MinusIcon = 'MinusIcon',
   PlusIcon = 'PlusIcon',
   PlusIconOrange = 'PlusIconOrange',
-  UkraineIcon = 'UkraineIcon'
+  UkraineIcon = 'UkraineIcon',
+  OwnBlocks = 'OwnBlocks',
+  MissedOwnBlocks = 'MissedOwnBlocks',
+  Endorsements = 'Endorsements',
+  MissedEndorsements = 'MissedEndorsements'
 }

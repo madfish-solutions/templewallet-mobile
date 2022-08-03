@@ -13,3 +13,11 @@ export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
 };
 
 export const useBakersListSelector = () => useBakingSelector().bakersList.data;
+
+export const useKnownBakerSelector = (bakerAddress: string) => {
+  const bakersList = useBakersListSelector();
+
+  return bakersList.find(baker => baker.address === bakerAddress);
+};
+
+export const useBakerRewardsListSelector = () => useBakingSelector().bakerRewardsList.data;
