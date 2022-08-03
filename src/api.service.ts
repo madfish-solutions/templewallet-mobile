@@ -21,10 +21,8 @@ export const exolixApi = axios.create({
 
 export const everstakeApi = axios.create({
   baseURL: 'https://aff-api.everstake.one/temple',
-  ...(TEMPLE_WALLET_EVERSTAKE_API_KEY && {
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
-    }
-  })
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
+  }
 });
