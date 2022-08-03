@@ -2,32 +2,28 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { AvatarImage } from '../../../components/avatar-image/avatar-image';
-import { ButtonDelegateSecondary } from '../../../components/button/button-large/button-delegate-secondary/button-delegate-secondary';
 import { ButtonSmallDelegate } from '../../../components/button/button-small/button-small-delegate/button-small-delegate';
 import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
+import { BakerRewardInterface } from '../../../interfaces/baker-reward.interface';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
-import { openUrl, tzktUrl } from '../../../utils/linking.util';
+import { tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
+import { BakerRewardsList } from './baker-rewards-list/baker-rewards-list';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
 interface Props {
   baker: BakerInterface;
+  bakerRewardsList: BakerRewardInterface[];
   onRedelegatePress: EmptyFn;
 }
 
-export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
-  const colors = useColors();
+export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
 
   return (
@@ -78,27 +74,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
         </View>
       </View>
 
-      <View style={styles.rewardsContainer}>
-        <Text style={styles.rewardsText}>Rewards</Text>
-        <Divider size={formatSize(6)} />
-        <Icon name={IconNameEnum.SoonBadge} color={colors.gray3} size={formatSize(32)} />
-      </View>
-
-      <ScreenContainer>
-        <ButtonDelegateSecondary
-          title="View on TZKT block explorer"
-          marginTop={formatSize(8)}
-          marginBottom={formatSize(16)}
-          onPress={() => openUrl(tzktUrl(baker.address))}
-          disabled={!isDefined(baker.address)}
-        />
-
-        <Text style={styles.descriptionText}>
-          For monitoring your rewards - subscribe to notifications from the{' '}
-          <TextLink url="https://t.me/baking_bad_bot">Baking Bad bot</TextLink> in the telegram. The bot notifies users
-          about received payments, expected rewards, and if a Baker underpays or misses payments.
-        </Text>
-      </ScreenContainer>
+      <BakerRewardsList bakerRewards={bakerRewardsList} />
     </>
   );
 };
