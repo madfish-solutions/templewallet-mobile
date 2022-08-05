@@ -75,8 +75,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
   builder.addCase(loadTokensBalancesArrayActions.success, (state, { payload: { publicKeyHash, data } }) =>
     updateAccountState(state, publicKeyHash, account => ({
-      tokensList: pushOrUpdateTokensBalances(account.tokensList, data),
-      dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data)
+      tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
     }))
   );
 
@@ -93,7 +92,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       removedTokensList: [...currentAccount.removedTokensList, slug]
     }))
   );
-
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
@@ -138,7 +136,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
                   }
                 : token
             ) ?? initialAccountState.tokensList,
-          dcpTokensList: initialAccountState.dcpTokensList,
           removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
         };
 

@@ -12,7 +12,7 @@ export const useTokenMetadataSelector = (slug: string) =>
   );
 
 export const useTokensMetadataSelector = () =>
-  useSelector<TokensMetadataRootState, Record<string, TokenMetadataInterface>>(
+  useSelector<TokensMetadataRootState, TokensMetadataState['metadataRecord']>(
     ({ tokensMetadata }) => tokensMetadata.metadataRecord,
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
