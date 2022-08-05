@@ -117,14 +117,11 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
 
           const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
 
-          console.log(tokensList, 'list');
-
           const accountTokensSlugs = tokensList.map(token => token.slug);
           const existingMetadataSlugs = Object.keys(metadataRecord);
 
           const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
           const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
-          console.log(allTokensSlugs, 'allT');
 
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
