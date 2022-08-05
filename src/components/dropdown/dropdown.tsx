@@ -96,7 +96,7 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref) || !isDefined(value) || !isDefined(list)) {
+    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || list.length === 0) {
       return void 0;
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));

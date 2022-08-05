@@ -35,7 +35,6 @@ export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onC
         placeholderTextColor={colors.gray2}
         onChangeText={debouncedOnChangeText}
         onBlur={e => {
-          searchInputRef.current?.clear();
           onBlur(e);
         }}
       />
