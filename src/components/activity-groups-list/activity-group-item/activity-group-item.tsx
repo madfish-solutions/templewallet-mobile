@@ -26,7 +26,6 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const nonZeroAmounts = useNonZeroAmounts(group);
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-
   const { isTezosNode } = useNetworkInfo();
 
   const firstActivity = group[0] ?? emptyActivity;
