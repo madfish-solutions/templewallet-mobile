@@ -105,11 +105,20 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       removedTokensList: [...currentAccount.removedTokensList, slug]
     }))
   );
-  builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-    }))
-  );
+
+  builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug, selectedRpcUrl } }) => {
+    const isTezosNode = !isDcpNode(selectedRpcUrl);
+
+    return updateCurrentAccountState(state, currentAccount =>
+      isTezosNode
+        ? {
+            tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
+          }
+        : {
+            dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
+          }
+    );
+  });
 
   // MIGRATIONS
   builder.addCase(deleteOldTokensMetadata, state => ({
