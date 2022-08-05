@@ -8,6 +8,7 @@ import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { RootState } from '../create-store';
 import { emptyAction } from '../root-state.actions';
 import {
+  addDcpTokensMetadata,
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,
   deleteOldTokensMetadata,
@@ -30,10 +31,19 @@ const migrateTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Ob
         return [deleteOldTokensMetadata(), setNewTokensMetadata(rootState.wallet.tokensMetadata)];
       }
 
+      return [];
+    })
+  );
+
+const addDcpTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(addDcpTokensMetadata),
+    withLatestFrom(state$),
+    concatMap(([, rootState]) => {
       const existingMetadataSlugs = Object.keys(rootState.tokensMetadata.metadataRecord);
 
       if (!existingMetadataSlugs.includes(APX_TOKEN_SLUG)) {
-        const newTokensMetadata = rootState.tokensMetadata.metadataRecord;
+        const newTokensMetadata = { ...rootState.tokensMetadata.metadataRecord };
 
         DCP_TOKENS_METADATA.forEach(
           tokenMetadata => (newTokensMetadata[`${tokenMetadata.address}_${tokenMetadata.id}`] = tokenMetadata)
@@ -87,6 +97,7 @@ const migrateQuipuApyEpic: Epic = (action$: Observable<Action>, state$: Observab
 
 export const migrationEpics = combineEpics(
   migrateTokensMetadataEpic,
+  addDcpTokensMetadataEpic,
   migrateTokenSuggestionEpic,
   migrateIsShownDomainNameEpic,
   migrateQuipuApyEpic

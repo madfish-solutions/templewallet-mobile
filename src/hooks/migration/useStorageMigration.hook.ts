@@ -7,7 +7,8 @@ import {
   addDcpRpc,
   migrateQuipuApy,
   migrateTokensMetadata,
-  migrateTokenSuggestion
+  migrateTokenSuggestion,
+  addDcpTokensMetadata
 } from '../../store/migration/migration-actions';
 
 export const useStorageMigration = () => {
@@ -20,5 +21,6 @@ export const useStorageMigration = () => {
     dispatch(migrateQuipuApy());
     dispatch(migrateAccountsState());
     dispatch(addDcpRpc());
+    dispatch(addDcpTokensMetadata());
   }, []);
 };

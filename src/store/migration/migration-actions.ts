@@ -3,6 +3,7 @@ import { createAction } from '@reduxjs/toolkit';
 import { TokensMetadataState } from '../tokens-metadata/tokens-metadata-state';
 
 export const migrateTokensMetadata = createAction('migration/TOKENS_METADATA');
+export const addDcpTokensMetadata = createAction('migration/ADD_DCP_TOKENS_METADATA');
 export const deleteOldTokensMetadata = createAction('migration/DELETE_OLD_TOKENS_METADATA');
 export const setNewTokensMetadata = createAction<TokensMetadataState['metadataRecord']>(
   'migration/ADD_NEW_TOKENS_METADATA'
