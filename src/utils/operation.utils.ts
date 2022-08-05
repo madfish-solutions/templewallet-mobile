@@ -4,8 +4,6 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import {
-  OperationFa12Interface,
-  OperationFa2Interface,
   OperationInterface,
   OperationLiquidityBakingInterface,
   ParameterFa12,
@@ -129,77 +127,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       entrypoint,
       level,
       destination,
-      amount: source.address === address ? `-${amount}` : amount,
-      timestamp: new Date(timestamp).getTime()
-    });
-  }
-
-  return activities;
-};
-
-export const mapOperationsFa12ToActivities = (address: string, operations: Array<OperationFa12Interface>) => {
-  const activities: Array<ActivityInterface> = [];
-
-  for (const operation of operations) {
-    const { id, type, status, hash, timestamp, entrypoint, sender, target, level, parameter } = operation;
-
-    const source = sender;
-    const amount = parameter.value.value;
-
-    activities.push({
-      address: target.address,
-      id,
-      type,
-      hash,
-      status: stringToActivityStatusEnum(status),
-      source,
-      entrypoint,
-      level,
-      destination: target,
-      amount: source.address === address ? `-${amount}` : amount,
-      timestamp: new Date(timestamp).getTime()
-    });
-  }
-
-  return activities;
-};
-
-export const mapOperationsFa2ToActivities = (address: string, operations: Array<OperationFa2Interface>) => {
-  const activities: Array<ActivityInterface> = [];
-
-  for (const operation of operations) {
-    const { id, type, status, hash, timestamp, entrypoint, sender, target, level, parameter } = operation;
-
-    const source = sender;
-    let amount = '0';
-    let tokenId = '0';
-    if (parameter.value.length > 0) {
-      if (parameter.value[0].from_ === address) {
-        amount = parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
-        tokenId = parameter.value[0].txs[0].token_id;
-      }
-      for (const param of parameter.value) {
-        const val = param.txs.find(tx => {
-          return tx.to_ === address && (amount = tx.amount);
-        });
-        if (isDefined(val)) {
-          amount = val.amount;
-          tokenId = val.token_id;
-        }
-      }
-    }
-
-    activities.push({
-      address: target.address,
-      id,
-      tokenId,
-      type,
-      hash,
-      status: stringToActivityStatusEnum(status),
-      source,
-      entrypoint,
-      level,
-      destination: target,
       amount: source.address === address ? `-${amount}` : amount,
       timestamp: new Date(timestamp).getTime()
     });

@@ -26,6 +26,7 @@ import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { LoadLastActivityTokenType } from '../../utils/token-operations.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
 export const LiquidityBakingDapp = () => {
@@ -43,7 +44,11 @@ export const LiquidityBakingDapp = () => {
 
   const bTokenPool = lpContract.storage.tokenPool;
 
-  const { activities, handleUpdate } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
+  const { activities, handleUpdate } = useContractActivity(
+    LoadLastActivityTokenType.LiquidityBaking,
+    LIQUIDITY_BAKING_DEX_ADDRESS,
+    ''
+  );
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 

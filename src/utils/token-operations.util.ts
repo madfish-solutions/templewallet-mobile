@@ -1,23 +1,38 @@
+import uniqBy from 'lodash-es/uniqBy';
+
 import { tzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
+import { ActivityGroup } from '../interfaces/activity.interface';
+import {
+  OperationFa12Interface,
+  OperationFa2Interface,
+  OperationInterface,
+  OperationLiquidityBakingInterface
+} from '../interfaces/operation.interface';
+import { TokenTypeEnum } from '../interfaces/token-type.enum';
+import { transformActivityInterfaceToActivityGroups } from './activity.utils';
 import { isDefined } from './is-defined';
+import { mapOperationLiquidityBakingToActivity, mapOperationsToActivities } from './operation.utils';
 
 export const getOperationGroupByHash = <T>(hash: string) => tzktApi.get<Array<T>>(`operations/${hash}`);
 
-export const getContractOperations = <T>(account: string, contractAddress: string, lastLevel: number | null) =>
-  tzktApi.get<Array<T>>(`accounts/${contractAddress}/operations`, {
-    params: {
-      type: 'transaction',
-      limit: OPERATION_LIMIT,
-      sort: '1',
-      initiator: account,
-      entrypoint: 'mintOrBurn',
-      ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
-    }
-  });
+// LIQUIDITY BAKING ACTIVITY
+export const getContractOperations = async <T>(account: string, contractAddress: string, lastLevel: number | null) =>
+  (
+    await tzktApi.get<Array<T>>(`accounts/${contractAddress}/operations`, {
+      params: {
+        type: 'transaction',
+        limit: OPERATION_LIMIT,
+        sort: '1',
+        initiator: account,
+        entrypoint: 'mintOrBurn',
+        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
+      }
+    })
+  ).data;
 
+// FA2 TOKEN ACTIVITY
 export const getTokenFa2Operations = async (
   account: string,
   contractAddress: string,
@@ -37,6 +52,7 @@ export const getTokenFa2Operations = async (
     })
   ).data;
 
+// FA1_2 TOKEN ACTIVITY
 export const getTokenFa12Operations = async (account: string, contractAddress: string, lastLevel: number | null) =>
   (
     await tzktApi.get<Array<OperationFa12Interface>>('operations/transactions', {
@@ -51,7 +67,8 @@ export const getTokenFa12Operations = async (account: string, contractAddress: s
     })
   ).data;
 
-export const getTezosOperations = async (account: string, lastLevel: number | null) =>
+// TOKEN ACTIVITY
+export const getTezosOperations = async (account: string, lastId: number | null) =>
   (
     await tzktApi.get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
@@ -59,11 +76,12 @@ export const getTezosOperations = async (account: string, lastLevel: number | nu
         type: ActivityTypeEnum.Transaction,
         sort: '1',
         'parameter.null': true,
-        ...(isDefined(lastLevel) ? { lastId: lastLevel } : undefined)
+        ...(isDefined(lastId) ? { lastId } : undefined)
       }
     })
   ).data;
 
+// GENERAL ACTIVITY
 export const getTokenOperations = async (account: string, lastId: number | null) =>
   (
     await tzktApi.get<Array<OperationInterface>>(`accounts/${account}/operations`, {
@@ -105,3 +123,143 @@ export const getFa2IncomingOperations = async (account: string, lowerId: number,
       }
     })
   ).data;
+
+export enum LoadLastActivityTokenType {
+  Tezos = 'Tezos',
+  LiquidityBaking = 'LiquidityBaking',
+  All = 'All'
+}
+export type LoadLastActivityType =
+  | TokenTypeEnum.FA_2
+  | TokenTypeEnum.FA_1_2
+  | LoadLastActivityTokenType.Tezos
+  | LoadLastActivityTokenType.All
+  | LoadLastActivityTokenType.LiquidityBaking;
+
+interface LoadLastActivityProps {
+  lastLevel: number | null;
+  publicKeyHash: string;
+  contractAddress: string;
+  tokenId: string;
+  tokenType: LoadLastActivityType;
+  setIsAllLoaded: (boo: boolean) => void;
+  setActivities: (values: (prevValues: Array<ActivityGroup>) => Array<ActivityGroup>) => void;
+}
+
+export const loadLastActivity = async ({
+  lastLevel,
+  publicKeyHash,
+  contractAddress,
+  tokenId,
+  tokenType,
+  setIsAllLoaded,
+  setActivities
+}: LoadLastActivityProps) => {
+  if (tokenType === LoadLastActivityTokenType.All) {
+    const operations = await getTokenOperations(publicKeyHash, lastLevel);
+    if (operations.length === 0) {
+      return;
+    }
+    const filteredOperations = uniqBy<OperationInterface>(operations, 'hash');
+    const operationGroups = (
+      await Promise.all(
+        filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(x.hash).then(x => x.data))
+      )
+    ).flat();
+    const localLastItem = operationGroups[operationGroups.length - 1];
+    if (!isDefined(localLastItem)) {
+      setIsAllLoaded(true);
+
+      return;
+    }
+    const lowerId = localLastItem.id;
+    const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, lastLevel);
+    const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, lastLevel);
+
+    const filteredOperationsFa12 = uniqBy<OperationInterface>(operationsFa12, 'hash');
+    const operationGroupsFa12 = (
+      await Promise.all(
+        filteredOperationsFa12.map(x => getOperationGroupByHash<OperationFa12Interface>(x.hash).then(x => x.data))
+      )
+    ).flat();
+    const filteredOperationsFa2 = uniqBy<OperationInterface>(operationsFa2, 'hash');
+    const operationGroupsFa2 = (
+      await Promise.all(
+        filteredOperationsFa2.map(x => getOperationGroupByHash<OperationFa2Interface>(x.hash).then(x => x.data))
+      )
+    ).flat();
+
+    if (operationGroups.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
+      setIsAllLoaded(true);
+
+      return;
+    }
+
+    const loadedActivities = mapOperationsToActivities(publicKeyHash, operationGroups);
+    const loadedActivitiesFa12 = mapOperationsToActivities(publicKeyHash, operationGroupsFa12);
+    const loadedActivitiesFa2 = mapOperationsToActivities(publicKeyHash, operationGroupsFa2);
+
+    const allOperations = [...loadedActivitiesFa12, ...loadedActivitiesFa2, ...loadedActivities].sort(
+      (b, a) => a.level ?? 0 - (b.level ?? 0)
+    );
+    const activityGroups = transformActivityInterfaceToActivityGroups(allOperations);
+
+    setActivities(prevValue => [...prevValue, ...activityGroups]);
+
+    return;
+  }
+
+  let operations: Array<OperationInterface> = [];
+  switch (tokenType) {
+    case TokenTypeEnum.FA_2:
+      operations = await getTokenFa2Operations(publicKeyHash, contractAddress, tokenId, lastLevel);
+      break;
+    case TokenTypeEnum.FA_1_2:
+      operations = await getTokenFa12Operations(publicKeyHash, contractAddress, lastLevel);
+      break;
+    case LoadLastActivityTokenType.Tezos:
+      operations = await getTezosOperations(publicKeyHash, lastLevel);
+      break;
+    case LoadLastActivityTokenType.LiquidityBaking:
+      operations = await getContractOperations<OperationLiquidityBakingInterface>(
+        publicKeyHash,
+        contractAddress,
+        lastLevel
+      );
+      break;
+    default:
+      throw new Error('unimplemented');
+  }
+
+  const filteredOperations = uniqBy<OperationInterface>(operations, 'hash');
+
+  setIsAllLoaded(filteredOperations.length === 0);
+
+  const operationGroups = await Promise.all(
+    filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(x.hash).then(x => x.data))
+  );
+
+  const activityGroups: Array<ActivityGroup> = [];
+  for (const group of operationGroups) {
+    switch (tokenType) {
+      case TokenTypeEnum.FA_2:
+        activityGroups.push(mapOperationsToActivities(publicKeyHash, group as Array<OperationFa2Interface>));
+        break;
+      case TokenTypeEnum.FA_1_2:
+        activityGroups.push(mapOperationsToActivities(publicKeyHash, group as Array<OperationFa12Interface>));
+        break;
+      case LoadLastActivityTokenType.Tezos:
+        activityGroups.push(mapOperationsToActivities(publicKeyHash, group));
+        break;
+      case LoadLastActivityTokenType.LiquidityBaking:
+        activityGroups.push(
+          mapOperationLiquidityBakingToActivity(publicKeyHash, group as Array<OperationLiquidityBakingInterface>)
+        );
+        break;
+      default:
+        throw new Error('unimplemented');
+    }
+  }
+
+  setActivities((prevValue: Array<ActivityGroup>) => [...prevValue, ...activityGroups]);
+};
