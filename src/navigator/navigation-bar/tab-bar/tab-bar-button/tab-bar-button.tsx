@@ -5,6 +5,8 @@ import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
+import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
@@ -17,6 +19,7 @@ interface Props {
   focused: boolean;
   disabled?: boolean;
   params?: ScreensParamList[ScreensEnum.SwapScreen];
+  disabledOnPress?: () => void;
 }
 
 export const TabBarButton: FC<Props> = ({
@@ -26,7 +29,8 @@ export const TabBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
-  params
+  params,
+  disabledOnPress
 }) => {
   const colors = useColors();
   const styles = useTabBarButtonStyles();
@@ -41,7 +45,13 @@ export const TabBarButton: FC<Props> = ({
   }, [colors, focused, disabled]);
 
   return (
-    <TouchableOpacity style={styles.container} disabled={disabled} onPress={() => navigate(routeName, params)}>
+    <TouchableOpacity
+      style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
+      onPress={() => {
+        !disabled && navigate(routeName, params);
+        isDefined(disabledOnPress) && disabled && disabledOnPress();
+      }}
+    >
       <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>

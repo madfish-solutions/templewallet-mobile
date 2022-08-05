@@ -4,7 +4,9 @@ import { View } from 'react-native';
 import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { formatSize } from '../../../styles/format-size';
+import { showErrorToast } from '../../../toast/toast.utils';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import {
@@ -15,6 +17,7 @@ import {
   walletStackScreens
 } from '../../enums/screens.enum';
 import { useNavigation } from '../../hooks/use-navigation.hook';
+import { NOT_AVAILABLE_MESSAGE } from '../side-bar/side-bar';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
@@ -28,12 +31,16 @@ interface Props {
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
 
+  const { isTezosNode } = useNetworkInfo();
+
   const { getState } = useNavigation();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
+
+  const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
 
   return (
     <View style={styles.container}>
@@ -51,6 +58,8 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.DApps}
           focused={isStackFocused(dAppsStackScreens)}
+          disabled={!isTezosNode}
+          disabledOnPress={disabledOnPress}
         />
         <TabBarButton
           label="Swap"
@@ -63,6 +72,8 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
               : undefined
           }
           focused={isStackFocused(swapStackScreens)}
+          disabled={!isTezosNode}
+          disabledOnPress={disabledOnPress}
         />
         <DebugTapListener>
           <TabBarButton

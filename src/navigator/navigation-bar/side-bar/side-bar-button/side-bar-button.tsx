@@ -7,6 +7,7 @@ import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { ScreensEnum } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useSideBarButtonStyles } from './side-bar-button.styles';
@@ -17,9 +18,17 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
+  disabledOnPress?: () => void;
 }
 
-export const SideBarButton: FC<Props> = ({ label, iconName, routeName, focused, disabled = false }) => {
+export const SideBarButton: FC<Props> = ({
+  label,
+  iconName,
+  routeName,
+  focused,
+  disabled = false,
+  disabledOnPress
+}) => {
   const colors = useColors();
   const styles = useSideBarButtonStyles();
   const { navigate } = useNavigation();
@@ -34,9 +43,15 @@ export const SideBarButton: FC<Props> = ({ label, iconName, routeName, focused, 
 
   return (
     <TouchableOpacity
-      style={[styles.container, conditionalStyle(focused, { borderLeftColor: color })]}
-      disabled={disabled}
-      onPress={() => navigate(routeName)}
+      style={[
+        styles.container,
+        conditionalStyle(focused, { borderLeftColor: color }),
+        conditionalStyle(disabled, { borderLeftColor: color })
+      ]}
+      onPress={() => {
+        !disabled && navigate(routeName);
+        isDefined(disabledOnPress) && disabled && disabledOnPress();
+      }}
     >
       <Icon name={iconName} size={formatSize(28)} color={color} />
       <Divider size={formatSize(8)} />
