@@ -1,4 +1,4 @@
-name: Testflight build
+name: Manual build
 
 on:
   workflow_dispatch:
@@ -6,6 +6,10 @@ on:
       buildNumber:
         description: 'Build number'
         required: true
+      githubReleaseVersion:
+        description: 'Github release version'
+        default: ''
+        required: false
 
 jobs:
   testflight-build:
@@ -73,6 +77,9 @@ jobs:
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           TEMPLE_WALLET_API=${{ secrets.TEMPLE_WALLET_API }}
           SEGMENT_ANALYTICS_KEY=${{ secrets.SEGMENT_ANALYTICS_KEY }}
+          TEMPLE_WALLET_EXOLIX_API_KEY=${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_API_KEY=${{ secrets.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_LINK_ID=${{ secrets.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
           EOF
 
       - name: Install Android Gemfile dependencies
@@ -89,6 +96,16 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Create Github release
+        if: ${{ github.event.inputs.githubReleaseVersion != '' }}
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ github.event.inputs.githubReleaseVersion }}(${{ github.event.inputs.buildNumber }})
+          prerelease: false
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
 
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install
