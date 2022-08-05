@@ -7,7 +7,10 @@ export const useNetworkInfo = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   return useMemo(
-    () => ({ isDcpNode: isDcpNode(selectedRpcUrl), metadata: getNetworkGasTokenMetadata(selectedRpcUrl) }),
+    () => ({
+      isTezosNode: !isDcpNode(selectedRpcUrl),
+      metadata: getNetworkGasTokenMetadata(selectedRpcUrl)
+    }),
     [selectedRpcUrl]
   );
 };

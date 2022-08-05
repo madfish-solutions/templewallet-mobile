@@ -10,12 +10,12 @@ import { TokenListItem } from './token-list-item';
 export const TezosToken: FC = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const { navigate } = useNavigation();
-  const { isDcpNode } = useNetworkInfo();
+  const { isTezosNode } = useNetworkInfo();
 
   return (
     <TokenListItem
       token={tezosToken}
-      apy={isDcpNode ? undefined : delegationApy}
+      apy={isTezosNode ? delegationApy : undefined}
       onPress={() => navigate(ScreensEnum.TezosTokenScreen)}
     />
   );

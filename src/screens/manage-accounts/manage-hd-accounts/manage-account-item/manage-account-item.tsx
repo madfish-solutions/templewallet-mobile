@@ -12,7 +12,6 @@ import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
-import { useNetworkInfo } from '../../../../hooks/use-network-info.hook';
 import { AccountInterface } from '../../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
@@ -35,8 +34,6 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const styles = useManageAccountItemStyles();
   const tezosToken = useTezosTokenSelector(account.publicKeyHash);
   const isVisible = useIsVisibleSelector(account.publicKeyHash);
-
-  const { isDcpNode } = useNetworkInfo();
 
   const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 
@@ -94,11 +91,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <HideBalance style={styles.balanceText}>
             <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
-          {!isDcpNode && (
-            <HideBalance style={styles.equityText}>
-              <AssetValueText convertToDollar asset={tezosToken} amount={tezosToken.balance} />
-            </HideBalance>
-          )}
+
+          <HideBalance style={styles.equityText}>
+            <AssetValueText convertToDollar asset={tezosToken} amount={tezosToken.balance} />
+          </HideBalance>
         </View>
 
         <ButtonSmallSecondary

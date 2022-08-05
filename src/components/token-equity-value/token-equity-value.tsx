@@ -24,14 +24,12 @@ interface Props {
 export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) => {
   const styles = useTokenEquityValueStyles();
 
-  const { isDcpNode } = useNetworkInfo();
+  const { isTezosNode } = useNetworkInfo();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();
 
-  return isDcpNode ? (
-    <Divider />
-  ) : (
+  return isTezosNode ? (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableIcon
@@ -63,5 +61,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
         </HideBalance>
       )}
     </View>
+  ) : (
+    <Divider />
   );
 };

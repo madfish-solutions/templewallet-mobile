@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getDollarValue } from '../../utils/balance.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -23,7 +24,9 @@ export const AssetValueText: FC<Props> = ({
   showSymbol = true,
   convertToDollar = false
 }) => {
-  const hideText = convertToDollar && !isDefined(asset.exchangeRate);
+  const { isTezosNode } = useNetworkInfo();
+
+  const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || !isTezosNode);
 
   const visibleAmount = getDollarValue(amount, asset, convertToDollar ? asset.exchangeRate : 1);
   const visibleSymbol = showSymbol ? asset.symbol : undefined;

@@ -7,7 +7,6 @@ import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { TokenContainer } from '../../../../components/token-container/token-container';
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { EmptyFn } from '../../../../config/general';
-import { useNetworkInfo } from '../../../../hooks/use-network-info.hook';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { useTokenListItemStyles } from './token-list-item.styles';
@@ -20,8 +19,6 @@ export const TokenListItem: FC<Props> = memo(
   ({ token, apy, onPress }) => {
     const styles = useTokenListItemStyles();
     const { navigate } = useNavigation();
-
-    const { isDcpNode } = useNetworkInfo();
 
     const handleOnPress = useCallback(() => {
       if (onPress) {
@@ -39,11 +36,10 @@ export const TokenListItem: FC<Props> = memo(
             <HideBalance style={styles.balanceText}>
               <AssetValueText asset={token} amount={token.balance} showSymbol={false} />
             </HideBalance>
-            {!isDcpNode && (
-              <HideBalance style={styles.valueText}>
-                <AssetValueText asset={token} convertToDollar amount={token.balance} />
-              </HideBalance>
-            )}
+
+            <HideBalance style={styles.valueText}>
+              <AssetValueText asset={token} convertToDollar amount={token.balance} />
+            </HideBalance>
           </View>
         </TokenContainer>
       </TouchableOpacity>

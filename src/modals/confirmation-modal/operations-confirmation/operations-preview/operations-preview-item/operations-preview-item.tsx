@@ -6,7 +6,6 @@ import { Divider } from '../../../../../components/divider/divider';
 import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
-import { useNetworkInfo } from '../../../../../hooks/use-network-info.hook';
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
@@ -39,8 +38,6 @@ interface ParamsPreviewDataInterface {
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
-
-  const { isDcpNode } = useNetworkInfo();
 
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const getContract = () => {
@@ -126,7 +123,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
                   showMinusSign
                 />
                 <Divider size={formatSize(8)} />
-                {!isCollectible(token.tokenData) && !isDcpNode && (
+                {!isCollectible(token.tokenData) && (
                   <AssetValueText
                     convertToDollar
                     amount={token.amount}

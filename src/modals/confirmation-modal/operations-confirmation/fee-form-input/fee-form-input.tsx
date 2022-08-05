@@ -38,7 +38,7 @@ export const FeeFormInput: FC<Props> = ({
 }) => {
   const styles = useFeeFormInputStyles();
 
-  const { isDcpNode, metadata } = useNetworkInfo();
+  const { metadata } = useNetworkInfo();
 
   const [isShowDetailedInput, setIsShowDetailedInput] = useState(!estimationWasSuccessful);
 
@@ -71,7 +71,7 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${metadata.symbol}` : 'Not defined'}
           </Text>
-          {isDefined(gasFeeSumToken) && !isDcpNode && (
+          {isDefined(gasFeeSumToken) && (
             <AssetValueText
               convertToDollar
               asset={gasFeeSumToken}
@@ -88,7 +88,7 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee} ${metadata.symbol}` : 'Not defined'}
           </Text>
-          {storageFeeToken && !isDcpNode ? (
+          {storageFeeToken ? (
             <AssetValueText
               convertToDollar
               asset={storageFeeToken}

@@ -73,7 +73,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
-  const { isDcpNode } = useNetworkInfo();
+  const { isTezosNode } = useNetworkInfo();
 
   const amountInputRef = useRef<TextInput>(null);
 
@@ -173,7 +173,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {!isDcpNode && toUsdToggle && hasExchangeRate && (
+        {isTezosNode && toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
@@ -223,14 +223,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       <Divider size={formatSize(8)} />
 
       <View style={styles.footerContainer}>
-        {!isDcpNode && (
-          <AssetValueText
-            amount={amount.toFixed()}
-            asset={value.asset}
-            style={styles.equivalentValueText}
-            convertToDollar={isTokenInputType}
-          />
-        )}
+        <AssetValueText
+          amount={amount.toFixed()}
+          asset={value.asset}
+          style={styles.equivalentValueText}
+          convertToDollar={isTokenInputType}
+        />
         <View style={styles.balanceContainer}>
           {isLiquidityProviderToken && (
             <>
@@ -247,20 +245,18 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
               <Divider size={formatSize(8)} />
             </>
           )}
-          {!isDcpNode && (
-            <View style={styles.balanceRow}>
-              <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
-              <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
-                <AssetValueText
-                  amount={value.asset.balance}
-                  asset={value.asset}
-                  style={styles.balanceValueText}
-                  convertToDollar={!isTokenInputType}
-                />
-              </HideBalance>
-            </View>
-          )}
+          <View style={styles.balanceRow}>
+            <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+            <Divider size={formatSize(4)} />
+            <HideBalance style={styles.balanceValueText}>
+              <AssetValueText
+                amount={value.asset.balance}
+                asset={value.asset}
+                style={styles.balanceValueText}
+                convertToDollar={!isTokenInputType}
+              />
+            </HideBalance>
+          </View>
         </View>
       </View>
     </>

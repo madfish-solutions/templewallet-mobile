@@ -24,7 +24,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
   const nonZeroAmounts = useNonZeroAmounts(group);
 
-  const { isDcpNode } = useNetworkInfo();
+  const { isTezosNode } = useNetworkInfo();
 
   const firstActivity = group[0] ?? emptyActivity;
 
@@ -50,7 +50,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
           <ActivityTime timestamp={firstActivity.timestamp} />
         </View>
 
-        {!isDcpNode && <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />}
+        {isTezosNode && <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />}
       </View>
       <Divider size={formatSize(16)} />
     </View>
