@@ -27,7 +27,7 @@ export const useGeneralActivity = (): UseActivityInterface => {
 
   const loadOperations = useCallback(
     async (upperId: number | null) => {
-      const operations = await getTokenOperations(publicKeyHash, upperId, selectedRpcUrl);
+      const operations = await getTokenOperations(selectedRpcUrl, publicKeyHash, upperId);
       if (operations.length === 0) {
         return;
       }
@@ -38,8 +38,8 @@ export const useGeneralActivity = (): UseActivityInterface => {
         return;
       }
       const lowerId = localLastItem.id;
-      const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, upperId, selectedRpcUrl);
-      const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, upperId, selectedRpcUrl);
+      const operationsFa12 = await getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId);
+      const operationsFa2 = await getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId);
 
       if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
         setIsAllLoaded(true);

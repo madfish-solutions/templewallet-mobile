@@ -31,7 +31,7 @@ interface Props {
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
 
-  const { isTezosNode } = useNetworkInfo();
+  const { isDcpNode } = useNetworkInfo();
 
   const { getState } = useNavigation();
 
@@ -58,7 +58,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.DApps}
           focused={isStackFocused(dAppsStackScreens)}
-          disabled={!isTezosNode}
+          disabled={isDcpNode}
           disabledOnPress={disabledOnPress}
         />
         <TabBarButton
@@ -72,7 +72,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
               : undefined
           }
           focused={isStackFocused(swapStackScreens)}
-          disabled={!isTezosNode}
+          disabled={isDcpNode}
           disabledOnPress={disabledOnPress}
         />
         <DebugTapListener>

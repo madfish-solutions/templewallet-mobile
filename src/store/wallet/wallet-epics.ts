@@ -102,7 +102,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     withMetadataSlugs(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[[[, selectedAccount], selectedAccountState], metadataRecord], selectedRpcUrl]) =>
-      loadTokensWithBalance$(selectedAccount.publicKeyHash, selectedRpcUrl).pipe(
+      loadTokensWithBalance$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
         concatMap(tokensWithBalance => {
           const isTezosNode = !isDcpNode(selectedRpcUrl);
 

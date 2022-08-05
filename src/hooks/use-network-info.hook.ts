@@ -9,6 +9,7 @@ export const useNetworkInfo = () => {
   return useMemo(
     () => ({
       isTezosNode: !isDcpNode(selectedRpcUrl),
+      isDcpNode: isDcpNode(selectedRpcUrl),
       metadata: getNetworkGasTokenMetadata(selectedRpcUrl)
     }),
     [selectedRpcUrl]

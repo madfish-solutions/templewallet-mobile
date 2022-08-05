@@ -18,7 +18,7 @@ export const useTezosTokenActivity = (): UseActivityInterface => {
 
   const loadLastActivity = useCallback(
     async (lastId: number | null) => {
-      const operations = await getTezosOperations(publicKeyHash, lastId, selectedRpcUrl);
+      const operations = await getTezosOperations(selectedRpcUrl, publicKeyHash, lastId);
 
       setIsAllLoaded(operations.length === 0);
 
