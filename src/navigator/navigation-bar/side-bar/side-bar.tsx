@@ -29,7 +29,7 @@ export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
-  const { isTezosNode } = useNetworkInfo();
+  const { isDcpNode } = useNetworkInfo();
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
@@ -53,7 +53,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocused(dAppsStackScreens)}
-            disabled={!isTezosNode}
+            disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
           />
           <SideBarButton
@@ -61,7 +61,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
-            disabled={!isTezosNode}
+            disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
           />
           <DebugTapListener>
