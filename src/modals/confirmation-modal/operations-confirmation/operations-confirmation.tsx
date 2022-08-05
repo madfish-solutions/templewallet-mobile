@@ -11,7 +11,7 @@ import { LoadingPlaceholder } from '../../../components/loading-placeholder/load
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EventFn } from '../../../config/general';
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { AccountInterface } from '../../../interfaces/account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
@@ -35,7 +35,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   const estimations = useEstimations(sender, opParams);
   const {

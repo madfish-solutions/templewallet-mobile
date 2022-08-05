@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
 import { formatSize } from '../../../styles/format-size';
@@ -24,7 +24,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
   const nonZeroAmounts = useNonZeroAmounts(group);
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const firstActivity = group[0] ?? emptyActivity;
 

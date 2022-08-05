@@ -13,7 +13,7 @@ import { HeaderTokenInfo } from '../components/header/header-token-info/header-t
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useGasToken } from '../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
@@ -62,7 +62,7 @@ export const MainStackScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   useAppLockTimer();
   useBeaconHandler();

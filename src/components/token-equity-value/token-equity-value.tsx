@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
-import { useGasToken } from '../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useTotalBalance } from '../../hooks/use-total-balance';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
@@ -24,7 +24,7 @@ interface Props {
 export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) => {
   const styles = useTokenEquityValueStyles();
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();

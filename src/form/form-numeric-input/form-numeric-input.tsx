@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 
 import { StyledNumericInput } from '../../components/styled-numberic-input/styled-numeric-input';
 import { StyledNumericInputProps } from '../../components/styled-numberic-input/styled-numeric-input.props';
-import { useGasToken } from '../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { hasError } from '../../utils/has-error';
 import { isDefined } from '../../utils/is-defined';
 import { ErrorMessage } from '../error-message/error-message';
@@ -19,7 +19,7 @@ export const FormNumericInput: FC<Props> = ({ name, maxValue, decimals, editable
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
 
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   return (
     <>

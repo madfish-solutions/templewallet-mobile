@@ -11,7 +11,7 @@ import { Label } from '../../../../components/label/label';
 import { Slider } from '../../../../components/slider/slider';
 import { StyledNumericInput } from '../../../../components/styled-numberic-input/styled-numeric-input';
 import { FormNumericInput } from '../../../../form/form-numeric-input/form-numeric-input';
-import { useGasToken } from '../../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../../hooks/use-network-info.hook';
 import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz, tzToMutez } from '../../../../utils/tezos.util';
@@ -38,7 +38,7 @@ export const FeeFormInput: FC<Props> = ({
 }) => {
   const styles = useFeeFormInputStyles();
 
-  const { isDcpNode, metadata } = useGasToken();
+  const { isDcpNode, metadata } = useNetworkInfo();
 
   const [isShowDetailedInput, setIsShowDetailedInput] = useState(!estimationWasSuccessful);
 

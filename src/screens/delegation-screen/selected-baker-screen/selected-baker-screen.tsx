@@ -12,7 +12,7 @@ import { PublicKeyHashText } from '../../../components/public-key-hash-text/publ
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
@@ -30,7 +30,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
   const colors = useColors();
   const styles = useSelectedBakerScreenStyles();
 
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   return (
     <>

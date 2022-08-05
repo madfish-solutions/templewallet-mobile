@@ -6,7 +6,7 @@ import { Divider } from '../../../../../components/divider/divider';
 import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
-import { useGasToken } from '../../../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../../../hooks/use-network-info.hook';
 import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
 import { formatSize } from '../../../../../styles/format-size';
@@ -40,7 +40,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const getContract = () => {

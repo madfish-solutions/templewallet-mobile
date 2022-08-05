@@ -14,7 +14,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import {
   addDcpTokensMetadataAction,
   addTokensMetadataAction
@@ -38,7 +38,7 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
     decimals: new BigNumber(tokenSuggestion.data.decimals)
   };
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const onSubmit = (data: AddTokenInfoFormValues) => {
     const tokenMetadata = { ...initialValues, ...data, decimals: data.decimals.toNumber() };

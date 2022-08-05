@@ -8,7 +8,7 @@ import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable
 import { Switch } from '../../../components/switch/switch';
 import { TokenContainer } from '../../../components/token-container/token-container';
 import { VisibilityEnum } from '../../../enums/visibility.enum';
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import {
   removeDcpTokenAction,
   removeTokenAction,
@@ -27,7 +27,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
   const dispatch = useDispatch();
   const slug = getTokenSlug(asset);
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const handleTrashIconPress = () =>
     Alert.alert('Delete asset?', 'You can add this asset again in the same menu in the "Add asset" section.', [

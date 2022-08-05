@@ -12,7 +12,7 @@ import { RobotIcon } from '../../../../components/robot-icon/robot-icon';
 import { Switch } from '../../../../components/switch/switch';
 import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
-import { useGasToken } from '../../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../../hooks/use-network-info.hook';
 import { AccountInterface } from '../../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
@@ -36,7 +36,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const tezosToken = useTezosTokenSelector(account.publicKeyHash);
   const isVisible = useIsVisibleSelector(account.publicKeyHash);
 
-  const { isDcpNode } = useGasToken();
+  const { isDcpNode } = useNetworkInfo();
 
   const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
 

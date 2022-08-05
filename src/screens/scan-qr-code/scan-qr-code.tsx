@@ -4,7 +4,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
-import { useGasToken } from '../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -24,7 +24,7 @@ export const ScanQrCode = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
 
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   usePageAnalytic(ScreensEnum.ScanQrCode);
 

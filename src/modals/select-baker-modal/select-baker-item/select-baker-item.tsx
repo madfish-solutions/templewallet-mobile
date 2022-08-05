@@ -6,7 +6,7 @@ import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../../config/general';
-import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -22,7 +22,7 @@ interface Props {
 
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
-  const { metadata } = useGasToken();
+  const { metadata } = useNetworkInfo();
 
   return (
     <TouchableOpacity

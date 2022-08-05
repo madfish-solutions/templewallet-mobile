@@ -7,7 +7,7 @@ import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { TokenContainer } from '../../../../components/token-container/token-container';
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { EmptyFn } from '../../../../config/general';
-import { useGasToken } from '../../../../hooks/use-gas-token.hook';
+import { useNetworkInfo } from '../../../../hooks/use-network-info.hook';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { useTokenListItemStyles } from './token-list-item.styles';
@@ -21,7 +21,7 @@ export const TokenListItem: FC<Props> = memo(
     const styles = useTokenListItemStyles();
     const { navigate } = useNavigation();
 
-    const { isDcpNode } = useGasToken();
+    const { isDcpNode } = useNetworkInfo();
 
     const handleOnPress = useCallback(() => {
       if (onPress) {
