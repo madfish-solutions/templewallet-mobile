@@ -113,8 +113,6 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
             })
           );
 
-          console.log(selectedAccountState.dcpTokensList, 'dcp');
-
           const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
 
           const accountTokensSlugs = tokensList.map(token => token.slug);

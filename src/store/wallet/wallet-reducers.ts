@@ -36,7 +36,8 @@ import {
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    accounts: [...state.accounts, { ...account, ...initialAccountState }]
+    accounts: [...state.accounts, account],
+    accountsStateRecord: { ...state.accountsStateRecord, [account.publicKeyHash]: initialAccountState }
   }));
   builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,
