@@ -3,8 +3,10 @@ import { Text, TouchableOpacity } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
+import { conditionalStyle } from '../../../../utils/conditional-style';
 import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
@@ -17,6 +19,7 @@ interface Props {
   focused: boolean;
   disabled?: boolean;
   params?: ScreensParamList[ScreensEnum.SwapScreen];
+  disabledOnPress?: EmptyFn;
 }
 
 export const TabBarButton: FC<Props> = ({
@@ -26,7 +29,8 @@ export const TabBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
-  params
+  params,
+  disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
   const styles = useTabBarButtonStyles();
@@ -40,8 +44,19 @@ export const TabBarButton: FC<Props> = ({
     return value;
   }, [colors, focused, disabled]);
 
+  const handlePress = () => {
+    if (disabled) {
+      disabledOnPress();
+    } else {
+      navigate(routeName, params);
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.container} disabled={disabled} onPress={() => navigate(routeName, params)}>
+    <TouchableOpacity
+      style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
+      onPress={handlePress}
+    >
       <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>

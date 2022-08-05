@@ -79,6 +79,7 @@ import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
+import FilmTokenIcon from './assets/tokens/film.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
@@ -136,6 +137,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
+  [IconNameEnum.FilmToken]: FilmTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   /** topup icons **/

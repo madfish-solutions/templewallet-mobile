@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { mockHdAccount } from '../interfaces/account.interface.mock';
 import { mockFA1_2Contract, mockFA2Contract, mockToolkitMethods } from '../mocks/tezos.mock';
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { FILM_TOKEN_METADATA, TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { mockFA1_2TokenMetadata, mockFA2TokenMetadata } from '../token/interfaces/token-metadata.interface.mock';
 import { rxJsTestingHelper } from './testing.utis';
 import { getTransferParams$ } from './transfer-params.utils';
@@ -20,6 +20,22 @@ describe('getTransferParams$', () => {
 
     getTransferParams$(
       TEZ_TOKEN_METADATA,
+      mockRpcUrl,
+      mockHdAccount,
+      'receiverPublicKeyHash',
+      mockInputAmount
+    ).subscribe(
+      rxJsTestingHelper(params => {
+        expect(params).toEqual({ amount: mockInputAmount.toNumber(), to: 'receiverPublicKeyHash', mutez: true });
+      }, done)
+    );
+  });
+
+  it('should create params for transferring FILM', done => {
+    const mockInputAmount = new BigNumber(0.005);
+
+    getTransferParams$(
+      FILM_TOKEN_METADATA,
       mockRpcUrl,
       mockHdAccount,
       'receiverPublicKeyHash',
