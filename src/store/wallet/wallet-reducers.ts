@@ -22,10 +22,7 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions,
-  removeDcpTokenAction,
-  addDcpTokenAction,
-  toggleDcpTokenVisibilityAction
+  loadTokensBalancesArrayActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -97,32 +94,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }))
   );
 
-  builder.addCase(addDcpTokenAction, (state, { payload: tokenMetadata }) => {
-    const slug = getTokenSlug(tokenMetadata);
-
-    console.log(slug, 'slug');
-    console.log(tokenMetadata, 'meta');
-
-    return updateCurrentAccountState(state, currentAccount => ({
-      dcpTokensList: pushOrUpdateTokensBalances(currentAccount.dcpTokensList, [{ slug, balance: '0' }]),
-      removedDcpTokensList: currentAccount.removedDcpTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-    }));
-  });
-  builder.addCase(removeDcpTokenAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      removedDcpTokensList: [...currentAccount.removedDcpTokensList, slug]
-    }))
-  );
-
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
     updateCurrentAccountState(state, currentAccount => ({
       tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-    }))
-  );
-
-  builder.addCase(toggleDcpTokenVisibilityAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
     }))
   );
 
@@ -165,8 +139,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
                 : token
             ) ?? initialAccountState.tokensList,
           dcpTokensList: initialAccountState.dcpTokensList,
-          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList,
-          removedDcpTokensList: initialAccountState.removedDcpTokensList
+          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
         };
 
         accounts.push({

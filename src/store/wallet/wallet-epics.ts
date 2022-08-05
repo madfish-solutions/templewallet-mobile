@@ -30,8 +30,7 @@ import {
   loadTokensBalancesArrayActions,
   loadTokensActions,
   sendAssetActions,
-  waitForOperationCompletionAction,
-  addDcpTokenAction
+  waitForOperationCompletionAction
 } from './wallet-actions';
 
 const updateDataActions = () => [
@@ -189,9 +188,6 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
-const addDcpTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addDcpTokenAction), concatMap(updateDataActions));
-
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,
   loadTokenBalanceEpic,
@@ -199,6 +195,5 @@ export const walletEpics = combineEpics(
   loadTokensWithBalancesEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
-  addTokenMetadataEpic,
-  addDcpTokenMetadataEpic
+  addTokenMetadataEpic
 );

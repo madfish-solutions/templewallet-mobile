@@ -4,11 +4,7 @@ import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interf
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
-import {
-  addDcpTokensMetadataAction,
-  addTokensMetadataAction,
-  loadTokenSuggestionActions
-} from './tokens-metadata-actions';
+import { addTokensMetadataAction, loadTokenSuggestionActions } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
 export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
@@ -28,28 +24,6 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
     return {
       ...state,
       metadataRecord
-    };
-  });
-
-  builder.addCase(addDcpTokensMetadataAction, (state, { payload: tokensMetadata }) => {
-    const dcpMetadataRecord = tokensMetadata.reduce((prevState, tokenMetadata) => {
-      const slug = getTokenSlug(tokenMetadata);
-
-      console.log(tokenMetadata, 'meta');
-      console.log(slug, 'slug');
-
-      return {
-        ...prevState,
-        [slug]: {
-          ...prevState[slug],
-          ...tokenMetadata
-        }
-      };
-    }, state.dcpMetadataRecord);
-
-    return {
-      ...state,
-      dcpMetadataRecord
     };
   });
 
