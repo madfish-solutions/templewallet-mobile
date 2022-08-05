@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
@@ -36,12 +36,14 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
           disabled={disabled}
-          onPress={() => copyStringToClipboard(domainName)}
+          onLongPress={() => {
+            copyStringToClipboard(domainName);
+          }}
         >
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>
       ) : (
-        <PublicKeyHashText publicKeyHash={publicKeyHash} />
+        <PublicKeyHashText longPress publicKeyHash={publicKeyHash} />
       )}
       {isString(domainName) ? (
         <TouchableIcon
