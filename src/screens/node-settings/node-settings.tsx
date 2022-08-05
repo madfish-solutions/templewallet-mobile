@@ -9,10 +9,8 @@ import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-g
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { loadSelectedBakerActions } from '../../store/baking/baking-actions';
 import { setSelectedRpcUrl } from '../../store/settings/settings-actions';
 import { useRpcListSelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
-import { loadTezosBalanceActions, loadTokensActions } from '../../store/wallet/wallet-actions';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const NodeSettings = () => {
@@ -25,12 +23,7 @@ export const NodeSettings = () => {
   const radioButtons = useMemo(() => rpcList.map(rpc => ({ label: rpc.name, value: rpc.url })), [rpcList]);
 
   usePageAnalytic(ScreensEnum.NodeSettings);
-  const handleChange = (newRpcUrl: string) => {
-    dispatch(setSelectedRpcUrl(newRpcUrl));
-    dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokensActions.submit());
-    dispatch(loadSelectedBakerActions.submit());
-  };
+  const handleChange = (newRpcUrl: string) => dispatch(setSelectedRpcUrl(newRpcUrl));
 
   return (
     <ScreenContainer>

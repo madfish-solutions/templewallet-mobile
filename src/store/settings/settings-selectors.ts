@@ -23,12 +23,6 @@ export const useRpcListSelector = () =>
   useSelector<SettingsRootState, RpcInterface[]>(({ settings }) => settings.rpcList);
 export const useSelectedRpcUrlSelector = () =>
   useSelector<SettingsRootState, string>(({ settings }) => settings.selectedRpcUrl);
-export const useSelectedRpcSelector = () => {
-  const rpcList = useRpcListSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-
-  return rpcList.find(rpc => rpc.url === selectedRpcUrl) ?? rpcList[0];
-};
 
 export const useFiatCurrencySelector = () =>
   useSelector<SettingsRootState, FiatCurrenciesEnum>(({ settings }) => settings.fiatCurrency);

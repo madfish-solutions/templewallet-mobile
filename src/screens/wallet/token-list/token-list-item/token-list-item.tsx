@@ -36,7 +36,6 @@ export const TokenListItem: FC<Props> = memo(
             <HideBalance style={styles.balanceText}>
               <AssetValueText asset={token} amount={token.balance} showSymbol={false} />
             </HideBalance>
-
             <HideBalance style={styles.valueText}>
               <AssetValueText asset={token} convertToDollar amount={token.balance} />
             </HideBalance>

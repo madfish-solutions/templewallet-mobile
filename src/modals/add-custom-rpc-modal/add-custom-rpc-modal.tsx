@@ -11,8 +11,8 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { RpcTypeEnum } from '../../enums/rpc-type.enum';
 import { FormTextInput } from '../../form/form-text-input';
+import { RpcInterface } from '../../interfaces/rpc.interface';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addCustomRpc, setSelectedRpcUrl } from '../../store/settings/settings-actions';
@@ -21,24 +21,20 @@ import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
-import {
-  addCustomRpcFormInitialValues,
-  addCustomRpcFormValidationSchema,
-  AddCustomRpcFormValues
-} from './add-custom-rpc.form';
+import { addCustomRpcFormInitialValues, addCustomRpcFormValidationSchema } from './add-custom-rpc.form';
 
 export const AddCustomRpcModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const rpcList = useRpcListSelector();
 
-  const handleSubmit = (newRpc: AddCustomRpcFormValues) => {
+  const handleSubmit = (newRpc: RpcInterface) => {
     const duplicate = rpcList.find(rpc => rpc.name === newRpc.name || rpc.url === newRpc.url);
 
     if (isDefined(duplicate)) {
       showErrorToast({ description: `RPC already exist ${duplicate.name}(${duplicate.url})` });
     } else {
-      dispatch(addCustomRpc({ ...newRpc, type: RpcTypeEnum.MAIN }));
+      dispatch(addCustomRpc(newRpc));
       dispatch(setSelectedRpcUrl(newRpc.url));
       goBack();
     }

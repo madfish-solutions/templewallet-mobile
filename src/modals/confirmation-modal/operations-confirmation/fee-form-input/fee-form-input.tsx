@@ -88,15 +88,13 @@ export const FeeFormInput: FC<Props> = ({
           <Text style={styles.infoFeeAmount}>
             {isDefined(storageFee) ? `${storageFee} ${metadata.symbol}` : 'Not defined'}
           </Text>
-          {storageFeeToken ? (
+          {storageFeeToken && (
             <AssetValueText
               convertToDollar
               asset={storageFeeToken}
               style={styles.infoFeeValue}
               amount={storageFeeToken.balance}
             />
-          ) : (
-            <Divider size={formatSize(18)} />
           )}
         </View>
       </View>

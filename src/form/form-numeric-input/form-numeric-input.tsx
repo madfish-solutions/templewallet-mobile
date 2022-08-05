@@ -20,12 +20,13 @@ export const FormNumericInput: FC<Props> = ({ name, maxValue, decimals, editable
   const isError = hasError(meta);
 
   const { metadata } = useNetworkInfo();
+  const decimalsWithFallback = decimals ?? metadata.decimals;
 
   return (
     <>
       <StyledNumericInput
         value={field.value}
-        decimals={decimals ?? metadata.decimals}
+        decimals={decimalsWithFallback}
         editable={editable}
         placeholder={placeholder}
         isError={isError}
@@ -37,7 +38,7 @@ export const FormNumericInput: FC<Props> = ({ name, maxValue, decimals, editable
       {isDefined(maxValue) && (
         <FormNumericInputButtons
           maxValue={maxValue}
-          onButtonPress={newValue => helpers.setValue(newValue.decimalPlaces(decimals ?? metadata.decimals))}
+          onButtonPress={newValue => helpers.setValue(newValue.decimalPlaces(decimalsWithFallback))}
         />
       )}
     </>

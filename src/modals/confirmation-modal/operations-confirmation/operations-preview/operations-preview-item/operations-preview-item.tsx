@@ -38,7 +38,6 @@ interface ParamsPreviewDataInterface {
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
   const getTokenMetadata = useTokenMetadataGetter();
-
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const getContract = () => {
       if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {

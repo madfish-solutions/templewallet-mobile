@@ -44,6 +44,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
@@ -60,6 +61,7 @@ export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   const { metadata } = useNetworkInfo();
@@ -77,7 +79,7 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash, selectedRpcUrl]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
