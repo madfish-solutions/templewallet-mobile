@@ -29,7 +29,9 @@ export const loadTokensBalancesArrayActions = createActions<
 
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
-export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
+export const toggleTokenVisibilityAction = createAction<{ slug: string; selectedRpcUrl: string }>(
+  'assets/TOGGLE_TOKEN_VISIBILITY'
+);
 
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
 
