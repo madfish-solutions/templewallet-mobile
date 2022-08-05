@@ -4,10 +4,10 @@ import { Text, TouchableOpacity } from 'react-native';
 import { Divider } from '../../../../components/divider/divider';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
-import { isDefined } from '../../../../utils/is-defined';
 import { ScreensEnum } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useSideBarButtonStyles } from './side-bar-button.styles';
@@ -18,7 +18,7 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
-  disabledOnPress?: () => void;
+  disabledOnPress?: EmptyFn;
 }
 
 export const SideBarButton: FC<Props> = ({
@@ -27,7 +27,7 @@ export const SideBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
-  disabledOnPress
+  disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
   const styles = useSideBarButtonStyles();
@@ -41,6 +41,14 @@ export const SideBarButton: FC<Props> = ({
     return value;
   }, [colors, focused, disabled]);
 
+  const handlePress = () => {
+    if (disabled) {
+      disabledOnPress();
+    } else {
+      navigate(routeName);
+    }
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -48,10 +56,7 @@ export const SideBarButton: FC<Props> = ({
         conditionalStyle(focused, { borderLeftColor: color }),
         conditionalStyle(disabled, { borderLeftColor: color })
       ]}
-      onPress={() => {
-        !disabled && navigate(routeName);
-        isDefined(disabledOnPress) && disabled && disabledOnPress();
-      }}
+      onPress={handlePress}
     >
       <Icon name={iconName} size={formatSize(28)} color={color} />
       <Divider size={formatSize(8)} />

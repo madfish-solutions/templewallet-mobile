@@ -3,7 +3,7 @@ import { Text, TouchableOpacity } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { emptyFn } from '../../../../config/general';
+import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
@@ -19,7 +19,7 @@ interface Props {
   focused: boolean;
   disabled?: boolean;
   params?: ScreensParamList[ScreensEnum.SwapScreen];
-  disabledOnPress?: () => void;
+  disabledOnPress?: EmptyFn;
 }
 
 export const TabBarButton: FC<Props> = ({

@@ -19,7 +19,7 @@ export const Debit = () => {
   const url = useSignedMoonPayUrl();
   const colors = useColors();
 
-  const { isTezosNode } = useNetworkInfo();
+  const { isTezosNode, isDcpNode } = useNetworkInfo();
 
   return (
     <>
@@ -35,7 +35,7 @@ export const Debit = () => {
           </TouchableOpacity>
         </WhiteContainer>
       )}
-      {!isTezosNode && (
+      {isDcpNode && (
         <WhiteContainer>
           <View style={styles.providerLogo}>
             <Image source={require('./assets/ChainBits.png')} style={styles.chainbitsIcon} />
