@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
@@ -19,13 +20,14 @@ import {
 
 export const useGeneralActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadOperations = useCallback(
     async (upperId: number | null) => {
-      const operations = await getTokenOperations(publicKeyHash, upperId);
+      const operations = await getTokenOperations(publicKeyHash, upperId, selectedRpcUrl);
       if (operations.length === 0) {
         return;
       }
@@ -36,8 +38,8 @@ export const useGeneralActivity = (): UseActivityInterface => {
         return;
       }
       const lowerId = localLastItem.id;
-      const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, upperId);
-      const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, upperId);
+      const operationsFa12 = await getFa12IncomingOperations(publicKeyHash, lowerId, upperId, selectedRpcUrl);
+      const operationsFa2 = await getFa2IncomingOperations(publicKeyHash, lowerId, upperId, selectedRpcUrl);
 
       if (operations.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
         setIsAllLoaded(true);

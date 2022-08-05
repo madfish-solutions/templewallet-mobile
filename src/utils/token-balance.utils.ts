@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { forkJoin, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { tzktApi } from '../api.service';
+import { getTzktApi } from '../api.service';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TzktAccountTokenBalance } from '../interfaces/tzkt.interface';
 import { getTokenType } from '../token/utils/token.utils';
@@ -14,8 +14,8 @@ const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwK
 
 const limit = 300;
 
-const getTokenBalances = (account: string, isCollectible: boolean) =>
-  tzktApi.get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
+const getTokenBalances = (account: string, isCollectible: boolean, selectedRpcUrl: string) =>
+  getTzktApi(selectedRpcUrl).get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
     params: {
       account,
       'token.metadata.artifactUri.null': !isCollectible,
@@ -25,10 +25,11 @@ const getTokenBalances = (account: string, isCollectible: boolean) =>
     }
   });
 
-export const loadTokensWithBalance$ = (accountPublicKeyHash: string) =>
-  forkJoin([getTokenBalances(accountPublicKeyHash, false), getTokenBalances(accountPublicKeyHash, true)]).pipe(
-    map(responses => responses.map(response => response.data).flat())
-  );
+export const loadTokensWithBalance$ = (accountPublicKeyHash: string, selectedRpcUrl: string) =>
+  forkJoin([
+    getTokenBalances(accountPublicKeyHash, false, selectedRpcUrl),
+    getTokenBalances(accountPublicKeyHash, true, selectedRpcUrl)
+  ]).pipe(map(responses => responses.map(response => response.data).flat()));
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(

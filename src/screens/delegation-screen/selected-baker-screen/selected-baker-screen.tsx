@@ -14,6 +14,7 @@ import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { isDefined } from '../../../utils/is-defined';
@@ -31,6 +32,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
   const styles = useSelectedBakerScreenStyles();
 
   const { metadata } = useNetworkInfo();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   return (
     <>
@@ -45,7 +47,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(baker.address)} />
+                <ExternalLinkButton url={tzktUrl(baker.address, selectedRpcUrl)} />
               </View>
             </View>
           </View>
@@ -91,7 +93,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           title="View on TZKT block explorer"
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
-          onPress={() => openUrl(tzktUrl(baker.address))}
+          onPress={() => openUrl(tzktUrl(baker.address, selectedRpcUrl))}
           disabled={!isDefined(baker.address)}
         />
 

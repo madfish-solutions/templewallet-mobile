@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { tzktUrl } from '../../../utils/linking.util';
 import { Divider } from '../../divider/divider';
@@ -24,6 +25,8 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
   const nonZeroAmounts = useNonZeroAmounts(group);
 
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+
   const { isTezosNode } = useNetworkInfo();
 
   const firstActivity = group[0] ?? emptyActivity;
@@ -37,7 +40,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
         <View style={styles.exploreContainer}>
           <PublicKeyHashText publicKeyHash={firstActivity.hash} />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(firstActivity.hash)} />
+          <ExternalLinkButton url={tzktUrl(firstActivity.hash, selectedRpcUrl)} />
         </View>
       </View>
       <Divider size={formatSize(8)} />

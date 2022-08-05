@@ -9,6 +9,7 @@ import { PublicKeyHashText } from '../../components/public-key-hash-text/public-
 import { EmptyFn } from '../../config/general';
 import { white } from '../../config/styles';
 import { ToastTypeEnum } from '../../enums/toast-type.enum';
+import { useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { isDefined } from '../../utils/is-defined';
@@ -38,6 +39,8 @@ export const CustomToast: FC<Props> = ({
 }) => {
   const styles = useToastStyles();
   const colors = useColors();
+
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const backgroundColorMap: Record<string, string> = {
     [ToastTypeEnum.Success]: colors.adding,
@@ -89,7 +92,7 @@ export const CustomToast: FC<Props> = ({
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(operationHash)} />
+                <ExternalLinkButton url={tzktUrl(operationHash, selectedRpcUrl)} />
               </View>
             )}
           </View>

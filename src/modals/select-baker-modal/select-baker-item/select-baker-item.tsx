@@ -8,6 +8,7 @@ import { PublicKeyHashText } from '../../../components/public-key-hash-text/publ
 import { EmptyFn } from '../../../config/general';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
@@ -24,6 +25,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
   const { metadata } = useNetworkInfo();
 
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+
   return (
     <TouchableOpacity
       style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
@@ -39,7 +42,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View style={styles.actionsContainer}>
           <PublicKeyHashText publicKeyHash={baker.address} />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(baker.address)} />
+          <ExternalLinkButton url={tzktUrl(baker.address, selectedRpcUrl)} />
         </View>
       </View>
 

@@ -23,7 +23,7 @@ export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: 
 );
 export const loadTokensBalancesArrayActions = createActions<
   { publicKeyHash: string; slugs: string[] },
-  { publicKeyHash: string; data: TokenBalanceResponse[] },
+  { publicKeyHash: string; data: TokenBalanceResponse[]; selectedRpcUrl: string },
   string
 >('assets/LOAD_TOKEN_BALANCE');
 

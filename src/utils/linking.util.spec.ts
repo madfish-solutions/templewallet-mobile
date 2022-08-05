@@ -3,11 +3,11 @@ import { openUrl, tzktUrl } from './linking.util';
 
 describe('tzktUrl', () => {
   it('should return tzkt link with passed non-empty address path', () => {
-    expect(tzktUrl('test')).toEqual('https://tzkt.io/test');
+    expect(tzktUrl('test', 'https://mainnet-node.madfish.solutions')).toEqual('https://tzkt.io/test');
   });
 
   it('should return tzkt link with passed empty address path', () => {
-    expect(tzktUrl('')).toEqual('https://tzkt.io/');
+    expect(tzktUrl('', 'https://mainnet-node.madfish.solutions')).toEqual('https://tzkt.io/');
   });
 });
 

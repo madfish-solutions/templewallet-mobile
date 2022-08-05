@@ -14,6 +14,7 @@ import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { sliceIntoChunks } from '../../utils/array.utils';
 import { isDefined } from '../../utils/is-defined';
+import { isDcpNode } from '../../utils/network.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
 import { withMetadataSlugs } from '../../utils/token-metadata.utils';
@@ -44,13 +45,14 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
     ofType(highPriorityLoadTokenBalanceAction),
     toPayload(),
     withSelectedRpcUrl(state$),
-    switchMap(([payload, rpcUrl]) =>
-      loadAssetBalance$(rpcUrl, payload.publicKeyHash, payload.slug).pipe(
+    switchMap(([payload, selectedRpcUrl]) =>
+      loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, payload.slug).pipe(
         map(balance =>
           isDefined(balance)
             ? loadTokensBalancesArrayActions.success({
                 publicKeyHash: payload.publicKeyHash,
-                data: [{ slug: payload.slug, balance }]
+                data: [{ slug: payload.slug, balance }],
+                selectedRpcUrl
               })
             : loadTokensBalancesArrayActions.fail(`${payload.slug} balance load FAILED`)
         )
@@ -66,18 +68,19 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
       of(payload).pipe(
         withSelectedAccount(state$),
         withSelectedRpcUrl(state$),
-        switchMap(([[payload, selectedAccount], rpcUrl]) => {
+        switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
           if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
             return forkJoin(
               payload.slugs.map(slug =>
-                loadAssetBalance$(rpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
+                loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
               )
             ).pipe(
               delay(100),
               map(data =>
                 loadTokensBalancesArrayActions.success({
                   publicKeyHash: payload.publicKeyHash,
-                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance))
+                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
+                  selectedRpcUrl
                 })
               )
             );
@@ -97,9 +100,12 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     withSelectedAccount(state$),
     withSelectedAccountState(state$),
     withMetadataSlugs(state$),
-    switchMap(([[[, selectedAccount], selectedAccountState], metadataRecord]) =>
-      loadTokensWithBalance$(selectedAccount.publicKeyHash).pipe(
+    withSelectedRpcUrl(state$),
+    switchMap(([[[[, selectedAccount], selectedAccountState], metadataRecord], selectedRpcUrl]) =>
+      loadTokensWithBalance$(selectedAccount.publicKeyHash, selectedRpcUrl).pipe(
         concatMap(tokensWithBalance => {
+          const isTezosNode = !isDcpNode(selectedRpcUrl);
+
           const tokensWithBalancesSlugs = tokensWithBalance.map(tokenWithBalance =>
             getTokenSlug({
               address: tokenWithBalance.token.contract.address,
@@ -107,11 +113,18 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
             })
           );
 
-          const accountTokensSlugs = (selectedAccountState.tokensList ?? []).map(token => token.slug);
+          console.log(selectedAccountState.dcpTokensList, 'dcp');
+
+          const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
+
+          console.log(tokensList, 'list');
+
+          const accountTokensSlugs = tokensList.map(token => token.slug);
           const existingMetadataSlugs = Object.keys(metadataRecord);
 
           const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
           const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
+          console.log(allTokensSlugs, 'allT');
 
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
