@@ -104,8 +104,6 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     switchMap(([[[[, selectedAccount], selectedAccountState], metadataRecord], selectedRpcUrl]) =>
       loadTokensWithBalance$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
         concatMap(tokensWithBalance => {
-          const isTezosNode = !isDcpNode(selectedRpcUrl);
-
           const tokensWithBalancesSlugs = tokensWithBalance.map(tokenWithBalance =>
             getTokenSlug({
               address: tokenWithBalance.token.contract.address,
@@ -113,6 +111,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
             })
           );
 
+          const isTezosNode = !isDcpNode(selectedRpcUrl);
           const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
 
           const accountTokensSlugs = tokensList.map(token => token.slug);
