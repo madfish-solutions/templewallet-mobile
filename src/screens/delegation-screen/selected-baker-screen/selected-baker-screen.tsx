@@ -12,10 +12,11 @@ import { PublicKeyHashText } from '../../../components/public-key-hash-text/publ
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
@@ -30,6 +31,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
   const colors = useColors();
   const styles = useSelectedBakerScreenStyles();
 
+  const { metadata } = useNetworkInfo();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+
   return (
     <>
       <View style={styles.bakerCard}>
@@ -43,7 +47,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(baker.address)} />
+                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
               </View>
             </View>
           </View>
@@ -67,7 +71,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {TEZ_TOKEN_METADATA.symbol}
+              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />
@@ -89,7 +93,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           title="View on TZKT block explorer"
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
-          onPress={() => openUrl(tzktUrl(baker.address))}
+          onPress={() => openUrl(tzktUrl(selectedRpcUrl, baker.address))}
           disabled={!isDefined(baker.address)}
         />
 

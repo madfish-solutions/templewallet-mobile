@@ -13,6 +13,7 @@ import { HeaderTokenInfo } from '../components/header/header-token-info/header-t
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
+import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
@@ -43,9 +44,9 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -60,7 +61,10 @@ export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+
+  const { metadata } = useNetworkInfo();
 
   useAppLockTimer();
   useBeaconHandler();
@@ -75,7 +79,7 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash, selectedRpcUrl]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
@@ -127,7 +131,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={TEZ_TOKEN_METADATA} />)}
+                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}

@@ -3,10 +3,12 @@ import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { delegationApy } from '../../config/general';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { Divider } from '../divider/divider';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
 
 interface Props {
@@ -20,8 +22,10 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const [, isBakerSelected] = useSelectedBakerSelector();
   const isTezos = token.address === '';
 
+  const { isTezosNode } = useNetworkInfo();
+
   if (showHistoryComponent && isTezos === true) {
-    return (
+    return isTezosNode ? (
       <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
         {isBakerSelected ? (
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
@@ -31,6 +35,8 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
           </Text>
         )}
       </TouchableOpacity>
+    ) : (
+      <Divider />
     );
   }
 

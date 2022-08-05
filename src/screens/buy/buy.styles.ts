@@ -32,5 +32,9 @@ export const useBuyStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     width: '100%',
     height: formatSize(72)
+  },
+  chainbitsIcon: {
+    width: formatSize(200),
+    height: formatSize(40)
   }
 }));
