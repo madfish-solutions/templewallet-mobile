@@ -1,5 +1,6 @@
 import { mockLinking } from '../mocks/react-native.mock';
 import { openUrl, tzktUrl } from './linking.util';
+import { DCP_RPC } from './rpc/rpc-list';
 
 describe('tzktUrl', () => {
   it('should return tzkt link with passed non-empty address path', () => {
@@ -8,6 +9,14 @@ describe('tzktUrl', () => {
 
   it('should return tzkt link with passed empty address path', () => {
     expect(tzktUrl('', 'https://mainnet-node.madfish.solutions')).toEqual('https://tzkt.io/');
+  });
+
+  it('should return DPC tzkt link with passed non-empty address path (DPC rpcUrl)', () => {
+    expect(tzktUrl('test', DCP_RPC.url)).toEqual('https://explorer.tlnt.net/test');
+  });
+
+  it('should return DPC tzkt link with passed empty address path (DPC rpcUrl)', () => {
+    expect(tzktUrl('', DCP_RPC.url)).toEqual('https://explorer.tlnt.net/');
   });
 });
 
