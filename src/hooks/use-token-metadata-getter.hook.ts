@@ -13,7 +13,7 @@ export const useTokenMetadataGetter = () => {
 
   return useCallback(
     (slug: string): TokenMetadataInterface => {
-      const tokenMetadata = normalizeTokenMetadata(slug, selectedRpcUrl, tokensMetadata[slug]);
+      const tokenMetadata = normalizeTokenMetadata(selectedRpcUrl, slug, tokensMetadata[slug]);
       const exchangeRate = getTokenExchangeRate(slug);
 
       return {
