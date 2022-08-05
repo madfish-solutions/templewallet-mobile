@@ -33,8 +33,8 @@ const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, addre
       };
 
 export const normalizeTokenMetadata = (
-  slug: string,
   selectedRpcUrl: string,
+  slug: string,
   rawMetadata?: TokenMetadataInterface
 ): TokenMetadataInterface => {
   const [tokenAddress, tokenId] = slug.split('_');
@@ -75,8 +75,8 @@ export const getTokenExchangeRate = (state: RootState, slug: string) => {
 
 export const getTokenMetadata = (state: RootState, slug: string) => {
   const tokenMetadata = normalizeTokenMetadata(
-    slug,
     state.settings.selectedRpcUrl,
+    slug,
     state.tokensMetadata.metadataRecord[slug]
   );
   const exchangeRate = getTokenExchangeRate(state, slug);
