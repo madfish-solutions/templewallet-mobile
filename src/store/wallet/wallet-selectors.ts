@@ -72,7 +72,6 @@ export const useAssetsListSelector = (): TokenInterface[] =>
           };
         });
     },
-
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
 
