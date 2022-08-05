@@ -47,7 +47,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(baker.address, selectedRpcUrl)} />
+                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
               </View>
             </View>
           </View>
@@ -93,7 +93,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           title="View on TZKT block explorer"
           marginTop={formatSize(8)}
           marginBottom={formatSize(16)}
-          onPress={() => openUrl(tzktUrl(baker.address, selectedRpcUrl))}
+          onPress={() => openUrl(tzktUrl(selectedRpcUrl, baker.address))}
           disabled={!isDefined(baker.address)}
         />
 

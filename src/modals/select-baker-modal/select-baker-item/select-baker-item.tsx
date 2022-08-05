@@ -42,7 +42,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View style={styles.actionsContainer}>
           <PublicKeyHashText publicKeyHash={baker.address} />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(baker.address, selectedRpcUrl)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
         </View>
       </View>
 

@@ -92,7 +92,7 @@ export const CustomToast: FC<Props> = ({
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(operationHash, selectedRpcUrl)} />
+                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, operationHash)} />
               </View>
             )}
           </View>
