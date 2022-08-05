@@ -6,9 +6,9 @@ import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../../config/general';
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
@@ -22,6 +22,7 @@ interface Props {
 
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
+  const { metadata } = useGasToken();
 
   return (
     <TouchableOpacity
@@ -53,7 +54,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View>
           <Text style={styles.cellTitle}>Space:</Text>
           <Text style={styles.cellValueText}>
-            {baker.freeSpace.toFixed(2)} {TEZ_TOKEN_METADATA.symbol}
+            {baker.freeSpace.toFixed(2)} {metadata.symbol}
           </Text>
         </View>
         <Divider size={formatSize(16)} />

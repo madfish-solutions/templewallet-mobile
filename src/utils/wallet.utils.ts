@@ -5,6 +5,7 @@ import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
+import { RpcInterface } from '../interfaces/rpc.interface';
 import { Shelter } from '../shelter/shelter';
 import { SettingsRootState } from '../store/settings/settings-state';
 import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
@@ -42,6 +43,16 @@ export const withSelectedRpcUrl =
   <T>(state$: Observable<SettingsRootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(withLatestFrom(state$, (value, { settings }): [T, string] => [value, settings.selectedRpcUrl]));
+
+export const withSelectedRpc =
+  <T>(state$: Observable<SettingsRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { settings }): [T, RpcInterface] => [
+        value,
+        settings.rpcList.find(rpc => rpc.url === settings.selectedRpcUrl) ?? settings.rpcList[0]
+      ])
+    );
 
 export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opParams: ParamsWithKind[]) =>
   Shelter.getSigner$(sender.publicKeyHash).pipe(

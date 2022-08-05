@@ -4,13 +4,13 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
+import { useGasToken } from '../../hooks/use-gas-token.hook';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast } from '../../toast/toast.utils';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isBeaconPayload } from '../../utils/beacon.utils';
 import { isSyncPayload } from '../../utils/sync.utils';
@@ -24,6 +24,8 @@ export const ScanQrCode = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
 
+  const { metadata } = useGasToken();
+
   usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handleRead = ({ data }: BarCodeReadEvent) => {
@@ -31,9 +33,9 @@ export const ScanQrCode = () => {
     if (isAuthorised) {
       if (isValidAddress(data)) {
         if (Number(tezosToken.balance) > 0) {
-          navigate(ModalsEnum.Send, { token: TEZ_TOKEN_METADATA, receiverPublicKeyHash: data });
+          navigate(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
         } else {
-          showErrorToast({ description: 'You need to have TEZ to pay gas fee' });
+          showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
         }
       } else if (isBeaconPayload(data)) {
         beaconDeepLinkHandler(

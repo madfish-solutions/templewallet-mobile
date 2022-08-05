@@ -5,7 +5,7 @@ import { map, filter, withLatestFrom } from 'rxjs/operators';
 import { tokenMetadataApi } from '../api.service';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { FILM_TOKEN_METADATA, TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
@@ -31,11 +31,15 @@ const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, addre
         artifactUri: token.artifactUri
       };
 
-export const normalizeTokenMetadata = (slug: string, rawMetadata?: TokenMetadataInterface): TokenMetadataInterface => {
+export const normalizeTokenMetadata = (
+  slug: string,
+  gasTokenMetadata: TokenMetadataInterface,
+  rawMetadata?: TokenMetadataInterface
+): TokenMetadataInterface => {
   const [tokenAddress, tokenId] = slug.split('_');
 
   return slug === TEZ_TOKEN_SLUG
-    ? TEZ_TOKEN_METADATA
+    ? gasTokenMetadata
     : rawMetadata ?? {
         ...emptyTokenMetadata,
         symbol: '???',
@@ -67,8 +71,12 @@ export const getTokenExchangeRate = (state: RootState, slug: string) => {
   return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
 };
 
-export const getTokenMetadata = (state: RootState, slug: string) => {
-  const tokenMetadata = normalizeTokenMetadata(slug, state.tokensMetadata.metadataRecord[slug]);
+export const getTokenMetadata = (state: RootState, isDcpNode: boolean, slug: string) => {
+  const tokenMetadata = normalizeTokenMetadata(
+    slug,
+    isDcpNode ? FILM_TOKEN_METADATA : TEZ_TOKEN_METADATA,
+    isDcpNode ? state.tokensMetadata.dcpMetadataRecord[slug] : state.tokensMetadata.metadataRecord[slug]
+  );
   const exchangeRate = getTokenExchangeRate(state, slug);
 
   return {
@@ -84,6 +92,16 @@ export const withMetadataSlugs =
       withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
         value,
         tokensMetadata.metadataRecord
+      ])
+    );
+
+export const withDcpMetadataSlugs =
+  <T>(state$: Observable<TokensMetadataRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
+        value,
+        tokensMetadata.dcpMetadataRecord
       ])
     );
 

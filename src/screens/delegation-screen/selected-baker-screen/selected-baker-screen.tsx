@@ -12,10 +12,10 @@ import { PublicKeyHashText } from '../../../components/public-key-hash-text/publ
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { isDefined } from '../../../utils/is-defined';
 import { openUrl, tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
@@ -29,6 +29,8 @@ interface Props {
 export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
   const colors = useColors();
   const styles = useSelectedBakerScreenStyles();
+
+  const { metadata } = useGasToken();
 
   return (
     <>
@@ -67,7 +69,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {TEZ_TOKEN_METADATA.symbol}
+              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />

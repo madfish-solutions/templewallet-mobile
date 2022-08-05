@@ -4,6 +4,7 @@ import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.in
 import { createActions } from '../create-actions';
 
 export const addTokensMetadataAction = createAction<TokenMetadataInterface[]>('assets/ADD_TOKENS_METADATA');
+export const addDcpTokensMetadataAction = createAction<TokenMetadataInterface[]>('assets/ADD_DCP_TOKENS_METADATA');
 
 export const loadTokensMetadataAction = createAction<string[]>('assets/LOAD_TOKENS_METADATA');
 

@@ -8,7 +8,13 @@ import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable
 import { Switch } from '../../../components/switch/switch';
 import { TokenContainer } from '../../../components/token-container/token-container';
 import { VisibilityEnum } from '../../../enums/visibility.enum';
-import { removeTokenAction, toggleTokenVisibilityAction } from '../../../store/wallet/wallet-actions';
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import {
+  removeDcpTokenAction,
+  removeTokenAction,
+  toggleDcpTokenVisibilityAction,
+  toggleTokenVisibilityAction
+} from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
@@ -21,6 +27,8 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
   const dispatch = useDispatch();
   const slug = getTokenSlug(asset);
 
+  const { isDcpNode } = useGasToken();
+
   const handleTrashIconPress = () =>
     Alert.alert('Delete asset?', 'You can add this asset again in the same menu in the "Add asset" section.', [
       {
@@ -30,7 +38,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
       {
         text: 'Delete',
         style: 'destructive',
-        onPress: () => dispatch(removeTokenAction(slug))
+        onPress: () => dispatch(isDcpNode ? removeDcpTokenAction(slug) : removeTokenAction(slug))
       }
     ]);
 
@@ -40,7 +48,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
       <Divider size={formatSize(16)} />
       <Switch
         value={asset.visibility === VisibilityEnum.Visible}
-        onChange={() => dispatch(toggleTokenVisibilityAction(slug))}
+        onChange={() => dispatch(isDcpNode ? toggleDcpTokenVisibilityAction(slug) : toggleTokenVisibilityAction(slug))}
       />
     </TokenContainer>
   );

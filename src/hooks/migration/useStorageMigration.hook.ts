@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import {
   migrateAccountsState,
   migrateIsShownDomainName,
+  migrateRpcList,
   migrateQuipuApy,
   migrateTokensMetadata,
   migrateTokenSuggestion
@@ -18,5 +19,6 @@ export const useStorageMigration = () => {
     dispatch(migrateIsShownDomainName());
     dispatch(migrateQuipuApy());
     dispatch(migrateAccountsState());
+    dispatch(migrateRpcList());
   }, []);
 };

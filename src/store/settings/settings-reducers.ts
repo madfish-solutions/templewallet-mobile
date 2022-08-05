@@ -1,5 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { RpcTypeEnum } from '../../enums/rpc-type.enum';
+import { isDefined } from '../../utils/is-defined';
+import { migrateRpcList } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -67,5 +70,20 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
     ...state,
     isShownDomainName
+  }));
+
+  // MIGRATIONS
+  builder.addCase(migrateRpcList, state => ({
+    ...state,
+    rpcList: isDefined(state.rpcList[0].type)
+      ? state.rpcList
+      : [
+          ...state.rpcList.map(rpc => ({ ...rpc, type: RpcTypeEnum.MAIN })),
+          {
+            name: 'T4L3NT Mainnet',
+            url: 'https://rpc.decentralized.pictures',
+            type: RpcTypeEnum.DCP
+          }
+        ]
   }));
 });

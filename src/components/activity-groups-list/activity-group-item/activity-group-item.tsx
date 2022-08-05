@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
 import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
 import { formatSize } from '../../../styles/format-size';
@@ -22,6 +23,8 @@ interface Props {
 export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
   const nonZeroAmounts = useNonZeroAmounts(group);
+
+  const { isDcpNode } = useGasToken();
 
   const firstActivity = group[0] ?? emptyActivity;
 
@@ -47,7 +50,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
           <ActivityTime timestamp={firstActivity.timestamp} />
         </View>
 
-        <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
+        {!isDcpNode && <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />}
       </View>
       <Divider size={formatSize(16)} />
     </View>

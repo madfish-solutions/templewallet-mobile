@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 
 import { emptyFn } from '../../config/general';
+import { useGasToken } from '../../hooks/use-gas-token.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { StyledNumericInputProps } from './styled-numeric-input.props';
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
-  decimals = TEZ_TOKEN_METADATA.decimals,
+  decimals,
   editable,
   placeholder,
   isError,
@@ -17,9 +17,11 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   onFocus,
   onChange = emptyFn
 }) => {
+  const { metadata } = useGasToken();
+
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     value,
-    decimals,
+    decimals ?? metadata.decimals,
     onChange,
     onBlur,
     onFocus

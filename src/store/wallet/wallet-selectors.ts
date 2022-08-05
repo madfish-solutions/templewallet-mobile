@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
+import { RpcTypeEnum } from '../../enums/rpc-type.enum';
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface } from '../../interfaces/account-state.interface';
 import { AccountInterface } from '../../interfaces/account.interface';
@@ -12,6 +13,7 @@ import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getAccountState, getSelectedAccount } from '../../utils/wallet-account-state.utils';
 import { useTezosToken } from '../../utils/wallet.utils';
 import { RootState } from '../create-store';
+import { useSelectedRpcSelector } from '../settings/settings-selectors';
 import { WalletRootState, WalletState } from './wallet-state';
 
 export const useAccountsListSelector = () =>
@@ -47,29 +49,49 @@ export const useSelectedAccountSelector = () =>
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
 
-export const useAssetsListSelector = (): TokenInterface[] =>
-  useSelector<RootState, TokenInterface[]>(
+export const useAssetsListSelector = (): TokenInterface[] => {
+  const selectedRpc = useSelectedRpcSelector();
+  const isDcpNode = selectedRpc.type === RpcTypeEnum.DCP;
+
+  return useSelector<RootState, TokenInterface[]>(
     state => {
       const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
 
-      return selectedAccountState.tokensList
-        .filter(item => selectedAccountState.removedTokensList.indexOf(item.slug) === -1)
-        .map(token => {
-          const visibility =
-            token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
-              ? VisibilityEnum.Visible
-              : token.visibility;
-          const metadata = getTokenMetadata(state, token.slug);
+      return isDcpNode
+        ? selectedAccountState.dcpTokensList
+            .filter(item => selectedAccountState.removedDcpTokensList.indexOf(item.slug) === -1)
+            .map(token => {
+              const visibility =
+                token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
+                  ? VisibilityEnum.Visible
+                  : token.visibility;
+              const metadata = getTokenMetadata(state, isDcpNode, token.slug);
 
-          return {
-            ...metadata,
-            visibility,
-            balance: token.balance
-          };
-        });
+              return {
+                ...metadata,
+                visibility,
+                balance: token.balance
+              };
+            })
+        : selectedAccountState.tokensList
+            .filter(item => selectedAccountState.removedTokensList.indexOf(item.slug) === -1)
+            .map(token => {
+              const visibility =
+                token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
+                  ? VisibilityEnum.Visible
+                  : token.visibility;
+              const metadata = getTokenMetadata(state, isDcpNode, token.slug);
+
+              return {
+                ...metadata,
+                visibility,
+                balance: token.balance
+              };
+            });
     },
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
+};
 
 export const useVisibleAssetListSelector = () => {
   const tokensList = useAssetsListSelector();

@@ -6,6 +6,7 @@ import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
@@ -49,6 +50,8 @@ export const TokenList: FC = () => {
   const dispatch = useDispatch();
   const styles = useTokenListStyles();
 
+  const { metadata } = useGasToken();
+
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const isHideZeroBalanceMemo = useHideZeroBalances();
@@ -60,7 +63,7 @@ export const TokenList: FC = () => {
     isHideZeroBalanceMemo
   );
   const isShowTezos = useMemo(
-    () => filterTezos(tezosToken.balance, isHideZeroBalance, searchValue),
+    () => filterTezos(tezosToken.balance, isHideZeroBalance, metadata, searchValue),
     [tezosToken.balance, isHideZeroBalance, searchValue]
   );
 

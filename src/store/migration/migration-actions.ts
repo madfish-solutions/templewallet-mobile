@@ -18,3 +18,5 @@ export const migrateQuipuApy = createAction('migration/QUIPU_APY');
 export const deleteOldQuipuApy = createAction('migration/DELETE_OLD_QUIPU_APY');
 
 export const migrateAccountsState = createAction('migration/ACCOUNTS_STATE');
+
+export const migrateRpcList = createAction('migration/RPC_LIST');

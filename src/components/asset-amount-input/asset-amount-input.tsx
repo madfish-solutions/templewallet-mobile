@@ -3,6 +3,7 @@ import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } fr
 import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { useGasToken } from '../../hooks/use-gas-token.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-getter.hook';
 import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
@@ -71,6 +72,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
+
+  const { isDcpNode } = useGasToken();
 
   const amountInputRef = useRef<TextInput>(null);
 
@@ -170,7 +173,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {toUsdToggle && hasExchangeRate && (
+        {!isDcpNode && toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
@@ -220,12 +223,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       <Divider size={formatSize(8)} />
 
       <View style={styles.footerContainer}>
-        <AssetValueText
-          amount={amount.toFixed()}
-          asset={value.asset}
-          style={styles.equivalentValueText}
-          convertToDollar={isTokenInputType}
-        />
+        {!isDcpNode && (
+          <AssetValueText
+            amount={amount.toFixed()}
+            asset={value.asset}
+            style={styles.equivalentValueText}
+            convertToDollar={isTokenInputType}
+          />
+        )}
         <View style={styles.balanceContainer}>
           {isLiquidityProviderToken && (
             <>
@@ -242,18 +247,20 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
               <Divider size={formatSize(8)} />
             </>
           )}
-          <View style={styles.balanceRow}>
-            <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
-            <Divider size={formatSize(4)} />
-            <HideBalance style={styles.balanceValueText}>
-              <AssetValueText
-                amount={value.asset.balance}
-                asset={value.asset}
-                style={styles.balanceValueText}
-                convertToDollar={!isTokenInputType}
-              />
-            </HideBalance>
-          </View>
+          {!isDcpNode && (
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+              <Divider size={formatSize(4)} />
+              <HideBalance style={styles.balanceValueText}>
+                <AssetValueText
+                  amount={value.asset.balance}
+                  asset={value.asset}
+                  style={styles.balanceValueText}
+                  convertToDollar={!isTokenInputType}
+                />
+              </HideBalance>
+            </View>
+          )}
         </View>
       </View>
     </>

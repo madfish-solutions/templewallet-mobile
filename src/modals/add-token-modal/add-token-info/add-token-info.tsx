@@ -14,9 +14,13 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from '../../../form/form-text-input';
-import { addTokensMetadataAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
+import { useGasToken } from '../../../hooks/use-gas-token.hook';
+import {
+  addDcpTokensMetadataAction,
+  addTokensMetadataAction
+} from '../../../store/tokens-metadata/tokens-metadata-actions';
 import { useAddTokenSuggestionSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
-import { addTokenAction } from '../../../store/wallet/wallet-actions';
+import { addDcpTokenAction, addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
@@ -34,11 +38,13 @@ export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
     decimals: new BigNumber(tokenSuggestion.data.decimals)
   };
 
+  const { isDcpNode } = useGasToken();
+
   const onSubmit = (data: AddTokenInfoFormValues) => {
     const tokenMetadata = { ...initialValues, ...data, decimals: data.decimals.toNumber() };
 
-    dispatch(addTokenAction(tokenMetadata));
-    dispatch(addTokensMetadataAction([tokenMetadata]));
+    dispatch(isDcpNode ? addDcpTokenAction(tokenMetadata) : addTokenAction(tokenMetadata));
+    dispatch(isDcpNode ? addDcpTokensMetadataAction([tokenMetadata]) : addTokensMetadataAction([tokenMetadata]));
 
     showSuccessToast({ description: 'Token successfully added' });
     onFormSubmitted();

@@ -28,8 +28,11 @@ export const loadTokensBalancesArrayActions = createActions<
 >('assets/LOAD_TOKEN_BALANCE');
 
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
+export const addDcpTokenAction = createAction<TokenMetadataInterface>('assets/ADD_DCP_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
+export const removeDcpTokenAction = createAction<string>('assets/REMOVE_DCP_TOKEN');
 export const toggleTokenVisibilityAction = createAction<string>('assets/TOGGLE_TOKEN_VISIBILITY');
+export const toggleDcpTokenVisibilityAction = createAction<string>('assets/TOGGLE_DCP_TOKEN_VISIBILITY');
 
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
 
