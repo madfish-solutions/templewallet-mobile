@@ -14,7 +14,7 @@ const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwK
 
 const limit = 300;
 
-const getTokenBalances = (account: string, isCollectible: boolean, selectedRpcUrl: string) =>
+const getTokenBalances = (selectedRpcUrl: string, account: string, isCollectible: boolean) =>
   getTzktApi(selectedRpcUrl).get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
     params: {
       account,
@@ -25,10 +25,10 @@ const getTokenBalances = (account: string, isCollectible: boolean, selectedRpcUr
     }
   });
 
-export const loadTokensWithBalance$ = (accountPublicKeyHash: string, selectedRpcUrl: string) =>
+export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
   forkJoin([
-    getTokenBalances(accountPublicKeyHash, false, selectedRpcUrl),
-    getTokenBalances(accountPublicKeyHash, true, selectedRpcUrl)
+    getTokenBalances(selectedRpcUrl, accountPublicKeyHash, false),
+    getTokenBalances(selectedRpcUrl, accountPublicKeyHash, true)
   ]).pipe(map(responses => responses.map(response => response.data).flat()));
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>

@@ -27,8 +27,8 @@ export const useTokenActivity = (contractAddress: string, tokenId: string): UseA
 
       const loadedActivities =
         tokenType === TokenTypeEnum.FA_2
-          ? await loadFa2Activity(publicKeyHash, contractAddress, tokenId, lastLevel, selectedRpcUrl)
-          : await loadFa12Activity(publicKeyHash, contractAddress, lastLevel, selectedRpcUrl);
+          ? await loadFa2Activity(selectedRpcUrl, publicKeyHash, contractAddress, tokenId, lastLevel)
+          : await loadFa12Activity(selectedRpcUrl, publicKeyHash, contractAddress, lastLevel);
 
       setIsAllLoaded(loadedActivities.length === 0);
       const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
@@ -57,24 +57,24 @@ export const useTokenActivity = (contractAddress: string, tokenId: string): UseA
 };
 
 const loadFa2Activity = async (
+  selectedRpcUrl: string,
   publicKeyHash: string,
   contractAddress: string,
   tokenId: string,
-  lastLevel: number | null,
-  selectedRpcUrl: string
+  lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
-  const operations = await getTokenFa2Operations(publicKeyHash, contractAddress, tokenId, lastLevel, selectedRpcUrl);
+  const operations = await getTokenFa2Operations(selectedRpcUrl, publicKeyHash, contractAddress, tokenId, lastLevel);
 
   return mapOperationsFa2ToActivities(publicKeyHash, operations);
 };
 
 const loadFa12Activity = async (
+  selectedRpcUrl: string,
   publicKeyHash: string,
   contractAddress: string,
-  lastLevel: number | null,
-  selectedRpcUrl: string
+  lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
-  const operations = await getTokenFa12Operations(publicKeyHash, contractAddress, lastLevel, selectedRpcUrl);
+  const operations = await getTokenFa12Operations(selectedRpcUrl, publicKeyHash, contractAddress, lastLevel);
 
   return mapOperationsFa12ToActivities(publicKeyHash, operations);
 };

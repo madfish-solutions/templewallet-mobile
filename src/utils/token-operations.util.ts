@@ -5,11 +5,11 @@ import { OperationFa12Interface, OperationFa2Interface, OperationInterface } fro
 import { isDefined } from './is-defined';
 
 export const getTokenFa2Operations = async (
+  selectedRpcUrl: string,
   account: string,
   contractAddress: string,
   tokenId = '0',
-  lastLevel: number | null,
-  selectedRpcUrl: string
+  lastLevel: number | null
 ) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationFa2Interface>>(
@@ -19,10 +19,10 @@ export const getTokenFa2Operations = async (
   ).data;
 
 export const getTokenFa12Operations = async (
+  selectedRpcUrl: string,
   account: string,
   contractAddress: string,
-  lastLevel: number | null,
-  selectedRpcUrl: string
+  lastLevel: number | null
 ) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationFa12Interface>>(
@@ -31,7 +31,7 @@ export const getTokenFa12Operations = async (
     )
   ).data;
 
-export const getTezosOperations = async (account: string, lastLevel: number | null, selectedRpcUrl: string) =>
+export const getTezosOperations = async (selectedRpcUrl: string, account: string, lastLevel: number | null) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationInterface>>(
       `accounts/${account}/operations?limit=${OPERATION_LIMIT}&type=${ActivityTypeEnum.Transaction}&sort=1&parameter.null` +
@@ -39,7 +39,7 @@ export const getTezosOperations = async (account: string, lastLevel: number | nu
     )
   ).data;
 
-export const getTokenOperations = async (account: string, lastId: number | null, selectedRpcUrl: string) =>
+export const getTokenOperations = async (selectedRpcUrl: string, account: string, lastId: number | null) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationInterface>>(
       `accounts/${account}/operations?limit=${OPERATION_LIMIT}&sort=1&type=${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}` +
@@ -48,10 +48,10 @@ export const getTokenOperations = async (account: string, lastId: number | null,
   ).data;
 
 export const getFa12IncomingOperations = async (
+  selectedRpcUrl: string,
   account: string,
   lowerId: number,
-  upperId: number | null,
-  selectedRpcUrl: string
+  upperId: number | null
 ) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationFa12Interface>>(
@@ -61,10 +61,10 @@ export const getFa12IncomingOperations = async (
   ).data;
 
 export const getFa2IncomingOperations = async (
+  selectedRpcUrl: string,
   account: string,
   lowerId: number,
-  upperId: number | null,
-  selectedRpcUrl: string
+  upperId: number | null
 ) =>
   (
     await getTzktApi(selectedRpcUrl).get<Array<OperationFa2Interface>>(
