@@ -24,9 +24,9 @@ export const AssetValueText: FC<Props> = ({
   showSymbol = true,
   convertToDollar = false
 }) => {
-  const { isTezosNode } = useNetworkInfo();
+  const { isDcpNode } = useNetworkInfo();
 
-  const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || !isTezosNode);
+  const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || isDcpNode);
 
   const visibleAmount = getDollarValue(amount, asset, convertToDollar ? asset.exchangeRate : 1);
   const visibleSymbol = showSymbol ? asset.symbol : undefined;

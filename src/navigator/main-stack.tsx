@@ -170,7 +170,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
-                options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
               />
 
               {/** Swap stack **/}
