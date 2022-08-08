@@ -161,10 +161,6 @@ export const SelectBakerModal: FC = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {finalBakersList.length === 0 && (
-          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
-        )}
       </View>
 
       <FlatList
@@ -175,6 +171,9 @@ export const SelectBakerModal: FC = () => {
         keyExtractor={item => item.address}
         style={styles.flatList}
         windowSize={10}
+        ListEmptyComponent={
+          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
+        }
       />
 
       <ModalButtonsContainer>
