@@ -23,7 +23,6 @@ import { truncateLongAddress } from '../../../../utils/exolix.util';
 import { isDefined } from '../../../../utils/is-defined';
 import { openUrl } from '../../../../utils/linking.util';
 import { Countdown } from '../../components/countdown/countdown';
-import { TopUpTokenDropdownItem } from '../../components/top-up-token-dropdown-item/top-up-token-dropdown-item';
 import { EXOLIX_CONTACT_LINK } from './config';
 import { ErrorComponent } from './error-component';
 import { ExolixSelectors } from './exolix.selectors';
@@ -34,6 +33,8 @@ interface ApproveStepProps {
   isError: boolean;
   setIsError: (b: boolean) => void;
 }
+
+const FORTY_FIVE_MINUTES_IN_MS = 45 * 60 * 1000;
 
 export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
   const styles = useExolixStyles();
@@ -80,7 +81,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           </View>
           <Divider size={formatSize(16)} />
           <View>
-            <Countdown endTimestamp={new Date(exchangeData.createdAt).getTime() + 3600000} />
+            <Countdown endTimestamp={new Date(exchangeData.createdAt).getTime() + FORTY_FIVE_MINUTES_IN_MS} />
           </View>
           <Divider size={formatSize(16)} />
           <Disclaimer
@@ -137,16 +138,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           <Divider size={formatSize(8)} />
           <ButtonsFloatingContainer />
           <View style={styles.rowCenterContainer}>
-            <Text style={styles.depositText}>Deposit BTC address:</Text>
-            <Divider size={formatSize(8)} />
-            <TopUpTokenDropdownItem
-              token={{
-                code: exchangeData.coinFrom.coinCode,
-                name: exchangeData.coinFrom.coinName,
-                icon: exchangeData.coinFrom.icon
-              }}
-              iconSize={formatSize(32)}
-            />
+            <Text style={styles.depositText}>Deposit {exchangeData.coinFrom.networkName} address:</Text>
           </View>
           <Divider size={formatSize(8)} />
           <TouchableOpacity style={styles.addressContainer} onPress={handleCopyTransactionPress}>

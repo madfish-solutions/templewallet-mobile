@@ -1,5 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { DCP_RPC } from '../../utils/rpc/rpc-list';
+import { addDcpRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -68,4 +70,18 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     isShownDomainName
   }));
+
+  // MIGRATIONS
+  builder.addCase(addDcpRpc, state => {
+    const isMigrationNeeded = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
+
+    if (isMigrationNeeded) {
+      return {
+        ...state,
+        rpcList: [...state.rpcList, DCP_RPC]
+      };
+    }
+
+    return state;
+  });
 });

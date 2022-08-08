@@ -4,14 +4,6 @@ import { TokenBalanceResponse } from '../../interfaces/token-balance-response.in
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
 import { WalletState } from './wallet-state';
 
-const MAX_PENDING_OPERATION_DISPLAY_TIME = 4 * 3600000;
-
-export const isPendingOperationOutdated = (addedAt: number) => {
-  const currentTime = new Date().getTime();
-
-  return currentTime - addedAt > MAX_PENDING_OPERATION_DISPLAY_TIME;
-};
-
 export const updateCurrentAccountState = (
   state: WalletState,
   updateFn: (currentAccountState: AccountStateInterface) => Partial<AccountStateInterface>

@@ -4,9 +4,12 @@ import { map, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
+import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { RootState } from '../create-store';
 import { emptyAction } from '../root-state.actions';
 import {
+  addDcpTokensMetadata,
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,
   deleteOldTokensMetadata,
@@ -18,6 +21,8 @@ import {
   setNewTokensMetadata
 } from './migration-actions';
 
+const APX_TOKEN_SLUG = 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN_0';
+
 const migrateTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(migrateTokensMetadata),
@@ -25,6 +30,25 @@ const migrateTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Ob
     concatMap(([, rootState]) => {
       if (rootState.wallet.tokensMetadata !== undefined) {
         return [deleteOldTokensMetadata(), setNewTokensMetadata(rootState.wallet.tokensMetadata)];
+      }
+
+      return [];
+    })
+  );
+
+const addDcpTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(addDcpTokensMetadata),
+    withLatestFrom(state$),
+    concatMap(([, rootState]) => {
+      const existingMetadataSlugs = Object.keys(rootState.tokensMetadata.metadataRecord);
+
+      if (!existingMetadataSlugs.includes(APX_TOKEN_SLUG)) {
+        const newTokensMetadata = { ...rootState.tokensMetadata.metadataRecord };
+
+        DCP_TOKENS_METADATA.forEach(tokenMetadata => (newTokensMetadata[getTokenSlug(tokenMetadata)] = tokenMetadata));
+
+        return [setNewTokensMetadata(newTokensMetadata)];
       }
 
       return [];
@@ -72,6 +96,7 @@ const migrateQuipuApyEpic: Epic = (action$: Observable<Action>, state$: Observab
 
 export const migrationEpics = combineEpics(
   migrateTokensMetadataEpic,
+  addDcpTokensMetadataEpic,
   migrateTokenSuggestionEpic,
   migrateIsShownDomainNameEpic,
   migrateQuipuApyEpic

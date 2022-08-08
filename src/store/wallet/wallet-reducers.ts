@@ -5,6 +5,7 @@ import { AccountStateInterface, initialAccountState } from '../../interfaces/acc
 import { AccountInterface } from '../../interfaces/account.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
+import { isDcpNode } from '../../utils/network.utils';
 import {
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,
@@ -35,7 +36,8 @@ import {
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
     ...state,
-    accounts: [...state.accounts, { ...account, ...initialAccountState }]
+    accounts: [...state.accounts, account],
+    accountsStateRecord: { ...state.accountsStateRecord, [account.publicKeyHash]: initialAccountState }
   }));
   builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,
@@ -73,10 +75,21 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     })
   );
 
-  builder.addCase(loadTokensBalancesArrayActions.success, (state, { payload: { publicKeyHash, data } }) =>
-    updateAccountState(state, publicKeyHash, account => ({
-      tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
-    }))
+  builder.addCase(
+    loadTokensBalancesArrayActions.success,
+    (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
+      const isTezosNode = !isDcpNode(selectedRpcUrl);
+
+      return updateAccountState(state, publicKeyHash, account =>
+        isTezosNode
+          ? {
+              tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
+            }
+          : {
+              dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data)
+            }
+      );
+    }
   );
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
@@ -92,11 +105,20 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       removedTokensList: [...currentAccount.removedTokensList, slug]
     }))
   );
-  builder.addCase(toggleTokenVisibilityAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-    }))
-  );
+
+  builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug, selectedRpcUrl } }) => {
+    const isTezosNode = !isDcpNode(selectedRpcUrl);
+
+    return updateCurrentAccountState(state, currentAccount =>
+      isTezosNode
+        ? {
+            tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
+          }
+        : {
+            dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
+          }
+    );
+  });
 
   // MIGRATIONS
   builder.addCase(deleteOldTokensMetadata, state => ({
@@ -136,6 +158,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
                   }
                 : token
             ) ?? initialAccountState.tokensList,
+          dcpTokensList: initialAccountState.dcpTokensList,
           removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
         };
 

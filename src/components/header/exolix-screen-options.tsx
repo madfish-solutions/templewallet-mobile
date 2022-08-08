@@ -1,9 +1,7 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import React, { FC, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { restartExolixTopupAction } from '../../store/exolix/exolix-actions';
 import { useExolixStep } from '../../store/exolix/exolix-selectors';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { HeaderButton } from './header-button/header-button';
@@ -11,14 +9,9 @@ import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';
 
 export const BackButton: FC = () => {
-  const step = useExolixStep();
-  const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
   const handleOnPress = () => {
-    if (step > 0) {
-      dispatch(restartExolixTopupAction());
-    }
     goBack();
   };
 
@@ -42,9 +35,8 @@ const TitleComponent: FC = () => {
       case 1:
         return 'Deposit';
       case 2:
-      case 3:
         return 'Convertation';
-      case 4:
+      case 3:
       default:
         return 'Completed';
     }
@@ -56,5 +48,5 @@ const TitleComponent: FC = () => {
 const Stepper: FC = () => {
   const step = useExolixStep();
 
-  return <HeaderProgress current={step < 3 ? step + 1 : step} total={4} />;
+  return <HeaderProgress current={step + 1 < 4 ? step + 1 : 4} total={4} />;
 };

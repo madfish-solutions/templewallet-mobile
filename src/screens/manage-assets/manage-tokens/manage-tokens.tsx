@@ -8,6 +8,7 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useTokensListSelector } from '../../../store/wallet/wallet-selectors';
@@ -19,13 +20,15 @@ export const ManageTokens = () => {
   const styles = useManageAssetsStyles();
   const { navigate } = useNavigation();
 
+  const { isTezosNode } = useNetworkInfo();
+
   const tokensList = useTokensListSelector();
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList);
 
   return (
     <>
       <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />
-      <Text style={styles.descriptionText}>Show, remove and hide tokens at your home screen.</Text>
+      <Text style={styles.descriptionText}>Show{isTezosNode && ', remove'} and hide tokens at your home screen.</Text>
 
       <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
         {filteredAssetsList.length === 0 ? (
@@ -35,7 +38,13 @@ export const ManageTokens = () => {
         )}
 
         <Divider />
-        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="ADD TOKEN" onPress={() => navigate(ModalsEnum.AddToken)} />
+        {isTezosNode && (
+          <IconTitleNoBg
+            icon={IconNameEnum.PlusCircle}
+            text="ADD TOKEN"
+            onPress={() => navigate(ModalsEnum.AddToken)}
+          />
+        )}
         <Divider />
       </ScreenContainer>
     </>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
@@ -10,13 +11,14 @@ import { getTezosOperations } from '../utils/token-operations.util';
 
 export const useTezosTokenActivity = (): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(
     async (lastId: number | null) => {
-      const operations = await getTezosOperations(publicKeyHash, lastId);
+      const operations = await getTezosOperations(selectedRpcUrl, publicKeyHash, lastId);
 
       setIsAllLoaded(operations.length === 0);
 

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from '../../../../components/divider/divider';
 import { Icon } from '../../../../components/icon/icon';
@@ -15,13 +15,14 @@ const TEMPORARILY_UNAVAILABLE_MESSAGE = 'Sorry, service is temporarily unavailab
 
 interface Props {
   title: string;
-  iconName: IconNameEnum;
+  iconName?: IconNameEnum;
+  imageSource?: ImageSourcePropType;
   disabled?: boolean;
   isError?: boolean;
   onPress?: () => void;
 }
 
-export const TopUpOption: FC<Props> = ({ title, iconName, disabled, isError, onPress }) => {
+export const TopUpOption: FC<Props> = ({ title, iconName, imageSource, disabled, isError, onPress }) => {
   const styles = useTopUpOptionStyles();
   const colors = useColors();
 
@@ -35,17 +36,20 @@ export const TopUpOption: FC<Props> = ({ title, iconName, disabled, isError, onP
 
   return (
     <>
-      <TouchableOpacity onPress={handlePress}>
-        <WhiteContainer>
+      <WhiteContainer>
+        <TouchableOpacity onPress={handlePress}>
           <View style={styles.providerLogo}>
-            <Icon name={iconName} width={formatSize(160)} height={formatSize(40)} color={colors.black} />
+            {isDefined(iconName) && (
+              <Icon name={iconName} width={formatSize(160)} height={formatSize(40)} color={colors.black} />
+            )}
+            {isDefined(imageSource) && <Image source={imageSource} style={styles.pngImage} />}
           </View>
           <View style={styles.divider} />
           <View style={styles.textContainer}>
             <Text style={[styles.actionsContainer, isDefined(disabled) && disabled && styles.disabled]}>{title}</Text>
           </View>
-        </WhiteContainer>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </WhiteContainer>
       <Divider size={formatSize(16)} />
     </>
   );

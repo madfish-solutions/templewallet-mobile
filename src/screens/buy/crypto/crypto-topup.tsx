@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { loadExolixCurrenciesAction } from '../../../store/exolix/exolix-actions';
@@ -13,6 +14,8 @@ export const CryptoTopup = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
+  const { isTezosNode } = useNetworkInfo();
+
   const handleOnPress = () => {
     dispatch(loadExolixCurrenciesAction.submit());
     navigate(ScreensEnum.Exolix);
@@ -21,7 +24,9 @@ export const CryptoTopup = () => {
   return (
     <>
       <Divider size={formatSize(16)} />
-      <TopUpOption title="Buy TEZ with Exolix" iconName={IconNameEnum.Exolix} onPress={handleOnPress} />
+      {isTezosNode && (
+        <TopUpOption title="Buy TEZ with Exolix" iconName={IconNameEnum.Exolix} onPress={handleOnPress} />
+      )}
     </>
   );
 };

@@ -6,12 +6,14 @@ import { Divider } from '../../../components/divider/divider';
 import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../../config/general';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
+import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props {
@@ -22,12 +24,26 @@ interface Props {
 
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
+  const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
+  const { metadata } = useNetworkInfo();
+
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   return (
     <TouchableOpacity
-      style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
+      style={[
+        styles.container,
+        conditionalStyle(selected, styles.containerSelected),
+        conditionalStyle(isRecommendedBaker, styles.containerPaddingWithRecommended)
+      ]}
       onPress={onPress}
     >
+      {isRecommendedBaker && (
+        <View style={styles.recommendedContainer}>
+          <Text style={styles.recommendedText}>Recommended</Text>
+        </View>
+      )}
+
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
           <AvatarImage size={formatSize(32)} uri={baker.logo} />
@@ -38,7 +54,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View style={styles.actionsContainer}>
           <PublicKeyHashText publicKeyHash={baker.address} />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(baker.address)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
         </View>
       </View>
 
@@ -53,7 +69,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View>
           <Text style={styles.cellTitle}>Space:</Text>
           <Text style={styles.cellValueText}>
-            {baker.freeSpace.toFixed(2)} {TEZ_TOKEN_METADATA.symbol}
+            {baker.freeSpace.toFixed(2)} {metadata.symbol}
           </Text>
         </View>
         <Divider size={formatSize(16)} />
