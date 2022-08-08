@@ -162,7 +162,7 @@ export const SelectBakerModal: FC = () => {
           </View>
         </View>
 
-        {sortedBakersList.length === 0 && (
+        {finalBakersList.length === 0 && (
           <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
         )}
       </View>
