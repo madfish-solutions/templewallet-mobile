@@ -36,9 +36,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
           disabled={disabled}
-          onLongPress={() => {
-            copyStringToClipboard(domainName);
-          }}
+          onLongPress={() => copyStringToClipboard(domainName)}
         >
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>
