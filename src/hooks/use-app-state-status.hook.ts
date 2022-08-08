@@ -10,14 +10,12 @@ enum BasicAppStateStatus {
 }
 
 interface AppStateStatusProps {
-  isLogged?: boolean;
   onAppActiveState?: EmptyFn;
   onAppInactiveState?: EmptyFn;
   onAppBackgroundState?: EmptyFn;
 }
 
 export const useAppStateStatus = ({
-  isLogged = false,
   onAppActiveState = emptyFn,
   onAppInactiveState = emptyFn,
   onAppBackgroundState = emptyFn
@@ -30,34 +28,21 @@ export const useAppStateStatus = ({
       return null;
     }
 
-    if (isLogged) {
-      console.log(newAppState, prevAppState.current);
-    }
-
     if (newAppState === prevAppState.current) {
       return null;
     }
 
     if (newAppState === BasicAppStateStatus.Active) {
-      if (isLogged) {
-        console.log('onAppActiveState();');
-      }
       onAppActiveState();
       prevAppState.current = BasicAppStateStatus.Active;
     }
 
     if (newAppState === BasicAppStateStatus.Inactive) {
-      if (isLogged) {
-        console.log('onAppInactiveState();');
-      }
       onAppInactiveState();
       prevAppState.current = BasicAppStateStatus.Inactive;
     }
 
     if (newAppState === BasicAppStateStatus.Background) {
-      if (isLogged) {
-        console.log('onAppBackgroundState();');
-      }
       onAppBackgroundState();
       prevAppState.current = BasicAppStateStatus.Background;
     }
