@@ -23,7 +23,6 @@ const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$:
     switchMap(([[, selectedAccount], rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
         switchMap(bakerAddress => {
-          console.log(bakerAddress, 'add');
           if (isDefined(bakerAddress)) {
             return from(bakingBadApi.get<BakerInterface>(`/bakers/${bakerAddress}`)).pipe(map(({ data }) => data));
           } else {

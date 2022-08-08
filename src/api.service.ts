@@ -3,7 +3,6 @@ import axios from 'axios';
 import { TEMPLE_WALLET_API, TEMPLE_WALLET_EVERSTAKE_API_KEY, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
-
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
 
 const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });

@@ -14,7 +14,6 @@ export const DelegationScreen = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const [selectedBaker, isBakerSelected] = useSelectedBakerSelector();
-  console.log(selectedBaker, 'bak');
 
   const bakerRewardsList = useBakerRewardsListSelector();
 
