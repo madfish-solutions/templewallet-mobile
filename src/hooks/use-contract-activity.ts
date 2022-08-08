@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
 import { OperationLiquidityBakingInterface } from '../interfaces/operation.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
@@ -11,13 +12,14 @@ import { getContractOperations } from '../utils/token-operations.util';
 
 export const useContractActivity = (contractAddress: string): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const loadLastActivity = useCallback(
     async (lastLevel: number | null) => {
-      const loadedActivities = await loadContractActivity(publicKeyHash, contractAddress, lastLevel);
+      const loadedActivities = await loadContractActivity(selectedRpcUrl, publicKeyHash, contractAddress, lastLevel);
 
       setIsAllLoaded(loadedActivities.length === 0);
       const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
@@ -46,11 +48,13 @@ export const useContractActivity = (contractAddress: string): UseActivityInterfa
 };
 
 const loadContractActivity = async (
+  selectedRpcUrl: string,
   publicKeyHash: string,
   contractAddress: string,
   lastLevel: number | null
 ): Promise<Array<ActivityInterface>> => {
   const operations = await getContractOperations<OperationLiquidityBakingInterface>(
+    selectedRpcUrl,
     publicKeyHash,
     contractAddress,
     lastLevel

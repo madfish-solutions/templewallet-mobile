@@ -4,9 +4,11 @@ import { useDispatch } from 'react-redux';
 import {
   migrateAccountsState,
   migrateIsShownDomainName,
+  addDcpRpc,
   migrateQuipuApy,
   migrateTokensMetadata,
-  migrateTokenSuggestion
+  migrateTokenSuggestion,
+  addDcpTokensMetadata
 } from '../../store/migration/migration-actions';
 
 export const useStorageMigration = () => {
@@ -18,5 +20,7 @@ export const useStorageMigration = () => {
     dispatch(migrateIsShownDomainName());
     dispatch(migrateQuipuApy());
     dispatch(migrateAccountsState());
+    dispatch(addDcpRpc());
+    dispatch(addDcpTokensMetadata());
   }, []);
 };

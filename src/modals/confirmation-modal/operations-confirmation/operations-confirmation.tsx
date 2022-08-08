@@ -11,10 +11,10 @@ import { LoadingPlaceholder } from '../../../components/loading-placeholder/load
 import { ModalButtonsContainer } from '../../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EventFn } from '../../../config/general';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { AccountInterface } from '../../../interfaces/account.interface';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
@@ -37,6 +37,8 @@ interface Props {
 export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading, onSubmit, children }) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
+
+  const { metadata } = useNetworkInfo();
 
   const { trackEvent } = useAnalytics();
 
@@ -67,7 +69,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
       if (opParam.kind !== OpKind.ACTIVATION) {
         const patchedOpParam = { ...opParam }; // Make copy;
         if (isDefined(gasFeeSum)) {
-          patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_METADATA.decimals).toNumber() : 0;
+          patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, metadata.decimals).toNumber() : 0;
         }
         if (isDefined(storageLimitSum) && onlyOneOperation) {
           patchedOpParam.storageLimit = storageLimitSum.toNumber();

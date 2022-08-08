@@ -3,6 +3,7 @@ import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } fr
 import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-getter.hook';
 import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
@@ -71,6 +72,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
+
+  const { isTezosNode } = useNetworkInfo();
 
   const amountInputRef = useRef<TextInput>(null);
 
@@ -170,7 +173,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     <>
       <View style={styles.headerContainer}>
         <Label label={label} />
-        {toUsdToggle && hasExchangeRate && (
+        {isTezosNode && toUsdToggle && hasExchangeRate && (
           <TextSegmentControl
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
