@@ -8,9 +8,11 @@ import { ExternalLinkButton } from '../../../components/icon/external-link-butto
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from '../../../config/general';
 import { BakerRewardInterface } from '../../../interfaces/baker-reward.interface';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { BakerInterface } from '../../../interfaces/baker.interface';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { useColors } from '../../../styles/use-colors';
 import { isDefined } from '../../../utils/is-defined';
 import { tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
@@ -26,6 +28,9 @@ interface Props {
 export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
 
+  const { metadata } = useNetworkInfo();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+
   return (
     <>
       <View style={styles.bakerCard}>
@@ -39,7 +44,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(baker.address)} />
+                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
               </View>
             </View>
           </View>
@@ -63,7 +68,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {TEZ_TOKEN_METADATA.symbol}
+              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />

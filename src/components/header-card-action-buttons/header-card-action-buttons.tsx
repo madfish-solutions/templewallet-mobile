@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -21,12 +22,13 @@ interface Props {
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
+  const { metadata } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
-      ? 'You need to have TEZ to pay gas fee'
+      ? `You need to have ${metadata.symbol} to pay gas fee`
       : 'Balance is zero';
 
   const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;

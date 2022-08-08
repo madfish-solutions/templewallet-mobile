@@ -47,6 +47,7 @@ export enum IconNameEnum {
   QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',
   TezToken = 'TezToken',
+  FilmToken = 'FilmToken',
   TzBtcToken = 'TzBtcToken',
   NoNameToken = 'NoNameToken',
   InfoFilled = 'InfoFilled',

@@ -3,7 +3,9 @@ import { View } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgCssUri } from 'react-native-svg';
 
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { formatSizeScaled } from '../../styles/format-size';
+import { useColors } from '../../styles/use-colors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { formatImgUri, isImgUriSvg } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -19,6 +21,10 @@ interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'
 export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSizeScaled(32) }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFailed, setIsFailed] = useState(false);
+
+  const colors = useColors();
+
+  const { metadata } = useNetworkInfo();
 
   const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
   const style = useMemo(
@@ -36,7 +42,7 @@ export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSize
   return (
     <View style={[TokenIconStyles.container, { borderRadius: size / 2 }]}>
       {isDefined(iconName) ? (
-        <Icon name={iconName} size={size} />
+        <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />
       ) : isString(thumbnailUri) ? (
         isImgUriSvg(thumbnailUri) ? (
           <SvgCssUri width={size} height={size} uri={thumbnailUri} />

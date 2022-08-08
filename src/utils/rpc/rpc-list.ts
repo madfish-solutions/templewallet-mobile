@@ -1,5 +1,10 @@
 import { RpcInterface } from '../../interfaces/rpc.interface';
 
+export const DCP_RPC: RpcInterface = {
+  name: 'T4L3NT Mainnet',
+  url: 'https://rpc.decentralized.pictures'
+};
+
 export const RpcList: RpcInterface[] = [
   {
     name: 'Temple Default',
@@ -15,6 +20,7 @@ export const RpcList: RpcInterface[] = [
   },
   {
     name: 'TZ Beta Node',
-    url: 'https://rpc.tzbeta.net/'
-  }
+    url: 'https://rpc.tzbeta.net'
+  },
+  DCP_RPC
 ];

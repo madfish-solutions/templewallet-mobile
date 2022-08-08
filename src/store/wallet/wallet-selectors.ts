@@ -7,6 +7,7 @@ import { AccountStateInterface } from '../../interfaces/account-state.interface'
 import { AccountInterface } from '../../interfaces/account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { isDefined } from '../../utils/is-defined';
+import { isDcpNode } from '../../utils/network.utils';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getAccountState, getSelectedAccount } from '../../utils/wallet-account-state.utils';
@@ -51,9 +52,12 @@ export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector<RootState, TokenInterface[]>(
     state => {
       const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
+      const isTezosNode = !isDcpNode(state.settings.selectedRpcUrl);
 
-      return selectedAccountState.tokensList
-        .filter(item => selectedAccountState.removedTokensList.indexOf(item.slug) === -1)
+      const tokensList = isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList;
+
+      return tokensList
+        .filter(token => selectedAccountState.removedTokensList.indexOf(token.slug) === -1)
         .map(token => {
           const visibility =
             token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0

@@ -1,10 +1,15 @@
 import axios from 'axios';
 
 import { TEMPLE_WALLET_API, TEMPLE_WALLET_EVERSTAKE_API_KEY, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
+import { isDcpNode } from './utils/network.utils';
+
 
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
 
-export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
+const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
+const dcpTzktApi = axios.create({ baseURL: 'https://explorer.tlnt.net:8001/v1' });
+
+export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl) ? dcpTzktApi : tzktApi);
 
 export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
 

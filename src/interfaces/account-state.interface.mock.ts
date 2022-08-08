@@ -5,5 +5,6 @@ export const mockAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: '100',
   tokensList: mockAccountTokens,
+  dcpTokensList: mockAccountTokens,
   removedTokensList: []
 };

@@ -2,11 +2,13 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useTotalBalance } from '../../hooks/use-total-balance';
 import { formatSize } from '../../styles/format-size';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { AssetEquityText } from '../asset-equity-text/asset-equity-text';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
+import { Divider } from '../divider/divider';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -22,10 +24,12 @@ interface Props {
 export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) => {
   const styles = useTokenEquityValueStyles();
 
+  const { isTezosNode } = useNetworkInfo();
+
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();
 
-  return (
+  return isTezosNode ? (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableIcon
@@ -57,5 +61,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
         </HideBalance>
       )}
     </View>
+  ) : (
+    <Divider />
   );
 };
