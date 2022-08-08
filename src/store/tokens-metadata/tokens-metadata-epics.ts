@@ -4,13 +4,28 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$, loadTokensMetadata$ } from '../../utils/token-metadata.utils';
+import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
 import {
   addTokensMetadataAction,
   loadTokenMetadataActions,
   loadTokensMetadataAction,
-  loadTokenSuggestionActions
+  loadTokenSuggestionActions,
+  loadWhitelistAction
 } from './tokens-metadata-actions';
+
+const loadWhitelistEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadWhitelistAction.submit),
+    switchMap(() =>
+      loadWhitelist$().pipe(
+        concatMap(tokenMetadata => [
+          loadWhitelistAction.success(tokenMetadata),
+          addTokensMetadataAction([tokenMetadata])
+        ]),
+        catchError(err => of(loadWhitelistAction.fail(err.message)))
+      )
+    )
+  );
 
 const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -54,4 +69,9 @@ const loadTokensMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const tokensMetadataEpics = combineEpics(loadTokenSuggestionEpic, loadTokenMetadataEpic, loadTokensMetadataEpic);
+export const tokensMetadataEpics = combineEpics(
+  loadWhitelistEpic,
+  loadTokenSuggestionEpic,
+  loadTokenMetadataEpic,
+  loadTokensMetadataEpic
+);

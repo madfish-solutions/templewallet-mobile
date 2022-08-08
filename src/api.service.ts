@@ -3,6 +3,7 @@ import axios from 'axios';
 import { TEMPLE_WALLET_API, TEMPLE_WALLET_EVERSTAKE_API_KEY, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
+const WHITELIST_TOKENS_BASE_URL = 'https://raw.githubusercontent.com/madfish-solutions/tokens-whitelist/master/';
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
 
 const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
@@ -13,6 +14,8 @@ export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl)
 export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
 
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
+
+export const whitelistApi = axios.create({ baseURL: WHITELIST_TOKENS_BASE_URL });
 
 export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
 

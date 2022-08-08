@@ -1,8 +1,4 @@
-import {
-  DCP_TOKENS_METADATA,
-  HIDDEN_WHITELIST_TOKENS,
-  MAINNET_TOKENS_METADATA
-} from '../../token/data/tokens-metadata';
+import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
@@ -14,7 +10,7 @@ export interface TokensMetadataState {
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
-  metadataRecord: [...MAINNET_TOKENS_METADATA, ...HIDDEN_WHITELIST_TOKENS, ...DCP_TOKENS_METADATA].reduce(
+  metadataRecord: DCP_TOKENS_METADATA.reduce(
     (obj, tokenMetadata) => ({
       ...obj,
       [getTokenSlug(tokenMetadata)]: tokenMetadata

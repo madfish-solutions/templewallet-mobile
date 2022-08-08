@@ -2,7 +2,7 @@ import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
-import { tokenMetadataApi } from '../api.service';
+import { tokenMetadataApi, whitelistApi } from '../api.service';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
@@ -96,6 +96,15 @@ export const withMetadataSlugs =
         tokensMetadata.metadataRecord
       ])
     );
+
+export const loadWhitelist$ = memoize(
+  (): Observable<Array<TokenMetadataInterface>> =>
+    from(whitelistApi.get<Array<TokenMetadataResponse>>('tokens/quipuswap.whitelist.json')).pipe(
+      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
+      filter(isDefined)
+    ),
+  { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
+);
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>
