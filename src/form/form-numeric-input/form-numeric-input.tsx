@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 
 import { StyledNumericInput } from '../../components/styled-numberic-input/styled-numeric-input';
 import { StyledNumericInputProps } from '../../components/styled-numberic-input/styled-numeric-input.props';
-import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { hasError } from '../../utils/has-error';
 import { isDefined } from '../../utils/is-defined';
 import { ErrorMessage } from '../error-message/error-message';
@@ -15,22 +15,18 @@ interface Props extends Pick<StyledNumericInputProps, 'decimals' | 'editable' | 
   maxValue?: BigNumber;
 }
 
-export const FormNumericInput: FC<Props> = ({
-  name,
-  maxValue,
-  decimals = TEZ_TOKEN_METADATA.decimals,
-  editable,
-  placeholder,
-  isShowCleanButton
-}) => {
+export const FormNumericInput: FC<Props> = ({ name, maxValue, decimals, editable, placeholder, isShowCleanButton }) => {
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
+
+  const { metadata } = useNetworkInfo();
+  const decimalsWithFallback = decimals ?? metadata.decimals;
 
   return (
     <>
       <StyledNumericInput
         value={field.value}
-        decimals={decimals}
+        decimals={decimalsWithFallback}
         editable={editable}
         placeholder={placeholder}
         isError={isError}
@@ -42,7 +38,7 @@ export const FormNumericInput: FC<Props> = ({
       {isDefined(maxValue) && (
         <FormNumericInputButtons
           maxValue={maxValue}
-          onButtonPress={newValue => helpers.setValue(newValue.decimalPlaces(decimals))}
+          onButtonPress={newValue => helpers.setValue(newValue.decimalPlaces(decimalsWithFallback))}
         />
       )}
     </>

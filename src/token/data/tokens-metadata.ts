@@ -11,6 +11,14 @@ export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezToken
 };
 
+export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
+  ...emptyTokenMetadata,
+  name: 'FILM',
+  symbol: 'FILM',
+  decimals: 6,
+  iconName: IconNameEnum.FilmToken
+};
+
 export const MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
@@ -527,5 +535,16 @@ export const HIDDEN_WHITELIST_TOKENS: TokenMetadataInterface[] = [
     name: 'DOGAMI',
     thumbnailUri: 'ipfs://QmW8sa5UygUKg58LLzK7NoEDtCRyAQU4wZh1rbpFa6j7kP',
     decimals: 5
+  }
+];
+
+export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
+  {
+    id: 0,
+    address: 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN',
+    decimals: 0,
+    symbol: 'APX',
+    name: 'APXCOIN',
+    thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png'
   }
 ];

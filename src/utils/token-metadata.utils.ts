@@ -5,10 +5,11 @@ import { map, filter, withLatestFrom } from 'rxjs/operators';
 import { tokenMetadataApi } from '../api.service';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
+import { getNetworkGasTokenMetadata } from './network.utils';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -31,11 +32,16 @@ const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, addre
         artifactUri: token.artifactUri
       };
 
-export const normalizeTokenMetadata = (slug: string, rawMetadata?: TokenMetadataInterface): TokenMetadataInterface => {
+export const normalizeTokenMetadata = (
+  selectedRpcUrl: string,
+  slug: string,
+  rawMetadata?: TokenMetadataInterface
+): TokenMetadataInterface => {
   const [tokenAddress, tokenId] = slug.split('_');
+  const gasTokenMetadata = getNetworkGasTokenMetadata(selectedRpcUrl);
 
   return slug === TEZ_TOKEN_SLUG
-    ? TEZ_TOKEN_METADATA
+    ? gasTokenMetadata
     : rawMetadata ?? {
         ...emptyTokenMetadata,
         symbol: '???',
@@ -68,7 +74,11 @@ export const getTokenExchangeRate = (state: RootState, slug: string) => {
 };
 
 export const getTokenMetadata = (state: RootState, slug: string) => {
-  const tokenMetadata = normalizeTokenMetadata(slug, state.tokensMetadata.metadataRecord[slug]);
+  const tokenMetadata = normalizeTokenMetadata(
+    state.settings.selectedRpcUrl,
+    slug,
+    state.tokensMetadata.metadataRecord[slug]
+  );
   const exchangeRate = getTokenExchangeRate(state, slug);
 
   return {

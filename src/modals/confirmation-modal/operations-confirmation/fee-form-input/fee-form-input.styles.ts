@@ -3,11 +3,10 @@ import { formatSize } from '../../../../styles/format-size';
 
 export const useFeeFormInputStyles = createUseStyles(({ colors, typography }) => ({
   infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: 'row'
   },
   infoContainerItem: {
-    width: '30%'
+    width: '31%'
   },
   infoTitle: {
     ...typography.caption11Regular,

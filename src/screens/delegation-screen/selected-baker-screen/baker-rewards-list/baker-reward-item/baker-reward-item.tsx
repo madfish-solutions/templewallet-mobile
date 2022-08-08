@@ -11,6 +11,7 @@ import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
 import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
 import { useKnownBakerSelector } from '../../../../../store/baking/baking-selectors';
+import { useSelectedRpcUrlSelector } from '../../../../../store/settings/settings-selectors';
 import { formatSize } from '../../../../../styles/format-size';
 import { isDefined } from '../../../../../utils/is-defined';
 import { tzktUrl } from '../../../../../utils/linking.util';
@@ -30,6 +31,8 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
   fallbackRewardPerOwnBlock
 }) => {
   const styles = useBakerRewardItemStyles();
+
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
@@ -98,7 +101,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.row}>
               <PublicKeyHashText publicKeyHash={reward.baker.address} />
               <Divider size={formatSize(4)} />
-              <ExternalLinkButton url={tzktUrl(reward.baker.address)} />
+              <ExternalLinkButton url={tzktUrl(selectedRpcUrl, reward.baker.address)} />
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Delegated:</Text>
