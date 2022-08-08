@@ -9,7 +9,7 @@ import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
-import { getNetworkGasTokenMetadata } from './network.utils';
+import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -17,6 +17,32 @@ export interface TokenMetadataResponse {
   name?: string;
   thumbnailUri?: string;
   artifactUri?: string;
+}
+
+interface WhitelistResponse {
+  keywords: Array<string>;
+  logoURI: string;
+  name: string;
+  timestamp: string;
+  tokens?: Array<TokenListItem>;
+  version: {
+    major: number;
+    minor: number;
+    patch: number;
+  };
+}
+
+interface TokenListItem {
+  contractAddress: 'tez' | string;
+  fa2TokenId?: number;
+  network: 'mainnet' | string;
+  metadata: {
+    decimals: number;
+    name: string;
+    symbol: string;
+    thumbnailUri?: string;
+  };
+  type: 'FA2' | 'FA12';
 }
 
 const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, address: string, id: number) =>
@@ -31,6 +57,15 @@ const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, addre
         thumbnailUri: token.thumbnailUri,
         artifactUri: token.artifactUri
       };
+
+const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string, id: number) => ({
+  id,
+  address,
+  decimals: token.metadata.decimals,
+  symbol: token.metadata.symbol ?? token.metadata.name?.substring(0, 8) ?? '???',
+  name: token.metadata.name ?? token.metadata.symbol ?? 'Unknown Token',
+  thumbnailUri: token.metadata.thumbnailUri
+});
 
 export const normalizeTokenMetadata = (
   selectedRpcUrl: string,
@@ -97,14 +132,17 @@ export const withMetadataSlugs =
       ])
     );
 
-export const loadWhitelist$ = memoize(
-  (): Observable<Array<TokenMetadataInterface>> =>
-    from(whitelistApi.get<Array<TokenMetadataResponse>>('tokens/quipuswap.whitelist.json')).pipe(
-      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
-      filter(isDefined)
+export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
+  from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
+    map(({ data }) =>
+      isDefined(data.tokens) && !isDcpNode(selectedRpc)
+        ? data.tokens
+            .filter(x => x.contractAddress !== 'tez')
+            .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
+        : []
     ),
-  { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
-);
+    filter(isDefined)
+  );
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>

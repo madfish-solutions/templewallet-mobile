@@ -13,6 +13,7 @@ import {
   deleteOldTokenSuggestion,
   migrateAccountsState
 } from '../migration/migration-actions';
+import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addHdAccountAction,
   addTokenAction,
@@ -49,6 +50,18 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateAccountState(state, publicKeyHash, account => ({
       ...account,
       isVisible
+    }))
+  );
+  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) =>
+    updateCurrentAccountState(state, account => ({
+      ...account,
+      tokensList: account.tokensList.concat(
+        tokensMetadata.map(token => ({
+          slug: getTokenSlug(token),
+          balance: '0',
+          visibility: VisibilityEnum.InitiallyHidden
+        }))
+      )
     }))
   );
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
