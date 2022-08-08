@@ -24,13 +24,15 @@ export const PublicKeyHashText: FC<Props> = ({
 }) => {
   const styles = usePublicKeyHashTextStyles();
 
-  const handlePress = () => copyStringToClipboard(publicKeyHash);
+  const handlePress = () => !longPress && copyStringToClipboard(publicKeyHash);
+  const handleLongPress = () => longPress && copyStringToClipboard(publicKeyHash);
 
   return (
     <TouchableOpacity
       style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
-      {...(longPress ? { onLongPress: handlePress } : { onPress: handlePress })}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
     >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}
