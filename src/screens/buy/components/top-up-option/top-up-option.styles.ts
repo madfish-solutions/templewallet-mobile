@@ -30,7 +30,7 @@ export const useTopUpOptionStyles = createUseStyles(({ colors, typography }) => 
     width: '100%',
     height: formatSize(72)
   },
-  chainbitsIcon: {
+  pngImage: {
     width: formatSize(200),
     height: formatSize(40)
   }

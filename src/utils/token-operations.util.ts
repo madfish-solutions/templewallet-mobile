@@ -4,8 +4,13 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { OperationFa12Interface, OperationFa2Interface, OperationInterface } from '../interfaces/operation.interface';
 import { isDefined } from './is-defined';
 
-export const getContractOperations = <T>(account: string, contractAddress: string, lastLevel: number | null) =>
-  tzktApi.get<Array<T>>(
+export const getContractOperations = <T>(
+  selectedRpcUrl: string,
+  account: string,
+  contractAddress: string,
+  lastLevel: number | null
+) =>
+  getTzktApi(selectedRpcUrl).get<Array<T>>(
     `accounts/${contractAddress}/operations?type=transaction&limit=40&sort=1&quote=usd&initiator=${account}&entrypoint=mintOrBurn` +
       (isDefined(lastLevel) ? `&level.lt=${lastLevel}` : '')
   );

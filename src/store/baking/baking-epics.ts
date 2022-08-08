@@ -4,7 +4,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { bakingBadApi, tzktApi } from '../../api.service';
+import { bakingBadApi, getTzktApi } from '../../api.service';
 import { BakerRewardInterface } from '../../interfaces/baker-reward.interface';
 import { BakerInterface, emptyBaker } from '../../interfaces/baker.interface';
 import { isDefined } from '../../utils/is-defined';
@@ -23,6 +23,7 @@ const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$:
     switchMap(([[, selectedAccount], rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
         switchMap(bakerAddress => {
+          console.log(bakerAddress, 'add');
           if (isDefined(bakerAddress)) {
             return from(bakingBadApi.get<BakerInterface>(`/bakers/${bakerAddress}`)).pipe(map(({ data }) => data));
           } else {
@@ -60,9 +61,10 @@ const loadBakerRewardsListEpic: Epic = (action$: Observable<Action>, state$: Obs
   action$.pipe(
     ofType(loadBakerRewardsListActions.submit),
     withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) =>
+    withSelectedRpcUrl(state$),
+    switchMap(([[, selectedAccount], selectedRpcUrl]) =>
       from(
-        tzktApi.get<BakerRewardInterface[]>(`/rewards/delegators/${selectedAccount.publicKeyHash}`, {
+        getTzktApi(selectedRpcUrl).get<BakerRewardInterface[]>(`/rewards/delegators/${selectedAccount.publicKeyHash}`, {
           params: { limit: NUMBER_OF_BAKER_REWARDS_TO_LOAD }
         })
       ).pipe(
