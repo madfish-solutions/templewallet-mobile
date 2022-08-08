@@ -34,9 +34,7 @@ export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onC
         placeholder={placeholder}
         placeholderTextColor={colors.gray2}
         onChangeText={debouncedOnChangeText}
-        onBlur={e => {
-          onBlur(e);
-        }}
+        onBlur={onBlur}
       />
     </View>
   );
