@@ -9,7 +9,9 @@
 
     <style name="BootTheme" parent="AppTheme">
         <!-- set the generated bootsplash.xml drawable as activity background -->
-        <item name="android:background">@drawable/bootsplash</item>
+        <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 
     <style name="ThemeAlert" parent="Theme.AppCompat.Light.Dialog.Alert">
