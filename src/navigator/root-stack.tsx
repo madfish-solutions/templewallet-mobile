@@ -51,7 +51,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
-  const isSplash = useAppSplash();
+  useAppSplash();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
