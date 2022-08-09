@@ -21,9 +21,7 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:windowSoftInputMode="adjustPan"
                 android:exported="true"
-                android:launchMode="singleTask"
-                android:theme="@style/BootTheme"
-                >
+                android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -35,6 +33,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/temple_url_scheme" />
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+                android:theme="@style/BootTheme"
+                android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 

@@ -8992,7 +8992,7 @@ fs-extra@^1.0.0:
     jsonfile "^2.1.0"
     klaw "^1.0.0"
 
-fs-extra@^10.0.0, fs-extra@^10.1.0:
+fs-extra@^10.0.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz#02873cfbc4084dde127eaa5f9905eef2325d1abf"
   integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==
@@ -13752,14 +13752,14 @@ react-native-biometrics@^2.2.0:
   resolved "https://registry.yarnpkg.com/react-native-biometrics/-/react-native-biometrics-2.2.0.tgz#6fc3e801b83389ae1f6c9c41f7b37b50e7014c4e"
   integrity sha512-V2O0s2ic7PxVP76CguCfBXvVEyazbjtWv7r20T7D+ZQqBB1XSZ1WzK/Gnr12CVRxHLUZ3/tKHOsz7mzIaXyNoA==
 
-react-native-bootsplash@^4.2.4:
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-bootsplash/-/react-native-bootsplash-4.2.4.tgz#d11332851f624f13b52e2cfc771d3baf1477223e"
-  integrity sha512-7qYM9gEu8RudFGutlw3m/Ryg66Ed84nMOuowyUD1F5e1aFsb/L5ZoAyM62aI7B4DFlzNOgGbC5fnVasVcd4zBA==
+react-native-bootsplash@3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/react-native-bootsplash/-/react-native-bootsplash-3.2.6.tgz#610e476b1156ab29817aa394d5bb64871c1f1f42"
+  integrity sha512-zNEXIe2K1A06J45QOAg+OBo3wIyId9lZXOwITUcwNR2bQEg/3CO6uvcRB7MLuy2ct54R1PlbADHDZK/Ozt7mfA==
   dependencies:
-    fs-extra "^10.1.0"
+    chalk "^4.1.2"
+    fs-extra "^10.0.0"
     jimp "^0.16.1"
-    picocolors "^1.0.0"
 
 react-native-camera@^4.2.1:
   version "4.2.1"
