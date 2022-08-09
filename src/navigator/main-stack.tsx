@@ -48,7 +48,6 @@ import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
@@ -77,7 +76,6 @@ export const MainStackScreen = () => {
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
-    dispatch(loadWhitelistAction.submit());
     dispatch(loadSelectedBakerActions.submit());
   };
   const initLongRefreshLoading = () => {

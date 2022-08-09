@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { uniqBy } from 'lodash-es';
 
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
@@ -55,12 +56,16 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) =>
     updateCurrentAccountState(state, account => ({
       ...account,
-      tokensList: account.tokensList.concat(
-        tokensMetadata.map(token => ({
-          slug: getTokenSlug(token),
-          balance: '0',
-          visibility: VisibilityEnum.InitiallyHidden
-        }))
+      tokensList: uniqBy(
+        [
+          ...account.tokensList,
+          ...tokensMetadata.map(token => ({
+            slug: getTokenSlug(token),
+            balance: '0',
+            visibility: VisibilityEnum.InitiallyHidden
+          }))
+        ],
+        'slug'
       )
     }))
   );

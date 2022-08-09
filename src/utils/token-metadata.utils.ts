@@ -133,16 +133,18 @@ export const withMetadataSlugs =
     );
 
 export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
-  from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
-    map(({ data }) =>
-      isDefined(data.tokens) && !isDcpNode(selectedRpc)
-        ? data.tokens
-            .filter(x => x.contractAddress !== 'tez')
-            .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
-        : []
-    ),
-    filter(isDefined)
-  );
+  isDcpNode(selectedRpc)
+    ? from([])
+    : from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
+        map(({ data }) =>
+          isDefined(data.tokens)
+            ? data.tokens
+                .filter(x => x.contractAddress !== 'tez')
+                .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
+            : []
+        ),
+        filter(isDefined)
+      );
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>
