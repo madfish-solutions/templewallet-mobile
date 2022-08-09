@@ -2,12 +2,11 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
-import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { isIOS } from '../config/system';
 import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
-import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+import { useAppSplash } from '../hooks/use-app-splash.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
@@ -25,6 +24,7 @@ import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
+import { SplashModal } from '../modals/splash-modal/splash-modal';
 import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ForceUpdate } from '../screens/force-update/force-update';
@@ -52,10 +52,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
-  useAppStateStatus({
-    onAppInactiveState: show,
-    onAppActiveState: hide
-  });
+  const isSplash = useAppSplash();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
@@ -175,6 +172,7 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
+      {isSplash && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}

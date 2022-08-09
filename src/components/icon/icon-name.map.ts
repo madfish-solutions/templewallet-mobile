@@ -20,12 +20,19 @@ import CloseIcon from './assets/close.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
+import CycleStatusFutureIcon from './assets/cycle-status-future.svg';
+import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
+import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
+import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
 import DealIcon from './assets/deal.svg';
+import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
+import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EditIcon from './assets/edit.svg';
+import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
@@ -49,9 +56,12 @@ import LiquidityBakingIcon from './assets/liquidity-baking.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MinusIcon from './assets/minus-icon.svg';
+import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
+import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
+import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
@@ -84,6 +94,7 @@ import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
+import FilmTokenIcon from './assets/tokens/film.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
@@ -104,9 +115,19 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
+  [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
+  [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
+  [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
+  [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
+  [IconNameEnum.Endorsements]: EndorsementsIcon,
+  [IconNameEnum.MissedEndorsements]: MissedEndorsementsIcon,
+  [IconNameEnum.MissedOwnBlocks]: MissedOwnBlocksIcon,
+  [IconNameEnum.CycleStatusFuture]: CycleStatusFutureIcon,
+  [IconNameEnum.CycleStatusInProgress]: CycleStatusInProgressIcon,
+  [IconNameEnum.CycleStatusLocked]: CycleStatusLockedIcon,
+  [IconNameEnum.CycleStatusUnlocked]: CycleStatusUnlockedIcon,
   [IconNameEnum.BookOpen]: BookOpenIcon,
   [IconNameEnum.Terminal]: TerminalIcon,
-  [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.Diez]: DiezIcon,
   [IconNameEnum.FaceId]: FaceIdIcon,
@@ -142,6 +163,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
+  [IconNameEnum.FilmToken]: FilmTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,

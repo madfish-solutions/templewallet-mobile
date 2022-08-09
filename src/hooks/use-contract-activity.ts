@@ -4,6 +4,7 @@ import { emptyFn } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadLastActivity, LoadLastActivityTokenType, LoadLastActivityType } from '../utils/token-operations.util';
@@ -15,6 +16,7 @@ export const useContractActivity = (
   loading = false
 ): UseActivityInterface => {
   const { publicKeyHash } = useSelectedAccountSelector();
+  const selectedRpc = useSelectedRpcUrlSelector();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
@@ -22,6 +24,7 @@ export const useContractActivity = (
   useEffect(() => {
     if (!loading) {
       loadLastActivity({
+        selectedRpc,
         lastLevel: null,
         publicKeyHash,
         contractAddress,
@@ -48,6 +51,7 @@ export const useContractActivity = (
             : lastActivityItem.id;
         if (isDefined(lastLevelOrLastId)) {
           loadLastActivity({
+            selectedRpc,
             lastLevel: lastLevelOrLastId,
             publicKeyHash,
             contractAddress,

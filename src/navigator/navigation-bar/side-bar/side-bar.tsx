@@ -6,7 +6,9 @@ import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { formatSize } from '../../../styles/format-size';
+import { showErrorToast } from '../../../toast/toast.utils';
 import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
@@ -22,11 +24,17 @@ interface Props {
   currentRouteName: ScreensEnum;
 }
 
+export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
+
 export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
+  const { isDcpNode } = useNetworkInfo();
+
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
+
+  const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
 
   return (
     <View style={styles.container}>
@@ -45,12 +53,16 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocused(dAppsStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={disabledOnPress}
           />
           <SideBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={disabledOnPress}
           />
           <DebugTapListener>
             <SideBarButton

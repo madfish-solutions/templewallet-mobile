@@ -26,11 +26,14 @@ import { useBakersListSelector, useSelectedBakerSelector } from '../../store/bak
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
+
+export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -51,13 +54,25 @@ export const SelectBakerModal: FC = () => {
   const revealSelectBottomSheetController = useBottomSheetController();
   const [currentBaker] = useSelectedBakerSelector();
 
+  const { trackEvent } = useAnalytics();
+
   const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const [filteredBakersList, setFilteredBakersList] = useState(bakersList);
+  const [allBakers, setFilteredBakersList] = useState(bakersList);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
+
+  const recommendedBakers = useMemo(
+    () => allBakers.filter(baker => baker.address === RECOMMENDED_BAKER_ADDRESS),
+    [allBakers]
+  );
+
+  const filteredBakersList = useMemo(
+    () => allBakers.filter(baker => baker.address !== RECOMMENDED_BAKER_ADDRESS),
+    [allBakers]
+  );
 
   const debouncedSetSearchValue = debounce(setSearchValue);
 
@@ -65,6 +80,10 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
+      if (selectedBaker.address === RECOMMENDED_BAKER_ADDRESS) {
+        trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+      }
+
       if (currentBaker.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
@@ -113,6 +132,11 @@ export const SelectBakerModal: FC = () => {
     }
   }, [filteredBakersList, sortValue]);
 
+  const finalBakersList = useMemo(
+    () => recommendedBakers.concat(sortedBakersList),
+    [recommendedBakers, sortedBakersList]
+  );
+
   return (
     <>
       <ModalStatusBar />
@@ -137,20 +161,19 @@ export const SelectBakerModal: FC = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {sortedBakersList.length === 0 && (
-          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
-        )}
       </View>
 
       <FlatList
-        data={sortedBakersList}
+        data={finalBakersList}
         renderItem={({ item }) => (
           <BakerListItem item={item} selected={item.address === selectedBaker?.address} onPress={setSelectedBaker} />
         )}
         keyExtractor={item => item.address}
         style={styles.flatList}
         windowSize={10}
+        ListEmptyComponent={
+          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
+        }
       />
 
       <ModalButtonsContainer>

@@ -19,6 +19,29 @@ export interface BakerInterface {
   payoutAccuracy: 'precise' | 'inaccurate' | 'suspicious' | 'no_data';
   audit: string;
   insuranceCoverage: number;
+  config?: BakerConfig;
+}
+
+export interface BakerValueHistoryItem<T> {
+  cycle: number;
+  value: T;
+}
+
+export interface BakerConfig {
+  address: string;
+  fee: BakerValueHistoryItem<number>[];
+  minDelegation: BakerValueHistoryItem<number>[];
+  allocationFee: BakerValueHistoryItem<boolean>[];
+  payoutFee: BakerValueHistoryItem<boolean>[];
+  payoutDelay: BakerValueHistoryItem<number>[];
+  payoutPeriod: BakerValueHistoryItem<number>[];
+  minPayout: BakerValueHistoryItem<number>[];
+  rewardStruct: BakerValueHistoryItem<number>[];
+  payoutRatio: BakerValueHistoryItem<number>[];
+  maxStakingThreshold: BakerValueHistoryItem<number>[];
+  openForDelegation: BakerValueHistoryItem<boolean>[];
+  ignored: string[];
+  sources: string[];
 }
 
 export const emptyBaker: BakerInterface = {
