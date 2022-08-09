@@ -24,6 +24,7 @@ const TABS = [
 ];
 
 export const Buy = () => {
+  const { metadata } = useNetworkInfo();
   const { isDcpNode, metadata } = useNetworkInfo();
   const [tab, setTab] = useState(TABS[isDcpNode ? 1 : 0]);
 

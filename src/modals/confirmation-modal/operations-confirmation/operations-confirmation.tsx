@@ -39,7 +39,6 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   const { goBack } = useNavigation();
 
   const { metadata } = useNetworkInfo();
-
   const { trackEvent } = useAnalytics();
 
   const estimations = useEstimations(sender, opParams);
