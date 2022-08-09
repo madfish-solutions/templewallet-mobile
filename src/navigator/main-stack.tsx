@@ -179,7 +179,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.AliceBob}
                 component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title="Top up TEZ balance" />)}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
