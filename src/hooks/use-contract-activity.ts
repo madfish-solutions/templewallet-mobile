@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { emptyFn } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
@@ -34,8 +33,6 @@ export const useContractActivity = (
         setIsAllLoaded
       });
     }
-
-    return emptyFn;
   }, [loading, tokenType]);
 
   const handleUpdate = () => {
