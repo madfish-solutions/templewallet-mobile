@@ -1,6 +1,5 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-svg';
 
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -19,7 +18,6 @@ export const CollectiblesHomeSwipeButton = () => {
       onPress={() => navigate(ScreensEnum.CollectiblesHome)}
     >
       <CollectiblesSvg height={formatSize(13)} />
-      <Text>TextAAA</Text>
     </TouchableOpacity>
   );
 };
