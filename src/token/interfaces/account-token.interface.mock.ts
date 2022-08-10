@@ -1,17 +1,9 @@
 import { VisibilityEnum } from '../../enums/visibility.enum';
+import { LOCAL_MAINNET_TOKENS_METADATA } from '../data/tokens-metadata';
 import { getTokenSlug } from '../utils/token.utils';
 import { AccountTokenInterface } from './account-token.interface';
 
-export const mockAccountTokens: AccountTokenInterface[] = [
-  {
-    id: 0,
-    address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
-    name: 'Quipuswap governance token',
-    symbol: 'QUIPU',
-    decimals: 6,
-    thumbnailUri: 'https://quipuswap.com/tokens/quipu.png'
-  }
-].map(token => ({
+export const mockAccountTokens: AccountTokenInterface[] = LOCAL_MAINNET_TOKENS_METADATA.map(token => ({
   slug: getTokenSlug(token),
   balance: '33',
   visibility: VisibilityEnum.Visible
