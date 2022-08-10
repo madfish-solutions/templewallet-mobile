@@ -2,12 +2,11 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
-import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { isIOS } from '../config/system';
 import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
-import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+import { useAppSplash } from '../hooks/use-app-splash.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
@@ -52,10 +51,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
-  useAppStateStatus({
-    onAppInactiveState: show,
-    onAppActiveState: hide
-  });
+  useAppSplash();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
