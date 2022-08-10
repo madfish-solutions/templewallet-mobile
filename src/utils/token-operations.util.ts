@@ -11,22 +11,21 @@ import {
   OperationLiquidityBakingInterface
 } from '../interfaces/operation.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { transformActivityInterfaceToActivityGroups } from './activity.utils';
 import { isDefined } from './is-defined';
-import { mapOperationLiquidityBakingToActivity, mapOperationsToActivities } from './operation.utils';
+import { mapOperationsToActivities } from './operation.utils';
 
 export const getOperationGroupByHash = <T>(selectedRpc: string, hash: string) =>
   getTzktApi(selectedRpc).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-export const getContractOperations = async <T>(
+export const getContractOperations = <T>(
   selectedRpc: string,
   account: string,
   contractAddress: string,
   lastLevel: number | null
 ) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<T>>(`accounts/${contractAddress}/operations`, {
+  getTzktApi(selectedRpc)
+    .get<Array<T>>(`accounts/${contractAddress}/operations`, {
       params: {
         type: 'transaction',
         limit: OPERATION_LIMIT,
@@ -36,18 +35,18 @@ export const getContractOperations = async <T>(
         ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
 // FA2 TOKEN ACTIVITY
-export const getTokenFa2Operations = async (
+export const getTokenFa2Operations = (
   selectedRpc: string,
   account: string,
   contractAddress: string,
   tokenId = '0',
   lastLevel: number | null
 ) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationFa2Interface>>('operations/transactions', {
+  getTzktApi(selectedRpc)
+    .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -57,17 +56,17 @@ export const getTokenFa2Operations = async (
         ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
 // FA1_2 TOKEN ACTIVITY
-export const getTokenFa12Operations = async (
+export const getTokenFa12Operations = (
   selectedRpc: string,
   account: string,
   contractAddress: string,
   lastLevel: number | null
 ) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationFa12Interface>>('operations/transactions', {
+  getTzktApi(selectedRpc)
+    .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -77,12 +76,12 @@ export const getTokenFa12Operations = async (
         ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
 // TOKEN ACTIVITY
-export const getTezosOperations = async (selectedRpc: string, account: string, lastId: number | null) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+export const getTezosOperations = (selectedRpc: string, account: string, lastId: number | null) =>
+  getTzktApi(selectedRpc)
+    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
         type: ActivityTypeEnum.Transaction,
@@ -91,12 +90,12 @@ export const getTezosOperations = async (selectedRpc: string, account: string, l
         ...(isDefined(lastId) ? { lastId } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
 // GENERAL ACTIVITY
-export const getTokenOperations = async (selectedRpc: string, account: string, lastId: number | null) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+export const getTokenOperations = (selectedRpc: string, account: string, lastId: number | null) =>
+  getTzktApi(selectedRpc)
+    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
         type: `${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`,
@@ -104,16 +103,16 @@ export const getTokenOperations = async (selectedRpc: string, account: string, l
         ...(isDefined(lastId) ? { lastId } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
-export const getFa12IncomingOperations = async (
+export const getFa12IncomingOperations = (
   selectedRpc: string,
   account: string,
   lowerId: number,
   upperId: number | null
 ) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationFa12Interface>>('operations/transactions', {
+  getTzktApi(selectedRpc)
+    .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
         'target.ne': account,
@@ -124,7 +123,7 @@ export const getFa12IncomingOperations = async (
         ...(isDefined(upperId) ? { 'id.lt': upperId } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
 
 export const getFa2IncomingOperations = async (
   selectedRpc: string,
@@ -132,8 +131,8 @@ export const getFa2IncomingOperations = async (
   lowerId: number,
   upperId: number | null
 ) =>
-  (
-    await getTzktApi(selectedRpc).get<Array<OperationFa2Interface>>('operations/transactions', {
+  getTzktApi(selectedRpc)
+    .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
         'target.ne': account,
@@ -144,7 +143,27 @@ export const getFa2IncomingOperations = async (
         ...(isDefined(upperId) ? { 'id.lt': upperId } : undefined)
       }
     })
-  ).data;
+    .then(x => x.data);
+
+export const getAllOperations = async (
+  selectedRpc: string,
+  publicKeyHash: string,
+  lastLevel: number | null
+): Promise<OperationInterface[]> => {
+  const operations = await getTokenOperations(selectedRpc, publicKeyHash, lastLevel);
+  if (operations.length === 0) {
+    return [];
+  }
+  const localLastItem = operations[operations.length - 1];
+  if (!isDefined(localLastItem)) {
+    return [];
+  }
+  const lowerId = localLastItem.id;
+  const operationsFa12 = await getFa12IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
+  const operationsFa2 = await getFa2IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
+
+  return operations.concat(operationsFa12).concat(operationsFa2);
+};
 
 export enum LoadLastActivityTokenType {
   Tezos = 'Tezos',
@@ -164,7 +183,7 @@ interface LoadLastActivityProps {
   publicKeyHash: string;
   contractAddress: string;
   tokenId: string;
-  tokenType: LoadLastActivityType;
+  activityType: LoadLastActivityType;
   setIsAllLoaded: (boo: boolean) => void;
   setActivities: (values: (prevValues: Array<ActivityGroup>) => Array<ActivityGroup>) => void;
 }
@@ -175,70 +194,15 @@ export const loadLastActivity = async ({
   publicKeyHash,
   contractAddress,
   tokenId,
-  tokenType,
+  activityType,
   setIsAllLoaded,
   setActivities
 }: LoadLastActivityProps) => {
-  if (tokenType === LoadLastActivityTokenType.All) {
-    const operations = await getTokenOperations(selectedRpc, publicKeyHash, lastLevel);
-    if (operations.length === 0) {
-      return;
-    }
-    const filteredOperations = uniqBy<OperationInterface>(operations, 'hash');
-    const operationGroups = (
-      await Promise.all(
-        filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(selectedRpc, x.hash).then(x => x.data))
-      )
-    ).flat();
-    const localLastItem = operationGroups[operationGroups.length - 1];
-    if (!isDefined(localLastItem)) {
-      setIsAllLoaded(true);
-
-      return;
-    }
-    const lowerId = localLastItem.id;
-    const operationsFa12 = await getFa12IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
-    const operationsFa2 = await getFa2IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
-
-    const filteredOperationsFa12 = uniqBy<OperationInterface>(operationsFa12, 'hash');
-    const operationGroupsFa12 = (
-      await Promise.all(
-        filteredOperationsFa12.map(x =>
-          getOperationGroupByHash<OperationFa12Interface>(selectedRpc, x.hash).then(x => x.data)
-        )
-      )
-    ).flat();
-    const filteredOperationsFa2 = uniqBy<OperationInterface>(operationsFa2, 'hash');
-    const operationGroupsFa2 = (
-      await Promise.all(
-        filteredOperationsFa2.map(x =>
-          getOperationGroupByHash<OperationFa2Interface>(selectedRpc, x.hash).then(x => x.data)
-        )
-      )
-    ).flat();
-
-    if (operationGroups.length === 0 && operationsFa12.length === 0 && operationsFa2.length === 0) {
-      setIsAllLoaded(true);
-
-      return;
-    }
-
-    const loadedActivities = mapOperationsToActivities(publicKeyHash, operationGroups);
-    const loadedActivitiesFa12 = mapOperationsToActivities(publicKeyHash, operationGroupsFa12);
-    const loadedActivitiesFa2 = mapOperationsToActivities(publicKeyHash, operationGroupsFa2);
-
-    const allOperations = [...loadedActivitiesFa12, ...loadedActivitiesFa2, ...loadedActivities].sort(
-      (b, a) => a.level ?? 0 - (b.level ?? 0)
-    );
-    const activityGroups = transformActivityInterfaceToActivityGroups(allOperations);
-
-    setActivities(prevValue => [...prevValue, ...activityGroups]);
-
-    return;
-  }
-
   let operations: Array<OperationInterface> = [];
-  switch (tokenType) {
+  switch (activityType) {
+    case LoadLastActivityTokenType.All:
+      operations = await getAllOperations(selectedRpc, publicKeyHash, lastLevel);
+      break;
     case TokenTypeEnum.FA_2:
       operations = await getTokenFa2Operations(selectedRpc, publicKeyHash, contractAddress, tokenId, lastLevel);
       break;
@@ -270,24 +234,7 @@ export const loadLastActivity = async ({
 
   const activityGroups: Array<ActivityGroup> = [];
   for (const group of operationGroups) {
-    switch (tokenType) {
-      case TokenTypeEnum.FA_2:
-        activityGroups.push(mapOperationsToActivities(publicKeyHash, group as Array<OperationFa2Interface>));
-        break;
-      case TokenTypeEnum.FA_1_2:
-        activityGroups.push(mapOperationsToActivities(publicKeyHash, group as Array<OperationFa12Interface>));
-        break;
-      case LoadLastActivityTokenType.Tezos:
-        activityGroups.push(mapOperationsToActivities(publicKeyHash, group));
-        break;
-      case LoadLastActivityTokenType.LiquidityBaking:
-        activityGroups.push(
-          mapOperationLiquidityBakingToActivity(publicKeyHash, group as Array<OperationLiquidityBakingInterface>)
-        );
-        break;
-      default:
-        throw new Error('unimplemented');
-    }
+    activityGroups.push(mapOperationsToActivities(publicKeyHash, group));
   }
 
   setActivities((prevValue: Array<ActivityGroup>) => [...prevValue, ...activityGroups]);

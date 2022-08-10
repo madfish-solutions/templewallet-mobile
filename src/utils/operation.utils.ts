@@ -5,7 +5,6 @@ import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import {
   OperationInterface,
-  OperationLiquidityBakingInterface,
   ParameterFa12,
   ParameterLiquidityBaking,
   ParamterFa2
@@ -128,44 +127,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       level,
       destination,
       amount: source.address === address ? `-${amount}` : amount,
-      timestamp: new Date(timestamp).getTime()
-    });
-  }
-
-  return activities;
-};
-
-export const mapOperationLiquidityBakingToActivity = (
-  address: string,
-  operations: Array<OperationLiquidityBakingInterface>
-) => {
-  const activities: Array<ActivityInterface> = [];
-
-  for (const operation of operations) {
-    const { id, amount, type, status, hash, timestamp, entrypoint, sender, target, level, parameter } = operation;
-
-    const source = sender;
-    const tokenOrTezAmount =
-      isDefined(parameter) && isDefined((parameter as ParameterFa12).value.value)
-        ? (parameter as ParameterFa12).value.value
-        : amount.toString();
-
-    activities.push({
-      address: isDefined(parameter) ? target.address : undefined,
-      id,
-      type,
-      hash,
-      status: stringToActivityStatusEnum(status),
-      source,
-      entrypoint,
-      level,
-      destination: target,
-      amount:
-        isDefined(parameter) && isDefined((parameter as ParameterLiquidityBaking).value.quantity)
-          ? (parameter as ParameterLiquidityBaking).value.quantity
-          : target.address === address || (isDefined(parameter) && (parameter as ParameterFa12).value.to === address)
-          ? tokenOrTezAmount
-          : `-${tokenOrTezAmount}`,
       timestamp: new Date(timestamp).getTime()
     });
   }
