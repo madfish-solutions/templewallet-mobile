@@ -1,6 +1,5 @@
 import React, { FC, memo, useCallback } from 'react';
-import { View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback, View } from 'react-native';
 
 import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
