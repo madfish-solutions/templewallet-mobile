@@ -7,7 +7,7 @@ import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { formatSizeScaled } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { formatImgUri, isImgUriSvg } from '../../utils/image.utils';
+import { formatAssetUri, isImgUriSvg } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { Icon } from '../icon/icon';
@@ -32,7 +32,7 @@ export const TokenIcon: FC<Props> = ({ iconName, thumbnailUri, size = formatSize
     [isShowPlaceholder, size]
   );
   const source = useMemo<Source>(
-    () => (isString(thumbnailUri) ? { uri: formatImgUri(thumbnailUri) } : {}),
+    () => (isString(thumbnailUri) ? { uri: formatAssetUri(thumbnailUri) } : {}),
     [thumbnailUri]
   );
 

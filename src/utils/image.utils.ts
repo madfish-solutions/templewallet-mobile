@@ -4,10 +4,25 @@ const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
 const OBJKT_RESIZE_1 = 'assets-001';
 const OBJKT_RESIZE_3 = 'assets-003';
 
+const MEDIA_HOST = 'https://static.tcinfra.net';
+const MEDIA_SIZE = 'small';
+
 export const formatImgUri = (origin: string) =>
   origin.startsWith(IPFS_PROTOCOL_PREFIX)
     ? `https://${IPFS_GATEWAY}/ipfs/${origin.substring(IPFS_PROTOCOL_PREFIX.length)}/`
     : origin;
+
+export const formatAssetUri = (url = '') => {
+  if (url.startsWith('ipfs://')) {
+    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/ipfs/${url.substring(7)}`;
+  }
+
+  if (url.startsWith('http')) {
+    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/web/${url.replace(/^https?:\/\//, '')}`;
+  }
+
+  return url;
+};
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
