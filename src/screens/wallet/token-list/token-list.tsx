@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, Text, useWindowDimensions, View } from 'react-native';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
@@ -16,7 +16,7 @@ import {
 } from '../../../store/wallet/wallet-selectors';
 import { formatSize, formatSizeScaled } from '../../../styles/format-size';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { TokenInterface } from '../../../token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { filterTezos } from '../../../utils/filter.util';
 import { createGetItemLayout } from '../../../utils/flat-list.utils';
@@ -26,11 +26,8 @@ import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
-type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG | '';
-const keyExtractor = (item: FlatListItem, index: number) => {
-  if (item === '') {
-    return 'placeholder' + index;
-  }
+type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
+const keyExtractor = (item: FlatListItem) => {
   if (item === TEZ_TOKEN_SLUG) {
     return TEZ_TOKEN_SLUG;
   }
@@ -39,7 +36,7 @@ const keyExtractor = (item: FlatListItem, index: number) => {
 };
 
 const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
-  if (item === '') {
+  if (item === emptyToken) {
     return <View style={{ height: ITEM_HEIGHT }} />;
   }
 
@@ -49,8 +46,6 @@ const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
 
   return <TokenListItem token={item} />;
 };
-
-const OTHER_UI_HEIGHT = 360;
 
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
@@ -62,7 +57,7 @@ export const TokenList: FC = () => {
 
   const { metadata } = useNetworkInfo();
 
-  const windowHeight = useWindowDimensions().height;
+  const [flatlistHeight, setFlatlistHeight] = useState(0);
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -84,12 +79,17 @@ export const TokenList: FC = () => {
     [isShowTezos, filteredAssetsList]
   );
 
-  const screenFillingItemsCount = (windowHeight - OTHER_UI_HEIGHT) / ITEM_HEIGHT;
+  const screenFillingItemsCount = flatlistHeight / ITEM_HEIGHT;
 
   const renderData =
     isAndroid && screenFillingItemsCount > flatListData.length
-      ? flatListData.concat(Array(Math.ceil(screenFillingItemsCount - flatListData.length)).fill(''))
+      ? flatListData.concat(Array(Math.ceil(screenFillingItemsCount - flatListData.length)).fill(emptyToken))
       : flatListData;
+
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    setFlatlistHeight(height);
+  };
 
   return (
     <>
@@ -109,7 +109,7 @@ export const TokenList: FC = () => {
         <SearchContainer onChange={setSearchValue} />
       </View>
 
-      <View style={styles.contentContainerStyle} testID={TokenListSelectors.TokenList}>
+      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.TokenList}>
         <FlatList
           data={renderData}
           renderItem={renderFlatListItem}
