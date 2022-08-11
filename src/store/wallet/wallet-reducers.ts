@@ -53,22 +53,28 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       isVisible
     }))
   );
-  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) =>
-    updateCurrentAccountState(state, account => ({
-      ...account,
-      tokensList: uniqBy(
-        [
-          ...account.tokensList,
-          ...tokensMetadata.map(token => ({
-            slug: getTokenSlug(token),
-            balance: '0',
-            visibility: VisibilityEnum.InitiallyHidden
-          }))
-        ],
-        'slug'
-      )
-    }))
-  );
+  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
+    ...state,
+    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((prev, cur) => {
+      return {
+        ...prev,
+        [cur]: {
+          ...prev[cur],
+          tokensList: uniqBy(
+            [
+              ...prev[cur].tokensList,
+              ...tokensMetadata.map(token => ({
+                slug: getTokenSlug(token),
+                balance: '0',
+                visibility: VisibilityEnum.InitiallyHidden
+              }))
+            ],
+            'slug'
+          )
+        }
+      };
+    }, state.accountsStateRecord)
+  }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
