@@ -1,11 +1,12 @@
 import React, { FC, memo, useCallback } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 
 import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { TokenContainer } from '../../../../components/token-container/token-container';
 import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
 import { EmptyFn } from '../../../../config/general';
+// import { isAndroid } from '../../../../config/system';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { useTokenListItemStyles } from './token-list-item.styles';
@@ -29,7 +30,7 @@ export const TokenListItem: FC<Props> = memo(
     }, [onPress]);
 
     return (
-      <TouchableWithoutFeedback delayPressIn={50} onPress={handleOnPress}>
+      <TouchableOpacity onPress={handleOnPress}>
         <TokenContainer token={token} apy={apy}>
           <View style={styles.rightContainer}>
             <HideBalance style={styles.balanceText}>
@@ -40,7 +41,7 @@ export const TokenListItem: FC<Props> = memo(
             </HideBalance>
           </View>
         </TokenContainer>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     );
   },
   (prevProps, nextProps) => JSON.stringify(prevProps) === JSON.stringify(nextProps)
