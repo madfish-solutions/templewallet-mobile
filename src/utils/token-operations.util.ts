@@ -159,8 +159,10 @@ export const getAllOperations = async (
     return [];
   }
   const lowerId = localLastItem.id;
-  const operationsFa12 = await getFa12IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
-  const operationsFa2 = await getFa2IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel);
+  const [operationsFa12, operationsFa2] = await Promise.all([
+    getFa12IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel),
+    getFa2IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel)
+  ]);
 
   return operations.concat(operationsFa12).concat(operationsFa2);
 };
