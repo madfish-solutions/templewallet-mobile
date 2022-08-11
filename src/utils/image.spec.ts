@@ -1,26 +1,19 @@
-import {
-  formatImgUri,
-  isImgUriSvg,
-  formatCollectibleObjktMediumUri,
-  formatCollectibleObjktBigUri
-} from './image.utils';
+import { formatImgUri, isImgUriSvg, formatCollectibleObjktMediumUri } from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
-    it('should leave http:// uri intact', () => {
+    it('should convert http:// to https://', () => {
       const mockHttpUri = 'http://mocklink.com';
+      const mockHttpsUri = 'https://static.tcinfra.net/media/small/web/mocklink.com';
 
-      expect(formatImgUri(mockHttpUri)).toEqual(mockHttpUri);
+      expect(formatImgUri(mockHttpUri)).toEqual(mockHttpsUri);
     });
 
-    it('should leave https:// uri intact', () => {
-      const mockHttpsUri = 'https://mocklink.com';
+    it('should convert ipfs:// uri to https://', () => {
+      const mockIpfsUri = 'ipfs://mockFileHash';
+      const mockHttpsUri = 'https://static.tcinfra.net/media/small/ipfs/mockFileHash';
 
-      expect(formatImgUri(mockHttpsUri)).toEqual(mockHttpsUri);
-    });
-
-    it('should convert ipfs:// uri to URL to cloudflare-ipfs.com for that file', () => {
-      expect(formatImgUri('ipfs://mockFileHash')).toEqual('https://cloudflare-ipfs.com/ipfs/mockFileHash/');
+      expect(formatImgUri(mockIpfsUri)).toEqual(mockHttpsUri);
     });
   });
   describe('is image svg', () => {
@@ -29,22 +22,6 @@ describe('image utils', () => {
     });
     it('should return false for img address with .png', () => {
       expect(isImgUriSvg('https://facebook.com/favicon.png')).toEqual(false);
-    });
-  });
-  describe('formatCollectibleObjktBigUri', () => {
-    it('should convert asset KT and id to objkt.com URL for that asset', () => {
-      const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 };
-      const assetSlug = `${collectible.address}_${collectible.id}`;
-      expect(formatCollectibleObjktBigUri(assetSlug)).toEqual(
-        `https://assets.objkt.media/file/assets-001/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/1/7/464017/thumb400`
-      );
-    });
-    it('should convert asset KT and id with id < 10 to objkt.com URL for that asset', () => {
-      const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 9 };
-      const assetSlug = `${collectible.address}_${collectible.id}`;
-      expect(formatCollectibleObjktBigUri(assetSlug)).toEqual(
-        `https://assets.objkt.media/file/assets-001/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/0/9/9/thumb400`
-      );
     });
   });
   describe('formatCollectibleObjktMediumUri', () => {
