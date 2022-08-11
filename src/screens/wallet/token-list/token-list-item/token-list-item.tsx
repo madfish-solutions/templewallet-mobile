@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback } from 'react';
 import { View } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
 import { HideBalance } from '../../../../components/hide-balance/hide-balance';
@@ -30,7 +30,7 @@ export const TokenListItem: FC<Props> = memo(
     }, [onPress]);
 
     return (
-      <TouchableOpacity onPress={handleOnPress}>
+      <TouchableWithoutFeedback delayPressIn={50} onPress={handleOnPress}>
         <TokenContainer token={token} apy={apy}>
           <View style={styles.rightContainer}>
             <HideBalance style={styles.balanceText}>
@@ -41,7 +41,7 @@ export const TokenListItem: FC<Props> = memo(
             </HideBalance>
           </View>
         </TokenContainer>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );
   },
   (prevProps, nextProps) => JSON.stringify(prevProps) === JSON.stringify(nextProps)
