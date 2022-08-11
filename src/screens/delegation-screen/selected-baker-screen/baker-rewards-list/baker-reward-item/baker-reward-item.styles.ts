@@ -34,7 +34,7 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
   },
   detailsButtonText: {
     ...typography.caption13Semibold,
-    color: colors.destructive,
+    color: colors.orange,
     marginRight: formatSize(6)
   },
   row: {
