@@ -16,17 +16,17 @@ import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 
-export const getOperationGroupByHash = <T>(selectedRpc: string, hash: string) =>
-  getTzktApi(selectedRpc).get<Array<T>>(`operations/${hash}`);
+export const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
+  getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
 export const getContractOperations = <T>(
-  selectedRpc: string,
+  selectedRpcUrl: string,
   account: string,
   contractAddress: string,
   lastLevel: number | null
 ) =>
-  getTzktApi(selectedRpc)
+  getTzktApi(selectedRpcUrl)
     .get<Array<T>>(`accounts/${contractAddress}/operations`, {
       params: {
         type: 'transaction',
@@ -41,13 +41,13 @@ export const getContractOperations = <T>(
 
 // FA2 TOKEN ACTIVITY
 export const getTokenFa2Operations = (
-  selectedRpc: string,
+  selectedRpcUrl: string,
   account: string,
   contractAddress: string,
   tokenId = '0',
   lastLevel: number | null
 ) =>
-  getTzktApi(selectedRpc)
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
@@ -62,12 +62,12 @@ export const getTokenFa2Operations = (
 
 // FA1_2 TOKEN ACTIVITY
 export const getTokenFa12Operations = (
-  selectedRpc: string,
+  selectedRpcUrl: string,
   account: string,
   contractAddress: string,
   lastLevel: number | null
 ) =>
-  getTzktApi(selectedRpc)
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
@@ -81,8 +81,8 @@ export const getTokenFa12Operations = (
     .then(x => x.data);
 
 // TOKEN ACTIVITY
-export const getTezosOperations = (selectedRpc: string, account: string, lastId: number | null) =>
-  getTzktApi(selectedRpc)
+export const getTezosOperations = (selectedRpcUrl: string, account: string, lastId: number | null) =>
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
@@ -95,8 +95,8 @@ export const getTezosOperations = (selectedRpc: string, account: string, lastId:
     .then(x => x.data);
 
 // GENERAL ACTIVITY
-export const getTokenOperations = (selectedRpc: string, account: string, lastId: number | null) =>
-  getTzktApi(selectedRpc)
+export const getTokenOperations = (selectedRpcUrl: string, account: string, lastId: number | null) =>
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
@@ -108,12 +108,12 @@ export const getTokenOperations = (selectedRpc: string, account: string, lastId:
     .then(x => x.data);
 
 export const getFa12IncomingOperations = (
-  selectedRpc: string,
+  selectedRpcUrl: string,
   account: string,
   lowerId: number,
   upperId: number | null
 ) =>
-  getTzktApi(selectedRpc)
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
@@ -128,12 +128,12 @@ export const getFa12IncomingOperations = (
     .then(x => x.data);
 
 export const getFa2IncomingOperations = async (
-  selectedRpc: string,
+  selectedRpcUrl: string,
   account: string,
   lowerId: number,
   upperId: number | null
 ) =>
-  getTzktApi(selectedRpc)
+  getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
@@ -148,11 +148,11 @@ export const getFa2IncomingOperations = async (
     .then(x => x.data);
 
 export const getAllOperations = async (
-  selectedRpc: string,
+  selectedRpcUrl: string,
   publicKeyHash: string,
   lastLevel: number | null
 ): Promise<OperationInterface[]> => {
-  const operations = await getTokenOperations(selectedRpc, publicKeyHash, lastLevel);
+  const operations = await getTokenOperations(selectedRpcUrl, publicKeyHash, lastLevel);
   if (operations.length === 0) {
     return [];
   }
@@ -162,8 +162,8 @@ export const getAllOperations = async (
   }
   const lowerId = localLastItem.id;
   const [operationsFa12, operationsFa2] = await Promise.all([
-    getFa12IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel),
-    getFa2IncomingOperations(selectedRpc, publicKeyHash, lowerId, lastLevel)
+    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel),
+    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel)
   ]);
 
   return operations.concat(operationsFa12).concat(operationsFa2);
