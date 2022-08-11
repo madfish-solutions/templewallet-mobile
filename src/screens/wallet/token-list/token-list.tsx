@@ -1,10 +1,11 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, ListRenderItem, Text, useWindowDimensions, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
+import { isAndroid } from '../../../config/system';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
@@ -25,8 +26,11 @@ import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
-type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
-const keyExtractor = (item: FlatListItem) => {
+type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG | '';
+const keyExtractor = (item: FlatListItem, index: number) => {
+  if (item === '') {
+    return 'placeholder' + index;
+  }
   if (item === TEZ_TOKEN_SLUG) {
     return TEZ_TOKEN_SLUG;
   }
@@ -35,12 +39,18 @@ const keyExtractor = (item: FlatListItem) => {
 };
 
 const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
+  if (item === '') {
+    return <View style={{ height: ITEM_HEIGHT }} />;
+  }
+
   if (item === TEZ_TOKEN_SLUG) {
     return <TezosToken />;
   }
 
   return <TokenListItem token={item} />;
 };
+
+const OTHER_UI_HEIGHT = 360;
 
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
@@ -51,6 +61,8 @@ export const TokenList: FC = () => {
   const styles = useTokenListStyles();
 
   const { metadata } = useNetworkInfo();
+
+  const windowHeight = useWindowDimensions().height;
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -72,6 +84,13 @@ export const TokenList: FC = () => {
     [isShowTezos, filteredAssetsList]
   );
 
+  const screenFillingItemsCount = (windowHeight - OTHER_UI_HEIGHT) / ITEM_HEIGHT;
+
+  const renderData =
+    isAndroid && screenFillingItemsCount > flatListData.length
+      ? flatListData.concat(Array(Math.ceil(screenFillingItemsCount - flatListData.length)).fill(''))
+      : flatListData;
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -92,7 +111,7 @@ export const TokenList: FC = () => {
 
       <View style={styles.contentContainerStyle} testID={TokenListSelectors.TokenList}>
         <FlatList
-          data={flatListData}
+          data={renderData}
           renderItem={renderFlatListItem}
           keyExtractor={keyExtractor}
           getItemLayout={getItemLayout}
