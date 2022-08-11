@@ -3,7 +3,7 @@ import uniqBy from 'lodash-es/uniqBy';
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { ActivityGroup } from '../interfaces/activity.interface';
+import { ActivityInterface } from '../interfaces/activity.interface';
 import {
   OperationFa12Interface,
   OperationFa2Interface,
@@ -11,6 +11,8 @@ import {
   OperationLiquidityBakingInterface
 } from '../interfaces/operation.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
+import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
+import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 
@@ -180,64 +182,86 @@ export type LoadLastActivityType =
   | LoadLastActivityTokenType.LiquidityBaking;
 
 interface LoadLastActivityProps {
-  selectedRpc: string;
-  lastLevel: number | null;
+  selectedRpcUrl: string;
+  lastItem: ActivityInterface | null;
   publicKeyHash: string;
-  contractAddress: string;
-  tokenId: string;
-  activityType: LoadLastActivityType;
-  setIsAllLoaded: (boo: boolean) => void;
-  setActivities: (values: (prevValues: Array<ActivityGroup>) => Array<ActivityGroup>) => void;
+  tokenSlug?: string;
+  tokenType: TokenTypeEnum;
 }
 
 export const loadLastActivity = async ({
-  selectedRpc,
-  lastLevel,
+  selectedRpcUrl,
+  lastItem,
   publicKeyHash,
-  contractAddress,
-  tokenId,
-  activityType,
-  setIsAllLoaded,
-  setActivities
+  tokenSlug,
+  tokenType
 }: LoadLastActivityProps) => {
   let operations: Array<OperationInterface> = [];
+
+  const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
+
+  let activityType: LoadLastActivityType = tokenType;
+  if (isDefined(tokenSlug)) {
+    switch (tokenSlug) {
+      case TEZ_TOKEN_SLUG:
+        activityType = LoadLastActivityTokenType.Tezos;
+        break;
+      case LIQUIDITY_BAKING_DEX_ADDRESS:
+        activityType = LoadLastActivityTokenType.LiquidityBaking;
+        break;
+      default:
+        activityType = tokenType;
+    }
+  } else {
+    activityType = LoadLastActivityTokenType.All;
+  }
+
+  const lastLevelOrLastId = isDefined(lastItem)
+    ? activityType === TokenTypeEnum.FA_1_2 ||
+      activityType === TokenTypeEnum.FA_2 ||
+      activityType === LoadLastActivityTokenType.LiquidityBaking
+      ? lastItem.level ?? null
+      : lastItem.id ?? null
+    : null;
+
   switch (activityType) {
     case LoadLastActivityTokenType.All:
-      operations = await getAllOperations(selectedRpc, publicKeyHash, lastLevel);
+      operations = await getAllOperations(selectedRpcUrl, publicKeyHash, lastLevelOrLastId);
       break;
     case TokenTypeEnum.FA_2:
-      operations = await getTokenFa2Operations(selectedRpc, publicKeyHash, contractAddress, tokenId, lastLevel);
+      operations = await getTokenFa2Operations(
+        selectedRpcUrl,
+        publicKeyHash,
+        contractAddress,
+        tokenId,
+        lastLevelOrLastId
+      );
       break;
     case TokenTypeEnum.FA_1_2:
-      operations = await getTokenFa12Operations(selectedRpc, publicKeyHash, contractAddress, lastLevel);
+      operations = await getTokenFa12Operations(selectedRpcUrl, publicKeyHash, contractAddress, lastLevelOrLastId);
       break;
     case LoadLastActivityTokenType.Tezos:
-      operations = await getTezosOperations(selectedRpc, publicKeyHash, lastLevel);
+      operations = await getTezosOperations(selectedRpcUrl, publicKeyHash, lastLevelOrLastId);
       break;
     case LoadLastActivityTokenType.LiquidityBaking:
       operations = await getContractOperations<OperationLiquidityBakingInterface>(
-        selectedRpc,
+        selectedRpcUrl,
         publicKeyHash,
         contractAddress,
-        lastLevel
+        lastLevelOrLastId
       );
       break;
-    default:
-      throw new Error('unimplemented');
   }
 
   const filteredOperations = uniqBy<OperationInterface>(operations, 'hash');
 
-  setIsAllLoaded(filteredOperations.length === 0);
-
-  const operationGroups = await Promise.all(
-    filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(selectedRpc, x.hash).then(x => x.data))
-  );
-
-  const activityGroups: Array<ActivityGroup> = [];
-  for (const group of operationGroups) {
-    activityGroups.push(mapOperationsToActivities(publicKeyHash, group));
+  if (filteredOperations.length === 0) {
+    return [];
   }
 
-  setActivities((prevValue: Array<ActivityGroup>) => [...prevValue, ...activityGroups]);
+  const operationGroups = await Promise.all(
+    filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(selectedRpcUrl, x.hash).then(x => x.data))
+  );
+
+  return operationGroups.map(group => mapOperationsToActivities(publicKeyHash, group));
 };
