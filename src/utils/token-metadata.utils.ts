@@ -142,8 +142,7 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
                 .filter(x => x.contractAddress !== 'tez')
                 .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
             : []
-        ),
-        filter(isDefined)
+        )
       );
 
 export const loadTokenMetadata$ = memoize(
