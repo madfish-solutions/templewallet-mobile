@@ -5,7 +5,6 @@ import FastImage from 'react-native-fast-image';
 import { formatSize } from '../../styles/format-size';
 import {
   formatCollectibleObjktArtifactUri,
-  formatCollectibleObjktBigUri,
   formatCollectibleObjktMediumUri,
   formatImgUri
 } from '../../utils/image.utils';
@@ -21,7 +20,6 @@ interface LoadStrategy {
 
 const collectibleBigLoadStrategy: Array<LoadStrategy> = [
   { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
-  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
   { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
   { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
   { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
@@ -30,7 +28,6 @@ const collectibleBigLoadStrategy: Array<LoadStrategy> = [
 
 const collectibleThumbnailLoadStrategy: Array<LoadStrategy> = [
   { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
-  { type: 'objktBig', uri: formatCollectibleObjktBigUri, field: 'assetSlug' }, // png/jpg
   { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
   { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
   { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
