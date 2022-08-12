@@ -55,14 +55,14 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   );
   builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
     ...state,
-    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((prev, cur) => {
+    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((accountsState, publicHash) => {
       return {
-        ...prev,
-        [cur]: {
-          ...prev[cur],
+        ...accountsState,
+        [publicHash]: {
+          ...accountsState[publicHash],
           tokensList: uniqBy(
             [
-              ...prev[cur].tokensList,
+              ...accountsState[publicHash].tokensList,
               ...tokensMetadata.map(token => ({
                 slug: getTokenSlug(token),
                 balance: '0',
