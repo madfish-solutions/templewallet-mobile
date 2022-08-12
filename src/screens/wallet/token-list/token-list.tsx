@@ -36,12 +36,12 @@ const keyExtractor = (item: FlatListItem) => {
 };
 
 const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
-  if (item === emptyToken) {
-    return <View style={{ height: ITEM_HEIGHT }} />;
-  }
-
   if (item === TEZ_TOKEN_SLUG) {
     return <TezosToken />;
+  }
+
+  if (item.address.startsWith('filler') === true) {
+    return <View style={{ height: ITEM_HEIGHT }} />;
   }
 
   return <TokenListItem token={item} />;
