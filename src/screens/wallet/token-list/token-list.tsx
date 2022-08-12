@@ -79,17 +79,14 @@ export const TokenList: FC = () => {
     [isShowTezos, filteredAssetsList]
   );
 
-  const screenFillingItemsCount = flatlistHeight / ITEM_HEIGHT;
+  const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
 
-  const renderData =
-    isAndroid && screenFillingItemsCount > flatListData.length
-      ? flatListData.concat(Array(Math.ceil(screenFillingItemsCount - flatListData.length)).fill(emptyToken))
-      : flatListData;
+  const renderData = useMemo(
+    () => addPlaceholdersForAndroid(flatListData, screenFillingItemsCount),
+    [flatListData, screenFillingItemsCount]
+  );
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setFlatlistHeight(height);
-  };
+  const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
   return (
     <>
@@ -123,3 +120,12 @@ export const TokenList: FC = () => {
     </>
   );
 };
+
+const addPlaceholdersForAndroid = (flatListData: FlatListItem[], screenFillingItemsCount: number) =>
+  isAndroid && screenFillingItemsCount > flatListData.length
+    ? flatListData.concat(
+        Array(Math.ceil(screenFillingItemsCount - flatListData.length))
+          .fill(emptyToken)
+          .map((token, index) => ({ ...token, address: `filler${index}` }))
+      )
+    : flatListData;
