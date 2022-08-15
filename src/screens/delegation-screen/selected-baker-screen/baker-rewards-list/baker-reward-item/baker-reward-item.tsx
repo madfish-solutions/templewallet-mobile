@@ -146,7 +146,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
 
         <View style={styles.rightContainer}>
           <View style={styles.rowAlignCenter}>
-            <Text>{reward.cycle}</Text>
+            <Text style={styles.textBlack}>{reward.cycle}</Text>
             <Divider size={formatSize(4)} />
             <Icon name={getCycleStatusIcon(cycleStatus)} size={formatSize(16)} />
           </View>
