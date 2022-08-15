@@ -1,8 +1,9 @@
-import uniqBy from 'lodash-es/uniqBy';
+import { uniq } from 'lodash-es';
 
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
+import { AccountInterface } from '../interfaces/account.interface';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import {
   OperationFa12Interface,
@@ -13,18 +14,20 @@ import {
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-export const getContractOperations = <T>(
+const getContractOperations = <T>(
   selectedRpcUrl: string,
   account: string,
   contractAddress: string,
-  lastLevel: number | null
+  lastLevel?: number
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<T>>(`accounts/${contractAddress}/operations`, {
@@ -39,13 +42,12 @@ export const getContractOperations = <T>(
     })
     .then(x => x.data);
 
-// FA2 TOKEN ACTIVITY
-export const getTokenFa2Operations = (
+const getTokenFa2Operations = (
   selectedRpcUrl: string,
   account: string,
   contractAddress: string,
   tokenId = '0',
-  lastLevel: number | null
+  lastLevel?: number
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
@@ -60,13 +62,7 @@ export const getTokenFa2Operations = (
     })
     .then(x => x.data);
 
-// FA1_2 TOKEN ACTIVITY
-export const getTokenFa12Operations = (
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  lastLevel: number | null
-) =>
+const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
@@ -80,8 +76,7 @@ export const getTokenFa12Operations = (
     })
     .then(x => x.data);
 
-// TOKEN ACTIVITY
-export const getTezosOperations = (selectedRpcUrl: string, account: string, lastId: number | null) =>
+const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
@@ -94,8 +89,7 @@ export const getTezosOperations = (selectedRpcUrl: string, account: string, last
     })
     .then(x => x.data);
 
-// GENERAL ACTIVITY
-export const getTokenOperations = (selectedRpcUrl: string, account: string, lastId: number | null) =>
+const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
       params: {
@@ -107,12 +101,7 @@ export const getTokenOperations = (selectedRpcUrl: string, account: string, last
     })
     .then(x => x.data);
 
-export const getFa12IncomingOperations = (
-  selectedRpcUrl: string,
-  account: string,
-  lowerId: number,
-  upperId: number | null
-) =>
+export const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
@@ -127,12 +116,7 @@ export const getFa12IncomingOperations = (
     })
     .then(x => x.data);
 
-export const getFa2IncomingOperations = async (
-  selectedRpcUrl: string,
-  account: string,
-  lowerId: number,
-  upperId: number | null
-) =>
+export const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
@@ -147,12 +131,12 @@ export const getFa2IncomingOperations = async (
     })
     .then(x => x.data);
 
-export const getAllOperations = async (
+const getAllOperations = async (
   selectedRpcUrl: string,
   publicKeyHash: string,
-  lastLevel: number | null
+  lastLevel?: number
 ): Promise<OperationInterface[]> => {
-  const operations = await getTokenOperations(selectedRpcUrl, publicKeyHash, lastLevel);
+  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, lastLevel);
   if (operations.length === 0) {
     return [];
   }
@@ -169,99 +153,65 @@ export const getAllOperations = async (
   return operations.concat(operationsFa12).concat(operationsFa2);
 };
 
-export enum LoadLastActivityTokenType {
-  Tezos = 'Tezos',
-  LiquidityBaking = 'LiquidityBaking',
-  All = 'All'
-}
-export type LoadLastActivityType =
-  | TokenTypeEnum.FA_2
-  | TokenTypeEnum.FA_1_2
-  | LoadLastActivityTokenType.Tezos
-  | LoadLastActivityTokenType.All
-  | LoadLastActivityTokenType.LiquidityBaking;
-
-interface LoadLastActivityProps {
-  selectedRpcUrl: string;
-  lastItem: ActivityInterface | null;
-  publicKeyHash: string;
-  tokenSlug?: string;
-  tokenType: TokenTypeEnum;
-}
-
-export const loadLastActivity = async ({
-  selectedRpcUrl,
-  lastItem,
-  publicKeyHash,
-  tokenSlug,
-  tokenType
-}: LoadLastActivityProps) => {
-  let operations: Array<OperationInterface> = [];
-
+const loadOperations = async (
+  selectedRpcUrl: string,
+  selectedAccount: AccountInterface,
+  tokenSlug?: string,
+  lastItem?: ActivityInterface
+) => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
 
-  let activityType: LoadLastActivityType = tokenType;
   if (isDefined(tokenSlug)) {
-    switch (tokenSlug) {
-      case TEZ_TOKEN_SLUG:
-        activityType = LoadLastActivityTokenType.Tezos;
-        break;
-      case LIQUIDITY_BAKING_DEX_ADDRESS:
-        activityType = LoadLastActivityTokenType.LiquidityBaking;
-        break;
-      default:
-        activityType = tokenType;
+    if (tokenSlug === TEZ_TOKEN_SLUG) {
+      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
     }
-  } else {
-    activityType = LoadLastActivityTokenType.All;
-  }
 
-  const lastLevelOrLastId = isDefined(lastItem)
-    ? activityType === TokenTypeEnum.FA_1_2 ||
-      activityType === TokenTypeEnum.FA_2 ||
-      activityType === LoadLastActivityTokenType.LiquidityBaking
-      ? lastItem.level ?? null
-      : lastItem.id ?? null
-    : null;
-
-  switch (activityType) {
-    case LoadLastActivityTokenType.All:
-      operations = await getAllOperations(selectedRpcUrl, publicKeyHash, lastLevelOrLastId);
-      break;
-    case TokenTypeEnum.FA_2:
-      operations = await getTokenFa2Operations(
+    if (tokenSlug === LIQUIDITY_BAKING_DEX_ADDRESS) {
+      return getContractOperations<OperationLiquidityBakingInterface>(
         selectedRpcUrl,
-        publicKeyHash,
+        selectedAccount.publicKeyHash,
+        contractAddress,
+        lastItem?.level
+      );
+    }
+
+    const tezos = createReadOnlyTezosToolkit(selectedRpcUrl, selectedAccount);
+    const contract = await tezos.contract.at(contractAddress);
+    const tokenType = getTokenType(contract);
+
+    if (tokenType === TokenTypeEnum.FA_1_2) {
+      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, lastItem?.level);
+    }
+
+    if (tokenType === TokenTypeEnum.FA_2) {
+      return getTokenFa2Operations(
+        selectedRpcUrl,
+        selectedAccount.publicKeyHash,
         contractAddress,
         tokenId,
-        lastLevelOrLastId
+        lastItem?.level
       );
-      break;
-    case TokenTypeEnum.FA_1_2:
-      operations = await getTokenFa12Operations(selectedRpcUrl, publicKeyHash, contractAddress, lastLevelOrLastId);
-      break;
-    case LoadLastActivityTokenType.Tezos:
-      operations = await getTezosOperations(selectedRpcUrl, publicKeyHash, lastLevelOrLastId);
-      break;
-    case LoadLastActivityTokenType.LiquidityBaking:
-      operations = await getContractOperations<OperationLiquidityBakingInterface>(
-        selectedRpcUrl,
-        publicKeyHash,
-        contractAddress,
-        lastLevelOrLastId
-      );
-      break;
+    }
   }
 
-  const filteredOperations = uniqBy<OperationInterface>(operations, 'hash');
+  return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+};
 
-  if (filteredOperations.length === 0) {
-    return [];
-  }
+export const loadActivity = async (
+  selectedRpcUrl: string,
+  selectedAccount: AccountInterface,
+  tokenSlug?: string,
+  lastItem?: ActivityInterface
+) => {
+  const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
+    .then(operations => operations.map(operation => operation.hash))
+    .then(hashes => uniq(hashes));
 
-  const operationGroups = await Promise.all(
-    filteredOperations.map(x => getOperationGroupByHash<OperationInterface>(selectedRpcUrl, x.hash).then(x => x.data))
+  return Promise.all(
+    operationsHashes.map(hash =>
+      getOperationGroupByHash<OperationInterface>(selectedRpcUrl, hash).then(response => response.data)
+    )
+  ).then(operationGroups =>
+    operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
   );
-
-  return operationGroups.map(group => mapOperationsToActivities(publicKeyHash, group));
 };

@@ -5,13 +5,10 @@ import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
-import { loadLastActivity } from '../utils/token-operations.util';
-import { useTokenType } from './use-token-type';
+import { loadActivity } from '../utils/token-operations.util';
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
-  const [contractAddress] = (tokenSlug ?? '').split('_');
-  const { tokenType, loading } = useTokenType(contractAddress);
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const lastActivityRef = useRef<string>('');
@@ -21,43 +18,34 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const result = await loadLastActivity({
-        selectedRpcUrl,
-        lastItem: null,
-        publicKeyHash,
-        tokenSlug,
-        tokenType
-      });
+      const result = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+
       if (result.length === 0) {
         setIsAllLoaded(true);
       }
       setActivities(result);
     };
 
-    if (!loading) {
-      asyncFunction();
-    }
-  }, [loading, tokenType]);
+    asyncFunction();
+  }, [selectedRpcUrl, selectedAccount, tokenSlug]);
 
   const handleUpdate = async () => {
-    if (isDefined(activities) && activities.length > 0 && !isAllLoaded) {
+    if (activities.length > 0 && !isAllLoaded) {
       const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+
       if (lastActivityGroup.length > 0) {
         const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+
         if (lastItem.hash !== lastActivityRef.current) {
           lastActivityRef.current = lastItem.hash;
+
           if (isDefined(lastItem)) {
-            const result = await loadLastActivity({
-              selectedRpcUrl,
-              lastItem,
-              publicKeyHash,
-              tokenSlug,
-              tokenType
-            });
-            if (result.length === 0) {
+            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+
+            if (newActivity.length === 0) {
               setIsAllLoaded(true);
             }
-            setActivities(prev => [...prev, ...result]);
+            setActivities(prev => [...prev, ...newActivity]);
           }
         }
       }
