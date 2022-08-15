@@ -97,6 +97,13 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
               ? tokenOrTezAmount
               : `-${tokenOrTezAmount}`;
         }
+        if (
+          !isDefined(operation.parameter) &&
+          operation.target.address !== address &&
+          operation.sender.address !== address
+        ) {
+          continue;
+        }
         break;
 
       case ActivityTypeEnum.Delegation:
@@ -113,14 +120,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
 
       default:
         continue;
-    }
-
-    if (
-      !isDefined(operation.parameter) &&
-      operation.target.address !== address &&
-      operation.sender.address !== address
-    ) {
-      continue;
     }
 
     activities.push({
