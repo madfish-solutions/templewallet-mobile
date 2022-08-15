@@ -115,6 +115,14 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
         continue;
     }
 
+    if (
+      !isDefined(operation.parameter) &&
+      operation.target.address !== address &&
+      operation.sender.address !== address
+    ) {
+      continue;
+    }
+
     activities.push({
       ...(isDefined(tokenId) ? { tokenId } : {}),
       ...(isDefined(contractAddress) ? { address: contractAddress } : {}),
