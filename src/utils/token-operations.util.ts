@@ -150,7 +150,10 @@ const getAllOperations = async (
     getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel)
   ]);
 
-  return operations.concat(operationsFa12).concat(operationsFa2);
+  return operations
+    .concat(operationsFa12)
+    .concat(operationsFa2)
+    .sort((b, a) => a.id - b.id);
 };
 
 const loadOperations = async (
