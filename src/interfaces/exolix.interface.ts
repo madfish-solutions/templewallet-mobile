@@ -42,7 +42,9 @@ export enum ExchangeDataStatusEnum {
 
 export interface ExchangePayload {
   coinFrom: string;
+  coinFromNetwork: string;
   coinTo: string;
+  coinToNetwork: string;
   amount: number;
   withdrawalAddress: string;
   withdrawalExtraId: string;

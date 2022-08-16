@@ -95,6 +95,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     dispatch(
       loadExolixExchangeDataActions.submit({
         coinFrom: values.coinFrom.asset.code,
+        coinFromNetwork: values.coinFrom.asset.network,
         coinTo: outputCoin.code,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
