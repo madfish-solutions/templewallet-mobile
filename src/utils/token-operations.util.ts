@@ -134,9 +134,9 @@ export const getFa2IncomingOperations = (selectedRpcUrl: string, account: string
 const getAllOperations = async (
   selectedRpcUrl: string,
   publicKeyHash: string,
-  lastLevel?: number
+  upperId?: number
 ): Promise<OperationInterface[]> => {
-  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, lastLevel);
+  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, upperId);
   if (operations.length === 0) {
     return [];
   }
@@ -146,8 +146,8 @@ const getAllOperations = async (
   }
   const lowerId = localLastItem.id;
   const [operationsFa12, operationsFa2] = await Promise.all([
-    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel),
-    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel)
+    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId),
+    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId)
   ]);
 
   return operations
@@ -204,17 +204,22 @@ export const loadActivity = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
   tokenSlug?: string,
-  lastItem?: ActivityInterface
+  lastItem?: ActivityInterface,
+  hashes?: Array<string>
 ) => {
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
-    .then(hashes => uniq(hashes));
+    .then(newHashes => uniq(newHashes.concat(hashes ?? [])));
+
+  const filteredHashes = operationsHashes.filter(hash => (hashes ?? []).indexOf(hash) < 0);
 
   return Promise.all(
-    operationsHashes.map(hash =>
+    filteredHashes.map(hash =>
       getOperationGroupByHash<OperationInterface>(selectedRpcUrl, hash).then(response => response.data)
     )
-  ).then(operationGroups =>
-    operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
-  );
+  )
+    .then(operationGroups =>
+      operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
+    )
+    .then(activities => ({ activities, operationsHashes }));
 };
