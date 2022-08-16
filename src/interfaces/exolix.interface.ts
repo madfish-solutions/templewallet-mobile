@@ -49,13 +49,38 @@ export interface ExchangePayload {
 }
 
 export interface CurrenciesInterface {
-  icon?: string;
   name: string;
   code: string;
+  network: string;
+  networkFullName: string;
+  icon?: string;
+  networkShortName?: string | null;
+}
+
+interface ExolixNetworkInterface {
+  addressRegex: string;
+  blockExplorer: string | null;
+  depositMinAmount: number | null;
+  isDefault: boolean;
+  memoName: string;
+  memoNeeded: boolean;
+  memoRegex: string;
+  name: string;
+  network: string;
+  notes: string;
+  precision: number;
+  shortName: string | null;
+}
+
+interface ExolixCurrenciesInterface {
+  code: string;
+  icon: string;
+  name: string;
+  networks: Array<ExolixNetworkInterface>;
 }
 
 export interface CurrenciesRequestInterface {
-  data: Array<CurrenciesInterface>;
+  data: Array<ExolixCurrenciesInterface>;
 }
 
 export interface RateInterface {

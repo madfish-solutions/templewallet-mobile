@@ -14,7 +14,7 @@ export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typogr
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    gap: 1
   },
   rightContainer: {
     flexDirection: 'row'

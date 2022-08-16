@@ -1,7 +1,9 @@
 export const outputCoin = {
   code: 'XTZ',
   name: 'Tezos',
-  icon: 'https://exolix.com/icons/coins/XTZ.png'
+  icon: 'https://exolix.com/icons/coins/XTZ.png',
+  network: 'XTZ',
+  networkFullName: 'Tezos'
 };
 
 export const initialData = {
@@ -9,7 +11,9 @@ export const initialData = {
     asset: {
       code: 'BTC',
       name: 'Bitcoin',
-      icon: 'https://exolix.com/icons/coins/BTC.png'
+      icon: 'https://exolix.com/icons/coins/BTC.png',
+      network: 'BTC',
+      networkFullName: 'Bitcoin'
     },
     amount: undefined,
     min: 0,

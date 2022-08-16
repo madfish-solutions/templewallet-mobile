@@ -129,7 +129,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                 equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
-                keyExtractor={(token: CurrenciesInterface) => token.code}
+                keyExtractor={(token: CurrenciesInterface) => `${token.code}_${token.network}`}
                 onValueChange={handleTokenChange}
               />
             ) : (
