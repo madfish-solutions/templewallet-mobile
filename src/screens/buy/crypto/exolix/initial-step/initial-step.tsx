@@ -22,10 +22,11 @@ import { loadExolixRate } from '../../../../../utils/exolix.util';
 import { isDefined } from '../../../../../utils/is-defined';
 import { TopUpAssetAmountInterface } from '../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
 import { TopUpFormAssetAmountInput } from '../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
+import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../config';
 import { ErrorComponent } from '../error-component';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../use-filtered-currencies-list.hook';
-import { initialData, outputCoin } from './initial-step.data';
+import { initialData } from './initial-step.data';
 import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields } from './initial-step.utils';
 
@@ -96,8 +97,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       loadExolixExchangeDataActions.submit({
         coinFrom: values.coinFrom.asset.code,
         coinFromNetwork: values.coinFrom.asset.network,
-        coinTo: outputCoin.code,
-        coinToNetwork: outputCoin.network,
+        coinTo: values.coinTo.asset.code,
+        coinToNetwork: values.coinTo.asset.network,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
@@ -119,7 +120,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const handleInputAmountChange = (asset: TopUpAssetAmountInterface) => {
     const requestData = {
       coinFrom: asset.asset.code,
-      coinTo: initialData.coinTo.asset.code, // TEZ
+      coinTo: values.coinTo.asset.code,
       amount: isDefined(asset.amount) ? asset.amount.toNumber() : 0
     };
 
@@ -162,7 +163,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   name="coinTo"
                   label="Get"
                   editable={false}
-                  assetsList={[]}
+                  assetsList={outputTokensList}
                   setSearchValue={emptyFn}
                 />
               </FormikProvider>
@@ -181,11 +182,11 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
               <View>
                 <Text style={styles.termsOfUse}>By clicking Exchange you agree with</Text>
                 <View style={styles.row}>
-                  <BlackTextLink url="https://exolix.com/terms">Terms of Use</BlackTextLink>
+                  <BlackTextLink url={EXOLIX_TERMS_LINK}>Terms of Use</BlackTextLink>
                   <Divider size={formatSize(4)} />
                   <Text style={styles.termsOfUse}>and</Text>
                   <Divider size={formatSize(4)} />
-                  <BlackTextLink url="https://exolix.com/privacy">Privacy Policy</BlackTextLink>
+                  <BlackTextLink url={EXOLIX_PRIVICY_LINK}>Privacy Policy</BlackTextLink>
                 </View>
               </View>
               <Divider size={formatSize(16)} />

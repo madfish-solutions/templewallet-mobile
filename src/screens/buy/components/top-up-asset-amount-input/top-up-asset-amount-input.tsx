@@ -126,7 +126,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <Divider size={formatSize(8)} />
 
           <View style={styles.dropdownContainer}>
-            {editable && assetsList.length !== 0 ? (
+            {assetsList.length !== 0 ? (
               <Dropdown
                 title="Assets"
                 value={value.asset}
