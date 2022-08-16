@@ -108,6 +108,7 @@ export const TokenList: FC = () => {
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.TokenList}>
         <FlatList
+          scrollEnabled
           data={renderData}
           renderItem={renderFlatListItem}
           keyExtractor={keyExtractor}

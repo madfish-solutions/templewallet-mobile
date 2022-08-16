@@ -14,6 +14,10 @@ export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
 
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
 
+export const whitelistApi = axios.create({
+  baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-whitelist/master/'
+});
+
 export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
 
 export const exolixApi = axios.create({
