@@ -26,6 +26,6 @@ export interface TopUpFormAssetAmountInputProps {
 }
 
 export interface TopUpAssetAmountInputProps extends TopUpFormAssetAmountInputProps {
-  value: TopUpAssetAmountInterface;
+  value?: TopUpAssetAmountInterface;
   onValueChange: EventFn<TopUpAssetAmountInterface>;
 }

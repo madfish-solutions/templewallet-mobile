@@ -2,42 +2,33 @@ import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
 export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: formatSize(40)
-  },
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1
   },
-  infoRow: {
+  row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 1
+    alignItems: 'center'
   },
-  rightContainer: {
-    flexDirection: 'row'
+  height40: {
+    height: formatSize(40)
   },
-  symbol: {
+  justifySpaceBetween: {
+    justifyContent: 'space-between'
+  },
+  textRegular15: {
     ...typography.numbersRegular15,
     color: colors.black
   },
-  name: {
+  textRegular11: {
     ...typography.numbersRegular11,
+    color: colors.gray2
+  },
+  textRegular13: {
+    ...typography.numbersRegular13,
     color: colors.gray1
   },
-  balance: {
-    ...typography.numbersRegular15,
-    color: colors.black,
-    alignSelf: 'center'
-  },
-  dollarEquivalent: {
-    ...typography.numbersRegular11,
-    color: colors.gray1,
-    alignSelf: 'flex-end'
-  },
-  actionIconSubstitute: {
-    marginRight: formatSize(24)
+  colorGray1: {
+    color: colors.gray1
   }
 }));

@@ -97,6 +97,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
         coinFrom: values.coinFrom.asset.code,
         coinFromNetwork: values.coinFrom.asset.network,
         coinTo: outputCoin.code,
+        coinToNetwork: outputCoin.network,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''

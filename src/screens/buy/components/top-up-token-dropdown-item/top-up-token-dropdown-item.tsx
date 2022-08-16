@@ -16,12 +16,18 @@ interface Props {
   token: CurrenciesInterface;
   actionIconName?: IconNameEnum;
   iconSize?: number;
+  isDropdownClosed?: boolean;
 }
 
-export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconSize = formatSize(40) }) => {
+export const TopUpTokenDropdownItem: FC<Props> = ({
+  token,
+  actionIconName,
+  iconSize = formatSize(32),
+  isDropdownClosed = false
+}) => {
   const styles = useTopUpTokenDropdownItemStyles();
 
-  const isDropdownClosed = isDefined(actionIconName);
+  console.log(token.icon, 'uri');
 
   const tokenIcon = useMemo(() => {
     switch (token.code) {
@@ -35,34 +41,31 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
   }, [token]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.row, styles.height40]}>
       {tokenIcon}
 
       <Divider size={formatSize(8)} />
 
       <View style={styles.infoContainer}>
-        <View style={styles.infoRow}>
-          <Text {...getTruncatedProps(styles.symbol)}>{token.code}</Text>
-          <View style={styles.rightContainer}>
-            <Divider size={formatSize(4)} />
-            {isDropdownClosed ? (
-              <Icon name={actionIconName} size={formatSize(24)} />
-            ) : (
-              <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>
+        <View style={[styles.row, styles.justifySpaceBetween]}>
+          <View style={styles.row}>
+            <Text {...getTruncatedProps(styles.textRegular15)}>{token.code}</Text>
+            <Divider size={formatSize(8)} />
+            {!isDropdownClosed && (
+              <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
+                {token.name}
+              </Text>
             )}
           </View>
+          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
 
-        <View style={styles.infoRow}>
-          {isDropdownClosed ? (
-            <Text {...getTruncatedProps(styles.name)}>{token.networkShortName ?? token.network}</Text>
-          ) : (
-            <Text {...getTruncatedProps(styles.name)}>{token.networkFullName}</Text>
-          )}
+        <View style={styles.row}>
+          <Text {...getTruncatedProps(styles.textRegular13)}>
+            {isDropdownClosed ? token.networkShortName ?? token.networkFullName : token.networkFullName}
+          </Text>
 
-          <View style={styles.rightContainer}>
-            <Divider size={formatSize(4)} />
-          </View>
+          <Divider size={formatSize(4)} />
         </View>
       </View>
     </View>
@@ -70,5 +73,5 @@ export const TopUpTokenDropdownItem: FC<Props> = ({ token, actionIconName, iconS
 };
 
 export const renderTopUpTokenListItem: DropdownListItemComponent<CurrenciesInterface> = ({ item, isSelected }) => (
-  <TopUpTokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
+  <TopUpTokenDropdownItem token={item} actionIconName={isSelected ? IconNameEnum.Check : undefined} />
 );

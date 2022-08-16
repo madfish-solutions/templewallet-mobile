@@ -55,7 +55,7 @@ export interface CurrenciesInterface {
   code: string;
   network: string;
   networkFullName: string;
-  icon?: string;
+  icon: string;
   networkShortName?: string | null;
 }
 

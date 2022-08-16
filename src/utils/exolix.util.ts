@@ -29,7 +29,7 @@ export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>
         name,
         network: network.network,
         networkFullName: network.name,
-        networkShortName: network.shortName
+        networkShortName: network.shortName === '' ? null : network.shortName
       }))
     )
     .flat();

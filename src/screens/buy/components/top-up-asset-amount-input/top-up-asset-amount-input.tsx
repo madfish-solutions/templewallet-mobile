@@ -24,12 +24,17 @@ import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styl
 import { TopUpAssetValueText } from './top-up-asset-value-text';
 
 const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }) => (
-  <TopUpTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
+  <TopUpTokenDropdownItem
+    token={value}
+    actionIconName={IconNameEnum.TriangleDown}
+    iconSize={formatSize(32)}
+    isDropdownClosed
+  />
 );
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
-    value,
+    value = initialData.coinFrom,
     label,
     assetsList = [],
     isError = false,
@@ -51,7 +56,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
 
     const amountInputRef = useRef<TextInput>(null);
 
-    const amount = value?.amount;
+    const amount = value.amount;
 
     const inputValueRef = useRef<BigNumber>();
 
@@ -126,7 +131,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                 title="Assets"
                 value={value.asset}
                 list={assetsList}
-                equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
+                equalityFn={(item, value) => item.code === value.code && item.network === value.network}
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
                 keyExtractor={(token: CurrenciesInterface, index) => `${index}_${token.code}_${token.network}`}

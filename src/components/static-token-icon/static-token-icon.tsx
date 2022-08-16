@@ -3,13 +3,12 @@ import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { formatSizeScaled } from '../../styles/format-size';
-import { isString } from '../../utils/is-string';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { StaticTokenIconStyles } from './static-token-icon.styles';
 
 interface Props {
-  uri?: string;
+  uri: string;
   size?: number;
 }
 
@@ -18,13 +17,11 @@ export const StaticTokenIcon: FC<Props> = ({ uri, size = formatSizeScaled(32) })
 
   const [isFailed, setIsFailed] = useState(false);
 
-  const isShowPlaceholder = useMemo(() => isFailed || !isString(uri), [isFailed, uri]);
-
   const handleError = useCallback(() => setIsFailed(true), []);
 
   return (
     <View style={[StaticTokenIconStyles.container, { borderRadius: size / 2 }]}>
-      {isShowPlaceholder ? (
+      {isFailed ? (
         <Icon name={IconNameEnum.NoNameToken} size={size} />
       ) : (
         <FastImage style={style} source={{ uri }} onError={handleError} />
