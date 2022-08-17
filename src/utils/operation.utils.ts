@@ -53,9 +53,11 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           isDefined(fa2Parameter.value[0].txs)
         ) {
           contractAddress = target.address;
+          let isFoundAddress = false;
           if (fa2Parameter.value[0].from_ === address) {
             amount = fa2Parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
             source.address = address;
+            isFoundAddress = true;
             tokenId = fa2Parameter.value[0].txs[0].token_id;
           }
           for (const param of fa2Parameter.value) {
@@ -63,27 +65,31 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
               return tx.to_ === address && (amount = tx.amount);
             });
             if (isDefined(val)) {
+              isFoundAddress = true;
               amount = val.amount;
               tokenId = val.token_id;
             }
+          }
+          if (!isFoundAddress) {
+            continue;
           }
         } else if (isDefined(fa12Parameter) && isDefined(fa12Parameter.value.value)) {
           if (fa12Parameter.entrypoint === 'approve') {
             continue;
           }
-          if (isDefined(fa12Parameter.value.from)) {
+          if (isDefined(fa12Parameter.value.from) || isDefined(fa12Parameter.value.to)) {
             if (fa12Parameter.value.from === address) {
               source.address = address;
-            }
-          }
-          if (isDefined(fa12Parameter.value.to)) {
-            if (fa12Parameter.value.to === address) {
+            } else if (fa12Parameter.value.to === address) {
               source.address = fa12Parameter.value.from;
+            } else {
+              continue;
             }
           }
           contractAddress = target.address;
           amount = fa12Parameter.value.value;
         } else if (isDefined(bakingParameter) && isDefined(bakingParameter.value.quantity)) {
+          console.log('baking');
           contractAddress = target.address;
           const tokenOrTezAmount =
             isDefined(parameter) && isDefined((parameter as ParameterFa12).value.value)
