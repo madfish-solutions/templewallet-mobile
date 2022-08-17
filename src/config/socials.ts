@@ -16,6 +16,6 @@ export const contact = 'https://templewallet.com/contact';
 export const delegationManual = 'https://youtu.be/iFH8WEfuaDI';
 
 export const supportUkraine = 'https://donate.tezos.org.ua';
-export const yupanaLink = 'https://yupana.finance/';
-export const quipuLink = 'https://quipuswap.com/';
+export const yupanaLink = 'https://app.yupana.finance/';
+export const quipuLink = 'https://quipuswap.com/farming';
 export const madfishLink = 'https://story.madfish.solutions/';
