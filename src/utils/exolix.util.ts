@@ -5,6 +5,7 @@ import {
   ExchangeDataInterface,
   RateInterface
 } from '../interfaces/exolix.interface';
+import { outputTokensList } from '../screens/buy/crypto/exolix/config';
 import { isDefined } from './is-defined';
 
 const currenciesLimit = 100;
@@ -32,7 +33,11 @@ export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>
         networkShortName: network.shortName === '' ? null : network.shortName
       }))
     )
-    .flat();
+    .flat()
+    .filter(
+      ({ name, network }) =>
+        outputTokensList.find(outputToken => outputToken.name === name && outputToken.network === network) === undefined
+    );
 };
 
 export const loadCurrency = async (page = 1) =>

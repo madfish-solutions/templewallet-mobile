@@ -10,6 +10,7 @@ import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../utils/style.util';
+import { getProperNetworkFullName } from '../../crypto/exolix/initial-step/initial-step.utils';
 import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
 
 interface Props {
@@ -22,12 +23,10 @@ interface Props {
 export const TopUpTokenDropdownItem: FC<Props> = ({
   token,
   actionIconName,
-  iconSize = formatSize(32),
+  iconSize = formatSize(40),
   isDropdownClosed = false
 }) => {
   const styles = useTopUpTokenDropdownItemStyles();
-
-  console.log(token.icon, 'uri');
 
   const tokenIcon = useMemo(() => {
     switch (token.code) {
@@ -39,6 +38,8 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
         return <StaticTokenIcon uri={token.icon} size={iconSize} />;
     }
   }, [token]);
+
+  const tokenNetworkFullName = useMemo(() => getProperNetworkFullName(token), [token]);
 
   return (
     <View style={[styles.row, styles.height40]}>
@@ -62,7 +63,7 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
 
         <View style={styles.row}>
           <Text {...getTruncatedProps(styles.textRegular13)}>
-            {isDropdownClosed ? token.networkShortName ?? token.networkFullName : token.networkFullName}
+            {isDropdownClosed ? token.networkShortName ?? tokenNetworkFullName : tokenNetworkFullName}
           </Text>
 
           <Divider size={formatSize(4)} />

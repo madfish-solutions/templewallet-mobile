@@ -3,7 +3,7 @@ import { number, object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../../../form/validation/messages';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { CurrenciesInterface, OutputTokenInterface } from '../../../../interfaces/exolix.interface';
 
 export interface ExolixTopupFormValues {
   coinFrom: {
@@ -14,7 +14,7 @@ export interface ExolixTopupFormValues {
   };
   rate: number;
   coinTo: {
-    asset: CurrenciesInterface;
+    asset: OutputTokenInterface;
     amount?: BigNumber;
   };
 }

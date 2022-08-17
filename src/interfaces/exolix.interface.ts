@@ -59,6 +59,10 @@ export interface CurrenciesInterface {
   networkShortName?: string | null;
 }
 
+export interface OutputTokenInterface extends CurrenciesInterface {
+  slug: string;
+}
+
 interface ExolixNetworkInterface {
   addressRegex: string;
   blockExplorer: string | null;

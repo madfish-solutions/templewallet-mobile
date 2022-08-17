@@ -1,8 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
-import { RateInterface } from '../../../../../interfaces/exolix.interface';
+import { CurrenciesInterface, RateInterface } from '../../../../../interfaces/exolix.interface';
 import { loadExolixRate } from '../../../../../utils/exolix.util';
-import { initialData } from './initial-step.data';
 
 const maxDollarValue = 10000;
 const avgCommission = 300;
@@ -10,22 +9,31 @@ const avgCommission = 300;
 type setFieldType = (field: 'coinFrom.max' | 'coinFrom.min', value: BigNumber | number) => void;
 
 // executed only once per changed pair to determine min, max
-export const loadMinMaxFields = (setFieldValue: setFieldType, inputAssetCode = 'BTC', tezPrice: number) => {
-  // TEZ to coin
+export const loadMinMaxFields = (
+  setFieldValue: setFieldType,
+  inputAssetCode = 'BTC',
+  inputAssetNetwork = 'BTC',
+  outputAssetCode = 'XTZ',
+  outputAssetNetwork = 'XTZ',
+  outputTokenPrice = 1
+) => {
   const forwardExchangeData = {
     coinTo: inputAssetCode,
-    coinFrom: initialData.coinTo.asset.code,
-    amount: (maxDollarValue + avgCommission) / tezPrice
+    coinToNetwork: inputAssetNetwork,
+    coinFrom: outputAssetCode,
+    coinFromNetwork: outputAssetNetwork,
+    amount: (maxDollarValue + avgCommission) / outputTokenPrice
   };
 
   loadExolixRate(forwardExchangeData).then((responseData: RateInterface) => {
     setFieldValue('coinFrom.max', new BigNumber(responseData.toAmount));
   });
 
-  // coin to TEZ, similar to regular submit
   const backwardExchangeData = {
     coinFrom: inputAssetCode,
-    coinTo: initialData.coinTo.asset.code,
+    coinFromNetwork: inputAssetNetwork,
+    coinTo: outputAssetCode,
+    coinToNetwork: outputAssetNetwork,
     amount: 1
   };
 
@@ -33,3 +41,6 @@ export const loadMinMaxFields = (setFieldValue: setFieldType, inputAssetCode = '
     setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
   });
 };
+
+export const getProperNetworkFullName = (currency: CurrenciesInterface) =>
+  currency.name === currency.networkFullName ? currency.networkFullName + ' Mainnet' : currency.networkFullName;
