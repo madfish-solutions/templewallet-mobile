@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { DCP_RPC } from '../../utils/rpc/rpc-list';
-import { addDcpRpc } from '../migration/migration-actions';
+import { updateRpcSettings } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -72,16 +72,18 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   }));
 
   // MIGRATIONS
-  builder.addCase(addDcpRpc, state => {
-    const isMigrationNeeded = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
+  builder.addCase(updateRpcSettings, state => {
+    const rpcTzBetaUrl = 'https://rpc.tzbeta.net';
+    const isMigrationTzBeta = state.rpcList.find(rpc => rpc.url === rpcTzBetaUrl) !== undefined;
+    const isMigrationDcp = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
 
-    if (isMigrationNeeded) {
-      return {
-        ...state,
-        rpcList: [...state.rpcList, DCP_RPC]
-      };
-    }
+    const rpcList = state.rpcList.filter(x => (isMigrationTzBeta ? x.url !== rpcTzBetaUrl : true));
 
-    return state;
+    return {
+      ...state,
+      selectedRpcUrl:
+        isMigrationTzBeta && state.selectedRpcUrl === rpcTzBetaUrl ? rpcList[0].url : state.selectedRpcUrl,
+      rpcList: isMigrationDcp ? [...rpcList, DCP_RPC] : rpcList
+    };
   });
 });
