@@ -5,7 +5,6 @@ import { Divider } from '../../components/divider/divider';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { SearchInput } from '../../components/search-input/search-input';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -60,9 +59,7 @@ export const CollectiblesHome = () => {
           <PromotionCarousel />
         )}
       </HeaderCard>
-      <ScreenContainer>
-        <CollectiblesList collectiblesList={isSearchMode ? filteredAssetsList : visibleCollectiblesList} />
-      </ScreenContainer>
+      <CollectiblesList collectiblesList={isSearchMode ? filteredAssetsList : visibleCollectiblesList} />
     </>
   );
 };
