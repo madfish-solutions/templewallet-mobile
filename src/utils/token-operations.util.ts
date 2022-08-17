@@ -134,9 +134,9 @@ export const getFa2IncomingOperations = (selectedRpcUrl: string, account: string
 const getAllOperations = async (
   selectedRpcUrl: string,
   publicKeyHash: string,
-  lastLevel?: number
+  upperId?: number
 ): Promise<OperationInterface[]> => {
-  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, lastLevel);
+  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, upperId);
   if (operations.length === 0) {
     return [];
   }
@@ -146,8 +146,8 @@ const getAllOperations = async (
   }
   const lowerId = localLastItem.id;
   const [operationsFa12, operationsFa2] = await Promise.all([
-    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel),
-    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, lastLevel)
+    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId),
+    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId)
   ]);
 
   return operations
@@ -208,7 +208,7 @@ export const loadActivity = async (
 ) => {
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
-    .then(hashes => uniq(hashes));
+    .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
 
   return Promise.all(
     operationsHashes.map(hash =>

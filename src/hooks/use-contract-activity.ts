@@ -18,12 +18,12 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const result = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
 
-      if (result.length === 0) {
+      if (activities.length === 0) {
         setIsAllLoaded(true);
       }
-      setActivities(result);
+      setActivities(activities);
     };
 
     asyncFunction();
