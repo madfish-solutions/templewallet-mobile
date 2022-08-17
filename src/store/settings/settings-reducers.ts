@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { DCP_RPC } from '../../utils/rpc/rpc-list';
-import { addDcpRpc, removeTzBetaRpc } from '../migration/migration-actions';
+import { addDcpRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -17,8 +17,6 @@ import {
   toggleDomainAddressShown
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
-
-const TZBETA_RPC_URL = 'https://rpc.tzbeta.net';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
@@ -81,21 +79,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
       return {
         ...state,
         rpcList: [...state.rpcList, DCP_RPC]
-      };
-    }
-
-    return state;
-  });
-  builder.addCase(removeTzBetaRpc, state => {
-    const isMigrationTzBeta = state.rpcList.find(rpc => rpc.url === TZBETA_RPC_URL) !== undefined;
-
-    if (isMigrationTzBeta) {
-      const rpcList = state.rpcList.filter(x => x.url !== TZBETA_RPC_URL);
-
-      return {
-        ...state,
-        selectedRpcUrl: state.selectedRpcUrl === TZBETA_RPC_URL ? rpcList[0].url : state.selectedRpcUrl,
-        rpcList
       };
     }
 

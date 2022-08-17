@@ -5,7 +5,6 @@ import {
   migrateAccountsState,
   migrateIsShownDomainName,
   addDcpRpc,
-  removeTzBetaRpc,
   migrateQuipuApy,
   migrateTokensMetadata,
   migrateTokenSuggestion,
@@ -22,7 +21,6 @@ export const useStorageMigration = () => {
     dispatch(migrateQuipuApy());
     dispatch(migrateAccountsState());
     dispatch(addDcpRpc());
-    dispatch(removeTzBetaRpc());
     dispatch(addDcpTokensMetadata());
   }, []);
 };
