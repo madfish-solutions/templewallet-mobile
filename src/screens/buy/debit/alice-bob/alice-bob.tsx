@@ -9,6 +9,7 @@ import { ButtonsFloatingContainer } from '../../../../components/button/buttons-
 import { Divider } from '../../../../components/divider/divider';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../components/text-link/black-text-link';
+import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 import { ScreensEnum, ScreensParamList } from '../../../../navigator/enums/screens.enum';
 import { useUserIdSelector } from '../../../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
@@ -21,6 +22,15 @@ import { TopUpFormAssetAmountInput } from '../../components/top-up-form-asset-am
 import { AliceBobTopupFormValidationSchema, AliceBobTopupFormValues } from './alice-bob-topup.form';
 import { useAliceBobStyles } from './alice-bob.styles';
 import { ALICE_BOB_PRIVACY_LINK, ALICE_BOB_TERMS_OF_USE_LINK } from './config';
+
+const hryvnia: CurrenciesInterface = {
+  code: 'UAH',
+  name: 'Hryvnia',
+  icon: '',
+  network: '',
+  networkFullName: '',
+  networkShortName: 'Hryvnia'
+};
 
 export const AliceBob: FC = () => {
   const { min, max } = useRoute<RouteProp<ScreensParamList, ScreensEnum.AliceBob>>().params;
@@ -61,10 +71,7 @@ export const AliceBob: FC = () => {
   const formik = useFormik<AliceBobTopupFormValues>({
     initialValues: {
       exchangeInfo: {
-        asset: {
-          code: 'UAH',
-          name: 'Hryvnia'
-        },
+        asset: hryvnia,
         amount: undefined,
         min,
         max
@@ -80,7 +87,7 @@ export const AliceBob: FC = () => {
         <View>
           <Divider size={formatSize(16)} />
           <FormikProvider value={formik}>
-            <TopUpFormAssetAmountInput name="exchangeInfo" label="Enter total amount" />
+            <TopUpFormAssetAmountInput name="exchangeInfo" label="Enter total amount" assetsList={[hryvnia]} />
           </FormikProvider>
         </View>
         <View>

@@ -12,7 +12,7 @@ export const outputTokensList: OutputTokenInterface[] = [
     name: 'Tezos',
     icon: 'https://exolix.com/icons/coins/XTZ.png',
     network: 'XTZ',
-    networkFullName: 'Tezos Mainnet',
+    networkFullName: 'Tezos',
     slug: 'tez'
   },
   {
@@ -21,6 +21,7 @@ export const outputTokensList: OutputTokenInterface[] = [
     name: 'TetherUS',
     network: 'XTZ',
     networkFullName: 'Tezos Mainnet',
+    networkShortName: 'Tezos',
     slug: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o_0'
   }
 ];

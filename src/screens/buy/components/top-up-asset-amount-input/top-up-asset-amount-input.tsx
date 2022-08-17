@@ -128,18 +128,22 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <Divider size={formatSize(8)} />
 
           <View style={styles.dropdownContainer}>
-            <Dropdown
-              title="Assets"
-              value={value.asset}
-              list={assetsList}
-              isSearchable={isSearchable}
-              equalityFn={(item, value) => item.code === value.code && item.network === value.network}
-              setSearchValue={setSearchValue}
-              renderValue={renderTokenValue}
-              renderListItem={renderTopUpTokenListItem}
-              keyExtractor={(token: CurrenciesInterface, index) => `${index}_${token.code}_${token.network}`}
-              onValueChange={handleTokenChange}
-            />
+            {assetsList.length === 1 ? (
+              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
+            ) : (
+              <Dropdown
+                title="Assets"
+                value={value.asset}
+                list={assetsList}
+                isSearchable={isSearchable}
+                equalityFn={(item, value) => item.code === value?.code && item.network === value.network}
+                setSearchValue={setSearchValue}
+                renderValue={renderTokenValue}
+                renderListItem={renderTopUpTokenListItem}
+                keyExtractor={(token: CurrenciesInterface, index) => `${index}_${token.code}_${token.network}`}
+                onValueChange={handleTokenChange}
+              />
+            )}
           </View>
         </View>
         <Divider size={formatSize(8)} />

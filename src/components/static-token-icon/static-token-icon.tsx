@@ -8,11 +8,11 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { StaticTokenIconStyles } from './static-token-icon.styles';
 
 interface Props {
-  uri: string;
+  uri?: string;
   size?: number;
 }
 
-export const StaticTokenIcon: FC<Props> = ({ uri, size = formatSizeScaled(32) }) => {
+export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(32) }) => {
   const [isFailed, setIsFailed] = useState(false);
 
   const style = useMemo<StyleProp<ImageStyle>>(

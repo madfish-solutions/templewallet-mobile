@@ -26,7 +26,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
 }
 
 export interface DropdownValueProps<T> {
-  value: T;
+  value?: T;
   itemHeight?: number;
   list: T[];
   disabled?: boolean;
@@ -38,10 +38,10 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderAccountListItem: DropdownListItemComponent<T>;
 };
 
-export type DropdownEqualityFn<T> = (item: T, value: T) => boolean;
+export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
 export type DropdownValueComponent<T> = FC<{
-  value: T;
+  value?: T;
   disabled?: boolean;
 }>;
 

@@ -14,7 +14,7 @@ import { getProperNetworkFullName } from '../../crypto/exolix/initial-step/initi
 import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
 
 interface Props {
-  token: CurrenciesInterface;
+  token?: CurrenciesInterface;
   actionIconName?: IconNameEnum;
   iconSize?: number;
   isDropdownClosed?: boolean;
@@ -29,17 +29,15 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
   const styles = useTopUpTokenDropdownItemStyles();
 
   const tokenIcon = useMemo(() => {
-    switch (token.code) {
+    switch (token?.code) {
       case 'UAH':
         return <Icon name={IconNameEnum.Uah} size={iconSize} />;
       case 'XTZ':
         return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
       default:
-        return <StaticTokenIcon uri={token.icon} size={iconSize} />;
+        return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
     }
   }, [token]);
-
-  const tokenNetworkFullName = useMemo(() => getProperNetworkFullName(token), [token]);
 
   return (
     <View style={[styles.row, styles.height40]}>
@@ -50,11 +48,11 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
       <View style={styles.infoContainer}>
         <View style={[styles.row, styles.justifySpaceBetween]}>
           <View style={styles.row}>
-            <Text {...getTruncatedProps(styles.textRegular15)}>{token.code}</Text>
+            <Text {...getTruncatedProps(styles.textRegular15)}>{token?.code}</Text>
             <Divider size={formatSize(8)} />
             {!isDropdownClosed && (
               <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
-                {token.name}
+                {token?.name}
               </Text>
             )}
           </View>
@@ -63,7 +61,7 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
 
         <View style={styles.row}>
           <Text {...getTruncatedProps(styles.textRegular13)}>
-            {isDropdownClosed ? token.networkShortName ?? tokenNetworkFullName : tokenNetworkFullName}
+            {isDropdownClosed ? token?.networkShortName ?? token?.networkFullName : getProperNetworkFullName(token)}
           </Text>
 
           <Divider size={formatSize(4)} />
