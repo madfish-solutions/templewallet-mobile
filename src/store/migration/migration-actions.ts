@@ -21,3 +21,4 @@ export const deleteOldQuipuApy = createAction('migration/DELETE_OLD_QUIPU_APY');
 export const migrateAccountsState = createAction('migration/ACCOUNTS_STATE');
 
 export const addDcpRpc = createAction('migration/ADD_DCP_RPC');
+export const removeTzBetaRpc = createAction('migration/REMOVE_TZBETA_RPC');
