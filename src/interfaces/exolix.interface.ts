@@ -50,6 +50,11 @@ export interface ExchangePayload {
   withdrawalExtraId: string;
 }
 
+export interface SubmitExchangePayload extends Omit<ExchangePayload, 'coinFromNetwork' | 'coinToNetwork'> {
+  networkFrom: string;
+  networkTo: string;
+}
+
 export interface CurrenciesInterface {
   name: string;
   code: string;

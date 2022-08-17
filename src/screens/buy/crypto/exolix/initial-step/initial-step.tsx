@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useEffect, useMemo } from 'react';
 import { View, Text } from 'react-native';
@@ -13,11 +12,9 @@ import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../../components/text-link/black-text-link';
 import { useTokenExchangeRateGetter } from '../../../../../hooks/use-token-exchange-rate-getter.hook';
-import { RateInterface } from '../../../../../interfaces/exolix.interface';
 import { loadExolixExchangeDataActions } from '../../../../../store/exolix/exolix-actions';
 import { useSelectedAccountSelector } from '../../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../../styles/format-size';
-import { loadExolixRate } from '../../../../../utils/exolix.util';
 import { isDefined } from '../../../../../utils/is-defined';
 import { TopUpAssetAmountInterface } from '../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
 import { TopUpFormAssetAmountInput } from '../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
@@ -27,7 +24,7 @@ import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../exoli
 import { useFilteredCurrenciesList } from '../use-filtered-currencies-list.hook';
 import { initialData } from './initial-step.data';
 import { useInitialStepStyles } from './initial-step.styles';
-import { getProperNetworkFullName, loadMinMaxFields } from './initial-step.utils';
+import { getProperNetworkFullName, loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
 interface InitialStepProps {
   isError: boolean;
@@ -49,9 +46,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     dispatch(
       loadExolixExchangeDataActions.submit({
         coinFrom: inputCurrency.code,
-        coinFromNetwork: inputCurrency.network,
+        networkFrom: inputCurrency.network,
         coinTo: outputCurrency.code,
-        coinToNetwork: outputCurrency.network,
+        networkTo: outputCurrency.network,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
@@ -82,7 +79,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     );
   }, [inputCurrency.code, outputTokenPrice]);
 
-  const handleInputAmountChange = (inputCurrency: TopUpAssetAmountInterface) => {
+  const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const requestData = {
       coinFrom: inputCurrency.asset.code,
       coinFromNetwork: inputCurrency.asset.network,
@@ -91,14 +88,19 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
     };
 
-    loadExolixRate(requestData).then((responseData: RateInterface) => {
-      if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
-        setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
-      }
-      if (isDefined(responseData.rate)) {
-        setFieldValue('rate', responseData.rate);
-      }
-    });
+    updateOutputInputValue(requestData, setFieldValue);
+  };
+
+  const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
+    const requestData = {
+      coinFrom: inputCurrency.code,
+      coinFromNetwork: inputCurrency.network,
+      coinTo: outputCurrency.asset.code,
+      coinToNetwork: outputCurrency.asset.network,
+      amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
+    };
+
+    updateOutputInputValue(requestData, setFieldValue);
   };
 
   const disclaimerMessage = useMemo(
@@ -124,7 +126,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   label="Send"
                   isSearchable
                   assetsList={filteredCurrenciesList}
-                  onValueChange={handleInputAmountChange}
+                  onValueChange={handleInputValueChange}
                   setSearchValue={setSearchValue}
                 />
                 <Divider size={formatSize(8)} />
@@ -132,7 +134,13 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   <Icon name={IconNameEnum.ArrowDown} size={formatSize(24)} />
                 </View>
                 <Divider size={formatSize(8)} />
-                <TopUpFormAssetAmountInput name="coinTo" label="Get" editable={false} assetsList={outputTokensList} />
+                <TopUpFormAssetAmountInput
+                  name="coinTo"
+                  label="Get"
+                  editable={false}
+                  assetsList={outputTokensList}
+                  onValueChange={handleOutputValueChange}
+                />
               </FormikProvider>
               <Divider size={formatSize(16)} />
               <View style={styles.exchangeContainer}>

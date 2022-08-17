@@ -1,12 +1,13 @@
 import { BigNumber } from 'bignumber.js';
 
-import { CurrenciesInterface, RateInterface } from '../../../../../interfaces/exolix.interface';
+import { CurrenciesInterface, ExchangePayload, RateInterface } from '../../../../../interfaces/exolix.interface';
 import { loadExolixRate } from '../../../../../utils/exolix.util';
+import { isDefined } from '../../../../../utils/is-defined';
 
 const maxDollarValue = 10000;
 const avgCommission = 300;
 
-type setFieldType = (field: 'coinFrom.max' | 'coinFrom.min', value: BigNumber | number) => void;
+type setFieldType = (field: string, value: BigNumber | number) => void;
 
 // executed only once per changed pair to determine min, max
 export const loadMinMaxFields = (
@@ -44,3 +45,17 @@ export const loadMinMaxFields = (
 
 export const getProperNetworkFullName = (currency: CurrenciesInterface) =>
   currency.name === currency.networkFullName ? currency.networkFullName + ' Mainnet' : currency.networkFullName;
+
+export const updateOutputInputValue = (
+  requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,
+  setFieldValue: setFieldType
+) => {
+  loadExolixRate(requestData).then((responseData: RateInterface) => {
+    if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
+      setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
+    }
+    if (isDefined(responseData.rate)) {
+      setFieldValue('rate', responseData.rate);
+    }
+  });
+};

@@ -3,7 +3,8 @@ import {
   CurrenciesInterface,
   CurrenciesRequestInterface,
   ExchangeDataInterface,
-  RateInterface
+  RateInterface,
+  SubmitExchangePayload
 } from '../interfaces/exolix.interface';
 import { outputTokensList } from '../screens/buy/crypto/exolix/config';
 import { isDefined } from './is-defined';
@@ -57,13 +58,8 @@ export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; a
       }
     });
 
-export const submitExolixExchange = (data: {
-  coinFrom: string;
-  coinTo: string;
-  amount: number;
-  withdrawalAddress: string;
-  withdrawalExtraId: string;
-}) => exolixApi.post<ExchangeDataInterface>('/transactions', { ...data, rateType: 'fixed' });
+export const submitExolixExchange = (data: SubmitExchangePayload) =>
+  exolixApi.post<ExchangeDataInterface>('/transactions', { ...data, rateType: 'fixed' });
 
 export const loadExolixExchangeData = (exchangeId: string) =>
   exolixApi.get<ExchangeDataInterface>(`/transactions/${exchangeId}`);
