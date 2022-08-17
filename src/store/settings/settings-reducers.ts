@@ -89,13 +89,16 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(removeTzBetaRpc, state => {
     const isMigrationTzBeta = state.rpcList.find(rpc => rpc.url === TZBETA_RPC_URL) !== undefined;
 
-    const rpcList = state.rpcList.filter(x => (isMigrationTzBeta ? x.url !== TZBETA_RPC_URL : true));
+    if (isMigrationTzBeta) {
+      const rpcList = state.rpcList.filter(x => x.url !== TZBETA_RPC_URL);
 
-    return {
-      ...state,
-      selectedRpcUrl:
-        isMigrationTzBeta && state.selectedRpcUrl === TZBETA_RPC_URL ? rpcList[0].url : state.selectedRpcUrl,
-      rpcList
-    };
+      return {
+        ...state,
+        selectedRpcUrl: state.selectedRpcUrl === TZBETA_RPC_URL ? rpcList[0].url : state.selectedRpcUrl,
+        rpcList
+      };
+    }
+
+    return state;
   });
 });
