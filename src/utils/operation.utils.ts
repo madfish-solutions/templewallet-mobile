@@ -53,11 +53,11 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           isDefined(fa2Parameter.value[0].txs)
         ) {
           contractAddress = target.address;
-          let isFoundAddress = false;
+          let isUserSenderOrReceiverOfFa2Operation = false;
           if (fa2Parameter.value[0].from_ === address) {
             amount = fa2Parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
             source.address = address;
-            isFoundAddress = true;
+            isUserSenderOrReceiverOfFa2Operation = true;
             tokenId = fa2Parameter.value[0].txs[0].token_id;
           }
           for (const param of fa2Parameter.value) {
@@ -65,12 +65,12 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
               return tx.to_ === address && (amount = tx.amount);
             });
             if (isDefined(val)) {
-              isFoundAddress = true;
+              isUserSenderOrReceiverOfFa2Operation = true;
               amount = val.amount;
               tokenId = val.token_id;
             }
           }
-          if (!isFoundAddress) {
+          if (!isUserSenderOrReceiverOfFa2Operation) {
             continue;
           }
         } else if (isDefined(fa12Parameter) && isDefined(fa12Parameter.value.value)) {
