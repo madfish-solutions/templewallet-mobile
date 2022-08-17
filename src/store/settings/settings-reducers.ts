@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { DCP_RPC } from '../../utils/rpc/rpc-list';
-import { updateRpcSettings } from '../migration/migration-actions';
+import { addDcpRpc, removeTzBetaRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -17,6 +17,8 @@ import {
   toggleDomainAddressShown
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
+
+const TZBETA_RPC_URL = 'https://rpc.tzbeta.net';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
@@ -72,18 +74,28 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   }));
 
   // MIGRATIONS
-  builder.addCase(updateRpcSettings, state => {
-    const rpcTzBetaUrl = 'https://rpc.tzbeta.net';
-    const isMigrationTzBeta = state.rpcList.find(rpc => rpc.url === rpcTzBetaUrl) !== undefined;
-    const isMigrationDcp = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
+  builder.addCase(addDcpRpc, state => {
+    const isMigrationNeeded = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
 
-    const rpcList = state.rpcList.filter(x => (isMigrationTzBeta ? x.url !== rpcTzBetaUrl : true));
+    if (isMigrationNeeded) {
+      return {
+        ...state,
+        rpcList: [...state.rpcList, DCP_RPC]
+      };
+    }
+
+    return state;
+  });
+  builder.addCase(removeTzBetaRpc, state => {
+    const isMigrationTzBeta = state.rpcList.find(rpc => rpc.url === TZBETA_RPC_URL) !== undefined;
+
+    const rpcList = state.rpcList.filter(x => (isMigrationTzBeta ? x.url !== TZBETA_RPC_URL : true));
 
     return {
       ...state,
       selectedRpcUrl:
-        isMigrationTzBeta && state.selectedRpcUrl === rpcTzBetaUrl ? rpcList[0].url : state.selectedRpcUrl,
-      rpcList: isMigrationDcp ? [...rpcList, DCP_RPC] : rpcList
+        isMigrationTzBeta && state.selectedRpcUrl === TZBETA_RPC_URL ? rpcList[0].url : state.selectedRpcUrl,
+      rpcList
     };
   });
 });
