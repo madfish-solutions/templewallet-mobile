@@ -5,11 +5,11 @@ export const usePromotionCarouselItemStyles = createUseStyles(() => ({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: formatSize(10)
+    alignItems: 'center'
   },
   bannerImage: {
     height: formatSize(112),
-    width: formatSize(343)
+    width: formatSize(343),
+    borderRadius: formatSize(10)
   }
 }));
