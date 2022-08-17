@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useRef } from 'react';
+import React, { FC } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -18,8 +18,6 @@ export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onC
   const colors = useColors();
   const styles = useSearchInputStyles();
 
-  const searchInputRef = useRef<TextInput>(null);
-
   const debouncedOnChangeText = debounce(onChangeText);
 
   return (
@@ -28,7 +26,6 @@ export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onC
         <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>
       <TextInput
-        ref={searchInputRef}
         value={value}
         style={styles.input}
         placeholder={placeholder}

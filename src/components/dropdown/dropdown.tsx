@@ -124,9 +124,7 @@ const DropdownComponent = <T extends unknown>({
 
       <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && (
-            <SearchInput placeholder="Search assets" onChangeText={setSearchValue} onBlur={() => setSearchValue('')} />
-          )}
+          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList
             data={list}
             ref={ref => {

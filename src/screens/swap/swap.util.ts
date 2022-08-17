@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { getTradeInputOperation, loadAssetContract, Trade, TokenStandardEnum } from 'swap-router-sdk';
 
 import { isDefined } from '../../utils/is-defined';
-import { ROUTING_FEE_ADDRESS } from './config';
+import { isPromotionTime, ROUTING_FEE_ADDRESS } from './config';
 
 export const getRoutingFeeTransferParams = async (
   inputTokenMutezAmount: BigNumber | undefined,
@@ -13,7 +13,7 @@ export const getRoutingFeeTransferParams = async (
 ) => {
   const tradeInputOperation = getTradeInputOperation(trade);
 
-  if (inputTokenMutezAmount && isDefined(tradeInputOperation)) {
+  if (inputTokenMutezAmount && isDefined(tradeInputOperation) && !isPromotionTime) {
     const feeAmount = inputTokenMutezAmount.minus(tradeInputOperation.aTokenAmount);
 
     if (tradeInputOperation.aTokenSlug === 'tez') {
