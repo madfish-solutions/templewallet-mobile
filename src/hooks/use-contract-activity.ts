@@ -15,16 +15,14 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
-  const [hashes, setHashes] = useState<Array<string>>([]);
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const { operationsHashes, activities } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
 
       if (activities.length === 0) {
         setIsAllLoaded(true);
       }
-      setHashes(operationsHashes);
       setActivities(activities);
     };
 
@@ -42,18 +40,11 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           lastActivityRef.current = lastItem.hash;
 
           if (isDefined(lastItem)) {
-            const { operationsHashes, activities: newActivity } = await loadActivity(
-              selectedRpcUrl,
-              selectedAccount,
-              tokenSlug,
-              lastItem,
-              hashes
-            );
+            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
 
             if (newActivity.length === 0) {
               setIsAllLoaded(true);
             }
-            setHashes(prev => [...prev, ...operationsHashes]);
             setActivities(prev => [...prev, ...newActivity]);
           }
         }

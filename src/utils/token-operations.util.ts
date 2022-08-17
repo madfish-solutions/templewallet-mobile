@@ -1,5 +1,3 @@
-import { uniq } from 'lodash-es';
-
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
@@ -204,22 +202,17 @@ export const loadActivity = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
   tokenSlug?: string,
-  lastItem?: ActivityInterface,
-  hashes?: Array<string>
+  lastItem?: ActivityInterface
 ) => {
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
-    .then(newHashes => uniq(newHashes.concat(hashes ?? [])));
-
-  const filteredHashes = operationsHashes.filter(hash => (hashes ?? []).indexOf(hash) < 0);
+    .then(newHashes => newHashes.filter(x => x !== lastItem?.hash));
 
   return Promise.all(
-    filteredHashes.map(hash =>
+    operationsHashes.map(hash =>
       getOperationGroupByHash<OperationInterface>(selectedRpcUrl, hash).then(response => response.data)
     )
-  )
-    .then(operationGroups =>
-      operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
-    )
-    .then(activities => ({ activities, operationsHashes }));
+  ).then(operationGroups =>
+    operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
+  );
 };
