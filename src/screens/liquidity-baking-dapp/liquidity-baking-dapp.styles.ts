@@ -7,6 +7,11 @@ export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typograph
     borderBottomWidth: formatSize(0.5),
     borderColor: colors.lines
   },
+  sectionHeaderText: {
+    ...typography.body15Semibold,
+    color: colors.gray1,
+    padding: formatSize(12)
+  },
   verticalLineDivider: {
     width: formatSize(1),
     height: formatSize(12),

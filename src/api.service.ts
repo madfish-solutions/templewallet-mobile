@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { TEMPLE_WALLET_API } from './utils/env.utils';
+import { TEMPLE_WALLET_API, TEMPLE_WALLET_EVERSTAKE_API_KEY, TEMPLE_WALLET_EXOLIX_API_KEY } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
 export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
@@ -14,4 +14,23 @@ export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
 
 export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
 
+export const whitelistApi = axios.create({
+  baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-whitelist/master/'
+});
+
 export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
+
+export const exolixApi = axios.create({
+  baseURL: 'https://exolix.com/api/v2',
+  headers: {
+    Authorization: TEMPLE_WALLET_EXOLIX_API_KEY
+  }
+});
+
+export const everstakeApi = axios.create({
+  baseURL: 'https://aff-api.everstake.one/temple',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
+  }
+});

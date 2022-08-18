@@ -83,19 +83,37 @@ describe('getTransferParams$', () => {
       'receiverPublicKeyHash',
       mockInputAmount
     ).subscribe(
-      rxJsTestingHelper(() => {
-        expect(mockFA2Contract.methods.transfer).toBeCalledWith([
-          {
-            from_: mockHdAccount.publicKeyHash,
-            txs: [
+      rxJsTestingHelper(params => {
+        expect(params).toEqual({
+          to: mockFA2Contract.address,
+          amount: 0,
+          parameter: {
+            entrypoint: 'transfer',
+            value: [
               {
-                to_: 'receiverPublicKeyHash',
-                token_id: mockFA2TokenMetadata.id,
-                amount: mockInputAmount
+                prim: 'Pair',
+                args: [
+                  { string: mockHdAccount.publicKeyHash },
+                  [
+                    {
+                      prim: 'Pair',
+                      args: [
+                        { string: 'receiverPublicKeyHash' },
+                        {
+                          prim: 'Pair',
+                          args: [
+                            { int: new BigNumber(mockFA2TokenMetadata.id).toFixed() },
+                            { int: mockInputAmount.toFixed() }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                ]
               }
             ]
           }
-        ]);
+        });
       }, done)
     );
   });

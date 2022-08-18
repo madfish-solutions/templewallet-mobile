@@ -13,6 +13,7 @@ import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { tzktUrl } from '../../../utils/linking.util';
 import { kFormatter } from '../../../utils/number.util';
+import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props {
@@ -23,18 +24,29 @@ interface Props {
 
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const styles = useSelectBakerItemStyles();
+  const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
   const { metadata } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   return (
     <TouchableOpacity
-      style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
+      style={[
+        styles.container,
+        conditionalStyle(selected, styles.containerSelected),
+        conditionalStyle(isRecommendedBaker, styles.containerPaddingWithRecommended)
+      ]}
       onPress={onPress}
     >
+      {isRecommendedBaker && (
+        <View style={styles.recommendedContainer}>
+          <Text style={styles.recommendedText}>Recommended</Text>
+        </View>
+      )}
+
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
-          <AvatarImage uri={baker.logo} />
+          <AvatarImage size={formatSize(32)} uri={baker.logo} />
           <Divider size={formatSize(10)} />
           <Text style={styles.nameText}>{baker.name}</Text>
         </View>

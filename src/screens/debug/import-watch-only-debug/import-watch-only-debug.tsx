@@ -8,6 +8,7 @@ import { AccountTypeEnum } from '../../../enums/account-type.enum';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormTextInput } from '../../../form/form-text-input';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { loadWhitelistAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../../store/wallet/wallet-actions';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import {
@@ -30,6 +31,7 @@ export const ImportWatchOnlyDebug: FC = () => {
 
     dispatch(setSelectedAccountAction(publicData.publicKeyHash));
     dispatch(addHdAccountAction(publicData));
+    dispatch(loadWhitelistAction.submit());
     showSuccessToast({ description: 'Debug Account Imported!' });
     goBack();
   };

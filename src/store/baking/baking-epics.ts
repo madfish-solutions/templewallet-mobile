@@ -4,13 +4,16 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { bakingBadApi } from '../../api.service';
+import { bakingBadApi, getTzktApi } from '../../api.service';
+import { BakerRewardInterface } from '../../interfaces/baker-reward.interface';
 import { BakerInterface, emptyBaker } from '../../interfaces/baker.interface';
 import { isDefined } from '../../utils/is-defined';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { RootState } from '../create-store';
-import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
+import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
+
+const NUMBER_OF_BAKER_REWARDS_TO_LOAD = 30;
 
 const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -53,4 +56,21 @@ const loadBakersListEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic, loadBakersListEpic);
+const loadBakerRewardsListEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadBakerRewardsListActions.submit),
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[, selectedAccount], selectedRpcUrl]) =>
+      from(
+        getTzktApi(selectedRpcUrl).get<BakerRewardInterface[]>(`/rewards/delegators/${selectedAccount.publicKeyHash}`, {
+          params: { limit: NUMBER_OF_BAKER_REWARDS_TO_LOAD }
+        })
+      ).pipe(
+        map(({ data }) => loadBakerRewardsListActions.success(data)),
+        catchError(err => of(loadBakerRewardsListActions.fail(err.message)))
+      )
+    )
+  );
+
+export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic, loadBakersListEpic, loadBakerRewardsListEpic);

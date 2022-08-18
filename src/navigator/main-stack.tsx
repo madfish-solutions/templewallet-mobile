@@ -4,6 +4,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
+import { exolixScreenOptions } from '../components/header/exolix-screen-options';
 import { generateIntegratedAppOptions } from '../components/header/generate-integrated-dapp-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderAction } from '../components/header/header-action/header-actions';
@@ -18,6 +19,8 @@ import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
+import { Exolix } from '../screens/buy/crypto/exolix/exolix';
+import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
@@ -172,6 +175,14 @@ export const MainStackScreen = () => {
                 component={Buy}
                 options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
               />
+
+              <MainStack.Screen
+                name={ScreensEnum.AliceBob}
+                component={AliceBob}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+              />
+
+              <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
 
               {/** Swap stack **/}
               <MainStack.Screen

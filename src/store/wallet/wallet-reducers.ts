@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { uniqBy } from 'lodash-es';
 
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
@@ -13,6 +14,7 @@ import {
   deleteOldTokenSuggestion,
   migrateAccountsState
 } from '../migration/migration-actions';
+import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 import {
   addHdAccountAction,
   addTokenAction,
@@ -51,6 +53,28 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       isVisible
     }))
   );
+  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
+    ...state,
+    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((accountsState, publicHash) => {
+      return {
+        ...accountsState,
+        [publicHash]: {
+          ...accountsState[publicHash],
+          tokensList: uniqBy(
+            [
+              ...accountsState[publicHash].tokensList,
+              ...tokensMetadata.map(token => ({
+                slug: getTokenSlug(token),
+                balance: '0',
+                visibility: VisibilityEnum.InitiallyHidden
+              }))
+            ],
+            'slug'
+          )
+        }
+      };
+    }, state.accountsStateRecord)
+  }));
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''

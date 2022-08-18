@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { Debit } from './debit';
+import { CryptoTopup } from './crypto/crypto-topup';
+import { Debit } from './debit/debit';
 
 const TABS = [
   {
     id: 0,
-    name: 'Crypto'
+    name: 'Crypto',
+    component: <CryptoTopup />
   },
   {
     id: 1,
@@ -23,8 +24,8 @@ const TABS = [
 ];
 
 export const Buy = () => {
-  const { metadata } = useNetworkInfo();
-  const [tab, setTab] = useState(TABS[1]);
+  const { isDcpNode, metadata } = useNetworkInfo();
+  const [tab, setTab] = useState(TABS[isDcpNode ? 1 : 0]);
 
   const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
 
@@ -36,12 +37,6 @@ export const Buy = () => {
         <TextSegmentControl selectedIndex={tab.id} values={TABS.map(x => x.name)} onChange={handleTabChange} />
         {tab.component}
       </View>
-      {!tab.component && (
-        <DataPlaceholder
-          text={`Soon!
-We are working on that.`}
-        />
-      )}
       <Disclaimer
         title="Disclaimer"
         texts={[

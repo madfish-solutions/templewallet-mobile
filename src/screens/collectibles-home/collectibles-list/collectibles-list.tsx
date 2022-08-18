@@ -1,7 +1,10 @@
-import React, { FC, useMemo } from 'react';
-import { Dimensions, FlatList, ListRenderItem, View } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
+import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
+import { SIDEBAR_WIDTH } from '../../../config/styles';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { sliceIntoChunks } from '../../../utils/array.utils';
@@ -15,23 +18,31 @@ interface Props {
 
 const ITEMS_PER_ROW = 3;
 
-const windowWidth = Dimensions.get('window').width;
-const ITEM_SIZE = (windowWidth - 36) / ITEMS_PER_ROW;
-
-const renderItem: ListRenderItem<TokenInterface[]> = ({ item }) => (
-  <View style={CollectiblesListStyles.rowContainer}>
-    {item.map(collectible => (
-      <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={ITEM_SIZE} />
-    ))}
-  </View>
-);
-
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
-const getItemLayout = createGetItemLayout<TokenInterface[]>(ITEM_SIZE);
+const TABBAR_MARGINS = 32;
+const SIDEBAR_MARGINS = 51;
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
+  const styles = useScreenContainerStyles();
+  const windowWidth = useWindowDimensions().width;
+  const itemSize =
+    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
+
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
+
+  const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
+
+  const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
+    ({ item }) => (
+      <View style={CollectiblesListStyles.rowContainer}>
+        {item.map(collectible => (
+          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemSize} />
+        ))}
+      </View>
+    ),
+    [itemSize]
+  );
 
   return (
     <FlatList
@@ -39,6 +50,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       getItemLayout={getItemLayout}
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollViewContentContainer}
       ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
     />
   );

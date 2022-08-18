@@ -2,15 +2,15 @@ import { PortalProvider } from '@gorhom/portal';
 import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import React, { createRef, useMemo, useState } from 'react';
-import { hide, show } from 'react-native-bootsplash';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
 import { isIOS } from '../config/system';
 import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
-import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+import { useAppSplash } from '../hooks/use-app-splash.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
+import { useWhitelist } from '../hooks/use-whitelist.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
@@ -52,10 +52,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
-  useAppStateStatus({
-    onAppInactiveState: show,
-    onAppActiveState: hide
-  });
+  useAppSplash();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
@@ -64,6 +61,7 @@ export const RootStackScreen = () => {
   const isForceUpdateNeeded = useIsForceUpdateNeeded();
   const isAppCheckFailed = useIsAppCheckFailed();
   useResetKeychainOnInstall();
+  useWhitelist();
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
