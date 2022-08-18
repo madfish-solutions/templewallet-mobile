@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
-import { useGeneralActivity } from '../../hooks/use-general-activity';
+import { useContractActivity } from '../../hooks/use-contract-activity';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
-  const { activities, handleUpdate } = useGeneralActivity();
+  const { activities, handleUpdate } = useContractActivity();
 
   usePageAnalytic(ScreensEnum.Activity);
 

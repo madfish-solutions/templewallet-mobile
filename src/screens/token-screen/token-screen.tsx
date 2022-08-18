@@ -10,7 +10,7 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from '../../components/token-screen-content-container/token-screen-content-container';
-import { useTokenActivity } from '../../hooks/use-token-activity.hook';
+import { useContractActivity } from '../../hooks/use-contract-activity';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { highPriorityLoadTokenBalanceAction } from '../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
@@ -21,6 +21,7 @@ import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
@@ -39,7 +40,7 @@ export const TokenScreen = () => {
     );
   }, []);
 
-  const { activities, handleUpdate } = useTokenActivity(initialToken.address, initialToken.id.toString());
+  const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
