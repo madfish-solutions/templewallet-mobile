@@ -23,6 +23,7 @@ interface Props {
 
 export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
+
   const nonZeroAmounts = useNonZeroAmounts(group);
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();

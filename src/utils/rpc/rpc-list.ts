@@ -18,9 +18,5 @@ export const RpcList: RpcInterface[] = [
     name: 'SmartPy Node',
     url: 'https://mainnet.smartpy.io'
   },
-  {
-    name: 'TZ Beta Node',
-    url: 'https://rpc.tzbeta.net'
-  },
   DCP_RPC
 ];

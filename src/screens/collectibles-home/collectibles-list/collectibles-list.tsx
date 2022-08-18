@@ -3,6 +3,7 @@ import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-nativ
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
+import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
@@ -23,6 +24,7 @@ const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
+  const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
   const itemSize =
     (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
@@ -48,6 +50,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       getItemLayout={getItemLayout}
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollViewContentContainer}
       ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
     />
   );
