@@ -4,8 +4,8 @@ export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
 export const TEZOS_DEXES_API_URL = 'wss://tezos-dexes-api-mainnet.production.madservice.xyz';
 
 const now = new Date().getTime();
-const promotionStart = new Date('2022-08-17T16:00:00').getTime();
-const promotionEnd = new Date('2022-08-17T16:30:00').getTime();
+const promotionStart = new Date('2022-08-24T00:00:00').getTime();
+const promotionEnd = new Date('2022-09-07T00:30:00').getTime();
 
 export const isPromotionTime = now >= promotionStart && now <= promotionEnd;
 
