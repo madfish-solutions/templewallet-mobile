@@ -1,7 +1,7 @@
 import { exolixApi } from '../api.service';
 import {
   CurrenciesInterface,
-  CurrenciesRequestInterface,
+  ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
   RateInterface,
   SubmitExchangePayload
@@ -43,7 +43,7 @@ export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>
 
 export const loadCurrency = async (page = 1) =>
   (
-    await exolixApi.get<CurrenciesRequestInterface>('/currencies', {
+    await exolixApi.get<ExolixCurrenciesResponseInterface>('/currencies', {
       params: { size: currenciesLimit, page, withNetworks: true }
     })
   ).data;

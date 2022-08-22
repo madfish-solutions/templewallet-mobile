@@ -90,7 +90,7 @@ interface ExolixCurrenciesInterface {
   networks: Array<ExolixNetworkInterface>;
 }
 
-export interface CurrenciesRequestInterface {
+export interface ExolixCurrenciesResponseInterface {
   data: Array<ExolixCurrenciesInterface>;
 }
 
