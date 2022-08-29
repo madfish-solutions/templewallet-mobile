@@ -1,42 +1,53 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ActivityGroup, ActivityInterface } from '../interfaces/activity.interface';
-import { OperationLiquidityBakingInterface } from '../interfaces/operation.interface';
+import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { transformActivityInterfaceToActivityGroups } from '../utils/activity.utils';
 import { isDefined } from '../utils/is-defined';
-import { mapOperationLiquidityBakingToActivity } from '../utils/operation.utils';
-import { getContractOperations } from '../utils/token-operations.util';
+import { loadActivity } from '../utils/token-operations.util';
 
-export const useContractActivity = (contractAddress: string): UseActivityInterface => {
-  const { publicKeyHash } = useSelectedAccountSelector();
+export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
+  const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+
+  const lastActivityRef = useRef<string>('');
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  const loadLastActivity = useCallback(
-    async (lastLevel: number | null) => {
-      const loadedActivities = await loadContractActivity(selectedRpcUrl, publicKeyHash, contractAddress, lastLevel);
-
-      setIsAllLoaded(loadedActivities.length === 0);
-      const activityGroups = transformActivityInterfaceToActivityGroups(loadedActivities);
-      setActivities(prevValue => [...prevValue, ...activityGroups]);
-    },
-    [publicKeyHash, setActivities]
-  );
-
   useEffect(() => {
-    loadLastActivity(null);
-  }, [loadLastActivity]);
+    const asyncFunction = async () => {
+      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
 
-  const handleUpdate = () => {
-    if (isDefined(activities) && activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1];
+      if (activities.length === 0) {
+        setIsAllLoaded(true);
+      }
+      setActivities(activities);
+    };
+
+    asyncFunction();
+  }, [selectedRpcUrl, selectedAccount, tokenSlug]);
+
+  const handleUpdate = async () => {
+    if (activities.length > 0 && !isAllLoaded) {
+      const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+
       if (lastActivityGroup.length > 0) {
-        loadLastActivity(lastActivityGroup[0].level ?? null);
+        const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+
+        if (lastItem.hash !== lastActivityRef.current) {
+          lastActivityRef.current = lastItem.hash;
+
+          if (isDefined(lastItem)) {
+            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+
+            if (newActivity.length === 0) {
+              setIsAllLoaded(true);
+            }
+            setActivities(prev => [...prev, ...newActivity]);
+          }
+        }
       }
     }
   };
@@ -45,20 +56,4 @@ export const useContractActivity = (contractAddress: string): UseActivityInterfa
     handleUpdate,
     activities
   };
-};
-
-const loadContractActivity = async (
-  selectedRpcUrl: string,
-  publicKeyHash: string,
-  contractAddress: string,
-  lastLevel: number | null
-): Promise<Array<ActivityInterface>> => {
-  const operations = await getContractOperations<OperationLiquidityBakingInterface>(
-    selectedRpcUrl,
-    publicKeyHash,
-    contractAddress,
-    lastLevel
-  ).then(x => x.data);
-
-  return mapOperationLiquidityBakingToActivity(publicKeyHash, operations);
 };

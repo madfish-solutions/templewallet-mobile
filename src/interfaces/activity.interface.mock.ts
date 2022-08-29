@@ -111,24 +111,6 @@ export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesBy
 
 export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
   {
-    amount: '1',
-    destination: {
-      address: 'address4',
-      alias: 'alias4'
-    },
-    entrypoint: 'transfer',
-    hash: 'hash',
-    id: 0,
-    level: undefined,
-    source: {
-      address: 'address1',
-      alias: 'alias1'
-    },
-    status: ActivityStatusEnum.Applied,
-    timestamp: 1628380800000,
-    type: ActivityTypeEnum.Transaction
-  },
-  {
     amount: 'contractBalance',
     destination: {
       address: 'address0',

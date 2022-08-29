@@ -1,6 +1,6 @@
 {
   "name": "temple-wallet",
-  "version": "1.4",
+  "version": "1.5",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install 'react-native-randombytes' --hack",

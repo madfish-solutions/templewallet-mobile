@@ -138,7 +138,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 319
-        versionName "1.4"
+        versionName "1.5"
         missingDimensionStrategy 'react-native-camera', 'general'
         // TODO: remove after Flipper update (0.140.0 does not work without code bellow)
         configurations.all {

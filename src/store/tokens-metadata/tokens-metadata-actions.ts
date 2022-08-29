@@ -7,6 +7,8 @@ export const addTokensMetadataAction = createAction<TokenMetadataInterface[]>('a
 
 export const loadTokensMetadataAction = createAction<string[]>('assets/LOAD_TOKENS_METADATA');
 
+export const loadWhitelistAction = createActions<void, Array<TokenMetadataInterface>>('assets/LOAD_WHITELIST_METADATA');
+
 export const loadTokenMetadataActions = createActions<
   Pick<TokenMetadataInterface, 'id' | 'address'>,
   TokenMetadataInterface,
