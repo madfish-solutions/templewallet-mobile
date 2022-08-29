@@ -42,11 +42,11 @@ export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>
 };
 
 export const loadCurrency = async (page = 1) =>
-  (
-    await exolixApi.get<ExolixCurrenciesResponseInterface>('/currencies', {
+  exolixApi
+    .get<ExolixCurrenciesResponseInterface>('/currencies', {
       params: { size: currenciesLimit, page, withNetworks: true }
     })
-  ).data;
+    .then(r => r.data);
 
 export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; amount: number }) =>
   exolixApi
