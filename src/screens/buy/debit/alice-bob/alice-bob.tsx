@@ -87,7 +87,12 @@ export const AliceBob: FC = () => {
         <View>
           <Divider size={formatSize(16)} />
           <FormikProvider value={formik}>
-            <TopUpFormAssetAmountInput name="exchangeInfo" label="Enter total amount" assetsList={[hryvnia]} />
+            <TopUpFormAssetAmountInput
+              name="exchangeInfo"
+              label="Enter total amount"
+              assetsList={[hryvnia]}
+              singleAsset
+            />
           </FormikProvider>
         </View>
         <View>

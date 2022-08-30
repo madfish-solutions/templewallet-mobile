@@ -15,6 +15,7 @@ export interface TopUpFormAssetAmountInputProps {
   name: string;
   label: string;
   assetsList?: CurrenciesInterface[];
+  singleAsset?: boolean;
   isError?: boolean;
   editable?: boolean;
   isSearchable?: boolean;

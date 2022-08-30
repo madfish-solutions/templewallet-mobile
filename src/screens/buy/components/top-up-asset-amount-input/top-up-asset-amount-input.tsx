@@ -37,6 +37,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     value = initialData.coinFrom,
     label,
     assetsList = [],
+    singleAsset = false,
     isSearchable = false,
     isError = false,
     editable = true,
@@ -128,7 +129,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <Divider size={formatSize(8)} />
 
           <View style={styles.dropdownContainer}>
-            {assetsList.length === 1 ? (
+            {singleAsset ? (
               <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
             ) : (
               <Dropdown
