@@ -38,7 +38,6 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const { publicKeyHash } = useSelectedAccountSelector();
   const getTokenExchangeRate = useTokenExchangeRateGetter();
-  console.log(filteredCurrenciesList, 'list');
 
   const handleSubmit = () => {
     if (!isDefined(values.coinFrom.amount)) {
