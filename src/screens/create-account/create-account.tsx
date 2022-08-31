@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { generateSeed } from '../../utils/keys.util';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 import { CreateNewWallet } from './create-new-wallet/create-new-wallet';
 import { CreateNewWalletFormValues } from './create-new-wallet/create-new-wallet.form';
@@ -14,6 +15,15 @@ export const CreateAccount = () => {
 
   usePageAnalytic(ScreensEnum.CreateAccount);
 
+  const initGenerateSeed = useCallback(async () => {
+    const seed = await generateSeed();
+    setSeedPhrase(seed);
+  }, []);
+
+  useEffect(() => {
+    initGenerateSeed();
+  }, []);
+
   const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase }: CreateNewWalletFormValues) => {
     setSeedPhrase(newSeedPhrase);
     setInnerScreenIndex(1);
@@ -21,7 +31,7 @@ export const CreateAccount = () => {
 
   return (
     <>
-      {innerScreenIndex === 0 && (
+      {seedPhrase !== '' && innerScreenIndex === 0 && (
         <CreateNewWallet initialSeedPhrase={seedPhrase} onSubmit={handleImportWalletFormSubmit} />
       )}
       {innerScreenIndex === 1 && (
