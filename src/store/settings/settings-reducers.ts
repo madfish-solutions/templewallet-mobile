@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DCP_RPC } from '../../utils/rpc/rpc-list';
-import { addDcpRpc } from '../migration/migration-actions';
+import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from '../../utils/rpc/rpc-list';
+import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -79,6 +79,28 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
       return {
         ...state,
         rpcList: [...state.rpcList, DCP_RPC]
+      };
+    }
+
+    return state;
+  });
+
+  builder.addCase(changeTempleRpc, state => {
+    const oldTempleRpc = state.rpcList.find(rpc => rpc.url === OLD_TEMPLE_RPC_URL);
+    const newRpcList = [TEMPLE_RPC, ...state.rpcList.filter(rpc => rpc.url !== OLD_TEMPLE_RPC_URL)];
+
+    if (oldTempleRpc) {
+      if (state.selectedRpcUrl === OLD_TEMPLE_RPC_URL) {
+        return {
+          ...state,
+          rpcList: newRpcList,
+          selectedRpcUrl: TEMPLE_RPC.url
+        };
+      }
+
+      return {
+        ...state,
+        rpcList: newRpcList
       };
     }
 
