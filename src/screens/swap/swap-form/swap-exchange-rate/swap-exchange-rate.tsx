@@ -6,10 +6,9 @@ import { AssetAmountInterface } from '../../../../components/asset-amount-input/
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
-import { conditionalStyle } from '../../../../utils/conditional-style';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
-import { isPromotionTime, ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
@@ -45,7 +44,10 @@ export const SwapExchangeRate: FC<Props> = ({
     if (bestTradeWithSlippageTolerance.length > 0) {
       const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
 
-      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
+      return mutezToTz(
+        lastTradeOperation.bTokenAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1),
+        outputAssets.asset.decimals
+      );
     }
 
     return undefined;
@@ -69,9 +71,7 @@ export const SwapExchangeRate: FC<Props> = ({
           <Text style={styles.infoText}>Routing Fee</Text>
           <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
         </View>
-        <Text style={conditionalStyle(isPromotionTime, styles.promotionText, styles.infoValue)}>
-          {ROUTING_FEE_PERCENT}%
-        </Text>
+        <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Exchange rate</Text>
