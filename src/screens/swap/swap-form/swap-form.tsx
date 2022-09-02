@@ -132,8 +132,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
   const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
 
+  const inputMutezAmountWithFee = useMemo(
+    () => (inputAssets.amount ? inputAssets.amount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) : undefined),
+    [inputAssets.amount]
+  );
+
   const bestTradeWithSlippageTolerance = useTradeWithSlippageTolerance(
-    inputAssets.amount,
+    inputMutezAmountWithFee,
     bestTrade,
     slippageTolerance
   );
@@ -168,21 +173,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   }, [searchValue, assetsList]);
 
   useEffect(() => {
-    if (inputAssets.amount && routePairsCombinations.length > 0) {
-      const bestTradeExactIn = getBestTradeExactInput(inputAssets.amount, routePairsCombinations);
+    if (inputMutezAmountWithFee && routePairsCombinations.length > 0) {
+      const bestTradeExactIn = getBestTradeExactInput(inputMutezAmountWithFee, routePairsCombinations);
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       setBestTrade(bestTradeExactIn);
-      setFieldValue(
-        'outputAssets.amount',
-        bestTradeOutput?.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) ?? undefined,
-        false
-      );
+      setFieldValue('outputAssets.amount', bestTradeOutput, false);
     } else {
       setBestTrade([]);
       setFieldValue('outputAssets.amount', undefined, false);
     }
-  }, [inputAssets.amount, routePairsCombinations, outputAssets.asset]);
+  }, [inputMutezAmountWithFee, routePairsCombinations, outputAssets.asset]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
