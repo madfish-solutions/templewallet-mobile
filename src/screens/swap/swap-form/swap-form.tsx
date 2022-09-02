@@ -91,6 +91,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
     );
     const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
 
+    console.log(JSON.stringify(routingFeeOpParams));
+
     const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
       ...transferParams,
       kind: OpKind.TRANSACTION
