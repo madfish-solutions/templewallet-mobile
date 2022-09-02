@@ -7,7 +7,7 @@ import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
 
 export interface AliceBobTopupFormValues {
   exchangeInfo: {
-    asset: CurrenciesInterface;
+    asset: Pick<CurrenciesInterface, 'name' | 'code'>;
     amount?: BigNumber;
     min?: number;
     max?: number;
