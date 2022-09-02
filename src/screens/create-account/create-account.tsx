@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -15,13 +15,8 @@ export const CreateAccount = () => {
 
   usePageAnalytic(ScreensEnum.CreateAccount);
 
-  const initGenerateSeed = useCallback(async () => {
-    const seed = await generateSeed();
-    setSeedPhrase(seed);
-  }, []);
-
   useEffect(() => {
-    initGenerateSeed();
+    generateSeed().then(seed => setSeedPhrase(seed));
   }, []);
 
   const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase }: CreateNewWalletFormValues) => {
