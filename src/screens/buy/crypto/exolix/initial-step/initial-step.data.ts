@@ -1,15 +1,13 @@
-export const outputCoin = {
-  code: 'XTZ',
-  name: 'Tezos',
-  icon: 'https://exolix.com/icons/coins/XTZ.png'
-};
+import { outputTokensList } from '../config';
 
 export const initialData = {
   coinFrom: {
     asset: {
       code: 'BTC',
       name: 'Bitcoin',
-      icon: 'https://exolix.com/icons/coins/BTC.png'
+      icon: 'https://exolix.com/icons/coins/BTC.png',
+      network: 'BTC',
+      networkFullName: 'Bitcoin'
     },
     amount: undefined,
     min: 0,
@@ -17,7 +15,7 @@ export const initialData = {
   },
   rate: 0,
   coinTo: {
-    asset: outputCoin,
+    asset: outputTokensList[0],
     amount: undefined
   }
 };

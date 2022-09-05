@@ -25,7 +25,7 @@ export const CryptoTopup = () => {
     <>
       <Divider size={formatSize(16)} />
       {isTezosNode && (
-        <TopUpOption title="Buy TEZ with Exolix" iconName={IconNameEnum.Exolix} onPress={handleOnPress} />
+        <TopUpOption title="Buy TEZ or USDT Tezos with Exolix" iconName={IconNameEnum.Exolix} onPress={handleOnPress} />
       )}
     </>
   );
