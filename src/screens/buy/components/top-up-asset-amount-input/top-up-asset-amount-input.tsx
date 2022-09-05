@@ -24,17 +24,25 @@ import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styl
 import { TopUpAssetValueText } from './top-up-asset-value-text';
 
 const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }) => (
-  <TopUpTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
+  <TopUpTokenDropdownItem
+    token={value}
+    actionIconName={IconNameEnum.TriangleDown}
+    iconSize={formatSize(32)}
+    isDropdownClosed
+  />
 );
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
-    value,
+    value = initialData.coinFrom,
     label,
     assetsList = [],
+    singleAsset = false,
+    isSearchable = false,
     isError = false,
     editable = true,
     selectionOptions = undefined,
+    setSearchValue,
     meta,
     onBlur,
     onFocus,
@@ -51,7 +59,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
 
     const amountInputRef = useRef<TextInput>(null);
 
-    const amount = value?.amount;
+    const amount = value.amount;
 
     const inputValueRef = useRef<BigNumber>();
 
@@ -121,19 +129,21 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <Divider size={formatSize(8)} />
 
           <View style={styles.dropdownContainer}>
-            {editable && assetsList.length !== 0 ? (
+            {singleAsset ? (
+              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
+            ) : (
               <Dropdown
                 title="Assets"
                 value={value.asset}
                 list={assetsList}
-                equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
+                isSearchable={isSearchable}
+                equalityFn={(item, value) => item.code === value?.code && item.network === value.network}
+                setSearchValue={setSearchValue}
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
-                keyExtractor={(token: CurrenciesInterface) => token.code}
+                keyExtractor={(token: CurrenciesInterface, index) => `${index}_${token.code}_${token.network}`}
                 onValueChange={handleTokenChange}
               />
-            ) : (
-              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} />
             )}
           </View>
         </View>

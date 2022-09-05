@@ -42,20 +42,56 @@ export enum ExchangeDataStatusEnum {
 
 export interface ExchangePayload {
   coinFrom: string;
+  coinFromNetwork: string;
   coinTo: string;
+  coinToNetwork: string;
   amount: number;
   withdrawalAddress: string;
   withdrawalExtraId: string;
 }
 
-export interface CurrenciesInterface {
-  icon?: string;
-  name: string;
-  code: string;
+export interface SubmitExchangePayload extends Omit<ExchangePayload, 'coinFromNetwork' | 'coinToNetwork'> {
+  networkFrom: string;
+  networkTo: string;
 }
 
-export interface CurrenciesRequestInterface {
-  data: Array<CurrenciesInterface>;
+export interface CurrenciesInterface {
+  name: string;
+  code: string;
+  network: string;
+  networkFullName: string;
+  icon: string;
+  networkShortName?: string | null;
+}
+
+export interface OutputTokenInterface extends CurrenciesInterface {
+  slug: string;
+}
+
+interface ExolixNetworkInterface {
+  addressRegex: string;
+  blockExplorer: string | null;
+  depositMinAmount: number | null;
+  isDefault: boolean;
+  memoName: string;
+  memoNeeded: boolean;
+  memoRegex: string;
+  name: string;
+  network: string;
+  notes: string;
+  precision: number;
+  shortName: string | null;
+}
+
+interface ExolixCurrenciesInterface {
+  code: string;
+  icon: string;
+  name: string;
+  networks: Array<ExolixNetworkInterface>;
+}
+
+export interface ExolixCurrenciesResponseInterface {
+  data: Array<ExolixCurrenciesInterface>;
 }
 
 export interface RateInterface {

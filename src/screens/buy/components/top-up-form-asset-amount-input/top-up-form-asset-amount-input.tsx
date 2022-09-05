@@ -13,6 +13,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   name,
   label,
   assetsList = [],
+  singleAsset = false,
   editable,
   isSearchable = false,
   setSearchValue = emptyFn,
@@ -38,6 +39,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       value={field.value}
       label={label}
       assetsList={assetsList}
+      singleAsset={singleAsset}
       isError={isError}
       meta={meta}
       isSearchable={isSearchable}
