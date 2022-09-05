@@ -84,14 +84,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1].aTokenAmount,
+      bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1].bTokenAmount,
       bestTradeWithSlippageTolerance,
       selectedAccount.publicKeyHash,
       tezos
     );
     const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
-
-    console.log(JSON.stringify(routingFeeOpParams));
 
     const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
       ...transferParams,
