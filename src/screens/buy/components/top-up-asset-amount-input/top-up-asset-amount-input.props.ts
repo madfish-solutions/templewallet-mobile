@@ -2,10 +2,10 @@ import { BigNumber } from 'bignumber.js';
 import { TextInputProps } from 'react-native';
 
 import { EmptyFn, EventFn } from '../../../../config/general';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
-  asset: CurrenciesInterface;
+  asset: TopUpInputInterface;
   amount?: BigNumber;
   min?: number;
   max?: number;
@@ -14,7 +14,7 @@ export interface TopUpAssetAmountInterface {
 export interface TopUpFormAssetAmountInputProps {
   name: string;
   label: string;
-  assetsList?: CurrenciesInterface[];
+  assetsList?: TopUpInputInterface[];
   singleAsset?: boolean;
   isError?: boolean;
   editable?: boolean;

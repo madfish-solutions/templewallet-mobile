@@ -16,6 +16,10 @@ export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typogr
   justifySpaceBetween: {
     justifyContent: 'space-between'
   },
+  textRegular17: {
+    ...typography.numbersRegular17,
+    color: colors.black
+  },
   textRegular15: {
     ...typography.numbersRegular15,
     color: colors.black

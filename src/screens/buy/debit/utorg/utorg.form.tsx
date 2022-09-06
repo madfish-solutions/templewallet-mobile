@@ -5,22 +5,34 @@ import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../../../form/validation/messages';
 import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 
-export interface AliceBobTopupFormValues {
-  exchangeInfo: {
-    asset: Pick<TopUpInputInterface, 'name' | 'code'>;
+export interface UtorgFormValues {
+  sendInput: {
+    asset: TopUpInputInterface;
+    amount?: BigNumber;
+  };
+  getOutput: {
+    asset: TopUpInputInterface;
     amount?: BigNumber;
     min?: number;
     max?: number;
   };
 }
 
-export const AliceBobTopupFormValidationSchema: SchemaOf<AliceBobTopupFormValues> = object().shape({
-  exchangeInfo: object().shape({
+export const UtorgFormValidationSchema: SchemaOf<UtorgFormValues> = object().shape({
+  sendInput: object().shape({
     asset: object()
       .shape({
-        name: string(),
-        icon: string(),
-        code: string().required()
+        code: string().required(),
+        icon: string()
+      })
+      .required(),
+    amount: bigNumberValidation.clone().required(makeRequiredErrorMessage('Amount'))
+  }),
+  getOutput: object().shape({
+    asset: object()
+      .shape({
+        code: string().required(),
+        icon: string()
       })
       .required(),
     amount: bigNumberValidation
