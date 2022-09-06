@@ -41,7 +41,7 @@ import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
+import { KNOWN_DEX_TYPES, TEZOS_DEXES_API_URL } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -74,8 +74,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   const [bestTrade, setBestTrade] = useState<Trade>([]);
 
   const handleSubmit = async () => {
-    const inputMutezAmount = inputAssets.amount;
-
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
     const outputAssetSlug = getTokenSlug(outputAssets.asset);
 
@@ -86,14 +84,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      inputMutezAmount,
+      bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1].bTokenAmount,
       bestTradeWithSlippageTolerance,
       selectedAccount.publicKeyHash,
       tezos
     );
     const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
 
-    const opParams: Array<ParamsWithKind> = [...routingFeeOpParams, ...tradeOpParams].map(transferParams => ({
+    const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
       ...transferParams,
       kind: OpKind.TRANSACTION
     }));
@@ -134,13 +132,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
   const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
 
-  const inputMutezAmountWithFee = useMemo(
-    () => (inputAssets.amount ? inputAssets.amount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) : undefined),
-    [inputAssets.amount]
-  );
-
   const bestTradeWithSlippageTolerance = useTradeWithSlippageTolerance(
-    inputMutezAmountWithFee,
+    inputAssets.amount,
     bestTrade,
     slippageTolerance
   );
@@ -175,8 +168,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   }, [searchValue, assetsList]);
 
   useEffect(() => {
-    if (inputMutezAmountWithFee && routePairsCombinations.length > 0) {
-      const bestTradeExactIn = getBestTradeExactInput(inputMutezAmountWithFee, routePairsCombinations);
+    if (inputAssets.amount && routePairsCombinations.length > 0) {
+      const bestTradeExactIn = getBestTradeExactInput(inputAssets.amount, routePairsCombinations);
       const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       setBestTrade(bestTradeExactIn);
@@ -185,7 +178,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       setBestTrade([]);
       setFieldValue('outputAssets.amount', undefined, false);
     }
-  }, [inputMutezAmountWithFee, routePairsCombinations, outputAssets.asset]);
+  }, [inputAssets.amount, routePairsCombinations, outputAssets.asset]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
