@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, View, Text, KeyboardAvoidingView } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {
   getBestTradeExactInput,
@@ -46,6 +46,7 @@ import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
+import { SwapPercentage } from './swap-percentage/swap-percentage';
 import { SwapPriceUpdateBar } from './swap-price-update-bar/swap-price-update-bar';
 import { useSwapPriceUpdateInfo } from './swap-price-update-bar/swap-price-update-info.hook';
 import { SwapPriceUpdateText } from './swap-price-update-bar/swap-price-update-text';
@@ -256,9 +257,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
         </View>
         <Divider size={formatSize(16)} />
       </ScreenContainer>
-      <KeyboardAvoidingView keyboardVerticalOffset={120} behavior="padding" style={{ backgroundColor: '#4099FF' }}>
-        <Text>Toolbar1</Text>
-      </KeyboardAvoidingView>
+      <SwapPercentage formik={formik} />
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
       </ButtonsFloatingContainer>
