@@ -1,4 +1,3 @@
-import { isAndroid } from '../../../../config/system';
 import { createUseStyles } from '../../../../styles/create-use-styles';
 import { formatSize } from '../../../../styles/format-size';
 
@@ -13,7 +12,7 @@ export const useSwapPercentageStyles = createUseStyles(({ colors, typography }) 
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingTop: formatSize(8),
-    height: isAndroid ? formatSize(180) : formatSize(160),
+    height: formatSize(180),
     width: '100%',
     backgroundColor: colors.pageBG,
     paddingHorizontal: formatSize(16)
