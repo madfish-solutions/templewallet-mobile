@@ -4,11 +4,8 @@ import { formatSize } from '../../../../styles/format-size';
 export const useSwapPercentageStyles = createUseStyles(({ colors, typography }) => ({
   keyboard: {
     flexDirection: 'row',
-    // justifyContent: 'center',
     alignItems: 'center',
     height: formatSize(44)
-    // paddingVertical: formatSize(8),
-    // paddingHorizontal: formatSize(16),
   },
   container: {
     flexDirection: 'row',
@@ -17,7 +14,7 @@ export const useSwapPercentageStyles = createUseStyles(({ colors, typography }) 
     paddingTop: formatSize(8),
     height: formatSize(160),
     width: '100%',
-    backgroundColor: colors.blue,
+    backgroundColor: colors.pageBG,
     paddingHorizontal: formatSize(16)
   },
   percentageGroup: {

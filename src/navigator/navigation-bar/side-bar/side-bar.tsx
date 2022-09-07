@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
-import { ScrollView, View } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 
 import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
+import { isAndroid } from '../../../config/system';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
@@ -35,6 +36,24 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
   const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      if (isDefined(currentRouteName) && currentRouteName === ScreensEnum.SwapScreen) {
+        setKeyboardVisible(true); // or some other action
+      }
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false); // or some other action
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -79,6 +98,16 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
           <Divider size={formatSize(8)} />
           <InsetSubstitute type="bottom" />
         </View>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={isAndroid ? formatSize(60) : formatSize(50)}
+          behavior="padding"
+          style={{
+            height: formatSize(44)
+          }}
+        >
+          {isKeyboardVisible && <View style={styles.keyboardContainer} />}
+          {/* <View style={styles.keyboardContainer} /> */}
+        </KeyboardAvoidingView>
       </ScrollView>
     </View>
   );

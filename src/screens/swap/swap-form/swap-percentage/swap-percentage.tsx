@@ -7,6 +7,7 @@ import { Keyboard, KeyboardAvoidingView, Text, View } from 'react-native';
 import { isAndroid } from '../../../../config/system';
 import { SwapFormValues } from '../../../../interfaces/swap-asset.interface';
 import { useTokensListSelector } from '../../../../store/wallet/wallet-selectors';
+import { formatSize } from '../../../../styles/format-size';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { useSwapPercentageStyles } from './swap-percentage.styles';
 
@@ -47,7 +48,7 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
 
   return (
     <KeyboardAvoidingView
-      keyboardVerticalOffset={isAndroid ? 60 : 50}
+      keyboardVerticalOffset={isAndroid ? formatSize(60) : formatSize(37.5)}
       behavior="padding"
       style={swapPercentageStyles.keyboard}
     >

@@ -17,6 +17,11 @@ export const useSideBarStyles = createUseStyles(({ colors }) => ({
       borderRightColor: colors.lines
     })
   },
+  keyboardContainer: {
+    height: formatSize(160),
+    width: '100%',
+    backgroundColor: colors.pageBG
+  },
   scrollViewContentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between'
