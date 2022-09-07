@@ -34,10 +34,10 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true); // or some other action
+      setKeyboardVisible(true);
     });
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false); // or some other action
+      setKeyboardVisible(false);
     });
 
     return () => {
@@ -48,9 +48,10 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
 
   return (
     <KeyboardAvoidingView
-      keyboardVerticalOffset={isAndroid ? formatSize(60) : formatSize(37.5)}
+      keyboardVerticalOffset={isKeyboardVisible ? (isAndroid ? formatSize(80) : formatSize(37.5)) : 0}
       behavior="padding"
-      style={swapPercentageStyles.keyboard}
+      // eslint-disable-next-line react-native/no-inline-styles
+      style={[swapPercentageStyles.keyboard, { height: isKeyboardVisible ? formatSize(44) : 0 }]}
     >
       {isKeyboardVisible && (
         <View style={swapPercentageStyles.container}>
@@ -58,6 +59,7 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
             <TouchableOpacity
               onPress={() => {
                 setFieldValue('inputAssets.amount', new BigNumber(token.balance).times(0.25));
+                Keyboard.dismiss();
               }}
               style={swapPercentageStyles.percentageShape}
             >
@@ -66,6 +68,7 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
             <TouchableOpacity
               onPress={() => {
                 setFieldValue('inputAssets.amount', new BigNumber(token.balance).times(0.5));
+                Keyboard.dismiss();
               }}
               style={swapPercentageStyles.percentageShape}
             >
@@ -74,6 +77,7 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
             <TouchableOpacity
               onPress={() => {
                 setFieldValue('inputAssets.amount', new BigNumber(token.balance).times(0.75));
+                Keyboard.dismiss();
               }}
               style={swapPercentageStyles.percentageShape}
             >
@@ -83,8 +87,9 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
               onPress={() => {
                 setFieldValue(
                   'inputAssets.amount',
-                  BigNumber.maximum(new BigNumber(token.balance).times(1).minus(token.symbol === 'TEZ' ? 0.3 : 0), 0)
+                  BigNumber.maximum(new BigNumber(token.balance).minus(token.symbol === 'TEZ' ? 3 * 10 ** 5 : 0), 0)
                 );
+                Keyboard.dismiss();
               }}
               style={swapPercentageStyles.percentageShape}
             >
