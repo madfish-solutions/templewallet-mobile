@@ -82,7 +82,7 @@ export const SwapPercentage: FC<Props> = ({ formik }) => {
               onPress={() => {
                 setFieldValue(
                   'inputAssets.amount',
-                  new BigNumber(token.balance).times(1).minus(token.symbol === 'TEZ' ? 0.3 : 0)
+                  BigNumber.minimum(new BigNumber(token.balance).times(1).minus(token.symbol === 'TEZ' ? 0.3 : 0), 0)
                 );
               }}
               style={swapPercentageStyles.percentageShape}
