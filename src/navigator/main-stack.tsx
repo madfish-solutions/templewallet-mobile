@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -13,6 +13,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
+import { useSwapRoutes } from '../hooks/swap-routes/swap-routes.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
@@ -57,11 +58,12 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
+// const DATA_REFRESH_INTERVAL = 60 * 1000;
 const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
+  const { allRoutePairs } = useSwapRoutes();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -82,7 +84,8 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash, selectedRpcUrl]);
+  useEffect(initDataLoading, [allRoutePairs?.block, selectedAccount.publicKeyHash, selectedRpcUrl]);
+
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
