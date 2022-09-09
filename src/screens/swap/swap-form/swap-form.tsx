@@ -9,6 +9,7 @@ import {
   getTradeOpParams,
   getTradeOutputAmount,
   Trade,
+  useAllRoutePairs,
   useRoutePairsCombinations,
   useTradeWithSlippageTolerance
 } from 'swap-router-sdk';
@@ -21,7 +22,6 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
-import { EMPTY_BLOCK, useSwapRoutes } from '../../../hooks/swap-routes/swap-routes.hook';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from '../../../interfaces/confirm-payload/confirmation-type.enum';
@@ -41,7 +41,7 @@ import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES } from '../config';
+import { KNOWN_DEX_TYPES, TEZOS_DEXES_API_URL } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -64,11 +64,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   const assetsList = useTokensWithTezosListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const { allRoutePairs } = useSwapRoutes();
-  const priceUpdateInfo = useSwapPriceUpdateInfo(allRoutePairs?.block ?? EMPTY_BLOCK);
+  const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
+  const priceUpdateInfo = useSwapPriceUpdateInfo(allRoutePairs.block);
   const filteredRoutePairs = useMemo(
-    () => allRoutePairs?.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)) ?? [],
-    [allRoutePairs?.data]
+    () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
+    [allRoutePairs.data]
   );
 
   const [bestTrade, setBestTrade] = useState<Trade>([]);
@@ -207,7 +207,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       />
       <ScreenContainer
         scrollViewRefreshControl={
-          <RefreshControl refreshing={allRoutePairs?.isRefreshing ?? false} onRefresh={allRoutePairs?.onRefresh} />
+          <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={allRoutePairs.onRefresh} />
         }
       >
         <SwapPriceUpdateText
@@ -241,7 +241,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
             inputAssets={inputAssets}
             outputAssets={outputAssets}
             trade={bestTrade}
-            loadingHasFailed={allRoutePairs?.hasFailed ?? true}
+            loadingHasFailed={allRoutePairs.hasFailed}
           />
 
           <Divider />

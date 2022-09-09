@@ -13,7 +13,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
-import { useSwapRoutes } from '../hooks/swap-routes/swap-routes.hook';
+import { useBlockSubscription } from '../hooks/block-subscription/block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
@@ -37,6 +37,7 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
+import { TEZOS_DEXES_API_URL } from '../screens/swap/config';
 import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
 import { SwapScreen } from '../screens/swap/swap';
@@ -58,16 +59,17 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-// const DATA_REFRESH_INTERVAL = 60 * 1000;
+const DATA_REFRESH_INTERVAL = 60 * 1000;
 const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
-  const { allRoutePairs } = useSwapRoutes();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+
+  const blockSubscription = useBlockSubscription(TEZOS_DEXES_API_URL);
 
   const { metadata } = useNetworkInfo();
 
@@ -84,7 +86,12 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useEffect(initDataLoading, [allRoutePairs?.block, selectedAccount.publicKeyHash, selectedRpcUrl]);
+  useEffect(() => {
+    initDataLoading();
+    const timer = setTimeout(initDataLoading, DATA_REFRESH_INTERVAL);
+
+    return () => clearTimeout(timer);
+  }, [blockSubscription.block, selectedAccount.publicKeyHash, selectedRpcUrl]);
 
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
