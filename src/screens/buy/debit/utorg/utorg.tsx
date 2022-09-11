@@ -87,11 +87,16 @@ export const Utorg: FC = () => {
   const { filteredCurrencies, setSearchValue } = useFilteredCurrencies(currencies);
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
-    if (isDefined(inputCurrency.amount)) {
-      convertFiatAmountToXtz(inputCurrency.amount.toNumber(), inputCurrency.asset.code).then(
-        outputAmount => void setFieldValue('getOutput.amount', new BigNumber(outputAmount))
-      );
-    }
+    convertFiatAmountToXtz(
+      isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0,
+      inputCurrency.asset.code
+    ).then(
+      outputAmount =>
+        void setFieldValue(
+          'getOutput.amount',
+          isDefined(inputCurrency.amount) ? new BigNumber(outputAmount) : undefined
+        )
+    );
   };
 
   return (
