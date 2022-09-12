@@ -12,7 +12,7 @@ export const usePercentageSelectorStyles = createUseStyles(({ colors, typography
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingTop: formatSize(8),
-    height: formatSize(180),
+    height: formatSize(252),
     width: '100%',
     backgroundColor: colors.pageBG,
     paddingHorizontal: formatSize(16)

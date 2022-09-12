@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { Formik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
+import { PercentageSelector } from '../../components/percentage-selector/percentage-selector';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
 import { FormAddressInput } from '../../form/form-address-input';
@@ -117,63 +118,68 @@ export const SendModal: FC = () => {
     );
   };
 
+  const formik = useFormik<SendModalFormValues>({
+    initialValues: sendModalInitialValues,
+    validationSchema: sendModalValidationSchema,
+    enableReinitialize: true,
+    onSubmit: onSubmit
+  });
+
+  const { values, submitForm, setFieldValue } = formik;
+
   return (
-    <Formik
-      initialValues={sendModalInitialValues}
-      enableReinitialize={true}
-      validationSchema={sendModalValidationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ values, submitForm }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <ModalStatusBar />
-          <View>
-            <Divider size={formatSize(8)} />
-            <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
-            <Divider />
+    <FormikProvider value={formik}>
+      <ScreenContainer isFullScreenMode={true}>
+        <ModalStatusBar />
+        <View>
+          <Divider size={formatSize(8)} />
+          <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
+          <Divider />
 
-            <Label
-              label="To"
-              description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
-            />
-            {values.transferBetweenOwnAccounts ? (
-              <>
-                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
-                <Divider size={formatSize(10)} />
-              </>
-            ) : (
-              <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
-            )}
-            <View
-              onTouchStart={() =>
-                void (
-                  transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
-                )
-              }
+          <Label
+            label="To"
+            description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
+          />
+          {values.transferBetweenOwnAccounts ? (
+            <>
+              <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+              <Divider size={formatSize(10)} />
+            </>
+          ) : (
+            <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
+          )}
+          <View
+            onTouchStart={() =>
+              void (transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' }))
+            }
+          >
+            <FormCheckbox
+              disabled={transferBetweenOwnAccountsDisabled}
+              name="transferBetweenOwnAccounts"
+              size={formatSize(16)}
             >
-              <FormCheckbox
-                disabled={transferBetweenOwnAccountsDisabled}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-              >
-                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
-              </FormCheckbox>
-            </View>
-
-            <Divider />
+              <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+            </FormCheckbox>
           </View>
 
-          <View>
-            <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
-              <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
-            </ButtonsContainer>
+          <Divider />
+        </View>
 
-            <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
-      )}
-    </Formik>
+        <View>
+          <ButtonsContainer>
+            <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
+            <Divider size={formatSize(16)} />
+            <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
+          </ButtonsContainer>
+
+          <InsetSubstitute type="bottom" />
+        </View>
+        <PercentageSelector
+          symbol={values.assetAmount.asset.symbol}
+          balance={values.assetAmount.asset.balance}
+          handleChange={value => setFieldValue('assetAmount.amount', value)}
+        />
+      </ScreenContainer>
+    </FormikProvider>
   );
 };

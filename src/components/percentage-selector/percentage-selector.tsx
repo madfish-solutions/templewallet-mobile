@@ -10,7 +10,7 @@ import { usePercentageSelectorStyles } from './percentage-selector.styles';
 interface Props {
   balance: string;
   symbol: string;
-  handleChange: (newStringValue: string) => void;
+  handleChange: (newValue: BigNumber) => void;
 }
 
 export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange }) => {
@@ -44,7 +44,9 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
           <View style={percentageStyles.percentageGroup}>
             <TouchableOpacity
               onPress={() => {
-                handleChange(new BigNumber(balance).times(0.25).toString());
+                const newValue = new BigNumber(balance).times(0.25);
+                handleChange(newValue);
+                Keyboard.dismiss();
               }}
               style={percentageStyles.percentageShape}
             >
@@ -52,7 +54,9 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                handleChange(new BigNumber(balance).times(0.5).toString());
+                const newValue = new BigNumber(balance).times(0.5);
+                handleChange(newValue);
+                Keyboard.dismiss();
               }}
               style={percentageStyles.percentageShape}
             >
@@ -60,10 +64,9 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                console.log('input');
-                const newValue = new BigNumber(balance).times(0.75).toString();
-                console.log('input new value:', newValue);
-                // handleChange(newValue);
+                const newValue = new BigNumber(balance).times(0.75);
+                handleChange(newValue);
+                Keyboard.dismiss();
               }}
               style={percentageStyles.percentageShape}
             >
@@ -71,7 +74,9 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                handleChange(BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 0.3 : 0), 0).toString());
+                const newValue = BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 300000 : 0), 0);
+                handleChange(newValue);
+                Keyboard.dismiss();
               }}
               style={percentageStyles.percentageShape}
             >

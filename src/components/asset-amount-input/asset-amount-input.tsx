@@ -20,7 +20,6 @@ import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
-// import { PercentageSelector } from '../percentage-selector/percentage-selector';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
@@ -136,8 +135,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     onBlur,
     onFocus
   );
-
-  // console.log()
 
   const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
     if (isDefined(amountInputRef.current)) {
@@ -262,7 +259,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           </View>
         </View>
       </View>
-      {/* <PercentageSelector symbol={value.asset.symbol} handleChange={handleChange} balance={value.asset.balance} /> */}
     </>
   );
 };

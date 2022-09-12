@@ -19,6 +19,7 @@ import { ButtonLargePrimary } from '../../../components/button/button-large/butt
 import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
+import { PercentageSelector } from '../../../components/percentage-selector/percentage-selector';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
@@ -256,6 +257,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
         </View>
         <Divider size={formatSize(16)} />
       </ScreenContainer>
+      <PercentageSelector
+        symbol={values.inputAssets.asset.symbol}
+        balance={values.inputAssets.asset.balance}
+        handleChange={value => setFieldValue('inputAssets.amount', value)}
+      />
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
       </ButtonsFloatingContainer>
