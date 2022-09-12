@@ -91,7 +91,7 @@ export const MainStackScreen = () => {
     const timer = setTimeout(initDataLoading, DATA_REFRESH_INTERVAL);
 
     return () => clearTimeout(timer);
-  }, [blockSubscription.block, selectedAccount.publicKeyHash, selectedRpcUrl]);
+  }, [blockSubscription, selectedAccount.publicKeyHash, selectedRpcUrl]);
 
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 

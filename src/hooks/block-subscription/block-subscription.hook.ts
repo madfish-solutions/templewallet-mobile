@@ -1,10 +1,6 @@
 import { BlockResponse, BlockFullHeader } from '@taquito/rpc';
 import { useEffect, useRef, useState } from 'react';
 
-export interface ResponseInterface {
-  block: BlockInterface;
-}
-
 export interface BlockInterface extends Pick<BlockResponse, 'protocol' | 'chain_id' | 'hash'> {
   header: Pick<BlockFullHeader, 'level' | 'timestamp'>;
 }
@@ -44,9 +40,9 @@ export const useBlockSubscription = (webSocketUrl: string) => {
     webSocketRef.current.onmessage = event => {
       setHasFailed(false);
       setIsRefreshing(false);
-      const rawResponse: ResponseInterface = JSON.parse(event.data);
+      const block: BlockInterface = JSON.parse(event.data);
 
-      setBlock(rawResponse.block);
+      setBlock(block);
     };
 
     return () => webSocketRef.current?.close();
