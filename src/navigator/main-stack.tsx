@@ -37,7 +37,7 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
-import { TEZOS_DEXES_API_URL } from '../screens/swap/config';
+import { BLOCK_UPDATE_API_URL } from '../screens/swap/config';
 import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
 import { SwapScreen } from '../screens/swap/swap';
@@ -69,7 +69,7 @@ export const MainStackScreen = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
-  const blockSubscription = useBlockSubscription(TEZOS_DEXES_API_URL);
+  const blockSubscription = useBlockSubscription(BLOCK_UPDATE_API_URL);
 
   const { metadata } = useNetworkInfo();
 
