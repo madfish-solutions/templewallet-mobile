@@ -40,6 +40,9 @@ export const useNumericInput = (
         normalizedStringValue = normalizedStringValue.substring(0, indexOfDot + decimals + 1);
       }
 
+      console.log('newValue:', newValue.toString());
+      console.log('newStringValue:', newStringValue);
+
       if (newValue.gte(DEFAULT_MIN_VALUE) && newValue.lte(DEFAULT_MAX_VALUE)) {
         setStringValue(normalizedStringValue);
         onChange(normalizedStringValue !== '' ? newValue : undefined);

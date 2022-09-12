@@ -46,7 +46,6 @@ import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
-import { SwapPercentage } from './swap-percentage/swap-percentage';
 import { SwapPriceUpdateBar } from './swap-price-update-bar/swap-price-update-bar';
 import { useSwapPriceUpdateInfo } from './swap-price-update-bar/swap-price-update-info.hook';
 import { SwapPriceUpdateText } from './swap-price-update-bar/swap-price-update-text';
@@ -257,7 +256,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
         </View>
         <Divider size={formatSize(16)} />
       </ScreenContainer>
-      <SwapPercentage formik={formik} />
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
       </ButtonsFloatingContainer>

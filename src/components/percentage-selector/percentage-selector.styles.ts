@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useSwapPercentageStyles = createUseStyles(({ colors, typography }) => ({
+export const usePercentageSelectorStyles = createUseStyles(({ colors, typography }) => ({
   keyboard: {
     flexDirection: 'row',
     alignItems: 'center',
