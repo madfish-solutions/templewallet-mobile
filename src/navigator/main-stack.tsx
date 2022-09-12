@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -16,7 +16,7 @@ import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useBlockSubscription } from '../hooks/block-subscription/block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
-import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
+import { useAuthorisedTimerEffect, useTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
@@ -86,13 +86,11 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useEffect(() => {
-    initDataLoading();
-    const timer = setTimeout(initDataLoading, DATA_REFRESH_INTERVAL);
-
-    return () => clearTimeout(timer);
-  }, [blockSubscription, selectedAccount.publicKeyHash, selectedRpcUrl]);
-
+  useTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
+    blockSubscription,
+    selectedAccount.publicKeyHash,
+    selectedRpcUrl
+  ]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
