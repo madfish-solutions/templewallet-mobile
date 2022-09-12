@@ -61,7 +61,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
-  const { values, isValid, submitForm, setFieldValue } = formik;
+  const { values, isValid, submitForm, setFieldValue, submitCount } = formik;
 
   const inputCurrency = values.coinFrom.asset;
   const outputCurrency = values.coinTo.asset;
@@ -170,7 +170,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
             </View>
           </ScreenContainer>
           <ButtonsFloatingContainer>
-            <ButtonLargePrimary disabled={!isValid} title="Top Up" onPress={submitForm} />
+            <ButtonLargePrimary title="Top Up" disabled={submitCount !== 0 && !isValid} onPress={submitForm} />
           </ButtonsFloatingContainer>
         </>
       ) : (

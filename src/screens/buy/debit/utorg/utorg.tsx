@@ -82,7 +82,7 @@ export const Utorg: FC = () => {
     onSubmit: handleSubmit
   });
 
-  const { values, submitForm, setFieldValue } = formik;
+  const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
   const exchangeRate = useExchangeRate(values.sendInput.asset.code, values.sendInput.amount);
   const { filteredCurrencies, setSearchValue } = useFilteredCurrencies(currencies);
 
@@ -111,6 +111,7 @@ export const Utorg: FC = () => {
               isSearchable
               assetsList={filteredCurrencies}
               onValueChange={handleInputValueChange}
+              onBlur={() => setFieldTouched('getOutput')}
               setSearchValue={setSearchValue}
             />
             <Divider />
@@ -150,7 +151,11 @@ export const Utorg: FC = () => {
         </View>
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary title={isLoading ? 'Loading...' : 'Top Up'} disabled={isLoading} onPress={submitForm} />
+        <ButtonLargePrimary
+          title={isLoading ? 'Loading...' : 'Top Up'}
+          disabled={(submitCount !== 0 && !isValid) || isLoading}
+          onPress={submitForm}
+        />
       </ButtonsFloatingContainer>
     </>
   );
