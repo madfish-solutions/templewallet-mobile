@@ -104,6 +104,7 @@ import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
+import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
@@ -171,6 +172,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
+  [IconNameEnum.Utorg]: UtorgIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,

@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../styles/create-use-styles';
 
-export const StaticTokenIconStyles = StyleSheet.create({
+export const useStaticTokenIconStyles = createUseStyles(({ colors }) => ({
   container: {
     overflow: 'hidden',
     position: 'relative'
@@ -12,5 +12,10 @@ export const StaticTokenIconStyles = StyleSheet.create({
     width: 1,
     height: 1,
     opacity: 0
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.lines
   }
-});
+}));

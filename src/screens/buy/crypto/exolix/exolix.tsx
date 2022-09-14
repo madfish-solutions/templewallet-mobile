@@ -3,9 +3,9 @@ import React, { FC, useState } from 'react';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useExolixStep } from '../../../../store/exolix/exolix-selectors';
 import { usePageAnalytic } from '../../../../utils/analytics/use-analytics.hook';
-import { ApproveStep } from './approve-step';
-import { ExchangeStep } from './exchange-step';
-import { InitialStep } from './initial-step/initial-step';
+import { ApproveStep } from './steps/approve-step';
+import { ExchangeStep } from './steps/exchange-step';
+import { InitialStep } from './steps/initial-step/initial-step';
 
 export const Exolix: FC = () => {
   const step = useExolixStep();

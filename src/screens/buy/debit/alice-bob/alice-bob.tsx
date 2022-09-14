@@ -9,7 +9,7 @@ import { ButtonsFloatingContainer } from '../../../../components/button/buttons-
 import { Divider } from '../../../../components/divider/divider';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../components/text-link/black-text-link';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 import { ScreensEnum, ScreensParamList } from '../../../../navigator/enums/screens.enum';
 import { useUserIdSelector } from '../../../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
@@ -19,11 +19,11 @@ import { useAnalytics, usePageAnalytic } from '../../../../utils/analytics/use-a
 import { isDefined } from '../../../../utils/is-defined';
 import { openUrl } from '../../../../utils/linking.util';
 import { TopUpFormAssetAmountInput } from '../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
+import { useDebitStyles } from '../debit.styles';
 import { AliceBobTopupFormValidationSchema, AliceBobTopupFormValues } from './alice-bob-topup.form';
-import { useAliceBobStyles } from './alice-bob.styles';
 import { ALICE_BOB_PRIVACY_LINK, ALICE_BOB_TERMS_OF_USE_LINK } from './config';
 
-const hryvnia: CurrenciesInterface = {
+const hryvnia: TopUpInputInterface = {
   code: 'UAH',
   name: 'Hryvnia',
   icon: '',
@@ -37,7 +37,7 @@ export const AliceBob: FC = () => {
   const { trackEvent } = useAnalytics();
   const { publicKeyHash } = useSelectedAccountSelector();
   const userId = useUserIdSelector();
-  const styles = useAliceBobStyles();
+  const styles = useDebitStyles();
 
   usePageAnalytic(ScreensEnum.AliceBob);
 

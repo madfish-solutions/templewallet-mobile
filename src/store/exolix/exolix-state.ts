@@ -1,4 +1,5 @@
-import { CurrenciesInterface, ExchangeDataInterface } from '../../interfaces/exolix.interface';
+import { ExchangeDataInterface } from '../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../interfaces/topup.interface';
 
 export const exolixInitialState: ExolixState = {
   step: 0,
@@ -9,7 +10,7 @@ export const exolixInitialState: ExolixState = {
 export interface ExolixState {
   step: number;
   exchangeData: ExchangeDataInterface | null;
-  currencies: Array<CurrenciesInterface>;
+  currencies: Array<TopUpInputInterface>;
 }
 
 export interface ExolixRootState {

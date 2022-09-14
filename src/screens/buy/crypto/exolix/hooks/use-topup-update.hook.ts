@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { emptyFn } from '../../../../config/general';
-import { refreshExolixExchangeDataAction } from '../../../../store/exolix/exolix-actions';
-import { useExolixExchangeData } from '../../../../store/exolix/exolix-selectors';
-import { isDefined } from '../../../../utils/is-defined';
+import { emptyFn } from '../../../../../config/general';
+import { refreshExolixExchangeDataAction } from '../../../../../store/exolix/exolix-actions';
+import { useExolixExchangeData } from '../../../../../store/exolix/exolix-selectors';
+import { isDefined } from '../../../../../utils/is-defined';
 
 const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
   const exchangeData = useExolixExchangeData();
