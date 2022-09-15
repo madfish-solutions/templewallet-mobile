@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useMemo, useCallback } from 'react';
 import { Keyboard, KeyboardAvoidingView, Text, View } from 'react-native';
 
 import { isAndroid } from '../../config/system';
@@ -32,62 +32,60 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
     };
   }, []);
 
+  const verticalOffset = useMemo(
+    () => (isKeyboardVisible ? (isAndroid ? formatSize(80) : formatSize(37.5)) : 0),
+    [isKeyboardVisible]
+  );
+  const keyboardShownStyle = useMemo(() => isKeyboardVisible && { height: formatSize(44) }, [isKeyboardVisible]);
+
+  const handlePercentage = useCallback(
+    (percentage: number) => {
+      const newValue = new BigNumber(balance).times(percentage);
+      handleChange(newValue);
+      Keyboard.dismiss();
+    },
+    [handleChange, balance]
+  );
+
+  const handle25Percentage = useCallback(() => handlePercentage(0.25), [handlePercentage]);
+
+  const handle50Percentage = useCallback(() => handlePercentage(0.5), [handlePercentage]);
+
+  const handle75Percentage = useCallback(() => handlePercentage(0.75), [handlePercentage]);
+
+  const handleMax = useCallback(() => {
+    const newValue = BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 300000 : 0), 0);
+    handleChange(newValue);
+    Keyboard.dismiss();
+  }, [handleChange, balance, symbol]);
+
+  const handleDismiss = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
+
   return (
     <KeyboardAvoidingView
-      keyboardVerticalOffset={isKeyboardVisible ? (isAndroid ? formatSize(80) : formatSize(37.5)) : 0}
+      keyboardVerticalOffset={verticalOffset}
       behavior="padding"
-      // eslint-disable-next-line react-native/no-inline-styles
-      style={[percentageStyles.keyboard, { height: isKeyboardVisible ? formatSize(44) : 0 }]}
+      style={[percentageStyles.keyboard, keyboardShownStyle]}
     >
       {isKeyboardVisible && (
         <View style={percentageStyles.container}>
           <View style={percentageStyles.percentageGroup}>
-            <TouchableOpacity
-              onPress={() => {
-                const newValue = new BigNumber(balance).times(0.25);
-                handleChange(newValue);
-                Keyboard.dismiss();
-              }}
-              style={percentageStyles.percentageShape}
-            >
+            <TouchableOpacity onPress={handle25Percentage} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>25%</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                const newValue = new BigNumber(balance).times(0.5);
-                handleChange(newValue);
-                Keyboard.dismiss();
-              }}
-              style={percentageStyles.percentageShape}
-            >
+            <TouchableOpacity onPress={handle50Percentage} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>50%</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                const newValue = new BigNumber(balance).times(0.75);
-                handleChange(newValue);
-                Keyboard.dismiss();
-              }}
-              style={percentageStyles.percentageShape}
-            >
+            <TouchableOpacity onPress={handle75Percentage} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>75%</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                const newValue = BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 300000 : 0), 0);
-                handleChange(newValue);
-                Keyboard.dismiss();
-              }}
-              style={percentageStyles.percentageShape}
-            >
+            <TouchableOpacity onPress={handleMax} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>MAX</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              Keyboard.dismiss();
-            }}
-          >
+          <TouchableOpacity onPress={handleDismiss}>
             <Text style={percentageStyles.percentageText}>Done</Text>
           </TouchableOpacity>
         </View>

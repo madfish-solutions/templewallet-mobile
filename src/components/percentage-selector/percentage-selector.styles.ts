@@ -4,8 +4,7 @@ import { formatSize } from '../../styles/format-size';
 export const usePercentageSelectorStyles = createUseStyles(({ colors, typography }) => ({
   keyboard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    height: formatSize(44)
+    alignItems: 'center'
   },
   container: {
     flexDirection: 'row',
