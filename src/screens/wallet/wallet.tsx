@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
@@ -8,7 +8,6 @@ import { HeaderCardActionButtons } from '../../components/header-card-action-but
 import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-// import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -40,37 +39,42 @@ export const Wallet = () => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 3000);
+    }, Math.random() * 2000 + 2000);
   };
 
   return (
     <>
       {isRefreshing && <Divider />}
-      <ScrollView refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
-        <HeaderCard hasInsetTop={true}>
-          <View style={WalletStyles.accountContainer}>
-            <CurrentAccountDropdown
-              value={selectedAccount}
-              list={visibleAccounts}
-              onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
-            />
+      <FlatList
+        data={[1]}
+        renderItem={() => (
+          <>
+            <HeaderCard hasInsetTop={true}>
+              <View style={WalletStyles.accountContainer}>
+                <CurrentAccountDropdown
+                  value={selectedAccount}
+                  list={visibleAccounts}
+                  onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+                />
 
-            <Divider />
+                <Divider />
 
-            <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
-          </View>
+                <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+              </View>
 
-          <TokenEquityValue token={tezosToken} showTokenValue={false} />
+              <TokenEquityValue token={tezosToken} showTokenValue={false} />
 
-          <HeaderCardActionButtons token={tezosToken} />
+              <HeaderCardActionButtons token={tezosToken} />
 
-          <Divider size={formatSize(16)} />
+              <Divider size={formatSize(16)} />
 
-          <CollectiblesHomeSwipeButton />
-        </HeaderCard>
-
-        <TokenList />
-      </ScrollView>
+              <CollectiblesHomeSwipeButton />
+            </HeaderCard>
+            <TokenList />
+          </>
+        )}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
+      />
     </>
   );
 };

@@ -13,10 +13,10 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
-import { useBlockSubscription } from '../hooks/block-subscription/block-subscription.hook';
+import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
-import { useAuthorisedTimerEffect, useTimerEffect } from '../hooks/use-timer-effect.hook';
+import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
@@ -37,7 +37,6 @@ import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
-import { BLOCK_UPDATE_API_URL } from '../screens/swap/config';
 import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
 import { SwapScreen } from '../screens/swap/swap';
@@ -69,7 +68,7 @@ export const MainStackScreen = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
-  const blockSubscription = useBlockSubscription(BLOCK_UPDATE_API_URL);
+  const blockSubscription = useBlockSubscription();
 
   const { metadata } = useNetworkInfo();
 
@@ -86,8 +85,8 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
-    blockSubscription,
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
+    blockSubscription.block.header,
     selectedAccount.publicKeyHash,
     selectedRpcUrl
   ]);
