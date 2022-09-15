@@ -112,17 +112,16 @@ def enableProguardInReleaseBuilds = true
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-// TODO: remove '-intl' as soon as i18n module that doesn't require it is installed and introduced
-def jscFlavor = 'org.webkit:android-jsc-intl:+'
+def jscFlavor = 'org.webkit:android-jsc:+'
 
 /**
  * Whether to enable the Hermes VM.
  *
- * This should be set on project.ext.react and mirrored here.  If it is not set
+ * This should be set on project.ext.react and that value will be read here. If it is not set
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", false)
+def enableHermes = project.ext.react.get("enableHermes", false);
 
 /**
  * Architectures to build native code for.
@@ -164,10 +163,6 @@ android {
         }
 
         missingDimensionStrategy 'react-native-camera', 'general'
-        // TODO: remove after Flipper update (0.140.0 does not work without code bellow)
-        configurations.all {
-            resolutionStrategy { force 'androidx.sqlite:sqlite-framework:2.1.0' }
-        }
     }
 
     if (isNewArchitectureEnabled()) {
@@ -194,6 +189,7 @@ android {
             // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
             preDebugBuild.dependsOn(packageReactNdkDebugLibs)
             preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
+
             // Due to a bug inside AGP, we have to explicitly set a dependency
             // between configureCMakeDebug* tasks and the preBuild tasks.
             // This can be removed once this is solved: https://issuetracker.google.com/issues/207403732
@@ -261,32 +257,13 @@ android {
 }
 
 dependencies {
-    implementation "com.google.firebase:firebase-appcheck-debug:16.0.0-beta05"
-    implementation "com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06"
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-
-    implementation project(':react-native-quick-actions')
-
-    implementation project(':react-native-android-open-settings')
-    implementation project(':react-native-fs')
-    implementation project(':react-native-config')
-
-//     // If your app supports Android versions before Ice Cream Sandwich (API level 14)
-//     implementation 'com.facebook.fresco:animated-base-support:1.3.0'
-//
-//     // For animated GIF support
-    implementation 'com.facebook.fresco:animated-gif:2.5.0'
-//
-//     // For WebP support, including animated WebP
-//     implementation 'com.facebook.fresco:animated-webp:2.1.0'
-//     implementation 'com.facebook.fresco:webpsupport:2.0.0'
-//
-//     // For WebP support, without animations
-//     implementation 'com.facebook.fresco:webpsupport:2.0.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation "androidx.core:core-splashscreen:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

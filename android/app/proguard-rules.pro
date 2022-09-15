@@ -9,7 +9,6 @@
 
 # Add any project specific keep options here:
 
--keep class com.templewallet.BuildConfig { *; }
 -keep public class com.horcrux.svg.** { *; }
 -keep class com.swmansion.reanimated.** { *; }
--keep class com.facebook.crypto.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }

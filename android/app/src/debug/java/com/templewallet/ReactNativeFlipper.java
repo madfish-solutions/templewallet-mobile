@@ -1,14 +1,13 @@
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
- *  <p>This source code is licensed under the MIT license found in the LICENSE file in the root
- *  directory of this source tree.
+ * <p>This source code is licensed under the MIT license found in the LICENSE file in the root
+ * directory of this source tree.
  */
 
 package com.templewallet;
 
 import android.content.Context;
-
 import com.facebook.flipper.android.AndroidFlipperClient;
 import com.facebook.flipper.android.utils.FlipperUtils;
 import com.facebook.flipper.core.FlipperClient;
@@ -25,6 +24,7 @@ import com.facebook.react.ReactInstanceEventListener;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.NetworkingModule;
+import okhttp3.OkHttpClient;
 
 public class ReactNativeFlipper {
   public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
@@ -39,7 +39,12 @@ public class ReactNativeFlipper {
 
       NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
       NetworkingModule.setCustomClientBuilder(
-              builder -> builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin)));
+          new NetworkingModule.CustomClientBuilder() {
+            @Override
+            public void apply(OkHttpClient.Builder builder) {
+              builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+            }
+          });
       client.addPlugin(networkFlipperPlugin);
       client.start();
 
@@ -53,7 +58,12 @@ public class ReactNativeFlipper {
               public void onReactContextInitialized(ReactContext reactContext) {
                 reactInstanceManager.removeReactInstanceEventListener(this);
                 reactContext.runOnNativeModulesQueueThread(
-                        () -> client.addPlugin(new FrescoFlipperPlugin()));
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        client.addPlugin(new FrescoFlipperPlugin());
+                      }
+                    });
               }
             });
       } else {

@@ -12,7 +12,7 @@
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:allowBackup="false"
-            android:theme="@style/AppTheme"
+            android:theme="@style/BootTheme"
             android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
@@ -22,6 +22,10 @@
                 android:windowSoftInputMode="adjustPan"
                 android:exported="true"
                 android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -35,16 +39,5 @@
                 <data android:scheme="@string/temple_url_scheme" />
             </intent-filter>
         </activity>
-
-        <activity
-                android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-                android:theme="@style/BootTheme"
-                android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-
     </application>
 </manifest>
