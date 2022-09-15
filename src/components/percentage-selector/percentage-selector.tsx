@@ -47,21 +47,13 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
     [handleChange, balance]
   );
 
-  const handle25Percentage = useCallback(() => handlePercentage(0.25), [handlePercentage]);
-
-  const handle50Percentage = useCallback(() => handlePercentage(0.5), [handlePercentage]);
-
-  const handle75Percentage = useCallback(() => handlePercentage(0.75), [handlePercentage]);
-
   const handleMax = useCallback(() => {
     const newValue = BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 300000 : 0), 0);
     handleChange(newValue);
     Keyboard.dismiss();
   }, [handleChange, balance, symbol]);
 
-  const handleDismiss = useCallback(() => {
-    Keyboard.dismiss();
-  }, []);
+  const handleDismiss = useCallback(() => void Keyboard.dismiss(), []);
 
   return (
     <KeyboardAvoidingView
@@ -72,13 +64,13 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
       {isKeyboardVisible && (
         <View style={percentageStyles.container}>
           <View style={percentageStyles.percentageGroup}>
-            <TouchableOpacity onPress={handle25Percentage} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={() => handlePercentage(0.25)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>25%</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handle50Percentage} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={() => handlePercentage(0.5)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>50%</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handle75Percentage} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={() => handlePercentage(0.75)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>75%</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleMax} style={percentageStyles.percentageShape}>
