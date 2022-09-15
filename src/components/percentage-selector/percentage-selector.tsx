@@ -39,7 +39,7 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
   const keyboardShownStyle = useMemo(() => isKeyboardVisible && { height: formatSize(44) }, [isKeyboardVisible]);
 
   const handlePercentage = useCallback(
-    (percentage: number) => {
+    (percentage: number) => () => {
       const newValue = new BigNumber(balance).times(percentage);
       handleChange(newValue);
       Keyboard.dismiss();
@@ -64,13 +64,13 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
       {isKeyboardVisible && (
         <View style={percentageStyles.container}>
           <View style={percentageStyles.percentageGroup}>
-            <TouchableOpacity onPress={() => handlePercentage(0.25)} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={handlePercentage(0.25)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>25%</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePercentage(0.5)} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={handlePercentage(0.5)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>50%</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePercentage(0.75)} style={percentageStyles.percentageShape}>
+            <TouchableOpacity onPress={handlePercentage(0.75)} style={percentageStyles.percentageShape}>
               <Text style={percentageStyles.percentageText}>75%</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleMax} style={percentageStyles.percentageShape}>
