@@ -55,19 +55,6 @@ export interface SubmitExchangePayload extends Omit<ExchangePayload, 'coinFromNe
   networkTo: string;
 }
 
-export interface CurrenciesInterface {
-  name: string;
-  code: string;
-  network: string;
-  networkFullName: string;
-  icon: string;
-  networkShortName?: string | null;
-}
-
-export interface OutputTokenInterface extends CurrenciesInterface {
-  slug: string;
-}
-
 interface ExolixNetworkInterface {
   addressRegex: string;
   blockExplorer: string | null;

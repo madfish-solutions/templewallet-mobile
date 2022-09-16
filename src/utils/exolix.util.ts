@@ -1,17 +1,17 @@
 import { exolixApi } from '../api.service';
 import {
-  CurrenciesInterface,
   ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
   RateInterface,
   SubmitExchangePayload
 } from '../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../interfaces/topup.interface';
 import { outputTokensList } from '../screens/buy/crypto/exolix/config';
 import { isDefined } from './is-defined';
 
 const currenciesLimit = 100;
 
-export const loadExolixCurrencies = async (): Promise<Array<CurrenciesInterface>> => {
+export const loadExolixCurrencies = async (): Promise<Array<TopUpInputInterface>> => {
   let page = 1;
   let result = await loadCurrency(page);
   let totalData = result.data;

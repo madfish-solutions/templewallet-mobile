@@ -1,6 +1,6 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
+import { createUseStyles } from '../../../styles/create-use-styles';
 
-export const useAliceBobStyles = createUseStyles(({ colors, typography }) => ({
+export const useDebitStyles = createUseStyles(({ colors, typography }) => ({
   row: {
     flexDirection: 'row',
     justifyContent: 'center'
