@@ -1,4 +1,4 @@
-import { outputTokensList } from '../config';
+import { outputTokensList } from '../../config';
 
 export const initialData = {
   coinFrom: {

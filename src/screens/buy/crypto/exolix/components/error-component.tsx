@@ -3,22 +3,22 @@ import React, { FC, useCallback } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from '../../../../components/divider/divider';
-import { ErrorDisclaimerMessage } from '../../../../components/error-disclaimer-message/error-disclaimer-message';
-import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { restartExolixTopupAction } from '../../../../store/exolix/exolix-actions';
-import { useExolixExchangeData } from '../../../../store/exolix/exolix-selectors';
-import { formatSize } from '../../../../styles/format-size';
-import { usePageAnalytic } from '../../../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../../../utils/is-defined';
-import { openUrl } from '../../../../utils/linking.util';
-import { EXOLIX_CONTACT_LINK } from './config';
-import { ExolixSelectors } from './exolix.selectors';
-import { useExolixStyles } from './exolix.styles';
-import { useSupportTrack } from './use-support-track';
+import { ButtonLargePrimary } from '../../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../../../../components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from '../../../../../components/divider/divider';
+import { ErrorDisclaimerMessage } from '../../../../../components/error-disclaimer-message/error-disclaimer-message';
+import { ScreenContainer } from '../../../../../components/screen-container/screen-container';
+import { ScreensEnum } from '../../../../../navigator/enums/screens.enum';
+import { restartExolixTopupAction } from '../../../../../store/exolix/exolix-actions';
+import { useExolixExchangeData } from '../../../../../store/exolix/exolix-selectors';
+import { formatSize } from '../../../../../styles/format-size';
+import { usePageAnalytic } from '../../../../../utils/analytics/use-analytics.hook';
+import { isDefined } from '../../../../../utils/is-defined';
+import { openUrl } from '../../../../../utils/linking.util';
+import { EXOLIX_CONTACT_LINK } from '../config';
+import { ExolixSelectors } from '../exolix.selectors';
+import { useExolixStyles } from '../exolix.styles';
+import { useSupportTrack } from '../hooks/use-support-track.hook';
 
 interface ErrorComponentProps {
   setIsError: (b: boolean) => void;

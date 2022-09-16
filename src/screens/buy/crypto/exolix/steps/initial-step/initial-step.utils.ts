@@ -1,8 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 
-import { CurrenciesInterface, ExchangePayload, RateInterface } from '../../../../../interfaces/exolix.interface';
-import { loadExolixRate } from '../../../../../utils/exolix.util';
-import { isDefined } from '../../../../../utils/is-defined';
+import { ExchangePayload, RateInterface } from '../../../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../../../interfaces/topup.interface';
+import { loadExolixRate } from '../../../../../../utils/exolix.util';
+import { isDefined } from '../../../../../../utils/is-defined';
 
 const maxDollarValue = 10000;
 const avgCommission = 300;
@@ -43,7 +44,7 @@ export const loadMinMaxFields = (
   });
 };
 
-export const getProperNetworkFullName = (currency?: CurrenciesInterface) =>
+export const getProperNetworkFullName = (currency?: TopUpInputInterface) =>
   isDefined(currency)
     ? currency.name === currency.networkFullName
       ? currency.networkFullName + ' Mainnet'
