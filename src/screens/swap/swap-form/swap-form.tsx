@@ -1,5 +1,6 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
+import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, View } from 'react-native';
@@ -40,8 +41,10 @@ import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/t
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
+import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, TEZOS_DEXES_API_URL } from '../config';
+import { mutezToTz, tzToMutez } from '../../../utils/tezos.util';
+import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -167,18 +170,43 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
     }
   }, [searchValue, assetsList]);
 
+  const minimumReceivedAmount = useMemo(() => {
+    if (bestTradeWithSlippageTolerance.length > 0) {
+      const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
+
+      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
+    }
+
+    return undefined;
+  }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
+
+  useEffect(() => {
+    if (isDefined(bestTrade)) {
+      const bestTradeOutput = getTradeOutputAmount(bestTrade);
+
+      const outputTzAmount = bestTradeOutput ? mutezToTz(bestTradeOutput, outputAssets.asset.decimals) : undefined;
+
+      const feeAmount = minimumReceivedAmount?.minus(minimumReceivedAmount?.multipliedBy(ROUTING_FEE_RATIO));
+      const finalAmount = outputTzAmount?.minus(feeAmount ?? new BigNumber(0));
+
+      setFieldValue(
+        'outputAssets.amount',
+        tzToMutez(finalAmount ?? new BigNumber(0), outputAssets.asset.decimals),
+        false
+      );
+    }
+  }, [bestTrade, minimumReceivedAmount, outputAssets.asset.decimals, outputAssetSlug, setFieldValue]);
+
   useEffect(() => {
     if (inputAssets.amount && routePairsCombinations.length > 0) {
       const bestTradeExactIn = getBestTradeExactInput(inputAssets.amount, routePairsCombinations);
-      const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
 
       setBestTrade(bestTradeExactIn);
-      setFieldValue('outputAssets.amount', bestTradeOutput, false);
     } else {
       setBestTrade([]);
       setFieldValue('outputAssets.amount', undefined, false);
     }
-  }, [inputAssets.amount, routePairsCombinations, outputAssets.asset]);
+  }, [inputAssets.amount, routePairsCombinations]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {

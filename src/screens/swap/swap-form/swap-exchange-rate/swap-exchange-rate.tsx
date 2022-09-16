@@ -8,7 +8,7 @@ import { TouchableIcon } from '../../../../components/icon/touchable-icon/toucha
 import { formatSize } from '../../../../styles/format-size';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
-import { ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
@@ -44,7 +44,9 @@ export const SwapExchangeRate: FC<Props> = ({
     if (bestTradeWithSlippageTolerance.length > 0) {
       const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
 
-      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
+      const feeAmount = mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
+
+      return feeAmount.multipliedBy(ROUTING_FEE_RATIO);
     }
 
     return undefined;
