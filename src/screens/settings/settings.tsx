@@ -24,8 +24,10 @@ import { changeTheme } from '../../store/settings/settings-actions';
 import { useFiatCurrencySelector, useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { SettingsHeader } from './settings-header/settings-header';
+import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
 
 export const Settings = () => {
@@ -34,6 +36,8 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
+
+  const { trackEvent } = useAnalytics();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -121,13 +125,14 @@ export const Settings = () => {
             </WhiteContainerAction>
             <WhiteContainerDivider />
             <WhiteContainerAction
-              onPress={() =>
+              onPress={() => {
+                trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
                 Share.share({
                   message:
                     'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile',
                   url: 'https://templewallet.com/mobile'
-                })
-              }
+                });
+              }}
             >
               <WhiteContainerText text="Share Temple Wallet" />
               <Icon name={IconNameEnum.Share} size={formatSize(24)} />
