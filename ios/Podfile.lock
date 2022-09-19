@@ -116,6 +116,8 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.1100)
+  - Permission-Camera (3.6.1):
+    - RNPermissions
   - PromisesObjC (2.1.1)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -472,6 +474,8 @@ PODS:
     - React-Core
   - RNOS (1.2.6):
     - React
+  - RNPermissions (3.6.1):
+    - React-Core
   - RNQuickAction (0.3.13):
     - React
   - RNReactNativeHapticFeedback (1.14.0):
@@ -564,6 +568,7 @@ DEPENDENCIES:
   - hermes-engine (from `../node_modules/react-native/sdks/hermes/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - OpenSSL-Universal (= 1.1.1100)
+  - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -618,6 +623,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNOS (from `../node_modules/react-native-os`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNQuickAction (from `../node_modules/react-native-quick-actions`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -673,6 +679,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes/hermes-engine.podspec"
+  Permission-Camera:
+    :path: "../node_modules/react-native-permissions/ios/Camera"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -777,6 +785,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNOS:
     :path: "../node_modules/react-native-os"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNQuickAction:
     :path: "../node_modules/react-native-quick-actions"
   RNReactNativeHapticFeedback:
@@ -828,6 +838,7 @@ SPEC CHECKSUMS:
   libwebp: 60305b2e989864154bd9be3d772730f08fc6a59c
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
+  Permission-Camera: bf6791b17c7f614b6826019fcfdcc286d3a107f6
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: d0e501e8024056451424aa341daa078c0c620b0d
@@ -881,6 +892,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
+  RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReactNativeHapticFeedback: 1e3efeca9628ff9876ee7cdd9edec1b336913f8c
   RNReanimated: 519f4b9b272a1183c23f8f082b9a450067ff229c
@@ -898,6 +910,6 @@ SPEC CHECKSUMS:
   Yoga: 82c9e8f652789f67d98bed5aef9d6653f71b04a9
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c3f7de10749e4f031ac37eeea8b1c90ff8ce6b8a
+PODFILE CHECKSUM: efaf90a179255a491c582fff486e4d7c001c7814
 
 COCOAPODS: 1.11.3

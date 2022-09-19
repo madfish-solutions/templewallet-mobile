@@ -40,4 +40,8 @@ target 'TempleWallet' do
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
 end
