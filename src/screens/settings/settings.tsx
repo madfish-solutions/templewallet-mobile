@@ -16,7 +16,6 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { isAndroid } from '../../config/system';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -124,9 +123,8 @@ export const Settings = () => {
             <WhiteContainerAction
               onPress={() =>
                 Share.share({
-                  message: `Hey friend! You should download TempleWallet, it's my favorite Tezos wallet${
-                    isAndroid ? ' - https://templewallet.com/mobile' : ''
-                  }`,
+                  message:
+                    'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile',
                   url: 'https://templewallet.com/mobile'
                 })
               }
