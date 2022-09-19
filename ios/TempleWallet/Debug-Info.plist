@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Temple</string>
+	<string>Temple Debug</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -44,19 +44,19 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>319</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsLocalNetworking</key>
-		<false/>
-		<key>NSAllowsArbitraryLoadsForMedia</key>
-		<false/>
-		<key>NSAllowsArbitraryLoadsInWebContent</key>
-		<false/>
 		<key>NSAllowsArbitraryLoads</key>
-		<false/>
+		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 		<key>NSPinnedDomains</key>
 		<dict>
 			<key>madfish.solutions</key>
@@ -73,8 +73,8 @@
 			</dict>
 			<key>api.templewallet.com</key>
 			<dict>
-                <key>NSIncludesSubdomains</key>
-                <false/>
+			    <key>NSIncludesSubdomains</key>
+            	<false/>
 				<key>NSPinnedCAIdentities</key>
 				<array>
 					<dict>
@@ -83,7 +83,7 @@
 					</dict>
 				</array>
 			</dict>
-            <key>metadata.templewallet.com</key>
+			<key>metadata.templewallet.com</key>
             <dict>
                 <key>NSIncludesSubdomains</key>
                 <false/>

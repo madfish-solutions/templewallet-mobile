@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarCodeReadEvent } from 'react-native-camera';
+// import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
@@ -28,51 +28,51 @@ export const ScanQrCode = () => {
 
   usePageAnalytic(ScreensEnum.ScanQrCode);
 
-  const handleRead = ({ data }: BarCodeReadEvent) => {
-    goBack();
-    if (isAuthorised) {
-      if (isValidAddress(data)) {
-        if (Number(tezosToken.balance) > 0) {
-          navigate(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
-        } else {
-          showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
-        }
-      } else if (isBeaconPayload(data)) {
-        beaconDeepLinkHandler(
-          data,
-          () =>
-            navigate(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.DAppOperations,
-              message: null,
-              loading: true
-            }),
-          errorMessage => {
-            goBack();
-            showErrorToast({ description: errorMessage });
-          }
-        );
-      } else {
-        showErrorToast({ description: 'Invalid QR code' });
-      }
-    } else {
-      if (isSyncPayload(data)) {
-        navigate(ScreensEnum.ConfirmSync, { payload: data });
-      } else {
-        showErrorToast({ description: 'Invalid QR code' });
-      }
-    }
-  };
+  // const handleRead = ({ data }: BarCodeReadEvent) => {
+  //   goBack();
+  //   if (isAuthorised) {
+  //     if (isValidAddress(data)) {
+  //       if (Number(tezosToken.balance) > 0) {
+  //         navigate(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
+  //       } else {
+  //         showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
+  //       }
+  //     } else if (isBeaconPayload(data)) {
+  //       beaconDeepLinkHandler(
+  //         data,
+  //         () =>
+  //           navigate(ModalsEnum.Confirmation, {
+  //             type: ConfirmationTypeEnum.DAppOperations,
+  //             message: null,
+  //             loading: true
+  //           }),
+  //         errorMessage => {
+  //           goBack();
+  //           showErrorToast({ description: errorMessage });
+  //         }
+  //       );
+  //     } else {
+  //       showErrorToast({ description: 'Invalid QR code' });
+  //     }
+  //   } else {
+  //     if (isSyncPayload(data)) {
+  //       navigate(ScreensEnum.ConfirmSync, { payload: data });
+  //     } else {
+  //       showErrorToast({ description: 'Invalid QR code' });
+  //     }
+  //   }
+  // };
 
   useNavigationSetOptions({ headerTransparent: true }, []);
 
   return (
     <>
-      <QRCodeScanner
-        cameraStyle={styles.camera}
-        showMarker={true}
-        customMarker={<CustomMarker />}
-        onRead={handleRead}
-      />
+      {/*<QRCodeScanner*/}
+      {/*  cameraStyle={styles.camera}*/}
+      {/*  showMarker={true}*/}
+      {/*  customMarker={<CustomMarker />}*/}
+      {/*  onRead={handleRead}*/}
+      {/*/>*/}
     </>
   );
 };
