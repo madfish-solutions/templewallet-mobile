@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
@@ -27,54 +27,36 @@ export const Wallet = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
-  const [isRefreshing, setRefreshing] = useState(false);
-
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
 
   usePageAnalytic(ScreensEnum.Wallet);
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, Math.random() * 2000 + 2000);
-  };
-
   return (
     <>
-      {isRefreshing && <Divider />}
-      <FlatList
-        data={[1]}
-        renderItem={() => (
-          <>
-            <HeaderCard hasInsetTop={true}>
-              <View style={WalletStyles.accountContainer}>
-                <CurrentAccountDropdown
-                  value={selectedAccount}
-                  list={visibleAccounts}
-                  onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
-                />
+      <HeaderCard hasInsetTop={true}>
+        <View style={WalletStyles.accountContainer}>
+          <CurrentAccountDropdown
+            value={selectedAccount}
+            list={visibleAccounts}
+            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+          />
 
-                <Divider />
+          <Divider />
 
-                <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
-              </View>
+          <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+        </View>
 
-              <TokenEquityValue token={tezosToken} showTokenValue={false} />
+        <TokenEquityValue token={tezosToken} showTokenValue={false} />
 
-              <HeaderCardActionButtons token={tezosToken} />
+        <HeaderCardActionButtons token={tezosToken} />
 
-              <Divider size={formatSize(16)} />
+        <Divider size={formatSize(16)} />
 
-              <CollectiblesHomeSwipeButton />
-            </HeaderCard>
-            <TokenList />
-          </>
-        )}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
-      />
+        <CollectiblesHomeSwipeButton />
+      </HeaderCard>
+      <TokenList />
     </>
   );
 };

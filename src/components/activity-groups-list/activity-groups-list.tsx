@@ -1,5 +1,5 @@
-import React, { FC, useMemo } from 'react';
-import { SectionList, Text } from 'react-native';
+import React, { FC, useMemo, useState } from 'react';
+import { RefreshControl, SectionList, Text } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
@@ -15,6 +15,8 @@ interface Props {
 
 export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
+
+  const [isRefreshing, setRefreshing] = useState(false);
 
   const sections = useMemo(() => {
     const result = [];
@@ -41,6 +43,13 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = e
     return result;
   }, [activityGroups]);
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, Math.random() * 2000 + 2000);
+  };
+
   const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
   return isShowPlaceholder ? (
@@ -56,6 +65,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = e
         keyExtractor={item => item[0].hash}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
       />
     </>
   );

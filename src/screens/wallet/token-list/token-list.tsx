@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
@@ -58,6 +58,7 @@ export const TokenList: FC = () => {
   const { metadata } = useNetworkInfo();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
+  const [isRefreshing, setRefreshing] = useState(false);
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -85,6 +86,13 @@ export const TokenList: FC = () => {
     () => addPlaceholdersForAndroid(flatListData, screenFillingItemsCount),
     [flatListData, screenFillingItemsCount]
   );
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, Math.random() * 2000 + 2000);
+  };
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
@@ -116,6 +124,7 @@ export const TokenList: FC = () => {
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
           windowSize={11}
           updateCellsBatchingPeriod={150}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         />
       </View>
     </>
