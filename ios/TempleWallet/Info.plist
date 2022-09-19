@@ -59,6 +59,18 @@
 		<false/>
 		<key>NSPinnedDomains</key>
 		<dict>
+			<key>api.templewallet.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<false/>
+				<key>NSPinnedCAIdentities</key>
+				<array>
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=</string>
+					</dict>
+				</array>
+			</dict>
 			<key>madfish.solutions</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
@@ -71,30 +83,18 @@
 					</dict>
 				</array>
 			</dict>
-			<key>api.templewallet.com</key>
+			<key>metadata.templewallet.com</key>
 			<dict>
-                <key>NSIncludesSubdomains</key>
-                <false/>
+				<key>NSIncludesSubdomains</key>
+				<false/>
 				<key>NSPinnedCAIdentities</key>
 				<array>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
-						<string>++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=</string>
+						<string>Y9mvm0exBk1JoQ57f9Vm28jKo5lFm/woKcVxrYxu80o=</string>
 					</dict>
 				</array>
 			</dict>
-            <key>metadata.templewallet.com</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <false/>
-                <key>NSPinnedCAIdentities</key>
-                <array>
-                    <dict>
-                        <key>SPKI-SHA256-BASE64</key>
-                        <string>Y9mvm0exBk1JoQ57f9Vm28jKo5lFm/woKcVxrYxu80o=</string>
-                    </dict>
-                </array>
-            </dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
@@ -110,6 +110,8 @@
 		<string>Rubik-Regular.ttf</string>
 		<string>Rubik-SemiBold.ttf</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>BootSplash.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
