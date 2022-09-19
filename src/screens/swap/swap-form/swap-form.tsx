@@ -177,23 +177,21 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
     }
 
-    return undefined;
+    return new BigNumber(0);
   }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
 
   useEffect(() => {
     if (isDefined(bestTrade)) {
       const bestTradeOutput = getTradeOutputAmount(bestTrade);
 
-      const outputTzAmount = bestTradeOutput ? mutezToTz(bestTradeOutput, outputAssets.asset.decimals) : undefined;
+      const outputTzAmount = bestTradeOutput
+        ? mutezToTz(bestTradeOutput, outputAssets.asset.decimals)
+        : new BigNumber(0);
 
-      const feeAmount = minimumReceivedAmount?.minus(minimumReceivedAmount?.multipliedBy(ROUTING_FEE_RATIO));
-      const finalAmount = outputTzAmount?.minus(feeAmount ?? new BigNumber(0));
+      const feeAmount = minimumReceivedAmount.minus(minimumReceivedAmount.multipliedBy(ROUTING_FEE_RATIO));
+      const finalAmount = outputTzAmount.minus(feeAmount);
 
-      setFieldValue(
-        'outputAssets.amount',
-        tzToMutez(finalAmount ?? new BigNumber(0), outputAssets.asset.decimals),
-        false
-      );
+      setFieldValue('outputAssets.amount', tzToMutez(finalAmount, outputAssets.asset.decimals), false);
     }
   }, [bestTrade, minimumReceivedAmount, outputAssets.asset.decimals, outputAssetSlug, setFieldValue]);
 
