@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -16,6 +16,7 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
+import { isAndroid } from '../../config/system';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -118,6 +119,20 @@ export const Settings = () => {
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)}>
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+            <WhiteContainerDivider />
+            <WhiteContainerAction
+              onPress={() =>
+                Share.share({
+                  message: `Hey friend! You should download TempleWallet, it's my favorite Tezos wallet${
+                    isAndroid ? ' - https://templewallet.com/mobile' : ''
+                  }`,
+                  url: 'https://templewallet.com/mobile'
+                })
+              }
+            >
+              <WhiteContainerText text="Share Temple Wallet" />
+              <Icon name={IconNameEnum.Share} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
           <Divider />
