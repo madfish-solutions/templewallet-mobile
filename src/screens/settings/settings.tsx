@@ -30,6 +30,10 @@ import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
 
+const SHARE_CONTENT =
+  'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile';
+const SHARE_URL_IOS = 'https://templewallet.com/mobile';
+
 export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
@@ -128,10 +132,15 @@ export const Settings = () => {
               onPress={() => {
                 trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
                 Share.share({
-                  message:
-                    'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile',
-                  url: 'https://templewallet.com/mobile'
-                });
+                  message: SHARE_CONTENT,
+                  url: SHARE_URL_IOS
+                })
+                  .then(() => {
+                    trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
+                  })
+                  .catch(() => {
+                    trackEvent(SettingsSelectors.ShareError, AnalyticsEventCategory.ButtonPress);
+                  });
               }}
             >
               <WhiteContainerText text="Share Temple Wallet" />
