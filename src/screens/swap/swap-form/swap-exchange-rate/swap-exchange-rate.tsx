@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
@@ -8,22 +9,17 @@ import { TouchableIcon } from '../../../../components/icon/touchable-icon/toucha
 import { formatSize } from '../../../../styles/format-size';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
-import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
+import { ROUTING_FEE_PERCENT } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
   inputAssets: AssetAmountInterface;
   outputAssets: AssetAmountInterface;
   bestTrade: Trade;
-  bestTradeWithSlippageTolerance: Trade;
+  minimumReceivedAmount?: BigNumber;
 }
 
-export const SwapExchangeRate: FC<Props> = ({
-  inputAssets,
-  outputAssets,
-  bestTrade,
-  bestTradeWithSlippageTolerance
-}) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTrade, minimumReceivedAmount }) => {
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
@@ -40,17 +36,6 @@ export const SwapExchangeRate: FC<Props> = ({
     return undefined;
   }, [bestTrade, inputAssets.asset.decimals, outputAssets.asset.decimals]);
 
-  const minimumReceivedAmount = useMemo(() => {
-    if (bestTradeWithSlippageTolerance.length > 0) {
-      const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
-
-      const feeAmount = mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
-
-      return feeAmount.multipliedBy(ROUTING_FEE_RATIO);
-    }
-
-    return undefined;
-  }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',

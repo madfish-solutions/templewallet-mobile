@@ -87,7 +87,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1].bTokenAmount,
+      getTradeOutputAmount(bestTradeWithSlippageTolerance),
       bestTradeWithSlippageTolerance,
       selectedAccount.publicKeyHash,
       tezos
@@ -172,9 +172,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
   const minimumReceivedAmount = useMemo(() => {
     if (bestTradeWithSlippageTolerance.length > 0) {
-      const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
+      const lastTradeOperationOutput = getTradeOutputAmount(bestTradeWithSlippageTolerance) ?? new BigNumber(0);
 
-      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
+      return mutezToTz(lastTradeOperationOutput, outputAssets.asset.decimals);
     }
 
     return new BigNumber(0);
@@ -188,7 +188,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
         ? mutezToTz(bestTradeOutput, outputAssets.asset.decimals)
         : new BigNumber(0);
 
-      const feeAmount = minimumReceivedAmount.minus(minimumReceivedAmount.multipliedBy(ROUTING_FEE_RATIO));
+      const feeAmount = minimumReceivedAmount.minus(
+        minimumReceivedAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1)
+      );
       const finalAmount = outputTzAmount.minus(feeAmount);
 
       setFieldValue('outputAssets.amount', tzToMutez(finalAmount, outputAssets.asset.decimals), false);
@@ -276,7 +278,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
               inputAssets={inputAssets}
               outputAssets={outputAssets}
               bestTrade={bestTrade}
-              bestTradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+              minimumReceivedAmount={minimumReceivedAmount}
             />
           </View>
         </View>
