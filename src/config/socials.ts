@@ -13,7 +13,6 @@ export const privacyPolicy = 'https://templewallet.com/privacy';
 export const analyticsCollecting = 'https://templewallet.com/analytics-collecting';
 export const termsOfUse = 'https://templewallet.com/terms';
 export const contact = 'https://templewallet.com/contact';
-export const delegationManual = 'https://youtu.be/iFH8WEfuaDI';
 
 export const supportUkraine = 'https://donate.tezos.org.ua';
 export const yupanaLink = 'https://app.yupana.finance/';
