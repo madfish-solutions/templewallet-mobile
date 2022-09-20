@@ -4,7 +4,9 @@ import React, { FC, useState, useEffect, useMemo, useCallback } from 'react';
 import { Keyboard, KeyboardAvoidingView, Text, View } from 'react-native';
 
 import { isAndroid } from '../../config/system';
+import { useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
+import { getNetworkGasTokenMetadata } from '../../utils/network.utils';
 import { usePercentageSelectorStyles } from './percentage-selector.styles';
 
 interface Props {
@@ -15,6 +17,10 @@ interface Props {
 
 export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange }) => {
   const percentageStyles = usePercentageSelectorStyles();
+
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+
+  const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -48,7 +54,11 @@ export const PercentageSelector: FC<Props> = ({ symbol, balance, handleChange })
   );
 
   const handleMax = useCallback(() => {
-    const newValue = BigNumber.maximum(new BigNumber(balance).minus(symbol === 'TEZ' ? 300000 : 0), 0);
+    // due to possibility of sending MAX amount of gas token
+    // prevent user to accidently send all gas amount
+    const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? 300000 : 0;
+
+    const newValue = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
     handleChange(newValue);
     Keyboard.dismiss();
   }, [handleChange, balance, symbol]);
