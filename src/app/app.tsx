@@ -17,6 +17,7 @@ import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
 import { segmentClient } from '../utils/analytics/analytics.util';
 import { initSentry } from '../utils/sentry.utils';
+import { AppStyles } from './app.styles';
 
 initSentry();
 enableScreens();
@@ -26,7 +27,7 @@ export const App = () => {
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void hide({ fade: true }), []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={AppStyles.root}>
       <AnalyticsProvider client={segmentClient}>
         <Provider store={store}>
           <PersistGate persistor={persistor} loading={null}>
