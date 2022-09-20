@@ -1,7 +1,8 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { RefreshControl, SectionList, Text } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { useRefresh } from '../../hooks/use-refresh.hook';
 import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
 import { isTheSameDay, isToday, isYesterday } from '../../utils/date.utils';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -16,7 +17,7 @@ interface Props {
 export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
 
-  const [isRefreshing, setRefreshing] = useState(false);
+  const { isRefreshing, handleRefresh } = useRefresh();
 
   const sections = useMemo(() => {
     const result = [];
@@ -42,13 +43,6 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = e
 
     return result;
   }, [activityGroups]);
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, Math.random() * 2000 + 2000);
-  };
 
   const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 

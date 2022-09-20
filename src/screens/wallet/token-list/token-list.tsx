@@ -8,6 +8,7 @@ import { Divider } from '../../../components/divider/divider';
 import { isAndroid } from '../../../config/system';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
+import { useRefresh } from '../../../hooks/use-refresh.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
@@ -58,7 +59,7 @@ export const TokenList: FC = () => {
   const { metadata } = useNetworkInfo();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
-  const [isRefreshing, setRefreshing] = useState(false);
+  const { isRefreshing, handleRefresh } = useRefresh();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -86,13 +87,6 @@ export const TokenList: FC = () => {
     () => addPlaceholdersForAndroid(flatListData, screenFillingItemsCount),
     [flatListData, screenFillingItemsCount]
   );
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, Math.random() * 2000 + 2000);
-  };
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
