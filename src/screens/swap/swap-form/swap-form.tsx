@@ -41,7 +41,6 @@ import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/t
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
 import { mutezToTz, tzToMutez } from '../../../utils/tezos.util';
 import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
@@ -181,7 +180,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
 
   useEffect(() => {
-    if (isDefined(bestTrade)) {
+    if (bestTrade.length) {
       const bestTradeOutput = getTradeOutputAmount(bestTrade);
 
       const outputTzAmount = bestTradeOutput
