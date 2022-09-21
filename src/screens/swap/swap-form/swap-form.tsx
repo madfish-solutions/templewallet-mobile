@@ -277,7 +277,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
               inputAssets={inputAssets}
               outputAssets={outputAssets}
               bestTrade={bestTrade}
-              minimumReceivedAmount={minimumReceivedAmount}
+              minimumReceivedAmount={minimumReceivedAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1)}
             />
           </View>
         </View>
