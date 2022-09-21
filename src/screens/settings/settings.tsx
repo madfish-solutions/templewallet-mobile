@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
@@ -52,6 +52,20 @@ export const Settings = () => {
 
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
+
+  const handleShare = useCallback(() => {
+    trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
+    Share.share({
+      message: SHARE_CONTENT,
+      url: SHARE_URL_IOS
+    })
+      .then(() => {
+        trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
+      })
+      .catch(() => {
+        trackEvent(SettingsSelectors.ShareError, AnalyticsEventCategory.ButtonPress);
+      });
+  }, [trackEvent]);
 
   return (
     <>
@@ -128,21 +142,7 @@ export const Settings = () => {
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
             <WhiteContainerDivider />
-            <WhiteContainerAction
-              onPress={() => {
-                trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
-                Share.share({
-                  message: SHARE_CONTENT,
-                  url: SHARE_URL_IOS
-                })
-                  .then(() => {
-                    trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
-                  })
-                  .catch(() => {
-                    trackEvent(SettingsSelectors.ShareError, AnalyticsEventCategory.ButtonPress);
-                  });
-              }}
-            >
+            <WhiteContainerAction onPress={handleShare}>
               <WhiteContainerText text="Share Temple Wallet" />
               <Icon name={IconNameEnum.Share} size={formatSize(24)} />
             </WhiteContainerAction>
