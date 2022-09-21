@@ -1,26 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { isDefined } from '../utils/is-defined';
+import { useActiveTimer } from './use-active-timer.hook';
+
+const FIXED_TIME = 2000;
+const VARIABLE_TIME = 2000;
 
 export const useRefresh = () => {
   const [isRefreshing, setRefreshing] = useState(false);
-
-  const timerRef = useRef<NodeJS.Timeout>();
+  const { activeTimer, clearActiveTimer } = useActiveTimer();
 
   const handleRefresh = () => {
+    clearActiveTimer();
     setRefreshing(true);
-    timerRef.current = setTimeout(() => {
-      setRefreshing(false);
-    }, Math.random() * 2000 + 2000);
+    activeTimer.current = setTimeout(() => setRefreshing(false), Math.random() * VARIABLE_TIME + FIXED_TIME);
   };
-
-  useEffect(() => {
-    return () => {
-      if (isDefined(timerRef.current)) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   return {
     isRefreshing,
