@@ -16,7 +16,6 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
 import { formatSize } from '../../../styles/format-size';
-import { isString } from '../../../utils/is-string';
 import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './create-new-wallet.form';
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 import { useCreateNewWalletStyles } from './create-new-wallet.styles';
@@ -32,7 +31,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
   const createNewWalletInitialValues: CreateNewWalletFormValues = useMemo(
     () => ({
       seedPhrase: initialSeedPhrase,
-      madeSeedPhraseBackup: isString(initialSeedPhrase)
+      madeSeedPhraseBackup: false
     }),
     [initialSeedPhrase]
   );

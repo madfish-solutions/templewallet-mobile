@@ -19,8 +19,5 @@ export const useSwapExchangeRateStyles = createUseStyles(({ colors }) => ({
   },
   infoValue: {
     color: colors.black
-  },
-  promotionText: {
-    color: colors.adding
   }
 }));

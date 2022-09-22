@@ -1,5 +1,6 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
+import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, View } from 'react-native';
@@ -8,6 +9,7 @@ import {
   getBestTradeExactInput,
   getTradeOpParams,
   getTradeOutputAmount,
+  getTradeOutputOperation,
   Trade,
   useAllRoutePairs,
   useRoutePairsCombinations,
@@ -40,6 +42,7 @@ import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/t
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
+import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
 import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
@@ -71,11 +74,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
     [allRoutePairs.data]
   );
 
-  const [bestTrade, setBestTrade] = useState<Trade>([]);
-
   const handleSubmit = async () => {
-    const inputMutezAmount = inputAssets.amount;
-
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
     const outputAssetSlug = getTokenSlug(outputAssets.asset);
 
@@ -86,14 +85,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      inputMutezAmount,
       bestTradeWithSlippageTolerance,
+      feeAmount,
       selectedAccount.publicKeyHash,
       tezos
     );
     const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
 
-    const opParams: Array<ParamsWithKind> = [...routingFeeOpParams, ...tradeOpParams].map(transferParams => ({
+    const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
       ...transferParams,
       kind: OpKind.TRANSACTION
     }));
@@ -134,16 +133,38 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
 
   const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
 
-  const inputMutezAmountWithFee = useMemo(
-    () => (inputAssets.amount ? inputAssets.amount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1) : undefined),
-    [inputAssets.amount]
+  const bestTrade = useMemo<Trade>(
+    () =>
+      inputAssets.amount && routePairsCombinations.length > 0
+        ? getBestTradeExactInput(inputAssets.amount, routePairsCombinations)
+        : [],
+    [inputAssets.amount, routePairsCombinations, outputAssets.asset]
   );
 
   const bestTradeWithSlippageTolerance = useTradeWithSlippageTolerance(
-    inputMutezAmountWithFee,
+    inputAssets.amount,
     bestTrade,
     slippageTolerance
   );
+
+  const { feeAmount, minimumReceivedAmount } = useMemo(() => {
+    const bestTradeWithSlippageToleranceOutput = getTradeOutputAmount(bestTradeWithSlippageTolerance);
+    const tradeOutputOperation = getTradeOutputOperation(bestTradeWithSlippageTolerance);
+
+    if (isDefined(bestTradeWithSlippageToleranceOutput) && isDefined(tradeOutputOperation)) {
+      const feeAmount = bestTradeWithSlippageToleranceOutput.minus(
+        tradeOutputOperation.bTokenAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1)
+      );
+      const minimumReceivedAmount = bestTradeWithSlippageToleranceOutput.minus(feeAmount);
+
+      return { feeAmount, minimumReceivedAmount };
+    } else {
+      const feeAmount = new BigNumber(0);
+      const minimumReceivedAmount = undefined;
+
+      return { feeAmount, minimumReceivedAmount };
+    }
+  }, [bestTradeWithSlippageTolerance]);
 
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true);
 
@@ -175,17 +196,15 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
   }, [searchValue, assetsList]);
 
   useEffect(() => {
-    if (inputMutezAmountWithFee && routePairsCombinations.length > 0) {
-      const bestTradeExactIn = getBestTradeExactInput(inputMutezAmountWithFee, routePairsCombinations);
-      const bestTradeOutput = getTradeOutputAmount(bestTradeExactIn);
+    if (bestTrade.length > 0) {
+      const bestTradeOutput = getTradeOutputAmount(bestTrade);
+      const displayedBestTradeOutput = isDefined(bestTradeOutput) ? bestTradeOutput.minus(feeAmount) : undefined;
 
-      setBestTrade(bestTradeExactIn);
-      setFieldValue('outputAssets.amount', bestTradeOutput, false);
+      setFieldValue('outputAssets.amount', displayedBestTradeOutput, false);
     } else {
-      setBestTrade([]);
       setFieldValue('outputAssets.amount', undefined, false);
     }
-  }, [inputMutezAmountWithFee, routePairsCombinations, outputAssets.asset]);
+  }, [bestTrade, feeAmount]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
@@ -257,7 +276,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
               inputAssets={inputAssets}
               outputAssets={outputAssets}
               bestTrade={bestTrade}
-              bestTradeWithSlippageTolerance={bestTradeWithSlippageTolerance}
+              minimumReceivedAmount={minimumReceivedAmount}
             />
           </View>
         </View>

@@ -8,6 +8,7 @@ import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
+import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
@@ -134,6 +135,7 @@ const DropdownComponent = <T extends unknown>({
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
+            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
           />
         </View>
 

@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
@@ -6,25 +7,20 @@ import { AssetAmountInterface } from '../../../../components/asset-amount-input/
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
-import { conditionalStyle } from '../../../../utils/conditional-style';
+import { isDefined } from '../../../../utils/is-defined';
 import { formatAssetAmount } from '../../../../utils/number.util';
 import { mutezToTz } from '../../../../utils/tezos.util';
-import { isPromotionTime, ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
   inputAssets: AssetAmountInterface;
   outputAssets: AssetAmountInterface;
   bestTrade: Trade;
-  bestTradeWithSlippageTolerance: Trade;
+  minimumReceivedAmount?: BigNumber;
 }
 
-export const SwapExchangeRate: FC<Props> = ({
-  inputAssets,
-  outputAssets,
-  bestTrade,
-  bestTradeWithSlippageTolerance
-}) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTrade, minimumReceivedAmount }) => {
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
@@ -41,15 +37,11 @@ export const SwapExchangeRate: FC<Props> = ({
     return undefined;
   }, [bestTrade, inputAssets.asset.decimals, outputAssets.asset.decimals]);
 
-  const minimumReceivedAmount = useMemo(() => {
-    if (bestTradeWithSlippageTolerance.length > 0) {
-      const lastTradeOperation = bestTradeWithSlippageTolerance[bestTradeWithSlippageTolerance.length - 1];
-
-      return mutezToTz(lastTradeOperation.bTokenAmount, outputAssets.asset.decimals);
-    }
-
-    return undefined;
-  }, [bestTradeWithSlippageTolerance, outputAssets.asset.decimals]);
+  const displayedMinimumReceivedAmount = useMemo(
+    () =>
+      isDefined(minimumReceivedAmount) ? mutezToTz(minimumReceivedAmount, outputAssets.asset.decimals) : undefined,
+    [minimumReceivedAmount, outputAssets.asset.decimals]
+  );
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',
@@ -69,9 +61,7 @@ export const SwapExchangeRate: FC<Props> = ({
           <Text style={styles.infoText}>Routing Fee</Text>
           <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
         </View>
-        <Text style={conditionalStyle(isPromotionTime, styles.promotionText, styles.infoValue)}>
-          {ROUTING_FEE_PERCENT}%
-        </Text>
+        <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Exchange rate</Text>
@@ -84,7 +74,9 @@ export const SwapExchangeRate: FC<Props> = ({
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Minimum received</Text>
         <Text style={styles.infoValue}>
-          {minimumReceivedAmount ? `${formatAssetAmount(minimumReceivedAmount)} ${outputAssets.asset.symbol}` : '---'}
+          {displayedMinimumReceivedAmount
+            ? `${formatAssetAmount(displayedMinimumReceivedAmount)} ${outputAssets.asset.symbol}`
+            : '---'}
         </Text>
       </View>
     </>

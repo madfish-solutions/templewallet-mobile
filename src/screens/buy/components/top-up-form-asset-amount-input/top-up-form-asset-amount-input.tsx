@@ -13,10 +13,12 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   name,
   label,
   assetsList = [],
+  singleAsset = false,
   editable,
   isSearchable = false,
   setSearchValue = emptyFn,
-  onValueChange = emptyFn
+  onValueChange = emptyFn,
+  onBlur = emptyFn
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<TopUpAssetAmountInterface>(name);
@@ -30,7 +32,10 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
     [onValueChange, formikContext.setFieldValue, name]
   );
 
-  const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
+  const handleBlur = useCallback(() => {
+    onBlur();
+    formikContext.setFieldTouched(name, true);
+  }, [formikContext.setFieldTouched]);
 
   return (
     <TopUpAssetAmountInput
@@ -38,6 +43,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       value={field.value}
       label={label}
       assetsList={assetsList}
+      singleAsset={singleAsset}
       isError={isError}
       meta={meta}
       isSearchable={isSearchable}

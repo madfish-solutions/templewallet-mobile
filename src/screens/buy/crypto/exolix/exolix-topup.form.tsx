@@ -3,18 +3,18 @@ import { number, object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../../../form/validation/messages';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface, TopUpOutputInterface } from '../../../../interfaces/topup.interface';
 
 export interface ExolixTopupFormValues {
   coinFrom: {
-    asset: CurrenciesInterface;
+    asset: TopUpInputInterface;
     amount?: BigNumber;
     min?: number;
     max?: number;
   };
   rate: number;
   coinTo: {
-    asset: CurrenciesInterface;
+    asset: TopUpOutputInterface;
     amount?: BigNumber;
   };
 }

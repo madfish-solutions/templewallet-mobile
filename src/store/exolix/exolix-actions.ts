@@ -1,14 +1,15 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { CurrenciesInterface, ExchangeDataInterface, ExchangePayload } from '../../interfaces/exolix.interface';
+import { ExchangeDataInterface, SubmitExchangePayload } from '../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../interfaces/topup.interface';
 import { createActions } from '../create-actions';
 
 export const setExolixStepAction = createAction<number>('exolix/SET_STEP');
 
-export const loadExolixCurrenciesAction = createActions<void, Array<CurrenciesInterface>, void>(
+export const loadExolixCurrenciesAction = createActions<void, Array<TopUpInputInterface>, void>(
   'exolix/LOAD_CURRENCIES'
 );
-export const loadExolixExchangeDataActions = createActions<ExchangePayload, ExchangeDataInterface | null, void>(
+export const loadExolixExchangeDataActions = createActions<SubmitExchangePayload, ExchangeDataInterface | null, void>(
   'exolix/LOAD_EXCHANGE_DATA'
 );
 

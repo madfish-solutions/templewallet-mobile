@@ -9,12 +9,12 @@ import { HideBalance } from '../../../../components/hide-balance/hide-balance';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { Label } from '../../../../components/label/label';
 import { useNumericInput } from '../../../../hooks/use-numeric-input.hook';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
-import { initialData } from '../../crypto/exolix/initial-step/initial-step.data';
+import { initialData } from '../../crypto/exolix/steps/initial-step/initial-step.data';
 import {
   renderTopUpTokenListItem,
   TopUpTokenDropdownItem
@@ -23,18 +23,26 @@ import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './top-up-
 import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styles';
 import { TopUpAssetValueText } from './top-up-asset-value-text';
 
-const renderTokenValue: DropdownValueComponent<CurrenciesInterface> = ({ value }) => (
-  <TopUpTokenDropdownItem token={value} actionIconName={IconNameEnum.TriangleDown} iconSize={formatSize(32)} />
+const renderTokenValue: DropdownValueComponent<TopUpInputInterface> = ({ value }) => (
+  <TopUpTokenDropdownItem
+    token={value}
+    actionIconName={IconNameEnum.TriangleDown}
+    iconSize={formatSize(32)}
+    isDropdownClosed
+  />
 );
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
-    value,
+    value = initialData.coinFrom,
     label,
     assetsList = [],
+    singleAsset = false,
+    isSearchable = false,
     isError = false,
     editable = true,
     selectionOptions = undefined,
+    setSearchValue,
     meta,
     onBlur,
     onFocus,
@@ -51,7 +59,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
 
     const amountInputRef = useRef<TextInput>(null);
 
-    const amount = value?.amount;
+    const amount = value.amount;
 
     const inputValueRef = useRef<BigNumber>();
 
@@ -84,10 +92,11 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     );
 
     const handleTokenChange = useCallback(
-      (newAsset?: CurrenciesInterface) => {
+      (newAsset?: TopUpInputInterface) => {
         if (isDefined(newAsset)) {
           onValueChange({
-            asset: newAsset
+            asset: newAsset,
+            amount: inputValueRef.current
           });
         }
       },
@@ -121,19 +130,21 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <Divider size={formatSize(8)} />
 
           <View style={styles.dropdownContainer}>
-            {editable && assetsList.length !== 0 ? (
+            {singleAsset ? (
+              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
+            ) : (
               <Dropdown
                 title="Assets"
                 value={value.asset}
                 list={assetsList}
-                equalityFn={(item, value) => item.code === (value ?? initialData.coinFrom.asset).code}
+                isSearchable={isSearchable}
+                equalityFn={(item, value) => item.code === value?.code && item.network === value.network}
+                setSearchValue={setSearchValue}
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
-                keyExtractor={(token: CurrenciesInterface) => token.code}
+                keyExtractor={(token: TopUpInputInterface, index) => `${index}_${token.code}_${token.network}`}
                 onValueChange={handleTokenChange}
               />
-            ) : (
-              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} />
             )}
           </View>
         </View>
@@ -143,9 +154,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
           <View style={styles.balanceContainer}>
             {isDefined(value.min) && (
               <View style={styles.balanceRow}>
-                <Text style={[styles.balanceDescription, conditionalStyle(isMinError, styles.textError)]}>
-                  {'Min:'}
-                </Text>
+                <Text style={[styles.balanceDescription, conditionalStyle(isMinError, styles.textError)]}>Min:</Text>
                 <Divider size={formatSize(4)} />
                 <HideBalance style={styles.balanceValueText}>
                   <TopUpAssetValueText
@@ -153,15 +162,16 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                     style={[styles.balanceValueText, conditionalStyle(isMinError, styles.textError)]}
                   />
                 </HideBalance>
+                <Text style={[styles.balanceValueText, conditionalStyle(isMinError, styles.textError)]}>
+                  {' ' + value?.asset.code}
+                </Text>
               </View>
             )}
           </View>
           <View style={styles.balanceContainer}>
             {isDefined(value.max) && (
               <View style={styles.balanceRow}>
-                <Text style={[styles.balanceDescription, conditionalStyle(isMaxError, styles.textError)]}>
-                  {'Max:'}
-                </Text>
+                <Text style={[styles.balanceDescription, conditionalStyle(isMaxError, styles.textError)]}>Max:</Text>
                 <Divider size={formatSize(4)} />
                 <HideBalance style={styles.balanceValueText}>
                   <TopUpAssetValueText
@@ -169,6 +179,9 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                     style={[styles.balanceValueText, conditionalStyle(isMaxError, styles.textError)]}
                   />
                 </HideBalance>
+                <Text style={[styles.balanceValueText, conditionalStyle(isMaxError, styles.textError)]}>
+                  {' ' + value?.asset.code}
+                </Text>
               </View>
             )}
           </View>

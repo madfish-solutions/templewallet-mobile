@@ -26,6 +26,10 @@ import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
 import DealIcon from './assets/deal.svg';
+import Delegate1Icon from './assets/delegate-1.svg';
+import Delegate2Icon from './assets/delegate-2.svg';
+import Delegate3Icon from './assets/delegate-3.svg';
+import Delegate4Icon from './assets/delegate-4.svg';
 import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
@@ -104,6 +108,7 @@ import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
+import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
@@ -171,6 +176,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
+  [IconNameEnum.Utorg]: UtorgIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
@@ -209,6 +215,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LogOut]: LogOutIcon,
   [IconNameEnum.Clipboard]: ClipboardIcon,
   [IconNameEnum.Deal]: DealIcon,
+  [IconNameEnum.Delegate1]: Delegate1Icon,
+  [IconNameEnum.Delegate2]: Delegate2Icon,
+  [IconNameEnum.Delegate3]: Delegate3Icon,
+  [IconNameEnum.Delegate4]: Delegate4Icon,
   [IconNameEnum.Gear]: GearIcon,
   [IconNameEnum.Link]: LinkIcon,
   [IconNameEnum.AlertShield]: AlertShield,

@@ -3,11 +3,11 @@ import { number, object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from '../../../../form/validation/big-number';
 import { makeRequiredErrorMessage } from '../../../../form/validation/messages';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 
 export interface AliceBobTopupFormValues {
   exchangeInfo: {
-    asset: CurrenciesInterface;
+    asset: Pick<TopUpInputInterface, 'name' | 'code'>;
     amount?: BigNumber;
     min?: number;
     max?: number;
