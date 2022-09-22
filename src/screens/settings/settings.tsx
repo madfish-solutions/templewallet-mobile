@@ -32,7 +32,6 @@ import { useSettingsStyles } from './settings.styles';
 
 const SHARE_CONTENT =
   'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile';
-const SHARE_URL_IOS = 'https://templewallet.com/mobile';
 
 export const Settings = () => {
   const styles = useSettingsStyles();
@@ -56,8 +55,7 @@ export const Settings = () => {
   const handleShare = useCallback(() => {
     trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
     Share.share({
-      message: SHARE_CONTENT,
-      url: SHARE_URL_IOS
+      message: SHARE_CONTENT
     })
       .then(() => {
         trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
