@@ -44,7 +44,7 @@ import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
+import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -90,7 +90,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       selectedAccount.publicKeyHash,
       tezos
     );
-    const tradeOpParams = await getTradeOpParams(bestTradeWithSlippageTolerance, selectedAccount.publicKeyHash, tezos);
+    const tradeOpParams = await getTradeOpParams(
+      bestTradeWithSlippageTolerance,
+      selectedAccount.publicKeyHash,
+      tezos,
+      ROUTING_FEE_ADDRESS
+    );
 
     const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
       ...transferParams,
