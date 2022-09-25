@@ -22,7 +22,7 @@ interface appCheckPayload extends VersionsInterface {
 
 const appCheck = firebase.appCheck();
 
-export const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
+const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(checkApp.submit),
     withSelectedUserId(state$),

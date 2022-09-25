@@ -24,6 +24,8 @@
     "no-void": "off",
     "no-shadow": "off",
     "react-hooks/exhaustive-deps": "off",
+    "import/no-duplicates": "error",
+    "import/no-self-import": "error",
     "import/order": [
       "error",
       {

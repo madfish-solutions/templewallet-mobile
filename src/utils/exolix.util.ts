@@ -41,7 +41,7 @@ export const loadExolixCurrencies = async (): Promise<Array<TopUpInputInterface>
     );
 };
 
-export const loadCurrency = async (page = 1) =>
+const loadCurrency = async (page = 1) =>
   exolixApi
     .get<ExolixCurrenciesResponseInterface>('/currencies', {
       params: { size: currenciesLimit, page, withNetworks: true }
