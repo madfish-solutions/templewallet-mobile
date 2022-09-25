@@ -8,7 +8,7 @@ import { BakerRewardItem } from './baker-reward-item/baker-reward-item';
 import { useBakerRewardsListStyles } from './baker-rewards-list.styles';
 import { reduceFunction } from './utils/reduce-function';
 
-export type RewardsPerEventHistoryItem = Partial<
+type RewardsPerEventHistoryItem = Partial<
   Record<
     'rewardPerOwnBlock' | 'rewardPerEndorsement' | 'rewardPerFutureBlock' | 'rewardPerFutureEndorsement',
     BigNumber

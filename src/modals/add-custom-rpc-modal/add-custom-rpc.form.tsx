@@ -3,7 +3,7 @@ import { object, SchemaOf, string } from 'yup';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { urlValidation } from '../../form/validation/url';
 
-export type AddCustomRpcFormValues = {
+type AddCustomRpcFormValues = {
   name: string;
   url: string;
 };
