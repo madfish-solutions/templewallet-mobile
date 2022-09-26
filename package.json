@@ -24,7 +24,7 @@
     "clear:android": "cd android && ./gradlew clean",
     "clear:ios": "rm -rf ios/Pods",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
-    "find-deadcode": "ts-prune"
+    "find-deadcode": "ts-prune --error"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.1.3",
