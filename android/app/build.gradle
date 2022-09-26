@@ -136,6 +136,11 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    compileOptions {
+        sourceCompatibility 1.11
+        targetCompatibility 1.11
+    }
+
     defaultConfig {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
