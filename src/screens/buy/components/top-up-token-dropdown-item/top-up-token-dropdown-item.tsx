@@ -6,15 +6,15 @@ import { DropdownListItemComponent } from '../../../../components/dropdown/dropd
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { StaticTokenIcon } from '../../../../components/static-token-icon/static-token-icon';
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
+import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
 import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
 import { getTruncatedProps } from '../../../../utils/style.util';
-import { getProperNetworkFullName } from '../../crypto/exolix/initial-step/initial-step.utils';
+import { getProperNetworkFullName } from '../../crypto/exolix/steps/initial-step/initial-step.utils';
 import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
 
 interface Props {
-  token?: CurrenciesInterface;
+  token?: TopUpInputInterface;
   actionIconName?: IconNameEnum;
   iconSize?: number;
   isDropdownClosed?: boolean;
@@ -29,13 +29,12 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
   const styles = useTopUpTokenDropdownItemStyles();
 
   const tokenIcon = useMemo(() => {
-    switch (token?.code) {
-      case 'UAH':
-        return <Icon name={IconNameEnum.Uah} size={iconSize} />;
-      case 'XTZ':
-        return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
-      default:
-        return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
+    if (token?.code === 'UAH' && token?.name === 'Hryvnia') {
+      return <Icon name={IconNameEnum.Uah} size={iconSize} />;
+    } else if (token?.code === 'XTZ') {
+      return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
+    } else {
+      return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
     }
   }, [token]);
 
@@ -48,7 +47,9 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
       <View style={styles.infoContainer}>
         <View style={[styles.row, styles.justifySpaceBetween]}>
           <View style={styles.row}>
-            <Text {...getTruncatedProps(styles.textRegular15)}>{token?.code}</Text>
+            <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
+              {token?.code}
+            </Text>
             <Divider size={formatSize(8)} />
             {!isDropdownClosed && (
               <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
@@ -59,18 +60,20 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
 
-        <View style={styles.row}>
-          <Text {...getTruncatedProps(styles.textRegular13)}>
-            {isDropdownClosed ? token?.networkShortName ?? token?.networkFullName : getProperNetworkFullName(token)}
-          </Text>
+        {token?.name !== '' && (
+          <View style={styles.row}>
+            <Text {...getTruncatedProps(styles.textRegular13)}>
+              {isDropdownClosed ? token?.networkShortName ?? token?.networkFullName : getProperNetworkFullName(token)}
+            </Text>
 
-          <Divider size={formatSize(4)} />
-        </View>
+            <Divider size={formatSize(4)} />
+          </View>
+        )}
       </View>
     </View>
   );
 };
 
-export const renderTopUpTokenListItem: DropdownListItemComponent<CurrenciesInterface> = ({ item, isSelected }) => (
+export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInputInterface> = ({ item, isSelected }) => (
   <TopUpTokenDropdownItem token={item} actionIconName={isSelected ? IconNameEnum.Check : undefined} />
 );

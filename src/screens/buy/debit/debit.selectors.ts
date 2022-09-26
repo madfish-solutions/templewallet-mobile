@@ -1,0 +1,6 @@
+export enum DebitSelectors {
+  MoonPay = 'MOONPAY_TOPUP_OPTION_PRESS',
+  Utorg = 'UTORG_TOPUP_OPTION_PRESS',
+  AliceBob = 'ALICE_BOB_TOPUP_OPTION_PRESS',
+  ChainBits = 'CHAINBITS_TOPUP_OPTION_PRESS'
+}

@@ -3,25 +3,25 @@ import React, { FC, useEffect, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from '../../../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../../../components/divider/divider';
-import { Icon } from '../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../../../../components/screen-container/screen-container';
-import { BlackTextLink } from '../../../../../components/text-link/black-text-link';
-import { useTokenExchangeRateGetter } from '../../../../../hooks/use-token-exchange-rate-getter.hook';
-import { loadExolixExchangeDataActions } from '../../../../../store/exolix/exolix-actions';
-import { useSelectedAccountSelector } from '../../../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../../../styles/format-size';
-import { isDefined } from '../../../../../utils/is-defined';
-import { TopUpAssetAmountInterface } from '../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
-import { TopUpFormAssetAmountInput } from '../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
-import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../config';
-import { ErrorComponent } from '../error-component';
-import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../exolix-topup.form';
-import { useFilteredCurrenciesList } from '../use-filtered-currencies-list.hook';
+import { ButtonLargePrimary } from '../../../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from '../../../../../../components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from '../../../../../../components/disclaimer/disclaimer';
+import { Divider } from '../../../../../../components/divider/divider';
+import { Icon } from '../../../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../../../components/icon/icon-name.enum';
+import { ScreenContainer } from '../../../../../../components/screen-container/screen-container';
+import { BlackTextLink } from '../../../../../../components/text-link/black-text-link';
+import { useTokenExchangeRateGetter } from '../../../../../../hooks/use-token-exchange-rate-getter.hook';
+import { loadExolixExchangeDataActions } from '../../../../../../store/exolix/exolix-actions';
+import { useSelectedAccountSelector } from '../../../../../../store/wallet/wallet-selectors';
+import { formatSize } from '../../../../../../styles/format-size';
+import { isDefined } from '../../../../../../utils/is-defined';
+import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
+import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
+import { ErrorComponent } from '../../components/error-component';
+import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../../config';
+import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
+import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
 import { initialData } from './initial-step.data';
 import { useInitialStepStyles } from './initial-step.styles';
 import { getProperNetworkFullName, loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
@@ -61,7 +61,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
-  const { values, isValid, submitForm, setFieldValue } = formik;
+  const { values, isValid, submitForm, setFieldValue, submitCount } = formik;
 
   const inputCurrency = values.coinFrom.asset;
   const outputCurrency = values.coinTo.asset;
@@ -170,7 +170,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
             </View>
           </ScreenContainer>
           <ButtonsFloatingContainer>
-            <ButtonLargePrimary disabled={!isValid} title="Top Up" onPress={submitForm} />
+            <ButtonLargePrimary title="Top Up" disabled={submitCount !== 0 && !isValid} onPress={submitForm} />
           </ButtonsFloatingContainer>
         </>
       ) : (

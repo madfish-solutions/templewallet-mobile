@@ -3704,6 +3704,7 @@
     "@types/react-test-renderer" ">=16.9.0"
     react-error-boundary "^3.1.0"
 
+
 "@tezos-domains/core@1.20.0", "@tezos-domains/core@^1.20.0":
   version "1.20.0"
   resolved "https://registry.yarnpkg.com/@tezos-domains/core/-/core-1.20.0.tgz#9a8670d9065228d10f3967a02968cf84c85408b3"

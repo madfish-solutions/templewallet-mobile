@@ -1,18 +1,18 @@
 import { useMemo, useState } from 'react';
 
-import { CurrenciesInterface } from '../../../../interfaces/exolix.interface';
-import { useExolixCurrencies } from '../../../../store/exolix/exolix-selectors';
-import { isString } from '../../../../utils/is-string';
+import { TopUpInputInterface } from '../../../../../interfaces/topup.interface';
+import { useExolixCurrencies } from '../../../../../store/exolix/exolix-selectors';
+import { isString } from '../../../../../utils/is-string';
 
 export const useFilteredCurrenciesList = () => {
   const currencies = useExolixCurrencies();
   const [searchValue, setSearchValue] = useState<string>();
-  const filteredCurrenciesList = useMemo<CurrenciesInterface[]>(() => {
+  const filteredCurrenciesList = useMemo<TopUpInputInterface[]>(() => {
     const sourceArray = currencies;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
-      const result: CurrenciesInterface[] = [];
+      const result: TopUpInputInterface[] = [];
 
       for (const asset of sourceArray) {
         const { name, code } = asset;

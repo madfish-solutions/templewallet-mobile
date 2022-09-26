@@ -56,7 +56,6 @@ export const Wallet = () => {
 
         <CollectiblesHomeSwipeButton />
       </HeaderCard>
-
       <TokenList />
     </>
   );

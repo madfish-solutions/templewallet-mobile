@@ -30,6 +30,7 @@ export enum ScreensEnum {
   Buy = 'Buy',
   Exolix = 'Exolix',
   AliceBob = 'AliceBob',
+  Utorg = 'Utorg',
 
   /** Settings stack **/
   Settings = 'Settings',
@@ -72,6 +73,7 @@ export type ScreensParamList = {
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.Exolix]: undefined;
   [ScreensEnum.AliceBob]: { min: number; max: number };
+  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

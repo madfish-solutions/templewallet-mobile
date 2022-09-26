@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from '../../../components/checkbox/checkbox';
@@ -8,6 +8,7 @@ import { Divider } from '../../../components/divider/divider';
 import { isAndroid } from '../../../config/system';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
+import { useRefresh } from '../../../hooks/use-refresh.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
 import {
@@ -58,6 +59,7 @@ export const TokenList: FC = () => {
   const { metadata } = useNetworkInfo();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
+  const { isRefreshing, handleRefresh } = useRefresh();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -116,6 +118,7 @@ export const TokenList: FC = () => {
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
           windowSize={11}
           updateCellsBatchingPeriod={150}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         />
       </View>
     </>

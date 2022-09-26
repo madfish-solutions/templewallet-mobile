@@ -13,6 +13,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
+import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
@@ -21,6 +22,7 @@ import { Activity } from '../screens/activity/activity';
 import { Buy } from '../screens/buy/buy';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
+import { Utorg } from '../screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { CreateAccount } from '../screens/create-account/create-account';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
@@ -67,6 +69,8 @@ export const MainStackScreen = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
+  const blockSubscription = useBlockSubscription();
+
   const { metadata } = useNetworkInfo();
 
   useAppLockTimer();
@@ -82,7 +86,11 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash, selectedRpcUrl]);
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
+    blockSubscription.block.header,
+    selectedAccount.publicKeyHash,
+    selectedRpcUrl
+  ]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
@@ -179,6 +187,12 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.AliceBob}
                 component={AliceBob}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.Utorg}
+                component={Utorg}
                 options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
               />
 
