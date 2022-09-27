@@ -13,6 +13,7 @@ import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
+import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
@@ -68,6 +69,8 @@ export const MainStackScreen = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
+  const blockSubscription = useBlockSubscription();
+
   const { metadata } = useNetworkInfo();
 
   useAppLockTimer();
@@ -83,7 +86,11 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [selectedAccount.publicKeyHash, selectedRpcUrl]);
+  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
+    blockSubscription.block.header,
+    selectedAccount.publicKeyHash,
+    selectedRpcUrl
+  ]);
   useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (

@@ -1,23 +1,19 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { loadAssetContract, Trade, TokenStandardEnum, getTradeOutputOperation } from 'swap-router-sdk';
+import { getTradeOutputOperation, loadAssetContract, TokenStandardEnum, Trade } from 'swap-router-sdk';
 
 import { isDefined } from '../../utils/is-defined';
-import { ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO } from './config';
+import { ROUTING_FEE_ADDRESS } from './config';
 
 export const getRoutingFeeTransferParams = async (
-  outputTokenMutezAmount: BigNumber | undefined,
   trade: Trade,
+  feeAmount: BigNumber,
   senderPublicKeyHash: string,
   tezos: TezosToolkit
 ) => {
   const tradeOutputOperation = getTradeOutputOperation(trade);
 
-  if (outputTokenMutezAmount && isDefined(tradeOutputOperation)) {
-    const feeAmount = outputTokenMutezAmount.minus(
-      tradeOutputOperation.bTokenAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1)
-    );
-
+  if (isDefined(tradeOutputOperation)) {
     if (tradeOutputOperation.bTokenSlug === 'tez') {
       return [
         {

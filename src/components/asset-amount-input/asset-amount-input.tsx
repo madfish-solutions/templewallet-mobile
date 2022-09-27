@@ -73,6 +73,13 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
 
+  const token = useMemo(
+    () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
+    [assetsList, value.asset]
+  );
+
+  const balance = useMemo(() => token?.balance ?? value.asset.balance, [token, value.asset.balance]);
+
   const { isTezosNode } = useNetworkInfo();
 
   const amountInputRef = useRef<TextInput>(null);
@@ -250,7 +257,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             <Divider size={formatSize(4)} />
             <HideBalance style={styles.balanceValueText}>
               <AssetValueText
-                amount={value.asset.balance}
+                amount={balance}
                 asset={value.asset}
                 style={styles.balanceValueText}
                 convertToDollar={!isTokenInputType}
