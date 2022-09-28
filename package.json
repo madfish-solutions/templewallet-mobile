@@ -6,7 +6,7 @@
     "postinstall": "rn-nodeify --install 'react-native-randombytes' --hack && bash postinstall.sh",
     "android": "react-native run-android",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
-    "android:release:apk": "cd android && ./gradlew assembleRelease",
+    "android:release:apk": "cd android && ./gradlew app:assembleRelease",
     "android:test-flight": "cd android && bundle exec fastlane alpha",
     "ios": "react-native run-ios",
     "ios:pods": "cd ios && pod install",
