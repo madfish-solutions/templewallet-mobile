@@ -8,7 +8,7 @@ import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';
 
-export const BackButton: FC = () => {
+const BackButton: FC = () => {
   const { goBack } = useNavigation();
 
   const handleOnPress = () => {

@@ -22,12 +22,12 @@ export interface BakerInterface {
   config?: BakerConfig;
 }
 
-export interface BakerValueHistoryItem<T> {
+interface BakerValueHistoryItem<T> {
   cycle: number;
   value: T;
 }
 
-export interface BakerConfig {
+interface BakerConfig {
   address: string;
   fee: BakerValueHistoryItem<number>[];
   minDelegation: BakerValueHistoryItem<number>[];

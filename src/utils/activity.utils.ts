@@ -32,7 +32,7 @@ export const groupActivitiesByHash = (
   return transformActivityInterfaceToActivityGroups(enrichedOperations);
 };
 
-export const transformActivityInterfaceToActivityGroups = (activites: ActivityInterface[]) => {
+const transformActivityInterfaceToActivityGroups = (activites: ActivityInterface[]) => {
   const result: ActivityGroup[] = [];
 
   const activities = activites.sort((a, b) => b.timestamp - a.timestamp);

@@ -83,21 +83,3 @@ export const mockOperations: Array<OperationInterface> = [
     }
   }
 ];
-
-export const mockExtractEntrypoint = {
-  entrypoint: 'update_operators',
-  value: [
-    {
-      prim: 'Left',
-      args: [
-        {
-          prim: 'Pair',
-          args: [
-            { string: 'tz1N9qzry2ko1gwTK6HKWamZZK6FGx3Vr89U' },
-            { prim: 'Pair', args: [{ string: 'KT1JyPE1BWdYoRGBvvKhEPbcVRd3C9NCCwQC' }, { int: '0' }] }
-          ]
-        }
-      ]
-    }
-  ]
-};
