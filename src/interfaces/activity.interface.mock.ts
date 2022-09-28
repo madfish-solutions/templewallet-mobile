@@ -1,7 +1,6 @@
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { groupActivitiesByHash } from '../utils/activity.utils';
-import { ActivityGroup, ActivityInterface } from './activity.interface';
+import { ActivityInterface } from './activity.interface';
 import { TzktTokenTransfer } from './tzkt.interface';
 
 const mockMember = {
@@ -95,19 +94,6 @@ export const mockOperations: Array<ActivityInterface> = [
 ];
 
 export const mockTransfers: Array<TzktTokenTransfer> = [mockPendingTransfer, mockAppliedTransfer];
-
-export const mockAppliedActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
-  [mockAppliedOperation, mockAppliedDelegationOperation],
-  [],
-  [],
-  [mockAppliedTransfer]
-);
-export const mockPendingActivityGroups: Array<ActivityGroup> = groupActivitiesByHash(
-  [mockPendingOperation],
-  [],
-  [],
-  [mockPendingTransfer]
-);
 
 export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
   {

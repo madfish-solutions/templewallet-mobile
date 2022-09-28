@@ -1,4 +1,4 @@
-export interface ExchangeCoin {
+interface ExchangeCoin {
   coinCode: string;
   coinName: string;
   icon: string;
@@ -8,7 +8,7 @@ export interface ExchangeCoin {
   networkShortName: string;
 }
 
-export interface ExchangeHash {
+interface ExchangeHash {
   hash: string | null;
   link: string | null;
 }

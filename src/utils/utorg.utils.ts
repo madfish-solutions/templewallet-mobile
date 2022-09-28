@@ -55,7 +55,7 @@ export const getExchangeRate = (fromCurrency: string, paymentAmount?: BigNumber)
     res => Math.round((res / finalPaymentAmount) * 10000) / 10000
   );
 };
-export const getCurrenciesInfo = () =>
+const getCurrenciesInfo = () =>
   utorgApi.post<{ data: utorgCurrencyInfo[] }>('/settings/currency').then(r => r.data.data);
 
 export const getMinMaxExchangeValue = () =>

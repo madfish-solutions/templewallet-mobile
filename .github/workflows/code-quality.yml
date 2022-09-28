@@ -37,6 +37,9 @@ jobs:
       - name: Check TypeScript
         run: yarn ts && yarn ts:e2e
 
+      - name: Find deadcode
+        run: yarn find-deadcode
+
       - name: Check ESLint
         run: yarn lint
 

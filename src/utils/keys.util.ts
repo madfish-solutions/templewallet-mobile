@@ -11,8 +11,6 @@ import { isString } from './is-string';
 
 const TEZOS_BIP44_COINTYPE = 1729;
 
-export const trimSeed = (seed: string) => seed.replace(/\n/g, ' ').trim();
-
 export const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
   const derivedSeed = isString(derivationPath) ? deriveSeed(seed, derivationPath) : seed;
 

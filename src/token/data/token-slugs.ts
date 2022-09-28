@@ -8,7 +8,7 @@ export const LIQUIDITY_BAKING_LP_SLUG = getTokenSlug({
   id: LIQUIDITY_BAKING_LP_TOKEN_ID
 });
 
-export const TZ_BTC_TOKEN_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn';
+const TZ_BTC_TOKEN_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn';
 const TZ_BTC_TOKEN_ID = 0;
 
 export const TZ_BTC_TOKEN_SLUG = getTokenSlug({

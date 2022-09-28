@@ -3,8 +3,6 @@ import { Text, View } from 'react-native';
 
 import { useCountdownStyles } from './countdown.styles';
 
-export const BLOCK_DURATION = 30000;
-
 interface Props {
   endTimestamp: number;
 }

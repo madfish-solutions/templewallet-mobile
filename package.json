@@ -24,7 +24,8 @@
     "clear:android": "cd android && ./gradlew clean",
     "clear:ios": "rm -rf ios/Pods",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
-    "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi"
+    "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi",
+    "find-deadcode": "ts-prune --error"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.1.4",
@@ -156,6 +157,7 @@
     "redux-flipper": "^2.0.2",
     "rn-nodeify": "^10.3.0",
     "ts-node": "^10.9.1",
+    "ts-prune": "^0.10.3",
     "typescript": "^4.8.3"
   },
   "resolutions": {
