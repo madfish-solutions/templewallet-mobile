@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useCallback } from 'react';
+import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -24,9 +24,14 @@ import { changeTheme } from '../../store/settings/settings-actions';
 import { useFiatCurrencySelector, useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { SettingsHeader } from './settings-header/settings-header';
+import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
+
+const SHARE_CONTENT =
+  'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile';
 
 export const Settings = () => {
   const styles = useSettingsStyles();
@@ -34,6 +39,8 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
+
+  const { trackEvent } = useAnalytics();
 
   const theme = useThemeSelector();
   const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
@@ -44,6 +51,19 @@ export const Settings = () => {
 
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
+
+  const handleShare = useCallback(() => {
+    trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
+    Share.share({
+      message: SHARE_CONTENT
+    })
+      .then(() => {
+        trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
+      })
+      .catch(() => {
+        trackEvent(SettingsSelectors.ShareError, AnalyticsEventCategory.ButtonPress);
+      });
+  }, [trackEvent]);
 
   return (
     <>
@@ -118,6 +138,11 @@ export const Settings = () => {
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)}>
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+            <WhiteContainerDivider />
+            <WhiteContainerAction onPress={handleShare}>
+              <WhiteContainerText text="Share Temple Wallet" />
+              <Icon name={IconNameEnum.Share} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
           <Divider />
