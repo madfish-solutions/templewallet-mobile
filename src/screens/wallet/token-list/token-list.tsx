@@ -5,8 +5,9 @@ import { useDispatch } from 'react-redux';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
-import { FakeRefreshControl } from '../../../components/fake-refresh-control/fake-refresh-control';
+import { RefreshControl } from '../../../components/refresh-control/refresh-control';
 import { isAndroid } from '../../../config/system';
+import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
@@ -59,6 +60,7 @@ export const TokenList: FC = () => {
   const { metadata } = useNetworkInfo();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
+  const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
@@ -117,7 +119,7 @@ export const TokenList: FC = () => {
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
           windowSize={11}
           updateCellsBatchingPeriod={150}
-          refreshControl={<FakeRefreshControl />}
+          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
         />
       </View>
     </>

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { RefreshControlProps } from 'react-native';
 
-import { useActiveTimer } from '../../hooks/use-active-timer.hook';
-import { RefreshControl } from '../refresh-control/refresh-control';
+import { useActiveTimer } from './use-active-timer.hook';
 
 const FIXED_TIME = 1000;
 const VARIABLE_TIME = 1000;
 
-export const FakeRefreshControl = () => {
+export const useFakeRefreshControlProps = (): RefreshControlProps => {
   const [isRefreshing, setRefreshing] = useState(false);
   const { activeTimer, clearActiveTimer } = useActiveTimer();
 
@@ -16,5 +16,5 @@ export const FakeRefreshControl = () => {
     activeTimer.current = setTimeout(() => setRefreshing(false), Math.random() * VARIABLE_TIME + FIXED_TIME);
   };
 
-  return <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />;
+  return { refreshing: isRefreshing, onRefresh: handleRefresh };
 };
