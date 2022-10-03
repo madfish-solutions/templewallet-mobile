@@ -10,3 +10,15 @@ deprecated_types_replace_string="} from 'react-native'\nimport { ViewPropTypes }
 
 sed -i "" "s/  ViewPropTypes,//" node_modules/react-native-camera/src/RNCamera.js
 sed -i "" "s/} from 'react-native';/$deprecated_types_replace_string/" node_modules/react-native-camera/src/RNCamera.js
+
+sed -i "" "s/, ViewPropTypes//" node_modules/react-native-snap-carousel/src/carousel/Carousel.js
+sed -i "" "s/} from 'react-native';/$deprecated_types_replace_string/" node_modules/react-native-snap-carousel/src/carousel/Carousel.js
+
+sed -i "" "s/, ViewPropTypes//" node_modules/react-native-snap-carousel/src/pagination/Pagination.js
+sed -i "" "s/} from 'react-native';/$deprecated_types_replace_string/" node_modules/react-native-snap-carousel/src/pagination/Pagination.js
+
+sed -i "" "s/, ViewPropTypes//" node_modules/react-native-snap-carousel/src/pagination/PaginationDot.js
+sed -i "" "s/} from 'react-native';/$deprecated_types_replace_string/" node_modules/react-native-snap-carousel/src/pagination/PaginationDot.js
+
+sed -i "" "s/, ViewPropTypes//" node_modules/react-native-snap-carousel/src/parallaximage/ParallaxImage.js
+sed -i "" "s/} from 'react-native';/$deprecated_types_replace_string/" node_modules/react-native-snap-carousel/src/parallaximage/ParallaxImage.js
