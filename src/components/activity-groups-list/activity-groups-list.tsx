@@ -1,11 +1,11 @@
 import React, { FC, useMemo } from 'react';
-import { RefreshControl, SectionList, Text } from 'react-native';
+import { SectionList, Text } from 'react-native';
 
 import { emptyFn } from '../../config/general';
-import { useRefresh } from '../../hooks/use-refresh.hook';
 import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
 import { isTheSameDay, isToday, isYesterday } from '../../utils/date.utils';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
+import { FakeRefreshControl } from '../fake-refresh-control/fake-refresh-control';
 import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
@@ -16,8 +16,6 @@ interface Props {
 
 export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = emptyFn }) => {
   const styles = useActivityGroupsListStyles();
-
-  const { isRefreshing, handleRefresh } = useRefresh();
 
   const sections = useMemo(() => {
     const result = [];
@@ -59,7 +57,7 @@ export const ActivityGroupsList: FC<Props> = ({ activityGroups, handleUpdate = e
         keyExtractor={item => item[0].hash}
         renderItem={({ item }) => <ActivityGroupItem group={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
+        refreshControl={<FakeRefreshControl />}
       />
     </>
   );
