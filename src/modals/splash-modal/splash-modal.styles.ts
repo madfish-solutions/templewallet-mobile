@@ -9,7 +9,7 @@ export const useSplashModalStyles = createUseStyles(({ colors }) => ({
     zIndex: zIndexEnum.PasswordLockScreen,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white
+    backgroundColor: colors.pageBG
   },
   container: { justifyContent: 'center', flex: 1 }
 }));
