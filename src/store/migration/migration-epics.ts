@@ -4,6 +4,7 @@ import { map, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
+import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
 import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { RootState } from '../create-store';
@@ -18,7 +19,8 @@ import {
   migrateQuipuApy,
   migrateTokensMetadata,
   migrateTokenSuggestion,
-  setNewTokensMetadata
+  setNewTokensMetadata,
+  updateSirsTokenAction
 } from './migration-actions';
 
 const APX_TOKEN_SLUG = 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN_0';
@@ -94,10 +96,37 @@ const migrateQuipuApyEpic: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
+const updateSirsTokenEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(updateSirsTokenAction),
+    withLatestFrom(state$),
+    concatMap(([, rootState]) => {
+      const existingMetadataSlugs = Object.keys(rootState.tokensMetadata.metadataRecord);
+
+      if (!existingMetadataSlugs.includes(LIQUIDITY_BAKING_LP_SLUG)) {
+        const newTokensMetadata = {
+          ...rootState.tokensMetadata.metadataRecord,
+          [LIQUIDITY_BAKING_LP_SLUG]: {
+            ...rootState.tokensMetadata.metadataRecord[LIQUIDITY_BAKING_LP_SLUG],
+            decimals: 0,
+            name: 'Sirius',
+            symbol: 'SIRS',
+            thumbnailUri: 'ipfs://QmNXQPkRACxaR17cht5ZWaaKiQy46qfCwNVT5FGZy6qnyp'
+          }
+        };
+
+        return [setNewTokensMetadata(newTokensMetadata)];
+      }
+
+      return [];
+    })
+  );
+
 export const migrationEpics = combineEpics(
   migrateTokensMetadataEpic,
   addDcpTokensMetadataEpic,
   migrateTokenSuggestionEpic,
   migrateIsShownDomainNameEpic,
-  migrateQuipuApyEpic
+  migrateQuipuApyEpic,
+  updateSirsTokenEpic
 );
