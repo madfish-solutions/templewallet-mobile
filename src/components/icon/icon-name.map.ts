@@ -65,6 +65,8 @@ import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
+import NotificationsReadIcon from './assets/notifications-read.svg';
+import NotificationsUnreadIcon from './assets/notifications-unread.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -133,6 +135,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CycleStatusUnlocked]: CycleStatusUnlockedIcon,
   [IconNameEnum.BookOpen]: BookOpenIcon,
   [IconNameEnum.Terminal]: TerminalIcon,
+  [IconNameEnum.NotificationsRead]: NotificationsReadIcon,
+  [IconNameEnum.NotificationsUnread]: NotificationsUnreadIcon,
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.Diez]: DiezIcon,
   [IconNameEnum.FaceId]: FaceIdIcon,

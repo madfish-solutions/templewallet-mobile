@@ -3,6 +3,7 @@ import { RootState } from './create-store';
 import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
 import { mockExolixState } from './exolix/exolix-state.mock';
+import { mockNewsState } from './news/news-state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
 import { mockTokensMetadataState } from './tokens-metadata/tokens-metadata-state.mock';
@@ -16,5 +17,6 @@ export const mockRootState: RootState = {
   security: mockSecurityState,
   dApps: mockDAppsState,
   currency: mockCurrencyState,
+  newsState: mockNewsState,
   exolix: mockExolixState
 };

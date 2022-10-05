@@ -11,6 +11,8 @@ export enum IconNameEnum {
   CycleStatusFuture = 'CycleStatusFuture',
   BookOpen = 'BookOpen',
   Terminal = 'Terminal',
+  NotificationsUnread = 'NotificationsUnread',
+  NotificationsRead = 'NotificationsRead',
   Download = 'Download',
   Diez = 'Diez',
   FaceId = 'FaceId',
