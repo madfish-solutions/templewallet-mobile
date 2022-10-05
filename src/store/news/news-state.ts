@@ -1,16 +1,15 @@
 import { EmptyObject } from '@reduxjs/toolkit';
 
 import { NewsNotificationInterface } from '../../interfaces/news.interface';
+import { welcomeNewsNotifications } from './news-data';
 
 export interface NewsState {
   news: Array<NewsNotificationInterface>;
-  readNewsIds: Array<string>;
   loading: boolean;
 }
 
 export const newsInitialState: NewsState = {
-  news: [],
-  readNewsIds: [],
+  news: welcomeNewsNotifications,
   loading: false
 };
 

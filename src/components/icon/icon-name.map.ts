@@ -64,6 +64,8 @@ import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
+import NewsReadIcon from './assets/news-read.svg';
+import NewsUnreadIcon from './assets/news-unread.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationsReadIcon from './assets/notifications-read.svg';
 import NotificationsUnreadIcon from './assets/notifications-unread.svg';
@@ -110,6 +112,8 @@ import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
+import UpdateReadIcon from './assets/update-read.svg';
+import UpdateUnreadIcon from './assets/update-unread.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
@@ -137,6 +141,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Terminal]: TerminalIcon,
   [IconNameEnum.NotificationsRead]: NotificationsReadIcon,
   [IconNameEnum.NotificationsUnread]: NotificationsUnreadIcon,
+  [IconNameEnum.NewsRead]: NewsReadIcon,
+  [IconNameEnum.NewsUnread]: NewsUnreadIcon,
+  [IconNameEnum.UpdateRead]: UpdateReadIcon,
+  [IconNameEnum.UpdateUnread]: UpdateUnreadIcon,
   [IconNameEnum.Download]: DownloadIcon,
   [IconNameEnum.Diez]: DiezIcon,
   [IconNameEnum.FaceId]: FaceIdIcon,

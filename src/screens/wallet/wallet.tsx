@@ -11,7 +11,7 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useIsEveryNewsReadedSelector } from '../../store/news/news-selectors';
+import { useIsEveryNewsSeenSelector } from '../../store/news/news-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -31,7 +31,7 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const isDotVisible = useIsEveryNewsReadedSelector();
+  const isDotVisible = useIsEveryNewsSeenSelector();
 
   usePageAnalytic(ScreensEnum.Wallet);
 
@@ -48,9 +48,10 @@ export const Wallet = () => {
           <Divider />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+          <Divider size={formatSize(24)} />
           <TouchableIcon
             name={isDotVisible ? IconNameEnum.NotificationsUnread : IconNameEnum.NotificationsRead}
-            onPress={() => navigate(ScreensEnum.ScanQrCode)}
+            onPress={() => navigate(ScreensEnum.Notifications)}
           />
         </View>
 

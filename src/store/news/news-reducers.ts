@@ -1,13 +1,17 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { StatusType, NewsNotificationInterface } from '../../interfaces/news.interface';
-import { loadMoreNewsAction, loadNewsAction, readNewsAction } from './news-actions';
+import { loadMoreNewsAction, loadNewsAction, readNewsAction, viewNewsAction } from './news-actions';
 import { newsInitialState, NewsState } from './news-state';
 
 export const newsReducer = createReducer<NewsState>(newsInitialState, builder => {
   builder.addCase(readNewsAction, (state, { payload }) => ({
     ...state,
-    readNewsIds: [...state.readNewsIds, payload]
+    news: state.news.map(n => (payload.indexOf(n.id) >= 0 ? { ...n, status: StatusType.Read } : n))
+  }));
+  builder.addCase(viewNewsAction, (state, { payload }) => ({
+    ...state,
+    news: state.news.map(n => (payload.indexOf(n.id) >= 0 ? { ...n, status: StatusType.Viewed } : n))
   }));
   builder.addCase(loadNewsAction.submit, state => ({
     ...state,

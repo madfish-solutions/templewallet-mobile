@@ -6,6 +6,7 @@ export enum ScreensEnum {
   SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
+  Notifications = 'Notifications',
 
   /** Wallet stack **/
   Wallet = 'Wallet',
@@ -49,6 +50,7 @@ export type ScreensParamList = {
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: undefined;
+  [ScreensEnum.Notifications]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
