@@ -7,6 +7,7 @@ import { ofType } from 'ts-action-operators';
 import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
 import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { isDefined } from '../../utils/is-defined';
 import { RootState } from '../create-store';
 import { emptyAction } from '../root-state.actions';
 import {
@@ -101,13 +102,13 @@ const updateSirsTokenEpic: Epic = (action$: Observable<Action>, state$: Observab
     ofType(updateSirsTokenAction),
     withLatestFrom(state$),
     concatMap(([, rootState]) => {
-      const existingMetadataSlugs = Object.keys(rootState.tokensMetadata.metadataRecord);
+      const sirsToken = rootState.tokensMetadata.metadataRecord[LIQUIDITY_BAKING_LP_SLUG];
 
-      if (!existingMetadataSlugs.includes(LIQUIDITY_BAKING_LP_SLUG)) {
+      if (isDefined(sirsToken) && isDefined(sirsToken.symbol) && sirsToken.symbol !== 'SIRS') {
         const newTokensMetadata = {
           ...rootState.tokensMetadata.metadataRecord,
           [LIQUIDITY_BAKING_LP_SLUG]: {
-            ...rootState.tokensMetadata.metadataRecord[LIQUIDITY_BAKING_LP_SLUG],
+            ...sirsToken,
             decimals: 0,
             name: 'Sirius',
             symbol: 'SIRS',
