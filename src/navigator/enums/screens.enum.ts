@@ -7,6 +7,7 @@ export enum ScreensEnum {
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
   Notifications = 'Notifications',
+  NewsScreen = 'NewsScreen',
 
   /** Wallet stack **/
   Wallet = 'Wallet',
@@ -51,6 +52,7 @@ export type ScreensParamList = {
   [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: undefined;
   [ScreensEnum.Notifications]: undefined;
+  [ScreensEnum.NewsScreen]: { id: string };
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -99,7 +101,9 @@ export const walletStackScreens = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
   ScreensEnum.Exolix,
-  ScreensEnum.AliceBob
+  ScreensEnum.AliceBob,
+  ScreensEnum.Notifications,
+  ScreensEnum.NewsScreen
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
 export const swapStackScreens = [

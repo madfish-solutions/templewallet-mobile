@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { FlatList, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { Label } from '../../components/label/label';
+import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
+import { StatusType } from '../../interfaces/news.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { viewNewsAction } from '../../store/news/news-actions';
 import { useIsEveryNewsSeenSelector, useNewsSelector } from '../../store/news/news-selectors';
@@ -18,22 +19,30 @@ export const Notifications = () => {
   const news = useNewsSelector();
   const dispatch = useDispatch();
 
+  const isShowPlaceholder = useMemo(() => news.length === 0, [news]);
+
   useEffect(() => {
-    if (!isAllSeen) {
-      setTimeout(() => {
-        dispatch(viewNewsAction(news.map(x => x.id)));
-      }, timeToSeenAllNews);
-    }
+    const timer = setTimeout(() => {
+      dispatch(viewNewsAction(news.filter(x => x.status === StatusType.New).map(x => x.id)));
+      // dispatch(viewNewsAction(news.map(x => x.id)));
+    }, timeToSeenAllNews);
+
+    return () => clearTimeout(timer);
   }, [isAllSeen, news]);
 
   usePageAnalytic(ScreensEnum.Notifications);
 
   return (
-    <ScrollView keyboardShouldPersistTaps={'never'} style={styles.contentWrapper}>
-      <Label label="Slippage tolerance" />
-      {news.map(n => {
-        return <NewsItem key={n.id} {...n} />;
-      })}
+    <ScrollView style={styles.contentWrapper}>
+      {isShowPlaceholder ? (
+        <DataPlaceholder text="Notifications not found" />
+      ) : (
+        <FlatList
+          data={news}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <NewsItem key={item.id} {...item} />}
+        />
+      )}
     </ScrollView>
   );
 };

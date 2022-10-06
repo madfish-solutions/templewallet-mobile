@@ -50,7 +50,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
           <Divider size={formatSize(24)} />
           <TouchableIcon
-            name={isDotVisible ? IconNameEnum.NotificationsUnread : IconNameEnum.NotificationsRead}
+            name={!isDotVisible ? IconNameEnum.NotificationsUnread : IconNameEnum.NotificationsRead}
             onPress={() => navigate(ScreensEnum.Notifications)}
           />
         </View>

@@ -35,6 +35,7 @@ import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
+import { NewsPage } from '../screens/notifications/news/news-page';
 import { Notifications } from '../screens/notifications/notifications';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
@@ -170,6 +171,11 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Notifications}
                 component={Notifications}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.NewsScreen}
+                component={NewsPage}
                 options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
 

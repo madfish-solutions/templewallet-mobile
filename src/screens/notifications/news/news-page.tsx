@@ -1,10 +1,11 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
-import { NewsNotificationInterface, StatusType } from '../../../interfaces/news.interface';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
+import { StatusType } from '../../../interfaces/news.interface';
+import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { readNewsAction } from '../../../store/news/news-actions';
 import { useNewsIdSelector } from '../../../store/news/news-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -12,7 +13,8 @@ import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { useNewsItemStyles } from './news-item.styles';
 
-export const NewsPage: FC<NewsNotificationInterface> = ({ id }) => {
+export const NewsPage: FC = () => {
+  const { id } = useRoute<RouteProp<ScreensParamList, ScreensEnum.NewsScreen>>().params;
   const {
     // createdAt,
     status,
