@@ -101,7 +101,7 @@ const updateSirsTokenEpic: Epic = (action$: Observable<Action>, state$: Observab
   action$.pipe(
     ofType(updateSirsTokenAction),
     withLatestFrom(state$),
-    concatMap(([, rootState]) => {
+    map(([, rootState]) => {
       const sirsToken = rootState.tokensMetadata.metadataRecord[LIQUIDITY_BAKING_LP_SLUG];
 
       if (isDefined(sirsToken) && isDefined(sirsToken.symbol) && sirsToken.symbol !== 'SIRS') {
@@ -116,10 +116,10 @@ const updateSirsTokenEpic: Epic = (action$: Observable<Action>, state$: Observab
           }
         };
 
-        return [setNewTokensMetadata(newTokensMetadata)];
+        return setNewTokensMetadata(newTokensMetadata);
       }
 
-      return [];
+      return emptyAction();
     })
   );
 
