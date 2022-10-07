@@ -172,6 +172,7 @@ export const RemoveLiquidityModal = () => {
                   name="lpToken"
                   label="Select LP"
                   assetsList={[values.lpToken.asset]}
+                  maxButton
                   onValueChange={handleLpTokenChange}
                 />
                 <Divider size={formatSize(16)} />

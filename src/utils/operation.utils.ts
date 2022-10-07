@@ -89,7 +89,6 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           contractAddress = target.address;
           amount = fa12Parameter.value.value;
         } else if (isDefined(bakingParameter) && isDefined(bakingParameter.value.quantity)) {
-          console.log('baking');
           contractAddress = target.address;
           const tokenOrTezAmount =
             isDefined(parameter) && isDefined((parameter as ParameterFa12).value.value)
