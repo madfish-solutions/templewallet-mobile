@@ -1907,15 +1907,15 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@dicebear/avatars-bottts-sprites@4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@dicebear/avatars-bottts-sprites/-/avatars-bottts-sprites-4.10.1.tgz#40f373693dcb21b6e07836d6c5308b6fcfe7fd36"
-  integrity sha512-4tvjH68qgoXrJFkdctiZKNaXgrMYFQzPH/XKZHM8NWdvsp6+1w1sLALRbLDEr4N0Zg0jTaGpHiZBuMe+847QYA==
+"@dicebear/avatars-bottts-sprites@4.10.5":
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/@dicebear/avatars-bottts-sprites/-/avatars-bottts-sprites-4.10.5.tgz#4ae64a98c5622d1ce4f50b9340eeb98d19d6658c"
+  integrity sha512-T44K3voIMDy2zsocHZ3+H8vweNdJ04hMpsXPeim6YLenaCPy4MwifR1yEE2RTajBoDX+cPA8PSpXPb1GV1SARQ==
 
-"@dicebear/avatars@4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.1.tgz#0d62040ab6c01348418d785eac70e0ab3c5a88ae"
-  integrity sha512-c9Etj+wkxERmt8puCBR/Q1Yor9FQxUgEXFchJx8eYwX0Pt/qvNj/D5mK7EddRj5tfslWiGELbYHd/0r8ZfJu+A==
+"@dicebear/avatars@4.10.5":
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.5.tgz#156ce34a7d23235e81fe16bb59d3d14510598f9c"
+  integrity sha512-vK1z5rtBaHs+hHW7UkKxx2yPA1ITIfdYQHwdtnXkSiXshRtXeL7JhSsMozU8GC7pT94WppIY8U9atIltQa0NUQ==
   dependencies:
     "@types/json-schema" "^7.0.7"
     pure-color "^1.3.0"
