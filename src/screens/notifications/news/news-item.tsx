@@ -13,20 +13,7 @@ import { useColors } from '../../../styles/use-colors';
 import { formatDate } from '../../../utils/format-date.utils';
 import { useNewsItemStyles } from './news-item.styles';
 
-export const NewsItem: FC<NewsNotificationInterface> = ({
-  id,
-  createdAt,
-  status,
-  type,
-  // platform,
-  // language,
-  title,
-  description
-  // content,
-  // extensionImageUrl,
-  // mobileImageUrl,
-  // readInOriginalUrl
-}) => {
+export const NewsItem: FC<NewsNotificationInterface> = ({ id, createdAt, status, type, title, description }) => {
   const colors = useColors();
   const styles = useNewsItemStyles();
   const { navigate } = useNavigation();
@@ -49,7 +36,7 @@ export const NewsItem: FC<NewsNotificationInterface> = ({
     }
 
     return IconNameEnum.NewsRead;
-  }, []);
+  }, [type]);
 
   const handlePress = useCallback(() => {
     navigate(ScreensEnum.NewsScreen, { id });
