@@ -24,7 +24,6 @@ export const Notifications = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(viewNewsAction(news.filter(x => x.status === StatusType.New).map(x => x.id)));
-      // dispatch(viewNewsAction(news.map(x => x.id)));
     }, timeToSeenAllNews);
 
     return () => clearTimeout(timer);

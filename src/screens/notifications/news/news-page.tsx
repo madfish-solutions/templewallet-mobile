@@ -37,8 +37,6 @@ export const NewsPage: FC = () => {
 
   usePageAnalytic(ScreensEnum.Notifications, id);
 
-  const handleSubmitPress = () => goBack;
-
   return (
     <>
       <ScrollView>
@@ -66,7 +64,7 @@ export const NewsPage: FC = () => {
       </ScrollView>
       <View style={styles.submitContainer}>
         <ButtonsContainer>
-          <ButtonLargePrimary title="Got it" onPress={handleSubmitPress} />
+          <ButtonLargePrimary title="Got it" onPress={goBack} />
         </ButtonsContainer>
 
         <InsetSubstitute type="bottom" />
