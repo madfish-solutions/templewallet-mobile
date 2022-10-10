@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
@@ -13,7 +13,6 @@ import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useBlockSubscription } from '../../hooks/block-subscription/use-block-subscription.hook';
 import { useContractActivity } from '../../hooks/use-contract-activity';
-import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -29,8 +28,6 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
-
-const DATA_REFRESH_INTERVAL = 50 * 1000;
 
 export const LiquidityBakingDapp = () => {
   const { navigate } = useNavigation();
@@ -54,7 +51,7 @@ export const LiquidityBakingDapp = () => {
     handleRefresh();
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [blockSubscription.block.header]);
+  useEffect(initDataLoading, [blockSubscription.block.header]);
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
