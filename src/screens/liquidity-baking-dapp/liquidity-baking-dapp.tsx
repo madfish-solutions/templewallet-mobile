@@ -47,11 +47,7 @@ export const LiquidityBakingDapp = () => {
 
   const { activities, handleUpdate, handleRefresh } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
 
-  const initDataLoading = () => {
-    handleRefresh();
-  };
-
-  useEffect(initDataLoading, [blockSubscription.block.header]);
+  useEffect(handleRefresh, [blockSubscription.block.header]);
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
