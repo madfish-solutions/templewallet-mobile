@@ -11,6 +11,7 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
+import { Loader } from '../../components/loader/loader';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
@@ -60,6 +61,8 @@ export const EnterPassword = () => {
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
+        {/* <Icon name={IconNameEnum.TempleLogo} width={formatSize(208)} height={formatSize(64)} /> */}
+        <Loader />
       </View>
       <Divider />
       <Quote
