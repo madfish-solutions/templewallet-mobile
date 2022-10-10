@@ -6,13 +6,7 @@ export const findLpToTokenOutput = (
   inputLpTokenAmount: BigNumber,
   lpTokenTotalSupply: BigNumber,
   outputTokenPool: BigNumber
-) => {
-  const r = inputLpTokenAmount.multipliedBy(outputTokenPool).dividedToIntegerBy(lpTokenTotalSupply);
-
-  // console.log(outputTokenPool, lpTokenTotalSupply, inputLpTokenAmount);
-
-  return r;
-};
+) => inputLpTokenAmount.multipliedBy(outputTokenPool).dividedToIntegerBy(lpTokenTotalSupply);
 
 export const findTokenToLpInput = (
   outputTokenAmount: BigNumber,
