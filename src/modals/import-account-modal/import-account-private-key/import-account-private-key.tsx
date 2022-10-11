@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,6 +14,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { setLoadingAction } from '../../../store/settings/settings-actions';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import {
@@ -26,12 +28,16 @@ interface Props {
 
 export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
   const { createImportedAccount } = useShelter();
+  const dispatch = useDispatch();
   const accountIndex = useAccountsListSelector().length + 1;
-  const onSubmit = ({ privateKey }: { privateKey: string }) =>
+  const onSubmit = ({ privateKey }: { privateKey: string }) => {
+    dispatch(setLoadingAction(true));
+
     createImportedAccount({
       privateKey,
       name: `Account ${accountIndex}`
     });
+  };
 
   return (
     <Formik
