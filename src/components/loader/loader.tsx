@@ -1,22 +1,26 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 // eslint-disable-next-line import/default
-import Animated, { Easing, useDerivedValue, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 import { formatSize } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { LoaderLines } from './loader-lines';
+import { LoaderLines, VECTOR_SIZE } from './loader-lines';
 import { useLoaderStyles } from './loader.styles';
 
-export const Loader: FC = () => {
+interface Props {
+  size?: number;
+}
+
+export const Loader: FC<Props> = ({ size = 64 }) => {
   const styles = useLoaderStyles();
 
   const progress = useSharedValue(0);
 
   useEffect(() => {
     progress.value = withRepeat(
-      withTiming(-38 * 4, {
+      withTiming(-VECTOR_SIZE * 4, {
         duration: 2000,
         easing: Easing.linear
       }),
@@ -24,14 +28,20 @@ export const Loader: FC = () => {
     );
   }, []);
 
-  const rotate = useDerivedValue(() => progress.value, []);
+  const logoWidth = useMemo(() => formatSize((size / 4) * 3), []);
+  const logoHeight = useMemo(() => formatSize((size / 8) * 3), []);
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={styles.icon}>
-        <LoaderLines progress={rotate} />
-      </Animated.View>
-      <Icon name={IconNameEnum.TempleLogo} width={formatSize(48)} height={formatSize(48)} />
+    <View style={styles.root}>
+      <View style={styles.card}>
+        <View style={styles.container}>
+          <Icon name={IconNameEnum.TempleLogoBottom} width={logoWidth} height={logoHeight} />
+          <Animated.View style={styles.icon}>
+            <LoaderLines size={size} progress={progress} />
+          </Animated.View>
+          <Icon name={IconNameEnum.TempleLogoUp} width={logoWidth} height={logoHeight} />
+        </View>
+      </View>
     </View>
   );
 };

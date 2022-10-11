@@ -22,3 +22,5 @@ export const toggleDomainAddressShown = createAction<void>('settings/TOGGLE_DOMA
 export const setIsDomainAddressShown = createAction<boolean>('settings/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
 export const setZeroBalancesShown = createAction<boolean>('settings/SET_ZERO_BALANCES_SHOWN');
+
+export const setLoadingAction = createAction<boolean>('settings/SET_LOADING_ACTION');

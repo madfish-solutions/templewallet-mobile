@@ -74,6 +74,8 @@ export enum IconNameEnum {
   ChevronRight = 'ChevronRight',
   NoResult = 'NoResult',
   TempleLogo = 'TempleLogo',
+  TempleLogoUp = 'TempleLogoUp',
+  TempleLogoBottom = 'TempleLogoBottom',
   TempleLogoWithText = 'TempleLogoWithText',
   Telegram = 'Telegram',
   Discord = 'Discord',

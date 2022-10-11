@@ -6,6 +6,7 @@ import { delay, switchMap } from 'rxjs/operators';
 import { usePasswordDelay } from '../hooks/use-password-delay.hook';
 import { enterPassword } from '../store/security/security-actions';
 import { usePasswordAttempt } from '../store/security/security-selectors';
+import { setLoadingAction } from '../store/settings/settings-actions';
 import { showErrorToast } from '../toast/toast.utils';
 import { isDefined } from '../utils/is-defined';
 import { Shelter } from './shelter';
@@ -44,10 +45,12 @@ export const useAppLock = () => {
         .subscribe(success => {
           if (success) {
             dispatch(enterPassword.success());
+            dispatch(setLoadingAction(false));
 
             return true;
           } else {
             dispatch(enterPassword.fail());
+            dispatch(setLoadingAction(false));
             showErrorToast({ description: 'Wrong password, please, try again' });
 
             return false;

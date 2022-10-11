@@ -49,3 +49,6 @@ export const useIsShownDomainName = () =>
 
 export const useHideZeroBalances = () =>
   useSelector<SettingsRootState, SettingsState['hideZeroBalances']>(({ settings }) => settings.hideZeroBalances);
+
+export const useLoadingSelector = () =>
+  useSelector<SettingsRootState, SettingsState['loading']>(({ settings }) => settings.loading);

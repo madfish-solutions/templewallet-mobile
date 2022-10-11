@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -11,7 +12,6 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { Label } from '../../components/label/label';
-import { Loader } from '../../components/loader/loader';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
@@ -22,6 +22,7 @@ import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { setLoadingAction } from '../../store/settings/settings-actions';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
@@ -36,6 +37,7 @@ import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
+  const dispatch = useDispatch();
 
   const { unlock, unlockWithBiometry } = useAppLock();
 
@@ -48,7 +50,12 @@ export const EnterPassword = () => {
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
+  const onSubmit = ({ password }: EnterPasswordFormValues) => {
+    if (!isDisabled) {
+      dispatch(setLoadingAction(true));
+      unlock(password);
+    }
+  };
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
@@ -61,8 +68,6 @@ export const EnterPassword = () => {
       <View style={styles.imageView}>
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
-        {/* <Icon name={IconNameEnum.TempleLogo} width={formatSize(208)} height={formatSize(64)} /> */}
-        <Loader />
       </View>
       <Divider />
       <Quote

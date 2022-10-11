@@ -19,6 +19,7 @@ export interface SettingsState {
   fiatCurrency: FiatCurrenciesEnum;
   isShownDomainName: boolean;
   hideZeroBalances: boolean;
+  loading: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -33,7 +34,8 @@ export const settingsInitialState: SettingsState = {
   slippage: 1.5,
   fiatCurrency: FiatCurrenciesEnum.USD,
   isShownDomainName: false,
-  hideZeroBalances: false
+  hideZeroBalances: false,
+  loading: false
 };
 
 export interface SettingsRootState {

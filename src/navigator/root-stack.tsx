@@ -4,6 +4,7 @@ import { createStackNavigator, StackNavigationOptions, TransitionPresets } from 
 import React, { createRef, useMemo, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { Loader } from '../components/loader/loader';
 import { isIOS } from '../config/system';
 import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from '../hooks/use-app-splash.hook';
@@ -31,6 +32,7 @@ import { ForceUpdate } from '../screens/force-update/force-update';
 import { PassCode } from '../screens/passcode/passcode';
 import { useAppLock } from '../shelter/use-app-lock.hook';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from '../store/security/security-selectors';
+import { useLoadingSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
 import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
@@ -48,6 +50,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
+  const isLoading = useLoadingSelector();
   const colors = useColors();
 
   useStorageMigration();
@@ -177,6 +180,7 @@ export const RootStackScreen = () => {
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
       {isAppCheckFailed && <AppCheckWarning />}
+      {isLoading && <Loader />}
     </NavigationContainer>
   );
 };
