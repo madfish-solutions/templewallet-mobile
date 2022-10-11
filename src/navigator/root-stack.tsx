@@ -180,7 +180,7 @@ export const RootStackScreen = () => {
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
       {isAppCheckFailed && <AppCheckWarning />}
-      {isLoading && <Loader />}
+      {isLoading === true && <Loader />}
     </NavigationContainer>
   );
 };

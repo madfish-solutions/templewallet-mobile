@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -56,6 +56,10 @@ export const EnterPassword = () => {
       unlock(password);
     }
   };
+
+  useEffect(() => {
+    dispatch(setLoadingAction(false));
+  }, []);
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 

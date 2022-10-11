@@ -43,14 +43,13 @@ export const useAppLock = () => {
           switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {
+          dispatch(setLoadingAction(false));
           if (success) {
             dispatch(enterPassword.success());
-            dispatch(setLoadingAction(false));
 
             return true;
           } else {
             dispatch(enterPassword.fail());
-            dispatch(setLoadingAction(false));
             showErrorToast({ description: 'Wrong password, please, try again' });
 
             return false;
