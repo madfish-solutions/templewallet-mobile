@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
-import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
+import { setIsAnalyticsEnabled, setLoadingAction } from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
@@ -32,12 +32,14 @@ export const AfterSyncQRScan = () => {
     useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
     dispatch(setIsAnalyticsEnabled(analytics));
+    dispatch(setLoadingAction(true));
 
     parseSyncPayload(payload, password)
       .then(res => {
         setUseBiometry(useBiometryValue === true);
         setSeedPhrase(res.mnemonic);
         setHdAccountsLength(res.hdAccountsLength);
+        dispatch(setLoadingAction(false));
 
         if (usePrevPassword === true) {
           dispatch(enterPassword.success());
@@ -52,6 +54,7 @@ export const AfterSyncQRScan = () => {
         }
       })
       .catch(e => {
+        dispatch(setLoadingAction(false));
         dispatch(enterPassword.fail());
 
         return showErrorToast({ description: e.message });

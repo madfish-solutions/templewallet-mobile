@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../../components/divider/divider';
@@ -13,6 +14,7 @@ import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
 import { FormPasswordInput } from '../../../../form/form-password-input';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
+import { setLoadingAction } from '../../../../store/settings/settings-actions';
 import { formatSize } from '../../../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
 import {
@@ -36,10 +38,13 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   onGoBackPress
 }) => {
   const { importWallet } = useShelter();
+  const dispatch = useDispatch();
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
+  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
+    dispatch(setLoadingAction(true));
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
+  };
 
   useNavigationSetOptions(
     {

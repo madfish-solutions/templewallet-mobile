@@ -1,7 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { forkJoin, of, Subject, switchMap } from 'rxjs';
 
-import { setIsBiometricsEnabled } from '../../store/settings/settings-actions';
+import { setIsBiometricsEnabled, setLoadingAction } from '../../store/settings/settings-actions';
 import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
@@ -18,6 +18,7 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
       )
     )
     .subscribe(([importedAccounts, isPasswordSaved]) => {
+      dispatch(setLoadingAction(false));
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
         dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));

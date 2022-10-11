@@ -2,7 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { of, Subject, switchMap } from 'rxjs';
 
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
-import { setIsBiometricsEnabled } from '../../store/settings/settings-actions';
+import { setIsBiometricsEnabled, setLoadingAction } from '../../store/settings/settings-actions';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { Shelter } from '../shelter';
 
@@ -20,6 +20,7 @@ export const enableBiometryPasswordSubscription = (
       )
     )
     .subscribe(isPasswordSaved => {
+      dispatch(setLoadingAction(false));
       if (isPasswordSaved === false) {
         showErrorToast({ description: 'Wrong password, please, try again' });
       } else {

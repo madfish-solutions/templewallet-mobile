@@ -2,6 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, of, Subject, switchMap } from 'rxjs';
 
 import { AccountInterface } from '../../interfaces/account.interface';
+import { setLoadingAction } from '../../store/settings/settings-actions';
 import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
@@ -41,6 +42,7 @@ export const createImportAccountSubscription = (
       )
     )
     .subscribe(publicData => {
+      dispatch(setLoadingAction(false));
       if (publicData !== undefined) {
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));
