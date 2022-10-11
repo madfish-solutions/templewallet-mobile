@@ -67,8 +67,8 @@ export const LoaderLines: FC<Props> = ({ progress, size = 64 }) => {
   );
 };
 
-const useAnimatedGradient = (progress: SharedValue<number>, offset = -Math.PI / 2) => {
-  return useAnimatedProps(() => {
+const useAnimatedGradient = (progress: SharedValue<number>, offset = -Math.PI / 2) =>
+  useAnimatedProps(() => {
     // from 0 to 1
     const norma = -progress.value / (VECTOR_SIZE * 4);
     // from -0.5pi to 1.5pi
@@ -94,4 +94,3 @@ const useAnimatedGradient = (progress: SharedValue<number>, offset = -Math.PI / 
       y2: `${y2}%`
     };
   });
-};
