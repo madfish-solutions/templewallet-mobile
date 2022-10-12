@@ -129,7 +129,7 @@ export const SendModal: FC = () => {
           <ModalStatusBar />
           <View>
             <Divider size={formatSize(8)} />
-            <FormAssetAmountInput name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
+            <FormAssetAmountInput maxButton name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
             <Divider />
 
             <Label

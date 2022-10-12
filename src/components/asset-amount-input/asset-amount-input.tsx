@@ -1,18 +1,19 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-getter.hook';
-import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
+import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { isDefined } from '../../utils/is-defined';
+import { getNetworkGasTokenMetadata } from '../../utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
@@ -65,6 +66,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   editable = true,
   isSearchable = false,
   selectionOptions = undefined,
+  maxButton = false,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -81,6 +83,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const balance = useMemo(() => token?.balance ?? value.asset.balance, [token, value.asset.balance]);
 
   const { isTezosNode } = useNetworkInfo();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
 
   const amountInputRef = useRef<TextInput>(null);
 
@@ -174,6 +178,18 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     [onValueChange, isTokenInputType, getTokenExchangeRate]
   );
 
+  const handleMaxButtonPress = useCallback(() => {
+    if (isDefined(token)) {
+      const { symbol, balance } = token;
+      const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
+      const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+      onValueChange({
+        amount,
+        asset: token
+      });
+    }
+  }, [token, gasToken, onValueChange]);
+
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
   return (
@@ -263,6 +279,17 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>
+            {maxButton && (
+              <>
+                <Divider size={formatSize(8)} />
+                <TouchableOpacity
+                  hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
+                  onPress={handleMaxButtonPress}
+                >
+                  <Text style={styles.maxButtonText}>MAX</Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       </View>
