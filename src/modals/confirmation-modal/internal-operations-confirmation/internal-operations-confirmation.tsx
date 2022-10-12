@@ -6,9 +6,14 @@ import { map, switchMap } from 'rxjs/operators';
 import { everstakeApi } from '../../../api.service';
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
+import { ActivityStatusEnum } from '../../../enums/activity-status.enum';
+import { ActivityTypeEnum } from '../../../enums/activity-type.enum';
 import { ApproveInternalOperationRequestActionPayloadInterface } from '../../../hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-request-confirmation.hook';
+import { ActivityInterface } from '../../../interfaces/activity.interface';
+import { emptyMember } from '../../../interfaces/member.interface';
 import { StacksEnum } from '../../../navigator/enums/stacks.enum';
+// import { addPendingActivity } from '../../../store/activity/activity-actions';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
@@ -28,24 +33,43 @@ const approveInternalOperationRequest = ({
   opParams
 }: ApproveInternalOperationRequestActionPayloadInterface) =>
   sendTransaction$(rpcUrl, sender, opParams).pipe(
-    switchMap(({ hash }) =>
+    switchMap(batch =>
       opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === RECOMMENDED_BAKER_ADDRESS
         ? of(
             everstakeApi.post('/delegations', {
               link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
-              delegations: [hash]
+              delegations: [batch.hash]
             })
-          ).pipe(map(() => hash))
-        : of(hash)
+          ).pipe(map(() => batch))
+        : of(batch)
     ),
-    switchMap(hash => {
+    switchMap(activity => {
       showSuccessToast({
-        operationHash: hash,
+        operationHash: activity.hash,
         description: 'Transaction request sent! Confirming...',
         title: 'Success!'
       });
 
-      return [navigateAction(StacksEnum.MainStack), waitForOperationCompletionAction({ opHash: hash, sender })];
+      const pendingActivity: ActivityInterface = {
+        ...activity,
+        type: ActivityTypeEnum.Transaction,
+        status: ActivityStatusEnum.Pending,
+        amount: '0',
+        timestamp: Date.now(),
+        destination: emptyMember,
+        source: emptyMember,
+        id: -1
+      };
+
+      console.log(pendingActivity);
+
+      // console.log(activity.results);
+
+      return [
+        navigateAction(StacksEnum.MainStack),
+        // addPendingActivity([pendingActivity]),
+        waitForOperationCompletionAction({ opHash: activity.hash, sender })
+      ];
     })
   );
 

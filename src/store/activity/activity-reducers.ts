@@ -6,10 +6,17 @@ import { activityInitialState, ActivityState } from './activity-state';
 export const activityReducers = createReducer<ActivityState>(activityInitialState, builder => {
   builder.addCase(addPendingActivity, (state, { payload: activity }) => ({
     ...state,
-    pendingActivities: [...state.pendingActivities.filter(x => x.id !== activity.id), activity]
+    pendingActivities: [
+      ...state.pendingActivities.filter(
+        group => activity.length > 0 && group.length > 0 && group[0].hash !== activity[0].hash
+      ),
+      activity
+    ]
   }));
-  builder.addCase(removePendingActivity, (state, { payload: activityId }) => ({
+  builder.addCase(removePendingActivity, (state, { payload: activityHash }) => ({
     ...state,
-    pendingActivities: state.pendingActivities.filter(x => x.id.toString() !== activityId)
+    pendingActivities: state.pendingActivities.filter(
+      group => group.length > 0 && group[0].hash.toString() !== activityHash
+    )
   }));
 });

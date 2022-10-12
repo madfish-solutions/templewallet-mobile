@@ -1,7 +1,7 @@
-import { ActivityInterface } from '../../interfaces/activity.interface';
+import { ActivityGroup } from '../../interfaces/activity.interface';
 
 export interface ActivityState {
-  pendingActivities: ActivityInterface[];
+  pendingActivities: ActivityGroup[];
 }
 
 export const activityInitialState: ActivityState = {
