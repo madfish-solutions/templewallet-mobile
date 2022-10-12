@@ -140,6 +140,7 @@ export const AddLiquidityModal = () => {
                   name="aToken"
                   label="Token A"
                   assetsList={[values.aToken.asset]}
+                  maxButton
                   onValueChange={handleATokenChange}
                 />
                 <Divider size={formatSize(16)} />
@@ -151,6 +152,7 @@ export const AddLiquidityModal = () => {
                   name="bToken"
                   label="Token B"
                   assetsList={[values.bToken.asset]}
+                  maxButton
                   onValueChange={handleBTokenChange}
                 />
                 <Text style={styles.sectionNameText}>Remove Liquidity Details</Text>

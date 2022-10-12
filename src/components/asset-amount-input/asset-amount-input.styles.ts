@@ -37,6 +37,10 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     borderRightWidth: formatSize(0.5)
   },
+  maxButtonText: {
+    ...typography.tagline13Tag,
+    color: colors.orange
+  },
   disabledInput: {
     ...typography.numbersMedium22,
     color: colors.gray2,
@@ -69,6 +73,7 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   balanceRow: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center'
   },
   balanceDescription: {
