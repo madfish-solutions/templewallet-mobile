@@ -27,12 +27,11 @@ interface Props {
 export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
-  const onSubmit = ({ privateKey }: { privateKey: string }) => {
+  const onSubmit = ({ privateKey }: { privateKey: string }) =>
     createImportedAccount({
       privateKey,
       name: `Account ${accountIndex}`
     });
-  };
 
   return (
     <Formik

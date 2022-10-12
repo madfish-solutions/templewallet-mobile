@@ -38,9 +38,8 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
   const { importWallet } = useShelter();
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = ({ password }: CreateNewPasswordFormValues) => {
+  const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
-  };
 
   useNavigationSetOptions(
     {
