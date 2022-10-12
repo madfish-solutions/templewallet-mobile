@@ -11,6 +11,7 @@ import { useAppSplash } from '../hooks/use-app-splash.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
+import { useResetLoading } from '../hooks/use-reset-loading.hook';
 import { useWhitelist } from '../hooks/use-whitelist.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
@@ -64,6 +65,7 @@ export const RootStackScreen = () => {
   const isForceUpdateNeeded = useIsForceUpdateNeeded();
   const isAppCheckFailed = useIsAppCheckFailed();
   useResetKeychainOnInstall();
+  useResetLoading();
   useWhitelist();
 
   const handleNavigationContainerStateChange = () =>
