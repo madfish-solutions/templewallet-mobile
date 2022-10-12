@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { catchError, of, Subject, switchMap } from 'rxjs';
+import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { setLoadingAction } from '../../store/settings/settings-actions';
@@ -17,6 +17,7 @@ export const createImportAccountSubscription = (
 ) =>
   createImportedAccount$
     .pipe(
+      tap(() => dispatch(setLoadingAction(true))),
       switchMap(({ privateKey, name }) =>
         getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey]) => {
@@ -39,10 +40,10 @@ export const createImportAccountSubscription = (
             return of(undefined);
           })
         )
-      )
+      ),
+      tap(() => dispatch(setLoadingAction(false)))
     )
     .subscribe(publicData => {
-      dispatch(setLoadingAction(false));
       if (publicData !== undefined) {
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));

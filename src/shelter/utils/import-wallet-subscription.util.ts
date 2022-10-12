@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { forkJoin, of, Subject, switchMap } from 'rxjs';
+import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
 import { setIsBiometricsEnabled, setLoadingAction } from '../../store/settings/settings-actions';
 import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
@@ -10,15 +10,16 @@ import { Shelter } from '../shelter';
 export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>, dispatch: Dispatch) =>
   importWallet$
     .pipe(
+      tap(() => dispatch(setLoadingAction(true))),
       switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
         forkJoin([
           Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
         ])
-      )
+      ),
+      tap(() => dispatch(setLoadingAction(false)))
     )
     .subscribe(([importedAccounts, isPasswordSaved]) => {
-      dispatch(setLoadingAction(false));
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
         dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));

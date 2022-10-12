@@ -19,7 +19,7 @@ import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { setIsAnalyticsEnabled, setLoadingAction } from '../../../store/settings/settings-actions';
+import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../../styles/set-password-screens-common-styles';
 import {
@@ -42,7 +42,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
 
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
     dispatch(setIsAnalyticsEnabled(analytics));
-    dispatch(setLoadingAction(true));
     importWallet({ seedPhrase, password, useBiometry });
   };
 

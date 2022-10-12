@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { Subject, switchMap } from 'rxjs';
+import { Subject, switchMap, tap } from 'rxjs';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { setLoadingAction } from '../../store/settings/settings-actions';
@@ -13,9 +13,12 @@ export const createHdAccountSubscription = (
   dispatch: Dispatch
 ) =>
   createHdAccount$
-    .pipe(switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)))
+    .pipe(
+      tap(() => dispatch(setLoadingAction(true))),
+      switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)),
+      tap(() => dispatch(setLoadingAction(false)))
+    )
     .subscribe(publicData => {
-      dispatch(setLoadingAction(false));
       if (publicData !== undefined) {
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));

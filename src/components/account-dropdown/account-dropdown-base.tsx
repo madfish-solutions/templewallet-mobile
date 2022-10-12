@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { setLoadingAction } from '../../store/settings/settings-actions';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -14,11 +12,9 @@ import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
-  const dispatch = useDispatch();
   const { createHdAccount } = useShelter();
 
   const handleCreateNewAccountButtonPress = () => {
-    dispatch(setLoadingAction(true));
     createHdAccount();
     onPress();
   };

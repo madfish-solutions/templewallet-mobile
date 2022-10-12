@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { catchError, map, merge, of, Subject, switchMap } from 'rxjs';
+import { catchError, map, merge, of, Subject, switchMap, tap } from 'rxjs';
 
 import { EventFn } from '../../config/general';
 import { setLoadingAction } from '../../store/settings/settings-actions';
@@ -14,21 +14,24 @@ export const revealSecretsSubscription = (
 ) =>
   merge(
     revealSecretKey$.pipe(
+      tap(() => dispatch(setLoadingAction(true))),
       switchMap(({ publicKeyHash, successCallback }) =>
         Shelter.revealSecretKey$(publicKeyHash).pipe(
           map((secretKey): [string | undefined, EventFn<string>] => [secretKey, successCallback])
         )
-      )
+      ),
+      tap(() => dispatch(setLoadingAction(false)))
     ),
     revealSeedPhrase$.pipe(
+      tap(() => dispatch(setLoadingAction(true))),
       switchMap(({ successCallback }) =>
         Shelter.revealSeedPhrase$()
           .pipe(catchError(() => of(undefined)))
           .pipe(map((seedPhrase): [string | undefined, EventFn<string>] => [seedPhrase, successCallback]))
-      )
+      ),
+      tap(() => dispatch(setLoadingAction(false)))
     )
   ).subscribe(([value, successCallback]) => {
-    dispatch(setLoadingAction(false));
     if (value !== undefined) {
       successCallback(value);
     }

@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { of, Subject, switchMap } from 'rxjs';
+import { of, Subject, switchMap, tap } from 'rxjs';
 
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { setIsBiometricsEnabled, setLoadingAction } from '../../store/settings/settings-actions';
@@ -13,14 +13,15 @@ export const enableBiometryPasswordSubscription = (
 ) =>
   enableBiometryPassword$
     .pipe(
+      tap(() => dispatch(setLoadingAction(true))),
       switchMap(password =>
         Shelter.isPasswordCorrect$(password).pipe(
           switchMap(isPasswordCorrect => (isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)))
         )
-      )
+      ),
+      tap(() => dispatch(setLoadingAction(false)))
     )
     .subscribe(isPasswordSaved => {
-      dispatch(setLoadingAction(false));
       if (isPasswordSaved === false) {
         showErrorToast({ description: 'Wrong password, please, try again' });
       } else {
