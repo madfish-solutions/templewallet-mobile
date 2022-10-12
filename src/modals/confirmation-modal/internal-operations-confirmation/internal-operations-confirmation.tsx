@@ -13,7 +13,7 @@ import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-
 import { ActivityInterface } from '../../../interfaces/activity.interface';
 import { emptyMember } from '../../../interfaces/member.interface';
 import { StacksEnum } from '../../../navigator/enums/stacks.enum';
-// import { addPendingActivity } from '../../../store/activity/activity-actions';
+import { addPendingActivity } from '../../../store/activity/activity-actions';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
@@ -50,16 +50,17 @@ const approveInternalOperationRequest = ({
         title: 'Success!'
       });
 
-      const pendingActivity: ActivityInterface = {
-        ...activity,
+      const pendingActivity: Array<ActivityInterface> = activity.results.map(() => ({
+        hash: activity.hash,
         type: ActivityTypeEnum.Transaction,
         status: ActivityStatusEnum.Pending,
+        // amount: result.amount ?? '0',
         amount: '0',
         timestamp: Date.now(),
         destination: emptyMember,
         source: emptyMember,
         id: -1
-      };
+      }));
 
       console.log(pendingActivity);
 
@@ -67,7 +68,7 @@ const approveInternalOperationRequest = ({
 
       return [
         navigateAction(StacksEnum.MainStack),
-        // addPendingActivity([pendingActivity]),
+        addPendingActivity(pendingActivity),
         waitForOperationCompletionAction({ opHash: activity.hash, sender })
       ];
     })
