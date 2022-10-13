@@ -5,13 +5,9 @@ import { mapTo, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { Divider } from '../../../../components/divider/divider';
-import { ActivityStatusEnum } from '../../../../enums/activity-status.enum';
-import { ActivityTypeEnum } from '../../../../enums/activity-type.enum';
 import { ApproveOperationRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { emptyAccount } from '../../../../interfaces/account.interface';
-import { ActivityInterface } from '../../../../interfaces/activity.interface';
-import { emptyMember } from '../../../../interfaces/member.interface';
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { addPendingActivity } from '../../../../store/activity/activity-actions';
 import { navigateAction } from '../../../../store/root-state.actions';
@@ -20,6 +16,7 @@ import { waitForOperationCompletionAction } from '../../../../store/wallet/walle
 import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
 import { showSuccessToast } from '../../../../toast/toast.utils';
 import { mapBeaconToTaquitoParams } from '../../../../utils/beacon.utils';
+import { parseOperationsToActivity } from '../../../../utils/pending.utils';
 import { sendTransaction$ } from '../../../../utils/wallet.utils';
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
@@ -51,20 +48,11 @@ const approveOperationRequest = ({
         title: 'Success!'
       });
 
-      const pendingActivity: ActivityInterface = {
-        ...activity,
-        type: ActivityTypeEnum.Transaction,
-        status: ActivityStatusEnum.Pending,
-        amount: '0',
-        timestamp: Date.now(),
-        destination: emptyMember,
-        source: emptyMember,
-        id: -1
-      };
+      const pendingActivity = parseOperationsToActivity(activity, sender);
 
       return [
         waitForOperationCompletionAction({ opHash: activity.hash, sender }),
-        addPendingActivity([pendingActivity]),
+        addPendingActivity(pendingActivity),
         navigateAction(StacksEnum.MainStack)
       ];
     })
