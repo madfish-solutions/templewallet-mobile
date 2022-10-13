@@ -1907,15 +1907,15 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@dicebear/avatars-bottts-sprites@4.10.5":
-  version "4.10.5"
-  resolved "https://registry.yarnpkg.com/@dicebear/avatars-bottts-sprites/-/avatars-bottts-sprites-4.10.5.tgz#4ae64a98c5622d1ce4f50b9340eeb98d19d6658c"
-  integrity sha512-T44K3voIMDy2zsocHZ3+H8vweNdJ04hMpsXPeim6YLenaCPy4MwifR1yEE2RTajBoDX+cPA8PSpXPb1GV1SARQ==
+"@dicebear/avatars-bottts-sprites@4.10.1":
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/@dicebear/avatars-bottts-sprites/-/avatars-bottts-sprites-4.10.1.tgz#40f373693dcb21b6e07836d6c5308b6fcfe7fd36"
+  integrity sha512-4tvjH68qgoXrJFkdctiZKNaXgrMYFQzPH/XKZHM8NWdvsp6+1w1sLALRbLDEr4N0Zg0jTaGpHiZBuMe+847QYA==
 
-"@dicebear/avatars@4.10.5":
-  version "4.10.5"
-  resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.5.tgz#156ce34a7d23235e81fe16bb59d3d14510598f9c"
-  integrity sha512-vK1z5rtBaHs+hHW7UkKxx2yPA1ITIfdYQHwdtnXkSiXshRtXeL7JhSsMozU8GC7pT94WppIY8U9atIltQa0NUQ==
+"@dicebear/avatars@4.10.1":
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.1.tgz#0d62040ab6c01348418d785eac70e0ab3c5a88ae"
+  integrity sha512-c9Etj+wkxERmt8puCBR/Q1Yor9FQxUgEXFchJx8eYwX0Pt/qvNj/D5mK7EddRj5tfslWiGELbYHd/0r8ZfJu+A==
   dependencies:
     "@types/json-schema" "^7.0.7"
     pure-color "^1.3.0"
@@ -6835,20 +6835,10 @@ camelcase@^6.2.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.2.1.tgz#250fd350cfd555d0d2160b1d51510eaf8326e86e"
   integrity sha512-tVI4q5jjFV5CavAU8DXfza/TJcZutVKo/5Foskmsqcm0MsL91moHvwiGNnqaa2o6PF/7yT5ikDRcVcl8Rj6LCA==
 
-caniuse-lite@^1.0.30001251, caniuse-lite@^1.0.30001280:
-  version "1.0.30001286"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001286.tgz#3e9debad420419618cfdf52dc9b6572b28a8fff6"
-  integrity sha512-zaEMRH6xg8ESMi2eQ3R4eZ5qw/hJiVsO/HlLwniIwErij0JDr9P+8V4dtx1l+kLq6j3yy8l8W4fst1lBnat5wQ==
-
-caniuse-lite@^1.0.30001370:
-  version "1.0.30001399"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001399.tgz#1bf994ca375d7f33f8d01ce03b7d5139e8587873"
-  integrity sha512-4vQ90tMKS+FkvuVWS5/QY1+d805ODxZiKFzsU8o/RsVJz49ZSRR8EjykLJbqhzdPgadbX6wB538wOzle3JniRA==
-
-caniuse-lite@^1.0.30001400:
-  version "1.0.30001400"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001400.tgz#3038bee70d8b875604cd8833cb0e5e254ee0281a"
-  integrity sha512-Mv659Hn65Z4LgZdJ7ge5JTVbE3rqbJaaXgW5LEI9/tOaXclfIZ8DW7D7FCWWWmWiiPS7AC48S8kf3DApSxQdgA==
+caniuse-lite@^1.0.30001251, caniuse-lite@^1.0.30001280, caniuse-lite@^1.0.30001370, caniuse-lite@^1.0.30001400:
+  version "1.0.30001419"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001419.tgz"
+  integrity sha512-aFO1r+g6R7TW+PNQxKzjITwLOyDhVRLjW0LcwS/HCZGUUKTGNp9+IwLC4xyDSZBygVL/mxaFR3HIV6wEKQuSzw==
 
 capital-case@^1.0.4:
   version "1.0.4"
@@ -14090,10 +14080,10 @@ react-native-codegen@^0.70.5:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
-react-native-config@^1.4.6:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.4.6.tgz#2aefebf4d9cf02831e64bbc1307596bd212f6d42"
-  integrity sha512-cSLdOfva2IPCxh6HjHN1IDVW9ratAvNnnAUx6ar2Byvr8KQU7++ysdFYPaoNVuJURuYoAKgvjab8ZcnwGZIO6Q==
+react-native-config@^1.4.11:
+  version "1.4.11"
+  resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.4.11.tgz#f9ea08a8dffbe3fd4f2187d80d2594756526dee8"
+  integrity sha512-PdBFnfR3pljUNrJu4B2wiJ9TbAiz1J1WcG5KP8AFBqZi8ve5MV/CTCDnANaGrqhOxkBDJV73D/SrMENHe7TKBg==
 
 react-native-crypto@^2.0.1:
   version "2.2.0"
@@ -14151,10 +14141,10 @@ react-native-fs@^2.20.0:
     base-64 "^0.1.0"
     utf8 "^3.0.0"
 
-react-native-gesture-handler@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.7.0.tgz#53ad828add926c8e025f68ea581758c0f8893054"
-  integrity sha512-0jr3FNm2R3gv/v6XTtENgjv0fewD6LEct8EWmXw/oHw36M3YiIIpxnW57thL+0YiKwyLBXN0QHL4JZbs/heW2Q==
+react-native-gesture-handler@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.7.1.tgz#c109d33c38cb182fafcda13012b77c6cac43b127"
+  integrity sha512-Rnak7U4v3ZB+vjVghv5CvAGS+UfRLsXUq7Nq+FycloxZ7jUZjBo+7rPnt+EdTIE2zc2pKhQHIQKcD+IAPg2Scg==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
@@ -14250,10 +14240,10 @@ react-native-randombytes@^3.5.1, react-native-randombytes@^3.6.1:
     buffer "^4.9.1"
     sjcl "^1.0.3"
 
-react-native-reanimated@^3.0.0-rc.2:
-  version "3.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.2.tgz#aadce91407313dd730ed9503102a6abd52903675"
-  integrity sha512-Or8O6PcO2xP+GTNd1fX+InmhpnDWWvrSudByIvzIqVRq99HkVCnyiWDODOZJUz3BqwcLJpFPfMBRfOAhX3YQCQ==
+react-native-reanimated@^3.0.0-rc.3:
+  version "3.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.3.tgz#caa9388826cbcdf30b05b85135de093f83d0a164"
+  integrity sha512-kFkbazXfhq/zb3sQyLIFegLqxzPMJAd36pbz7jtOphZ1mEXDadX0ODp6eD7/PJHnLqYGHtsqSI8WMMLLN6rdjw==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
@@ -14273,10 +14263,10 @@ react-native-safe-area-context@^4.4.1:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.4.1.tgz#239c60b8a9a80eac70a38a822b04c0f1d15ffc01"
   integrity sha512-N9XTjiuD73ZpVlejHrUWIFZc+6Z14co1K/p1IFMkImU7+avD69F3y+lhkqA2hN/+vljdZrBSiOwXPkuo43nFQA==
 
-react-native-screens@^3.18.0:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.18.0.tgz#e10ec54d8b158d47f66dc6c9a81e5a042e33037d"
-  integrity sha512-ndnz5JPLMLq/ThCYQzAOT65x6B4bdKFH1GKckUdbxKrwINGItPRSUiAoVI7YYyOQOa4VYL4hF37rrx+AjgjtRg==
+react-native-screens@^3.18.1:
+  version "3.18.1"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.18.1.tgz#19059f34a29a2ff4247ebb1bf0c2f9beacec1ec4"
+  integrity sha512-GtEC1AbvpvtKDJldavuONF/hXW1aEZO7qz8SioyHrV9L9/nDiy+iTviMFmeEoix9KwmEHHxoYxc0xiDrFxKHyA==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
@@ -14311,10 +14301,10 @@ react-native-svg-transformer@^1.0.0:
     "@svgr/plugin-svgo" "^6.1.2"
     path-dirname "^1.0.2"
 
-react-native-svg@^13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-13.3.0.tgz#07403ef0f74ba15a428c6b4da28275e8d96d0f61"
-  integrity sha512-Xr6+sTt8ioCRypCbIDMgfmc4l2s/7H8l7FfPoMZ8qMf0dVx8ZVCHRsQlrdmwgVKLJwKSAiwj7Tqqz8NPSEpwDw==
+react-native-svg@^12.4.4:
+  version "12.4.4"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.4.4.tgz#2ba684eaea9a7402fbbe0ed9737e77284631d00e"
+  integrity sha512-LpcNlEVCURexqPAvQ9ne8KrPVfYz0wIDygwud8VMRmXLezysXzyQN/DTsjm1BO9lIfYp55WQsr3u3yW/vk6iiA==
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"
@@ -14338,10 +14328,10 @@ react-native-url-polyfill@^1.3.0:
   dependencies:
     whatwg-url-without-unicode "8.0.0-3"
 
-react-native@^0.70.2:
-  version "0.70.2"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.70.2.tgz#d16c2b961c05d55439e8fc999825899257b18509"
-  integrity sha512-c0Usl1Lc4pApDI66wpHwX8SGBUqXouQ8Z8Q9gX4jBjnmO5E8Vmlv6IM0CWDqbX/tn+aKNHCBLqV5phnCqusGbw==
+react-native@^0.70.3:
+  version "0.70.3"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.70.3.tgz#a5315ce14dd3f51f9ef97827af5b0a470ade1d9c"
+  integrity sha512-EiJxOonyvpSWa3Eik7a6YAD6QU8lK2W9M/DDdYlpWmIlGLCd5110rIpEZjxttsyrohxlRJAYRgJ9Tx2mMXqtfw==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "9.1.3"
