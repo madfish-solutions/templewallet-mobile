@@ -1,3 +1,4 @@
+import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -35,19 +36,39 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     [pendingActivities, dispatch]
   );
 
-  useEffect(() => {
-    const asyncFunction = async () => {
+  const initialLoad = useCallback(
+    async (refresh = false) => {
       const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
       removePending(activities);
 
       if (activities.length === 0) {
         setIsAllLoaded(true);
       }
-      setActivities(activities);
-    };
+      if (refresh === true) {
+        setActivities(prev => {
+          const allActivities = [...activities, ...prev];
+          const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
+          const onlyUniqueHashes = uniq(allHashes);
+          const onlyUniqueActivitites = onlyUniqueHashes
+            .map(x => allActivities.find(y => y[0].hash === x))
+            .filter(isDefined);
 
-    asyncFunction();
-  }, [selectedRpcUrl, selectedAccount, tokenSlug, removePending]);
+          return onlyUniqueActivitites;
+        });
+      } else {
+        setActivities(activities);
+      }
+    },
+    [selectedRpcUrl, selectedAccount, tokenSlug, removePending]
+  );
+
+  useEffect(() => {
+    initialLoad();
+  }, [initialLoad]);
+
+  const handleRefresh = () => {
+    initialLoad(true);
+  };
 
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
@@ -80,6 +101,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   return {
     handleUpdate,
+    handleRefresh,
     activities: [...filteredPendingActivities, ...activities]
   };
 };
