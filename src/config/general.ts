@@ -6,3 +6,5 @@ export const emptyComponent = () => null;
 
 export const delegationApy = 6;
 export const OPERATION_LIMIT = 50;
+
+export const BLOCK_REFRESH_INTERVAL_FALLBACK = 60 * 1000;

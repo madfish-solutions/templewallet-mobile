@@ -12,6 +12,7 @@ import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
+import { BLOCK_REFRESH_INTERVAL_FALLBACK } from '../config/general';
 import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
@@ -59,7 +60,6 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
 const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 export const MainStackScreen = () => {
@@ -86,7 +86,7 @@ export const MainStackScreen = () => {
     dispatch(loadExchangeRates.submit());
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
+  useAuthorisedTimerEffect(initDataLoading, BLOCK_REFRESH_INTERVAL_FALLBACK, [
     blockSubscription.block.header,
     selectedAccount.publicKeyHash,
     selectedRpcUrl

@@ -2,6 +2,7 @@ import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { BLOCK_REFRESH_INTERVAL_FALLBACK } from '../config/general';
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { removePendingActivity } from '../store/activity/activity-actions';
@@ -10,11 +11,14 @@ import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors'
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
+import { useBlockSubscription } from './block-subscription/use-block-subscription.hook';
+import { useAuthorisedTimerEffect } from './use-timer-effect.hook';
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const dispatch = useDispatch();
+  const blockSubscription = useBlockSubscription();
 
   const lastActivityRef = useRef<string>('');
 
@@ -70,6 +74,8 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     initialLoad(true);
   };
 
+  useAuthorisedTimerEffect(handleRefresh, BLOCK_REFRESH_INTERVAL_FALLBACK, [blockSubscription.block.header]);
+
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
       const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
@@ -101,7 +107,6 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   return {
     handleUpdate,
-    handleRefresh,
     activities: [...filteredPendingActivities, ...activities]
   };
 };
