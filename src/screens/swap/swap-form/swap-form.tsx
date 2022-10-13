@@ -251,6 +251,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
           name="inputAssets"
           label="From"
           isSearchable
+          maxButton
           assetsList={filteredAssetsList}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}

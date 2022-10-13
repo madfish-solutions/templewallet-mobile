@@ -9,7 +9,8 @@ import {
   migrateTokensMetadata,
   migrateTokenSuggestion,
   addDcpTokensMetadata,
-  changeTempleRpc
+  changeTempleRpc,
+  updateSirsTokenAction
 } from '../../store/migration/migration-actions';
 
 export const useStorageMigration = () => {
@@ -24,5 +25,6 @@ export const useStorageMigration = () => {
     dispatch(addDcpRpc());
     dispatch(changeTempleRpc());
     dispatch(addDcpTokensMetadata());
+    dispatch(updateSirsTokenAction());
   }, []);
 };
