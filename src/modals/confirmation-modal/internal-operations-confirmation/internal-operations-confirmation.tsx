@@ -11,7 +11,6 @@ import { ActivityTypeEnum } from '../../../enums/activity-type.enum';
 import { ApproveInternalOperationRequestActionPayloadInterface } from '../../../hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-request-confirmation.hook';
 import { ActivityInterface } from '../../../interfaces/activity.interface';
-import { emptyMember } from '../../../interfaces/member.interface';
 import { StacksEnum } from '../../../navigator/enums/stacks.enum';
 import { addPendingActivity } from '../../../store/activity/activity-actions';
 import { navigateAction } from '../../../store/root-state.actions';
@@ -19,7 +18,14 @@ import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-sele
 import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { showSuccessToast } from '../../../toast/toast.utils';
+import {
+  LIQUIDITY_BAKING_LP_SLUG,
+  LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
+  LIQUIDITY_BAKING_LP_TOKEN_ID
+} from '../../../token/data/token-slugs';
+import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from '../../../utils/env.utils';
+import { isDefined } from '../../../utils/is-defined';
 import { sendTransaction$ } from '../../../utils/wallet.utils';
 import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
@@ -50,21 +56,78 @@ const approveInternalOperationRequest = ({
         title: 'Success!'
       });
 
-      const pendingActivity: Array<ActivityInterface> = activity.results.map(() => ({
-        hash: activity.hash,
-        type: ActivityTypeEnum.Transaction,
-        status: ActivityStatusEnum.Pending,
-        // amount: result.amount ?? '0',
-        amount: '0',
-        timestamp: Date.now(),
-        destination: emptyMember,
-        source: emptyMember,
-        id: -1
-      }));
+      const pendingActivity: Array<ActivityInterface> = activity.results.map(operation => {
+        let slug = '';
+        let address = '';
+        let tokenId;
+        let amount = '0';
+        if (operation.kind === OpKind.TRANSACTION) {
+          if (operation.amount !== '0') {
+            address = TEZ_TOKEN_SLUG;
+            amount = operation.amount;
+          }
+          if (operation.parameters?.entrypoint === 'update_operators') {
+            const params = operation.parameters;
+            const value = params.value as unknown;
+            const outerArg =
+              isDefined(value) && Array.isArray(value) && value.length > 0 && isDefined(value[0].args)
+                ? value[0].args
+                : null;
+            const innerArg =
+              isDefined(outerArg) && Array.isArray(outerArg) && outerArg.length > 0 && isDefined(outerArg[0].args)
+                ? outerArg[0].args
+                : null;
+            const lastArg =
+              isDefined(innerArg) && Array.isArray(innerArg) && innerArg.length > 1 && isDefined(innerArg[1].args)
+                ? innerArg[1].args
+                : null;
 
-      console.log(pendingActivity);
+            if (
+              Array.isArray(lastArg) &&
+              lastArg.length > 1 &&
+              isDefined(lastArg[1].int) &&
+              isDefined(lastArg[0].string)
+            ) {
+              slug = lastArg[0].string + '_' + lastArg[1].int;
+              address = lastArg[0].string;
+              tokenId = lastArg[1].int;
+              amount = operation.amount;
+            }
+          }
+          if (operation.parameters?.entrypoint === 'approve') {
+            slug = `${operation.destination}_0`;
+            address = operation.destination;
+            tokenId = 0;
+            amount = operation.amount;
+          }
+          if (
+            operation.parameters?.entrypoint === 'removeLiquidity' ||
+            operation.parameters?.entrypoint === 'addLiquidity'
+          ) {
+            slug = LIQUIDITY_BAKING_LP_SLUG;
+            address = LIQUIDITY_BAKING_LP_TOKEN_ADDRESS;
+            tokenId = LIQUIDITY_BAKING_LP_TOKEN_ID;
+            amount = operation.amount;
+          }
+        }
 
-      // console.log(activity.results);
+        return {
+          hash: activity.hash,
+          type: ActivityTypeEnum.Transaction,
+          status: ActivityStatusEnum.Pending,
+          amount,
+          address,
+          tokenId,
+          timestamp: Date.now(),
+          destination: {
+            address: slug
+          },
+          source: {
+            address: sender.publicKeyHash
+          },
+          id: -1
+        };
+      });
 
       return [
         navigateAction(StacksEnum.MainStack),

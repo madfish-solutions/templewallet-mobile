@@ -74,8 +74,12 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     }
   };
 
+  const filteredPendingActivities = pendingActivities.filter(group =>
+    group.some(activity => activity.destination.address === tokenSlug)
+  );
+
   return {
     handleUpdate,
-    activities: [...pendingActivities, ...activities]
+    activities: [...filteredPendingActivities, ...activities]
   };
 };
