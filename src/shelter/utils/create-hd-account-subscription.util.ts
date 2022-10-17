@@ -15,10 +15,10 @@ export const createHdAccountSubscription = (
   createHdAccount$
     .pipe(
       tap(() => dispatch(setLoadingAction(true))),
-      switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length)),
-      tap(() => dispatch(setLoadingAction(false)))
+      switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, accounts.length))
     )
     .subscribe(publicData => {
+      dispatch(setLoadingAction(false));
       if (publicData !== undefined) {
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));

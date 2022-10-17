@@ -40,10 +40,10 @@ export const createImportAccountSubscription = (
             return of(undefined);
           })
         )
-      ),
-      tap(() => dispatch(setLoadingAction(false)))
+      )
     )
     .subscribe(publicData => {
+      dispatch(setLoadingAction(false));
       if (publicData !== undefined) {
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));

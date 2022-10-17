@@ -2,6 +2,7 @@ import { mnemonicToSeedSync } from 'bip39';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AndroidKeyboardDisclaimer } from '../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -16,6 +17,7 @@ import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { setLoadingAction } from '../../../store/settings/settings-actions';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
@@ -33,10 +35,12 @@ interface Props {
 }
 
 export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
+  const dispatch = useDispatch();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
   const onSubmit = (values: ImportAccountSeedValues) => {
+    dispatch(setLoadingAction(true));
     const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
     const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
 

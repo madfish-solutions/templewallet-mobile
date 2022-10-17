@@ -16,10 +16,10 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
           Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
         ])
-      ),
-      tap(() => dispatch(setLoadingAction(false)))
+      )
     )
     .subscribe(([importedAccounts, isPasswordSaved]) => {
+      dispatch(setLoadingAction(false));
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
         dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));

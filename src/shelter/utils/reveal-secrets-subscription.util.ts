@@ -19,8 +19,7 @@ export const revealSecretsSubscription = (
         Shelter.revealSecretKey$(publicKeyHash).pipe(
           map((secretKey): [string | undefined, EventFn<string>] => [secretKey, successCallback])
         )
-      ),
-      tap(() => dispatch(setLoadingAction(false)))
+      )
     ),
     revealSeedPhrase$.pipe(
       tap(() => dispatch(setLoadingAction(true))),
@@ -28,10 +27,10 @@ export const revealSecretsSubscription = (
         Shelter.revealSeedPhrase$()
           .pipe(catchError(() => of(undefined)))
           .pipe(map((seedPhrase): [string | undefined, EventFn<string>] => [seedPhrase, successCallback]))
-      ),
-      tap(() => dispatch(setLoadingAction(false)))
+      )
     )
   ).subscribe(([value, successCallback]) => {
+    dispatch(setLoadingAction(false));
     if (value !== undefined) {
       successCallback(value);
     }

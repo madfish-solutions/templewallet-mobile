@@ -18,10 +18,10 @@ export const enableBiometryPasswordSubscription = (
         Shelter.isPasswordCorrect$(password).pipe(
           switchMap(isPasswordCorrect => (isPasswordCorrect ? Shelter.enableBiometryPassword$(password) : of(false)))
         )
-      ),
-      tap(() => dispatch(setLoadingAction(false)))
+      )
     )
     .subscribe(isPasswordSaved => {
+      dispatch(setLoadingAction(false));
       if (isPasswordSaved === false) {
         showErrorToast({ description: 'Wrong password, please, try again' });
       } else {

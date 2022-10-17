@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
 
 import { usePasswordDelay } from '../hooks/use-password-delay.hook';
@@ -41,10 +41,10 @@ export const useAppLock = () => {
         .pipe(
           tap(() => dispatch(setLoadingAction(true))),
           delay(passwordDelay),
-          switchMap(password => Shelter.unlockApp$(password)),
-          tap(() => dispatch(setLoadingAction(false)))
+          switchMap(password => Shelter.unlockApp$(password))
         )
         .subscribe(success => {
+          dispatch(setLoadingAction(false));
           if (success) {
             dispatch(enterPassword.success());
 
