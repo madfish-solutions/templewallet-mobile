@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
 
 import { usePasswordDelay } from '../hooks/use-password-delay.hook';
