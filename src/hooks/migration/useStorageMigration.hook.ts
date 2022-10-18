@@ -10,7 +10,8 @@ import {
   migrateTokenSuggestion,
   addDcpTokensMetadata,
   changeTempleRpc,
-  updateSirsTokenAction
+  updateSirsTokenAction,
+  removeGiganodeAction
 } from '../../store/migration/migration-actions';
 
 export const useStorageMigration = () => {
@@ -26,5 +27,6 @@ export const useStorageMigration = () => {
     dispatch(changeTempleRpc());
     dispatch(addDcpTokensMetadata());
     dispatch(updateSirsTokenAction());
+    dispatch(removeGiganodeAction());
   }, []);
 };

@@ -15,10 +15,6 @@ export const OLD_TEMPLE_RPC_URL = 'https://mainnet-node.madfish.solutions';
 export const RpcList: RpcInterface[] = [
   TEMPLE_RPC,
   {
-    name: 'Tezos Giga Node',
-    url: 'https://mainnet-tezos.giganode.io'
-  },
-  {
     name: 'SmartPy Node',
     url: 'https://mainnet.smartpy.io'
   },

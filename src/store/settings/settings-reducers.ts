@@ -1,7 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { isDefined } from '../../utils/is-defined';
 import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from '../../utils/rpc/rpc-list';
-import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
+import { addDcpRpc, changeTempleRpc, removeGiganodeAction } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
@@ -105,5 +106,27 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     }
 
     return state;
+  });
+
+  builder.addCase(removeGiganodeAction, state => {
+    const rpcToRemove = 'https://mainnet-tezos.giganode.io';
+    const { rpcList, selectedRpcUrl } = state;
+    let newSelectedRpc = rpcToRemove;
+    const isMigrationDontNeeded =
+      isDefined(rpcList.find(x => x.url === rpcToRemove)) === false && selectedRpcUrl !== rpcToRemove;
+    if (isMigrationDontNeeded) {
+      return state;
+    }
+    const newRpcList = rpcList.filter(x => x.url !== rpcToRemove);
+
+    if (selectedRpcUrl === rpcToRemove && newRpcList.length > 0) {
+      newSelectedRpc = newRpcList[0].url;
+    }
+
+    return {
+      ...state,
+      selectedRpcUrl: newSelectedRpc,
+      rpcList: newRpcList
+    };
   });
 });
