@@ -1,11 +1,11 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { NewsNotificationInterface, NewsType, StatusType } from '../../../interfaces/news.interface';
+import { NewsInterface, NewsType, StatusType } from '../../../interfaces/news.interface';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
@@ -16,16 +16,16 @@ import { NewsIcon } from '../icons/news.icon';
 import { UpdateIcon } from '../icons/update.icon';
 import { useNewsItemStyles } from './news-item.styles';
 
-export const NewsItem: FC<NewsNotificationInterface> = ({ id, createdAt, status, type, title, description }) => {
+export const NewsItem: FC<NewsInterface> = ({ id, createdAt, status, type, title, description }) => {
   const styles = useNewsItemStyles();
   const colors = useColors();
   const { navigate } = useNavigation();
 
   const isNew = status === StatusType.New;
 
-  const handlePress = useCallback(() => {
+  const handlePress = () => {
     navigate(ScreensEnum.NewsScreen, { id });
-  }, []);
+  };
 
   return (
     <TouchableOpacity

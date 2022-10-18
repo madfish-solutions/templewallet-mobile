@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect } from 'react';
-import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
@@ -27,8 +27,6 @@ export const NewsPage: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
-  const windowWidth = useWindowDimensions().width;
-
   useEffect(() => {
     if (status !== StatusType.Read) {
       dispatch(readNewsAction([id]));
@@ -40,14 +38,7 @@ export const NewsPage: FC = () => {
   return (
     <>
       <ScrollView>
-        <View
-          style={[
-            styles.imageWrapper,
-            {
-              width: windowWidth
-            }
-          ]}
-        >
+        <View style={styles.imageWrapper}>
           {isDefined(mobileImageUrl) && <FastImage style={styles.image} source={{ uri: mobileImageUrl }} />}
         </View>
         <View style={styles.container}>

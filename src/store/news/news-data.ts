@@ -1,6 +1,6 @@
-import { NewsNotificationInterface, NewsType, PlatformType, StatusType } from '../../interfaces/news.interface';
+import { NewsInterface, NewsType, PlatformType, StatusType } from '../../interfaces/news.interface';
 
-export const welcomeNewsNotifications: Array<NewsNotificationInterface> = [
+export const welcomeNewsNotifications: Array<NewsInterface> = [
   {
     id: '0m1',
     createdAt: '2022-09-01T00:00:00.000Z',

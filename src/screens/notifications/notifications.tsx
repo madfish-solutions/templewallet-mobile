@@ -39,6 +39,7 @@ export const Notifications = () => {
         <FlatList
           data={news}
           keyExtractor={item => item.id}
+          ListEmptyComponent={<DataPlaceholder text="Notifications not found" />}
           renderItem={({ item }) => <NewsItem key={item.id} {...item} />}
         />
       )}

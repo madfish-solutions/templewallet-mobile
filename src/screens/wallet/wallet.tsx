@@ -51,7 +51,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
           <Divider size={formatSize(24)} />
           <TouchableOpacity onPress={() => navigate(ScreensEnum.Notifications)}>
-            <NotificationIcon isNotification={!isDotVisible} />
+            <NotificationIcon isNotification={isDotVisible === false} />
           </TouchableOpacity>
         </View>
 

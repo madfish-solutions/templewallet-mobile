@@ -29,6 +29,7 @@ export const useNewsPageStyles = createUseStyles(({ colors, typography }) => ({
   },
   imageWrapper: {
     height: formatSize(192),
+    width: '100%',
     paddingHorizontal: formatSize(16),
     paddingTop: formatSize(12)
   },

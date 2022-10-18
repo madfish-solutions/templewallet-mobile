@@ -7,7 +7,7 @@ import { NewsRootState, NewsState } from './news-state';
 const useBaseSelector = () => {
   const loadedNews = useSelector<NewsRootState, NewsState['news']>(({ newsState }) => newsState.news);
 
-  return [...loadedNews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return [...loadedNews.data].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 export const useNewsIdSelector = (key: string) =>

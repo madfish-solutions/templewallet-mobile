@@ -1,6 +1,6 @@
+import { createEntity } from '../create-entity';
 import { NewsState } from './news-state';
 
 export const mockNewsState: NewsState = {
-  news: [],
-  loading: false
+  news: createEntity([])
 };

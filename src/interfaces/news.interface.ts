@@ -15,7 +15,7 @@ export enum StatusType {
   Viewed = 'Viewed'
 }
 
-export interface NewsNotificationInterface {
+export interface NewsInterface {
   id: string;
   createdAt: string;
   status: StatusType;

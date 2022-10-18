@@ -1,16 +1,16 @@
 import { EmptyObject } from '@reduxjs/toolkit';
 
-import { NewsNotificationInterface } from '../../interfaces/news.interface';
+import { NewsInterface } from '../../interfaces/news.interface';
+import { createEntity } from '../create-entity';
+import { LoadableEntityState } from '../types';
 import { welcomeNewsNotifications } from './news-data';
 
 export interface NewsState {
-  news: Array<NewsNotificationInterface>;
-  loading: boolean;
+  news: LoadableEntityState<Array<NewsInterface>>;
 }
 
 export const newsInitialState: NewsState = {
-  news: welcomeNewsNotifications,
-  loading: false
+  news: createEntity(welcomeNewsNotifications)
 };
 
 export interface NewsRootState extends EmptyObject {
