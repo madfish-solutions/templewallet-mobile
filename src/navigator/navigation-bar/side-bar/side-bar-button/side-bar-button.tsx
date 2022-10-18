@@ -15,7 +15,7 @@ import { useSideBarButtonStyles } from './side-bar-button.styles';
 interface Props {
   label: string;
   iconName: IconNameEnum;
-  routeName: ScreensEnum;
+  routeName: ScreensEnum.Wallet | ScreensEnum.DApps | ScreensEnum.SwapScreen | ScreensEnum.Settings;
   focused: boolean;
   disabled?: boolean;
   disabledOnPress?: EmptyFn;
