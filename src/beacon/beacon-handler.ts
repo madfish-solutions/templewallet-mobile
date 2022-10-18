@@ -8,7 +8,6 @@ import {
   WalletClient
 } from '@airgap/beacon-sdk';
 import { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
-import * as sodium from 'libsodium-wrappers';
 
 import { EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
@@ -20,8 +19,6 @@ export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
 
   static async init(onBeaconRequest: EventFn<BeaconRequestOutputMessage>) {
-    await sodium.ready;
-
     if (!isDefined(BeaconHandler._walletClient)) {
       BeaconHandler._walletClient = new WalletClient({
         name: 'Temple Wallet',

@@ -27,7 +27,7 @@ platform :android do
     releaseFilePath = File.join(Dir.pwd, "..", "app/temple-wallet.keystore")
     gradle(task: 'clean')
     gradle(
-      task: 'assemble',
+      task: 'app:assemble',
       build_type: 'Release',
       print_command: false,
       properties: {

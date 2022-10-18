@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
+import { RefreshControlProps } from 'react-native';
 
 import { CurrentRouteNameContext } from '../navigator/current-route-name.context';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { useActiveTimer } from './use-active-timer.hook';
 
-const FIXED_TIME = 2000;
-const VARIABLE_TIME = 2000;
+const FIXED_TIME = 1000;
+const VARIABLE_TIME = 1000;
 
-export const useRefresh = () => {
+export const useFakeRefreshControlProps = (): RefreshControlProps => {
   const [isRefreshing, setRefreshing] = useState(false);
   const { activeTimer, clearActiveTimer } = useActiveTimer();
   const currentRouteName = useContext(CurrentRouteNameContext);
@@ -24,8 +25,5 @@ export const useRefresh = () => {
     clearActiveTimer();
   }, [publicKeyHash, currentRouteName]);
 
-  return {
-    isRefreshing,
-    handleRefresh
-  };
+  return { refreshing: isRefreshing, onRefresh: handleRefresh };
 };

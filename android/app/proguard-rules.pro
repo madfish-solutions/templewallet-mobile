@@ -9,7 +9,10 @@
 
 # Add any project specific keep options here:
 
--keep class com.templewallet.BuildConfig { *; }
 -keep public class com.horcrux.svg.** { *; }
 -keep class com.swmansion.reanimated.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }
+# react-native-config setup
+-keep class com.templewallet.BuildConfig { *; }
+# react-native-keychain setup
 -keep class com.facebook.crypto.** { *; }

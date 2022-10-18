@@ -22,7 +22,7 @@ export const AccountDropdownModalItem: FC<AccountDropdownItemProps> = ({
   const tezosToken = useTezosTokenSelector(account.publicKeyHash);
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, styles.rootModal]}>
       <RobotIcon size={formatSize(24)} seed={account.publicKeyHash} />
       <View style={styles.smallInfoContainer}>
         <View style={styles.lowerContainer}>
