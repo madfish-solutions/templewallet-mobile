@@ -16,3 +16,6 @@ export const useNewsIdSelector = (key: string) =>
 export const useNewsSelector = () => useBaseSelector();
 
 export const useIsEveryNewsSeenSelector = () => useBaseSelector().every(x => x.status !== StatusType.New);
+
+export const useNewsEnabledSelector = () =>
+  useSelector<NewsRootState, NewsState['newsEnabled']>(({ newsState }) => newsState.newsEnabled);

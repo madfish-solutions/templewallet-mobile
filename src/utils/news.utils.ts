@@ -7,7 +7,7 @@ import { loadNewsAction } from '../store/news/news-actions';
 import { NewsRootState } from '../store/news/news-state';
 import { isDefined } from './is-defined';
 
-interface RequestParams {
+export interface RequestParams {
   welcome?: boolean;
   platform?: PlatformType;
   limit?: string;
@@ -17,19 +17,20 @@ interface RequestParams {
   sorted?: SortedBy;
 }
 
-type Payload = { payload: unknown; type: string };
+export type Payload = { payload: unknown; type: string };
 
-export const getNewsItems$ = (lastNewsArr: Array<Payload | NewsInterface[]> | Payload) =>
-  from(
+export const getNewsItems$ = (isEnabled: boolean, lastNews?: NewsInterface[]) => {
+  if (isEnabled === false) {
+    return of(loadNewsAction.fail('News not enabled'));
+  }
+
+  return from(
     templeWalletApi.get<RequestParams, NewsInterface[]>('/news', {
       params: {
         platform: PlatformType.Mobile,
         timeLt:
-          isDefined(lastNewsArr) &&
-          Array.isArray(lastNewsArr) &&
-          isDefined(lastNewsArr[1]) &&
-          Array.isArray(lastNewsArr[1])
-            ? new Date(lastNewsArr[1][lastNewsArr[1].length - 1].createdAt).getTime().toString()
+          isDefined(lastNews) && Array.isArray(lastNews)
+            ? new Date(lastNews[lastNews.length - 1].createdAt).getTime().toString()
             : undefined
       }
     })
@@ -37,6 +38,7 @@ export const getNewsItems$ = (lastNewsArr: Array<Payload | NewsInterface[]> | Pa
     map(data => loadNewsAction.success(data)),
     catchError(err => of(loadNewsAction.fail(err.message)))
   );
+};
 
 export const withLoadedNews =
   <T>(state$: Observable<NewsRootState>) =>
@@ -44,3 +46,8 @@ export const withLoadedNews =
     observable$.pipe(
       withLatestFrom(state$, (value, { newsState }): [T, Array<NewsInterface>] => [value, newsState.news.data])
     );
+
+export const withNewsEnabled =
+  <T>(state$: Observable<NewsRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(withLatestFrom(state$, (value, { newsState }): [T, boolean] => [value, newsState.newsEnabled]));

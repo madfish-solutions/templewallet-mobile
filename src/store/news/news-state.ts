@@ -7,10 +7,12 @@ import { welcomeNewsNotifications } from './news-data';
 
 export interface NewsState {
   news: LoadableEntityState<Array<NewsInterface>>;
+  newsEnabled: boolean;
 }
 
 export const newsInitialState: NewsState = {
-  news: createEntity(welcomeNewsNotifications)
+  news: createEntity(welcomeNewsNotifications),
+  newsEnabled: true
 };
 
 export interface NewsRootState extends EmptyObject {
