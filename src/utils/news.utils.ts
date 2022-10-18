@@ -7,7 +7,7 @@ import { loadNewsAction } from '../store/news/news-actions';
 import { NewsRootState } from '../store/news/news-state';
 import { isDefined } from './is-defined';
 
-export interface RequestParams {
+interface RequestParams {
   welcome?: boolean;
   platform?: PlatformType;
   limit?: string;
@@ -16,8 +16,6 @@ export interface RequestParams {
   timeGt?: string;
   sorted?: SortedBy;
 }
-
-export type Payload = { payload: unknown; type: string };
 
 export const getNewsItems$ = (isEnabled: boolean, lastNews?: NewsInterface[]) => {
   if (isEnabled === false) {
