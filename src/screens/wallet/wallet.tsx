@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
@@ -11,6 +11,7 @@ import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-ic
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useIsEveryNewsSeenSelector } from '../../store/news/news-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -19,6 +20,7 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { NotificationIcon } from '../notifications/icons/notification.icon';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
@@ -30,6 +32,7 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const isDotVisible = useIsEveryNewsSeenSelector();
 
   usePageAnalytic(ScreensEnum.Wallet);
 
@@ -46,6 +49,10 @@ export const Wallet = () => {
           <Divider />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+          <Divider size={formatSize(24)} />
+          <TouchableOpacity onPress={() => navigate(ScreensEnum.Notifications)}>
+            <NotificationIcon isNotification={isDotVisible === false} />
+          </TouchableOpacity>
         </View>
 
         <TokenEquityValue token={tezosToken} showTokenValue={false} />

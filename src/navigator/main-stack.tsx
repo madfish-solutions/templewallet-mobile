@@ -35,6 +35,8 @@ import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { NodeSettings } from '../screens/node-settings/node-settings';
+import { NewsPage } from '../screens/notifications/news/news-page';
+import { Notifications } from '../screens/notifications/notifications';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
@@ -49,6 +51,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { loadNewsAction } from '../store/news/news-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -84,6 +87,7 @@ export const MainStackScreen = () => {
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
+    dispatch(loadNewsAction.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
@@ -163,6 +167,16 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Activity}
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Notifications}
+                component={Notifications}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.NewsScreen}
+                component={NewsPage}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
 
               {/** DApps stack **/}
