@@ -24,6 +24,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+ios/.xcode.env.local
 
 # Android/IntelliJ
 #
@@ -33,6 +34,7 @@ build/
 local.properties
 *.iml
 *.hprof
+.cxx/
 
 # node.js
 #
@@ -64,8 +66,9 @@ api-*.json
 # Bundle artifact
 *.jsbundle
 
-# CocoaPods
+# Ruby / CocoaPods
 /ios/Pods/
+/vendor/bundle/
 
 # Jest
 coverage/

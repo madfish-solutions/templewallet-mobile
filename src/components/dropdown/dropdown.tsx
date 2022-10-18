@@ -1,6 +1,6 @@
-import { TouchableOpacity as BottomSheetTouchableOpacity } from '@gorhom/bottom-sheet';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useState } from 'react';
-import { FlatListProps, ListRenderItemInfo, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, useWindowDimensions, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
@@ -86,11 +86,11 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <BottomSheetTouchableOpacity key={index} onPress={handlePress}>
+        <TouchableOpacity key={index} onPress={handlePress}>
           <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
-        </BottomSheetTouchableOpacity>
+        </TouchableOpacity>
       );
     },
     [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]

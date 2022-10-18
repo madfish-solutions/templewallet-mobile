@@ -10,7 +10,7 @@ import { formatSize } from '../../../styles/format-size';
 import { useIntegratedDAppStyles } from './integrated.styles';
 
 interface Props {
-  screenName: ScreensEnum;
+  screenName: ScreensEnum.LiquidityBakingDapp;
   iconName: IconNameEnum;
   title: string;
   description?: string;
