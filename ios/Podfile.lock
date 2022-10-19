@@ -899,7 +899,7 @@ SPEC CHECKSUMS:
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReactNativeHapticFeedback: 1e3efeca9628ff9876ee7cdd9edec1b336913f8c
-  RNReanimated: 45406c349c61c88962e91b62187bc22cfe8b278f
+  RNReanimated: 3cd9150cfe61e8126e03e172364cb59c0cc573fb
   RNScreens: 1b7bb502dac62cc4cf01b94bea591c8da275132f
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSentry: 1cd4360f7c668f4d7e8f860e41da884f00e7d814
