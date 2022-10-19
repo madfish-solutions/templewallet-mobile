@@ -36,7 +36,13 @@ export const useAppLock = () => {
 
   useEffect(() => {
     const subscriptions = [
-      Shelter.isLocked$.subscribe(value => setIsLocked(value)),
+      Shelter.isLocked$.subscribe(value => {
+        dispatch(setLoadingAction(false));
+        if (value === false) {
+          dispatch(enterPassword.success());
+        }
+        setIsLocked(value);
+      }),
       unlock$
         .pipe(
           tap(() => dispatch(setLoadingAction(true))),

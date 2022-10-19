@@ -1,4 +1,5 @@
 import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
+import axios from 'axios';
 import { combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -94,7 +95,7 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadDAppsListActions.submit),
     switchMap(() =>
-      from(templeWalletApi.get<CustomDAppsInfo>('/dapps')).pipe(
+      from(axios.create({ baseURL: 'http://localhost:3000/api' }).get<CustomDAppsInfo>('/dapps')).pipe(
         map(({ data }) => loadDAppsListActions.success(data.dApps)),
         catchError(err => of(loadDAppsListActions.fail(err.message)))
       )
