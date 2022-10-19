@@ -22,6 +22,7 @@ jobs:
 
       - name: Secrets setup
         uses: ./.github/workflows/secrets-setup
+        secrets: inherit
 
       - name: Setup Java SDK
         uses: actions/setup-java@v3

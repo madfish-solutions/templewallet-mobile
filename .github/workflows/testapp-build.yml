@@ -35,6 +35,7 @@ jobs:
 
       - name: Secrets setup
         uses: ./.github/workflows/secrets-setup
+        secrets: inherit
 
       # Android
 
