@@ -6,7 +6,7 @@ export const DCP_RPC: RpcInterface = {
 };
 
 export const TEMPLE_RPC: RpcInterface = {
-  name: 'Temple Default',
+  name: 'Tezos Mainnet',
   url: 'https://uoi3x99n7c.tezosrpc.midl.dev'
 };
 
@@ -15,8 +15,12 @@ export const OLD_TEMPLE_RPC_URL = 'https://mainnet-node.madfish.solutions';
 export const RpcList: RpcInterface[] = [
   TEMPLE_RPC,
   {
-    name: 'SmartPy Node',
+    name: 'SmartPy Mainnet',
     url: 'https://mainnet.smartpy.io'
+  },
+  {
+    name: 'ECAD Labs Mainnet',
+    url: 'https://mainnet.api.tez.ie'
   },
   DCP_RPC
 ];
