@@ -13,13 +13,13 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { EventFn } from '../../../config/general';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { AccountInterface } from '../../../interfaces/account.interface';
+import { TestIdProps } from '../../../interfaces/test-id.props';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
 import { tzToMutez } from '../../../utils/tezos.util';
-import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -27,14 +27,14 @@ import { useFeeForm } from './hooks/use-fee-form.hook';
 import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
 
-interface Props {
+interface Props extends TestIdProps {
   sender: AccountInterface;
   opParams: ParamsWithKind[];
   isLoading: boolean;
   onSubmit: EventFn<ParamsWithKind[]>;
 }
 
-export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading, onSubmit, children }) => {
+export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading, onSubmit, children, testID }) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
@@ -55,8 +55,8 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   } = useFeeForm(opParams, estimations.data);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
-    if (opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === RECOMMENDED_BAKER_ADDRESS) {
-      trackEvent('RECOMMENDED_BAKER_DELEGATION', AnalyticsEventCategory.FormSubmit);
+    if (isDefined(testID)) {
+      trackEvent(testID, AnalyticsEventCategory.FormSubmit);
     }
 
     // Remove revealGasGee from sum
