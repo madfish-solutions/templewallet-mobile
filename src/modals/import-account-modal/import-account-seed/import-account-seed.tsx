@@ -41,13 +41,15 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
 
   const onSubmit = (values: ImportAccountSeedValues) => {
     dispatch(setLoadingAction(true));
-    const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
-    const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
+    setTimeout(() => {
+      const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
+      const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
 
-    createImportedAccount({
-      name: `Account ${accountsIndex}`,
-      privateKey
-    });
+      createImportedAccount({
+        name: `Account ${accountsIndex}`,
+        privateKey
+      });
+    }, 100);
   };
 
   return (
