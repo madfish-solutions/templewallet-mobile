@@ -25,13 +25,16 @@ jobs:
   testapp-build:
     name: Create new iOS / Android builds and upload them via TestApp
     runs-on: macos-latest
-    environment: testapp
+    environment: fastlane
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
 
       - name: Repository setup
         uses: ./.github/workflows/repository-setup
+
+      - name: Secrets setup
+        uses: ./.github/workflows/secrets-setup
 
       # Android
 
@@ -52,7 +55,7 @@ jobs:
 
       - name: Build Android
         if: ${{ github.event.inputs.android == 'true' }}
-        run: yarn build:android
+        run: yarn android:release:apk
 
       - name: Upload Android artifact to TestApp.io
         if: ${{ github.event.inputs.android == 'true' }}
@@ -102,7 +105,7 @@ jobs:
         with:
           api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
           app_id: ${{ secrets.TESTAPPIO_APP_ID }}
-          file: apps/mobile/ios/build/KlaytnWallet.ipa
+          file: apps/mobile/ios/build/TempleWallet.ipa
           release_notes: ${{env.GIT_BRANCH_NAME}} iOS
           git_release_notes: false
           include_git_commit_id: false
