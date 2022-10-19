@@ -47,8 +47,6 @@ jobs:
         with:
           xcode-version: latest-stable
 
-
-
       - name: Write secrets to google-services.json
         run: |
           cat << EOF > ./android/app/google-services.json
@@ -84,17 +82,17 @@ jobs:
           cd android && ./decrypt_script.sh
           yarn android:test-flight
         env:
-          BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Create Github release
-        if: ${{ github.event.inputs.githubReleaseVersion != '' }}
+        if: ${{ github.event.inputs.github-release-version != '' }}
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: ${{ github.event.inputs.githubReleaseVersion }}(${{ github.event.inputs.buildNumber }})
+          automatic_release_tag: ${{ github.event.inputs.github-release-version }}(${{ github.event.inputs.build-number }})
           prerelease: false
           files: |
             android/app/build/outputs/apk/release/app-release.apk
@@ -112,7 +110,7 @@ jobs:
           cd ios && ./decrypt_script.sh
           yarn ios:test-flight
         env:
-          BUILD_NUMBER: ${{ github.event.inputs.buildNumber }}
+          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           CHANGELOG: ${{ steps.changelog.outputs.log }}
