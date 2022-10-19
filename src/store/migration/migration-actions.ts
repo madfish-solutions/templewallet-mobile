@@ -24,5 +24,3 @@ export const addDcpRpc = createAction('migration/ADD_DCP_RPC');
 export const changeTempleRpc = createAction('migration/CHANGE_TEMPLE_RPC');
 
 export const updateSirsTokenAction = createAction('migration/UPDATE_SIRS_TOKEN');
-
-export const removeGiganodeAction = createAction('migration/REMOVE_GIGANODE_RPC');
