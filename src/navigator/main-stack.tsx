@@ -266,7 +266,7 @@ export const MainStackScreen = () => {
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}
-            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" isWhite={true} />)}
+            options={generateScreenOptions(<HeaderTitle title="Scan QR Code" />)}
           />
         </MainStack.Navigator>
       </NavigationBar>
