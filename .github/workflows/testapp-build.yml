@@ -46,6 +46,9 @@ jobs:
           TEMPLE_WALLET_UTORG_SID: ${{ secrets.TEMPLE_WALLET_UTORG_SID }}
           FIREBASE_GOOGLE_SERVICE_ANDROID: ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
           FIREBASE_GOOGLE_SERVICE_IOS: ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
+          APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
+          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
 
       # Android
 

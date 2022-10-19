@@ -58,12 +58,9 @@ jobs:
         run: |
           export LC_ALL=en_US.UTF-8
           export LANG=en_US.UTF-8
-          cd android && ./decrypt_script.sh
           yarn android:test-flight
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build-number }}
-          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
-          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Create Github release
@@ -86,10 +83,8 @@ jobs:
         run: |
           export LC_ALL=en_US.UTF-8
           export LANG=en_US.UTF-8
-          cd ios && ./decrypt_script.sh
           yarn ios:test-flight
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           CHANGELOG: ${{ steps.changelog.outputs.log }}
