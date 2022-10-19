@@ -1,6 +1,7 @@
 import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -19,6 +20,7 @@ import { useDappRequestConfirmation } from '../../../../hooks/request-confirmati
 import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { navigateAction } from '../../../../store/root-state.actions';
+import { setSelectedAccountAction } from '../../../../store/wallet/wallet-actions';
 import { useAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { showSuccessToast } from '../../../../toast/toast.utils';
@@ -50,6 +52,7 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
   );
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
+  const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -61,11 +64,15 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
     [selectedAccount]
   );
 
-  const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) =>
-    void confirmRequest({
+  const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
+    if (approver.publicKeyHash !== selectedAccount.publicKeyHash) {
+      dispatch(setSelectedAccountAction(approver.publicKeyHash));
+    }
+    confirmRequest({
       message,
       publicKey: approver.publicKey
     });
+  };
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
 
