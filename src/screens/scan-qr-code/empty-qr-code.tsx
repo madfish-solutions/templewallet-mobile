@@ -7,16 +7,12 @@ import { ButtonsFloatingContainer } from '../../components/button/buttons-floati
 import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { Divider } from '../../components/divider/divider';
 import { isAndroid } from '../../config/system';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
 export const EmptyQrCode = () => {
   const styles = useScanQrCodeStyles();
-
-  usePageAnalytic(ScreensEnum.ScanQrCode);
 
   const handlePress = () => (isAndroid ? appDetailsSettings() : openUrl('App-Prefs:Security'));
 
