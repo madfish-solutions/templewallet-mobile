@@ -49,6 +49,7 @@ jobs:
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       # Android
 

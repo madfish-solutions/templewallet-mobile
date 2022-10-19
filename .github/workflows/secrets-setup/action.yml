@@ -33,6 +33,12 @@ runs:
         ${{ inputs.FIREBASE_GOOGLE_SERVICE_IOS }}
         EOF
 
+    - name: Set Keystore password
+      shell: bash
+      run: |
+        sed -i "" "s/MYAPP_UPLOAD_STORE_PASSWORD=/MYAPP_UPLOAD_STORE_PASSWORD=${{ inputs.SIGNING_PASSWORD }}/" android/gradle.properties
+        sed -i "" "s/MYAPP_UPLOAD_KEY_PASSWORD=/MYAPP_UPLOAD_KEY_PASSWORD=${{ inputs.SIGNING_PASSWORD }}/" android/gradle.properties
+
     - name: Write GooglePlay authkey and Keystore file
       shell: bash
       run: cd android && ./decrypt_script.sh
@@ -40,7 +46,7 @@ runs:
         GOOGLE_PLAY_AUTHKEY: ${{ inputs.GOOGLE_PLAY_AUTHKEY }}
         KEYSTORE_KEY: ${{ inputs.KEYSTORE_KEY }}
 
-    - name: Write AppStore authkey and Keystore file
+    - name: Write AppStore authkey
       shell: bash
       run: cd ios && ./decrypt_script.sh
       env:
