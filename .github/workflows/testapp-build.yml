@@ -1,0 +1,123 @@
+name: TestApp build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        default: 1.7
+        required: true
+      build-number:
+        description: Build number
+        required: true
+      ios:
+        type: boolean
+        description: iOS
+        default: true
+        required: true
+      android:
+        type: boolean
+        description: Android
+        default: true
+        required: true
+
+jobs:
+  testapp-build:
+    name: Create new iOS / Android builds and upload them via TestApp
+    runs-on: macos-latest
+    environment: fastlane
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Repository setup
+        uses: ./.github/workflows/repository-setup
+
+      - name: Secrets setup
+        uses: ./.github/workflows/secrets-setup
+        with:
+          READ_ONLY_SIGNER_PUBLIC_KEY: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY }}
+          READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ secrets.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+          TEMPLE_WALLET_API: ${{ secrets.TEMPLE_WALLET_API }}
+          SEGMENT_ANALYTICS_KEY: ${{ secrets.SEGMENT_ANALYTICS_KEY }}
+          TEMPLE_WALLET_EXOLIX_API_KEY: ${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_API_KEY: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_LINK_ID: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
+          TEMPLE_WALLET_UTORG_SID: ${{ secrets.TEMPLE_WALLET_UTORG_SID }}
+          FIREBASE_GOOGLE_SERVICE_ANDROID: ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
+          FIREBASE_GOOGLE_SERVICE_IOS: ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
+
+      # Android
+
+      - name: Setup Java SDK
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Update Android version
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
+        with:
+          build-gradle-path: android/app/build.gradle
+          version-name: ${{ github.event.inputs.version }}
+          version-code: ${{ github.event.inputs.build-number }}
+
+      - name: Build Android
+        if: ${{ github.event.inputs.android == 'true' }}
+        run: yarn android:release:apk
+
+      - name: Upload Android artifact to TestApp.io
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: testappio/github-action@v5
+        with:
+          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
+          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
+          file: android/app/build/outputs/apk/release/app-release.apk
+          release_notes: ${{env.GIT_BRANCH_NAME}} Android
+          git_release_notes: false
+          include_git_commit_id: false
+          notify: true
+
+      # iOS
+
+      - name: Install Pods
+        if: ${{ github.event.inputs.ios == 'true' }}
+        run: yarn ios:pods
+
+      - name: Update iOS version
+        if: ${{ github.event.inputs.ios == 'true' }}
+        uses: damienaicheh/update-ios-version-info-plist-action@v1.0.0
+        with:
+          info-plist-path: ios/TempleWallet/Info.plist
+          bundle-short-version-string: ${{ github.event.inputs.version }}
+          bundle-version: ${{ github.event.inputs.build-number }}
+
+      - name: Build iOS
+        if: ${{ github.event.inputs.ios == 'true' }}
+        uses: yukiarrr/ios-build-action@v1.5.0
+        with:
+          project-path: ios/TempleWallet.xcodeproj
+          workspace-path: ios/TempleWallet.xcworkspace
+          scheme: TempleWallet
+          export-method: ad-hoc
+          configuration: Release
+          output-path: ios/build/TempleWallet.ipa
+          p12-base64: ${{ secrets.P12_BASE64 }}
+          certificate-password: ${{ secrets.P12_PASSWORD }}
+          mobileprovision-base64: ${{ secrets.ADHOC_MOBILEPROVISION_BASE64 }}
+          code-signing-identity: ${{ secrets.CODE_SIGNING_IDENTITY }}
+          team-id: ${{ secrets.TEAM_ID }}
+
+      - name: Upload iOS artifact to TestApp.io
+        if: ${{ github.event.inputs.ios == 'true' }}
+        uses: testappio/github-action@v5
+        with:
+          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
+          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
+          file: apps/mobile/ios/build/TempleWallet.ipa
+          release_notes: ${{env.GIT_BRANCH_NAME}} iOS
+          git_release_notes: false
+          include_git_commit_id: false
+          notify: true

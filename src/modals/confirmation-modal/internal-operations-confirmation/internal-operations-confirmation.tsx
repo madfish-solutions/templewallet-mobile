@@ -49,7 +49,7 @@ const approveInternalOperationRequest = ({
     })
   );
 
-export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
+export const InternalOperationsConfirmation: FC<Props> = ({ opParams, testID }) => {
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
 
@@ -77,6 +77,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams }) => {
       opParams={opParams}
       isLoading={isLoading}
       onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
+      testID={testID}
     />
   );
 };
