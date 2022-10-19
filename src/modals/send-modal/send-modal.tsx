@@ -1,4 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
+import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -30,11 +31,13 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
+import { TEZ_TOKEN_METADATA } from '../../token/data/tokens-metadata';
+import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
-import { isValidAddress } from '../../utils/tezos.util';
+import { isValidAddress, tzToMutez } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
 
@@ -117,6 +120,29 @@ export const SendModal: FC = () => {
     );
   };
 
+  const maxEstimationFn = (gasToken: TokenMetadataInterface, token: TokenInterface): BigNumber => {
+    const { symbol, balance } = token;
+    let isGasTokenMaxAmountGuard = new BigNumber(0);
+    if (symbol === gasToken.symbol) {
+      if (symbol === TEZ_TOKEN_METADATA.symbol) {
+        // const estmtn = await tezos.estimate.transfer(transferParams);
+        // let amountMax = balanceBN.minus(mutezToTz(estmtn.totalCost));
+        // if (!hasManager(manager)) {
+        //   amountMax = amountMax.minus(mutezToTz(DEFAULT_FEE.REVEAL));
+        // }
+        // estmtnMax = await tezos.estimate.transfer({
+        //   to,
+        //   amount: amountMax.toString() as any
+        // });
+      } else {
+        isGasTokenMaxAmountGuard = tzToMutez(new BigNumber(0.3), token.decimals);
+      }
+    }
+    const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+
+    return amount;
+  };
+
   return (
     <Formik
       initialValues={sendModalInitialValues}
@@ -129,7 +155,13 @@ export const SendModal: FC = () => {
           <ModalStatusBar />
           <View>
             <Divider size={formatSize(8)} />
-            <FormAssetAmountInput maxButton name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
+            <FormAssetAmountInput
+              maxButton
+              name="assetAmount"
+              label="Asset"
+              assetsList={filteredAssetsListWithTez}
+              maxEstimation={maxEstimationFn}
+            />
             <Divider />
 
             <Label

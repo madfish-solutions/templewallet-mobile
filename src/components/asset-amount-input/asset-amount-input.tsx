@@ -9,6 +9,7 @@ import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-
 import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
@@ -67,6 +68,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
+  maxEstimation = defaultMaxEstimation,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -178,17 +180,18 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
     [onValueChange, isTokenInputType, getTokenExchangeRate]
   );
 
-  const handleMaxButtonPress = useCallback(() => {
-    if (isDefined(token)) {
-      const { symbol, balance } = token;
-      const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
-      const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
-      onValueChange({
-        amount,
-        asset: token
-      });
-    }
-  }, [token, gasToken, onValueChange]);
+  const handleMaxButtonPress = useCallback(
+    (gasToken: TokenMetadataInterface, token: TokenInterface | undefined) => {
+      if (isDefined(token)) {
+        const amount = maxEstimation(gasToken, token);
+        onValueChange({
+          amount,
+          asset: token
+        });
+      }
+    },
+    [onValueChange]
+  );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -284,7 +287,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <Divider size={formatSize(8)} />
                 <TouchableOpacity
                   hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
-                  onPress={handleMaxButtonPress}
+                  onPress={() => handleMaxButtonPress(gasToken, token)}
                 >
                   <Text style={styles.maxButtonText}>MAX</Text>
                 </TouchableOpacity>
@@ -298,3 +301,11 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 };
 
 export const AssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;
+
+const defaultMaxEstimation = (gasToken: TokenMetadataInterface, token: TokenInterface): BigNumber => {
+  const { symbol, balance } = token;
+  const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
+  const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+
+  return amount;
+};
