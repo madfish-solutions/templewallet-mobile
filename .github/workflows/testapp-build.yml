@@ -30,28 +30,47 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
-      - name: Setup Node 16.x
-        uses: actions/setup-node@v2
+      - name: Repository setup
+        uses: ./.github/workflows/repository-setup
+
+      # Android
+
+      - name: Setup Java SDK
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: actions/setup-java@v3
         with:
-          node-version: '16.x'
+          distribution: 'zulu'
+          java-version: '11'
 
-      - name: Get branch name
-        uses: EthanSK/git-branch-name-action@v1
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      - name: Update Android version
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          build-gradle-path: android/app/build.gradle
+          version-name: ${{ github.event.inputs.version }}
+          version-code: ${{ github.event.inputs.build-number }}
 
-      - name: Install dependencies
-        run: yarn install
+      - name: Build Android
+        if: ${{ github.event.inputs.android == 'true' }}
+        run: yarn build:android
+
+      - name: Upload Android artifact to TestApp.io
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: testappio/github-action@v5
+        with:
+          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
+          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
+          file: android/app/build/outputs/apk/release/app-release.apk
+          release_notes: ${{env.GIT_BRANCH_NAME}} Android
+          git_release_notes: false
+          include_git_commit_id: false
+          notify: true
+
+      # iOS
+
+      - name: Install Pods
+        if: ${{ github.event.inputs.ios == 'true' }}
+        run: yarn ios:pods
 
       - name: Update iOS version
         if: ${{ github.event.inputs.ios == 'true' }}
@@ -60,10 +79,6 @@ jobs:
           info-plist-path: ios/TempleWallet/Info.plist
           bundle-short-version-string: ${{ github.event.inputs.version }}
           bundle-version: ${{ github.event.inputs.build-number }}
-
-      - name: Install Pods
-        if: ${{ github.event.inputs.ios == 'true' }}
-        run: yarn ios:pods
 
       - name: Build iOS
         if: ${{ github.event.inputs.ios == 'true' }}
@@ -89,37 +104,6 @@ jobs:
           app_id: ${{ secrets.TESTAPPIO_APP_ID }}
           file: apps/mobile/ios/build/KlaytnWallet.ipa
           release_notes: ${{env.GIT_BRANCH_NAME}} iOS
-          git_release_notes: false
-          include_git_commit_id: false
-          notify: true
-
-      - name: Update Android version
-        if: ${{ github.event.inputs.android == 'true' }}
-        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
-        with:
-          build-gradle-path: android/app/build.gradle
-          version-name: ${{ github.event.inputs.version }}
-          version-code: ${{ github.event.inputs.build-number }}
-
-      - name: Setup Java SDK
-        if: ${{ github.event.inputs.android == 'true' }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-
-      - name: Build Android
-        if: ${{ github.event.inputs.android == 'true' }}
-        run: yarn build:android
-
-      - name: Upload Android artifact to TestApp.io
-        if: ${{ github.event.inputs.android == 'true' }}
-        uses: testappio/github-action@v5
-        with:
-          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
-          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
-          file: android/app/build/outputs/apk/release/app-release.apk
-          release_notes: ${{env.GIT_BRANCH_NAME}} Android
           git_release_notes: false
           include_git_commit_id: false
           notify: true

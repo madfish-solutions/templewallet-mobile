@@ -1,5 +1,7 @@
-name: Environment setup
-description: Basic environment setup
+name: Repository setup
+
+description: Setups Node 16.x & installs dependencies
+
 runs:
   using: 'composite'
   steps:
