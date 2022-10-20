@@ -86,12 +86,6 @@ jobs:
 
       # iOS
 
-      - name: Setup Xcode
-        if: ${{ github.event.inputs.ios == 'true' }}
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-
       - name: Install Pods
         if: ${{ github.event.inputs.ios == 'true' }}
         run: yarn ios:pods
@@ -126,7 +120,7 @@ jobs:
         with:
           api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
           app_id: ${{ secrets.TESTAPPIO_APP_ID }}
-          file: apps/mobile/ios/build/TempleWallet.ipa
+          file: ios/build/TempleWallet.ipa
           release_notes: ${{env.GIT_BRANCH_NAME}} iOS
           git_release_notes: false
           include_git_commit_id: false
