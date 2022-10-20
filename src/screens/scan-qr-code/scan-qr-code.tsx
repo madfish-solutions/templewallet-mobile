@@ -26,7 +26,7 @@ export const ScanQrCode = () => {
   const { navigate, goBack } = useNavigation();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const [isCameraPermissionGranted, setIsCameraPermissionGranted] = useState(true);
+  const [isAndroidCameraPermissionGranted, setIsAndroidCameraPermissionGranted] = useState(true);
 
   const { metadata } = useNetworkInfo();
 
@@ -68,11 +68,9 @@ export const ScanQrCode = () => {
   };
 
   useEffect(() => {
-    if (isAndroid) {
-      PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(granted =>
-        setIsCameraPermissionGranted(granted)
-      );
-    }
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(granted =>
+      setIsAndroidCameraPermissionGranted(granted)
+    );
   }, []);
 
   useNavigationSetOptions({ headerTransparent: true }, []);
@@ -86,7 +84,7 @@ export const ScanQrCode = () => {
         notAuthorizedView={<EmptyQrCode />}
         onRead={handleRead}
       />
-      {isCameraPermissionGranted === false && isAndroid && (
+      {isAndroidCameraPermissionGranted === false && isAndroid && (
         <View style={styles.emptyScreenAndroid}>
           <EmptyQrCode />
         </View>
