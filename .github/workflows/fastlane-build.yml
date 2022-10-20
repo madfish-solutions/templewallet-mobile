@@ -45,43 +45,43 @@ jobs:
         id: changelog
         run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
 
-#      # Android
-#
-#      - name: Setup Java SDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'zulu'
-#          java-version: '11'
-#
-#      - name: Setup ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: 2.7.2
-#          bundler-cache: true
-#
-#      - name: Install Android Gemfile dependencies
-#        run: cd android && bundle install
-#
-#      - name: Build Android & Distribute to Google Play Console
-#        run: |
-#          export LC_ALL=en_US.UTF-8
-#          export LANG=en_US.UTF-8
-#          yarn android:test-flight
-#        env:
-#          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
-#          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-#
-#      # Github release
-#
-#      - name: Create Github release
-#        if: ${{ github.event.inputs.github-release-version != '' }}
-#        uses: marvinpinto/action-automatic-releases@latest
-#        with:
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          automatic_release_tag: ${{ github.event.inputs.github-release-version }}(${{ github.event.inputs.build-number }})
-#          prerelease: false
-#          files: |
-#            android/app/build/outputs/apk/release/app-release.apk
+      # Android
+
+      - name: Setup Java SDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+
+      - name: Install Android Gemfile dependencies
+        run: cd android && bundle install
+
+      - name: Build Android & Distribute to Google Play Console
+        run: |
+          export LC_ALL=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          yarn android:test-flight
+        env:
+          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      # Github release
+
+      - name: Create Github release
+        if: ${{ github.event.inputs.github-release-version != '' }}
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ github.event.inputs.github-release-version }}(${{ github.event.inputs.build-number }})
+          prerelease: false
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
 
       # iOS
 
