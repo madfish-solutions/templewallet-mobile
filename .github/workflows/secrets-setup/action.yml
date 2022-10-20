@@ -1,0 +1,53 @@
+name: Secrets setup
+
+description: Writes secrets
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create .env file
+      shell: bash
+      run: |
+        cat << EOF > .env
+        READ_ONLY_SIGNER_PUBLIC_KEY=${{ inputs.READ_ONLY_SIGNER_PUBLIC_KEY }}
+        READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ inputs.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+        TEMPLE_WALLET_API=${{ inputs.TEMPLE_WALLET_API }}
+        SEGMENT_ANALYTICS_KEY=${{ inputs.SEGMENT_ANALYTICS_KEY }}
+        TEMPLE_WALLET_EXOLIX_API_KEY=${{ inputs.TEMPLE_WALLET_EXOLIX_API_KEY }}
+        TEMPLE_WALLET_EVERSTAKE_API_KEY=${{ inputs.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
+        TEMPLE_WALLET_EVERSTAKE_LINK_ID=${{ inputs.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
+        TEMPLE_WALLET_UTORG_SID=${{ inputs.TEMPLE_WALLET_UTORG_SID }}
+        EOF
+
+    - name: Write secrets to google-services.json
+      shell: bash
+      run: |
+        cat << EOF > ./android/app/google-services.json
+        ${{ inputs.FIREBASE_GOOGLE_SERVICE_ANDROID }}
+        EOF
+
+    - name: Write secrets to GoogleService-Info.plist
+      shell: bash
+      run: |
+        cat << EOF > ./ios/GoogleService-Info.plist
+        ${{ inputs.FIREBASE_GOOGLE_SERVICE_IOS }}
+        EOF
+
+    - name: Set Keystore password
+      shell: bash
+      run: |
+        sed -i "" "s/MYAPP_UPLOAD_STORE_PASSWORD=/MYAPP_UPLOAD_STORE_PASSWORD=${{ inputs.SIGNING_PASSWORD }}/" android/gradle.properties
+        sed -i "" "s/MYAPP_UPLOAD_KEY_PASSWORD=/MYAPP_UPLOAD_KEY_PASSWORD=${{ inputs.SIGNING_PASSWORD }}/" android/gradle.properties
+
+    - name: Write GooglePlay authkey and Keystore file
+      shell: bash
+      run: cd android && ./decrypt_script.sh
+      env:
+        GOOGLE_PLAY_AUTHKEY: ${{ inputs.GOOGLE_PLAY_AUTHKEY }}
+        KEYSTORE_KEY: ${{ inputs.KEYSTORE_KEY }}
+
+    - name: Write AppStore authkey
+      shell: bash
+      run: cd ios && ./decrypt_script.sh
+      env:
+        APPSTORE_AUTHKEY: ${{ inputs.APPSTORE_AUTHKEY }}
