@@ -68,9 +68,11 @@ export const ScanQrCode = () => {
   };
 
   useEffect(() => {
-    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(granted =>
-      setIsAndroidCameraPermissionGranted(granted)
-    );
+    if (isAndroid) {
+      PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(granted =>
+        setIsAndroidCameraPermissionGranted(granted)
+      );
+    }
   }, []);
 
   useNavigationSetOptions({ headerTransparent: true }, []);
@@ -84,7 +86,7 @@ export const ScanQrCode = () => {
         notAuthorizedView={<EmptyQrCode />}
         onRead={handleRead}
       />
-      {isAndroidCameraPermissionGranted === false && isAndroid && (
+      {isAndroidCameraPermissionGranted === false && (
         <View style={styles.emptyScreenAndroid}>
           <EmptyQrCode />
         </View>
