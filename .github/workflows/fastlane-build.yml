@@ -1,4 +1,4 @@
-name: TestFlight build
+name: Fastlane build
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ on:
         required: false
 
 jobs:
-  testflight-build:
-    name: Create new iOS & Android builds and upload them via Testflight
+  fastlane-build:
+    name: Create new iOS & Android builds and upload them via Fastlane
     runs-on: macos-latest
     environment: fastlane
     steps:
