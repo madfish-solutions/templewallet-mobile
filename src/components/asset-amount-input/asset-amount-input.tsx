@@ -183,14 +183,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const handleMaxButtonPress = useCallback(
     (gasToken: TokenMetadataInterface, token: TokenInterface | undefined) => {
       if (isDefined(token)) {
-        const amount = maxEstimation(gasToken, token);
-        onValueChange({
-          amount,
-          asset: token
-        });
+        maxEstimation(gasToken, token).then(amount =>
+          onValueChange({
+            amount,
+            asset: token
+          })
+        );
       }
     },
-    [onValueChange]
+    [onValueChange, maxEstimation]
   );
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
@@ -302,7 +303,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
 export const AssetAmountInput = memo(AssetAmountInputComponent) as typeof AssetAmountInputComponent;
 
-const defaultMaxEstimation = (gasToken: TokenMetadataInterface, token: TokenInterface): BigNumber => {
+const defaultMaxEstimation = async (gasToken: TokenMetadataInterface, token: TokenInterface): Promise<BigNumber> => {
   const { symbol, balance } = token;
   const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
   const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);

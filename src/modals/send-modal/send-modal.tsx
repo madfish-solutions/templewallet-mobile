@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
-import { Formik } from 'formik';
-import React, { FC, useMemo, useState } from 'react';
+import { FormikProvider, useFormik } from 'formik';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -37,9 +37,11 @@ import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/toke
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
-import { isValidAddress, tzToMutez } from '../../utils/tezos.util';
+import { isValidAddress, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { useSendModalStyles } from './send-modal.styles';
+
+const PENNY = 0.000001;
 
 export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -120,92 +122,122 @@ export const SendModal: FC = () => {
     );
   };
 
-  const maxEstimationFn = (gasToken: TokenMetadataInterface, token: TokenInterface): BigNumber => {
-    const { symbol, balance } = token;
-    let isGasTokenMaxAmountGuard = new BigNumber(0);
-    if (symbol === gasToken.symbol) {
-      if (symbol === TEZ_TOKEN_METADATA.symbol) {
-        // const estmtn = await tezos.estimate.transfer(transferParams);
-        // let amountMax = balanceBN.minus(mutezToTz(estmtn.totalCost));
-        // if (!hasManager(manager)) {
-        //   amountMax = amountMax.minus(mutezToTz(DEFAULT_FEE.REVEAL));
-        // }
-        // estmtnMax = await tezos.estimate.transfer({
-        //   to,
-        //   amount: amountMax.toString() as any
-        // });
-      } else {
-        isGasTokenMaxAmountGuard = tzToMutez(new BigNumber(0.3), token.decimals);
-      }
-    }
-    const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+  const formik = useFormik<SendModalFormValues>({
+    initialValues: sendModalInitialValues,
+    validationSchema: sendModalValidationSchema,
+    enableReinitialize: true,
+    onSubmit
+  });
+  const { values, submitForm } = formik;
 
-    return amount;
-  };
+  const maxEstimationFn = useCallback(
+    async (gasToken: TokenMetadataInterface, token: TokenInterface): Promise<BigNumber> => {
+      const { symbol, balance } = token;
+      let isGasTokenMaxAmountGuard = new BigNumber(0);
+      if (symbol === gasToken.symbol) {
+        if (symbol === TEZ_TOKEN_METADATA.symbol) {
+          const to =
+            values.receiverPublicKeyHash === '' || values.transferBetweenOwnAccounts === true
+              ? values.ownAccount.publicKeyHash
+              : values.receiverPublicKeyHash;
+          const estimateBaseFee = async () => {
+            const amount = new BigNumber(1).div(10 ** (token.decimals ?? 0)).toNumber();
+            const transferParams = {
+              to,
+              amount
+            };
+
+            const balanceBN = mutezToTz(new BigNumber(balance), token.decimals);
+            const estmtn = await tezos.estimate.transfer(transferParams);
+            const amountMax = balanceBN.minus(mutezToTz(new BigNumber(estmtn.totalCost), token.decimals));
+            const estmtnMax = await tezos.estimate.transfer({
+              to,
+              amount: amountMax.toNumber()
+            });
+
+            const estimatedBaseFee = mutezToTz(
+              new BigNumber(estmtnMax.burnFeeMutez + estmtnMax.suggestedFeeMutez),
+              token.decimals
+            );
+            if (estimatedBaseFee.isGreaterThanOrEqualTo(balanceBN)) {
+              return new BigNumber(0.3);
+            }
+
+            return estimatedBaseFee;
+          };
+
+          const maxAmount = async () => {
+            const baseFee = await estimateBaseFee();
+
+            return baseFee.minus(PENNY);
+          };
+          const feeAmount = await maxAmount();
+          isGasTokenMaxAmountGuard = tzToMutez(feeAmount, token.decimals);
+        } else {
+          isGasTokenMaxAmountGuard = tzToMutez(new BigNumber(0.3), token.decimals);
+        }
+      }
+      const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+
+      return amount;
+    },
+    [values.receiverPublicKeyHash, values.ownAccount.publicKeyHash, values.transferBetweenOwnAccounts]
+  );
 
   return (
-    <Formik
-      initialValues={sendModalInitialValues}
-      enableReinitialize={true}
-      validationSchema={sendModalValidationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ values, submitForm }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <ModalStatusBar />
-          <View>
-            <Divider size={formatSize(8)} />
-            <FormAssetAmountInput
-              maxButton
-              name="assetAmount"
-              label="Asset"
-              assetsList={filteredAssetsListWithTez}
-              maxEstimation={maxEstimationFn}
-            />
-            <Divider />
+    <FormikProvider value={formik}>
+      <ScreenContainer isFullScreenMode={true}>
+        <ModalStatusBar />
+        <View>
+          <Divider size={formatSize(8)} />
+          <FormAssetAmountInput
+            maxButton
+            name="assetAmount"
+            label="Asset"
+            assetsList={filteredAssetsListWithTez}
+            maxEstimation={maxEstimationFn}
+          />
+          <Divider />
 
-            <Label
-              label="To"
-              description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
-            />
-            {values.transferBetweenOwnAccounts ? (
-              <>
-                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
-                <Divider size={formatSize(10)} />
-              </>
-            ) : (
-              <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
-            )}
-            <View
-              onTouchStart={() =>
-                void (
-                  transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
-                )
-              }
+          <Label
+            label="To"
+            description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
+          />
+          {values.transferBetweenOwnAccounts ? (
+            <>
+              <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+              <Divider size={formatSize(10)} />
+            </>
+          ) : (
+            <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
+          )}
+          <View
+            onTouchStart={() =>
+              void (transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' }))
+            }
+          >
+            <FormCheckbox
+              disabled={transferBetweenOwnAccountsDisabled}
+              name="transferBetweenOwnAccounts"
+              size={formatSize(16)}
             >
-              <FormCheckbox
-                disabled={transferBetweenOwnAccountsDisabled}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-              >
-                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
-              </FormCheckbox>
-            </View>
-
-            <Divider />
+              <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+            </FormCheckbox>
           </View>
 
-          <View>
-            <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
-              <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
-            </ButtonsContainer>
+          <Divider />
+        </View>
 
-            <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
-      )}
-    </Formik>
+        <View>
+          <ButtonsContainer>
+            <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
+            <Divider size={formatSize(16)} />
+            <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
+          </ButtonsContainer>
+
+          <InsetSubstitute type="bottom" />
+        </View>
+      </ScreenContainer>
+    </FormikProvider>
   );
 };

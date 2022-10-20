@@ -17,7 +17,7 @@ export interface AssetAmountInputProps {
   toUsdToggle?: boolean;
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
-  maxEstimation?: (gasToken: TokenMetadataInterface, token: TokenInterface) => BigNumber;
+  maxEstimation?: (gasToken: TokenMetadataInterface, token: TokenInterface) => Promise<BigNumber>;
   setSearchValue?: EventFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
