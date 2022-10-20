@@ -41,32 +41,23 @@ jobs:
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
+      - name: Prepare changelog
+        id: changelog
+        run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
+
+      # Android
+
       - name: Setup Java SDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '11'
 
-      - name: Prepare changelog
-        id: changelog
-        run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"
-
-      - name: Install SSH key to get acces to repository with Certificates and Provisioning profiles
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.2
           bundler-cache: true
-
-      - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
 
       - name: Install Android Gemfile dependencies
         run: cd android && bundle install
@@ -80,6 +71,8 @@ jobs:
           BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
+      # Github release
+
       - name: Create Github release
         if: ${{ github.event.inputs.github-release-version != '' }}
         uses: marvinpinto/action-automatic-releases@latest
@@ -89,6 +82,19 @@ jobs:
           prerelease: false
           files: |
             android/app/build/outputs/apk/release/app-release.apk
+
+      # iOS
+
+      - name: Install SSH key to get acces to repository with Certificates and Provisioning profiles
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
 
       - name: Install iOS Gemfile dependencies
         run: cd ios && bundle install
