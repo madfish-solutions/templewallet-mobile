@@ -19,12 +19,14 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { BackupSheet } from '../backup-sheet/backup-sheet';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { TokenList } from './token-list/token-list';
-import { WalletStyles } from './wallet.styles';
+import { useWalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const dispatch = useDispatch();
+  const styles = useWalletStyles();
   const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
@@ -36,7 +38,7 @@ export const Wallet = () => {
   return (
     <>
       <HeaderCard hasInsetTop={true}>
-        <View style={WalletStyles.accountContainer}>
+        <View style={styles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
@@ -57,6 +59,7 @@ export const Wallet = () => {
         <CollectiblesHomeSwipeButton />
       </HeaderCard>
       <TokenList />
+      <BackupSheet />
     </>
   );
 };

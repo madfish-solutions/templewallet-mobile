@@ -2,7 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS, MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { createEntity } from '../create-entity';
-import { checkApp, enterPassword, verifySeedPhrase } from './security-actions';
+import { checkApp, enterPassword, showBackupModal, verifySeedPhrase } from './security-actions';
 import { securityInitialState, SecurityState } from './security-state';
 
 export const securityReducers = createReducer<SecurityState>(securityInitialState, builder => {
@@ -33,6 +33,11 @@ export const securityReducers = createReducer<SecurityState>(securityInitialStat
   }));
   builder.addCase(verifySeedPhrase, (state, { payload }) => ({
     ...state,
-    isSeedPhraseVerified: payload
+    isSeedPhraseVerified: payload,
+    isBackupModalShown: false
+  }));
+  builder.addCase(showBackupModal, (state, { payload }) => ({
+    ...state,
+    isBackupModalShown: payload
   }));
 });

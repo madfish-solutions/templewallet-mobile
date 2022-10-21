@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { createUseStyles } from '../../styles/create-use-styles';
 
-export const WalletStyles = StyleSheet.create({
+export const useWalletStyles = createUseStyles(() => ({
   accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   }
-});
+}));

@@ -7,5 +7,6 @@ export const mockSecurityState: SecurityState = {
   passwordLockTime: INITIAL_ENTER_PASSWORD_LOCKTIME,
   isForceUpdateNeeded: createEntity(false),
   isAppCheckFailed: createEntity(false),
-  isSeedPhraseVerified: true
+  isSeedPhraseVerified: true,
+  isBackupModalShown: false
 };

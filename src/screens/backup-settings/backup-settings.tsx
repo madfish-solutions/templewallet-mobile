@@ -13,7 +13,7 @@ import { Backup } from './backup/backup';
 export const BackupSettings = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const { goBack } = useNavigation();
 
   const { revealSeedPhrase } = useShelter();
 
@@ -32,7 +32,7 @@ export const BackupSettings = () => {
 
   const handleVerify = () => {
     dispatch(verifySeedPhrase(true));
-    navigate(ScreensEnum.Settings);
+    goBack();
   };
 
   return (

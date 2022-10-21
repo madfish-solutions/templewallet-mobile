@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -21,6 +22,7 @@ import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { useAppLock } from '../../shelter/use-app-lock.hook';
+import { showBackupModal } from '../../store/security/security-actions';
 import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { ToastProvider } from '../../toast/toast-provider';
@@ -37,6 +39,7 @@ export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
 
   const { unlock, unlockWithBiometry } = useAppLock();
+  const dispatch = useDispatch();
 
   const { biometryType } = useBiometryAvailability();
   const handleResetDataButtonPress = useResetDataHandler();
@@ -47,7 +50,12 @@ export const EnterPassword = () => {
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
+  const onSubmit = ({ password }: EnterPasswordFormValues) => {
+    if (!isDisabled) {
+      dispatch(showBackupModal(true));
+      unlock(password);
+    }
+  };
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
@@ -64,7 +72,7 @@ export const EnterPassword = () => {
       <Divider />
       <Quote
         quote="The only function of economic forecasting is to make astrology look more respectable."
-        author="John Kenneth Galbraith"
+        author="© John Kenneth Galbraith"
       />
       <Divider />
       <View>

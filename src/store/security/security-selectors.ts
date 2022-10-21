@@ -16,3 +16,6 @@ export const useIsAppCheckFailed = () =>
 
 export const useIsSeedPhraseVerified = () =>
   useSelector<SecurityRootState, boolean>(({ security }) => security.isSeedPhraseVerified);
+
+export const useIsBackupModalShown = () =>
+  useSelector<SecurityRootState, boolean>(({ security }) => security.isBackupModalShown);
