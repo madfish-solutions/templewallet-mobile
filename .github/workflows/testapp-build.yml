@@ -51,38 +51,38 @@ jobs:
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
-#      # Android
-#
-#      - name: Setup Java SDK
-#        if: ${{ github.event.inputs.android == 'true' }}
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'zulu'
-#          java-version: '11'
-#
-#      - name: Update Android version
-#        if: ${{ github.event.inputs.android == 'true' }}
-#        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
-#        with:
-#          build-gradle-path: android/app/build.gradle
-#          version-name: ${{ github.event.inputs.version }}
-#          version-code: ${{ github.event.inputs.build-number }}
-#
-#      - name: Build Android
-#        if: ${{ github.event.inputs.android == 'true' }}
-#        run: yarn android:release:apk
-#
-#      - name: Upload Android artifact to TestApp.io
-#        if: ${{ github.event.inputs.android == 'true' }}
-#        uses: testappio/github-action@v5
-#        with:
-#          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
-#          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
-#          file: android/app/build/outputs/apk/release/app-release.apk
-#          release_notes: ${{env.GIT_BRANCH_NAME}} Android
-#          git_release_notes: false
-#          include_git_commit_id: false
-#          notify: true
+      # Android
+
+      - name: Setup Java SDK
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Update Android version
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
+        with:
+          build-gradle-path: android/app/build.gradle
+          version-name: ${{ github.event.inputs.version }}
+          version-code: ${{ github.event.inputs.build-number }}
+
+      - name: Build Android
+        if: ${{ github.event.inputs.android == 'true' }}
+        run: yarn android:release:apk
+
+      - name: Upload Android artifact to TestApp.io
+        if: ${{ github.event.inputs.android == 'true' }}
+        uses: testappio/github-action@v5
+        with:
+          api_token: ${{ secrets.TESTAPPIO_API_TOKEN }}
+          app_id: ${{ secrets.TESTAPPIO_APP_ID }}
+          file: android/app/build/outputs/apk/release/app-release.apk
+          release_notes: ${{env.GIT_BRANCH_NAME}} Android
+          git_release_notes: false
+          include_git_commit_id: false
+          notify: true
 
       # iOS
 
