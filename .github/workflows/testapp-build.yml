@@ -86,6 +86,9 @@ jobs:
 
       # iOS
 
+      - name: Enable automatic code signing
+        run: ./ios/enable_automatic_code_signing.sh
+
       - name: Install Pods
         if: ${{ github.event.inputs.ios == 'true' }}
         run: yarn ios:pods

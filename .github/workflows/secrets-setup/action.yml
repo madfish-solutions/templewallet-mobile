@@ -41,13 +41,13 @@ runs:
 
     - name: Write GooglePlay authkey and Keystore file
       shell: bash
-      run: cd android && ./decrypt_script.sh
+      run: ./android/decrypt_script.sh
       env:
         GOOGLE_PLAY_AUTHKEY: ${{ inputs.GOOGLE_PLAY_AUTHKEY }}
         KEYSTORE_KEY: ${{ inputs.KEYSTORE_KEY }}
 
     - name: Write AppStore authkey
       shell: bash
-      run: cd ios && ./decrypt_script.sh
+      run: ./ios/decrypt_script.sh
       env:
         APPSTORE_AUTHKEY: ${{ inputs.APPSTORE_AUTHKEY }}
