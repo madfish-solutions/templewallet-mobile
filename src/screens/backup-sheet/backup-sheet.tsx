@@ -24,11 +24,7 @@ export const BackupSheet = () => {
 
   useEffect(() => {
     if (isShowModal === true && isVerified === false) {
-      console.log('call');
-      const timer = setTimeout(() => {
-        console.log('call 2');
-        dropdownBottomSheetController.open();
-      }, 1000);
+      const timer = setTimeout(() => dropdownBottomSheetController.open(), 1000);
 
       return () => clearTimeout(timer);
     }
