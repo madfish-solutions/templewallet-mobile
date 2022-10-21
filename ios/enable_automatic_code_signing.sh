@@ -7,4 +7,3 @@ sed -i '' 's#DEVELOPMENT_TEAM = "";#DEVELOPMENT_TEAM = D653UWS37K;#g' TempleWall
 sed -i '' 's#"DEVELOPMENT_TEAM\[sdk=iphoneos\*\]" = D653UWS37K;##g' TempleWallet.xcodeproj/project.pbxproj
 
 sed -i '' 's#"PROVISIONING_PROFILE_SPECIFIER\[sdk=iphoneos\*\]" = "match AppStore com.madfish.temple-wallet";##g' TempleWallet.xcodeproj/project.pbxproj
-
