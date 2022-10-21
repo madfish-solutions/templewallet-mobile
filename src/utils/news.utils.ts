@@ -5,7 +5,6 @@ import { templeWalletApi } from '../api.service';
 import { NewsInterface, PlatformType, SortedBy } from '../interfaces/news.interface';
 import { loadNewsAction } from '../store/news/news-actions';
 import { NewsRootState } from '../store/news/news-state';
-import { isDefined } from './is-defined';
 
 interface RequestParams {
   welcome?: boolean;
@@ -27,7 +26,7 @@ export const getNewsItems$ = (isEnabled: boolean, lastNews?: NewsInterface[]) =>
       params: {
         platform: PlatformType.Mobile,
         timeLt:
-          isDefined(lastNews) && Array.isArray(lastNews)
+          Array.isArray(lastNews) && lastNews.length > 0
             ? new Date(lastNews[lastNews.length - 1].createdAt).getTime().toString()
             : undefined
       }
