@@ -80,7 +80,9 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
-      if (selectedBaker.address === RECOMMENDED_BAKER_ADDRESS) {
+      const isRecommendedBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
+
+      if (isRecommendedBakerSelected) {
         trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
       }
 
@@ -94,7 +96,8 @@ export const SelectBakerModal: FC = () => {
           type: ConfirmationTypeEnum.InternalOperations,
           opParams: [
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
-          ]
+          ],
+          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
         });
       }
     }

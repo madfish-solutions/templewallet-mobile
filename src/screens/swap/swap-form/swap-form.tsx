@@ -107,7 +107,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       showErrorToast({ description: 'Transaction params not loaded' });
     }
 
-    dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
+    dispatch(
+      navigateAction(ModalsEnum.Confirmation, {
+        type: ConfirmationTypeEnum.InternalOperations,
+        opParams,
+        testID: 'SWAP_TRANSACTION_SENT'
+      })
+    );
   };
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
