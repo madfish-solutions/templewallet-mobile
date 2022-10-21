@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { useCallback } from 'react';
-import { Share, Text, View } from 'react-native';
+import { Alert, Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -20,6 +20,7 @@ import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useIsSeedPhraseVerified } from '../../store/security/security-selectors';
 import { changeTheme } from '../../store/settings/settings-actions';
 import { useFiatCurrencySelector, useThemeSelector } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -37,8 +38,9 @@ export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const handleLogoutButtonPress = useResetDataHandler();
+  const resetHandler = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
+  const isVerified = useIsSeedPhraseVerified();
 
   const { trackEvent } = useAnalytics();
 
@@ -65,6 +67,29 @@ export const Settings = () => {
       });
   }, [trackEvent]);
 
+  const handleLogoutButtonPress = () => {
+    if (isVerified === false) {
+      Alert.alert(
+        'Are you sure you want to reset the Temple Wallet?',
+        'You have no baked up you wallet, as result your data will be lost.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Reset',
+            style: 'destructive',
+            onPress: resetHandler
+          }
+        ]
+      );
+
+      return;
+    }
+    resetHandler();
+  };
+
   return (
     <>
       <SettingsHeader />
@@ -84,6 +109,22 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+            {isVerified === false && (
+              <>
+                <WhiteContainerDivider />
+                <WhiteContainerAction onPress={() => navigate(ScreensEnum.BackupSettings)}>
+                  <View style={styles.actionsContainer}>
+                    <WhiteContainerText text="Backup" />
+                  </View>
+                  <View style={styles.shevronContainer}>
+                    <View style={styles.notificationCircle}>
+                      <Text style={styles.notificationText}>1</Text>
+                    </View>
+                    <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                  </View>
+                </WhiteContainerAction>
+              </>
+            )}
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 

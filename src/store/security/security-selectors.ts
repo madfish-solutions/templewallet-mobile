@@ -13,3 +13,6 @@ export const useIsForceUpdateNeeded = () =>
 
 export const useIsAppCheckFailed = () =>
   useSelector<SecurityRootState, boolean>(({ security }) => security.isAppCheckFailed.data);
+
+export const useIsSeedPhraseVerified = () =>
+  useSelector<SecurityRootState, boolean>(({ security }) => security.isSeedPhraseVerified);

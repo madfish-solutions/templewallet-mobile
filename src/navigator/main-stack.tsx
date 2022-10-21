@@ -19,6 +19,7 @@ import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
+import { BackupSettings } from '../screens/backup-settings/backup-settings';
 import { Buy } from '../screens/buy/buy';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
@@ -230,6 +231,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManageAccounts}
                 component={ManageAccounts}
                 options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.BackupSettings}
+                component={BackupSettings}
+                options={generateScreenOptions(<HeaderTitle title="Back up" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.About}

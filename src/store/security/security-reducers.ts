@@ -2,7 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS, MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { createEntity } from '../create-entity';
-import { checkApp, enterPassword } from './security-actions';
+import { checkApp, enterPassword, verifySeedPhrase } from './security-actions';
 import { securityInitialState, SecurityState } from './security-state';
 
 export const securityReducers = createReducer<SecurityState>(securityInitialState, builder => {
@@ -30,5 +30,9 @@ export const securityReducers = createReducer<SecurityState>(securityInitialStat
     ...state,
     isForceUpdateNeeded: createEntity(false, false, payload),
     isAppCheckFailed: createEntity(false, false, payload)
+  }));
+  builder.addCase(verifySeedPhrase, (state, { payload }) => ({
+    ...state,
+    isSeedPhraseVerified: payload
   }));
 });

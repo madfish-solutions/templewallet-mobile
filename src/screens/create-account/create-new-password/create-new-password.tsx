@@ -6,10 +6,6 @@ import { useDispatch } from 'react-redux';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../components/divider/divider';
-import { HeaderButton } from '../../../components/header/header-button/header-button';
-import { HeaderTitle } from '../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
@@ -31,10 +27,9 @@ import { CreateNewPasswordCreateAccountSelectors } from './create-new-password.s
 
 interface CreateNewPasswordProps {
   seedPhrase: string;
-  onGoBackPress: () => void;
 }
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGoBackPress }) => {
+export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase }) => {
   const dispatch = useDispatch();
 
   const styles = useSetPasswordScreensCommonStyles();
@@ -44,14 +39,6 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ seedPhrase, onGo
     dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
   };
-
-  useNavigationSetOptions(
-    {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
-      headerTitle: () => <HeaderTitle title="Create a new password" />
-    },
-    [onGoBackPress]
-  );
 
   return (
     <Formik

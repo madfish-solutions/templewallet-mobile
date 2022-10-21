@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useCreateNewWalletStyles = createUseStyles(({ colors, typography }) => ({
+export const useBackupSeedStyles = createUseStyles(({ colors, typography }) => ({
   checkboxContainer: {
     marginLeft: formatSize(4)
   },

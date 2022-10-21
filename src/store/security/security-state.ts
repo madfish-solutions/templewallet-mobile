@@ -7,13 +7,15 @@ export interface SecurityState {
   passwordLockTime: number;
   isForceUpdateNeeded: LoadableEntityState<boolean>;
   isAppCheckFailed: LoadableEntityState<boolean>;
+  isSeedPhraseVerified: boolean;
 }
 
 export const securityInitialState: SecurityState = {
   passwordAttempt: INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS,
   passwordLockTime: INITIAL_ENTER_PASSWORD_LOCKTIME,
   isForceUpdateNeeded: createEntity(false),
-  isAppCheckFailed: createEntity(false)
+  isAppCheckFailed: createEntity(false),
+  isSeedPhraseVerified: true
 };
 
 export interface SecurityRootState {

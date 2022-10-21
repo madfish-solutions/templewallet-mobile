@@ -35,7 +35,6 @@ export enum IconNameEnum {
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',
-  Settings = 'Settings',
   DApps = 'DApps',
   SoonBadge = 'SoonBadge',
   Spicy = 'Spicy',

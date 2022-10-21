@@ -29,6 +29,19 @@ export const useSettingsStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption13Semibold,
     color: colors.gray2
   },
+  notificationCircle: {
+    backgroundColor: colors.destructive,
+    borderRadius: formatSize(9),
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: formatSize(18),
+    height: formatSize(18)
+  },
+  notificationText: {
+    ...typography.numbersRegular11,
+    fontSize: formatSize(10),
+    color: colors.white
+  },
   logoutButtonText: {
     ...typography.tagline13Tag,
     color: colors.destructive,

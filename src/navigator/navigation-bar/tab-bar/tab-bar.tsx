@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { SettingsIcon } from '../../../components/icon/settings-icon/settings-icon';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { formatSize } from '../../../styles/format-size';
@@ -78,7 +79,8 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         <DebugTapListener>
           <TabBarButton
             label="Settings"
-            iconName={IconNameEnum.Settings}
+            iconName={IconNameEnum.Swap}
+            IconComponent={SettingsIcon}
             iconWidth={formatSize(32)}
             routeName={ScreensEnum.Settings}
             focused={isStackFocused(settingsStackScreens)}

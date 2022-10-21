@@ -6,7 +6,6 @@ import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
 import { formatSize } from '../../../styles/format-size';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
-import { generateSeed } from '../../../utils/keys.util';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../divider/divider';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
@@ -29,13 +28,6 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
     activeTimer.current = setTimeout(() => setIsShowOverlay(true), OVERLAY_SHOW_TIMEOUT);
   };
 
-  const handleGenerateNewButtonPress = async () => {
-    const seed = await generateSeed();
-
-    onChangeText(seed);
-    hideOverlay();
-  };
-
   return (
     <View style={MnemonicStyles.container}>
       <StyledTextInput
@@ -49,11 +41,6 @@ export const MnemonicCreate: FC<MnemonicProps> = ({ value, isError, onChangeText
         testID={testID}
       />
       <View style={MnemonicStyles.buttonsContainer}>
-        <ButtonSmallSecondary
-          title="GEN NEW"
-          onPress={handleGenerateNewButtonPress}
-          testID={MnemonicCreateSelectors.GenNewSeedButton}
-        />
         {isString(value) ? (
           <>
             <Divider size={formatSize(8)} />

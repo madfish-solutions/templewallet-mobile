@@ -78,7 +78,6 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import SearchIcon from './assets/search.svg';
-import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
 import DiscordIcon from './assets/socials/discord.svg';
@@ -156,7 +155,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
-  [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,

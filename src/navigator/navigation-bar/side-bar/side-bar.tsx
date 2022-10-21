@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { SettingsIcon } from '../../../components/icon/settings-icon/settings-icon';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
@@ -67,7 +68,8 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
           <DebugTapListener>
             <SideBarButton
               label="Settings"
-              iconName={IconNameEnum.Settings}
+              iconName={IconNameEnum.Swap}
+              IconComponent={SettingsIcon}
               routeName={ScreensEnum.Settings}
               focused={isStackFocused(settingsStackScreens)}
             />

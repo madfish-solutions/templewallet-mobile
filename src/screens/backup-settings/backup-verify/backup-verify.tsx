@@ -7,6 +7,7 @@ import { object, string } from 'yup';
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from '../../../components/divider/divider';
 import { HeaderButton } from '../../../components/header/header-button/header-button';
+import { HeaderProgress } from '../../../components/header/header-progress/header-progress';
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
@@ -16,11 +17,11 @@ import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
+import { BackupVerifySelectors } from './backup-verify.selectors';
+import { useBackupVerifyStyles } from './backup-verify.styles';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
-import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
-import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
-interface VerifySeedPhraseProps {
+interface BackupVerifyProps {
   seedPhrase: string;
   onVerify: EmptyFn;
   onGoBackPress: EmptyFn;
@@ -28,13 +29,14 @@ interface VerifySeedPhraseProps {
 
 const WORDS_TO_FILL = 2;
 
-export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVerify, onGoBackPress }) => {
-  const styles = useVerifySeedPhraseStyles();
+export const BackupVerify: FC<BackupVerifyProps> = ({ seedPhrase, onVerify, onGoBackPress }) => {
+  const styles = useBackupVerifyStyles();
 
   useNavigationSetOptions(
     {
       headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
-      headerTitle: () => <HeaderTitle title="Verify your seed" />
+      headerTitle: () => <HeaderTitle title="Verify your seed" />,
+      headerRight: () => <HeaderProgress current={2} total={2} />
     },
     []
   );
@@ -130,7 +132,7 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
               title="Next"
               disabled={!isValid}
               onPress={submitForm}
-              testID={VerifySeedPhraseSelectors.NextButton}
+              testID={BackupVerifySelectors.NextButton}
             />
           </View>
           <InsetSubstitute type="bottom" />
