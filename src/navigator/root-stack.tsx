@@ -25,6 +25,7 @@ import { RevealPrivateKeyModal } from '../modals/reveal-private-key-modal/reveal
 import { RevealSeedPhraseModal } from '../modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from '../modals/select-baker-modal/select-baker-modal';
 import { SendModal } from '../modals/send-modal/send-modal';
+import { SplashModal } from '../modals/splash-modal/splash-modal';
 import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ForceUpdate } from '../screens/force-update/force-update';
@@ -52,7 +53,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
-  useAppSplash();
+  const isSplash = useAppSplash();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
@@ -173,6 +174,7 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
+      {isSplash && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}

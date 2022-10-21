@@ -1,6 +1,7 @@
 import { createAvatar } from '@dicebear/avatars';
 import * as botttsSprites from '@dicebear/avatars-bottts-sprites';
 import React, { FC, useMemo } from 'react';
+import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { formatSize } from '../../styles/format-size';
@@ -25,5 +26,9 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
     [seed, size]
   );
 
-  return <SvgXml xml={xml} style={styles.icon} />;
+  return (
+    <View style={styles.root}>
+      <SvgXml xml={xml} />
+    </View>
+  );
 };

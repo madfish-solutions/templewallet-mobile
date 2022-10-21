@@ -48,6 +48,7 @@ export const TabBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
+      // @ts-ignore
       navigate(routeName, params);
     }
   };

@@ -3,7 +3,7 @@ import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {
   getBestTradeExactInput,
@@ -21,6 +21,7 @@ import { ButtonLargePrimary } from '../../../components/button/button-large/butt
 import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../components/divider/divider';
 import { Label } from '../../../components/label/label';
+import { RefreshControl } from '../../../components/refresh-control/refresh-control';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
@@ -106,7 +107,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
       showErrorToast({ description: 'Transaction params not loaded' });
     }
 
-    dispatch(navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams }));
+    dispatch(
+      navigateAction(ModalsEnum.Confirmation, {
+        type: ConfirmationTypeEnum.InternalOperations,
+        opParams,
+        testID: 'SWAP_TRANSACTION_SENT'
+      })
+    );
   };
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -250,6 +257,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
           name="inputAssets"
           label="From"
           isSearchable
+          maxButton
           assetsList={filteredAssetsList}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}

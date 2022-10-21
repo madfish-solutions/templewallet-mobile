@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { uniq } from 'lodash-es';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
@@ -16,18 +17,38 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  useEffect(() => {
-    const asyncFunction = async () => {
+  const initialLoad = useCallback(
+    async (refresh = false) => {
       const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
 
       if (activities.length === 0) {
         setIsAllLoaded(true);
       }
-      setActivities(activities);
-    };
+      if (refresh === true) {
+        setActivities(prev => {
+          const allActivities = [...activities, ...prev];
+          const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
+          const onlyUniqueHashes = uniq(allHashes);
+          const onlyUniqueActivitites = onlyUniqueHashes
+            .map(x => allActivities.find(y => y[0].hash === x))
+            .filter(isDefined);
 
-    asyncFunction();
-  }, [selectedRpcUrl, selectedAccount, tokenSlug]);
+          return onlyUniqueActivitites;
+        });
+      } else {
+        setActivities(activities);
+      }
+    },
+    [selectedRpcUrl, selectedAccount, tokenSlug]
+  );
+
+  useEffect(() => {
+    initialLoad();
+  }, [initialLoad]);
+
+  const handleRefresh = () => {
+    initialLoad(true);
+  };
 
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
@@ -54,6 +75,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   return {
     handleUpdate,
+    handleRefresh,
     activities
   };
 };

@@ -11,7 +11,9 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { useBlockSubscription } from '../../hooks/block-subscription/use-block-subscription.hook';
 import { useContractActivity } from '../../hooks/use-contract-activity';
+import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -28,8 +30,11 @@ import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
+const DATA_REFRESH_INTERVAL = 50 * 1000;
+
 export const LiquidityBakingDapp = () => {
   const { navigate } = useNavigation();
+  const blockSubscription = useBlockSubscription();
   const styles = useLiquidityBakingDappStyles();
   const assetsList = useAssetsListSelector();
   const exchangeRates = useUsdToTokenRates();
@@ -43,7 +48,9 @@ export const LiquidityBakingDapp = () => {
 
   const bTokenPool = lpContract.storage.tokenPool;
 
-  const { activities, handleUpdate } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
+  const { activities, handleUpdate, handleRefresh } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
+
+  useAuthorisedTimerEffect(handleRefresh, DATA_REFRESH_INTERVAL, [blockSubscription.block.header]);
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 

@@ -4,6 +4,7 @@ import { Animated, View } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
+import { formatSize } from '../../styles/format-size';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> {
@@ -55,6 +56,12 @@ export const SegmentedControl = <T extends unknown>({
           <TouchableOpacity
             key={index}
             style={[styles.itemContainer, { width: tileWidth }]}
+            hitSlop={{
+              ...(index === 0 && { left: formatSize(12) }),
+              top: formatSize(12),
+              ...(index === values.length - 1 && { right: formatSize(12) }),
+              bottom: formatSize(8)
+            }}
             onPress={() => onChange(index)}
           >
             {renderValue({ item, isSelected: index === selectedIndex })}

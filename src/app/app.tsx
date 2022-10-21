@@ -2,6 +2,7 @@ import { AnalyticsProvider } from '@segment/analytics-react-native';
 import React from 'react';
 import { LogBox } from 'react-native';
 import { hide } from 'react-native-bootsplash';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
@@ -16,6 +17,7 @@ import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
 import { segmentClient } from '../utils/analytics/analytics.util';
 import { initSentry } from '../utils/sentry.utils';
+import { AppStyles } from './app.styles';
 
 initSentry();
 enableScreens();
@@ -25,19 +27,21 @@ export const App = () => {
   useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void hide({ fade: true }), []);
 
   return (
-    <AnalyticsProvider client={segmentClient}>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={null}>
-          <BiometryAvailabilityProvider>
-            <HideBalanceProvider>
-              <SafeAreaProvider>
-                <RootStackScreen />
-                <ToastProvider />
-              </SafeAreaProvider>
-            </HideBalanceProvider>
-          </BiometryAvailabilityProvider>
-        </PersistGate>
-      </Provider>
-    </AnalyticsProvider>
+    <GestureHandlerRootView style={AppStyles.root}>
+      <AnalyticsProvider client={segmentClient}>
+        <Provider store={store}>
+          <PersistGate persistor={persistor} loading={null}>
+            <BiometryAvailabilityProvider>
+              <HideBalanceProvider>
+                <SafeAreaProvider>
+                  <RootStackScreen />
+                  <ToastProvider />
+                </SafeAreaProvider>
+              </HideBalanceProvider>
+            </BiometryAvailabilityProvider>
+          </PersistGate>
+        </Provider>
+      </AnalyticsProvider>
+    </GestureHandlerRootView>
   );
 };

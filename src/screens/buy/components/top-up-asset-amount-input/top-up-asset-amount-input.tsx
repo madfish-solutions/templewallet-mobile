@@ -51,7 +51,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     const styles = useTopUpAssetAmountInputStyles();
     const colors = useColors();
 
-    const error: string | Record<string, string> = (meta.touched && meta.error) || {};
+    const error: string | Record<string, string> = (meta.touched ? meta.error : undefined) ?? {};
     const errorStr = (typeof error === 'string' ? error : error[Object.keys(error)[0]]) || ' ';
 
     const isMinError = errorStr === 'min';
