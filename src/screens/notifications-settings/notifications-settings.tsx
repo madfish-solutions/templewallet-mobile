@@ -22,14 +22,6 @@ export const NotificationsSettings = () => {
 
   usePageAnalytic(ScreensEnum.NotificationsSettings);
 
-  // const handleNewsToggle = (newValue: boolean) => {
-  //   if (isDefined(biometryType)) {
-  //     newValue ? navigate(ModalsEnum.EnableBiometryPassword) : dispatch(disableBiometryPassword());
-  //   } else {
-  //     openSecuritySettings();
-  //   }
-  // };
-
   return (
     <ScreenContainer>
       <Label description="Configure the notifications you want to receive. (Platform updates and emergency notifications can’t be disabled)" />
