@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { PermissionsAndroid, View } from 'react-native';
+import React from 'react';
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import { beaconDeepLinkHandler } from '../../beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
-import { isAndroid } from '../../config/system';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
@@ -26,7 +24,6 @@ export const ScanQrCode = () => {
   const { navigate, goBack } = useNavigation();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const [isAndroidCameraPermissionGranted, setIsAndroidCameraPermissionGranted] = useState(true);
 
   const { metadata } = useNetworkInfo();
 
@@ -67,14 +64,6 @@ export const ScanQrCode = () => {
     }
   };
 
-  useEffect(() => {
-    if (isAndroid) {
-      PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(granted =>
-        setIsAndroidCameraPermissionGranted(granted)
-      );
-    }
-  }, []);
-
   useNavigationSetOptions({ headerTransparent: true }, []);
 
   return (
@@ -84,13 +73,10 @@ export const ScanQrCode = () => {
         showMarker={true}
         customMarker={<CustomMarker />}
         notAuthorizedView={<EmptyQrCode />}
+        permissionDialogTitle="There is no access to the Camera."
+        permissionDialogMessage="Please, give access in the phone Setting page."
         onRead={handleRead}
       />
-      {isAndroidCameraPermissionGranted === false && (
-        <View style={styles.emptyScreenAndroid}>
-          <EmptyQrCode />
-        </View>
-      )}
     </>
   );
 };
