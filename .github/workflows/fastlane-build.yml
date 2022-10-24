@@ -111,3 +111,4 @@ jobs:
           BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           CHANGELOG: ${{ steps.changelog.outputs.log }}
+          ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: 'true'
