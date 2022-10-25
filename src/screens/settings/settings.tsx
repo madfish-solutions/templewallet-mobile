@@ -71,7 +71,7 @@ export const Settings = () => {
     if (isVerified === false) {
       Alert.alert(
         'Are you sure you want to reset the Temple Wallet?',
-        'You have no baked up you wallet, as result your data will be lost.',
+        'You have not backed up you wallet, as result your data will be lost.',
         [
           {
             text: 'Cancel',
