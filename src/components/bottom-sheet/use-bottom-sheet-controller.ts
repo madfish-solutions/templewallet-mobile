@@ -4,7 +4,7 @@ import { RefObject, useMemo, useRef } from 'react';
 import { EmptyFn } from '../../config/general';
 import { isDefined } from '../../utils/is-defined';
 
-export interface BottomSheetController {
+interface BottomSheetController {
   ref: RefObject<BottomSheetModal>;
   open: EmptyFn;
   close: EmptyFn;

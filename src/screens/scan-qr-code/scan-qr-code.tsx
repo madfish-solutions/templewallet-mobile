@@ -16,6 +16,7 @@ import { isBeaconPayload } from '../../utils/beacon.utils';
 import { isSyncPayload } from '../../utils/sync.utils';
 import { isValidAddress } from '../../utils/tezos.util';
 import CustomMarker from './custom-marker.svg';
+import { EmptyQrCode } from './empty-qr-code';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
 export const ScanQrCode = () => {
@@ -71,6 +72,9 @@ export const ScanQrCode = () => {
         cameraStyle={styles.camera}
         showMarker={true}
         customMarker={<CustomMarker />}
+        notAuthorizedView={<EmptyQrCode />}
+        permissionDialogTitle="There is no access to the Camera."
+        permissionDialogMessage="Please, give access in the phone Setting page."
         onRead={handleRead}
       />
     </>

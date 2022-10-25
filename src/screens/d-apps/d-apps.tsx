@@ -25,7 +25,7 @@ export const DApps = () => {
 
   const styles = useDAppsStyles();
 
-  const DAppsList = useDAppsListSelector();
+  const dAppsList = useDAppsListSelector();
 
   const [searchQuery, setSearchQuery] = useState<string>();
 
@@ -43,11 +43,11 @@ export const DApps = () => {
 
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchQuery)) {
-      return DAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
-    return DAppsList;
-  }, [searchQuery, DAppsList]);
+    return dAppsList;
+  }, [searchQuery, dAppsList]);
 
   return (
     <>

@@ -101,7 +101,7 @@ export const getFiatToUsdRate = (state: RootState) => {
   return undefined;
 };
 
-export const getTokenExchangeRate = (state: RootState, slug: string) => {
+const getTokenExchangeRate = (state: RootState, slug: string) => {
   const tokenUsdExchangeRate = state.currency.usdToTokenRates.data[slug];
   const fiatToUsdRate = getFiatToUsdRate(state);
 

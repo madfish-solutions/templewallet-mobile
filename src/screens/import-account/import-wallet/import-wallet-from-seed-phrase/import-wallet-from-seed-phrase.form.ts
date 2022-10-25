@@ -2,7 +2,7 @@ import { object, SchemaOf } from 'yup';
 
 import { seedPhraseValidation } from '../../../../form/validation/seed-phrase';
 
-export type ImportWalletFromSeedPhraseFormValues = {
+type ImportWalletFromSeedPhraseFormValues = {
   seedPhrase: string;
 };
 

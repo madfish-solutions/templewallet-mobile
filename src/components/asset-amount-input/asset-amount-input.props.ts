@@ -5,6 +5,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { AssetAmountInterface } from './asset-amount-input';
 
 export interface AssetAmountInputProps {
+  maxButton?: boolean;
   value: AssetAmountInterface;
   label: string;
   assetsList: TokenInterface[];

@@ -7,7 +7,7 @@ import { ofType } from 'ts-action-operators';
 import { loadUsdToTokenRates$, loadFiatToTezosRates$ } from '../../utils/exchange-rate.util';
 import { loadExchangeRates } from './currency-actions';
 
-export const loadExchangeRatesEpic = (action$: Observable<Action>) =>
+const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
     switchMap(() =>

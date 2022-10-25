@@ -19,7 +19,7 @@ import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
-export const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
+const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
@@ -101,7 +101,7 @@ const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: 
     })
     .then(x => x.data);
 
-export const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
+const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
@@ -116,7 +116,7 @@ export const getFa12IncomingOperations = (selectedRpcUrl: string, account: strin
     })
     .then(x => x.data);
 
-export const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
+const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
