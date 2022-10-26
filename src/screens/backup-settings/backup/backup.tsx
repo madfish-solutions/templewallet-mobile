@@ -7,12 +7,13 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { WhiteContainer } from '../../../components/white-container/white-container';
 import { WhiteContainerDivider } from '../../../components/white-container/white-container-divider/white-container-divider';
+import { EmptyFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { useBackupSettingsStyles } from './backup.styles';
 
 interface Props {
-  onPress: () => void;
+  onPress: EmptyFn;
 }
 
 export const Backup: FC<Props> = ({ onPress }) => {

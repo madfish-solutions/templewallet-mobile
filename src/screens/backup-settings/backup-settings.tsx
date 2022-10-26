@@ -17,30 +17,32 @@ export const BackupSettings = () => {
 
   const { revealSeedPhrase } = useShelter();
 
-  const [seedPhrase, setSeedPhrase] = useState<string>('');
+  const [seedPhrase, setSeedPhrase] = useState('');
 
   usePageAnalytic(ScreensEnum.BackupSettings);
 
-  const handleBackupManually = () => {
-    revealSeedPhrase({
+  const handleBackupManually = () =>
+    void revealSeedPhrase({
       successCallback: value => {
         setSeedPhrase(value);
         setInnerScreenIndex(1);
       }
     });
-  };
 
   const handleVerify = () => {
     dispatch(verifySeedPhrase(true));
     goBack();
   };
 
+  const handleSubmit = () => setInnerScreenIndex(2);
+  const handleBack = () => setInnerScreenIndex(1);
+
   return (
     <>
       {innerScreenIndex === 0 && <Backup onPress={handleBackupManually} />}
-      {innerScreenIndex === 1 && <BackupSeed initialSeedPhrase={seedPhrase} onSubmit={() => setInnerScreenIndex(2)} />}
+      {innerScreenIndex === 1 && <BackupSeed initialSeedPhrase={seedPhrase} onSubmit={handleSubmit} />}
       {innerScreenIndex === 2 && (
-        <BackupVerify seedPhrase={seedPhrase} onVerify={handleVerify} onGoBackPress={() => setInnerScreenIndex(1)} />
+        <BackupVerify seedPhrase={seedPhrase} onVerify={handleVerify} onGoBackPress={handleBack} />
       )}
     </>
   );
