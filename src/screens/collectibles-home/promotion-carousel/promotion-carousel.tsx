@@ -1,18 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+import Carousel from 'react-native-reanimated-carousel';
 
-import { Divider } from '../../../components/divider/divider';
 import { useLayoutSizes } from '../../../hooks/use-layout-sizes.hook';
 import { useActivePromotionSelector } from '../../../store/advertising/advertising-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isDefined } from '../../../utils/is-defined';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
-import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
 export const PromotionCarousel = () => {
-  const styles = usePromotionCarouselStyles();
   const activePromotion = useActivePromotionSelector();
 
   const data = useMemo<Array<JSX.Element>>(() => {
@@ -32,35 +29,24 @@ export const PromotionCarousel = () => {
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
-  const itemWidth = useMemo(() => Math.floor(Math.abs(layoutWidth - 2 * formatSize(16))), [layoutWidth]);
-
-  const [activeDotIndex, setActiveDotIndex] = useState(1);
 
   return (
     <View onLayout={handleLayout}>
       <Carousel
         data={data}
-        sliderWidth={flooredLayoutWidth}
-        itemWidth={itemWidth}
-        enableMomentum={false}
-        decelerationRate={0.5}
-        removeClippedSubviews={true}
         loop={true}
-        firstItem={-1}
-        autoplay={true}
-        autoplayInterval={5000}
+        autoPlay={true}
+        autoPlayInterval={2000}
+        mode="parallax"
+        modeConfig={{
+          parallaxScrollingOffset: 24,
+          parallaxScrollingScale: 1,
+          parallaxAdjacentItemScale: 1
+        }}
+        width={flooredLayoutWidth}
+        height={formatSize(112)}
+        scrollAnimationDuration={1200}
         renderItem={renderItem => renderItem.item}
-        onSnapToItem={index => setActiveDotIndex(index)}
-      />
-      <Divider />
-      <Pagination
-        dotsLength={data.length}
-        activeDotIndex={activeDotIndex}
-        containerStyle={styles.paginationContainer}
-        dotStyle={styles.paginationDot}
-        inactiveDotStyle={styles.paginationInactiveDot}
-        inactiveDotOpacity={1}
-        inactiveDotScale={1}
       />
     </View>
   );

@@ -6,6 +6,11 @@ import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
 
 export const COMMON_PROMOTION_CAROUSEL_DATA = [
   <PromotionCarouselItem
+    link={supportUkraine}
+    source={require('./banners/ukraine.png')}
+    testID={PromotionCarouselSelectors.SupportUkraine}
+  />,
+  <PromotionCarouselItem
     link={madfishLink}
     source={require('./banners/madfish.png')}
     testID={PromotionCarouselSelectors.MadFishBlog}
@@ -19,10 +24,5 @@ export const COMMON_PROMOTION_CAROUSEL_DATA = [
     link={quipuLink}
     source={require('./banners/quipu.png')}
     testID={PromotionCarouselSelectors.QuipuSwap}
-  />,
-  <PromotionCarouselItem
-    link={supportUkraine}
-    source={require('./banners/ukraine.png')}
-    testID={PromotionCarouselSelectors.SupportUkraine}
   />
 ];

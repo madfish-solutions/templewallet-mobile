@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
+import { formatSize } from '../../../../styles/format-size';
 import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../../../utils/linking.util';
@@ -30,6 +31,8 @@ export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) 
       {typeof source === 'string' ? (
         <SvgUri
           style={styles.bannerImage}
+          height={formatSize(112)}
+          width={formatSize(343)}
           uri={'https://generic-objects.fra1.digitaloceanspaces.com/banners/mobile-banner.svg'}
         />
       ) : (
