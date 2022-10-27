@@ -15,6 +15,6 @@ export const advertisingReducers = createReducer<AdvertisingState>(advertisingIn
   }));
   builder.addCase(loadAdvertisingPromotionActions.fail, (state, { payload: error }) => ({
     ...state,
-    activePromotion: createEntity(undefined, false, error)
+    activePromotion: createEntity(state.activePromotion.data, false, error)
   }));
 });

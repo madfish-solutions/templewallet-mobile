@@ -16,19 +16,19 @@ export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
 
   const data = useMemo<Array<JSX.Element>>(() => {
-    if (isDefined(activePromotion.data)) {
+    if (isDefined(activePromotion)) {
       return [
         <PromotionCarouselItem
-          link={activePromotion.data.url}
-          source={activePromotion.data.mobileBannerUrl}
-          testID={`PromotionCarousel/${activePromotion.data.name}`}
+          link={activePromotion.url}
+          source={activePromotion.mobileBannerUrl}
+          testID={`PromotionCarousel/${activePromotion.name}`}
         />,
         ...COMMON_PROMOTION_CAROUSEL_DATA
       ];
     }
 
     return COMMON_PROMOTION_CAROUSEL_DATA;
-  }, [activePromotion.data]);
+  }, [activePromotion]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
