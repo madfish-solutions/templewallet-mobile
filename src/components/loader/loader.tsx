@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect } from 'react';
 import { View } from 'react-native';
 // eslint-disable-next-line import/default
 import Animated, { Easing, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
@@ -9,11 +9,10 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { LoaderLines, VECTOR_SIZE } from './loader-lines';
 import { useLoaderStyles } from './loader.styles';
 
-interface Props {
-  size?: number;
-}
+const width = formatSize(48);
+const height = formatSize(24);
 
-export const Loader: FC<Props> = ({ size = 64 }) => {
+export const Loader: FC = () => {
   const styles = useLoaderStyles();
 
   const progress = useSharedValue(0);
@@ -28,18 +27,15 @@ export const Loader: FC<Props> = ({ size = 64 }) => {
     );
   }, []);
 
-  const logoWidth = useMemo(() => formatSize((size / 4) * 3), []);
-  const logoHeight = useMemo(() => formatSize((size / 8) * 3), []);
-
   return (
     <View style={styles.root}>
       <View style={styles.card}>
         <View style={styles.container}>
-          <Icon name={IconNameEnum.TempleLogoBottom} width={logoWidth} height={logoHeight} />
+          <Icon name={IconNameEnum.TempleLogoBottom} width={width} height={height} />
           <Animated.View style={styles.icon}>
-            <LoaderLines size={size} progress={progress} />
+            <LoaderLines progress={progress} />
           </Animated.View>
-          <Icon name={IconNameEnum.TempleLogoUp} width={logoWidth} height={logoHeight} />
+          <Icon name={IconNameEnum.TempleLogoUp} width={width} height={height} />
         </View>
       </View>
     </View>

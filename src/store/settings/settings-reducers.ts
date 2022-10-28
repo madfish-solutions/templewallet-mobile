@@ -11,7 +11,7 @@ import {
   setIsBalanceHidden,
   setIsBiometricsEnabled,
   setIsDomainAddressShown,
-  setLoadingAction,
+  setIsShowLoaderAction,
   setSelectedRpcUrl,
   setSlippage,
   setZeroBalancesShown,
@@ -22,7 +22,7 @@ import { settingsInitialState, SettingsState } from './settings-state';
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
 
-  builder.addCase(setLoadingAction, (state, { payload: loading }) => ({ ...state, loading }));
+  builder.addCase(setIsShowLoaderAction, (state, { payload: isShowLoader }) => ({ ...state, isShowLoader }));
 
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,

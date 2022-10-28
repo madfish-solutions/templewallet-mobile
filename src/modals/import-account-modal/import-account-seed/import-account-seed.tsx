@@ -17,7 +17,7 @@ import { EmptyFn } from '../../../config/general';
 import { FormMnemonicInput } from '../../../form/form-mnemonic-input';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { setLoadingAction } from '../../../store/settings/settings-actions';
+import { showLoaderAction } from '../../../store/settings/settings-actions';
 import { useAccountsListSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
@@ -40,7 +40,8 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
   const accountsIndex = useAccountsListSelector().length + 1;
 
   const onSubmit = (values: ImportAccountSeedValues) => {
-    dispatch(setLoadingAction(true));
+    dispatch(showLoaderAction());
+
     setTimeout(() => {
       const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
       const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
@@ -49,7 +50,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
         name: `Account ${accountsIndex}`,
         privateKey
       });
-    }, 100);
+    }, 0);
   };
 
   return (

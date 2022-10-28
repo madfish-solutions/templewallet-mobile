@@ -23,4 +23,6 @@ export const setIsDomainAddressShown = createAction<boolean>('settings/SET_IS_DO
 
 export const setZeroBalancesShown = createAction<boolean>('settings/SET_ZERO_BALANCES_SHOWN');
 
-export const setLoadingAction = createAction<boolean>('settings/SET_LOADING_ACTION');
+export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
+export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');
+export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW_LOADER_ACTION');

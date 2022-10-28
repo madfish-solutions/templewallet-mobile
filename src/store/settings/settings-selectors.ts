@@ -44,11 +44,11 @@ export const useUserIdSelector = () => useSelector<SettingsRootState, string>(({
 
 export const useSlippageSelector = () => useSelector<SettingsRootState, number>(({ settings }) => settings.slippage);
 
-export const useIsShownDomainName = () =>
+export const useIsShownDomainNameSelector = () =>
   useSelector<SettingsRootState, SettingsState['isShownDomainName']>(({ settings }) => settings.isShownDomainName);
 
-export const useHideZeroBalances = () =>
+export const useHideZeroBalancesSelector = () =>
   useSelector<SettingsRootState, SettingsState['hideZeroBalances']>(({ settings }) => settings.hideZeroBalances);
 
-export const useLoadingSelector = () =>
-  useSelector<SettingsRootState, SettingsState['loading']>(({ settings }) => settings.loading);
+export const useIsShowLoaderSelector = () =>
+  useSelector<SettingsRootState, SettingsState['isShowLoader']>(({ settings }) => settings.isShowLoader);

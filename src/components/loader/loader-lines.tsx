@@ -16,13 +16,12 @@ const SECOND_LINE_STROKE = `url(#${SECOND_GRADIENT_ID})`;
 
 interface Props {
   progress: SharedValue<number>;
-  size: number;
 }
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
-export const LoaderLines: FC<Props> = ({ progress, size = 64 }) => {
+export const LoaderLines: FC<Props> = ({ progress }) => {
   const firstLinePath = useAnimatedProps(() => ({
     strokeDashoffset: progress.value
   }));
@@ -30,11 +29,11 @@ export const LoaderLines: FC<Props> = ({ progress, size = 64 }) => {
     strokeDashoffset: progress.value + VECTOR_SIZE * 2
   }));
 
-  const firstLineGradient = useAnimatedGradient(progress);
+  const firstLineGradient = useAnimatedGradient(progress, -Math.PI / 2);
   const secondLineGradient = useAnimatedGradient(progress, Math.PI / 2);
 
   return (
-    <Svg width={size} height={size} viewBox="-1 0 66 64" fill="none">
+    <Svg width={64} height={64} viewBox="-1 0 66 64" fill="none">
       <Defs>
         <AnimatedGradient animatedProps={firstLineGradient} id={FIRST_GRADIENT_ID}>
           <Stop offset="0%" stopColor={LINE_COLOR} />
@@ -67,7 +66,7 @@ export const LoaderLines: FC<Props> = ({ progress, size = 64 }) => {
   );
 };
 
-const useAnimatedGradient = (progress: SharedValue<number>, offset = -Math.PI / 2) =>
+const useAnimatedGradient = (progress: SharedValue<number>, offset: number) =>
   useAnimatedProps(() => {
     // from 0 to 1
     const norma = -progress.value / (VECTOR_SIZE * 4);

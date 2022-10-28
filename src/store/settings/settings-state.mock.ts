@@ -16,5 +16,5 @@ export const mockSettingsState: SettingsState = {
   fiatCurrency: FiatCurrenciesEnum.USD,
   isShownDomainName: false,
   hideZeroBalances: false,
-  loading: false
+  isShowLoader: false
 };
