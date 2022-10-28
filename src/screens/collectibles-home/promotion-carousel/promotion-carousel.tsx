@@ -36,7 +36,7 @@ export const PromotionCarousel = () => {
         data={data}
         loop={true}
         autoPlay={true}
-        autoPlayInterval={2000}
+        autoPlayInterval={3000}
         mode="parallax"
         modeConfig={{
           parallaxScrollingOffset: 24,
