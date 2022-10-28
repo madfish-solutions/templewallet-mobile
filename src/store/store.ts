@@ -1,3 +1,4 @@
+import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
@@ -20,5 +21,6 @@ export const { store, persistor } = createStore(
   settingsEpic,
   currencyEpics,
   securityEpics,
-  migrationEpics
+  migrationEpics,
+  advertisingEpics
 );
