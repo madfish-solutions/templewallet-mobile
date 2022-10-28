@@ -14,12 +14,14 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { useWalletAddressStyles } from './wallet-address.styles';
+
 interface Props {
   publicKeyHash: string;
   disabled?: boolean;
+  isPublicKeyHashTextDisabled?: boolean;
 }
 
-export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
+export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled, isPublicKeyHashTextDisabled }) => {
   const styles = useWalletAddressStyles();
   const dispatch = useDispatch();
   const isShownDomainName = useIsShownDomainName();
@@ -41,7 +43,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled }) => {
           <Text style={styles.domainNameText}>{domainName}</Text>
         </TouchableOpacity>
       ) : (
-        <PublicKeyHashText longPress publicKeyHash={publicKeyHash} />
+        <PublicKeyHashText longPress publicKeyHash={publicKeyHash} disabled={isPublicKeyHashTextDisabled} />
       )}
       {isString(domainName) ? (
         <TouchableIcon
