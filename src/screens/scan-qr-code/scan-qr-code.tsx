@@ -73,6 +73,8 @@ export const ScanQrCode = () => {
         showMarker={true}
         customMarker={<CustomMarker />}
         notAuthorizedView={<EmptyQrCode />}
+        permissionDialogTitle="There is no access to the Camera."
+        permissionDialogMessage="Please, give access in the phone Setting page."
         onRead={handleRead}
       />
     </>

@@ -12,9 +12,10 @@ import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
-import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
+import { useAdvertising } from '../hooks/use-advertising.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
+import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
@@ -76,6 +77,7 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
   useFirebaseApp();
+  useAdvertising();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());

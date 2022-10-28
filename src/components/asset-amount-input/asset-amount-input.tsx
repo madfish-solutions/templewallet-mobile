@@ -183,12 +183,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const { symbol, balance } = token;
       const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+
+      amountInputRef.current?.blur();
+
       onValueChange({
         amount,
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange]);
+  }, [token, gasToken, onValueChange, amountInputRef]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
