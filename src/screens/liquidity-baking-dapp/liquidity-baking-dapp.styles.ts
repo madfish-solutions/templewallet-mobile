@@ -20,7 +20,21 @@ export const useLiquidityBakingDappStyles = createUseStyles(({ colors, typograph
   },
   lbCoinContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  lbWrapper: {
+    flexDirection: 'row',
     alignItems: 'center'
+  },
+  lbGreyText: {
+    ...typography.caption13Semibold,
+    marginRight: formatSize(4),
+    color: colors.gray2
+  },
+  lbBoldText: {
+    ...typography.numbersMedium13,
+    color: colors.black
   },
   accountContainer: {
     flexDirection: 'row',

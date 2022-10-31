@@ -15,8 +15,18 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
     ...typography.body15Semibold,
     color: white
   },
-  description: {
-    ...typography.caption11Regular,
+  balanceWrapper: {
+    flexDirection: 'row'
+  },
+  balance: {
+    marginRight: formatSize(4)
+  },
+  descriptionOrange: {
+    ...typography.caption13Semibold,
+    color: colors.orangeTransparent
+  },
+  descriptionGrey: {
+    ...typography.caption13Regular,
     color: greyLight400
   }
 }));

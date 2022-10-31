@@ -16,7 +16,8 @@ const basicLightColors = {
   black: '#000000',
   white: '#ffffff',
   peach: '#FF5B00',
-  liteOrange: '#E5E5EA'
+  liteOrange: '#E5E5EA',
+  orangeTransparent: '#F6D5C3'
 };
 
 const basicDarkColors: typeof basicLightColors = {
@@ -25,7 +26,8 @@ const basicDarkColors: typeof basicLightColors = {
   black: '#ffffff',
   white: '#000000',
   peach: '#FF5B00',
-  liteOrange: '#242424'
+  liteOrange: '#242424',
+  orangeTransparent: '#F6D5C3'
 };
 
 const basicLightAlphaColors = {
