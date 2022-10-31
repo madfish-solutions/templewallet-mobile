@@ -29,6 +29,14 @@ yarn
 yarn ios:pods
 ```
 
+Install dependencies for M1
+```
+yarn
+sudo arch -arch x86_64 gem install cocoapods
+sudo arch -arch x86_64 gem install ffi
+arch -arch x86_64 pod install
+```
+
 To start app run
 ```
 # Android application
