@@ -29,12 +29,7 @@ export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) 
       }}
     >
       {typeof source === 'string' ? (
-        <SvgUri
-          style={styles.bannerImage}
-          height={formatSize(112)}
-          width={formatSize(343)}
-          uri={'https://generic-objects.fra1.digitaloceanspaces.com/banners/mobile-banner.svg'}
-        />
+        <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
       ) : (
         <FastImage style={styles.bannerImage} source={source} />
       )}
