@@ -7,3 +7,7 @@ export interface AdvertisingPromotion {
   popupLogoUrl: string;
   mobileBannerUrl: string;
 }
+
+export interface GetAdvertisingInfoResponse {
+  data?: AdvertisingPromotion;
+}
