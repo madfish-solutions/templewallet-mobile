@@ -1,7 +1,8 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { catchError, of, Subject, switchMap } from 'rxjs';
+import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountInterface } from '../../interfaces/account.interface';
+import { hideLoaderAction, showLoaderAction } from '../../store/settings/settings-actions';
 import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
@@ -16,6 +17,7 @@ export const createImportAccountSubscription = (
 ) =>
   createImportedAccount$
     .pipe(
+      tap(() => dispatch(showLoaderAction())),
       switchMap(({ privateKey, name }) =>
         getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey]) => {
@@ -38,7 +40,8 @@ export const createImportAccountSubscription = (
             return of(undefined);
           })
         )
-      )
+      ),
+      tap(() => dispatch(hideLoaderAction()))
     )
     .subscribe(publicData => {
       if (publicData !== undefined) {

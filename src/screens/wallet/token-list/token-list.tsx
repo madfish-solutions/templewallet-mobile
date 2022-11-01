@@ -11,7 +11,7 @@ import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-cont
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
-import { useHideZeroBalances } from '../../../store/settings/settings-selectors';
+import { useHideZeroBalancesSelector } from '../../../store/settings/settings-selectors';
 import {
   useSelectedAccountTezosTokenSelector,
   useVisibleTokensListSelector
@@ -64,7 +64,7 @@ export const TokenList: FC = () => {
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const isHideZeroBalanceMemo = useHideZeroBalances();
+  const isHideZeroBalanceMemo = useHideZeroBalancesSelector();
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);

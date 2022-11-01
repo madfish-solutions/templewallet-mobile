@@ -94,6 +94,8 @@ import SwapInfo from './assets/swap-info.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
+import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
+import TempleLogoUpIcon from './assets/temple-logo-up.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
@@ -197,6 +199,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
+  [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
+  [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
   [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
   [IconNameEnum.Telegram]: TelegramIcon,
   [IconNameEnum.Discord]: DiscordIcon,
