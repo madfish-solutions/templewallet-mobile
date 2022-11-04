@@ -14,7 +14,7 @@ import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useBlockSubscription } from '../../hooks/block-subscription/use-block-subscription.hook';
 import { useContractActivity } from '../../hooks/use-contract-activity';
-import { useSirsToken } from '../../hooks/use-sirs-token.hook';
+import { useSirsInfo } from '../../hooks/use-sirs-info.hook';
 import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -24,7 +24,7 @@ import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-ba
 import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
 import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -41,12 +41,12 @@ export const LiquidityBakingDapp = () => {
   const styles = useLiquidityBakingDappStyles();
   const assetsList = useAssetsListSelector();
   const exchangeRates = useUsdToTokenRates();
-  const { sirsToken, isSirsBalance } = useSirsToken();
+  const { token, isPositiveBalance } = useSirsInfo();
 
   const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 
   const aToken = useSelectedAccountTezosTokenSelector();
-  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
+  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_SLUG) ?? emptyToken;
 
   const aTokenPool = lpContract.storage.xtzPool;
 
@@ -81,10 +81,10 @@ export const LiquidityBakingDapp = () => {
             <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
           </View>
 
-          {isDefined(sirsToken) && isSirsBalance && (
+          {isDefined(token) && isPositiveBalance && (
             <View style={styles.lbWrapper}>
               <Text style={styles.lbGreyText}>Balance:</Text>
-              <AssetValueText asset={sirsToken} amount={sirsToken.balance} style={styles.lbBoldText} />
+              <AssetValueText asset={token} amount={token.balance} style={styles.lbBoldText} />
             </View>
           )}
         </View>

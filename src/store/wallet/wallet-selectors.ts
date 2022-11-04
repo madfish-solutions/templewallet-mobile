@@ -91,7 +91,10 @@ export const useTokensListSelector = () => {
 export const useTokenSelector = (tokenSlug: string) => {
   const tokensList = useTokensListSelector();
 
-  return useMemo(() => tokensList.find(({ address, id }) => getTokenSlug({ address, id }) === tokenSlug), [tokensList]);
+  return useMemo(
+    () => tokensList.find(({ address, id }) => getTokenSlug({ address, id }) === tokenSlug),
+    [tokensList, tokenSlug]
+  );
 };
 
 export const useTokensWithTezosListSelector = () => {

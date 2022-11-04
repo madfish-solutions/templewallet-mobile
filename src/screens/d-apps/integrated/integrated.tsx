@@ -5,7 +5,7 @@ import { AssetValueText } from '../../../components/asset-value-text/asset-value
 import { Divider } from '../../../components/divider/divider';
 import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { useSirsToken } from '../../../hooks/use-sirs-token.hook';
+import { useSirsInfo } from '../../../hooks/use-sirs-info.hook';
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
@@ -21,7 +21,7 @@ interface Props {
 
 export const IntegratedDApp: FC<Props> = ({ screenName, iconName, title, description }) => {
   const { navigate } = useNavigation();
-  const { sirsToken, isSirsBalance } = useSirsToken();
+  const { token, isPositiveBalance } = useSirsInfo();
 
   const styles = useIntegratedDAppStyles();
 
@@ -31,10 +31,10 @@ export const IntegratedDApp: FC<Props> = ({ screenName, iconName, title, descrip
       <Divider size={formatSize(16)} />
       <View>
         <Text style={styles.title}>{title}</Text>
-        {isDefined(sirsToken) && isSirsBalance ? (
+        {isDefined(token) && isPositiveBalance ? (
           <View style={styles.balanceWrapper}>
             <Text style={[styles.balance, styles.descriptionOrange]}>Balance:</Text>
-            <AssetValueText asset={sirsToken} amount={sirsToken.balance} style={styles.descriptionOrange} />
+            <AssetValueText asset={token} amount={token.balance} style={styles.descriptionOrange} />
           </View>
         ) : (
           <Text style={styles.descriptionGrey}>{description}</Text>
