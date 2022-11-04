@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { StyleProp, Text, TextStyle } from 'react-native';
+import { StyleProp, TextStyle } from 'react-native';
 
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -32,10 +32,8 @@ export const AssetValueText: FC<Props> = ({
   const visibleSymbol = showSymbol ? asset.symbol : undefined;
 
   return (
-    <Text style={style}>
-      {hideText ? (
-        ''
-      ) : (
+    <>
+      {hideText ? null : (
         <FormattedAmount
           amount={visibleAmount}
           isDollarValue={convertToDollar}
@@ -45,6 +43,6 @@ export const AssetValueText: FC<Props> = ({
           style={style}
         />
       )}
-    </Text>
+    </>
   );
 };

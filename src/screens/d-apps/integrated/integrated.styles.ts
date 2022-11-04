@@ -23,7 +23,8 @@ export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) 
   },
   descriptionOrange: {
     ...typography.caption13Semibold,
-    color: colors.orangeTransparent
+    color: white,
+    opacity: 0.8
   },
   descriptionGrey: {
     ...typography.caption13Regular,
