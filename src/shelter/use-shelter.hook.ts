@@ -30,7 +30,7 @@ export const useShelter = () => {
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
       createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
-      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
+      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 

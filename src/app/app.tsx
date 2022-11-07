@@ -13,6 +13,7 @@ import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../config/animation';
 import { HideBalanceProvider } from '../hooks/hide-balance/hide-balance.provider';
 import { useDelayedEffect } from '../hooks/use-delayed-effect.hook';
 import { RootStackScreen } from '../navigator/root-stack';
+import { AppLockContextProvider } from '../shelter/app-lock/app-lock';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
 import { segmentClient } from '../utils/analytics/analytics.util';
@@ -33,10 +34,12 @@ export const App = () => {
           <PersistGate persistor={persistor} loading={null}>
             <BiometryAvailabilityProvider>
               <HideBalanceProvider>
-                <SafeAreaProvider>
-                  <RootStackScreen />
-                  <ToastProvider />
-                </SafeAreaProvider>
+                <AppLockContextProvider>
+                  <SafeAreaProvider>
+                    <RootStackScreen />
+                    <ToastProvider />
+                  </SafeAreaProvider>
+                </AppLockContextProvider>
               </HideBalanceProvider>
             </BiometryAvailabilityProvider>
           </PersistGate>

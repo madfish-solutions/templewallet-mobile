@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useAppLock } from '../shelter/app-lock/app-lock';
 import { useAppStateStatus } from './use-app-state-status.hook';
 
 const SHOW_ENTER_PASSWORD_SCREEN_DELAY = 3 * 60 * 1000;

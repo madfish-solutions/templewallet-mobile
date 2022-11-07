@@ -20,7 +20,8 @@ import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   account = emptyAccount,
   showFullData = true,
-  actionIconName
+  actionIconName,
+  isPublicKeyHashTextDisabled
 }) => {
   const styles = useAccountDropdownItemStyles();
   const tezosToken = useTezosTokenSelector(account.publicKeyHash);
@@ -34,7 +35,10 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <WalletAddress publicKeyHash={account.publicKeyHash} />
+          <WalletAddress
+            publicKeyHash={account.publicKeyHash}
+            isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
+          />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
