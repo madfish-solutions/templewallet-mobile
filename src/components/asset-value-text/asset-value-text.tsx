@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { StyleProp, TextStyle } from 'react-native';
+import { StyleProp, TextStyle, Text } from 'react-native';
 
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
@@ -33,7 +33,9 @@ export const AssetValueText: FC<Props> = ({
 
   return (
     <>
-      {hideText ? null : (
+      {hideText ? (
+        <Text style={style} />
+      ) : (
         <FormattedAmount
           amount={visibleAmount}
           isDollarValue={convertToDollar}
