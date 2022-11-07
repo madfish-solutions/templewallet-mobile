@@ -25,7 +25,7 @@ import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from '../screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
-import { CreateAccount } from '../screens/create-account/create-account';
+import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
@@ -121,7 +121,7 @@ export const MainStackScreen = () => {
               />
               <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
-                component={CreateAccount}
+                component={CreateNewWallet}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
               />
             </>
