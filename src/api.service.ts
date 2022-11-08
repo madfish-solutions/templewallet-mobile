@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import {
-  TEMPLE_WALLET_API,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
   TEMPLE_WALLET_EXOLIX_API_KEY,
   TEMPLE_WALLET_UTORG_SID
@@ -15,9 +14,9 @@ const dcpTzktApi = axios.create({ baseURL: 'https://explorer.tlnt.net:8001/v1' }
 
 export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl) ? dcpTzktApi : tzktApi);
 
-export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API });
+export const templeWalletApi = axios.create({ baseURL: 'https://temple-api-mainnet.prod.templewallet.com/api' });
 
-export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata.templewallet.com' });
+export const tokenMetadataApi = axios.create({ baseURL: 'https://metadata-api-mainnet.prod.templewallet.com' });
 
 export const whitelistApi = axios.create({
   baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-whitelist/master/'
