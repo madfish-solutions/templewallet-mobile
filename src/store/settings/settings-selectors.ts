@@ -52,3 +52,6 @@ export const useHideZeroBalancesSelector = () =>
 
 export const useIsShowLoaderSelector = () =>
   useSelector<SettingsRootState, SettingsState['isShowLoader']>(({ settings }) => settings.isShowLoader);
+
+export const useIsManualBackupMadeSelector = () =>
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.madeManualBackup !== false);

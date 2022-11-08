@@ -40,6 +40,7 @@ export enum ScreensEnum {
   FiatSettings = 'FiatSettings',
   SecureSettings = 'SecureSettings',
   NodeSettings = 'NodeSettings',
+  Backup = 'Backup',
   ManualBackup = 'ManualBackup',
   Debug = 'Debug'
 }
@@ -84,6 +85,7 @@ export type ScreensParamList = {
   [ScreensEnum.FiatSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
   [ScreensEnum.NodeSettings]: undefined;
+  [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
@@ -113,6 +115,7 @@ export const settingsStackScreens = [
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
   ScreensEnum.SecureSettings,
+  ScreensEnum.Backup,
   ScreensEnum.ManualBackup,
   ScreensEnum.NodeSettings
 ];

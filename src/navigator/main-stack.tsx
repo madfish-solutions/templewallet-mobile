@@ -18,6 +18,7 @@ import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
+import { Backup } from '../screens/backup/backup';
 import { Buy } from '../screens/buy/buy';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
@@ -256,6 +257,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SecureSettings}
                 component={SecureSettings}
                 options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Backup}
+                component={Backup}
+                options={generateScreenOptions(<HeaderTitle title="Backup" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.ManualBackup}

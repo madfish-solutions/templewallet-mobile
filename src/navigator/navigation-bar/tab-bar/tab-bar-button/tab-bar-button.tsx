@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -18,6 +18,7 @@ interface Props {
   routeName: ScreensEnum;
   focused: boolean;
   disabled?: boolean;
+  showNotificationDot?: boolean;
   params?: ScreensParamList[ScreensEnum.SwapScreen];
   disabledOnPress?: EmptyFn;
 }
@@ -29,6 +30,7 @@ export const TabBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
+  showNotificationDot = false,
   params,
   disabledOnPress = emptyFn
 }) => {
@@ -58,7 +60,18 @@ export const TabBarButton: FC<Props> = ({
       style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
       onPress={handlePress}
     >
-      <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
+      <View style={styles.iconContainer}>
+        {showNotificationDot && (
+          <Icon
+            name={IconNameEnum.NotificationDot}
+            width={formatSize(9)}
+            height={formatSize(9)}
+            color={colors.navigation}
+            style={styles.notificationDotIcon}
+          />
+        )}
+        <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
+      </View>
       <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>
   );

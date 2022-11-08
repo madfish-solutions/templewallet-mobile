@@ -6,6 +6,7 @@ import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   changeTheme,
+  madeManualBackupAction,
   setFiatCurrency,
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
@@ -72,6 +73,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
     ...state,
     isShownDomainName
+  }));
+
+  builder.addCase(madeManualBackupAction, state => ({
+    ...state,
+    madeManualBackup: true
   }));
 
   // MIGRATIONS

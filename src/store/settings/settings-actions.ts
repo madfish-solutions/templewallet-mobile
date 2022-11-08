@@ -26,3 +26,5 @@ export const setZeroBalancesShown = createAction<boolean>('settings/SET_ZERO_BAL
 export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');
 export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW_LOADER_ACTION');
+
+export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_BACKUP_ACTION');
