@@ -4,5 +4,6 @@ import { DAppsState } from './d-apps-state';
 
 export const mockDAppsState: DAppsState = {
   permissions: createEntity([]),
-  dappsList: createEntity([mockDApp])
+  dappsList: createEntity([mockDApp]),
+  tokensApyInfo: {}
 };

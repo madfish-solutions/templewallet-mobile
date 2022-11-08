@@ -16,4 +16,12 @@ export const TZ_BTC_TOKEN_SLUG = getTokenSlug({
   id: TZ_BTC_TOKEN_ID
 });
 
+const KUSD_TOKEN_ADDRESS = 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV';
+const KUSD_TOKEN_ID = 0;
+
+export const KUSD_SLUG = getTokenSlug({
+  address: KUSD_TOKEN_ADDRESS,
+  id: KUSD_TOKEN_ID
+});
+
 export const LIQUIDITY_BAKING_DEX_ADDRESS = 'KT1TxqZ8QtKvLu3V3JH7Gx58n7Co8pgtpQU5';
