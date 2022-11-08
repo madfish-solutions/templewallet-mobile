@@ -23,11 +23,7 @@ import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/tokens-metadata/tokens-metadata-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import {
-  LIQUIDITY_BAKING_LP_SLUG,
-  LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
-  LIQUIDITY_BAKING_LP_TOKEN_ID
-} from '../../token/data/token-slugs';
+import { SIRS_SLUG, SIRS_TOKEN_ADDRESS, SIRS_TOKEN_ID } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -55,7 +51,7 @@ export const RemoveLiquidityModal = () => {
   const styles = useRemoveLiquidityModalStyles();
 
   const lpToken = useMemo(
-    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === LIQUIDITY_BAKING_LP_SLUG) ?? emptyToken,
+    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === SIRS_SLUG) ?? emptyToken,
     [tokensList]
   );
 
@@ -99,8 +95,8 @@ export const RemoveLiquidityModal = () => {
         lpToken.address === emptyToken.address &&
         dispatch(
           loadTokenMetadataActions.submit({
-            address: LIQUIDITY_BAKING_LP_TOKEN_ADDRESS,
-            id: LIQUIDITY_BAKING_LP_TOKEN_ID
+            address: SIRS_TOKEN_ADDRESS,
+            id: SIRS_TOKEN_ID
           })
         )
       ),

@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
+import { AssetValueText } from '../../components/asset-value-text/asset-value-text';
 import { ButtonLargeWhite } from '../../components/button/button-large/button-large-white/button-large-white';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { Divider } from '../../components/divider/divider';
@@ -13,6 +14,7 @@ import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { useBlockSubscription } from '../../hooks/block-subscription/use-block-subscription.hook';
 import { useContractActivity } from '../../hooks/use-contract-activity';
+import { useSirsInfo } from '../../hooks/use-sirs-info.hook';
 import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -22,10 +24,11 @@ import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-ba
 import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
 import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_TOKEN_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_SLUG } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { isDefined } from '../../utils/is-defined';
 import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
@@ -38,11 +41,12 @@ export const LiquidityBakingDapp = () => {
   const styles = useLiquidityBakingDappStyles();
   const assetsList = useAssetsListSelector();
   const exchangeRates = useUsdToTokenRates();
+  const { token, isPositiveBalance } = useSirsInfo();
 
   const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 
   const aToken = useSelectedAccountTezosTokenSelector();
-  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_TOKEN_SLUG) ?? emptyToken;
+  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_SLUG) ?? emptyToken;
 
   const aTokenPool = lpContract.storage.xtzPool;
 
@@ -72,9 +76,17 @@ export const LiquidityBakingDapp = () => {
       <HeaderCard>
         <Divider size={formatSize(8)} />
         <View style={styles.lbCoinContainer}>
-          <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
-          <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
-          <Divider size={formatSize(8)} />
+          <View style={styles.lbWrapper}>
+            <LpTokenIcon firstTokenIcon={IconNameEnum.TezToken} secondTokenIcon={IconNameEnum.LbTokenIcon} />
+            <Text style={styles.lbCoinText}>XTZ/tzBTC</Text>
+          </View>
+
+          {isDefined(token) && isPositiveBalance && (
+            <View style={styles.lbWrapper}>
+              <Text style={styles.lbGreyText}>Balance:</Text>
+              <AssetValueText asset={token} amount={token.balance} style={styles.lbBoldText} />
+            </View>
+          )}
         </View>
         <View style={styles.bottomLbContainer}>
           <View>
