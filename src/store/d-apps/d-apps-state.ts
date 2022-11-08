@@ -1,7 +1,7 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 
 import { CustomDAppInfo } from '../../interfaces/custom-dapps-info.interface';
-import { TZ_BTC_TOKEN_SLUG, KUSD_SLUG } from '../../token/data/token-slugs';
+import { TZ_BTC_SLUG, KUSD_SLUG } from '../../token/data/token-slugs';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 import { YUPANA_LINK, KORDFI_LINK } from './constants';
@@ -23,7 +23,7 @@ export const dAppsInitialState: DAppsState = {
       rate: 0,
       link: YUPANA_LINK
     },
-    [TZ_BTC_TOKEN_SLUG]: {
+    [TZ_BTC_SLUG]: {
       rate: 0,
       link: KORDFI_LINK
     }
