@@ -233,7 +233,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
         >
           <Dropdown
-            title="Assets"
+            description="Assets"
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}

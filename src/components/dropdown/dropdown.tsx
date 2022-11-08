@@ -14,7 +14,7 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 import { useDropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
-  title: string;
+  description: string;
   list: T[];
   isSearchable?: boolean;
   itemHeight?: number;
@@ -58,7 +58,7 @@ export type DropdownActionButtonsComponent = FC<{
 const DropdownComponent = <T extends unknown>({
   value,
   list,
-  title,
+  description,
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
@@ -123,7 +123,7 @@ const DropdownComponent = <T extends unknown>({
         {renderValue({ value, disabled })}
       </TouchableOpacity>
 
-      <BottomSheet title={title} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
+      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList

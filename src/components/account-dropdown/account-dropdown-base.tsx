@@ -49,7 +49,7 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountInterface>> =
 
   return (
     <Dropdown
-      title="Accounts"
+      description="Accounts"
       value={value}
       list={list}
       equalityFn={accountEqualityFn}

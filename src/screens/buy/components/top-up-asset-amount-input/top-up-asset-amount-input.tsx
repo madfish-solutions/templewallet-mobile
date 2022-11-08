@@ -134,7 +134,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
               <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
             ) : (
               <Dropdown
-                title="Assets"
+                description="Assets"
                 value={value.asset}
                 list={assetsList}
                 isSearchable={isSearchable}

@@ -1,35 +1,36 @@
 import { Formik } from 'formik';
 import { range, shuffle } from 'lodash-es';
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { object, string } from 'yup';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { Divider } from '../../components/divider/divider';
-import { HeaderButton } from '../../components/header/header-button/header-button';
-import { HeaderTitle } from '../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { EmptyFn } from '../../config/general';
-import { formatSize } from '../../styles/format-size';
-import { showErrorToast } from '../../toast/toast.utils';
-import { formatOrdinalNumber } from '../../utils/number-format.utils';
+import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from '../../../components/divider/divider';
+import { HeaderButton } from '../../../components/header/header-button/header-button';
+import { HeaderTitle } from '../../../components/header/header-title/header-title';
+import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
+import { ScreenContainer } from '../../../components/screen-container/screen-container';
+import { EmptyFn } from '../../../config/general';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { formatSize } from '../../../styles/format-size';
+import { showErrorToast } from '../../../toast/toast.utils';
+import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
-interface VerifySeedPhraseProps {
-  seedPhrase: string;
-  onVerify: EmptyFn;
+interface Props {
   onGoBackPress: EmptyFn;
 }
 
 const WORDS_TO_FILL = 2;
 
-export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVerify, onGoBackPress }) => {
+export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const styles = useVerifySeedPhraseStyles();
+  const { revealSeedPhrase } = useShelter();
+  const [words, setWords] = useState<string[]>([]);
 
   useNavigationSetOptions(
     {
@@ -38,8 +39,14 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     },
     []
   );
+  useEffect(
+    () =>
+      void revealSeedPhrase({
+        successCallback: value => setWords(value.split(' '))
+      }),
+    []
+  );
 
-  const words = useMemo(() => seedPhrase.split(' '), [seedPhrase]);
   const wordsToCheckPositions = useMemo(() => {
     const shuffledPositions = shuffle(range(0, words.length));
     const selectedPositions: number[] = [];
@@ -91,12 +98,14 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     []
   );
 
+  const handleSubmit = () => void 0;
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       validateOnMount={true}
-      onSubmit={onVerify}
+      onSubmit={handleSubmit}
     >
       {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>

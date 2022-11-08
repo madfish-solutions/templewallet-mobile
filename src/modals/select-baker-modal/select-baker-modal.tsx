@@ -186,7 +186,7 @@ export const SelectBakerModal: FC = () => {
       </ModalButtonsContainer>
 
       <BottomSheet
-        title="Sort bakers by:"
+        description="Sort bakers by:"
         contentHeight={formatSize(260)}
         controller={revealSelectBottomSheetController}
       >

@@ -22,7 +22,7 @@ const renderAccountValue: DropdownValueComponent<AccountInterface> = ({ value })
 export const AccountFormDropdown: FC<Props> = ({ name, list }) => (
   <FormDropdown
     name={name}
-    title="Accounts"
+    description="Accounts"
     list={list}
     equalityFn={accountEqualityFn}
     renderValue={renderAccountValue}

@@ -35,6 +35,7 @@ import { ImportAccount } from '../screens/import-account/import-account';
 import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
+import { ManualBackup } from '../screens/manual-backup/manual-backup';
 import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
@@ -257,6 +258,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SecureSettings}
                 component={SecureSettings}
                 options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ManualBackup}
+                component={ManualBackup}
+                options={generateScreenOptions(<HeaderTitle title="Manual backup" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}

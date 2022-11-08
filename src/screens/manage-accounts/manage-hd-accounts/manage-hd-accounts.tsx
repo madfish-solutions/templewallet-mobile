@@ -83,7 +83,7 @@ export const ManageHdAccounts = () => {
         <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="CREATE NEW" onPress={createHdAccount} />
 
         <BottomSheet
-          title="Select what do you want to reveal:"
+          description="Select what do you want to reveal:"
           contentHeight={formatSize(180)}
           controller={revealSelectBottomSheetController}
         >
