@@ -6,6 +6,7 @@ import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface } from '../../interfaces/account-state.interface';
 import { AccountInterface } from '../../interfaces/account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isDcpNode } from '../../utils/network.utils';
 import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
@@ -85,6 +86,15 @@ export const useTokensListSelector = () => {
   const assetsList = useAssetsListSelector();
 
   return useMemo(() => assetsList.filter(({ artifactUri }) => !isDefined(artifactUri)), [assetsList]);
+};
+
+export const useTokenSelector = (tokenSlug: string) => {
+  const tokensList = useTokensListSelector();
+
+  return useMemo(
+    () => tokensList.find(({ address, id }) => getTokenSlug({ address, id }) === tokenSlug),
+    [tokensList, tokenSlug]
+  );
 };
 
 export const useTokensWithTezosListSelector = () => {
