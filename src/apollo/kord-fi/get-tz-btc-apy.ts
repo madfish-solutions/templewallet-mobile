@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { TZ_BTC_SLUG } from '../../token/data/token-slugs';
-import { apolloConfigurableClient } from './apollo-configurable-client';
+import { apolloKordFiClient } from './apollo-kord-fi-client';
 import { getTzBtcApyQuery } from './queries';
 
 interface GetTzBtcApy {
@@ -10,7 +10,7 @@ interface GetTzBtcApy {
 }
 
 export const getTzBtcApy$ = () =>
-  apolloConfigurableClient.query<GetTzBtcApy>(getTzBtcApyQuery).pipe(
+  apolloKordFiClient.query<GetTzBtcApy>(getTzBtcApyQuery).pipe(
     map(data => {
       const { tzbtcDepositRate = 0 } = data?.contractInfo?.[0] ?? {};
 

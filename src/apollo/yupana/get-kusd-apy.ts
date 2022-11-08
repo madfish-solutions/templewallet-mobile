@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { KUSD_SLUG } from '../../token/data/token-slugs';
-import { apolloConfigurableClient } from './apollo-configurable-client.ts';
+import { apolloYupanaClient } from './apollo-yupana-client.ts';
 import { getKUSDApyQuery } from './queries';
 
 interface GetKUSDApy {
@@ -10,7 +10,7 @@ interface GetKUSDApy {
 }
 
 export const getKUSDApy$ = () =>
-  apolloConfigurableClient.query<GetKUSDApy>(getKUSDApyQuery).pipe(
+  apolloYupanaClient.query<GetKUSDApy>(getKUSDApyQuery).pipe(
     map(data => {
       const { rates } = data.asset[0];
       const { supply_apy } = rates[0];
