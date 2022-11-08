@@ -6,8 +6,8 @@ export const useLayoutSizes = () => {
   const [layoutHeight, setLayoutHeight] = useState(100);
 
   const handleLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-    setLayoutWidth(nativeEvent.layout.width);
-    setLayoutHeight(nativeEvent.layout.height);
+    setLayoutWidth(nativeEvent.layout.width || 1);
+    setLayoutHeight(nativeEvent.layout.height || 1);
   };
 
   return { layoutWidth, layoutHeight, handleLayout };
