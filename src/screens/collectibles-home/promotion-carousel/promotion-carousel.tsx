@@ -28,7 +28,7 @@ export const PromotionCarousel = () => {
   }, [activePromotion]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth) || 100, [layoutWidth]);
 
   return (
     <View onLayout={handleLayout}>
