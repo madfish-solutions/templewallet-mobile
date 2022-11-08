@@ -12,8 +12,11 @@ import { HeaderCard } from '../../components/header-card/header-card';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
+import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useAppLock } from '../../shelter/app-lock/app-lock';
+import { useIsOpenBackupBottomSheetSelector } from '../../store/settings/settings-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -29,21 +32,27 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const backupSelectBottomSheetController = useBottomSheetController();
+  const { isLocked } = useAppLock();
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
 
+  const isOpenBackupBottomSheet = useIsOpenBackupBottomSheetSelector();
+  const backupBottomSheetController = useBottomSheetController();
+
+  useWalletOpenTacker();
   usePageAnalytic(ScreensEnum.Wallet);
 
   useEffect(() => {
-    backupSelectBottomSheetController.open();
-  }, [backupSelectBottomSheetController.ref.current]);
+    if (isOpenBackupBottomSheet && !isLocked) {
+      setTimeout(backupBottomSheetController.open, 500);
+    }
+  }, [isOpenBackupBottomSheet, isLocked]);
 
   const handleManualBackupButtonPress = () => {
     navigate(ScreensEnum.ManualBackup);
-    backupSelectBottomSheetController.close();
+    backupBottomSheetController.close();
   };
 
   return (
@@ -58,7 +67,7 @@ export const Wallet = () => {
 
           <Divider />
 
-          <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => backupSelectBottomSheetController.open()} />
+          <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
         </View>
 
         <TokenEquityValue token={tezosToken} showTokenValue={false} />
@@ -76,7 +85,7 @@ export const Wallet = () => {
         description={'Don’t lose your wallet! Save your access \nto accounts.'}
         cancelButtonText="Not now"
         contentHeight={formatSize(186)}
-        controller={backupSelectBottomSheetController}
+        controller={backupBottomSheetController}
       >
         <BottomSheetActionButton title="Manual backup" onPress={handleManualBackupButtonPress} />
       </BottomSheet>

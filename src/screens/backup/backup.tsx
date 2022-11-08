@@ -11,6 +11,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useIsManualBackupMadeSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { useBackupStyles } from './backup.styles';
 
 const iconSize = formatSize(32);
@@ -21,6 +22,8 @@ export const Backup = () => {
   const { navigate } = useNavigation();
 
   const isManualBackupMade = useIsManualBackupMadeSelector();
+
+  usePageAnalytic(ScreensEnum.Backup);
 
   return (
     <ScreenContainer>

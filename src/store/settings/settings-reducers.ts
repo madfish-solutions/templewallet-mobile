@@ -5,6 +5,7 @@ import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
+  walletOpenedAction,
   changeTheme,
   madeManualBackupAction,
   setFiatCurrency,
@@ -78,6 +79,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(madeManualBackupAction, state => ({
     ...state,
     madeManualBackup: true
+  }));
+
+  builder.addCase(walletOpenedAction, state => ({
+    ...state,
+    applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
   }));
 
   // MIGRATIONS

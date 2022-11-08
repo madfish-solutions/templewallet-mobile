@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import { range, shuffle } from 'lodash-es';
 import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { object, string } from 'yup';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,7 +14,9 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
+import { madeManualBackupAction } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
@@ -28,8 +31,11 @@ interface Props {
 const WORDS_TO_FILL = 2;
 
 export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
+  const dispatch = useDispatch();
   const styles = useVerifySeedPhraseStyles();
+  const { goBack } = useNavigation();
   const { revealSeedPhrase } = useShelter();
+
   const [words, setWords] = useState<string[]>([]);
 
   useNavigationSetOptions(
@@ -98,7 +104,10 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     []
   );
 
-  const handleSubmit = () => void 0;
+  const handleSubmit = () => {
+    dispatch(madeManualBackupAction());
+    goBack();
+  };
 
   return (
     <Formik
