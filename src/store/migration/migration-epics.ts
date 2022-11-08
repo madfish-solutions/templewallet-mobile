@@ -4,7 +4,7 @@ import { map, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { LIQUIDITY_BAKING_LP_SLUG } from '../../token/data/token-slugs';
+import { SIRS_SLUG } from '../../token/data/token-slugs';
 import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -102,12 +102,12 @@ const updateSirsTokenEpic: Epic = (action$: Observable<Action>, state$: Observab
     ofType(updateSirsTokenAction),
     withLatestFrom(state$),
     map(([, rootState]) => {
-      const sirsToken = rootState.tokensMetadata.metadataRecord[LIQUIDITY_BAKING_LP_SLUG];
+      const sirsToken = rootState.tokensMetadata.metadataRecord[SIRS_SLUG];
 
       if (isDefined(sirsToken) && isDefined(sirsToken.symbol) && sirsToken.symbol !== 'SIRS') {
         const newTokensMetadata = {
           ...rootState.tokensMetadata.metadataRecord,
-          [LIQUIDITY_BAKING_LP_SLUG]: {
+          [SIRS_SLUG]: {
             ...sirsToken,
             decimals: 0,
             name: 'Sirius',
