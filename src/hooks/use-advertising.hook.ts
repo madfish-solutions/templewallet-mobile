@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { loadAdvertisingPromotionActions } from '../store/advertising/advertising-actions';
+import { useAuthorisedEffect } from './use-authorised-effect.hook';
 
 export const useAdvertising = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => void dispatch(loadAdvertisingPromotionActions.submit()), []);
+  useAuthorisedEffect(() => dispatch(loadAdvertisingPromotionActions.submit()));
 };
