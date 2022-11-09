@@ -13,7 +13,7 @@ export const useResetDataHandler = () => {
       'Are you sure you want to reset the Temple Wallet?',
       isManualBackupMade
         ? 'As a result, all your data will be deleted.'
-        : 'Your wallet is NOT backed up. As a result, you will lost access to all your money!',
+        : 'Your wallet is NOT backed up. As a result, you will lose access to all your money!',
       [
         {
           text: 'Cancel',
