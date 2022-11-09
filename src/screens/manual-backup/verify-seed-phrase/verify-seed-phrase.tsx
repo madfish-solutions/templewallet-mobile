@@ -18,7 +18,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { madeManualBackupAction } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
+import { showErrorToast, showSuccessToast } from "../../../toast/toast.utils";
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
@@ -106,6 +106,8 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
 
   const handleSubmit = () => {
     dispatch(madeManualBackupAction());
+    showSuccessToast({ description: 'You have successfully verified seed phrase!' });
+
     goBack();
   };
 
