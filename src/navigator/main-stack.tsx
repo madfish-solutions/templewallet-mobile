@@ -14,7 +14,6 @@ import { useBlockSubscription } from '../hooks/block-subscription/use-block-subs
 import { useAdvertising } from '../hooks/use-advertising.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
-import { useLoadTokensApy } from '../hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
@@ -49,6 +48,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -77,12 +77,12 @@ export const MainStackScreen = () => {
   useBeaconHandler();
   useFirebaseApp();
   useAdvertising();
-  useLoadTokensApy();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
+    dispatch(loadTokensApyActions.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
