@@ -14,7 +14,7 @@ import { useBlockSubscription } from '../hooks/block-subscription/use-block-subs
 import { useAdvertising } from '../hooks/use-advertising.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
-import { useLoadTokensApyHook } from '../hooks/use-load-tokens-apy.hook';
+import { useLoadTokensApy } from '../hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
@@ -77,7 +77,7 @@ export const MainStackScreen = () => {
   useBeaconHandler();
   useFirebaseApp();
   useAdvertising();
-  useLoadTokensApyHook();
+  useLoadTokensApy();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
