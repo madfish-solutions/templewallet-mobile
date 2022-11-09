@@ -18,7 +18,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { madeManualBackupAction } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
-import { showErrorToast, showSuccessToast } from "../../../toast/toast.utils";
+import { showErrorToast, showSuccessToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
