@@ -20,8 +20,8 @@ export interface SettingsState {
   isShownDomainName: boolean;
   hideZeroBalances: boolean;
   isShowLoader: boolean;
-  madeManualBackup?: boolean;
-  applicationOpenCounter?: number;
+  isManualBackupMade: boolean;
+  applicationOpenCounter: number;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -38,7 +38,7 @@ export const settingsInitialState: SettingsState = {
   isShownDomainName: false,
   hideZeroBalances: false,
   isShowLoader: false,
-  madeManualBackup: false,
+  isManualBackupMade: true,
   applicationOpenCounter: 0
 };
 

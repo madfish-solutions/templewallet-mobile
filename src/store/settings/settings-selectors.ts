@@ -54,9 +54,9 @@ export const useIsShowLoaderSelector = () =>
   useSelector<SettingsRootState, SettingsState['isShowLoader']>(({ settings }) => settings.isShowLoader);
 
 export const useIsManualBackupMadeSelector = () =>
-  useSelector<SettingsRootState, boolean>(({ settings }) => settings.madeManualBackup !== false);
+  useSelector<SettingsRootState, boolean>(({ settings }) => settings.isManualBackupMade);
 
 export const useIsOpenBackupBottomSheetSelector = () =>
   useSelector<SettingsRootState, boolean>(
-    ({ settings }) => settings.madeManualBackup === false && (settings.applicationOpenCounter ?? 0) > 1
+    ({ settings }) => !settings.isManualBackupMade && settings.applicationOpenCounter > 1
   );

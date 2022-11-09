@@ -5,12 +5,7 @@ import { useDispatch } from 'react-redux';
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
-import {
-  hideLoaderAction,
-  madeManualBackupAction,
-  setIsAnalyticsEnabled,
-  showLoaderAction
-} from '../../../store/settings/settings-actions';
+import { hideLoaderAction, setIsAnalyticsEnabled, showLoaderAction } from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
@@ -53,7 +48,6 @@ export const AfterSyncQRScan = () => {
             useBiometry: useBiometryValue,
             hdAccountsLength: res.hdAccountsLength
           });
-          dispatch(madeManualBackupAction());
         } else {
           setInnerScreenIndex(1);
         }

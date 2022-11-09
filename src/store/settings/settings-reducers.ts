@@ -7,7 +7,7 @@ import {
   addCustomRpc,
   walletOpenedAction,
   changeTheme,
-  madeManualBackupAction,
+  requestManualBackupAction,
   setFiatCurrency,
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
@@ -17,7 +17,8 @@ import {
   setSelectedRpcUrl,
   setSlippage,
   setZeroBalancesShown,
-  toggleDomainAddressShown
+  toggleDomainAddressShown,
+  madeManualBackupAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -76,9 +77,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
+  builder.addCase(requestManualBackupAction, state => ({
+    ...state,
+    isManualBackupMade: false
+  }));
+
   builder.addCase(madeManualBackupAction, state => ({
     ...state,
-    madeManualBackup: true
+    isManualBackupMade: true
   }));
 
   builder.addCase(walletOpenedAction, state => ({

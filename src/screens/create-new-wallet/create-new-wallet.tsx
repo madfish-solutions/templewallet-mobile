@@ -15,7 +15,11 @@ import { FormBiometryCheckbox } from '../../form/form-biometry-checkbox/form-bio
 import { FormCheckbox } from '../../form/form-checkbox';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
-import { setIsAnalyticsEnabled, showLoaderAction } from '../../store/settings/settings-actions';
+import {
+  requestManualBackupAction,
+  setIsAnalyticsEnabled,
+  showLoaderAction
+} from '../../store/settings/settings-actions';
 import { formatSize } from '../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../styles/set-password-screens-common-styles';
 import { generateSeed } from '../../utils/keys.util';
@@ -37,6 +41,7 @@ export const CreateNewWallet = () => {
     dispatch(setIsAnalyticsEnabled(analytics));
     const seedPhrase = await generateSeed();
     importWallet({ seedPhrase, password, useBiometry });
+    dispatch(requestManualBackupAction());
   };
 
   return (
