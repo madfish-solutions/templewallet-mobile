@@ -9,6 +9,8 @@ export const useLoadTokensApy = () => {
   const isAuthorised = useIsAuthorisedSelector();
 
   useEffect(() => {
-    dispatch(loadTokensApyActions.submit());
+    if (isAuthorised) {
+      dispatch(loadTokensApyActions.submit());
+    }
   }, [isAuthorised]);
 };
