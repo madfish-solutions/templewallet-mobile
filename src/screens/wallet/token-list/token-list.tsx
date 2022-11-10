@@ -10,6 +10,7 @@ import { isAndroid } from '../../../config/system';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
+import { useTokensApyInfoSelector } from '../../../store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from '../../../store/settings/settings-selectors';
 import {
@@ -37,18 +38,6 @@ const keyExtractor = (item: FlatListItem) => {
   return getTokenSlug(item);
 };
 
-const renderFlatListItem: ListRenderItem<FlatListItem> = ({ item }) => {
-  if (item === TEZ_TOKEN_SLUG) {
-    return <TezosToken />;
-  }
-
-  if (item.address.startsWith('filler') === true) {
-    return <View style={{ height: ITEM_HEIGHT }} />;
-  }
-
-  return <TokenListItem token={item} />;
-};
-
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
@@ -58,6 +47,7 @@ export const TokenList: FC = () => {
   const styles = useTokenListStyles();
 
   const { metadata } = useNetworkInfo();
+  const apyInfo = useTokensApyInfoSelector();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
@@ -90,6 +80,21 @@ export const TokenList: FC = () => {
   );
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
+
+  const renderFlatListItem: ListRenderItem<FlatListItem> = useCallback(
+    ({ item }) => {
+      if (item === TEZ_TOKEN_SLUG) {
+        return <TezosToken />;
+      }
+
+      if (item.address.startsWith('filler') === true) {
+        return <View style={{ height: ITEM_HEIGHT }} />;
+      }
+
+      return <TokenListItem token={item} apy={apyInfo[getTokenSlug(item)]?.rate} />;
+    },
+    [apyInfo]
+  );
 
   return (
     <>
