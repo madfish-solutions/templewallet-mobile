@@ -5,4 +5,5 @@ export interface AccountDropdownItemProps {
   account?: AccountInterface;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
+  isPublicKeyHashTextDisabled?: boolean;
 }

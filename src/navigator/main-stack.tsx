@@ -5,26 +5,27 @@ import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from '../components/header/exolix-screen-options';
-import { generateIntegratedAppOptions } from '../components/header/generate-integrated-dapp-options.util';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
 import { HeaderAction } from '../components/header/header-action/header-actions';
-import { HeaderModal } from '../components/header/header-modal/header-modal';
 import { HeaderTitle } from '../components/header/header-title/header-title';
 import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
-import { useFirebaseApp } from '../firebase/use-firebase-app.hook';
 import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
+import { useAdvertising } from '../hooks/use-advertising.hook';
 import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
+import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
+import { useLoadTokensApy } from '../hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from '../hooks/use-network-info.hook';
 import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
 import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
+import { Backup } from '../screens/backup/backup';
 import { Buy } from '../screens/buy/buy';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from '../screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
-import { CreateAccount } from '../screens/create-account/create-account';
+import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
 import { Debug } from '../screens/debug/debug';
@@ -34,6 +35,7 @@ import { ImportAccount } from '../screens/import-account/import-account';
 import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
+import { ManualBackup } from '../screens/manual-backup/manual-backup';
 import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
@@ -76,6 +78,8 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
   useFirebaseApp();
+  useAdvertising();
+  useLoadTokensApy();
 
   const initDataLoading = () => {
     dispatch(loadTezosBalanceActions.submit());
@@ -119,7 +123,7 @@ export const MainStackScreen = () => {
               />
               <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
-                component={CreateAccount}
+                component={CreateNewWallet}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
               />
             </>
@@ -174,7 +178,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.LiquidityBakingDapp}
                 component={LiquidityBakingDapp}
-                options={generateIntegratedAppOptions(<HeaderModal />)}
+                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
               />
 
               {/** Buy stack **/}
@@ -255,6 +259,16 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SecureSettings}
                 component={SecureSettings}
                 options={generateScreenOptions(<HeaderTitle title="Secure" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Backup}
+                component={Backup}
+                options={generateScreenOptions(<HeaderTitle title="Backup" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ManualBackup}
+                component={ManualBackup}
+                options={generateScreenOptions(<HeaderTitle title="Manual backup" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}

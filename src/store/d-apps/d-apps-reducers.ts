@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadDAppsListActions, loadPermissionsActions } from './d-apps-actions';
+import { loadTokensApyActions, loadDAppsListActions, loadPermissionsActions } from './d-apps-actions';
 import { dAppsInitialState, DAppsState } from './d-apps-state';
 
 export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builder => {
@@ -30,4 +30,19 @@ export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builde
     ...state,
     dappsList: createEntity([], false, error)
   }));
+  builder.addCase(loadTokensApyActions.success, (state, { payload: apyRecords }) => {
+    const slugs = Object.keys(apyRecords);
+    const tokensApy = slugs.reduce(
+      (acc, slug) => ({
+        ...acc,
+        [slug]: {
+          ...state.tokensApyInfo[slug],
+          rate: apyRecords[slug]
+        }
+      }),
+      {}
+    );
+
+    return { ...state, tokensApyInfo: { ...state.tokensApyInfo, ...tokensApy } };
+  });
 });

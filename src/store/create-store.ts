@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { advertisingReducers } from './advertising/advertising-reducers';
+import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -35,7 +37,8 @@ export type RootState = WalletRootState &
   DAppsRootState &
   CurrencyRootState &
   SecurityRootState &
-  ExolixRootState;
+  ExolixRootState &
+  AdvertisingRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -60,7 +63,8 @@ const rootReducer = rootStateReducer<RootState>({
   security: securityReducers,
   dApps: dAppsReducers,
   currency: currencyReducers,
-  exolix: exolixReducers
+  exolix: exolixReducers,
+  advertising: advertisingReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

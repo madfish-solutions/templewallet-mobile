@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
-import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
+import { hideLoaderAction, setIsAnalyticsEnabled, showLoaderAction } from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
@@ -14,6 +14,7 @@ import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 
 export const AfterSyncQRScan = () => {
+  const dispatch = useDispatch();
   const { importWallet } = useShelter();
 
   const [seedPhrase, setSeedPhrase] = useState('');
@@ -22,7 +23,6 @@ export const AfterSyncQRScan = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
-  const dispatch = useDispatch();
   usePageAnalytic(ScreensEnum.ConfirmSync);
 
   const handleConfirmSyncFormSubmit = ({
@@ -32,6 +32,7 @@ export const AfterSyncQRScan = () => {
     useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
     dispatch(setIsAnalyticsEnabled(analytics));
+    dispatch(showLoaderAction());
 
     parseSyncPayload(payload, password)
       .then(res => {
@@ -55,7 +56,8 @@ export const AfterSyncQRScan = () => {
         dispatch(enterPassword.fail());
 
         return showErrorToast({ description: e.message });
-      });
+      })
+      .finally(() => void dispatch(hideLoaderAction()));
   };
 
   return (

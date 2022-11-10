@@ -16,7 +16,9 @@ const basicLightColors = {
   black: '#000000',
   white: '#ffffff',
   peach: '#FF5B00',
-  liteOrange: '#E5E5EA'
+  liteOrange: '#E5E5EA',
+  liteGreen: '#3EBD93',
+  darkGreen: '#143A3A'
 };
 
 const basicDarkColors: typeof basicLightColors = {
@@ -25,16 +27,20 @@ const basicDarkColors: typeof basicLightColors = {
   black: '#ffffff',
   white: '#000000',
   peach: '#FF5B00',
-  liteOrange: '#242424'
+  liteOrange: '#242424',
+  liteGreen: '#3EBD93',
+  darkGreen: '#143A3A'
 };
 
 const basicLightAlphaColors = {
   black10: hexa(basicLightColors.black, 0.1),
+  black16: hexa(basicLightColors.black, 0.16),
   peach10: hexa(basicLightColors.peach, 0.1)
 };
 
 const basicDarkAlphaColors: typeof basicLightAlphaColors = {
   black10: hexa(basicDarkColors.black, 0.1),
+  black16: hexa(basicDarkColors.black, 0.16),
   peach10: hexa(basicDarkColors.peach, 0.1)
 };
 

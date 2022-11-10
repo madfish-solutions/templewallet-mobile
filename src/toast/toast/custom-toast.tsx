@@ -58,7 +58,7 @@ export const CustomToast: FC<Props> = ({
       <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
           <Icon
-            name={toastType === ToastTypeEnum.Success ? IconNameEnum.Success : IconNameEnum.AlertShield}
+            name={toastType === ToastTypeEnum.Success ? IconNameEnum.Success : IconNameEnum.Shield}
             style={styles.iconLeft}
             {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
           />

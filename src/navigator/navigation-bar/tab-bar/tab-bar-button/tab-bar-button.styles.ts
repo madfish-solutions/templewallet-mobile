@@ -8,6 +8,15 @@ export const useTabBarButtonStyles = createUseStyles(({ typography }) => ({
     alignItems: 'center',
     paddingVertical: formatSize(4)
   },
+  iconContainer: {
+    position: 'relative'
+  },
+  notificationDotIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    top: formatSize(2),
+    right: formatSize(4)
+  },
   label: {
     ...typography.caption11Regular,
     // TODO: replace this with correct typography name
