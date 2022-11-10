@@ -10,15 +10,22 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     borderRadius: formatSize(14)
   },
   headerContainer: {
-    height: formatSize(44),
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: formatSize(16),
+    paddingHorizontal: formatSize(12),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },
   title: {
+    ...typography.body17Semibold,
+    color: colors.black,
+    marginBottom: formatSize(2)
+  },
+  description: {
     ...typography.caption13Regular,
-    color: colors.gray1
+    color: colors.gray1,
+    textAlign: 'center'
   },
   cancelButton: {
     height: formatSize(56),

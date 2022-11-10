@@ -20,6 +20,8 @@ export interface SettingsState {
   isShownDomainName: boolean;
   hideZeroBalances: boolean;
   isShowLoader: boolean;
+  isManualBackupMade: boolean;
+  applicationOpenCounter: number;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -35,7 +37,9 @@ export const settingsInitialState: SettingsState = {
   fiatCurrency: FiatCurrenciesEnum.USD,
   isShownDomainName: false,
   hideZeroBalances: false,
-  isShowLoader: false
+  isShowLoader: false,
+  isManualBackupMade: true,
+  applicationOpenCounter: 0
 };
 
 export interface SettingsRootState {

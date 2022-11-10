@@ -6,7 +6,5 @@ import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-ac
 export const useWhitelist = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(loadWhitelistAction.submit());
-  }, []);
+  useEffect(() => void dispatch(loadWhitelistAction.submit()), []);
 };

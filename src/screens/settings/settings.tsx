@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { NotificationCounter } from '../../components/notification-counter/notification-counter';
 import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
 import { Quote } from '../../components/quote/quote';
 import { RobotIcon } from '../../components/robot-icon/robot-icon';
@@ -21,7 +22,11 @@ import { ThemesEnum } from '../../interfaces/theme.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { changeTheme } from '../../store/settings/settings-actions';
-import { useFiatCurrencySelector, useThemeSelector } from '../../store/settings/settings-selectors';
+import {
+  useFiatCurrencySelector,
+  useIsManualBackupMadeSelector,
+  useThemeSelector
+} from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -39,6 +44,7 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
+  const isManualBackupMade = useIsManualBackupMadeSelector();
 
   const { trackEvent } = useAnalytics();
 
@@ -84,6 +90,20 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+            {!isManualBackupMade && (
+              <>
+                <WhiteContainerDivider />
+                <WhiteContainerAction onPress={() => navigate(ScreensEnum.Backup)}>
+                  <View style={styles.actionsContainer}>
+                    <WhiteContainerText text="Backup" />
+                  </View>
+                  <View style={styles.actionsContainer}>
+                    <NotificationCounter count={1} />
+                    <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                  </View>
+                </WhiteContainerAction>
+              </>
+            )}
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 

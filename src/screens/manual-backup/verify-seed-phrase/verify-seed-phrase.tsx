@@ -1,7 +1,8 @@
 import { Formik } from 'formik';
 import { range, shuffle } from 'lodash-es';
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { object, string } from 'yup';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -13,23 +14,29 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { EmptyFn } from '../../../config/general';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
+import { useShelter } from '../../../shelter/use-shelter.hook';
+import { madeManualBackupAction } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
+import { showErrorToast, showSuccessToast } from '../../../toast/toast.utils';
 import { formatOrdinalNumber } from '../../../utils/number-format.utils';
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
 
-interface VerifySeedPhraseProps {
-  seedPhrase: string;
-  onVerify: EmptyFn;
+interface Props {
   onGoBackPress: EmptyFn;
 }
 
 const WORDS_TO_FILL = 2;
 
-export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVerify, onGoBackPress }) => {
+export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
+  const dispatch = useDispatch();
   const styles = useVerifySeedPhraseStyles();
+  const { goBack } = useNavigation();
+  const { revealSeedPhrase } = useShelter();
+
+  const [words, setWords] = useState<string[]>([]);
 
   useNavigationSetOptions(
     {
@@ -38,8 +45,14 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     },
     []
   );
+  useEffect(
+    () =>
+      void revealSeedPhrase({
+        successCallback: value => setWords(value.split(' '))
+      }),
+    []
+  );
 
-  const words = useMemo(() => seedPhrase.split(' '), [seedPhrase]);
   const wordsToCheckPositions = useMemo(() => {
     const shuffledPositions = shuffle(range(0, words.length));
     const selectedPositions: number[] = [];
@@ -91,12 +104,19 @@ export const VerifySeedPhrase: FC<VerifySeedPhraseProps> = ({ seedPhrase, onVeri
     []
   );
 
+  const handleSubmit = () => {
+    dispatch(madeManualBackupAction());
+    showSuccessToast({ description: 'You have successfully verified seed phrase!' });
+
+    goBack();
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       validateOnMount={true}
-      onSubmit={onVerify}
+      onSubmit={handleSubmit}
     >
       {({ isValid, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>

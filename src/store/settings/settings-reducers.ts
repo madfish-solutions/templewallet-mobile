@@ -5,7 +5,9 @@ import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
+  walletOpenedAction,
   changeTheme,
+  requestManualBackupAction,
   setFiatCurrency,
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
@@ -15,7 +17,8 @@ import {
   setSelectedRpcUrl,
   setSlippage,
   setZeroBalancesShown,
-  toggleDomainAddressShown
+  toggleDomainAddressShown,
+  madeManualBackupAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 
@@ -72,6 +75,21 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
     ...state,
     isShownDomainName
+  }));
+
+  builder.addCase(requestManualBackupAction, state => ({
+    ...state,
+    isManualBackupMade: false
+  }));
+
+  builder.addCase(madeManualBackupAction, state => ({
+    ...state,
+    isManualBackupMade: true
+  }));
+
+  builder.addCase(walletOpenedAction, state => ({
+    ...state,
+    applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
   }));
 
   // MIGRATIONS

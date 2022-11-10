@@ -4,12 +4,13 @@ import { getInputText } from '../../utils/input.utils';
 import { findElement } from '../../utils/search.utils';
 import { Pages } from './steps-data';
 
-const { createNewWallet, verifyYourSeed } = Pages;
+const { verifyYourSeed } = Pages;
 
-let temporarySeedPhrase = '';
+const temporarySeedPhrase = '';
 
 Given(/^I save seed phrase$/, async () => {
-  temporarySeedPhrase = await createNewWallet.seedPhraseOut.getValue();
+  // TODO: update test according to new Wallet creation flow
+  // temporarySeedPhrase = await createNewWallet.seedPhraseOut.getValue();
 });
 
 Given(/^I enter correct seed words$/, async () => {

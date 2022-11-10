@@ -1,17 +1,19 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import AlertCircleIcon from './assets/alert-circle.svg';
 import AlertMonochromeIcon from './assets/alert-monochrome.svg';
-import AlertShield from './assets/alert-shield.svg';
+import ShieldIcon from './assets/alert-shield.svg';
+import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
-import AppCheckAlertIcon from './assets/app-check-alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import ChartIcon from './assets/chart-icon.svg';
+import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClipboardIcon from './assets/clipboard.svg';
@@ -65,6 +67,7 @@ import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NoResultIcon from './assets/no-result.svg';
+import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -191,9 +194,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.QrScannerBold]: QrScannerBoldIcon,
   [IconNameEnum.TriangleDown]: TriangleDownIcon,
   [IconNameEnum.Check]: CheckIcon,
+  [IconNameEnum.CheckCircle]: CheckCircleIcon,
   [IconNameEnum.Lock]: LockIcon,
   [IconNameEnum.Cloud]: CloudIcon,
-  [IconNameEnum.AppCheckAlert]: AppCheckAlertIcon,
+  [IconNameEnum.AlertCircle]: AlertCircleIcon,
+  [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
@@ -225,7 +230,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Delegate4]: Delegate4Icon,
   [IconNameEnum.Gear]: GearIcon,
   [IconNameEnum.Link]: LinkIcon,
-  [IconNameEnum.AlertShield]: AlertShield,
+  [IconNameEnum.Shield]: ShieldIcon,
   [IconNameEnum.Success]: SuccessIcon,
   [IconNameEnum.Hummer]: HummerIcon,
   [IconNameEnum.LbDappIcon]: LbDappIcon,
@@ -235,5 +240,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MinusIcon]: MinusIcon,
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
-  [IconNameEnum.UkraineIcon]: UkraineIcon
+  [IconNameEnum.UkraineIcon]: UkraineIcon,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon
 };

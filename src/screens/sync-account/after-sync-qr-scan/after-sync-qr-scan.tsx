@@ -14,6 +14,7 @@ import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 
 export const AfterSyncQRScan = () => {
+  const dispatch = useDispatch();
   const { importWallet } = useShelter();
 
   const [seedPhrase, setSeedPhrase] = useState('');
@@ -22,7 +23,6 @@ export const AfterSyncQRScan = () => {
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
   const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
-  const dispatch = useDispatch();
   usePageAnalytic(ScreensEnum.ConfirmSync);
 
   const handleConfirmSyncFormSubmit = ({

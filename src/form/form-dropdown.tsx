@@ -10,7 +10,7 @@ interface Props<T> extends DropdownProps<T> {
 
 export const FormDropdown = <T extends unknown>({
   name,
-  title,
+  description,
   list,
   itemHeight,
   equalityFn,
@@ -23,7 +23,7 @@ export const FormDropdown = <T extends unknown>({
   return (
     <>
       <Dropdown<T>
-        title={title}
+        description={description}
         value={field.value}
         list={list}
         itemHeight={itemHeight}

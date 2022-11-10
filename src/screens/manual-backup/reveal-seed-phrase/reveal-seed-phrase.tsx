@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -14,32 +14,29 @@ import { Label } from '../../../components/label/label';
 import { NewSeedPhraseAttention } from '../../../components/new-seed-phrase-attention/new-seed-phrase-attention';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormCheckbox } from '../../../form/form-checkbox';
-import { FormMnemonicCreate } from '../../../form/form-mnemonic-create';
+import { RevealSeedPhraseView } from '../../../modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { createNewWalletValidationSchema, CreateNewWalletFormValues } from './create-new-wallet.form';
-import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
-import { useCreateNewWalletStyles } from './create-new-wallet.styles';
+import {
+  createNewWalletValidationSchema,
+  CreateNewWalletFormValues,
+  createNewWalletInitialValues
+} from './reveal-seed-phrase.form';
+import { RevealSeedPhraseSelectors } from './reveal-seed-phrase.selectors';
+import { useCreateNewWalletStyles } from './reveal-seed-phrase.styles';
 
-interface CreateNewWalletProps {
-  initialSeedPhrase: string;
+interface Props {
   onSubmit: (formValues: CreateNewWalletFormValues) => void;
 }
 
-export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, onSubmit }) => {
+export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
   const styles = useCreateNewWalletStyles();
-
-  const createNewWalletInitialValues: CreateNewWalletFormValues = useMemo(
-    () => ({
-      seedPhrase: initialSeedPhrase,
-      madeSeedPhraseBackup: false
-    }),
-    [initialSeedPhrase]
-  );
+  const selectedAccount = useSelectedAccountSelector();
 
   useNavigationSetOptions(
     {
       headerLeft: () => <HeaderBackButton />,
-      headerTitle: () => <HeaderTitle title="Create a new Wallet" />
+      headerTitle: () => <HeaderTitle title="Manual backup" />
     },
     []
   );
@@ -58,14 +55,14 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
               label="Seed phrase"
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
-            <FormMnemonicCreate name="seedPhrase" testID={CreateNewWalletSelectors.SeedPhraseOut} />
+            <RevealSeedPhraseView publicKeyHash={selectedAccount.publicKeyHash} />
           </View>
 
           <View>
             <NewSeedPhraseAttention />
             <Divider />
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="madeSeedPhraseBackup" testID={CreateNewWalletSelectors.MadeSeedPhraseBackupCheckbox}>
+              <FormCheckbox name="madeSeedPhraseBackup" testID={RevealSeedPhraseSelectors.MadeSeedPhraseBackupCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </FormCheckbox>
@@ -79,7 +76,7 @@ export const CreateNewWallet: FC<CreateNewWalletProps> = ({ initialSeedPhrase, o
                 title="Next"
                 disabled={!isValid}
                 onPress={submitForm}
-                testID={CreateNewWalletSelectors.NextButton}
+                testID={RevealSeedPhraseSelectors.NextButton}
               />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />

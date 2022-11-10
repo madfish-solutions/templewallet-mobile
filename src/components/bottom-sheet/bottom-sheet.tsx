@@ -13,15 +13,25 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { emptyComponent } from '../../config/general';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
 import { formatSize } from '../../styles/format-size';
+import { isDefined } from '../../utils/is-defined';
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
 
 interface Props extends BottomSheetControllerProps {
-  title: string;
+  title?: string;
+  description: string;
+  cancelButtonText?: string;
   contentHeight: number;
 }
 
-export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, children }) => {
+export const BottomSheet: FC<Props> = ({
+  title,
+  description,
+  cancelButtonText = 'Cancel',
+  contentHeight,
+  controller,
+  children
+}) => {
   // hack that prevents rendering of GorhomBottomSheet component for locked app state,
   // as it loads heavy Reanimated 2 modules and application do not respond on gestures
   // TODO: try to remove this with @gorhom/bottom-sheet > 4.0.0
@@ -79,13 +89,14 @@ export const BottomSheet: FC<Props> = ({ title, contentHeight, controller, child
         >
           <View style={styles.root}>
             <View style={styles.headerContainer}>
-              <Text style={styles.title}>{title}</Text>
+              {isDefined(title) && <Text style={styles.title}>{title}</Text>}
+              <Text style={styles.description}>{description}</Text>
             </View>
 
             {children}
 
             <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
             </TouchableOpacity>
           </View>
         </GorhomBottomSheet>
