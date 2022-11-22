@@ -72,9 +72,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const createStore = (...epics: Epic[]) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rootEpic = (action$: Observable<any>, store$: StateObservable<any>, dependencies: any) =>
-    combineEpics(...epics)(action$, store$, dependencies).pipe(
-      catchError((error, source) => source)
-    );
+    combineEpics(...epics)(action$, store$, dependencies).pipe(catchError((error, source) => source));
 
   const store = configureStore({
     reducer: persistedReducer,
