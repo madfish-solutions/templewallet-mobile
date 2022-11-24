@@ -89,12 +89,8 @@ export const SendModal: FC = () => {
   }: SendModalFormValues) => {
     if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
       setIsLoading(true);
-      let address = null;
-      try {
-        address = await resolver.resolveNameToAddress(receiverPublicKeyHash);
-      } catch (e) {
-        console.log(e);
-      }
+
+      const address = await resolver.resolveNameToAddress(receiverPublicKeyHash).catch(() => null);
       setIsLoading(false);
       if (address !== null) {
         receiverPublicKeyHash = address;
