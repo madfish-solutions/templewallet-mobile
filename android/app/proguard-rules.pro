@@ -12,6 +12,9 @@
 -keep public class com.horcrux.svg.** { *; }
 -keep class com.swmansion.reanimated.** { *; }
 -keep class com.facebook.react.turbomodule.** { *; }
+# Hermes engine setup
+-keep class com.facebook.hermes.unicode.** { *; }
+-keep class com.facebook.jni.** { *; }
 # react-native-config setup
 -keep class com.templewallet.BuildConfig { *; }
 # react-native-keychain setup
