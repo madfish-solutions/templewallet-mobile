@@ -10,3 +10,5 @@ export const removePermissionAction = createAction<PermissionInfo>('d-apps/REMOV
 export const abortRequestAction = createAction<string>('d-apps/ABORT_REQUEST');
 
 export const loadDAppsListActions = createActions<void, CustomDAppInfo[], string>('d-apps/LOAD_DAPPS_LIST');
+
+export const loadTokensApyActions = createActions<void, Record<string, number>>('d-apps/LOAD_TOKENS_APY');

@@ -1,15 +1,17 @@
 import { PortalProvider } from '@gorhom/portal';
-import { DefaultTheme, NavigationContainer, NavigationContainerRef, Theme } from '@react-navigation/native';
-import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
-import React, { createRef, useMemo, useState } from 'react';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import React, { createRef, useState } from 'react';
 
 import { useModalOptions } from '../components/header/use-modal-options.util';
+import { Loader } from '../components/loader/loader';
 import { isIOS } from '../config/system';
 import { useStorageMigration } from '../hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from '../hooks/use-app-splash.hook';
 import { useDevicePasscode } from '../hooks/use-device-passcode.hook';
 import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
+import { useResetLoading } from '../hooks/use-reset-loading.hook';
 import { useWhitelist } from '../hooks/use-whitelist.hook';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
@@ -30,14 +32,16 @@ import { AppCheckWarning } from '../screens/app-check/app-check-warning';
 import { EnterPassword } from '../screens/enter-password/enter-password';
 import { ForceUpdate } from '../screens/force-update/force-update';
 import { PassCode } from '../screens/passcode/passcode';
-import { useAppLock } from '../shelter/use-app-lock.hook';
+import { useAppLock } from '../shelter/app-lock/app-lock';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from '../store/security/security-selectors';
+import { useIsShowLoaderSelector } from '../store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from '../store/wallet/wallet-selectors';
-import { useColors } from '../styles/use-colors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
 import { StacksEnum } from './enums/stacks.enum';
+import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
+import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
@@ -48,48 +52,28 @@ const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
+  const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const colors = useColors();
 
   useStorageMigration();
 
-  const isSplash = useAppSplash();
-
-  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
-
+  useWhitelist();
   useQuickActions();
+  useResetLoading();
+  useResetKeychainOnInstall();
+
+  const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
   const isForceUpdateNeeded = useIsForceUpdateNeeded();
   const isAppCheckFailed = useIsAppCheckFailed();
-  useResetKeychainOnInstall();
-  useWhitelist();
+
+  const theme = useNavigationContainerTheme();
+  const screenOptions = useStackNavigationOptions();
+
+  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
-
-  const screenOptions: StackNavigationOptions = useMemo(
-    () => ({
-      presentation: 'modal',
-      cardOverlayEnabled: true,
-      gestureEnabled: true,
-      ...TransitionPresets.ModalPresentationIOS,
-      cardStyle: {
-        backgroundColor: colors.pageBG
-      }
-    }),
-    [colors.pageBG]
-  );
-
-  const theme: Theme = useMemo(
-    () => ({
-      ...DefaultTheme,
-      colors: {
-        ...DefaultTheme.colors,
-        background: colors.navigation
-      }
-    }),
-    [colors.navigation]
-  );
 
   return (
     <NavigationContainer
@@ -179,6 +163,7 @@ export const RootStackScreen = () => {
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
       {isAppCheckFailed && <AppCheckWarning />}
+      {isShowLoader && <Loader />}
     </NavigationContainer>
   );
 };

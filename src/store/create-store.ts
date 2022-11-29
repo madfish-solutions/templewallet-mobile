@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { advertisingReducers } from './advertising/advertising-reducers';
+import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -37,8 +39,9 @@ export type RootState = WalletRootState &
   DAppsRootState &
   CurrencyRootState &
   SecurityRootState &
-  NewsRootState &
-  ExolixRootState;
+  ExolixRootState &
+  AdvertisingRootState &
+  NewsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -63,8 +66,9 @@ const rootReducer = rootStateReducer<RootState>({
   security: securityReducers,
   dApps: dAppsReducers,
   currency: currencyReducers,
-  newsState: newsReducer,
-  exolix: exolixReducers
+  exolix: exolixReducers,
+  advertising: advertisingReducers,
+  newsState: newsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -72,13 +76,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const createStore = (...epics: Epic[]) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rootEpic = (action$: Observable<any>, store$: StateObservable<any>, dependencies: any) =>
-    combineEpics(...epics)(action$, store$, dependencies).pipe(
-      catchError((error, source) => {
-        console.error(error);
-
-        return source;
-      })
-    );
+    combineEpics(...epics)(action$, store$, dependencies).pipe(catchError((error, source) => source));
 
   const store = configureStore({
     reducer: persistedReducer,

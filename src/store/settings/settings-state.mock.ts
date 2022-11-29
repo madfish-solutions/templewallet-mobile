@@ -15,5 +15,8 @@ export const mockSettingsState: SettingsState = {
   slippage: 1.5,
   fiatCurrency: FiatCurrenciesEnum.USD,
   isShownDomainName: false,
-  hideZeroBalances: false
+  hideZeroBalances: false,
+  isShowLoader: false,
+  isManualBackupMade: true,
+  applicationOpenCounter: 1
 };

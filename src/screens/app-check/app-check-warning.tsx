@@ -24,7 +24,7 @@ export const AppCheckWarning = () => {
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
-          <Icon name={IconNameEnum.AppCheckAlert} size={formatSize(64)} color={colors.orange} />
+          <Icon name={IconNameEnum.AlertTriangle} size={formatSize(64)} color={colors.orange} />
         </View>
         <Divider />
         <View>

@@ -13,7 +13,7 @@ import { TabBar } from './tab-bar/tab-bar';
 
 const IPAD_MINI_WIDTH = 768;
 
-const screensWithoutTabBar = [ScreensEnum.ScanQrCode];
+const screensWithoutTabBar = [ScreensEnum.ScanQrCode, ScreensEnum.ManualBackup];
 
 export const NavigationBar: FC = ({ children }) => {
   const isAuthorised = useIsAuthorisedSelector();

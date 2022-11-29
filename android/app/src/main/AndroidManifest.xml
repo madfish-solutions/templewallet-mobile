@@ -5,6 +5,7 @@
     <!-- used for debug and for api/rpc calls of blockchain -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- used for analytics -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
     <application
             android:name=".MainApplication"

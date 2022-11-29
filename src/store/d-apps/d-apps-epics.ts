@@ -6,12 +6,15 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
+import { getTzBtcApy$ } from '../../apollo/kord-fi/get-tz-btc-apy';
+import { getKUSDApy$ } from '../../apollo/yupana/get-kusd-apy';
 import { BeaconHandler } from '../../beacon/beacon-handler';
 import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { navigateAction } from '../root-state.actions';
 import {
+  loadTokensApyActions,
   abortRequestAction,
   loadDAppsListActions,
   loadPermissionsActions,
@@ -101,4 +104,20 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
     )
   );
 
-export const dAppsEpics = combineEpics(loadPermissionsEpic, removePermissionEpic, abortRequestEpic, loadDAppsListEpic);
+const loadTokensApyEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadTokensApyActions.submit),
+    switchMap(() =>
+      forkJoin([getTzBtcApy$(), getKUSDApy$()]).pipe(
+        map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
+      )
+    )
+  );
+
+export const dAppsEpics = combineEpics(
+  loadPermissionsEpic,
+  removePermissionEpic,
+  abortRequestEpic,
+  loadDAppsListEpic,
+  loadTokensApyEpic
+);
