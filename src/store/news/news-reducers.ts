@@ -3,7 +3,13 @@ import { uniqBy } from 'lodash-es';
 
 import { StatusType } from '../../interfaces/news.interface';
 import { createEntity } from '../create-entity';
-import { loadMoreNewsAction, loadNewsAction, readNewsAction, viewNewsAction } from './news-actions';
+import {
+  loadMoreNewsAction,
+  loadNewsAction,
+  newsEnabledToggleAction,
+  readNewsAction,
+  viewNewsAction
+} from './news-actions';
 import { newsInitialState, NewsState } from './news-state';
 
 export const newsReducer = createReducer<NewsState>(newsInitialState, builder => {
@@ -36,5 +42,10 @@ export const newsReducer = createReducer<NewsState>(newsInitialState, builder =>
   builder.addCase(loadMoreNewsAction.success, (state, { payload }) => ({
     ...state,
     news: createEntity(uniqBy([...state.news.data, ...payload.map(x => ({ ...x, status: StatusType.New }))], 'id'))
+  }));
+
+  builder.addCase(newsEnabledToggleAction, (state, { payload }) => ({
+    ...state,
+    newsEnabled: payload
   }));
 });
