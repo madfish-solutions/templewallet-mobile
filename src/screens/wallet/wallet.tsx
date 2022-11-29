@@ -16,7 +16,7 @@ import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
-import { useIsEveryNewsSeenSelector } from '../../store/news/news-selectors';
+import { useIsNewNotificationsAvailableSelector } from '../../store/notifications/notifications-selectors';
 import { useIsOpenBackupBottomSheetSelector } from '../../store/settings/settings-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
@@ -39,8 +39,8 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const isDotVisible = useIsEveryNewsSeenSelector();
 
+  const isNewNotificationsAvailable = useIsNewNotificationsAvailableSelector();
   const isOpenBackupBottomSheet = useIsOpenBackupBottomSheetSelector();
   const backupBottomSheetController = useBottomSheetController();
 
@@ -73,7 +73,7 @@ export const Wallet = () => {
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
           <Divider size={formatSize(24)} />
           <TouchableOpacity onPress={() => navigate(ScreensEnum.Notifications)}>
-            <NotificationIcon isNotification={isDotVisible === false} />
+            <NotificationIcon isNotification={isNewNotificationsAvailable} />
           </TouchableOpacity>
         </View>
 

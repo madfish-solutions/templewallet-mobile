@@ -1,41 +1,49 @@
 import React, { useEffect } from 'react';
-import { FlatList, ScrollView } from 'react-native';
+import { FlatList, ListRenderItem, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
-import { StatusType } from '../../interfaces/news.interface';
+import { HardcodedNotificationType } from '../../enums/hardcoded-notification-type.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { viewNewsAction } from '../../store/news/news-actions';
-import { useIsEveryNewsSeenSelector, useNewsSelector } from '../../store/news/news-selectors';
+import { viewAllNotificationsAction } from '../../store/notifications/notifications-actions';
+import { useNotificationsSelector } from '../../store/notifications/notifications-selectors';
+import { Notification } from '../../types/notification.type';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { NewsItem } from './news/news-item';
+import { NotificationPreviewItem } from './notification-preview-item/notification-preview-item';
 import { useNotificationsStyles } from './notifications.styles';
 
-const timeToSeenAllNews = 5 * 1000;
+const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
+
+const keyExtractor = (item: Notification) => item.id.toString();
+const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
+const renderItem: ListRenderItem<Notification> = ({ item }) => {
+  if (item.type === HardcodedNotificationType.Welcome) {
+    return null;
+  }
+
+  return <NotificationPreviewItem key={item.id} notification={item} />;
+};
 
 export const Notifications = () => {
   const styles = useNotificationsStyles();
-  const isAllSeen = useIsEveryNewsSeenSelector();
-  const news = useNewsSelector();
+  const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(viewNewsAction(news.filter(x => x.status === StatusType.New).map(x => x.id)));
-    }, timeToSeenAllNews);
+    const timer = setTimeout(() => void dispatch(viewAllNotificationsAction()), VIEW_ALL_NOTIFICATIONS_TIMEOUT);
 
     return () => clearTimeout(timer);
-  }, [isAllSeen, news]);
+  }, [notifications]);
 
   usePageAnalytic(ScreensEnum.Notifications);
 
   return (
     <ScrollView style={styles.contentWrapper}>
       <FlatList
-        data={news}
-        keyExtractor={item => item.id}
-        ListEmptyComponent={<DataPlaceholder text="Notifications not found" />}
-        renderItem={({ item }) => <NewsItem key={item.id} {...item} />}
+        data={notifications}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        ListEmptyComponent={ListEmptyComponent}
       />
     </ScrollView>
   );

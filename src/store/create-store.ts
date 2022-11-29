@@ -20,8 +20,8 @@ import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
 import { exolixReducers } from './exolix/exolix-reducers';
 import { ExolixRootState } from './exolix/exolix-state';
-import { newsReducer } from './news/news-reducers';
-import { NewsRootState } from './news/news-state';
+import { notificationsReducers } from './notifications/notifications-reducers';
+import { NotificationsRootState } from './notifications/notifications-state';
 import { rootStateReducer } from './root-state.reducers';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
@@ -41,7 +41,7 @@ export type RootState = WalletRootState &
   SecurityRootState &
   ExolixRootState &
   AdvertisingRootState &
-  NewsRootState;
+  NotificationsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -68,7 +68,7 @@ const rootReducer = rootStateReducer<RootState>({
   currency: currencyReducers,
   exolix: exolixReducers,
   advertising: advertisingReducers,
-  newsState: newsReducer
+  notifications: notificationsReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

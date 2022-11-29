@@ -9,8 +9,8 @@ import { WhiteContainer } from '../../components/white-container/white-container
 import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
 import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { newsEnabledToggleAction } from '../../store/news/news-actions';
-import { useNewsEnabledSelector } from '../../store/news/news-selectors';
+import { setIsNewsEnabledAction } from '../../store/notifications/notifications-actions';
+import { useIsNewsEnabledSelector } from '../../store/notifications/notifications-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { NotificationsSettingsSelectors } from './notifications-settings.selectors';
@@ -18,7 +18,7 @@ import { NotificationsSettingsSelectors } from './notifications-settings.selecto
 export const NotificationsSettings = () => {
   const dispatch = useDispatch();
 
-  const newsEnabled = useNewsEnabledSelector();
+  const isNewsEnabled = useIsNewsEnabledSelector();
 
   usePageAnalytic(ScreensEnum.NotificationsSettings);
 
@@ -27,11 +27,11 @@ export const NotificationsSettings = () => {
       <Label description="Configure the notifications you want to receive. (Platform updates and emergency notifications can’t be disabled)" />
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(newsEnabledToggleAction(!newsEnabled))}>
+        <WhiteContainerAction onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}>
           <WhiteContainerText text="News" />
           <Switch
-            value={newsEnabled}
-            onChange={value => dispatch(newsEnabledToggleAction(value))}
+            value={isNewsEnabled}
+            onChange={value => dispatch(setIsNewsEnabledAction(value))}
             testID={NotificationsSettingsSelectors.NewsSwitch}
           />
         </WhiteContainerAction>

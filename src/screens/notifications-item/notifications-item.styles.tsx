@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useNewsPageStyles = createUseStyles(({ colors, typography }) => ({
+export const useNotificationsItemsStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     paddingHorizontal: formatSize(16),
     paddingVertical: formatSize(20)

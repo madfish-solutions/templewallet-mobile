@@ -37,8 +37,8 @@ import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ManualBackup } from '../screens/manual-backup/manual-backup';
 import { NodeSettings } from '../screens/node-settings/node-settings';
+import { NotificationsItem } from '../screens/notifications-item/notifications-item';
 import { NotificationsSettings } from '../screens/notifications-settings/notifications-settings';
-import { NewsPage } from '../screens/notifications/news/news-page';
 import { Notifications } from '../screens/notifications/notifications';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
@@ -54,7 +54,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadNewsAction } from '../store/news/news-actions';
+import { loadNotificationsAction } from '../store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -92,7 +92,7 @@ export const MainStackScreen = () => {
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
-    dispatch(loadNewsAction.submit());
+    dispatch(loadNotificationsAction.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
@@ -179,8 +179,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
               <MainStack.Screen
-                name={ScreensEnum.NewsScreen}
-                component={NewsPage}
+                name={ScreensEnum.NotificationsItem}
+                component={NotificationsItem}
                 options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
 
