@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
@@ -16,6 +16,7 @@ import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
+import { useIsEveryNewsSeenSelector } from '../../store/news/news-selectors';
 import { useIsOpenBackupBottomSheetSelector } from '../../store/settings/settings-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
