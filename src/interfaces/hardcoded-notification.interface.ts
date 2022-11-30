@@ -6,8 +6,10 @@ export interface HardcodedNotification extends Pick<NotificationInterface, 'id' 
   type: HardcodedNotificationType;
 }
 
-export const WELCOME_NOTIFICATION: HardcodedNotification = {
-  id: -1,
-  status: NotificationStatus.New,
-  type: HardcodedNotificationType.Welcome
-};
+export const HARDCODED_NOTIFICATIONS: HardcodedNotification[] = [
+  {
+    id: -1,
+    status: NotificationStatus.New,
+    type: HardcodedNotificationType.Welcome
+  }
+];
