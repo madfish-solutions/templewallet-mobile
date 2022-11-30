@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
@@ -16,7 +16,6 @@ import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
-import { useIsNewNotificationsAvailableSelector } from '../../store/notifications/notifications-selectors';
 import { useIsOpenBackupBottomSheetSelector } from '../../store/settings/settings-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
@@ -26,8 +25,8 @@ import {
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { NotificationIcon } from '../notifications/icons/notification.icon';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
+import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -40,7 +39,6 @@ export const Wallet = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
 
-  const isNewNotificationsAvailable = useIsNewNotificationsAvailableSelector();
   const isOpenBackupBottomSheet = useIsOpenBackupBottomSheetSelector();
   const backupBottomSheetController = useBottomSheetController();
 
@@ -72,9 +70,7 @@ export const Wallet = () => {
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
           <Divider size={formatSize(24)} />
-          <TouchableOpacity onPress={() => navigate(ScreensEnum.Notifications)}>
-            <NotificationIcon isNotification={isNewNotificationsAvailable} />
-          </TouchableOpacity>
+          <NotificationsBell />
         </View>
 
         <TokenEquityValue token={tezosToken} showTokenValue={false} />

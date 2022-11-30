@@ -9,10 +9,16 @@ export const useNotificationPreviewItemStyles = createUseStyles(({ colors, typog
     paddingTop: formatSize(16)
   },
   containerRead: {
-    flexDirection: 'row',
-    backgroundColor: colors.input,
-    paddingHorizontal: formatSize(20),
-    paddingVertical: formatSize(16)
+    backgroundColor: colors.input
+  },
+  iconContainer: {
+    position: 'relative'
+  },
+  notificationDotIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    top: 0,
+    right: 0
   },
   contentWrapper: {
     flex: 1,

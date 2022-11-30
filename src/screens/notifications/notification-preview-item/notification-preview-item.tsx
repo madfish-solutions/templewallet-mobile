@@ -12,14 +12,18 @@ import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
-import { formatDate } from '../../../utils/format-date.utils';
-import { AlertIcon } from '../icons/alert.icon';
-import { NewsIcon } from '../icons/news.icon';
-import { UpdateIcon } from '../icons/update.icon';
+import { conditionalStyle } from '../../../utils/conditional-style';
+import { formatDateOutput } from '../../../utils/date.utils';
 import { useNotificationPreviewItemStyles } from './notification-preview-item.styles';
 
+const NotificationsIconMap: Record<NotificationType, IconNameEnum> = {
+  [NotificationType.News]: IconNameEnum.News,
+  [NotificationType.PlatformUpdate]: IconNameEnum.Update,
+  [NotificationType.SecurityNote]: IconNameEnum.AlertTriangle
+};
+
 interface Props {
-  notification: NotificationInterface;
+  notification: Pick<NotificationInterface, 'id' | 'status' | 'type' | 'title' | 'description' | 'createdAt'>;
 }
 
 export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
@@ -27,31 +31,39 @@ export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
   const colors = useColors();
   const { navigate } = useNavigation();
 
-  const isNew = status === NotificationStatus.New;
-
   const handlePress = () => navigate(ScreensEnum.NotificationsItem, { id: notification.id });
 
   return (
     <TouchableOpacity
+      style={[
+        styles.container,
+        conditionalStyle(notification.status === NotificationStatus.Read, styles.containerRead)
+      ]}
       onPress={handlePress}
-      style={status === NotificationStatus.Read ? styles.containerRead : styles.container}
     >
-      {notification.type === NotificationType.SecurityNote ? (
-        <AlertIcon color={colors.gray2} isNotification={isNew} />
-      ) : notification.type === NotificationType.PlatformUpdate ? (
-        <UpdateIcon color={colors.gray2} isNotification={isNew} />
-      ) : (
-        <NewsIcon color={colors.gray2} isNotification={isNew} />
-      )}
+      <View style={styles.iconContainer}>
+        {notification.status === NotificationStatus.New && (
+          <Icon
+            name={IconNameEnum.NotificationDot}
+            width={formatSize(9)}
+            height={formatSize(9)}
+            color={colors.navigation}
+            style={styles.notificationDotIcon}
+          />
+        )}
+        <Icon name={NotificationsIconMap[notification.type]} size={formatSize(24)} color={colors.gray2} />
+      </View>
       <Divider size={formatSize(10)} />
       <View style={styles.contentWrapper}>
         <View>
-          <Text style={status === NotificationStatus.Read ? styles.titleRead : styles.title}>{notification.title}</Text>
+          <Text style={notification.status === NotificationStatus.Read ? styles.titleRead : styles.title}>
+            {notification.title}
+          </Text>
           <Divider size={formatSize(8)} />
           <Text style={styles.description}>{notification.description}</Text>
         </View>
         <View style={styles.dateDetailsInfo}>
-          <Text style={styles.createdAt}>{formatDate(notification.createdAt)}</Text>
+          <Text style={styles.createdAt}>{formatDateOutput(notification.createdAt)}</Text>
           <View style={styles.detailsContainer}>
             <Text style={styles.details}>Details</Text>
             <Divider size={formatSize(4)} />

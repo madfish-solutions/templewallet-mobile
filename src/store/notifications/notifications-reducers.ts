@@ -17,13 +17,13 @@ export const notificationsReducers = createReducer<NotificationsState>(notificat
   }));
   builder.addCase(loadNotificationsAction.success, (state, { payload }) => {
     const notifications = state.list.data;
-    const lastNotificationId = notifications[notifications.length - 1].id;
+    const lastNotificationId = notifications[0].id;
 
-    const newNotifications = payload.filter(notification => notification.id > lastNotificationId);
+    const newNotifications = payload.filter(notification => notification.id > lastNotificationId).reverse();
 
     return {
       ...state,
-      list: createEntity([...notifications, ...newNotifications], false)
+      list: createEntity([...newNotifications, ...notifications], false)
     };
   });
   builder.addCase(loadNotificationsAction.fail, state => ({

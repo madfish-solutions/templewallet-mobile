@@ -6,17 +6,13 @@ import { NotificationPlatformType } from '../enums/notification-platform-type.en
 import { NotificationStatus } from '../enums/notification-status.enum';
 import { NotificationInterface } from '../interfaces/notification.interface';
 
-interface RequestParams {
-  platform: NotificationPlatformType;
-  startFromTime: number;
-}
-
+// TODO: remove mocked data
 export const loadNotifications$ = (startFromTime: number) =>
   from(
-    templeWalletApi.get<RequestParams, NotificationInterface[]>('/notifications', {
+    templeWalletApi.get<NotificationInterface[]>('/notifications', {
       params: {
-        platfrom: NotificationPlatformType.Mobile,
-        startFromTime
+        platform: NotificationPlatformType.Mobile,
+        startFromTime: new Date('2022-11-29T12:00:00.000Z').getTime()
       }
     })
-  ).pipe(map(response => response.map(notification => ({ ...notification, status: NotificationStatus.New }))));
+  ).pipe(map(response => response.data.map(notification => ({ ...notification, status: NotificationStatus.New }))));

@@ -28,3 +28,6 @@ export const useIsNewNotificationsAvailableSelector = () =>
 
 export const useIsNewsEnabledSelector = () =>
   useSelector<NotificationsRootState, boolean>(({ notifications }) => notifications.isNewsEnabled);
+
+export const useNotificationsStartFromTimeSelector = () =>
+  useSelector<NotificationsRootState, number>(({ notifications }) => notifications.startFromTime);

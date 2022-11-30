@@ -24,6 +24,7 @@ export const NotificationsSettings = () => {
 
   return (
     <ScreenContainer>
+      <Divider size={formatSize(8)} />
       <Label description="Configure the notifications you want to receive. (Platform updates and emergency notifications can’t be disabled)" />
       <Divider size={formatSize(8)} />
       <WhiteContainer>
