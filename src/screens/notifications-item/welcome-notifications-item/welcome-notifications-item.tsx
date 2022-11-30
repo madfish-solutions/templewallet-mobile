@@ -9,7 +9,7 @@ import { Divider } from '../../../components/divider/divider';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
-import { discordInviteUrl, knowledgeBase, telegramCommunityUrl } from '../../../config/socials';
+import { discordInviteUrl, knowledgeBase, mailToMadfishInfo, telegramCommunityUrl } from '../../../config/socials';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useNotificationsStartFromTimeSelector } from '../../../store/notifications/notifications-selectors';
 import { formatSize } from '../../../styles/format-size';
@@ -38,14 +38,14 @@ export const WelcomeNotificationsItem: FC = () => {
         <Text style={styles.title}>Welcome to the Temple wallet!</Text>
         <Divider size={formatSize(16)} />
         <Text style={styles.description}>
-          Welcome, traveler.{'\n'}
+          Welcome, traveler.{'\n\n'}
           You are now entering the ancient halls of the Temple. Stay a while and listen.{'\n\n'}
           Temple wallet stands among the first dedicated Tezos wallets and is used by hundreds of thousand Tezonians.
           This is a great start of your Tezos experience if you are new or a great boost of your capabilities if you’re
           a seasoned adventurer.{'\n\n'}
-          It boasts all the features you would expect from a modern crypto wallet:{'\n'}- Top up balance with crypto or
-          credit card.{'\n'}- Sync your wallet between mobile and desktop devices.{'\n'}- Use our swap router to conduct
-          advantageous exchanges.{'\n'}- Store NFTs in the Collectibles tab.{'\n'}- And more!{'\n\n'}
+          It boasts all the features you would expect from a modern crypto wallet:{'\n'} • Top up balance with crypto or
+          credit card.{'\n'} • Sync your wallet between mobile and desktop devices.{'\n'} • Use our swap router to
+          conduct advantageous exchanges.{'\n'} • Store NFTs in the Collectibles tab.{'\n'} • And more!{'\n\n'}
           To quickly learn the ropes, check our{' '}
           <TextLink url={knowledgeBase} style={styles.link}>
             knowledge base
@@ -55,8 +55,11 @@ export const WelcomeNotificationsItem: FC = () => {
             YouTube video tutorials
           </TextLink>{' '}
           out.{'\n\n'}
-          If you have any questions or suggestions, reach us at info@madfish.solutions.{'\n'}
-          To talk to us directly, join our online communities in{' '}
+          If you have any questions or suggestions, reach us at{' '}
+          <TextLink url={mailToMadfishInfo} style={styles.link}>
+            info@madfish.solutions
+          </TextLink>
+          . To talk to us directly, join our online communities in{' '}
           <TextLink url={telegramCommunityUrl} style={styles.link}>
             Telegram
           </TextLink>{' '}

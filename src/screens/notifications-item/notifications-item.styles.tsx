@@ -13,11 +13,11 @@ export const useNotificationsItemsStyles = createUseStyles(({ colors, typography
     color: colors.black
   },
   description: {
-    ...typography.body15Regular,
+    ...typography.caption13Regular,
     color: colors.black
   },
   link: {
-    ...typography.body15Regular
+    ...typography.caption13Regular
   },
   row: {
     flexDirection: 'row'

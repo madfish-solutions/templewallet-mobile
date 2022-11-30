@@ -20,3 +20,5 @@ export const supportUkraine = 'https://donate.tezos.org.ua';
 export const yupanaLink = 'https://app.yupana.finance/';
 export const quipuLink = 'https://quipuswap.com/farming';
 export const madfishLink = 'https://story.madfish.solutions/';
+
+export const mailToMadfishInfo = 'mailto:info@madfish.solutions';
