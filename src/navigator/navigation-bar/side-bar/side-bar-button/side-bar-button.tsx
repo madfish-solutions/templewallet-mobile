@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from '../../../../components/divider/divider';
 import { Icon } from '../../../../components/icon/icon';
@@ -18,6 +18,7 @@ interface Props {
   routeName: ScreensEnum.Wallet | ScreensEnum.DApps | ScreensEnum.SwapScreen | ScreensEnum.Settings;
   focused: boolean;
   disabled?: boolean;
+  showNotificationDot?: boolean;
   disabledOnPress?: EmptyFn;
 }
 
@@ -27,6 +28,7 @@ export const SideBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
+  showNotificationDot = false,
   disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
@@ -58,7 +60,18 @@ export const SideBarButton: FC<Props> = ({
       ]}
       onPress={handlePress}
     >
-      <Icon name={iconName} size={formatSize(28)} color={color} />
+      <View style={styles.iconContainer}>
+        {showNotificationDot && (
+          <Icon
+            name={IconNameEnum.NotificationDot}
+            width={formatSize(9)}
+            height={formatSize(9)}
+            color={colors.navigation}
+            style={styles.notificationDotIcon}
+          />
+        )}
+        <Icon name={iconName} size={formatSize(28)} color={color} />
+      </View>
       <Divider size={formatSize(8)} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </TouchableOpacity>
