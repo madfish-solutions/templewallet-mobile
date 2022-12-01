@@ -23,7 +23,7 @@ const NotificationsIconMap: Record<NotificationType, IconNameEnum> = {
 };
 
 interface Props {
-  notification: Pick<NotificationInterface, 'id' | 'status' | 'type' | 'title' | 'description' | 'createdAt'>;
+  notification: NotificationInterface;
 }
 
 export const NotificationPreviewItem: FC<Props> = ({ notification }) => {

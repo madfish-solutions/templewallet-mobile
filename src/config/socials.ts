@@ -1,7 +1,5 @@
 export const telegramUrl = 'https://t.me/madfishdev';
-export const telegramCommunityUrl = 'https://t.me/MadFishCommunity';
 export const discordUrl = 'https://discord.gg/qFRZ8kVzkv';
-export const discordInviteUrl = 'https://discord.com/invite/qFRZ8kVzkv';
 export const twitterUrl = 'https://twitter.com/madfishofficial';
 export const youTubeUrl = 'https://www.youtube.com/channel/UCUp80EXfJEigks3xU5hiwyA';
 export const redditUrl = 'https://www.reddit.com/r/MadFishCommunity';
@@ -20,5 +18,3 @@ export const supportUkraine = 'https://donate.tezos.org.ua';
 export const yupanaLink = 'https://app.yupana.finance/';
 export const quipuLink = 'https://quipuswap.com/farming';
 export const madfishLink = 'https://story.madfish.solutions/';
-
-export const mailToMadfishInfo = 'mailto:info@madfish.solutions';
