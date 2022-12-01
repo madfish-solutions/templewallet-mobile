@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useNotificationsItemsStyles = createUseStyles(({ colors, typography }) => ({
+export const useNotificationsItemStyles = createUseStyles(({ colors, typography }) => ({
   submitContainer: {
     paddingHorizontal: formatSize(16),
     paddingTop: formatSize(8),
@@ -11,13 +11,6 @@ export const useNotificationsItemsStyles = createUseStyles(({ colors, typography
   title: {
     ...typography.body20Bold,
     color: colors.black
-  },
-  description: {
-    ...typography.caption13Regular,
-    color: colors.black
-  },
-  link: {
-    ...typography.caption13Regular
   },
   row: {
     flexDirection: 'row'

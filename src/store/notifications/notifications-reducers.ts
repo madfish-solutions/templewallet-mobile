@@ -1,7 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { NotificationStatus } from '../../enums/notification-status.enum';
-import { HARDCODED_NOTIFICATIONS } from '../../interfaces/hardcoded-notification.interface';
 import { isDefined } from '../../utils/is-defined';
 import { createEntity } from '../create-entity';
 import {
@@ -17,8 +16,8 @@ export const notificationsReducers = createReducer<NotificationsState>(notificat
     ...state,
     list: createEntity(state.list.data, true)
   }));
-  builder.addCase(loadNotificationsAction.success, (state, { payload: newNotifications }) => {
-    const allNotifications = [...newNotifications, ...HARDCODED_NOTIFICATIONS].map(notification => {
+  builder.addCase(loadNotificationsAction.success, (state, { payload: notifications }) => {
+    const notificationsWithStatus = notifications.map(notification => {
       const prevNotification = state.list.data.find(item => item.id === notification.id);
 
       if (isDefined(prevNotification)) {
@@ -33,7 +32,7 @@ export const notificationsReducers = createReducer<NotificationsState>(notificat
 
     return {
       ...state,
-      list: createEntity(allNotifications, false)
+      list: createEntity(notificationsWithStatus, false)
     };
   });
   builder.addCase(loadNotificationsAction.fail, state => ({

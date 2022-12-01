@@ -11,7 +11,6 @@ import { Divider } from '../../components/divider/divider';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextLink } from '../../components/text-link/text-link';
-import { HardcodedNotificationType } from '../../enums/hardcoded-notification-type.enum';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { readNotificationsItemAction } from '../../store/notifications/notifications-actions';
@@ -20,11 +19,11 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatDateOutput } from '../../utils/date.utils';
 import { isDefined } from '../../utils/is-defined';
-import { useNotificationsItemsStyles } from './notifications-item.styles';
-import { WelcomeNotificationsItem } from './welcome-notifications-item/welcome-notifications-item';
+import { NotificationsItemContent } from './notifications-item-content/notifications-item-content';
+import { useNotificationsItemStyles } from './notifications-item.styles';
 
 export const NotificationsItem: FC = () => {
-  const styles = useNotificationsItemsStyles();
+  const styles = useNotificationsItemStyles();
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
@@ -39,10 +38,6 @@ export const NotificationsItem: FC = () => {
     return null;
   }
 
-  if (notification.type === HardcodedNotificationType.Welcome) {
-    return <WelcomeNotificationsItem />;
-  }
-
   return (
     <>
       <ScreenContainer isFullScreenMode={true}>
@@ -52,16 +47,7 @@ export const NotificationsItem: FC = () => {
         <Divider size={formatSize(20)} />
         <Text style={styles.title}>{notification.title}</Text>
         <Divider size={formatSize(16)} />
-        <Text style={styles.description}>{notification.content}</Text>
-        {isDefined(notification.link) && (
-          <View style={styles.row}>
-            <Text style={styles.description}>{notification.link.beforeLinkText}</Text>
-            <TextLink url={notification.link.url} style={styles.link}>
-              {notification.link.linkText}
-            </TextLink>
-            <Text style={styles.description}>{notification.link.afterLinkText}</Text>
-          </View>
-        )}
+        <NotificationsItemContent content={notification.content} />
         <Divider size={formatSize(16)} />
         <View style={styles.row}>
           <Text style={styles.createdAt}>{formatDateOutput(notification.createdAt)}</Text>

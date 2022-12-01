@@ -2,11 +2,11 @@ import { useSelector } from 'react-redux';
 
 import { NotificationStatus } from '../../enums/notification-status.enum';
 import { NotificationType } from '../../enums/notification-type.enum';
-import { Notification } from '../../types/notification.type';
+import { NotificationInterface } from '../../interfaces/notification.interface';
 import { NotificationsRootState } from './notifications-state';
 
 export const useNotificationsSelector = () =>
-  useSelector<NotificationsRootState, Notification[]>(state => {
+  useSelector<NotificationsRootState, NotificationInterface[]>(state => {
     const notifications = state.notifications.list.data;
 
     if (!state.notifications.isNewsEnabled) {
@@ -17,7 +17,7 @@ export const useNotificationsSelector = () =>
   });
 
 export const useNotificationsItemSelector = (id: number) =>
-  useSelector<NotificationsRootState, Notification | undefined>(state =>
+  useSelector<NotificationsRootState, NotificationInterface | undefined>(state =>
     state.notifications.list.data.find(notification => notification.id === id)
   );
 

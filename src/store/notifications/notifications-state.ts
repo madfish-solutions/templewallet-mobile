@@ -1,17 +1,16 @@
-import { HARDCODED_NOTIFICATIONS } from '../../interfaces/hardcoded-notification.interface';
-import { Notification } from '../../types/notification.type';
+import { NotificationInterface } from '../../interfaces/notification.interface';
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface NotificationsState {
   startFromTime: number;
-  list: LoadableEntityState<Notification[]>;
+  list: LoadableEntityState<NotificationInterface[]>;
   isNewsEnabled: boolean;
 }
 
 export const notificationsInitialState: NotificationsState = {
   startFromTime: new Date().getTime(),
-  list: createEntity(HARDCODED_NOTIFICATIONS),
+  list: createEntity([]),
   isNewsEnabled: true
 };
 
