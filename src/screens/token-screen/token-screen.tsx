@@ -1,5 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
@@ -13,7 +14,11 @@ import { TokenScreenContentContainer } from '../../components/token-screen-conte
 import { useContractActivity } from '../../hooks/use-contract-activity';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { highPriorityLoadTokenBalanceAction } from '../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
+import {
+  useIsAuthorisedSelector,
+  useSelectedAccountSelector,
+  useTokensListSelector
+} from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -25,6 +30,8 @@ export const TokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
+  const isAuthorised = useIsAuthorisedSelector();
+  const [counter, setCounter] = useState(0);
   const token = useMemo(
     () =>
       tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
@@ -40,6 +47,14 @@ export const TokenScreen = () => {
     );
   }, []);
 
+  useEffect(() => {
+    if (isAuthorised) {
+      const interval = setInterval(() => setCounter(prevState => prevState + 1), 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, []);
+
   const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
@@ -50,6 +65,7 @@ export const TokenScreen = () => {
     <>
       <HeaderCard>
         <TokenEquityValue token={token} />
+        <Text>{counter}</Text>
 
         <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
 
