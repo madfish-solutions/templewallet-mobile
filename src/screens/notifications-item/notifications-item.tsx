@@ -27,7 +27,7 @@ export const NotificationsItem: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
-  const params = useRoute<RouteProp<ScreensParamList, ScreensEnum.NotificationsItem>>().params;
+  const { params}  = useRoute<RouteProp<ScreensParamList, ScreensEnum.NotificationsItem>>();
   const notification = useNotificationsItemSelector(params.id);
 
   useEffect(() => void dispatch(readNotificationsItemAction(notification?.id ?? 0)), [notification?.id]);
