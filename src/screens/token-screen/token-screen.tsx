@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -14,24 +14,18 @@ import { TokenScreenContentContainer } from '../../components/token-screen-conte
 import { useContractActivity } from '../../hooks/use-contract-activity';
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { highPriorityLoadTokenBalanceAction } from '../../store/wallet/wallet-actions';
-import {
-  useIsAuthorisedSelector,
-  useSelectedAccountSelector,
-  useTokensListSelector
-} from '../../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TokenInfo } from './token-info/token-info';
 
-export const TokenScreen = () => {
+export const TokenScreen = ({ counter }: { counter: number }) => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
 
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
-  const isAuthorised = useIsAuthorisedSelector();
-  const [counter, setCounter] = useState(0);
   const token = useMemo(
     () =>
       tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
@@ -45,14 +39,6 @@ export const TokenScreen = () => {
         slug: getTokenSlug(token)
       })
     );
-  }, []);
-
-  useEffect(() => {
-    if (isAuthorised) {
-      const interval = setInterval(() => setCounter(prevState => prevState + 1), 2000);
-
-      return () => clearInterval(interval);
-    }
   }, []);
 
   const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));

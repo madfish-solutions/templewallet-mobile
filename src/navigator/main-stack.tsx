@@ -1,6 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
@@ -70,6 +72,15 @@ export const MainStackScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    if (isAuthorised) {
+      const interval = setInterval(() => setCounter(prevState => prevState + 1), 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isAuthorised]);
 
   const blockSubscription = useBlockSubscription();
 
@@ -102,6 +113,7 @@ export const MainStackScreen = () => {
       <ScreenStatusBar />
 
       <NavigationBar>
+        <Text style={{ position: 'absolute', top: '50%', right: '50%', zIndex: 20 }}>{counter}</Text>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
           {!isAuthorised ? (
             <>
@@ -150,9 +162,10 @@ export const MainStackScreen = () => {
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
-                component={TokenScreen}
                 options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
-              />
+              >
+                {() => <TokenScreen counter={counter} />}
+              </MainStack.Screen>
               <MainStack.Screen
                 name={ScreensEnum.Delegation}
                 component={DelegationScreen}
