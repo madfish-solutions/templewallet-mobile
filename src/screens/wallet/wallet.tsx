@@ -26,6 +26,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
+import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { TokenList } from './token-list/token-list';
 import { WalletStyles } from './wallet.styles';
 
@@ -68,6 +69,8 @@ export const Wallet = () => {
           <Divider />
 
           <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+          <Divider size={formatSize(24)} />
+          <NotificationsBell />
         </View>
 
         <TokenEquityValue token={tezosToken} showTokenValue={false} />

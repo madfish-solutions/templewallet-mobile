@@ -135,6 +135,13 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+            <WhiteContainerDivider />
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.NotificationsSettings)}>
+              <View style={styles.actionsContainer}>
+                <WhiteContainerText text="Notifications" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
           </WhiteContainer>
           <Divider size={formatSize(16)} />
 

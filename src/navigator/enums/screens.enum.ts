@@ -16,6 +16,8 @@ export enum ScreensEnum {
   ManageAssets = 'ManageAssets',
   Activity = 'Activity',
   ScanQrCode = 'ScanQrCode',
+  Notifications = 'Notifications',
+  NotificationsItem = 'NotificationsItem',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -42,6 +44,7 @@ export enum ScreensEnum {
   NodeSettings = 'NodeSettings',
   Backup = 'Backup',
   ManualBackup = 'ManualBackup',
+  NotificationsSettings = 'NotificationsSettings',
   Debug = 'Debug'
 }
 
@@ -61,6 +64,8 @@ export type ScreensParamList = {
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
   [ScreensEnum.ScanQrCode]: undefined;
+  [ScreensEnum.Notifications]: undefined;
+  [ScreensEnum.NotificationsItem]: { id: number };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -87,6 +92,7 @@ export type ScreensParamList = {
   [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
+  [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
 
@@ -101,7 +107,9 @@ export const walletStackScreens = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
   ScreensEnum.Exolix,
-  ScreensEnum.AliceBob
+  ScreensEnum.AliceBob,
+  ScreensEnum.Notifications,
+  ScreensEnum.NotificationsItem
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
 export const swapStackScreens = [
@@ -117,5 +125,6 @@ export const settingsStackScreens = [
   ScreensEnum.SecureSettings,
   ScreensEnum.Backup,
   ScreensEnum.ManualBackup,
+  ScreensEnum.NotificationsSettings,
   ScreensEnum.NodeSettings
 ];
