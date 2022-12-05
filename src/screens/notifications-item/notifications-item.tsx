@@ -20,7 +20,7 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatDateOutput } from '../../utils/date.utils';
 import { isDefined } from '../../utils/is-defined';
 import { NotificationsItemContent } from './notifications-item-content/notifications-item-content';
-import { useNotificationsItemStyles } from './notifications-item.styles';
+import { IMAGE_HEIGHT, useNotificationsItemStyles } from './notifications-item.styles';
 
 export const NotificationsItem: FC = () => {
   const styles = useNotificationsItemStyles();
@@ -43,7 +43,7 @@ export const NotificationsItem: FC = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View>
           <View style={styles.imageContainer}>
-            <SvgUri uri={notification.mobileImageUrl} width="100%" height="100%" />
+            <SvgUri uri={notification.mobileImageUrl} height={IMAGE_HEIGHT} />
           </View>
           <Divider size={formatSize(20)} />
           <Text style={styles.title}>{notification.title}</Text>

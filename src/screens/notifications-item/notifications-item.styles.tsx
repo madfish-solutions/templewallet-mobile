@@ -1,6 +1,8 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
+export const IMAGE_HEIGHT = 180;
+
 export const useNotificationsItemStyles = createUseStyles(({ colors, typography }) => ({
   submitContainer: {
     paddingHorizontal: formatSize(16),
@@ -21,8 +23,10 @@ export const useNotificationsItemStyles = createUseStyles(({ colors, typography 
   },
   imageContainer: {
     width: '100%',
-    height: formatSize(192),
-    backgroundColor: colors.blue10,
+    height: IMAGE_HEIGHT,
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.orange10,
     borderRadius: formatSize(8)
   }
 }));
