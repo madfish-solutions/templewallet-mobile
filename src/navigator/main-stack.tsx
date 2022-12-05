@@ -36,6 +36,7 @@ import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ManualBackup } from '../screens/manual-backup/manual-backup';
+import { Market } from '../screens/market/market';
 import { NodeSettings } from '../screens/node-settings/node-settings';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
@@ -51,6 +52,7 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
+import { loadMarketTopCoinsActions } from '../store/market/market-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -85,6 +87,7 @@ export const MainStackScreen = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
+    dispatch(loadMarketTopCoinsActions.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
@@ -222,6 +225,13 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapQuestionsScreen}
                 component={SwapQuestionsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
+              />
+
+              {/** Market stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.Market}
+                component={Market}
+                options={{ animationEnabled: false, headerShown: false }}
               />
 
               {/** Settings stack **/}

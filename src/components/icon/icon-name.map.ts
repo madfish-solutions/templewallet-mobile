@@ -61,6 +61,7 @@ import LinkIcon from './assets/link.svg';
 import LiquidityBakingIcon from './assets/liquidity-baking.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import Market from './assets/market.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
@@ -241,5 +242,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.Market]: Market
 };

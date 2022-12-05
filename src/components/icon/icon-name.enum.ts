@@ -116,5 +116,6 @@ export enum IconNameEnum {
   MissedOwnBlocks = 'MissedOwnBlocks',
   Endorsements = 'Endorsements',
   MissedEndorsements = 'MissedEndorsements',
-  NotificationDot = 'NotificationDot'
+  NotificationDot = 'NotificationDot',
+  Market = 'Market'
 }

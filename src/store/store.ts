@@ -4,6 +4,7 @@ import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
 import { dAppsEpics } from './d-apps/d-apps-epics';
 import { exolixEpics } from './exolix/exolix-epics';
+import { marketEpics } from './market/market-epics';
 import { migrationEpics } from './migration/migration-epics';
 import { rootStateEpics } from './root-state.epics';
 import { securityEpics } from './security/security-epics';
@@ -22,5 +23,6 @@ export const { store, persistor } = createStore(
   currencyEpics,
   securityEpics,
   migrationEpics,
-  advertisingEpics
+  advertisingEpics,
+  marketEpics
 );
