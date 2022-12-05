@@ -78,7 +78,7 @@ export const Settings = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View style={styles.upperContainer}>
           <View style={styles.quoteContainer}>
-            <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
+            <Quote quote="It’s money 2.0, a huge, huge, huge deal." author="Chamath Palihapitiya" />
           </View>
           <Divider size={formatSize(8)} />
 
