@@ -41,22 +41,24 @@ export const NotificationsItem: FC = () => {
   return (
     <>
       <ScreenContainer isFullScreenMode={true}>
-        <View style={styles.imageContainer}>
-          <SvgUri uri={notification.mobileImageUrl} width="100%" height="100%" />
-        </View>
-        <Divider size={formatSize(20)} />
-        <Text style={styles.title}>{notification.title}</Text>
-        <Divider size={formatSize(16)} />
-        <NotificationsItemContent content={notification.content} />
-        <Divider size={formatSize(16)} />
-        <View style={styles.row}>
-          <Text style={styles.createdAt}>{formatDateOutput(notification.createdAt)}</Text>
-          {isDefined(notification.sourceUrl) && (
-            <>
-              <Text style={styles.createdAt}> • </Text>
-              <TextLink url={notification.sourceUrl}>Read In Original</TextLink>
-            </>
-          )}
+        <View>
+          <View style={styles.imageContainer}>
+            <SvgUri uri={notification.mobileImageUrl} width="100%" height="100%" />
+          </View>
+          <Divider size={formatSize(20)} />
+          <Text style={styles.title}>{notification.title}</Text>
+          <Divider size={formatSize(16)} />
+          <NotificationsItemContent content={notification.content} />
+          <Divider size={formatSize(16)} />
+          <View style={styles.row}>
+            <Text style={styles.createdAt}>{formatDateOutput(notification.createdAt)}</Text>
+            {isDefined(notification.sourceUrl) && (
+              <>
+                <Text style={styles.createdAt}> • </Text>
+                <TextLink url={notification.sourceUrl}>Read In Original</TextLink>
+              </>
+            )}
+          </View>
         </View>
       </ScreenContainer>
       <ButtonsFloatingContainer>

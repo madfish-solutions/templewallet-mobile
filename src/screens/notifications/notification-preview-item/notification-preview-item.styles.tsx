@@ -6,7 +6,8 @@ export const useNotificationPreviewItemStyles = createUseStyles(({ colors, typog
     flexDirection: 'row',
     backgroundColor: colors.pageBG,
     paddingHorizontal: formatSize(20),
-    paddingTop: formatSize(16)
+    paddingTop: formatSize(16),
+    paddingBottom: formatSize(8)
   },
   containerRead: {
     backgroundColor: colors.input
