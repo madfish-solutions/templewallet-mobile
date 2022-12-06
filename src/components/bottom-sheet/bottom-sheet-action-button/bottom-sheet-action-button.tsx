@@ -4,7 +4,7 @@ import { Text, TouchableWithoutFeedbackProps } from 'react-native';
 
 import { useBottomSheetActionButtonStyles } from './bottom-sheet-action-button.styles';
 
-interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress'>{
+interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress'> {
   title: string;
 }
 
