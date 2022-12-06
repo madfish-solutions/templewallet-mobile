@@ -5,5 +5,8 @@ export const WalletStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  manualBackupButton: {
+    borderBottomWidth: 0
   }
 });

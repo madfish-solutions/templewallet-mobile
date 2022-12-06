@@ -86,11 +86,16 @@ export const Wallet = () => {
       <BottomSheet
         title="Backup your wallet"
         description={'Don’t lose your wallet! Save your access \nto accounts.'}
-        cancelButtonText="Not now"
-        contentHeight={formatSize(186)}
+        contentHeight={formatSize(132)}
         controller={backupBottomSheetController}
+        enablePanDownToClose={false}
+        backdropPressBehavior="none"
       >
-        <BottomSheetActionButton title="Manual backup" onPress={handleManualBackupButtonPress} />
+        <BottomSheetActionButton
+          title="Manual backup"
+          style={WalletStyles.manualBackupButton}
+          onPress={handleManualBackupButtonPress}
+        />
       </BottomSheet>
     </>
   );

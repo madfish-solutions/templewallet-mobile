@@ -6,7 +6,6 @@ import { ButtonLargePrimary } from '../../../components/button/button-large/butt
 import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
 import { Divider } from '../../../components/divider/divider';
-import { HeaderBackButton } from '../../../components/header/header-back-button/header-back-button';
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
@@ -35,7 +34,7 @@ export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderBackButton />,
+      headerLeft: () => null,
       headerTitle: () => <HeaderTitle title="Manual backup" />
     },
     []

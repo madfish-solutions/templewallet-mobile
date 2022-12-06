@@ -1,8 +1,10 @@
 import GorhomBottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
+  BottomSheetProps,
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
+import { BackdropPressBehavior } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import { Portal } from '@gorhom/portal';
 import { max } from 'lodash-es';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
@@ -17,19 +19,22 @@ import { isDefined } from '../../utils/is-defined';
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
 
-interface Props extends BottomSheetControllerProps {
+interface Props extends BottomSheetControllerProps, Pick<BottomSheetProps, 'enablePanDownToClose'> {
   title?: string;
   description: string;
   cancelButtonText?: string;
   contentHeight: number;
+  backdropPressBehavior?: BackdropPressBehavior;
 }
 
 export const BottomSheet: FC<Props> = ({
   title,
   description,
-  cancelButtonText = 'Cancel',
+  cancelButtonText,
   contentHeight,
   controller,
+  enablePanDownToClose = true,
+  backdropPressBehavior,
   children
 }) => {
   // hack that prevents rendering of GorhomBottomSheet component for locked app state,
@@ -49,6 +54,7 @@ export const BottomSheet: FC<Props> = ({
         opacity={0.16}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
+        pressBehavior={backdropPressBehavior}
       />
     ),
     [styles.backdrop]
@@ -80,7 +86,7 @@ export const BottomSheet: FC<Props> = ({
           ref={controller.ref}
           index={-1}
           snapPoints={[contentHeight]}
-          enablePanDownToClose={true}
+          enablePanDownToClose={enablePanDownToClose}
           bottomInset={bottomInset}
           handleComponent={emptyComponent}
           backgroundComponent={emptyComponent}
@@ -95,9 +101,11 @@ export const BottomSheet: FC<Props> = ({
 
             {children}
 
-            <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
-              <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
-            </TouchableOpacity>
+            {isDefined(cancelButtonText) && (
+              <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
+                <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </GorhomBottomSheet>
       )}
