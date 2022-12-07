@@ -1,27 +1,15 @@
-import React, { useCallback } from 'react';
-import { FlatList, ListRenderItem, RefreshControl, View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
-import { useFakeRefreshControlProps } from '../../hooks/use-fake-refresh-control-props.hook';
-import { useMarketTopCoinsWithoutTez } from '../../store/market/market-selectors';
-import { MarketCoin } from '../../store/market/market.interfaces';
-import { Row } from './row/row';
+import { HeaderCard } from '../../components/header-card/header-card';
+import { Table } from './table/table';
+import { TezosInfo } from './tezos-info/tezos-info';
 
-export const Market = () => {
-  const marketTopCoinsWithoutTez = useMarketTopCoinsWithoutTez();
-  const fakeRefreshControlProps = useFakeRefreshControlProps();
-
-  const renderFlatListItem: ListRenderItem<MarketCoin> = useCallback(({ item }) => <Row item={item} />, []);
-
-  return (
-    <View style={{ marginTop: 42 }}>
-      <FlatList
-        scrollEnabled
-        data={marketTopCoinsWithoutTez}
-        renderItem={renderFlatListItem}
-        ListEmptyComponent={<DataPlaceholder text="No records found." />}
-        refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-      />
-    </View>
-  );
-};
+export const Market = () => (
+  <View>
+    <HeaderCard hasInsetTop={true}>
+      <TezosInfo />
+    </HeaderCard>
+    <Table />
+  </View>
+);

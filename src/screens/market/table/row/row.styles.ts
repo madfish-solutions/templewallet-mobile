@@ -1,5 +1,5 @@
-import { formatSize } from '../../../styles/format-size';
-import { createUseStyles } from './../../../styles/create-use-styles';
+import { createUseStyles } from '../../../../styles/create-use-styles';
+import { formatSize } from '../../../../styles/format-size';
 
 export const useRowStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -7,12 +7,14 @@ export const useRowStyles = createUseStyles(({ colors, typography }) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: formatSize(14),
-    paddingVertical: formatSize(10)
+    paddingVertical: formatSize(10),
+    borderBottomColor: colors.lines,
+    borderBottomWidth: formatSize(1)
   },
   coinContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: formatSize(58)
+    width: formatSize(62)
   },
   digits: {
     width: formatSize(100),

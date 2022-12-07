@@ -20,6 +20,7 @@ export const loadMarketTopCoins$ = from(
 
       mappedCoins.push({
         id: coinInfo.id,
+        name: coinInfo.name,
         symbol: coinInfo.symbol.toUpperCase(),
         imageUrl: coinInfo.image,
         price:

@@ -1,5 +1,6 @@
 export interface MarketCoin {
   id: string;
+  name: string;
   symbol: string;
   imageUrl: string;
   price: number;

@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
-import { TokenIcon } from '../../../components/token-icon/token-icon';
-import { useUsdToTokenRates } from '../../../store/currency/currency-selectors';
-import { MarketCoin } from '../../../store/market/market.interfaces';
+import { TokenIcon } from '../../../../components/token-icon/token-icon';
+import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
+import { MarketCoin } from '../../../../store/market/market.interfaces';
 import { useRowStyles } from './row.styles';
 
 interface Props {
