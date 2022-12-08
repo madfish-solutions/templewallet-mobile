@@ -3,8 +3,8 @@ import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
+import { loadMarketTopCoins$ } from '../../utils/market.util';
 import { loadMarketTopCoinsActions } from './market-actions';
-import { loadMarketTopCoins$ } from './market-coins.util';
 
 export const loadMarketTopCoins = (action$: Observable<Action>) =>
   action$.pipe(

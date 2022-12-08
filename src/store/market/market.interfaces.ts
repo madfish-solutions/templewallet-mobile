@@ -3,12 +3,12 @@ export interface MarketCoin {
   name: string;
   symbol: string;
   imageUrl: string;
-  price: number;
-  priceChange7d: number;
-  priceChange24h: number;
-  volume24h: number;
+  price: number | null;
+  priceChange7d: number | null;
+  priceChange24h: number | null;
+  volume24h: number | null;
   supply: number | null;
-  marketCup: number;
+  marketCup: number | null;
 }
 
 interface Roi {

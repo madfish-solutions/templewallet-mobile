@@ -59,9 +59,6 @@ export const useTezosInfoStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.gray1,
     textAlign: 'center'
   },
-  changeColor: {
-    color: colors.adding
-  },
   nameAndSymbolContainer: {
     marginLeft: formatSize(8)
   },
