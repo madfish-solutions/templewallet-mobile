@@ -32,7 +32,10 @@ export const NotificationsItem: FC = () => {
 
   useEffect(() => void dispatch(readNotificationsItemAction(notification?.id ?? 0)), [notification?.id]);
 
-  usePageAnalytic(ScreensEnum.Notifications, notification?.id.toString());
+  usePageAnalytic(ScreensEnum.NotificationsItem, '', {
+    id: notification?.id,
+    type: notification?.type
+  });
 
   if (!isDefined(notification)) {
     return null;
