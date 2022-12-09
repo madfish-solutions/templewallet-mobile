@@ -123,12 +123,7 @@ const DropdownComponent = <T extends unknown>({
         {renderValue({ value, disabled })}
       </TouchableOpacity>
 
-      <BottomSheet
-        description={description}
-        cancelButtonText="Cancel"
-        contentHeight={contentHeight}
-        controller={dropdownBottomSheetController}
-      >
+      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList

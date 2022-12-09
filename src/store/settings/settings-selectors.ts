@@ -55,6 +55,3 @@ export const useIsShowLoaderSelector = () =>
 
 export const useIsManualBackupMadeSelector = () =>
   useSelector<SettingsRootState, boolean>(({ settings }) => settings.isManualBackupMade);
-
-export const useIsOpenBackupBottomSheetSelector = () =>
-  useSelector<SettingsRootState, boolean>(({ settings }) => !settings.isManualBackupMade);

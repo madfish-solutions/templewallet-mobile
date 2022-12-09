@@ -84,7 +84,6 @@ export const ManageHdAccounts = () => {
 
         <BottomSheet
           description="Select what do you want to reveal:"
-          cancelButtonText="Cancel"
           contentHeight={formatSize(180)}
           controller={revealSelectBottomSheetController}
         >
