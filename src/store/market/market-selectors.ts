@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import { MarketCoinsSortFieldEnum } from '../../enums/market-coins-sort-field.enum';
 import { LoadableEntityState } from '../types';
 import { MarketRootState } from './market-state';
 import { MarketCoin } from './market.interfaces';
@@ -21,3 +22,6 @@ export const useTezosMarketCoin = () => {
 
   return useMemo(() => tokens.data.find(token => token.id === TEZOS_ID), [tokens]);
 };
+
+export const useSortFieldSelector = () =>
+  useSelector<MarketRootState, MarketCoinsSortFieldEnum>(state => state.market.sortField);

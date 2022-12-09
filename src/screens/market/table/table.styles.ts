@@ -2,6 +2,16 @@ import { formatSize } from '../../../styles/format-size';
 import { createUseStyles } from './../../../styles/create-use-styles';
 
 export const useTableStyles = createUseStyles(({ colors, typography }) => ({
+  rootContainer: {
+    flexGrow: 1,
+    flexShrink: 1
+  },
+  filtersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: formatSize(16),
+    paddingVertical: formatSize(12)
+  },
   columns: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -5,68 +5,53 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { Search } from '../../../components/search/search';
 import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
 import { Sorter } from '../../../components/sorter/sorter';
+import { MarketCoinsSortFieldEnum } from '../../../enums/market-coins-sort-field.enum';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
-import { useMarketTopCoinsWithoutTez } from '../../../store/market/market-selectors';
+import { useFilterdMarketCoins } from '../../../hooks/use-filtered-market-coins.hook';
 import { MarketCoin } from '../../../store/market/market.interfaces';
 import { formatSize } from '../../../styles/format-size';
 import { Row } from './row/row';
 import { useTableStyles } from './table.styles';
 
-enum MarketCoinsSortFieldEnum {
-  Volume = 'volume',
-  Price = 'price',
-  Supply = 'supply'
-}
-
 const marketCoinsSortFieldsLabels: Record<MarketCoinsSortFieldEnum, string> = {
   [MarketCoinsSortFieldEnum.Volume]: 'Volume',
   [MarketCoinsSortFieldEnum.Price]: 'Price',
-  [MarketCoinsSortFieldEnum.Supply]: 'Supply'
+  [MarketCoinsSortFieldEnum.PriceChange]: 'Price Change'
 };
 
 const marketCoinsSortFieldsOptions: Array<MarketCoinsSortFieldEnum> = [
   MarketCoinsSortFieldEnum.Volume,
   MarketCoinsSortFieldEnum.Price,
-  MarketCoinsSortFieldEnum.Supply
+  MarketCoinsSortFieldEnum.PriceChange
 ];
 
 export const Table = () => {
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
-  const [, setSearchValue] = useState<string>();
-  const [sortValue, setSortValue] = useState<string>(MarketCoinsSortFieldEnum.Volume);
 
   const styles = useTableStyles();
-  const marketTopCoinsWithoutTez = useMarketTopCoinsWithoutTez();
+  const { filteredAssetsList, sortFiled, setSearchValue, handleSetSortField } = useFilterdMarketCoins();
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const onChange = (index: number) => setInputTypeIndex(index);
-  const handleSetSortValue = (value: string) => setSortValue(value);
 
   const renderFlatListItem: ListRenderItem<MarketCoin> = useCallback(({ item }) => <Row item={item} />, []);
 
   return (
-    <View style={{ flexGrow: 1, flexShrink: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: formatSize(16),
-          paddingVertical: formatSize(12)
-        }}
-      >
+    <View style={styles.rootContainer}>
+      <View style={styles.filtersContainer}>
         <TextSegmentControl
           selectedIndex={inputTypeIndex}
-          width={formatSize(158)}
-          values={['Market', 'Favourite']}
+          width={formatSize(168)}
+          values={['Market', 'Favourites']}
           onChange={onChange}
         />
         <Search onChange={setSearchValue}>
           <Sorter
-            sortValue={sortValue}
+            sortValue={sortFiled}
             description="Sort tokens by:"
             sortFieldsLabels={marketCoinsSortFieldsLabels}
             sortFieldsOptions={marketCoinsSortFieldsOptions}
-            handleSetSortValue={handleSetSortValue}
+            handleSetSortValue={handleSetSortField}
           />
         </Search>
       </View>
@@ -78,7 +63,7 @@ export const Table = () => {
       </View>
       <FlatList
         scrollEnabled
-        data={marketTopCoinsWithoutTez}
+        data={filteredAssetsList}
         renderItem={renderFlatListItem}
         ListEmptyComponent={<DataPlaceholder text="No records found." />}
         refreshControl={<RefreshControl {...fakeRefreshControlProps} />}

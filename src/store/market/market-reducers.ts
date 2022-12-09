@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadMarketTopCoinsActions } from './market-actions';
+import { loadMarketTopCoinsActions, selectSortValue } from './market-actions';
 import { MarketState, marketInitialState } from './market-state';
 
 export const marketReducers = createReducer<MarketState>(marketInitialState, builer => {
@@ -16,5 +16,9 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   builer.addCase(loadMarketTopCoinsActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
     tokens: createEntity([], false, errorMessage)
+  }));
+  builer.addCase(selectSortValue, (state, { payload: sortField }) => ({
+    ...state,
+    sortField
   }));
 });

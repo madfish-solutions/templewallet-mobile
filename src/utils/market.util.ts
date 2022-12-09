@@ -51,7 +51,15 @@ export const getValueToShow = (value: number | null | undefined, tezosExchangeRa
 };
 
 export const getPriceChange = (value: number | null | undefined) => {
-  return value === null || value === undefined ? '-' : `${value.toFixed(2)}%`;
+  if (value === null || value === undefined) {
+    return '-';
+  }
+
+  if (value > 0) {
+    return `+${value.toFixed(2)}%`;
+  } else {
+    return `${value.toFixed(2)}%`;
+  }
 };
 
 export const getColor = (value: number | null | undefined, colors: Colors) => {
