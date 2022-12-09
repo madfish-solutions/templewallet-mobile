@@ -117,5 +117,7 @@ export enum IconNameEnum {
   Endorsements = 'Endorsements',
   MissedEndorsements = 'MissedEndorsements',
   NotificationDot = 'NotificationDot',
-  Market = 'Market'
+  Market = 'Market',
+  Buy = 'Buy',
+  Favourite = 'Favourite'
 }

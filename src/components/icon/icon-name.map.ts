@@ -12,6 +12,7 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import Buy from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
@@ -44,6 +45,7 @@ import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import FaceIdIcon from './assets/face-id.svg';
+import Favourite from './assets/favourite.svg';
 import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
@@ -243,5 +245,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
-  [IconNameEnum.Market]: Market
+  [IconNameEnum.Market]: Market,
+  [IconNameEnum.Buy]: Buy,
+  [IconNameEnum.Favourite]: Favourite
 };

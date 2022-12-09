@@ -1,7 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import { View, Text, FlatList, RefreshControl, ListRenderItem } from 'react-native';
+import React, { FC, useCallback, useState } from 'react';
+import { View, Text, RefreshControl, ListRenderItem, FlatList } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
+import { Divider } from '../../../components/divider/divider';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { Search } from '../../../components/search/search';
 import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
 import { Sorter } from '../../../components/sorter/sorter';
@@ -10,6 +13,7 @@ import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-cont
 import { useFilterdMarketCoins } from '../../../hooks/use-filtered-market-coins.hook';
 import { MarketCoin } from '../../../store/market/market.interfaces';
 import { formatSize } from '../../../styles/format-size';
+import { HiddenButton } from '../hidden-button/hidden-button';
 import { Row } from './row/row';
 import { useTableStyles } from './table.styles';
 
@@ -25,6 +29,23 @@ const marketCoinsSortFieldsOptions: Array<MarketCoinsSortFieldEnum> = [
   MarketCoinsSortFieldEnum.PriceChange
 ];
 
+const RightSwipeView: FC = () => (
+  <View
+    style={{
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'stretch',
+      maxWidth: formatSize(141)
+    }}
+  >
+    <HiddenButton iconName={IconNameEnum.Buy} text="Buy" onPress={() => console.log('Favo')} />
+    <Divider size={formatSize(1)} />
+
+    <HiddenButton iconName={IconNameEnum.Favourite} text="Favo" onPress={() => console.log('Favo')} />
+  </View>
+);
+
 export const Table = () => {
   const [inputTypeIndex, setInputTypeIndex] = useState(0);
 
@@ -34,7 +55,14 @@ export const Table = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const onChange = (index: number) => setInputTypeIndex(index);
 
-  const renderFlatListItem: ListRenderItem<MarketCoin> = useCallback(({ item }) => <Row item={item} />, []);
+  const renderItem: ListRenderItem<MarketCoin> = useCallback(
+    ({ item }) => (
+      <Swipeable renderRightActions={RightSwipeView}>
+        <Row item={item} />
+      </Swipeable>
+    ),
+    []
+  );
 
   return (
     <View style={styles.rootContainer}>
@@ -64,9 +92,10 @@ export const Table = () => {
       <FlatList
         scrollEnabled
         data={filteredAssetsList}
-        renderItem={renderFlatListItem}
-        ListEmptyComponent={<DataPlaceholder text="No records found." />}
+        renderItem={renderItem}
         refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+        keyExtractor={item => item.id}
+        ListEmptyComponent={<DataPlaceholder text="No records found." />}
       />
     </View>
   );

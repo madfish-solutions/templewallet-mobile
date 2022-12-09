@@ -8,6 +8,7 @@ export const useRowStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     paddingHorizontal: formatSize(14),
     paddingVertical: formatSize(10),
+    backgroundColor: colors.pageBG,
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(1)
   },
