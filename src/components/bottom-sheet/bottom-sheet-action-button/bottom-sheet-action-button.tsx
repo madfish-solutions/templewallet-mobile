@@ -1,20 +1,18 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { Text, TouchableWithoutFeedbackProps } from 'react-native';
 
-import { EmptyFn } from '../../../config/general';
 import { useBottomSheetActionButtonStyles } from './bottom-sheet-action-button.styles';
 
-interface Props {
+interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress'> {
   title: string;
-  onPress: EmptyFn;
 }
 
-export const BottomSheetActionButton: FC<Props> = ({ title, onPress }) => {
+export const BottomSheetActionButton: FC<Props> = ({ title, style, onPress }) => {
   const styles = useBottomSheetActionButtonStyles();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, style]} onPress={onPress}>
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );

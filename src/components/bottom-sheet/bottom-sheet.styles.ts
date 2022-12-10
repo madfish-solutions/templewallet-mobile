@@ -7,7 +7,8 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     marginHorizontal: formatSize(8),
     marginBottom: formatSize(34),
     backgroundColor: colors.navigation,
-    borderRadius: formatSize(14)
+    borderRadius: formatSize(14),
+    overflow: 'hidden'
   },
   headerContainer: {
     justifyContent: 'center',

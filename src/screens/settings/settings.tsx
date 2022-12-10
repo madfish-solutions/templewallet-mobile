@@ -78,7 +78,7 @@ export const Settings = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View style={styles.upperContainer}>
           <View style={styles.quoteContainer}>
-            <Quote quote="Buy on the peak = ride on the dick." author="Furry Hamster" />
+            <Quote quote="It’s money 2.0, a huge, huge, huge deal." author="Chamath Palihapitiya" />
           </View>
           <Divider size={formatSize(8)} />
 
@@ -132,6 +132,13 @@ export const Settings = () => {
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Secure" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+            <WhiteContainerDivider />
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.NotificationsSettings)}>
+              <View style={styles.actionsContainer}>
+                <WhiteContainerText text="Notifications" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>

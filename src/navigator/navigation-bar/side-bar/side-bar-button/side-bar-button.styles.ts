@@ -13,5 +13,14 @@ export const useSideBarButtonStyles = createUseStyles(({ typography }) => ({
   },
   label: {
     ...typography.caption13Semibold
+  },
+  iconContainer: {
+    position: 'relative'
+  },
+  notificationDotIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    top: formatSize(2),
+    right: formatSize(4)
   }
 }));
