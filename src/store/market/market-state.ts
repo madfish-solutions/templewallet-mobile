@@ -6,11 +6,13 @@ import { MarketCoin } from './market.interfaces';
 export interface MarketState {
   tokens: LoadableEntityState<Array<MarketCoin>>;
   sortField: MarketCoinsSortFieldEnum;
+  favouriteTokens: Array<string>;
 }
 
 export const marketInitialState: MarketState = {
   tokens: createEntity([]),
-  sortField: MarketCoinsSortFieldEnum.Volume
+  sortField: MarketCoinsSortFieldEnum.Volume,
+  favouriteTokens: []
 };
 
 export interface MarketRootState {

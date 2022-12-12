@@ -3,7 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum';
 import { selectSortValue } from '../store/market/market-actions';
-import { useMarketTopCoinsWithoutTez, useSortFieldSelector } from '../store/market/market-selectors';
+import {
+  useFavouriteTokens,
+  useMarketTopCoinsWithoutTez,
+  useSortFieldSelector
+} from '../store/market/market-selectors';
 import { isString } from '../utils/is-string';
 import { MarketCoin } from './../store/market/market.interfaces';
 
@@ -44,13 +48,18 @@ const sortMarketCoins = (marketCoins: Array<MarketCoin>, sortField: MarketCoinsS
 export const useFilterdMarketCoins = () => {
   const dispatch = useDispatch();
   const tokens = useMarketTopCoinsWithoutTez();
+  const favouriteTokens = useFavouriteTokens();
+  console.log('favouriteTokens: ', favouriteTokens);
 
   const sortFiled = useSortFieldSelector();
 
   const [searchValue, setSearchValue] = useState<string>();
+  const [inputTypeIndex, setInputTypeIndex] = useState<number>(0);
 
   const filteredAssetsList = useMemo<Array<MarketCoin>>(() => {
-    const sortedMarketCoins = sortMarketCoins(tokens, sortFiled);
+    const source =
+      inputTypeIndex === 0 ? tokens : tokens.filter(item => favouriteTokens.includes(`${item.id}-${item.symbol}`));
+    const sortedMarketCoins = sortMarketCoins(source, sortFiled);
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -68,17 +77,21 @@ export const useFilterdMarketCoins = () => {
     } else {
       return sortedMarketCoins;
     }
-  }, [searchValue, sortFiled]);
+  }, [searchValue, sortFiled, inputTypeIndex, favouriteTokens]);
 
   const handleSetSortField = useCallback(
     (sortValue: string) => dispatch(selectSortValue(sortValue as MarketCoinsSortFieldEnum)),
     []
   );
 
+  const handleSelectorChange = (index: number) => setInputTypeIndex(index);
+
   return {
-    filteredAssetsList,
     sortFiled,
+    filteredAssetsList,
+    inputTypeIndex,
     setSearchValue,
-    handleSetSortField
+    handleSetSortField,
+    handleSelectorChange
   };
 };

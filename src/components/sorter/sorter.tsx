@@ -14,16 +14,10 @@ interface Props<T extends string = string> {
   description: string;
   sortFieldsOptions: Array<T>;
   sortFieldsLabels: Record<T, string>;
-  handleSetSortValue: (value: T) => void;
+  onSetSortValue: (value: T) => void;
 }
 
-export const Sorter: FC<Props> = ({
-  sortValue,
-  description,
-  sortFieldsLabels,
-  sortFieldsOptions,
-  handleSetSortValue
-}) => {
+export const Sorter: FC<Props> = ({ sortValue, description, sortFieldsLabels, sortFieldsOptions, onSetSortValue }) => {
   const styles = useSorterStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
@@ -46,7 +40,7 @@ export const Sorter: FC<Props> = ({
             key={value}
             title={sortFieldsLabels[value]}
             onPress={() => {
-              handleSetSortValue(value);
+              onSetSortValue(value);
               revealSelectBottomSheetController.close();
             }}
           />

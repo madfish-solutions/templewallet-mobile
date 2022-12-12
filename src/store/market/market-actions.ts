@@ -7,3 +7,6 @@ import { MarketCoin } from './market.interfaces';
 export const loadMarketTopCoinsActions = createActions<void, Array<MarketCoin>, string>('market/MARKET_TOP_COINS');
 
 export const selectSortValue = createAction<MarketCoinsSortFieldEnum>('market/SELECT_SORT_VALUE');
+
+export const addFavouriteToken = createAction<string>('market/ADD_FAVOURITE_TOKEN');
+export const deleteFavouriteToken = createAction<string>('market/DELETE_FAVOURITE_TOKEN');

@@ -6,12 +6,6 @@ export const useTableStyles = createUseStyles(({ colors, typography }) => ({
     flexGrow: 1,
     flexShrink: 1
   },
-  filtersContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: formatSize(16),
-    paddingVertical: formatSize(12)
-  },
   columns: {
     flexDirection: 'row',
     justifyContent: 'space-between',

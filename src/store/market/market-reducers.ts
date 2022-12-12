@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadMarketTopCoinsActions, selectSortValue } from './market-actions';
+import { addFavouriteToken, deleteFavouriteToken, loadMarketTopCoinsActions, selectSortValue } from './market-actions';
 import { MarketState, marketInitialState } from './market-state';
 
 export const marketReducers = createReducer<MarketState>(marketInitialState, builer => {
@@ -20,5 +20,13 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   builer.addCase(selectSortValue, (state, { payload: sortField }) => ({
     ...state,
     sortField
+  }));
+  builer.addCase(addFavouriteToken, (state, { payload: tokenSlug }) => ({
+    ...state,
+    favouriteTokens: [...state.favouriteTokens, tokenSlug]
+  }));
+  builer.addCase(deleteFavouriteToken, (state, { payload: tokenSlug }) => ({
+    ...state,
+    favouriteTokens: state.favouriteTokens.filter(slug => slug !== tokenSlug)
   }));
 });

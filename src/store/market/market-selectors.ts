@@ -25,3 +25,6 @@ export const useTezosMarketCoin = () => {
 
 export const useSortFieldSelector = () =>
   useSelector<MarketRootState, MarketCoinsSortFieldEnum>(state => state.market.sortField);
+
+export const useFavouriteTokens = () =>
+  useSelector<MarketRootState, Array<string>>(state => state.market.favouriteTokens);
