@@ -4,15 +4,17 @@ import { createEntity } from './../create-entity';
 import { MarketCoin } from './market.interfaces';
 
 export interface MarketState {
-  tokens: LoadableEntityState<Array<MarketCoin>>;
-  sortField: MarketCoinsSortFieldEnum;
   favouriteTokens: Array<string>;
+  sortField: MarketCoinsSortFieldEnum;
+  tokens: LoadableEntityState<Array<MarketCoin>>;
+  tokensSlugs: LoadableEntityState<Record<string, string>>;
 }
 
 export const marketInitialState: MarketState = {
-  tokens: createEntity([]),
+  favouriteTokens: [],
   sortField: MarketCoinsSortFieldEnum.Volume,
-  favouriteTokens: []
+  tokens: createEntity([]),
+  tokensSlugs: createEntity({})
 };
 
 export interface MarketRootState {

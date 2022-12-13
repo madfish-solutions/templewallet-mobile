@@ -2,7 +2,7 @@ import { from, map } from 'rxjs';
 
 import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
-import { coingeckoApi } from './../api.service';
+import { coingeckoApi, templeWalletApi } from './../api.service';
 
 export const loadMarketTopCoins$ = from(
   coingeckoApi.get<Array<MarketCoinRaw>>(
@@ -29,6 +29,10 @@ export const loadMarketTopCoins$ = from(
 
     return mappedCoins;
   })
+);
+
+export const loadMarketCoinsSlugs$ = from(templeWalletApi.get<Record<string, string>>('/top-coins')).pipe(
+  map(value => value.data)
 );
 
 export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {

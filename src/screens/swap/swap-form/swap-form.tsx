@@ -59,9 +59,10 @@ const selectionOptions = { start: 0, end: 0 };
 
 interface SwapFormProps {
   inputToken?: TokenInterface;
+  outputToken?: TokenInterface;
 }
 
-export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
+export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -125,7 +126,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken }) => {
         amount: undefined
       },
       outputAssets: {
-        asset: emptyTezosLikeToken,
+        asset: outputToken ?? emptyTezosLikeToken,
         amount: undefined
       }
     },

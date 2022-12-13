@@ -48,10 +48,8 @@ const sortMarketCoins = (marketCoins: Array<MarketCoin>, sortField: MarketCoinsS
 export const useFilterdMarketCoins = () => {
   const dispatch = useDispatch();
   const tokens = useMarketTopCoinsWithoutTez();
-  const favouriteTokens = useFavouriteTokens();
-  console.log('favouriteTokens: ', favouriteTokens);
-
   const sortFiled = useSortFieldSelector();
+  const favouriteTokens = useFavouriteTokens();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [inputTypeIndex, setInputTypeIndex] = useState<number>(0);
