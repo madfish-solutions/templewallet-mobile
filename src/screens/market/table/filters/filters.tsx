@@ -11,7 +11,7 @@ import { useFilterStyles } from './filter.styles';
 const marketCoinsSortFieldsLabels: Record<MarketCoinsSortFieldEnum, string> = {
   [MarketCoinsSortFieldEnum.Volume]: 'Volume',
   [MarketCoinsSortFieldEnum.Price]: 'Price',
-  [MarketCoinsSortFieldEnum.PriceChange]: 'Price Change'
+  [MarketCoinsSortFieldEnum.PriceChange]: '24H'
 };
 
 const marketCoinsSortFieldsOptions: Array<MarketCoinsSortFieldEnum> = [

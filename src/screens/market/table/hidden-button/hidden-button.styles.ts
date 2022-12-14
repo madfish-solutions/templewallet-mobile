@@ -32,6 +32,6 @@ export const useHiddenButtonStyles = createUseStyles(({ colors, typography }) =>
     color: colors.peach
   },
   textDisabled: {
-    color: colors.disabled
+    color: colors.gray2
   }
 }));

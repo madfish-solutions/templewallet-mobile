@@ -36,6 +36,17 @@ export const loadMarketCoinsSlugs$ = from(templeWalletApi.get<Record<string, str
   map(value => value.data)
 );
 
+const formatNumber = (value: number) => {
+  const parts = value.toFixed(2).split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  if (value > 100_000 || parts[1] === '00') {
+    return parts[0];
+  }
+
+  return parts.join('.');
+};
+
 export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {
   const res: { value?: string; valueEstimatedInTezos?: string } = {};
 
@@ -45,11 +56,11 @@ export const getValueToShow = (value: number | null | undefined, tezosExchangeRa
     return res;
   }
 
-  res.value = value < 0.01 ? '>0.01' : value.toFixed(2);
+  res.value = value < 0.01 ? '>0.01' : formatNumber(value);
 
   if (tezosExchangeRate !== undefined) {
     const valueInTezos = value / tezosExchangeRate;
-    res.valueEstimatedInTezos = valueInTezos < 0.01 ? '>0.01' : valueInTezos.toFixed(2);
+    res.valueEstimatedInTezos = valueInTezos < 0.01 ? '>0.01' : formatNumber(valueInTezos);
   }
 
   return res;
