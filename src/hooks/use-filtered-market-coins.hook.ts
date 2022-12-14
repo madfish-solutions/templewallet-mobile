@@ -55,8 +55,7 @@ export const useFilterdMarketCoins = () => {
   const [inputTypeIndex, setInputTypeIndex] = useState<number>(0);
 
   const filteredAssetsList = useMemo<Array<MarketCoin>>(() => {
-    const source =
-      inputTypeIndex === 0 ? tokens : tokens.filter(item => favouriteTokens.includes(`${item.id}-${item.symbol}`));
+    const source = inputTypeIndex === 0 ? tokens : tokens.filter(item => favouriteTokens.includes(item.id));
     const sortedMarketCoins = sortMarketCoins(source, sortFiled);
 
     if (isString(searchValue)) {

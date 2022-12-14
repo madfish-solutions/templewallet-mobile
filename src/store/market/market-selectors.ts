@@ -28,5 +28,5 @@ export const useSortFieldSelector = () =>
 export const useFavouriteTokens = () =>
   useSelector<MarketRootState, Array<string>>(state => state.market.favouriteTokens);
 
-export const useMarketCoinsSlugs = () =>
-  useSelector<MarketRootState, Record<string, string>>(state => state.market.tokensSlugs.data);
+export const useMarketCoinSlug = (id: string) =>
+  useSelector<MarketRootState, string>(state => state.market.tokensSlugs.data[id]);

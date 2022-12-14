@@ -20,7 +20,7 @@ export const Table = () => {
 
   const renderItem: ListRenderItem<MarketCoin> = useCallback(
     ({ item }) => (
-      <Swipeable renderRightActions={() => <RightSwipeView slug={`${item.id}-${item.symbol}`} />}>
+      <Swipeable renderRightActions={() => <RightSwipeView id={item.id} />}>
         <Row item={item} />
       </Swipeable>
     ),

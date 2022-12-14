@@ -7,15 +7,31 @@ export const useHiddenButtonStyles = createUseStyles(({ colors, typography }) =>
     justifyContent: 'center',
     paddingHorizontal: formatSize(10),
     paddingVertical: formatSize(12),
-    alignItems: 'center',
+    alignItems: 'center'
+  },
+  rootContainerActive: {
     backgroundColor: colors.peach10
+  },
+  rootContainerDisabled: {
+    backgroundColor: colors.gray4
   },
   icon: {
     marginBottom: formatSize(4)
   },
+  iconActive: {
+    color: colors.peach
+  },
+  iconDisabled: {
+    color: colors.gray2
+  },
   text: {
     ...typography.caption11Regular,
-    textAlign: 'center',
+    textAlign: 'center'
+  },
+  textActive: {
     color: colors.peach
+  },
+  textDisabled: {
+    color: colors.disabled
   }
 }));
