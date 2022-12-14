@@ -6,7 +6,7 @@ import { ofType } from 'ts-action-operators';
 import { loadMarketCoinsSlugs$, loadMarketTopCoins$ } from '../../utils/market.util';
 import { loadMarketCoinsSlugsActions, loadMarketTopCoinsActions } from './market-actions';
 
-export const loadMarketTopCoins = (action$: Observable<Action>) =>
+const loadMarketTopCoins = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadMarketTopCoinsActions.submit),
     switchMap(() =>
@@ -17,7 +17,7 @@ export const loadMarketTopCoins = (action$: Observable<Action>) =>
     )
   );
 
-export const loadMarketCoinsSlugs: Epic = (action$: Observable<Action>) =>
+const loadMarketCoinsSlugs: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadMarketCoinsSlugsActions.submit),
     switchMap(() =>

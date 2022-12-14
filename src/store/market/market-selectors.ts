@@ -7,8 +7,7 @@ import { MarketCoin } from './market.interfaces';
 
 const TEZOS_ID = 'tezos';
 
-export const useMarketTopCoins = () =>
-  useSelector<MarketRootState, Array<MarketCoin>>(state => state.market.tokens.data);
+const useMarketTopCoins = () => useSelector<MarketRootState, Array<MarketCoin>>(state => state.market.tokens.data);
 
 export const useMarketTopCoinsWithoutTez = () => {
   const tokens = useMarketTopCoins();
