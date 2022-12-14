@@ -11,6 +11,7 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import Buy from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
@@ -69,6 +70,7 @@ import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
+import NewsIcon from './assets/news.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
@@ -116,6 +118,7 @@ import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
+import UpdateIcon from './assets/update.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XCircleIcon from './assets/x-circle.svg';
@@ -129,6 +132,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
+  [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
   [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
@@ -206,6 +210,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
+  [IconNameEnum.News]: NewsIcon,
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
   [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
   [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
@@ -247,5 +252,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: Market,
   [IconNameEnum.Buy]: Buy,
-  [IconNameEnum.Favourite]: Favourite
+  [IconNameEnum.Favourite]: Favourite,
+  [IconNameEnum.Update]: UpdateIcon,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon
 };

@@ -38,6 +38,9 @@ import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ManualBackup } from '../screens/manual-backup/manual-backup';
 import { Market } from '../screens/market/market';
 import { NodeSettings } from '../screens/node-settings/node-settings';
+import { NotificationsItem } from '../screens/notifications-item/notifications-item';
+import { NotificationsSettings } from '../screens/notifications-settings/notifications-settings';
+import { Notifications } from '../screens/notifications/notifications';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
@@ -53,6 +56,7 @@ import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
 import { loadMarketCoinsSlugsActions, loadMarketTopCoinsActions } from '../store/market/market-actions';
+import { loadNotificationsAction } from '../store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -92,6 +96,7 @@ export const MainStackScreen = () => {
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
+    dispatch(loadNotificationsAction.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
@@ -171,6 +176,16 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Activity}
                 component={Activity}
                 options={generateScreenOptions(<HeaderTitle title="Activity" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Notifications}
+                component={Notifications}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.NotificationsItem}
+                component={NotificationsItem}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
 
               {/** DApps stack **/}
@@ -280,6 +295,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManualBackup}
                 component={ManualBackup}
                 options={generateScreenOptions(<HeaderTitle title="Manual backup" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.NotificationsSettings}
+                component={NotificationsSettings}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}
