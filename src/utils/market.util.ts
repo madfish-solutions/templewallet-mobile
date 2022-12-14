@@ -1,5 +1,6 @@
 import { from, map } from 'rxjs';
 
+import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum';
 import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { coingeckoApi, templeWalletApi } from './../api.service';
@@ -66,7 +67,7 @@ export const getPriceChange = (value: number | null | undefined) => {
   }
 };
 
-export const getColor = (value: number | null | undefined, colors: Colors) => {
+export const getPriceChangeColor = (value: number | null | undefined, colors: Colors) => {
   if (value === null || value === undefined || value === 0) {
     return colors.black;
   } else if (value > 0) {
@@ -76,4 +77,40 @@ export const getColor = (value: number | null | undefined, colors: Colors) => {
   }
 
   return colors.black;
+};
+
+const sortByDescending = (a: number | null, b: number | null) => {
+  if (a === null) {
+    return 1;
+  } else if (b === null) {
+    return -1;
+  } else if (a > b) {
+    return -1;
+  } else if (a < b) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+export const sortMarketCoins = (marketCoins: Array<MarketCoin>, sortField: MarketCoinsSortFieldEnum) => {
+  switch (sortField) {
+    case MarketCoinsSortFieldEnum.Price:
+      return marketCoins.sort((a, b) => {
+        return sortByDescending(a.price, b.price);
+      });
+
+    case MarketCoinsSortFieldEnum.Volume:
+      return marketCoins.sort((a, b) => {
+        return sortByDescending(a.volume24h, b.volume24h);
+      });
+
+    case MarketCoinsSortFieldEnum.PriceChange:
+      return marketCoins.sort((a, b) => {
+        return sortByDescending(a.priceChange24h, b.priceChange24h);
+      });
+
+    default:
+      return marketCoins;
+  }
 };

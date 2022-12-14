@@ -9,41 +9,8 @@ import {
   useSortFieldSelector
 } from '../store/market/market-selectors';
 import { isString } from '../utils/is-string';
+import { sortMarketCoins } from '../utils/market.util';
 import { MarketCoin } from './../store/market/market.interfaces';
-
-const sortMarketCoins = (marketCoins: Array<MarketCoin>, sortField: MarketCoinsSortFieldEnum) => {
-  switch (sortField) {
-    case MarketCoinsSortFieldEnum.Price:
-      return marketCoins.sort((a, b) => {
-        if (a.price !== null && b.price !== null) {
-          return b.price - a.price;
-        }
-
-        return 0;
-      });
-
-    case MarketCoinsSortFieldEnum.Volume:
-      return marketCoins.sort((a, b) => {
-        if (a.volume24h !== null && b.volume24h !== null) {
-          return b.volume24h - a.volume24h;
-        }
-
-        return 0;
-      });
-
-    case MarketCoinsSortFieldEnum.PriceChange:
-      return marketCoins.sort((a, b) => {
-        if (a.priceChange24h !== null && b.priceChange24h !== null) {
-          return b.priceChange24h - a.priceChange24h;
-        }
-
-        return 0;
-      });
-
-    default:
-      return marketCoins;
-  }
-};
 
 export const useFilterdMarketCoins = () => {
   const dispatch = useDispatch();

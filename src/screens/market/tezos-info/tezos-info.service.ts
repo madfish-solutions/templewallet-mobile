@@ -1,13 +1,13 @@
 import { useTezosMarketCoin } from '../../../store/market/market-selectors';
 import { useColors } from '../../../styles/use-colors';
-import { getColor, getValueToShow, getPriceChange } from '../../../utils/market.util';
+import { getPriceChangeColor, getValueToShow, getPriceChange } from '../../../utils/market.util';
 
 export const useTezosInfoService = () => {
   const marketTezos = useTezosMarketCoin();
   const colors = useColors();
 
-  const priceChange24hColor = getColor(marketTezos?.priceChange24h, colors);
-  const priceChange7dColor = getColor(marketTezos?.priceChange7d, colors);
+  const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);
+  const priceChange7dColor = getPriceChangeColor(marketTezos?.priceChange7d, colors);
 
   const { value: price } = getValueToShow(marketTezos?.price);
   const { value: supply } = getValueToShow(marketTezos?.supply);
