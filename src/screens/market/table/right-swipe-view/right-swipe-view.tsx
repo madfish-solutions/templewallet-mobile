@@ -12,13 +12,14 @@ import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { HiddenButton } from '../hidden-button/hidden-button';
+import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 
 interface Props {
   id: string;
+  onPress: () => void;
 }
-
-export const RightSwipeView: FC<Props> = ({ id }) => {
+export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const colors = useColors();
   const styles = useRightSwipeViewStyles();
   const favouriteTokens = useFavouriteTokens();
@@ -30,25 +31,42 @@ export const RightSwipeView: FC<Props> = ({ id }) => {
   const { navigate } = useNavigation();
 
   const isFavourite = useMemo(() => favouriteTokens.includes(id), [favouriteTokens]);
-  const handleAddToFavourites = useCallback(() => dispatch(addFavouriteToken(id)), []);
-  const handleDeleteFromFavourites = useCallback(() => dispatch(deleteFavouriteToken(id)), []);
-  const handlePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
+
+  const handleAddToFavourites = useCallback(() => {
+    dispatch(addFavouriteToken(id));
+    onPress();
+  }, []);
+
+  const handleDeleteFromFavourites = useCallback(() => {
+    dispatch(deleteFavouriteToken(id));
+    onPress();
+  }, []);
+
+  const handleFavoritePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
+
+  const handleBuyPress = useCallback(() => {
+    navigate(ScreensEnum.SwapScreen, { outputToken });
+    onPress();
+  }, []);
 
   return (
     <View style={styles.rootContainer}>
       <HiddenButton
+        testID={`${RightSwipeViewSelectors.ToggleFavouriteToken}/${id}`}
         iconName={IconNameEnum.Buy}
         text="Buy"
         disabled={!outputToken}
-        onPress={() => navigate(ScreensEnum.SwapScreen, { outputToken })}
+        onPress={handleBuyPress}
       />
+
       <Divider size={formatSize(1)} />
 
       <HiddenButton
+        testID={`${RightSwipeViewSelectors.BuyToken}/${id}`}
         iconName={IconNameEnum.Favourite}
         text="Favorites"
         fill={isFavourite ? colors.peach : undefined}
-        onPress={handlePress}
+        onPress={handleFavoritePress}
       />
     </View>
   );

@@ -36,15 +36,32 @@ export const loadMarketCoinsSlugs$ = from(templeWalletApi.get<Record<string, str
   map(value => value.data)
 );
 
-const formatNumber = (value: number) => {
-  const parts = value.toFixed(2).split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const si = [
+  { value: 1e3, letter: 'K' },
+  { value: 1e6, letter: 'M' },
+  { value: 1e9, letter: 'B' },
+  { value: 1e12, letter: 'T' },
+  { value: 1e15, letter: 'P' },
+  { value: 1e18, letter: 'E' }
+];
 
-  if (value > 100_000 || parts[1] === '00') {
-    return parts[0];
+const formatNumber = (value: number) => {
+  if (value < 10000) {
+    if (value % 1 === 0) {
+      return value.toFixed(0);
+    }
+
+    return value.toFixed(2);
   }
 
-  return parts.join('.');
+  let index;
+  for (index = si.length - 1; index > 0; index--) {
+    if (value >= si[index].value) {
+      break;
+    }
+  }
+
+  return (value / si[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, '$1') + si[index].letter;
 };
 
 export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {

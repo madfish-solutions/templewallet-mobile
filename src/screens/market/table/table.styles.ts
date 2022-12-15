@@ -11,6 +11,7 @@ export const useTableStyles = createUseStyles(({ colors, typography }) => ({
     justifyContent: 'space-between',
     paddingHorizontal: formatSize(14),
     paddingVertical: formatSize(10),
+    paddingLeft: formatSize(30),
     borderTopWidth: formatSize(1),
     borderBottomWidth: formatSize(1),
     borderColor: colors.lines
@@ -19,15 +20,7 @@ export const useTableStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.numbersRegular11,
     color: colors.gray2
   },
-  name: {
-    marginRight: formatSize(88),
-    marginLeft: formatSize(16)
-  },
   price: {
-    marginRight: formatSize(52),
-    fontSize: formatSize(11)
-  },
-  h24: {
-    marginRight: 'auto'
+    paddingLeft: formatSize(42)
   }
 }));

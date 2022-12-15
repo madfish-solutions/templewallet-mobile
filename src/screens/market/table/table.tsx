@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
 import { View, Text, RefreshControl, ListRenderItem, FlatList } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilterdMarketCoins } from '../../../hooks/use-filtered-market-coins.hook';
 import { MarketCoin } from '../../../store/market/market.interfaces';
 import { Filters } from './filters/filters';
-import { RightSwipeView } from './right-swipe-view/right-swipe-view';
-import { Row } from './row/row';
+import { SwipableRow } from './swipable-row/swipable-row';
 import { useTableStyles } from './table.styles';
 
 export const Table = () => {
@@ -18,14 +16,7 @@ export const Table = () => {
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-  const renderItem: ListRenderItem<MarketCoin> = useCallback(
-    ({ item }) => (
-      <Swipeable renderRightActions={() => <RightSwipeView id={item.id} />}>
-        <Row item={item} />
-      </Swipeable>
-    ),
-    []
-  );
+  const renderItem: ListRenderItem<MarketCoin> = useCallback(({ item }) => <SwipableRow item={item} />, []);
 
   return (
     <View style={styles.rootContainer}>
@@ -37,9 +28,9 @@ export const Table = () => {
         onSelectorChange={handleSelectorChange}
       />
       <View style={styles.columns}>
-        <Text style={[styles.text, styles.name]}>NAME</Text>
+        <Text style={styles.text}>NAME</Text>
         <Text style={[styles.text, styles.price]}>PRICE</Text>
-        <Text style={[styles.text, styles.h24]}>24H</Text>
+        <Text style={styles.text}>24H</Text>
         <Text style={styles.text}>VOLUME (24H)</Text>
       </View>
       <FlatList

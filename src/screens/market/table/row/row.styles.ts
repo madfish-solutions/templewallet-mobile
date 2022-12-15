@@ -18,7 +18,7 @@ export const useRowStyles = createUseStyles(({ colors, typography }) => ({
     width: formatSize(62)
   },
   digits: {
-    width: formatSize(100),
+    width: formatSize(90),
     alignItems: 'flex-end'
   },
   priceChange: {
