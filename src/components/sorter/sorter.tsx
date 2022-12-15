@@ -2,9 +2,7 @@ import React, { FC } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { formatSize } from '../../styles/format-size';
-import { BottomSheet } from '../bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
+import { BottomSheet, useBottomSheetController, BottomSheetActionButton } from '../bottom-sheet';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSorterStyles } from './sorter.styles';
