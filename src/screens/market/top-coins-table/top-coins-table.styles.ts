@@ -1,7 +1,7 @@
+import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
-import { createUseStyles } from './../../../styles/create-use-styles';
 
-export const useTableStyles = createUseStyles(({ colors, typography }) => ({
+export const useTopCoinsTableStyles = createUseStyles(({ colors, typography }) => ({
   rootContainer: {
     flexGrow: 1,
     flexShrink: 1

@@ -1,3 +1,5 @@
+import { Roi } from '../../interfaces/roi.interface';
+
 export interface MarketCoin {
   id: string;
   name: string;
@@ -9,12 +11,6 @@ export interface MarketCoin {
   volume24h: number | null;
   supply: number | null;
   marketCup: number | null;
-}
-
-interface Roi {
-  times: number;
-  currency: string;
-  percentage: number;
 }
 
 export interface MarketCoinRaw {

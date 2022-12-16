@@ -12,19 +12,10 @@ export interface IconProps {
   height?: number;
   color?: string;
   style?: ViewStyle;
-  fill?: string;
 }
 
-export const Icon: FC<IconProps> = ({
-  name,
-  size = formatSize(16),
-  width = size,
-  height = size,
-  color,
-  style,
-  fill
-}) => {
+export const Icon: FC<IconProps> = ({ name, size = formatSize(16), width = size, height = size, color, style }) => {
   const Svg = useMemo(() => iconNameMap[name], [name]);
 
-  return <Svg width={width} height={height} color={color} style={style} fill={fill} />;
+  return <Svg width={width} height={height} color={color} style={style} />;
 };

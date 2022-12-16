@@ -25,7 +25,7 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   }));
   builer.addCase(loadMarketCoinsSlugsActions.submit, state => ({
     ...state,
-    tokensSlugs: createEntity(state.tokensSlugs.data, true)
+    tokensSlugs: createEntity(state.tokensIdsToSlugs.data, true)
   }));
   builer.addCase(loadMarketCoinsSlugsActions.success, (state, { payload: tokensSlugs }) => ({
     ...state,
@@ -41,10 +41,10 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   }));
   builer.addCase(addFavouriteToken, (state, { payload: tokenSlug }) => ({
     ...state,
-    favouriteTokens: [...state.favouriteTokens, tokenSlug]
+    favouriteTokens: [...state.favouriteTokensSlugs, tokenSlug]
   }));
   builer.addCase(deleteFavouriteToken, (state, { payload: tokenSlug }) => ({
     ...state,
-    favouriteTokens: state.favouriteTokens.filter(slug => slug !== tokenSlug)
+    favouriteTokens: state.favouriteTokensSlugs.filter(slug => slug !== tokenSlug)
   }));
 });

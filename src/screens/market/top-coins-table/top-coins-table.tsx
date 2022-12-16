@@ -7,10 +7,10 @@ import { useFilterdMarketCoins } from '../../../hooks/use-filtered-market-coins.
 import { MarketCoin } from '../../../store/market/market.interfaces';
 import { Filters } from './filters/filters';
 import { SwipableRow } from './swipable-row/swipable-row';
-import { useTableStyles } from './table.styles';
+import { useTopCoinsTableStyles } from './top-coins-table.styles';
 
-export const Table = () => {
-  const styles = useTableStyles();
+export const TopCoinsTable = () => {
+  const styles = useTopCoinsTableStyles();
   const { filteredAssetsList, sortFiled, inputTypeIndex, setSearchValue, handleSetSortField, handleSelectorChange } =
     useFilterdMarketCoins();
 
