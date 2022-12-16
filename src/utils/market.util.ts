@@ -1,40 +1,36 @@
-import { from, map } from 'rxjs';
-
 import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum';
 import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { coingeckoApi, templeWalletApi } from './../api.service';
 
-export const loadMarketTopCoins$ = from(
-  coingeckoApi.get<Array<MarketCoinRaw>>(
-    'coins/markets?vs_currency=usd&category=tezos-ecosystem&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h%2C7d'
-  )
-).pipe(
-  map(({ data }) => {
-    const mappedCoins: Array<MarketCoin> = [];
+export const fetchMarketTopCoins = () =>
+  coingeckoApi
+    .get<Array<MarketCoinRaw>>(
+      'coins/markets?vs_currency=usd&category=tezos-ecosystem&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h%2C7d'
+    )
+    .then(({ data }) => {
+      const mappedCoins: Array<MarketCoin> = [];
 
-    for (const coinInfo of data) {
-      mappedCoins.push({
-        id: coinInfo.id,
-        name: coinInfo.name,
-        symbol: coinInfo.symbol.toUpperCase(),
-        imageUrl: coinInfo.image,
-        price: coinInfo.current_price,
-        priceChange7d: coinInfo?.price_change_percentage_7d_in_currency,
-        priceChange24h: coinInfo?.price_change_percentage_24h_in_currency,
-        volume24h: coinInfo.total_volume,
-        supply: coinInfo.circulating_supply,
-        marketCup: coinInfo.market_cap
-      });
-    }
+      for (const coinInfo of data) {
+        mappedCoins.push({
+          id: coinInfo.id,
+          name: coinInfo.name,
+          symbol: coinInfo.symbol.toUpperCase(),
+          imageUrl: coinInfo.image,
+          price: coinInfo.current_price,
+          priceChange7d: coinInfo?.price_change_percentage_7d_in_currency,
+          priceChange24h: coinInfo?.price_change_percentage_24h_in_currency,
+          volume24h: coinInfo.total_volume,
+          supply: coinInfo.circulating_supply,
+          marketCup: coinInfo.market_cap
+        });
+      }
 
-    return mappedCoins;
-  })
-);
+      return mappedCoins;
+    });
 
-export const loadMarketCoinsSlugs$ = from(templeWalletApi.get<Record<string, string>>('/top-coins')).pipe(
-  map(value => value.data)
-);
+export const fetchMarketCoinsSlugs = () =>
+  templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
 
 const si = [
   { value: 1e3, letter: 'K' },

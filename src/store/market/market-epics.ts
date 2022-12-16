@@ -1,16 +1,19 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { loadMarketCoinsSlugs$, loadMarketTopCoins$ } from '../../utils/market.util';
+import { fetchMarketCoinsSlugs, fetchMarketTopCoins } from '../../utils/market.util';
 import { loadMarketCoinsSlugsActions, loadMarketTopCoinsActions } from './market-actions';
+
+const loadMarketCoinsSlugs$ = () => from(fetchMarketCoinsSlugs());
+const loadMarketTopCoins$ = () => from(fetchMarketTopCoins());
 
 const loadMarketTopCoins = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadMarketTopCoinsActions.submit),
     switchMap(() =>
-      loadMarketTopCoins$.pipe(
+      loadMarketTopCoins$().pipe(
         map(value => loadMarketTopCoinsActions.success(value)),
         catchError(error => of(loadMarketTopCoinsActions.fail(error.message)))
       )
@@ -21,7 +24,7 @@ const loadMarketCoinsSlugs: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadMarketCoinsSlugsActions.submit),
     switchMap(() =>
-      loadMarketCoinsSlugs$.pipe(
+      loadMarketCoinsSlugs$().pipe(
         map(value => loadMarketCoinsSlugsActions.success(value)),
         catchError(error => of(loadMarketCoinsSlugsActions.fail(error.message)))
       )
