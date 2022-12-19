@@ -17,7 +17,6 @@ export const Market = () => {
   const initDataLoading = () => {
     dispatch(loadMarketTopTokenActions.submit());
     dispatch(loadMarketTokensSlugsActions.submit());
-    console.log('initDataLoading');
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL);
