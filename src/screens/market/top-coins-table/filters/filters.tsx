@@ -9,13 +9,13 @@ import { MarketTokensSortFieldEnum } from '../../../../enums/market-tokens-sort-
 import { formatSize } from '../../../../styles/format-size';
 import { useFilterStyles } from './filter.styles';
 
-const marketCoinsSortFieldsLabels: Record<MarketTokensSortFieldEnum, string> = {
+const marketTokensSortFieldsLabels: Record<MarketTokensSortFieldEnum, string> = {
   [MarketTokensSortFieldEnum.Volume]: 'Volume',
   [MarketTokensSortFieldEnum.Price]: 'Price',
   [MarketTokensSortFieldEnum.PriceChange]: '24H'
 };
 
-const marketCoinsSortFieldsOptions: Array<MarketTokensSortFieldEnum> = [
+const marketTokensSortFieldsOptions: Array<MarketTokensSortFieldEnum> = [
   MarketTokensSortFieldEnum.Volume,
   MarketTokensSortFieldEnum.Price,
   MarketTokensSortFieldEnum.PriceChange
@@ -50,8 +50,8 @@ export const Filters: FC<Props> = ({
         <Sorter
           sortValue={sortFiled}
           description="Sort tokens by:"
-          sortFieldsOptions={marketCoinsSortFieldsOptions}
-          sortFieldsLabels={marketCoinsSortFieldsLabels}
+          sortFieldsOptions={marketTokensSortFieldsOptions}
+          sortFieldsLabels={marketTokensSortFieldsLabels}
           onSetSortValue={onSetSortValue}
         />
       </Search>

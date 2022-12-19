@@ -5,7 +5,7 @@ import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enu
 import { selectSortValue } from '../store/market/market-actions';
 import {
   useFavouriteTokensIds,
-  useMarketTopCoinsWithoutTez,
+  useMarketTopTokensWithoutTez,
   useSortFieldSelector
 } from '../store/market/market-selectors';
 import { isString } from '../utils/is-string';
@@ -14,7 +14,7 @@ import { MarketToken } from './../store/market/market.interfaces';
 
 export const useFilterdMarketTokens = () => {
   const dispatch = useDispatch();
-  const tokens = useMarketTopCoinsWithoutTez();
+  const tokens = useMarketTopTokensWithoutTez();
   const sortFiled = useSortFieldSelector();
   const favouriteTokensIds = useFavouriteTokensIds();
 
@@ -43,7 +43,7 @@ export const useFilterdMarketTokens = () => {
     } else {
       return sortedMarketTokens;
     }
-  }, [searchValue, sortFiled, segmentControlIndex, favouriteTokensIds]);
+  }, [searchValue, sortFiled, segmentControlIndex, favouriteTokensIds, tokens]);
 
   const handleSetSortField = (sortValue: MarketTokensSortFieldEnum) => dispatch(selectSortValue(sortValue));
   const handleSelectorChange = (index: number) => setSegmentControlIndex(index);

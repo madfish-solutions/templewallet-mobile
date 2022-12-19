@@ -4,16 +4,16 @@ import { useSelector } from '../selector';
 
 const TEZOS_ID = 'tezos';
 
-const useMarketTopToken = () => useSelector(state => state.market.tokens.data);
+const useMarketTopTokens = () => useSelector(state => state.market.tokens.data);
 
-export const useMarketTopCoinsWithoutTez = () => {
-  const tokens = useMarketTopToken();
+export const useMarketTopTokensWithoutTez = () => {
+  const tokens = useMarketTopTokens();
 
   return useMemo(() => tokens.filter(token => token.id !== TEZOS_ID), [tokens]);
 };
 
 export const useTezosMarketToken = () => {
-  const tokens = useMarketTopToken();
+  const tokens = useMarketTopTokens();
 
   return useMemo(() => tokens.find(token => token.id === TEZOS_ID), [tokens]);
 };

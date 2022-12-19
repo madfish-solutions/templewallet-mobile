@@ -55,7 +55,6 @@ import { Wallet } from '../screens/wallet/wallet';
 import { Welcome } from '../screens/welcome/welcome';
 import { loadSelectedBakerActions } from '../store/baking/baking-actions';
 import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from '../store/market/market-actions';
 import { loadNotificationsAction } from '../store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
@@ -91,8 +90,6 @@ export const MainStackScreen = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
-    dispatch(loadMarketTopTokenActions.submit());
-    dispatch(loadMarketTokensSlugsActions.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
