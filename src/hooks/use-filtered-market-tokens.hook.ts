@@ -25,13 +25,13 @@ export const useFilterdMarketTokens = () => {
 
   const filteredTokensList = useMemo<Array<MarketToken>>(() => {
     const source = segmentControlIndex === 0 ? tokens : tokens.filter(item => favouriteTokensIds.includes(item.id));
-    const sortedMarketCoins = sortMarketTokens(source, sortFiled);
+    const sortedMarketTokens = sortMarketTokens(source, sortFiled);
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: Array<MarketToken> = [];
 
-      for (const asset of sortedMarketCoins) {
+      for (const asset of sortedMarketTokens) {
         const { name, symbol } = asset;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || symbol.toLowerCase().includes(lowerCaseSearchValue)) {
@@ -41,7 +41,7 @@ export const useFilterdMarketTokens = () => {
 
       return result;
     } else {
-      return sortedMarketCoins;
+      return sortedMarketTokens;
     }
   }, [searchValue, sortFiled, segmentControlIndex, favouriteTokensIds]);
 

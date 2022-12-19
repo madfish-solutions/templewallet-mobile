@@ -4,28 +4,27 @@ import { View, Text } from 'react-native';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { TokenIcon } from '../../../components/token-icon/token-icon';
+import { useTezosMarketToken } from '../../../store/market/market-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { useTezosInfoService } from './tezos-info.service';
+import { useColors } from '../../../styles/use-colors';
+import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../utils/market.util';
+import { circulatingSupplyAlert, marketCupAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
-  const {
-    imageUrl,
-    symbol,
-    name,
-    price,
-    marketCup,
-    priceChange24h,
-    priceChange7d,
-    volume24h,
-    supply,
-    priceChange24hColor,
-    priceChange7dColor,
-    marketCupAlert,
-    volumeAlert,
-    circulatingSupplyAlert
-  } = useTezosInfoService();
+  const marketTezos = useTezosMarketToken();
+  const colors = useColors();
+
+  const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);
+  const priceChange7dColor = getPriceChangeColor(marketTezos?.priceChange7d, colors);
+
+  const { value: price } = getValueToShow(marketTezos?.price);
+  const { value: supply } = getValueToShow(marketTezos?.supply);
+  const { value: marketCup } = getValueToShow(marketTezos?.marketCup);
+  const { value: volume24h } = getValueToShow(marketTezos?.volume24h);
+  const priceChange7d = getPriceChange(marketTezos?.priceChange7d);
+  const priceChange24h = getPriceChange(marketTezos?.priceChange24h);
 
   return (
     <View>
@@ -33,11 +32,11 @@ export const TezosInfo = () => {
         <View style={[styles.flex1, styles.commonView, styles.mr8]}>
           <View style={[styles.displayFlex, styles.tezMain, styles.mb8]}>
             <View style={styles.imageAndPrice}>
-              <TokenIcon thumbnailUri={imageUrl} />
+              <TokenIcon thumbnailUri={marketTezos?.imageUrl} />
 
               <View style={styles.nameAndSymbolContainer}>
-                <Text style={styles.regularText}>{symbol}</Text>
-                <Text style={styles.subtitle11}>{name}</Text>
+                <Text style={styles.regularText}>{marketTezos?.symbol}</Text>
+                <Text style={styles.subtitle11}>{marketTezos?.name}</Text>
               </View>
             </View>
 
