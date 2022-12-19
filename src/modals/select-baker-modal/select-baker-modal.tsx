@@ -12,6 +12,7 @@ import { Label } from '../../components/label/label';
 import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { SearchInput } from '../../components/search-input/search-input';
+import { Sorter } from '../../components/sorter/sorter';
 import { BakersSortFieldEnum } from '../../enums/bakers-sort-field.enum';
 import { BakerInterface } from '../../interfaces/baker.interface';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
@@ -27,7 +28,6 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
-import { Sorter } from "../../components/sorter/sorter";
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 

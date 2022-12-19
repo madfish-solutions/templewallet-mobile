@@ -3,7 +3,7 @@ import { createEntity } from '../create-entity';
 import { MarketState } from './market-state';
 
 export const mockMarketState: MarketState = {
-  favouriteTokensSlugs: [],
+  favouriteTokensIds: [],
   sortField: MarketCoinsSortFieldEnum.Volume,
   tokens: createEntity([]),
   tokensIdsToSlugs: createEntity({})

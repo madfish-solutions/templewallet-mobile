@@ -7,10 +7,7 @@ import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from '../../../../store/market/market-actions';
-import {
-  useFavouriteTokensIds,
-  useMarketCoinSlug
-} from '../../../../store/market/market-selectors';
+import { useFavouriteTokensIds, useMarketCoinSlug } from '../../../../store/market/market-selectors';
 import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';

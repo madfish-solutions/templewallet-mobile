@@ -5,11 +5,16 @@ import { useDispatch } from 'react-redux';
 import { Checkbox } from '../../../components/checkbox/checkbox';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../../components/divider/divider';
+import { IconNameEnum } from '../../../components/icon/icon-name.enum';
+import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { RefreshControl } from '../../../components/refresh-control/refresh-control';
+import { Search } from '../../../components/search/search';
 import { isAndroid } from '../../../config/system';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
+import { ScreensEnum } from '../../../navigator/enums/screens.enum';
+import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useTokensApyInfoSelector } from '../../../store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from '../../../store/settings/settings-selectors';
@@ -27,11 +32,6 @@ import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
-import { Search } from "../../../components/search/search";
-import { TouchableIcon } from "../../../components/icon/touchable-icon/touchable-icon";
-import { IconNameEnum } from "../../../components/icon/icon-name.enum";
-import { ScreensEnum } from "../../../navigator/enums/screens.enum";
-import { useNavigation } from "../../../navigator/hooks/use-navigation.hook";
 
 type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
 const keyExtractor = (item: FlatListItem) => {
@@ -116,7 +116,7 @@ export const TokenList: FC = () => {
           </Checkbox>
         </View>
 
-        <Search  onChange={setSearchValue}>
+        <Search onChange={setSearchValue}>
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}

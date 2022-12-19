@@ -2,7 +2,7 @@ import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum'
 import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { coingeckoApi, templeWalletApi } from './../api.service';
-import { kFormatter } from "./number.util";
+import { kFormatter } from './number.util';
 
 export const fetchMarketTopCoins = () =>
   coingeckoApi

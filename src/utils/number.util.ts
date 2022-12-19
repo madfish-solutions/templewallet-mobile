@@ -34,7 +34,6 @@ export const roundFiat = (
 
 export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
 
-
 const THOUSAND = 1000;
 const MILLION = 1_000_000;
 const BILLION = 1_000_000_000;
