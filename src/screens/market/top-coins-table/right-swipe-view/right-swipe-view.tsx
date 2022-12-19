@@ -32,6 +32,8 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const { navigate } = useNavigation();
 
   const isFavourite = useMemo(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
+  const favouriteIconColor = isFavourite ? colors.peach : colors.peach10;
+  const buyIconColor = outputToken ? colors.peach : colors.gray1;
 
   const handleAddToFavourites = () => {
     dispatch(addFavouriteToken(id));
@@ -57,6 +59,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
         text="Buy"
         disabled={!outputToken}
         onPress={handleBuyPress}
+        color={buyIconColor}
         testID={RightSwipeViewSelectors.ToggleFavouriteToken}
         testIDProperties={{
           id
@@ -68,8 +71,8 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
       <HiddenButton
         iconName={IconNameEnum.Favourite}
         text="Favorites"
-        fill={isFavourite ? colors.peach : undefined}
         onPress={handleFavoritePress}
+        color={favouriteIconColor}
         testID={RightSwipeViewSelectors.BuyToken}
         testIDProperties={{
           id
