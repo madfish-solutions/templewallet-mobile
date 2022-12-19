@@ -1,11 +1,11 @@
 import { Alert } from 'react-native';
 
-import { useTezosMarketCoin } from '../../../store/market/market-selectors';
+import { useTezosMarketToken } from '../../../store/market/market-selectors';
 import { useColors } from '../../../styles/use-colors';
 import { getPriceChangeColor, getValueToShow, getPriceChange } from '../../../utils/market.util';
 
 export const useTezosInfoService = () => {
-  const marketTezos = useTezosMarketCoin();
+  const marketTezos = useTezosMarketToken();
   const colors = useColors();
 
   const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);

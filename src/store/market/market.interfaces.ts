@@ -1,6 +1,6 @@
 import { Roi } from '../../interfaces/roi.interface';
 
-export interface MarketCoin {
+export interface MarketToken {
   id: string;
   name: string;
   symbol: string;
@@ -13,7 +13,7 @@ export interface MarketCoin {
   marketCup: number | null;
 }
 
-export interface MarketCoinRaw {
+export interface MarketTokenRaw {
   id: string;
   symbol: string;
   name: string;

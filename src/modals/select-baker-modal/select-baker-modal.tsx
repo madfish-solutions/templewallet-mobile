@@ -98,7 +98,7 @@ export const SelectBakerModal: FC = () => {
     }
   };
 
-  const handleSortValueChange = (value: string) => setSortValue(value as BakersSortFieldEnum);
+  const handleSortValueChange = (value: BakersSortFieldEnum) => setSortValue(value);
 
   useEffect(() => {
     if (isString(searchValue)) {

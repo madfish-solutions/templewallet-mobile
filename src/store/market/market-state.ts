@@ -1,18 +1,18 @@
-import { MarketCoinsSortFieldEnum } from '../../enums/market-coins-sort-field.enum';
+import { MarketTokensSortFieldEnum } from '../../enums/market-tokens-sort-field.enum';
 import { LoadableEntityState } from '../types';
 import { createEntity } from './../create-entity';
-import { MarketCoin } from './market.interfaces';
+import { MarketToken } from './market.interfaces';
 
 export interface MarketState {
   favouriteTokensIds: Array<string>;
-  sortField: MarketCoinsSortFieldEnum;
-  tokens: LoadableEntityState<Array<MarketCoin>>;
+  sortField: MarketTokensSortFieldEnum;
+  tokens: LoadableEntityState<Array<MarketToken>>;
   tokensIdsToSlugs: LoadableEntityState<Record<string, string>>;
 }
 
 export const marketInitialState: MarketState = {
   favouriteTokensIds: [],
-  sortField: MarketCoinsSortFieldEnum.Volume,
+  sortField: MarketTokensSortFieldEnum.Volume,
   tokens: createEntity([]),
   tokensIdsToSlugs: createEntity({})
 };

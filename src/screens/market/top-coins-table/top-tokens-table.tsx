@@ -3,26 +3,32 @@ import { View, Text, RefreshControl, ListRenderItem, FlatList } from 'react-nati
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
-import { useFilterdMarketCoins } from '../../../hooks/use-filtered-market-coins.hook';
-import { MarketCoin } from '../../../store/market/market.interfaces';
+import { useFilterdMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
+import { MarketToken } from '../../../store/market/market.interfaces';
 import { Filters } from './filters/filters';
 import { SwipableRow } from './swipable-row/swipable-row';
 import { useTopCoinsTableStyles } from './top-coins-table.styles';
 
-export const TopCoinsTable = () => {
+export const TopTokensTable = () => {
   const styles = useTopCoinsTableStyles();
-  const { filteredAssetsList, sortFiled, inputTypeIndex, setSearchValue, handleSetSortField, handleSelectorChange } =
-    useFilterdMarketCoins();
+  const {
+    filteredTokensList,
+    sortFiled,
+    segmentControlIndex,
+    setSearchValue,
+    handleSetSortField,
+    handleSelectorChange
+  } = useFilterdMarketTokens();
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-  const renderItem: ListRenderItem<MarketCoin> = useCallback(({ item }) => <SwipableRow item={item} />, []);
+  const renderItem: ListRenderItem<MarketToken> = useCallback(({ item }) => <SwipableRow item={item} />, []);
 
   return (
     <View style={styles.rootContainer}>
       <Filters
         sortFiled={sortFiled}
-        inputTypeIndex={inputTypeIndex}
+        segmentControlIndex={segmentControlIndex}
         onSetSortValue={handleSetSortField}
         onSearchValueChange={setSearchValue}
         onSelectorChange={handleSelectorChange}
@@ -35,7 +41,7 @@ export const TopCoinsTable = () => {
       </View>
       <FlatList
         scrollEnabled
-        data={filteredAssetsList}
+        data={filteredTokensList}
         renderItem={renderItem}
         refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
         keyExtractor={item => item.id}

@@ -2,12 +2,12 @@ import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
 import { TokenIcon } from '../../../../components/token-icon/token-icon';
-import { MarketCoin } from '../../../../store/market/market.interfaces';
+import { MarketToken } from '../../../../store/market/market.interfaces';
 import { useRowService } from './row.service';
 import { useRowStyles } from './row.styles';
 
 interface Props {
-  item: MarketCoin;
+  item: MarketToken;
 }
 
 export const Row: FC<Props> = ({ item }) => {

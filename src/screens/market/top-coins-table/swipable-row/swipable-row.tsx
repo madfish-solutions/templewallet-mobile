@@ -1,12 +1,12 @@
 import React, { FC, useRef } from 'react';
 import { Swipeable } from 'react-native-gesture-handler';
 
-import { MarketCoin } from '../../../../store/market/market.interfaces';
+import { MarketToken } from '../../../../store/market/market.interfaces';
 import { RightSwipeView } from '../right-swipe-view/right-swipe-view';
 import { Row } from '../row/row';
 
 interface Props {
-  item: MarketCoin;
+  item: MarketToken;
 }
 
 export const SwipableRow: FC<Props> = ({ item }) => {

@@ -37,7 +37,6 @@ export const invertSign = (amount: string) => new BigNumber(amount).times(-1).to
 const THOUSAND = 1000;
 const MILLION = 1_000_000;
 const BILLION = 1_000_000_000;
-const TRILLION = 1_000_000_000_000;
 export const kFormatter = (num: number): string => {
   if (isNaN(num)) {
     return '';
@@ -47,23 +46,19 @@ export const kFormatter = (num: number): string => {
 
   const formattedValue = Math.abs(num);
 
-  if (formattedValue < THOUSAND) {
-    return (sign * formattedValue).toLocaleString();
+  if (formattedValue >= BILLION) {
+    return (sign * Math.round(formattedValue / BILLION)).toLocaleString() + ' B';
   }
 
-  if (formattedValue >= THOUSAND && formattedValue < MILLION) {
-    return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + 'K';
+  if (formattedValue >= MILLION) {
+    return (sign * Math.round(formattedValue / MILLION)).toLocaleString() + ' M';
   }
 
-  if (formattedValue >= MILLION && formattedValue < BILLION) {
-    return (sign * Math.round(formattedValue / MILLION)).toLocaleString() + 'M';
+  if (formattedValue >= THOUSAND) {
+    return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + ' K';
   }
 
-  if (formattedValue >= BILLION && formattedValue < TRILLION) {
-    return (sign * Math.round(formattedValue / BILLION)).toLocaleString() + 'B';
-  }
-
-  return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + ' K';
+  return (sign * formattedValue).toLocaleString();
 };
 
 const numberWithSpaces = (amount: string) => {

@@ -71,12 +71,21 @@ describe('invertSign', () => {
 });
 
 describe('kFormatter', () => {
-  it('should format number to thousands and return with K in the end, passing less than 1000 k', () => {
-    expect(kFormatter(100000)).toEqual('100 K');
+  it('should not format number passing less than 1000', () => {
+    expect(kFormatter(450)).toEqual('450');
   });
 
-  it('should format number to thousands and return with K in the end, passing more than 1000 k', () => {
-    expect(kFormatter(10000000)).toEqual('10,000 K');
+  it('should format number to thousands and return with K in the end, passing less than 1000', () => {
+    expect(kFormatter(100_000)).toEqual('100 K');
+  });
+
+  it('should format number to millions and return with M in the end, passing more than 1 000 000', () => {
+    expect(kFormatter(10_000_000)).toEqual('10 M');
+  });
+
+  it('should format number to billions and return with B in the end, passing more than 1 000 000 000', () => {
+    expect(kFormatter(10_000_000_000)).toEqual('10 B');
+    expect(kFormatter(10_000_000_000_000)).toEqual('10,000 B');
   });
 
   it('should return NaN passing NaN', () => {

@@ -1,13 +1,14 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../../../components/divider/divider';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { EmptyFn } from '../../../../config/general';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from '../../../../store/market/market-actions';
-import { useFavouriteTokensIds, useMarketCoinSlug } from '../../../../store/market/market-selectors';
+import { useFavouriteTokensIds, useMarketTokenSlug } from '../../../../store/market/market-selectors';
 import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
@@ -17,14 +18,14 @@ import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 
 interface Props {
   id: string;
-  onPress: () => void;
+  onPress: EmptyFn;
 }
 export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const colors = useColors();
   const styles = useRightSwipeViewStyles();
   const favouriteTokensIds = useFavouriteTokensIds();
 
-  const marketCoinSlug = useMarketCoinSlug(id);
+  const marketCoinSlug = useMarketTokenSlug(id);
   const outputToken = useTokenSelector(marketCoinSlug);
 
   const dispatch = useDispatch();
@@ -32,22 +33,22 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
 
   const isFavourite = useMemo(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
 
-  const handleAddToFavourites = useCallback(() => {
+  const handleAddToFavourites = () => {
     dispatch(addFavouriteToken(id));
     onPress();
-  }, []);
+  };
 
-  const handleDeleteFromFavourites = useCallback(() => {
+  const handleDeleteFromFavourites = () => {
     dispatch(deleteFavouriteToken(id));
     onPress();
-  }, []);
+  };
 
   const handleFavoritePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
 
-  const handleBuyPress = useCallback(() => {
+  const handleBuyPress = () => {
     navigate(ScreensEnum.SwapScreen, { outputToken });
     onPress();
-  }, []);
+  };
 
   return (
     <View style={styles.rootContainer}>

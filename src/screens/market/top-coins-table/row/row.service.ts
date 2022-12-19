@@ -1,9 +1,9 @@
 import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
-import { MarketCoin } from '../../../../store/market/market.interfaces';
+import { MarketToken } from '../../../../store/market/market.interfaces';
 import { useColors } from '../../../../styles/use-colors';
 import { getPriceChangeColor, getValueToShow, getPriceChange } from '../../../../utils/market.util';
 
-export const useRowService = (item: MarketCoin) => {
+export const useRowService = (item: MarketToken) => {
   const { tez: tezosExchangeRate } = useUsdToTokenRates();
   const colors = useColors();
 

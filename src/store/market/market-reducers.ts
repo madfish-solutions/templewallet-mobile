@@ -4,34 +4,34 @@ import { createEntity } from '../create-entity';
 import {
   addFavouriteToken,
   deleteFavouriteToken,
-  loadMarketCoinsSlugsActions,
-  loadMarketTopCoinsActions,
+  loadMarketTokensSlugsActions,
+  loadMarketTopTokenActions,
   selectSortValue
 } from './market-actions';
 import { MarketState, marketInitialState } from './market-state';
 
 export const marketReducers = createReducer<MarketState>(marketInitialState, builer => {
-  builer.addCase(loadMarketTopCoinsActions.submit, state => ({
+  builer.addCase(loadMarketTopTokenActions.submit, state => ({
     ...state,
     tokens: createEntity(state.tokens.data, true)
   }));
-  builer.addCase(loadMarketTopCoinsActions.success, (state, { payload: tokens }) => ({
+  builer.addCase(loadMarketTopTokenActions.success, (state, { payload: tokens }) => ({
     ...state,
     tokens: createEntity(tokens, false)
   }));
-  builer.addCase(loadMarketTopCoinsActions.fail, (state, { payload: errorMessage }) => ({
+  builer.addCase(loadMarketTopTokenActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
     tokens: createEntity([], false, errorMessage)
   }));
-  builer.addCase(loadMarketCoinsSlugsActions.submit, state => ({
+  builer.addCase(loadMarketTokensSlugsActions.submit, state => ({
     ...state,
     tokensIdsToSlugs: createEntity(state.tokensIdsToSlugs.data, true)
   }));
-  builer.addCase(loadMarketCoinsSlugsActions.success, (state, { payload: tokensSlugs }) => ({
+  builer.addCase(loadMarketTokensSlugsActions.success, (state, { payload: tokensSlugs }) => ({
     ...state,
     tokensIdsToSlugs: createEntity(tokensSlugs, false)
   }));
-  builer.addCase(loadMarketCoinsSlugsActions.fail, (state, { payload: errorMessage }) => ({
+  builer.addCase(loadMarketTokensSlugsActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
     tokensIdsToSlugs: createEntity({}, false, errorMessage)
   }));
@@ -39,9 +39,9 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
     ...state,
     sortField
   }));
-  builer.addCase(addFavouriteToken, (state, { payload: tokenSlug }) => ({
+  builer.addCase(addFavouriteToken, (state, { payload: tokenId }) => ({
     ...state,
-    favouriteTokensIds: [...state.favouriteTokensIds, tokenSlug]
+    favouriteTokensIds: [...state.favouriteTokensIds, tokenId]
   }));
   builer.addCase(deleteFavouriteToken, (state, { payload: tokenId }) => ({
     ...state,

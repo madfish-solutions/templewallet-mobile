@@ -1,12 +1,12 @@
-import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum';
-import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
+import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
+import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { coingeckoApi, templeWalletApi } from './../api.service';
 import { kFormatter } from './number.util';
 
-export const fetchMarketTopCoins = () =>
+export const fetchMarketTopTokens = () =>
   coingeckoApi
-    .get<Array<MarketCoinRaw>>('coins/markets', {
+    .get<Array<MarketTokenRaw>>('coins/markets', {
       params: {
         vs_currency: 'usd',
         category: 'tezos-ecosystem',
@@ -32,7 +32,7 @@ export const fetchMarketTopCoins = () =>
       }))
     );
 
-export const fetchMarketCoinsSlugs = () =>
+export const fetchMarketTokensSlugs = () =>
   templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
 
 export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {
@@ -92,24 +92,24 @@ const sortByDescending = (a: number | null, b: number | null) => {
   }
 };
 
-export const sortMarketCoins = (marketCoins: Array<MarketCoin>, sortField: MarketCoinsSortFieldEnum) => {
+export const sortMarketTokens = (marketTokens: Array<MarketToken>, sortField: MarketTokensSortFieldEnum) => {
   switch (sortField) {
-    case MarketCoinsSortFieldEnum.Price:
-      return marketCoins.sort((a, b) => {
+    case MarketTokensSortFieldEnum.Price:
+      return marketTokens.sort((a, b) => {
         return sortByDescending(a.price, b.price);
       });
 
-    case MarketCoinsSortFieldEnum.Volume:
-      return marketCoins.sort((a, b) => {
+    case MarketTokensSortFieldEnum.Volume:
+      return marketTokens.sort((a, b) => {
         return sortByDescending(a.volume24h, b.volume24h);
       });
 
-    case MarketCoinsSortFieldEnum.PriceChange:
-      return marketCoins.sort((a, b) => {
+    case MarketTokensSortFieldEnum.PriceChange:
+      return marketTokens.sort((a, b) => {
         return sortByDescending(a.priceChange24h, b.priceChange24h);
       });
 
     default:
-      return marketCoins;
+      return marketTokens;
   }
 };

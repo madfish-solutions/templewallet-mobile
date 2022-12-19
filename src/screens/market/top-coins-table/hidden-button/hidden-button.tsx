@@ -3,11 +3,13 @@ import { TouchableOpacity, Text } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { EmptyFn } from '../../../../config/general';
 import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
+import { conditionalStyle } from '../../../../utils/conditional-style';
 import { useHiddenButtonStyles } from './hidden-button.styles';
 
 interface Props extends TestIdProps {
@@ -15,7 +17,7 @@ interface Props extends TestIdProps {
   text: string;
   disabled?: boolean;
   fill?: string;
-  onPress: () => void;
+  onPress: EmptyFn;
 }
 
 export const HiddenButton: FC<Props> = ({
@@ -32,9 +34,9 @@ export const HiddenButton: FC<Props> = ({
   const { trackEvent } = useAnalytics();
 
   const fillColor = disabled ? colors.disabled : fill;
-  const iconStyles = disabled ? styles.iconDisabled : styles.iconActive;
-  const textStyles = disabled ? styles.textDisabled : styles.textActive;
-  const rootStyles = disabled ? styles.rootContainerDisabled : styles.rootContainerActive;
+  const iconStyles = conditionalStyle(disabled, styles.iconDisabled, styles.iconActive);
+  const textStyles = conditionalStyle(disabled, styles.textDisabled, styles.textActive);
+  const rootStyles = conditionalStyle(disabled, styles.rootContainerDisabled, styles.rootContainerActive);
 
   const handlePress = () => {
     trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);

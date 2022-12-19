@@ -4,32 +4,33 @@ import { View } from 'react-native';
 import { Search } from '../../../../components/search/search';
 import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
 import { Sorter } from '../../../../components/sorter/sorter';
-import { MarketCoinsSortFieldEnum } from '../../../../enums/market-coins-sort-field.enum';
+import { EventFn } from '../../../../config/general';
+import { MarketTokensSortFieldEnum } from '../../../../enums/market-tokens-sort-field.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { useFilterStyles } from './filter.styles';
 
-const marketCoinsSortFieldsLabels: Record<MarketCoinsSortFieldEnum, string> = {
-  [MarketCoinsSortFieldEnum.Volume]: 'Volume',
-  [MarketCoinsSortFieldEnum.Price]: 'Price',
-  [MarketCoinsSortFieldEnum.PriceChange]: '24H'
+const marketCoinsSortFieldsLabels: Record<MarketTokensSortFieldEnum, string> = {
+  [MarketTokensSortFieldEnum.Volume]: 'Volume',
+  [MarketTokensSortFieldEnum.Price]: 'Price',
+  [MarketTokensSortFieldEnum.PriceChange]: '24H'
 };
 
-const marketCoinsSortFieldsOptions: Array<MarketCoinsSortFieldEnum> = [
-  MarketCoinsSortFieldEnum.Volume,
-  MarketCoinsSortFieldEnum.Price,
-  MarketCoinsSortFieldEnum.PriceChange
+const marketCoinsSortFieldsOptions: Array<MarketTokensSortFieldEnum> = [
+  MarketTokensSortFieldEnum.Volume,
+  MarketTokensSortFieldEnum.Price,
+  MarketTokensSortFieldEnum.PriceChange
 ];
 
 interface Props {
-  inputTypeIndex: number;
-  sortFiled: MarketCoinsSortFieldEnum;
-  onSetSortValue: (value: string) => void;
-  onSelectorChange: (index: number) => void;
-  onSearchValueChange: (value: string | undefined) => void;
+  segmentControlIndex: number;
+  sortFiled: MarketTokensSortFieldEnum;
+  onSetSortValue: EventFn<MarketTokensSortFieldEnum>;
+  onSelectorChange: EventFn<number>;
+  onSearchValueChange: EventFn<string | undefined>;
 }
 
 export const Filters: FC<Props> = ({
-  inputTypeIndex,
+  segmentControlIndex,
   sortFiled,
   onSetSortValue,
   onSelectorChange,
@@ -40,7 +41,7 @@ export const Filters: FC<Props> = ({
   return (
     <View style={styles.filtersContainer}>
       <TextSegmentControl
-        selectedIndex={inputTypeIndex}
+        selectedIndex={segmentControlIndex}
         width={formatSize(168)}
         values={['Market', 'Favourites']}
         onChange={onSelectorChange}
@@ -49,8 +50,8 @@ export const Filters: FC<Props> = ({
         <Sorter
           sortValue={sortFiled}
           description="Sort tokens by:"
-          sortFieldsLabels={marketCoinsSortFieldsLabels}
           sortFieldsOptions={marketCoinsSortFieldsOptions}
+          sortFieldsLabels={marketCoinsSortFieldsLabels}
           onSetSortValue={onSetSortValue}
         />
       </Search>

@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -9,15 +10,21 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSorterStyles } from './sorter.styles';
 
-interface Props<T extends string = string> {
+interface Props<T extends string> {
   sortValue: T;
   description: string;
   sortFieldsOptions: Array<T>;
   sortFieldsLabels: Record<T, string>;
-  onSetSortValue: (value: T) => void;
+  onSetSortValue: EventFn<T>;
 }
 
-export const Sorter: FC<Props> = ({ sortValue, description, sortFieldsLabels, sortFieldsOptions, onSetSortValue }) => {
+export const Sorter = <T extends string>({
+  sortValue,
+  description,
+  sortFieldsLabels,
+  sortFieldsOptions,
+  onSetSortValue
+}: Props<T>) => {
   const styles = useSorterStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
