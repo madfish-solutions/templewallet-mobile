@@ -8,20 +8,23 @@ import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-ev
 import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
 import { useHiddenButtonStyles } from './hidden-button.styles';
 import { TestIdProps } from "../../../../interfaces/test-id.props";
+import { useColors } from "../../../../styles/use-colors";
 
 interface Props extends TestIdProps {
   iconName: IconNameEnum;
   text: string;
   disabled?: boolean;
-  colorized?: boolean;
+  fill?: string;
   onPress: () => void;
 }
 
-export const HiddenButton: FC<Props> = ({ text, iconName, disabled = false, colorized = false, testID, testIDProperties, onPress }) => {
+export const HiddenButton: FC<Props> = ({ text, iconName, disabled = false, fill, testID, testIDProperties, onPress }) => {
+  const colors = useColors();
   const styles = useHiddenButtonStyles();
   const { trackEvent } = useAnalytics();
 
-  const iconStyles = disabled ? styles.iconDisabled : colorized ? styles.iconColorized : styles.iconUncolorized;
+  const fillColor = disabled ? colors.disabled : fill;
+  const iconStyles = disabled ? styles.iconDisabled : styles.iconActive;
   const textStyles = disabled ? styles.textDisabled : styles.textActive;
   const rootStyles = disabled ? styles.rootContainerDisabled : styles.rootContainerActive;
 
@@ -32,7 +35,7 @@ export const HiddenButton: FC<Props> = ({ text, iconName, disabled = false, colo
 
   return (
     <TouchableOpacity style={[styles.rootContainer, rootStyles]} onPress={handlePress} disabled={disabled}>
-      <Icon size={formatSize(24)} name={iconName} style={{...styles.icon, ...iconStyles}} />
+      <Icon size={formatSize(24)} name={iconName} style={{...styles.icon, ...iconStyles}} fill={fillColor} />
       <Text style={[styles.text, textStyles]}>{text}</Text>
     </TouchableOpacity>
   );

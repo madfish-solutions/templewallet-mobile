@@ -25,15 +25,15 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   }));
   builer.addCase(loadMarketCoinsSlugsActions.submit, state => ({
     ...state,
-    tokensSlugs: createEntity(state.tokensIdsToSlugs.data, true)
+    tokensIdsToSlugs: createEntity(state.tokensIdsToSlugs.data, true)
   }));
   builer.addCase(loadMarketCoinsSlugsActions.success, (state, { payload: tokensSlugs }) => ({
     ...state,
-    tokensSlugs: createEntity(tokensSlugs, false)
+    tokensIdsToSlugs: createEntity(tokensSlugs, false)
   }));
   builer.addCase(loadMarketCoinsSlugsActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
-    tokensSlugs: createEntity({}, false, errorMessage)
+    tokensIdsToSlugs: createEntity({}, false, errorMessage)
   }));
   builer.addCase(selectSortValue, (state, { payload: sortField }) => ({
     ...state,
@@ -41,10 +41,10 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   }));
   builer.addCase(addFavouriteToken, (state, { payload: tokenSlug }) => ({
     ...state,
-    favouriteTokens: [...state.favouriteTokensSlugs, tokenSlug]
+    favouriteTokensIds: [...state.favouriteTokensIds, tokenSlug]
   }));
-  builer.addCase(deleteFavouriteToken, (state, { payload: tokenSlug }) => ({
+  builer.addCase(deleteFavouriteToken, (state, { payload: tokenId }) => ({
     ...state,
-    favouriteTokens: state.favouriteTokensSlugs.filter(slug => slug !== tokenSlug)
+    favouriteTokensIds: state.favouriteTokensIds.filter(id => id !== tokenId)
   }));
 });
