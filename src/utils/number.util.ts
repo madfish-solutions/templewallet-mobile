@@ -34,12 +34,37 @@ export const roundFiat = (
 
 export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
 
-export const kFormatter = (num: number): string | number => {
+
+const THOUSAND = 1000;
+const MILLION = 1_000_000;
+const BILLION = 1_000_000_000;
+const TRILLION = 1_000_000_000_000;
+export const kFormatter = (num: number): string => {
   if (isNaN(num)) {
     return '';
   }
 
-  return (Math.sign(num) * Math.round(Math.abs(num) / 1000)).toLocaleString() + ' K';
+  const sign = Math.sign(num);
+
+  const formattedValue = Math.abs(num);
+
+  if (formattedValue < THOUSAND) {
+    return (sign * formattedValue).toLocaleString();
+  }
+
+  if (formattedValue >= THOUSAND && formattedValue < MILLION) {
+    return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + 'K';
+  }
+
+  if (formattedValue >= MILLION && formattedValue < BILLION) {
+    return (sign * Math.round(formattedValue / MILLION)).toLocaleString() + 'M';
+  }
+
+  if (formattedValue >= BILLION && formattedValue < TRILLION) {
+    return (sign * Math.round(formattedValue / BILLION)).toLocaleString() + 'B';
+  }
+
+  return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + ' K';
 };
 
 const numberWithSpaces = (amount: string) => {

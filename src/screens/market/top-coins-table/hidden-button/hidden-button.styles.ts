@@ -18,8 +18,11 @@ export const useHiddenButtonStyles = createUseStyles(({ colors, typography }) =>
   icon: {
     marginBottom: formatSize(4)
   },
-  iconActive: {
+  iconColorized: {
     color: colors.peach
+  },
+  iconUncolorized: {
+    color: colors.peach10
   },
   iconDisabled: {
     color: colors.gray2

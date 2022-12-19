@@ -20,6 +20,6 @@ export const useTezosMarketCoin = () => {
 
 export const useSortFieldSelector = () => useSelector(state => state.market.sortField);
 
-export const useFavouriteTokens = () => useSelector(state => state.market.favouriteTokensSlugs);
+export const useFavouriteTokensSlugs = () => useSelector(state => state.market.favouriteTokensSlugs);
 
 export const useMarketCoinSlug = (id: string) => useSelector(state => state.market.tokensIdsToSlugs.data[id]);

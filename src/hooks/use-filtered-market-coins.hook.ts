@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum';
 import { selectSortValue } from '../store/market/market-actions';
 import {
-  useFavouriteTokens,
+  useFavouriteTokensSlugs,
   useMarketTopCoinsWithoutTez,
   useSortFieldSelector
 } from '../store/market/market-selectors';
@@ -16,15 +16,15 @@ export const useFilterdMarketCoins = () => {
   const dispatch = useDispatch();
   const tokens = useMarketTopCoinsWithoutTez();
   const sortFiled = useSortFieldSelector();
-  const favouriteTokens = useFavouriteTokens();
+  const favouriteTokensSlugs = useFavouriteTokensSlugs();
 
-  const inputTypeIndexDefault = favouriteTokens.length === 0 ? 0 : 1;
+  const inputTypeIndexDefault = favouriteTokensSlugs.length === 0 ? 0 : 1;
 
   const [searchValue, setSearchValue] = useState<string>();
   const [inputTypeIndex, setInputTypeIndex] = useState<number>(inputTypeIndexDefault);
 
   const filteredAssetsList = useMemo<Array<MarketCoin>>(() => {
-    const source = inputTypeIndex === 0 ? tokens : tokens.filter(item => favouriteTokens.includes(item.id));
+    const source = inputTypeIndex === 0 ? tokens : tokens.filter(item => favouriteTokensSlugs.includes(item.id));
     const sortedMarketCoins = sortMarketCoins(source, sortFiled);
 
     if (isString(searchValue)) {
@@ -43,7 +43,7 @@ export const useFilterdMarketCoins = () => {
     } else {
       return sortedMarketCoins;
     }
-  }, [searchValue, sortFiled, inputTypeIndex, favouriteTokens]);
+  }, [searchValue, sortFiled, inputTypeIndex, favouriteTokensSlugs]);
 
   const handleSetSortField = useCallback(
     (sortValue: string) => dispatch(selectSortValue(sortValue as MarketCoinsSortFieldEnum)),

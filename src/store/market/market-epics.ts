@@ -6,8 +6,8 @@ import { ofType } from 'ts-action-operators';
 import { fetchMarketCoinsSlugs, fetchMarketTopCoins } from '../../utils/market.util';
 import { loadMarketCoinsSlugsActions, loadMarketTopCoinsActions } from './market-actions';
 
-const loadMarketCoinsSlugs$ = () => from(fetchMarketCoinsSlugs());
 const loadMarketTopCoins$ = () => from(fetchMarketTopCoins());
+const loadMarketCoinsSlugs$ = () => from(fetchMarketCoinsSlugs());
 
 const loadMarketTopCoins = (action$: Observable<Action>) =>
   action$.pipe(

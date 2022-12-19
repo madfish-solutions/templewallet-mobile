@@ -23,11 +23,15 @@ import { emptyToken, TokenInterface } from '../../../token/interfaces/token.inte
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { filterTezos } from '../../../utils/filter.util';
 import { createGetItemLayout } from '../../../utils/flat-list.utils';
-import { SearchContainer } from './search-container/search-container';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
+import { Search } from "../../../components/search/search";
+import { TouchableIcon } from "../../../components/icon/touchable-icon/touchable-icon";
+import { IconNameEnum } from "../../../components/icon/icon-name.enum";
+import { ScreensEnum } from "../../../navigator/enums/screens.enum";
+import { useNavigation } from "../../../navigator/hooks/use-navigation.hook";
 
 type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
 const keyExtractor = (item: FlatListItem) => {
@@ -44,6 +48,7 @@ const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
 export const TokenList: FC = () => {
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
   const styles = useTokenListStyles();
 
   const { metadata } = useNetworkInfo();
@@ -111,7 +116,19 @@ export const TokenList: FC = () => {
           </Checkbox>
         </View>
 
-        <SearchContainer onChange={setSearchValue} />
+        <Search  onChange={setSearchValue}>
+          <TouchableIcon
+            name={IconNameEnum.Clock}
+            size={formatSize(16)}
+            onPress={() => navigate(ScreensEnum.Activity)}
+          />
+          <Divider size={formatSize(24)} />
+          <TouchableIcon
+            name={IconNameEnum.Edit}
+            size={formatSize(16)}
+            onPress={() => navigate(ScreensEnum.ManageAssets)}
+          />
+        </Search>
       </View>
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.TokenList}>

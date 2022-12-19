@@ -2,6 +2,7 @@ import { MarketCoinsSortFieldEnum } from '../enums/market-coins-sort-field.enum'
 import { MarketCoin, MarketCoinRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { coingeckoApi, templeWalletApi } from './../api.service';
+import { kFormatter } from "./number.util";
 
 export const fetchMarketTopCoins = () =>
   coingeckoApi
@@ -13,7 +14,7 @@ export const fetchMarketTopCoins = () =>
         per_page: '100',
         page: '1',
         sparkline: false,
-        price_change_percentage: '24h%2C7d'
+        price_change_percentage: '24h,7d'
       }
     })
     .then(({ data }) =>
@@ -34,34 +35,6 @@ export const fetchMarketTopCoins = () =>
 export const fetchMarketCoinsSlugs = () =>
   templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
 
-const si = [
-  { value: 1e3, letter: 'K' },
-  { value: 1e6, letter: 'M' },
-  { value: 1e9, letter: 'B' },
-  { value: 1e12, letter: 'T' },
-  { value: 1e15, letter: 'P' },
-  { value: 1e18, letter: 'E' }
-];
-
-const formatNumber = (value: number) => {
-  if (value < 10000) {
-    if (value % 1 === 0) {
-      return value.toFixed(0);
-    }
-
-    return value.toFixed(2);
-  }
-
-  let index;
-  for (index = si.length - 1; index > 0; index--) {
-    if (value >= si[index].value) {
-      break;
-    }
-  }
-
-  return (value / si[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, '$1') + si[index].letter;
-};
-
 export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {
   const res: { value?: string; valueEstimatedInTezos?: string } = {};
 
@@ -71,11 +44,11 @@ export const getValueToShow = (value: number | null | undefined, tezosExchangeRa
     return res;
   }
 
-  res.value = value < 0.01 ? '>0.01' : formatNumber(value);
+  res.value = value < 0.01 ? '>0.01' : kFormatter(value);
 
   if (tezosExchangeRate !== undefined) {
     const valueInTezos = value / tezosExchangeRate;
-    res.valueEstimatedInTezos = valueInTezos < 0.01 ? '>0.01' : formatNumber(valueInTezos);
+    res.valueEstimatedInTezos = valueInTezos < 0.01 ? '>0.01' : kFormatter(valueInTezos);
   }
 
   return res;
