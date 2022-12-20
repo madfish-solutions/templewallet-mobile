@@ -23,6 +23,15 @@ export const TopTokensTable = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const renderItem: ListRenderItem<MarketToken> = useCallback(({ item }) => <SwipableRow item={item} />, []);
+  const listEmptyComponent =
+    segmentControlIndex === 0 ? (
+      <DataPlaceholder text="No Market data were found" />
+    ) : (
+      <DataPlaceholder
+        text="You have no favorites"
+        subText="Hint: to add to favorites, swipe a token on the “Market tab” and tap the star icon."
+      />
+    );
 
   return (
     <View style={styles.rootContainer}>
@@ -45,7 +54,7 @@ export const TopTokensTable = () => {
         renderItem={renderItem}
         refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
         keyExtractor={item => item.id}
-        ListEmptyComponent={<DataPlaceholder text="No records found." />}
+        ListEmptyComponent={listEmptyComponent}
       />
     </View>
   );
