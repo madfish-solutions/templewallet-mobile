@@ -76,7 +76,7 @@ export const TezosInfo = () => {
 
         <View style={[styles.commonView, styles.flex1]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
-            <Text style={styles.subtitle13}>Carculating Supply</Text>
+            <Text style={styles.subtitle13}>Circulating Supply</Text>
             <TouchableIcon onPress={circulatingSupplyAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
           </View>
           <Text style={styles.regularText}>{supply} TEZ</Text>
