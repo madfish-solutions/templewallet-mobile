@@ -66,7 +66,7 @@ const app = async () => {
     });
 
     transfers.forEach(transfer => {
-      if (transfer.to.address === routerFeeAddress) {
+      if (transfer.to?.address === routerFeeAddress) {
         const slug = transfer.token.contract.address + '_' + transfer.token.tokenId;
         const resultItem = result[slug] ?? {
           symbol: transfer.token.metadata.symbol,
