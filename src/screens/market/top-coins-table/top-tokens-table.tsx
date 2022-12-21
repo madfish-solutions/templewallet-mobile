@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { View, Text, RefreshControl, ListRenderItem, FlatList } from 'react-native';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -8,6 +8,8 @@ import { MarketToken } from '../../../store/market/market.interfaces';
 import { Filters } from './filters/filters';
 import { SwipableRow } from './swipable-row/swipable-row';
 import { useTopCoinsTableStyles } from './top-coins-table.styles';
+
+const renderItem: ListRenderItem<MarketToken> = ({ item }) => <SwipableRow item={item} />;
 
 export const TopTokensTable = () => {
   const styles = useTopCoinsTableStyles();
@@ -21,8 +23,6 @@ export const TopTokensTable = () => {
   } = useFilterdMarketTokens();
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
-
-  const renderItem: ListRenderItem<MarketToken> = useCallback(({ item }) => <SwipableRow item={item} />, []);
 
   return (
     <View style={styles.rootContainer}>

@@ -1,21 +1,17 @@
-import { useMemo } from 'react';
-
 import { useSelector } from '../selector';
 
 const TEZOS_ID = 'tezos';
 
-const useMarketTopTokens = () => useSelector(state => state.market.tokens.data);
-
 export const useMarketTopTokensWithoutTez = () => {
-  const tokens = useMarketTopTokens();
+  const tokens = useSelector(state => state.market.tokens.data);
 
-  return useMemo(() => tokens.filter(token => token.id !== TEZOS_ID), [tokens]);
+  return tokens.filter(token => token.id !== TEZOS_ID);
 };
 
 export const useTezosMarketToken = () => {
-  const tokens = useMarketTopTokens();
+  const tokens = useSelector(state => state.market.tokens.data);
 
-  return useMemo(() => tokens.find(token => token.id === TEZOS_ID), [tokens]);
+  return tokens.find(token => token.id === TEZOS_ID);
 };
 
 export const useSortFieldSelector = () => useSelector(state => state.market.sortField);
