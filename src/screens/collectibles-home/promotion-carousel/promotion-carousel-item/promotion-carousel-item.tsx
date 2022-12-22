@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
@@ -28,11 +28,16 @@ export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) 
         openUrl(link);
       }}
     >
-      {typeof source === 'string' ? (
-        <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
-      ) : (
-        <FastImage style={styles.bannerImage} source={source} />
-      )}
+      <View style={styles.rewardContainer}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>AD</Text>
+        </View>
+        {typeof source === 'string' ? (
+          <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
+        ) : (
+          <FastImage style={styles.bannerImage} source={source} />
+        )}
+      </View>
     </TouchableOpacity>
   );
 });
