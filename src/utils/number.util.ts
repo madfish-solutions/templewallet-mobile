@@ -35,8 +35,8 @@ export const roundFiat = (
 export const invertSign = (amount: string) => new BigNumber(amount).times(-1).toString();
 
 const THOUSAND = 1000;
-const MILLION = 1_000_000;
-const BILLION = 1_000_000_000;
+const MILLION = 1000 * 1000;
+const BILLION = 1000 * 1000 * 1000;
 export const kFormatter = (num: number): string => {
   if (isNaN(num)) {
     return '';
