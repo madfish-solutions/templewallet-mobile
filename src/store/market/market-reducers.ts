@@ -13,7 +13,7 @@ import { MarketState, marketInitialState } from './market-state';
 export const marketReducers = createReducer<MarketState>(marketInitialState, builer => {
   builer.addCase(loadMarketTopTokenActions.submit, state => ({
     ...state,
-    tokens: createEntity([], true)
+    tokens: createEntity(state.tokens.data, true)
   }));
   builer.addCase(loadMarketTopTokenActions.success, (state, { payload: tokens }) => ({
     ...state,
@@ -21,7 +21,7 @@ export const marketReducers = createReducer<MarketState>(marketInitialState, bui
   }));
   builer.addCase(loadMarketTopTokenActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
-    tokens: createEntity([], false, errorMessage)
+    tokens: createEntity(state.tokens.data, false, errorMessage)
   }));
   builer.addCase(loadMarketTokensSlugsActions.submit, state => ({
     ...state,

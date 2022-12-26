@@ -10,7 +10,7 @@ import { formatSize } from '../../../../styles/format-size';
 import { useFilterStyles } from './filter.styles';
 
 const marketTokensSortFieldsLabels: Record<MarketTokensSortFieldEnum, string> = {
-  [MarketTokensSortFieldEnum.Volume]: 'Volume',
+  [MarketTokensSortFieldEnum.Volume]: 'Volume (24H)',
   [MarketTokensSortFieldEnum.Price]: 'Price',
   [MarketTokensSortFieldEnum.PriceChange]: '24H'
 };
@@ -42,11 +42,11 @@ export const Filters: FC<Props> = ({
     <View style={styles.filtersContainer}>
       <TextSegmentControl
         selectedIndex={segmentControlIndex}
-        width={formatSize(168)}
-        values={['Market', 'Favourites']}
+        width={formatSize(152)}
+        values={['Market', 'Favorites']}
         onChange={onSelectorChange}
       />
-      <Search onChange={onSearchValueChange}>
+      <Search onChange={onSearchValueChange} dividerSize={12}>
         <Sorter
           sortValue={sortFiled}
           description="Sort tokens by:"

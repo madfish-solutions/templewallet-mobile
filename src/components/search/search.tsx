@@ -11,10 +11,11 @@ import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useSearchStyles } from './search.styles';
 
 interface Props {
+  dividerSize?: number;
   onChange: EventFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({ onChange, children }) => {
+export const Search: FC<Props> = ({ dividerSize = 24, onChange, children }) => {
   const colors = useColors();
   const styles = useSearchStyles();
   const debouncedOnChange = debounce(onChange);
@@ -45,7 +46,7 @@ export const Search: FC<Props> = ({ onChange, children }) => {
       ) : (
         <>
           {children}
-          <Divider size={formatSize(24)} />
+          <Divider size={formatSize(dividerSize)} />
           <TouchableIcon name={IconNameEnum.Search} size={formatSize(16)} onPress={() => setIsSearchMode(true)} />
         </>
       )}

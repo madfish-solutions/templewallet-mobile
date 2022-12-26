@@ -5,14 +5,18 @@ import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { TokenIcon } from '../../../components/token-icon/token-icon';
 import { useTezosMarketToken } from '../../../store/market/market-selectors';
+import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../utils/market.util';
+import { getTruncatedProps } from '../../../utils/style.util';
 import { circulatingSupplyAlert, marketCupAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
+  const tezosMetadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
   const marketTezos = useTezosMarketToken();
   const colors = useColors();
 
@@ -32,15 +36,15 @@ export const TezosInfo = () => {
         <View style={[styles.flex1, styles.commonView, styles.mr8]}>
           <View style={[styles.displayFlex, styles.tezMain, styles.mb8]}>
             <View style={styles.imageAndPrice}>
-              <TokenIcon thumbnailUri={marketTezos?.imageUrl} />
+              <TokenIcon iconName={tezosMetadata.iconName} />
 
               <View style={styles.nameAndSymbolContainer}>
-                <Text style={styles.regularText}>{marketTezos?.symbol}</Text>
+                <Text style={styles.regularText}>{tezosMetadata.symbol}</Text>
                 <Text style={styles.subtitle11}>{marketTezos?.name}</Text>
               </View>
             </View>
 
-            <Text style={styles.tezosPrice}>{price}$</Text>
+            <Text style={styles.tezosPrice}>{price} $</Text>
           </View>
 
           <View style={styles.displayFlex}>
@@ -48,19 +52,19 @@ export const TezosInfo = () => {
               <Text style={styles.subtitle13}>Market Cup</Text>
               <TouchableIcon onPress={marketCupAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </View>
-            <Text style={styles.regularText}>{marketCup}$</Text>
+            <Text style={styles.regularText}>{marketCup} $</Text>
           </View>
         </View>
 
         <View style={[styles.commonView, styles.displayCenter]}>
           <View style={styles.percentage}>
             <Text style={styles.subtitle11}>24H</Text>
-            <Text style={{ color: priceChange24hColor }}>{priceChange24h}</Text>
+            <Text {...getTruncatedProps({ color: priceChange24hColor })}>{priceChange24h}</Text>
           </View>
 
           <View>
             <Text style={styles.subtitle11}>7D</Text>
-            <Text style={{ color: priceChange7dColor }}>{priceChange7d}</Text>
+            <Text {...getTruncatedProps({ color: priceChange7dColor })}>{priceChange7d}</Text>
           </View>
         </View>
       </View>
@@ -71,7 +75,7 @@ export const TezosInfo = () => {
             <Text style={styles.subtitle13}>Volume (24H)</Text>
             <TouchableIcon onPress={volumeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
           </View>
-          <Text style={styles.regularText}>{volume24h}$</Text>
+          <Text style={styles.regularText}>{volume24h} $</Text>
         </View>
 
         <View style={[styles.commonView, styles.flex1]}>

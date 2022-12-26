@@ -7,7 +7,10 @@ export const useHiddenButtonStyles = createUseStyles(({ colors, typography }) =>
     justifyContent: 'center',
     paddingHorizontal: formatSize(10),
     paddingVertical: formatSize(12),
-    alignItems: 'center'
+    alignItems: 'center',
+    minWidth: formatSize(74),
+    flexBasis: formatSize(74),
+    flexGrow: 1
   },
   rootContainerActive: {
     backgroundColor: colors.peach10

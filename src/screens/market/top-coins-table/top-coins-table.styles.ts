@@ -11,16 +11,20 @@ export const useTopCoinsTableStyles = createUseStyles(({ colors, typography }) =
     justifyContent: 'space-between',
     paddingHorizontal: formatSize(14),
     paddingVertical: formatSize(10),
-    paddingLeft: formatSize(30),
     borderTopWidth: formatSize(1),
     borderBottomWidth: formatSize(1),
     borderColor: colors.lines
   },
+  listContainer: {
+    position: 'relative'
+  },
   text: {
     ...typography.numbersRegular11,
-    color: colors.gray2
+    color: colors.gray2,
+    flexBasis: '25%',
+    textAlign: 'right'
   },
-  price: {
-    paddingLeft: formatSize(42)
+  name: {
+    textAlign: 'center',
   }
 }));

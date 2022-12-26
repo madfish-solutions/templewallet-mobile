@@ -32,5 +32,8 @@ export const useRowStyles = createUseStyles(({ colors, typography }) => ({
   tezValue: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  basis25: {
+    flexBasis: '25%'
   }
 }));

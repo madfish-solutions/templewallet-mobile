@@ -6,40 +6,42 @@ import { useUsdToTokenRates } from '../../../../store/currency/currency-selector
 import { MarketToken } from '../../../../store/market/market.interfaces';
 import { useColors } from '../../../../styles/use-colors';
 import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../../utils/market.util';
+import { getTruncatedProps } from '../../../../utils/style.util';
 import { useRowStyles } from './row.styles';
 
-interface Props {
-  item: MarketToken;
-}
-
-export const Row: FC<Props> = ({ item }) => {
+export const Row: FC<MarketToken> = ({ priceChange24h, price, imageUrl, symbol, volume24h }) => {
   const colors = useColors();
   const styles = useRowStyles();
   const { tez: tezosExchangeRate } = useUsdToTokenRates();
 
-  const priceChangeColor = getPriceChangeColor(item.priceChange24h, colors);
-  const { value: price, valueEstimatedInTezos: priceEstimatedInTezos } = getValueToShow(item.price, tezosExchangeRate);
-  const { value: volume, valueEstimatedInTezos: volumeEstimatedInTezos } = getValueToShow(
-    item.volume24h,
+  const priceChangeColor = getPriceChangeColor(priceChange24h, colors);
+  const { value: priceFormatted, valueEstimatedInTezos: priceEstimatedInTezos } = getValueToShow(
+    price,
     tezosExchangeRate
   );
-  const priceChange24h = getPriceChange(item.priceChange24h);
+  const { value: volume24hFormatted, valueEstimatedInTezos: volumeEstimatedInTezos } = getValueToShow(
+    volume24h,
+    tezosExchangeRate
+  );
+  const priceChange24hFormatted = getPriceChange(priceChange24h);
 
   return (
     <View style={styles.container}>
-      <View style={styles.coinContainer}>
-        <TokenIcon thumbnailUri={item.imageUrl} />
-        <Text style={styles.regularText}>{item.symbol}</Text>
+      <View style={[styles.coinContainer, styles.basis25]}>
+        <TokenIcon thumbnailUri={imageUrl} />
+        <Text {...getTruncatedProps(styles.regularText)}>{symbol}</Text>
       </View>
-      <View style={styles.digits}>
-        <Text style={styles.regularText}>{price}$</Text>
+      <View style={[styles.digits, styles.basis25]}>
+        <Text style={styles.regularText}>{priceFormatted} $</Text>
         <Text style={styles.tezValue}>{priceEstimatedInTezos} TEZ</Text>
       </View>
 
-      <Text style={[styles.priceChange, styles.regularText, { color: priceChangeColor }]}>{priceChange24h}</Text>
+      <Text style={[styles.priceChange, styles.regularText, styles.basis25, { color: priceChangeColor }]}>
+        {priceChange24hFormatted}
+      </Text>
 
-      <View style={styles.digits}>
-        <Text style={styles.regularText}>{volume}$</Text>
+      <View style={[styles.digits, styles.basis25]}>
+        <Text style={styles.regularText}>{volume24hFormatted} $</Text>
         <Text style={styles.tezValue}>{volumeEstimatedInTezos} TEZ</Text>
       </View>
     </View>

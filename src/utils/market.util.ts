@@ -1,7 +1,7 @@
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
-import { coingeckoApi, templeWalletApi } from './../api.service';
+import { coingeckoApi, templeWalletApi } from '../api.service';
 import { kFormatter } from './number.util';
 
 export const fetchMarketTopTokens = () =>
@@ -21,7 +21,7 @@ export const fetchMarketTopTokens = () =>
       data.map(coinInfo => ({
         id: coinInfo.id,
         name: coinInfo.name,
-        symbol: coinInfo.symbol.toUpperCase(),
+        symbol: coinInfo.id === 'tezos' ? 'TEZ' : coinInfo.symbol.toUpperCase(),
         imageUrl: coinInfo.image,
         price: coinInfo.current_price,
         priceChange7d: coinInfo?.price_change_percentage_7d_in_currency,

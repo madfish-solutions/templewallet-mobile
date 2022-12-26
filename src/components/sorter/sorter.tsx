@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
@@ -16,9 +16,11 @@ interface Props<T extends string> {
   sortFieldsOptions: Array<T>;
   sortFieldsLabels: Record<T, string>;
   onSetSortValue: EventFn<T>;
+  style?: ViewStyle;
 }
 
 export const Sorter = <T extends string>({
+  style,
   sortValue,
   description,
   sortFieldsLabels,
@@ -29,7 +31,7 @@ export const Sorter = <T extends string>({
   const revealSelectBottomSheetController = useBottomSheetController();
 
   return (
-    <View>
+    <View style={style}>
       <View style={styles.sortSelector}>
         <Text style={styles.sortByLabel}>Sort by</Text>
         <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={revealSelectBottomSheetController.open}>
@@ -39,7 +41,7 @@ export const Sorter = <T extends string>({
       </View>
       <BottomSheet
         description={description}
-        contentHeight={formatSize(260)}
+        contentHeight={formatSize(225)}
         controller={revealSelectBottomSheetController}
       >
         {sortFieldsOptions.map(value => (

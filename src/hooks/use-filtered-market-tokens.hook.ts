@@ -8,9 +8,9 @@ import {
   useMarketTopTokensWithoutTez,
   useSortFieldSelector
 } from '../store/market/market-selectors';
+import { MarketToken } from '../store/market/market.interfaces';
 import { isString } from '../utils/is-string';
 import { sortMarketTokens } from '../utils/market.util';
-import { MarketToken } from './../store/market/market.interfaces';
 
 export const useFilterdMarketTokens = () => {
   const dispatch = useDispatch();
@@ -31,11 +31,11 @@ export const useFilterdMarketTokens = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: Array<MarketToken> = [];
 
-      for (const asset of sortedMarketTokens) {
-        const { name, symbol } = asset;
+      for (const token of sortedMarketTokens) {
+        const { name, symbol } = token;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || symbol.toLowerCase().includes(lowerCaseSearchValue)) {
-          result.push(asset);
+          result.push(token);
         }
       }
 

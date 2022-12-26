@@ -14,7 +14,6 @@ export const useSorterStyles = createUseStyles(({ colors, typography }) => ({
   selectedBakerSortField: {
     ...typography.caption11Regular,
     color: colors.black,
-    width: formatSize(50),
     marginLeft: formatSize(2)
   },
   selectedBakerFieldWrapper: {

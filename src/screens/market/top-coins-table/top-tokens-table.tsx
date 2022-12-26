@@ -1,16 +1,18 @@
-import React from 'react';
-import { View, Text, RefreshControl, ListRenderItem, FlatList } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, RefreshControl, ListRenderItem } from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilterdMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
 import { MarketToken } from '../../../store/market/market.interfaces';
+import { formatSize } from '../../../styles/format-size';
 import { Filters } from './filters/filters';
-import { SwipableRow } from './swipable-row/swipable-row';
+import { RightSwipeView } from './right-swipe-view/right-swipe-view';
+import { Row } from './row/row';
 import { useTopCoinsTableStyles } from './top-coins-table.styles';
 
-const renderItem: ListRenderItem<MarketToken> = ({ item }) => <SwipableRow item={item} />;
-
+const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 export const TopTokensTable = () => {
   const styles = useTopCoinsTableStyles();
   const {
@@ -21,6 +23,7 @@ export const TopTokensTable = () => {
     handleSetSortField,
     handleSelectorChange
   } = useFilterdMarketTokens();
+  const ref = useRef<SwipeListView<MarketToken | { id: string }>>(null);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -34,6 +37,13 @@ export const TopTokensTable = () => {
       />
     );
 
+  const closeAllOpenRows = () => ref.current?.closeAllOpenRows();
+
+  const handleSelectorChangeAndSwipeClose = (index: number) => {
+    handleSelectorChange(index);
+    closeAllOpenRows();
+  };
+
   return (
     <View style={styles.rootContainer}>
       <Filters
@@ -41,22 +51,28 @@ export const TopTokensTable = () => {
         segmentControlIndex={segmentControlIndex}
         onSetSortValue={handleSetSortField}
         onSearchValueChange={setSearchValue}
-        onSelectorChange={handleSelectorChange}
+        onSelectorChange={handleSelectorChangeAndSwipeClose}
       />
       <View style={styles.columns}>
-        <Text style={styles.text}>NAME</Text>
-        <Text style={[styles.text, styles.price]}>PRICE</Text>
+        <Text style={[styles.text, styles.name]}>NAME</Text>
+        <Text style={styles.text}>PRICE</Text>
         <Text style={styles.text}>24H</Text>
         <Text style={styles.text}>VOLUME (24H)</Text>
       </View>
-      <FlatList
-        scrollEnabled
-        data={filteredTokensList}
-        renderItem={renderItem}
-        refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-        keyExtractor={item => item.id}
-        ListEmptyComponent={listEmptyComponent}
-      />
+      <View style={styles.listContainer}>
+        <SwipeListView
+          scrollEnabled
+          disableRightSwipe
+          ref={ref}
+          data={filteredTokensList}
+          renderItem={renderItem}
+          renderHiddenItem={({ item }) => <RightSwipeView id={item.id} onPress={closeAllOpenRows} />}
+          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+          keyExtractor={item => item.id}
+          rightOpenValue={formatSize(-148)}
+          ListEmptyComponent={listEmptyComponent}
+        />
+      </View>
     </View>
   );
 };

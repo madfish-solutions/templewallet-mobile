@@ -16,7 +16,7 @@ import { HiddenButton } from '../hidden-button/hidden-button';
 import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 
-interface Props {
+export interface Props {
   id: string;
   onPress: EmptyFn;
 }
@@ -31,7 +31,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
-  const isFavourite = useMemo(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
+  const isFavourite = useMemo<boolean>(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
   const favouriteIconColor = isFavourite ? colors.peach : colors.peach10;
   const buyIconColor = outputToken ? colors.peach : colors.gray1;
 
@@ -49,7 +49,6 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
 
   const handleBuyPress = () => {
     navigate(ScreensEnum.SwapScreen, { outputToken });
-    onPress();
   };
 
   return (

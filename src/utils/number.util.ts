@@ -47,15 +47,15 @@ export const kFormatter = (num: number): string => {
   const formattedValue = Math.abs(num);
 
   if (formattedValue >= BILLION) {
-    return (sign * Math.round(formattedValue / BILLION)).toLocaleString() + ' B';
+    return (sign * Math.round(formattedValue / BILLION)).toLocaleString() + 'B';
   }
 
   if (formattedValue >= MILLION) {
-    return (sign * Math.round(formattedValue / MILLION)).toLocaleString() + ' M';
+    return (sign * Math.round(formattedValue / MILLION)).toLocaleString() + 'M';
   }
 
   if (formattedValue >= THOUSAND) {
-    return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + ' K';
+    return (sign * Math.round(formattedValue / THOUSAND)).toLocaleString() + 'K';
   }
 
   return (sign * formattedValue).toLocaleString();
