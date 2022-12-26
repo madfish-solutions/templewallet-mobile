@@ -25,6 +25,6 @@ export const useTopCoinsTableStyles = createUseStyles(({ colors, typography }) =
     textAlign: 'right'
   },
   name: {
-    textAlign: 'center',
+    textAlign: 'center'
   }
 }));

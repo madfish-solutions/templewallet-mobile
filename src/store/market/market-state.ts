@@ -14,7 +14,7 @@ export const marketInitialState: MarketState = {
   favouriteTokensIds: [],
   sortField: MarketTokensSortFieldEnum.Volume,
   tokens: createEntity([]),
-  tokensIdsToSlugs: createEntity({}),
+  tokensIdsToSlugs: createEntity({})
 };
 
 export interface MarketRootState {

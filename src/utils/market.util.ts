@@ -1,7 +1,7 @@
+import { coingeckoApi, templeWalletApi } from '../api.service';
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
-import { coingeckoApi, templeWalletApi } from '../api.service';
 import { kFormatter } from './number.util';
 
 export const fetchMarketTopTokens = () =>
