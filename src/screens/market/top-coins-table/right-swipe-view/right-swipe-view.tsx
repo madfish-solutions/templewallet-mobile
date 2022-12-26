@@ -16,7 +16,7 @@ import { HiddenButton } from '../hidden-button/hidden-button';
 import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 
-export interface Props {
+interface Props {
   id: string;
   onPress: EmptyFn;
 }
