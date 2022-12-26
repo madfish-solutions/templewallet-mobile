@@ -13,9 +13,10 @@ interface Props {
   testID: string;
   source: Source | string;
   link: string;
+  shouldShowAdBage?: boolean;
 }
 
-export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) => {
+export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link, shouldShowAdBage = false }) => {
   const { trackEvent } = useAnalytics();
 
   const styles = usePromotionCarouselItemStyles();
@@ -29,9 +30,11 @@ export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) 
       }}
     >
       <View style={styles.rewardContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>AD</Text>
-        </View>
+        {shouldShowAdBage && (
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>AD</Text>
+          </View>
+        )}
         {typeof source === 'string' ? (
           <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
         ) : (
