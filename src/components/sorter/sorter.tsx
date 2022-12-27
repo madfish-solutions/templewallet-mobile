@@ -16,6 +16,7 @@ interface Props<T extends string> {
   sortFieldsOptions: Array<T>;
   sortFieldsLabels: Record<T, string>;
   onSetSortValue: EventFn<T>;
+  bottomSheetContentHeight?: number;
   style?: ViewStyle;
 }
 
@@ -25,7 +26,8 @@ export const Sorter = <T extends string>({
   description,
   sortFieldsLabels,
   sortFieldsOptions,
-  onSetSortValue
+  onSetSortValue,
+  bottomSheetContentHeight = 260
 }: Props<T>) => {
   const styles = useSorterStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
@@ -41,7 +43,7 @@ export const Sorter = <T extends string>({
       </View>
       <BottomSheet
         description={description}
-        contentHeight={formatSize(225)}
+        contentHeight={formatSize(bottomSheetContentHeight)}
         controller={revealSelectBottomSheetController}
       >
         {sortFieldsOptions.map(value => (

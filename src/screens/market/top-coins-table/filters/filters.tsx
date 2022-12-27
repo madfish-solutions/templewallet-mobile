@@ -48,6 +48,7 @@ export const Filters: FC<Props> = ({
       />
       <Search onChange={onSearchValueChange} dividerSize={12}>
         <Sorter
+          bottomSheetContentHeight={224}
           sortValue={sortFiled}
           description="Sort tokens by:"
           sortFieldsOptions={marketTokensSortFieldsOptions}
