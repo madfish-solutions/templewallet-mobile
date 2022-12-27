@@ -10,11 +10,11 @@ import { formatSize } from '../../../styles/format-size';
 import { Filters } from './filters/filters';
 import { RightSwipeView } from './right-swipe-view/right-swipe-view';
 import { Row } from './row/row';
-import { useTopCoinsTableStyles } from './top-coins-table.styles';
+import { useTopTokensTableStyles } from './top-tokens-table.styles';
 
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 export const TopTokensTable = () => {
-  const styles = useTopCoinsTableStyles();
+  const styles = useTopTokensTableStyles();
   const {
     filteredTokensList,
     sortFiled,

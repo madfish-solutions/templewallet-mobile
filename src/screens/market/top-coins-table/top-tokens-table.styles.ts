@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
-export const useTopCoinsTableStyles = createUseStyles(({ colors, typography }) => ({
+export const useTopTokensTableStyles = createUseStyles(({ colors, typography }) => ({
   rootContainer: {
     flexGrow: 1,
     flexShrink: 1
@@ -16,7 +16,9 @@ export const useTopCoinsTableStyles = createUseStyles(({ colors, typography }) =
     borderColor: colors.lines
   },
   listContainer: {
-    position: 'relative'
+    position: 'relative',
+    flexGrow: 1,
+    flexShrink: 1
   },
   text: {
     ...typography.numbersRegular11,
