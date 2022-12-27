@@ -46,17 +46,15 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
 
       <View style={styles.infoContainer}>
         <View style={[styles.row, styles.justifySpaceBetween]}>
-          <View style={styles.row}>
-            <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
-              {token?.code}
+          <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
+            {token?.code}
+          </Text>
+          <Divider size={formatSize(8)} />
+          {!isDropdownClosed && (
+            <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
+              {token?.name}
             </Text>
-            <Divider size={formatSize(8)} />
-            {!isDropdownClosed && (
-              <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
-                {token?.name}
-              </Text>
-            )}
-          </View>
+          )}
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
 
