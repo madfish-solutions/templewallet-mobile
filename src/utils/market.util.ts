@@ -93,23 +93,19 @@ const sortByDescending = (a: number | null, b: number | null) => {
 };
 
 export const sortMarketTokens = (marketTokens: Array<MarketToken>, sortField: MarketTokensSortFieldEnum) => {
+  const result = [...marketTokens];
+
   switch (sortField) {
     case MarketTokensSortFieldEnum.Price:
-      return marketTokens.sort((a, b) => {
-        return sortByDescending(a.price, b.price);
-      });
+      return result.sort((a, b) => sortByDescending(a.price, b.price));
 
     case MarketTokensSortFieldEnum.Volume:
-      return marketTokens.sort((a, b) => {
-        return sortByDescending(a.volume24h, b.volume24h);
-      });
+      return result.sort((a, b) => sortByDescending(a.volume24h, b.volume24h));
 
     case MarketTokensSortFieldEnum.PriceChange:
-      return marketTokens.sort((a, b) => {
-        return sortByDescending(a.priceChange24h, b.priceChange24h);
-      });
+      return result.sort((a, b) => sortByDescending(a.priceChange24h, b.priceChange24h));
 
     default:
-      return marketTokens;
+      return result;
   }
 };

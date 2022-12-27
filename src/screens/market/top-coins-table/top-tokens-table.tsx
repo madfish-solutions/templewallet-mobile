@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
-import { View, Text, RefreshControl, ListRenderItem } from 'react-native';
+import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
-import { useFilterdMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
+import { useFilteredMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
 import { MarketToken } from '../../../store/market/market.interfaces';
 import { formatSize } from '../../../styles/format-size';
 import { Filters } from './filters/filters';
@@ -13,6 +13,8 @@ import { Row } from './row/row';
 import { useTopTokensTableStyles } from './top-tokens-table.styles';
 
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
+const keyExtractor = (item: MarketToken) => item.id;
+
 export const TopTokensTable = () => {
   const styles = useTopTokensTableStyles();
   const {
@@ -22,8 +24,8 @@ export const TopTokensTable = () => {
     setSearchValue,
     handleSetSortField,
     handleSelectorChange
-  } = useFilterdMarketTokens();
-  const ref = useRef<SwipeListView<MarketToken | { id: string }>>(null);
+  } = useFilteredMarketTokens();
+  const ref = useRef<SwipeListView<MarketToken>>(null);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -68,7 +70,7 @@ export const TopTokensTable = () => {
           renderItem={renderItem}
           renderHiddenItem={({ item }) => <RightSwipeView id={item.id} onPress={closeAllOpenRows} />}
           refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-          keyExtractor={item => item.id}
+          keyExtractor={keyExtractor}
           rightOpenValue={formatSize(-148)}
           ListEmptyComponent={listEmptyComponent}
         />

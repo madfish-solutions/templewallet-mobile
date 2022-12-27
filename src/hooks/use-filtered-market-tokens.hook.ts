@@ -12,7 +12,7 @@ import { MarketToken } from '../store/market/market.interfaces';
 import { isString } from '../utils/is-string';
 import { sortMarketTokens } from '../utils/market.util';
 
-export const useFilterdMarketTokens = () => {
+export const useFilteredMarketTokens = () => {
   const dispatch = useDispatch();
   const tokens = useMarketTopTokensWithoutTez();
   const sortFiled = useSortFieldSelector();

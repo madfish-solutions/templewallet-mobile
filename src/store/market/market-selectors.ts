@@ -2,17 +2,14 @@ import { useSelector } from '../selector';
 
 const TEZOS_ID = 'tezos';
 
-export const useMarketTopTokensWithoutTez = () => {
-  const tokens = useSelector(state => state.market.tokens.data);
+export const useMarketTopTokensWithoutTez = () =>
+  useSelector(
+    state => state.market.tokens.data.filter(token => token.id !== TEZOS_ID),
+    (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  );
 
-  return tokens.filter(token => token.id !== TEZOS_ID);
-};
-
-export const useTezosMarketToken = () => {
-  const tokens = useSelector(state => state.market.tokens.data);
-
-  return tokens.find(token => token.id === TEZOS_ID);
-};
+export const useTezosMarketToken = () =>
+  useSelector(state => state.market.tokens.data.find(token => token.id === TEZOS_ID));
 
 export const useSortFieldSelector = () => useSelector(state => state.market.sortField);
 
