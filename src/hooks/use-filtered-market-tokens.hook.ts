@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { selectSortValue } from '../store/market/market-actions';
 import {
-  useFavouriteTokensIds,
-  useMarketTopTokensWithoutTez,
+  useFavouriteTokensIdsSelector,
+  useMarketTopTokensWithoutTezSelector,
   useSortFieldSelector
 } from '../store/market/market-selectors';
 import { MarketToken } from '../store/market/market.interfaces';
@@ -14,9 +14,9 @@ import { sortMarketTokens } from '../utils/market.util';
 
 export const useFilteredMarketTokens = () => {
   const dispatch = useDispatch();
-  const tokens = useMarketTopTokensWithoutTez();
+  const tokens = useMarketTopTokensWithoutTezSelector();
   const sortFiled = useSortFieldSelector();
-  const favouriteTokensIds = useFavouriteTokensIds();
+  const favouriteTokensIds = useFavouriteTokensIdsSelector();
 
   const segmentControlIndexDefault = favouriteTokensIds.length === 0 ? 0 : 1;
 

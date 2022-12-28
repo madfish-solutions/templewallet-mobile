@@ -8,7 +8,7 @@ import { EmptyFn } from '../../../../config/general';
 import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from '../../../../store/market/market-actions';
-import { useFavouriteTokensIds, useMarketTokenSlug } from '../../../../store/market/market-selectors';
+import { useFavouriteTokensIdsSelector, useMarketTokenSlugSelector } from '../../../../store/market/market-selectors';
 import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
@@ -23,9 +23,9 @@ interface Props {
 export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const colors = useColors();
   const styles = useRightSwipeViewStyles();
-  const favouriteTokensIds = useFavouriteTokensIds();
+  const favouriteTokensIds = useFavouriteTokensIdsSelector();
 
-  const marketCoinSlug = useMarketTokenSlug(id);
+  const marketCoinSlug = useMarketTokenSlugSelector(id);
   const outputToken = useTokenSelector(marketCoinSlug);
 
   const dispatch = useDispatch();

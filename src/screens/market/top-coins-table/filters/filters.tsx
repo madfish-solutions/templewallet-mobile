@@ -42,7 +42,7 @@ export const Filters: FC<Props> = ({
     <View style={styles.filtersContainer}>
       <TextSegmentControl
         selectedIndex={segmentControlIndex}
-        width={formatSize(156)}
+        width={formatSize(160)}
         values={['Market', 'Favorites']}
         onChange={onSelectorChange}
       />

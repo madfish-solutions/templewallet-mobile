@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
 import { TokenIcon } from '../../../components/token-icon/token-icon';
-import { useTezosMarketToken } from '../../../store/market/market-selectors';
+import { useTezosMarketTokenSelector } from '../../../store/market/market-selectors';
 import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
@@ -17,7 +17,7 @@ import { useTezosInfoStyles } from './tezos-info.styles';
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
   const tezosMetadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
-  const marketTezos = useTezosMarketToken();
+  const marketTezos = useTezosMarketTokenSelector();
   const colors = useColors();
 
   const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);
