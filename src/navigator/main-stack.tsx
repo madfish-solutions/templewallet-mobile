@@ -36,6 +36,7 @@ import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-
 import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
 import { ManageAssets } from '../screens/manage-assets/manage-assets';
 import { ManualBackup } from '../screens/manual-backup/manual-backup';
+import { Market } from '../screens/market/market';
 import { NodeSettings } from '../screens/node-settings/node-settings';
 import { NotificationsItem } from '../screens/notifications-item/notifications-item';
 import { NotificationsSettings } from '../screens/notifications-settings/notifications-settings';
@@ -237,6 +238,13 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapQuestionsScreen}
                 component={SwapQuestionsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
+              />
+
+              {/** Market stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.Market}
+                component={Market}
+                options={{ animationEnabled: false, headerShown: false }}
               />
 
               {/** Settings stack **/}

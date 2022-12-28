@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
-export const useSearchContainerStyles = createUseStyles(({ colors, typography }) => ({
+export const useSearchStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center'
