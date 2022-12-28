@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
 import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { VisibilityEnum } from '../../enums/visibility.enum';
-import { AccountStateInterface } from '../../interfaces/account-state.interface';
-import { AccountInterface } from '../../interfaces/account.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -13,14 +10,12 @@ import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
 import { getTokenMetadata } from '../../utils/token-metadata.utils';
 import { getAccountState, getSelectedAccount } from '../../utils/wallet-account-state.utils';
 import { useTezosToken } from '../../utils/wallet.utils';
-import { RootState } from '../create-store';
-import { WalletRootState, WalletState } from './wallet-state';
+import { useSelector } from '../selector';
 
-export const useAccountsListSelector = () =>
-  useSelector<WalletRootState, WalletState['accounts']>(({ wallet }) => wallet.accounts);
+export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);
 
 export const useVisibleAccountsListSelector = () =>
-  useSelector<WalletRootState, WalletState['accounts']>(
+  useSelector(
     ({ wallet }) => wallet.accounts.filter(account => getAccountState(wallet, account.publicKeyHash).isVisible),
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
@@ -44,13 +39,13 @@ export const useIsAuthorisedSelector = () => {
 };
 
 export const useSelectedAccountSelector = () =>
-  useSelector<WalletRootState, AccountInterface>(
+  useSelector(
     ({ wallet }) => getSelectedAccount(wallet),
     (left, right) => JSON.stringify(left) === JSON.stringify(right)
   );
 
 export const useAssetsListSelector = (): TokenInterface[] =>
-  useSelector<RootState, TokenInterface[]>(
+  useSelector(
     state => {
       const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
       const isTezosNode = !isDcpNode(state.settings.selectedRpcUrl);
@@ -129,14 +124,14 @@ export const useVisibleCollectiblesListSelector = () => {
 };
 
 export const useIsVisibleSelector = (publicKeyHash: string) =>
-  useSelector<WalletRootState, AccountStateInterface['isVisible']>(({ wallet }) => {
+  useSelector(({ wallet }) => {
     const accountState = getAccountState(wallet, publicKeyHash);
 
     return accountState.isVisible;
   });
 
 export const useTezosTokenSelector = (publicKeyHash: string) => {
-  const tezosBalance = useSelector<WalletRootState, AccountStateInterface['tezosBalance']>(({ wallet }) => {
+  const tezosBalance = useSelector(({ wallet }) => {
     const accountState = getAccountState(wallet, publicKeyHash);
 
     return accountState.tezosBalance;
@@ -146,9 +141,7 @@ export const useTezosTokenSelector = (publicKeyHash: string) => {
 };
 
 export const useSelectedAccountTezosTokenSelector = () => {
-  const selectedAccountPublicKeyHash = useSelector<WalletRootState, WalletState['selectedAccountPublicKeyHash']>(
-    ({ wallet }) => wallet.selectedAccountPublicKeyHash
-  );
+  const selectedAccountPublicKeyHash = useSelector(({ wallet }) => wallet.selectedAccountPublicKeyHash);
 
   return useTezosTokenSelector(selectedAccountPublicKeyHash);
 };

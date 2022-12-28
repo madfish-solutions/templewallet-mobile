@@ -1,9 +1,7 @@
-import { useSelector } from 'react-redux';
-
 import { BakerInterface, emptyBaker } from '../../interfaces/baker.interface';
-import { BakingRootState, BakingState } from './baking-state';
+import { useSelector } from '../selector';
 
-const useBakingSelector = () => useSelector<BakingRootState, BakingState>(({ baking }) => baking);
+const useBakingSelector = () => useSelector(({ baking }) => baking);
 
 export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
   const selectedBaker = useBakingSelector().selectedBaker;

@@ -1,15 +1,9 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from '../selector';
 
-import { SecurityRootState } from './security-state';
+export const usePasswordLockTime = () => useSelector(({ security }) => security.passwordLockTime);
 
-export const usePasswordLockTime = () =>
-  useSelector<SecurityRootState, number>(({ security }) => security.passwordLockTime);
+export const usePasswordAttempt = () => useSelector(({ security }) => security.passwordAttempt);
 
-export const usePasswordAttempt = () =>
-  useSelector<SecurityRootState, number>(({ security }) => security.passwordAttempt);
+export const useIsForceUpdateNeeded = () => useSelector(({ security }) => security.isForceUpdateNeeded.data);
 
-export const useIsForceUpdateNeeded = () =>
-  useSelector<SecurityRootState, boolean>(({ security }) => security.isForceUpdateNeeded.data);
-
-export const useIsAppCheckFailed = () =>
-  useSelector<SecurityRootState, boolean>(({ security }) => security.isAppCheckFailed.data);
+export const useIsAppCheckFailed = () => useSelector(({ security }) => security.isAppCheckFailed.data);

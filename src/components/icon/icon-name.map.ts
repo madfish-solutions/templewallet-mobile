@@ -13,6 +13,7 @@ import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
@@ -45,6 +46,7 @@ import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import FaceIdIcon from './assets/face-id.svg';
+import FavoriteIcon from './assets/favourite.svg';
 import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
@@ -62,6 +64,7 @@ import LinkIcon from './assets/link.svg';
 import LiquidityBakingIcon from './assets/liquidity-baking.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import MarketIcon from './assets/market.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
@@ -246,6 +249,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.Market]: MarketIcon,
+  [IconNameEnum.Buy]: BuyIcon,
+  [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon
 };

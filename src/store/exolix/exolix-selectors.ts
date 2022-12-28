@@ -1,11 +1,7 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from '../selector';
 
-import { ExolixRootState, ExolixState } from './exolix-state';
+export const useExolixStep = () => useSelector(({ exolix }) => exolix.step);
 
-export const useExolixStep = () => useSelector<ExolixRootState, number>(({ exolix }) => exolix.step);
+export const useExolixExchangeData = () => useSelector(({ exolix }) => exolix.exchangeData);
 
-export const useExolixExchangeData = () =>
-  useSelector<ExolixRootState, ExolixState['exchangeData']>(({ exolix }) => exolix.exchangeData);
-
-export const useExolixCurrencies = () =>
-  useSelector<ExolixRootState, ExolixState['currencies']>(({ exolix }) => exolix.currencies);
+export const useExolixCurrencies = () => useSelector(({ exolix }) => exolix.currencies);
