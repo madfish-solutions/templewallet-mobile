@@ -7,6 +7,5 @@ export const advertisingPromotionMock: AdvertisingPromotion = {
   fullPageLogoUrl: 'https://mock.finance/fullpage-logo.svg',
   popupBannerUrl: 'https://mock.finance/popup-banner.svg',
   popupLogoUrl: 'https://mock.finance/popup-logo.svg',
-  mobileBannerUrl: 'https://mock.finance/mobile-banner.svg',
-  isExternalAd: false
+  mobileBannerUrl: 'https://mock.finance/mobile-banner.svg'
 };

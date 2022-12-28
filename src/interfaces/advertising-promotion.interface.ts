@@ -6,7 +6,6 @@ export interface AdvertisingPromotion {
   popupBannerUrl: string;
   popupLogoUrl: string;
   mobileBannerUrl: string;
-  isExternalAd?: boolean;
 }
 
 export interface GetAdvertisingInfoResponse {
