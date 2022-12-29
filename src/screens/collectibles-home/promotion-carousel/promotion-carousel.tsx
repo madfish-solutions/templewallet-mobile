@@ -16,6 +16,7 @@ export const PromotionCarousel = () => {
     if (isDefined(activePromotion)) {
       return [
         <PromotionCarouselItem
+          shouldShowAdBage
           link={activePromotion.url}
           source={activePromotion.mobileBannerUrl}
           testID={`PromotionCarousel/${activePromotion.name}`}
