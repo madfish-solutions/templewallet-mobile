@@ -31,7 +31,7 @@ export const useShelter = () => {
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, hdAccounts, dispatch),
-      createImportAccountSubscription(createImportedAccount$, hdAccounts, dispatch, goBack),
+      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
