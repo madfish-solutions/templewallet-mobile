@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
+import { AccountTypeEnum } from '../enums/account-type.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
@@ -26,10 +27,11 @@ export const useShelter = () => {
   const createImportedAccount$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
 
   useEffect(() => {
+    const hdAccounts = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
-      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
+      createHdAccountSubscription(createHdAccount$, hdAccounts, dispatch),
+      createImportAccountSubscription(createImportedAccount$, hdAccounts, dispatch, goBack),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
