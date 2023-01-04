@@ -14,7 +14,7 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors }) => ({
   },
   exploreContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'stretch'
   },
   lowerContainer: {
     flexDirection: 'row',
@@ -24,5 +24,8 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors }) => ({
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  accountPkh: {
+    height: formatSize(24)
   }
 }));

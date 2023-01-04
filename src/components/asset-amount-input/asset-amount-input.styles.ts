@@ -61,7 +61,8 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   },
   footerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   equivalentValueText: {
     ...typography.numbersRegular11,
