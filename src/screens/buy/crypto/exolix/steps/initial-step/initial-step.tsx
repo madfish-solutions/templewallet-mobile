@@ -11,7 +11,7 @@ import { Icon } from '../../../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../../../../components/screen-container/screen-container';
 import { BlackTextLink } from '../../../../../../components/text-link/black-text-link';
-import { useTokenExchangeRateGetter } from '../../../../../../hooks/use-token-exchange-rate-getter.hook';
+import { useUsdToTokenRates } from '../../../../../../store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from '../../../../../../store/exolix/exolix-actions';
 import { useSelectedAccountSelector } from '../../../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../../../styles/format-size';
@@ -37,7 +37,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const { publicKeyHash } = useSelectedAccountSelector();
-  const getTokenExchangeRate = useTokenExchangeRateGetter();
+  const tokenUsdExchangeRates = useUsdToTokenRates();
 
   const handleSubmit = () => {
     if (!isDefined(values.coinFrom.amount)) {
@@ -66,7 +66,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const inputCurrency = values.coinFrom.asset;
   const outputCurrency = values.coinTo.asset;
 
-  const outputTokenPrice = useMemo(() => getTokenExchangeRate(outputCurrency.slug), [outputCurrency.code]);
+  const outputTokenPrice = useMemo(() => tokenUsdExchangeRates[outputCurrency.slug], [outputCurrency.slug]);
 
   useEffect(() => {
     loadMinMaxFields(
