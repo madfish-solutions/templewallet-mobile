@@ -14,7 +14,7 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors }) => ({
   },
   exploreContainer: {
     flexDirection: 'row',
-    alignItems: 'stretch'
+    alignItems: 'center'
   },
   lowerContainer: {
     flexDirection: 'row',
