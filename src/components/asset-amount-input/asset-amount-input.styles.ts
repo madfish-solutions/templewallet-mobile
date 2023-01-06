@@ -77,12 +77,8 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     alignItems: 'center',
     justifyContent: 'center'
   },
-  balanceDescription: {
+  balanceText: {
     ...typography.numbersRegular11,
     color: colors.gray1
-  },
-  balanceValueText: {
-    ...typography.numbersRegular11,
-    color: colors.black
   }
 }));
