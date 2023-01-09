@@ -200,6 +200,8 @@ const loadOperations = async (
   return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
 };
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const loadActivity = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
@@ -210,11 +212,13 @@ export const loadActivity = async (
     .then(operations => operations.map(operation => operation.hash))
     .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
 
-  return Promise.all(
-    operationsHashes.map(hash =>
-      getOperationGroupByHash<OperationInterface>(selectedRpcUrl, hash).then(response => response.data)
-    )
-  ).then(operationGroups =>
-    operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group))
-  );
+  const operationGroups = [];
+
+  for (const opHash of operationsHashes) {
+    const { data } = await getOperationGroupByHash<OperationInterface>(selectedRpcUrl, opHash);
+    operationGroups.push(data);
+    await sleep(100);
+  }
+
+  return operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group));
 };
