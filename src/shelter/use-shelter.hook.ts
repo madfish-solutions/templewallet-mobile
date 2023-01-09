@@ -27,11 +27,9 @@ export const useShelter = () => {
   const createImportedAccount$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
 
   useEffect(() => {
-    const hdAccounts = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
-    hdAccounts.length = accounts.length;
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
-      createHdAccountSubscription(createHdAccount$, hdAccounts, dispatch),
+      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
       createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
