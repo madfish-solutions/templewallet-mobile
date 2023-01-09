@@ -28,6 +28,7 @@ export const useShelter = () => {
 
   useEffect(() => {
     const hdAccounts = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
+    hdAccounts.length = accounts.length;
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, hdAccounts, dispatch),
