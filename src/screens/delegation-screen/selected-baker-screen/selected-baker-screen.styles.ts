@@ -28,7 +28,8 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     color: colors.black
   },
   actionsContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   lowerContainer: {
     flexDirection: 'row'
@@ -40,5 +41,8 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   cellValueText: {
     ...typography.numbersRegular15,
     color: colors.black
+  },
+  accountPkh: {
+    height: formatSize(24)
   }
 }));
