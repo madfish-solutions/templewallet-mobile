@@ -12,6 +12,7 @@ import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
+  marketStackScreens,
   ScreensEnum,
   settingsStackScreens,
   swapStackScreens,
@@ -75,6 +76,14 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           }
           focused={isStackFocused(swapStackScreens)}
           disabled={isDcpNode}
+          disabledOnPress={disabledOnPress}
+        />
+        <TabBarButton
+          label="Market"
+          iconName={IconNameEnum.Market}
+          iconWidth={formatSize(32)}
+          routeName={ScreensEnum.Market}
+          focused={isStackFocused(marketStackScreens)}
           disabledOnPress={disabledOnPress}
         />
         <DebugTapListener>

@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
@@ -13,9 +13,10 @@ interface Props {
   testID: string;
   source: Source | string;
   link: string;
+  shouldShowAdBage?: boolean;
 }
 
-export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) => {
+export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link, shouldShowAdBage = false }) => {
   const { trackEvent } = useAnalytics();
 
   const styles = usePromotionCarouselItemStyles();
@@ -28,11 +29,18 @@ export const PromotionCarouselItem: FC<Props> = memo(({ testID, source, link }) 
         openUrl(link);
       }}
     >
-      {typeof source === 'string' ? (
-        <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
-      ) : (
-        <FastImage style={styles.bannerImage} source={source} />
-      )}
+      <View style={styles.rewardContainer}>
+        {shouldShowAdBage && (
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>AD</Text>
+          </View>
+        )}
+        {typeof source === 'string' ? (
+          <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
+        ) : (
+          <FastImage style={styles.bannerImage} source={source} />
+        )}
+      </View>
     </TouchableOpacity>
   );
 });

@@ -20,6 +20,8 @@ import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
 import { exolixReducers } from './exolix/exolix-reducers';
 import { ExolixRootState } from './exolix/exolix-state';
+import { marketReducers } from './market/market-reducers';
+import { MarketRootState } from './market/market-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { NotificationsRootState } from './notifications/notifications-state';
 import { rootStateReducer } from './root-state.reducers';
@@ -41,6 +43,7 @@ export type RootState = WalletRootState &
   SecurityRootState &
   ExolixRootState &
   AdvertisingRootState &
+  MarketRootState &
   NotificationsRootState;
 
 const epicMiddleware = createEpicMiddleware();
@@ -68,6 +71,7 @@ const rootReducer = rootStateReducer<RootState>({
   currency: currencyReducers,
   exolix: exolixReducers,
   advertising: advertisingReducers,
+  market: marketReducers,
   notifications: notificationsReducers
 });
 

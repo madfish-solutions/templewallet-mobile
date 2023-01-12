@@ -34,6 +34,9 @@ export enum ScreensEnum {
   AliceBob = 'AliceBob',
   Utorg = 'Utorg',
 
+  /** Market stack **/
+  Market = 'Market',
+
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
@@ -63,6 +66,7 @@ export type ScreensParamList = {
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
+
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
@@ -72,7 +76,7 @@ export type ScreensParamList = {
   [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
-  [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface };
+  [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
   [ScreensEnum.SwapQuestionsScreen]: undefined;
 
@@ -81,6 +85,9 @@ export type ScreensParamList = {
   [ScreensEnum.Exolix]: undefined;
   [ScreensEnum.AliceBob]: { min: number; max: number };
   [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
+
+  /** Market stack **/
+  [ScreensEnum.Market]: undefined;
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
@@ -117,6 +124,7 @@ export const swapStackScreens = [
   ScreensEnum.SwapSettingsScreen,
   ScreensEnum.SwapQuestionsScreen
 ];
+export const marketStackScreens = [ScreensEnum.Market];
 export const settingsStackScreens = [
   ScreensEnum.Settings,
   ScreensEnum.ManageAccounts,

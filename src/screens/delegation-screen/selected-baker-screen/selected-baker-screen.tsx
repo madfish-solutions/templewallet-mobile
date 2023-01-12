@@ -41,7 +41,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
               <Text style={styles.nameText}>{baker.name}</Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
-                <PublicKeyHashText publicKeyHash={baker.address} />
+                <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
                 <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
               </View>

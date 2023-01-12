@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { Text, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { MarginProps } from '../../interfaces/margin.props';
@@ -11,6 +11,7 @@ interface Props extends MarginProps {
   publicKeyHash: string;
   disabled?: boolean;
   longPress?: boolean;
+  style?: ViewStyle;
 }
 
 export const PublicKeyHashText: FC<Props> = ({
@@ -19,6 +20,7 @@ export const PublicKeyHashText: FC<Props> = ({
   marginRight,
   marginBottom,
   marginLeft,
+  style,
   disabled = false,
   longPress = false
 }) => {
@@ -29,7 +31,7 @@ export const PublicKeyHashText: FC<Props> = ({
 
   return (
     <TouchableOpacity
-      style={[styles.container, { marginTop, marginRight, marginBottom, marginLeft }]}
+      style={[styles.container, style, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
       onPress={handlePress}
       onLongPress={handleLongPress}
