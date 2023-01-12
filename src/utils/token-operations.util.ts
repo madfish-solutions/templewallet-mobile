@@ -18,6 +18,7 @@ import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { sleep } from './sleep.util';
 
 const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
@@ -199,8 +200,6 @@ const loadOperations = async (
 
   return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
 };
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const loadActivity = async (
   selectedRpcUrl: string,
