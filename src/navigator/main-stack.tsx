@@ -25,6 +25,7 @@ import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from '../screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
+import { Contacts } from '../screens/contacts/contacts';
 import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
@@ -257,6 +258,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManageAccounts}
                 component={ManageAccounts}
                 options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Contacts}
+                component={Contacts}
+                options={generateScreenOptions(<HeaderTitle title="Contacts" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.About}
