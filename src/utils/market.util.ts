@@ -35,7 +35,7 @@ export const fetchMarketTopTokens = () =>
 export const fetchMarketTokensSlugs = () =>
   templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
 
-export const getValueToShow = (value: number | null | undefined, tezosExchangeRate?: number) => {
+export const formatRegularValue = (value: number | null | undefined, tezosExchangeRate?: number) => {
   const res: { value?: string; valueEstimatedInTezos?: string } = {};
 
   if (value === null || value === undefined) {
@@ -54,7 +54,27 @@ export const getValueToShow = (value: number | null | undefined, tezosExchangeRa
   return res;
 };
 
-export const getPriceChange = (value: number | null | undefined) => {
+export const formatPrice = (value: number | null | undefined, tezosExchangeRate?: number) => {
+  const res: { value?: string; valueEstimatedInTezos?: string } = {};
+
+  if (value === null || value === undefined) {
+    res.value = '-';
+
+    return res;
+  }
+
+  res.value = value < 0.01 ? '>0.01' : value.toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+  if (tezosExchangeRate !== undefined) {
+    const valueInTezos = value / tezosExchangeRate;
+    res.valueEstimatedInTezos =
+      valueInTezos < 0.01 ? '>0.01' : valueInTezos.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  }
+
+  return res;
+};
+
+export const formatPriceChange = (value: number | null | undefined) => {
   if (value === null || value === undefined) {
     return '-';
   }

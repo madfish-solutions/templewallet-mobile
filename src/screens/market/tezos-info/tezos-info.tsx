@@ -9,7 +9,7 @@ import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../utils/market.util';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { circulatingSupplyAlert, marketCupAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
@@ -23,12 +23,12 @@ export const TezosInfo = () => {
   const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);
   const priceChange7dColor = getPriceChangeColor(marketTezos?.priceChange7d, colors);
 
-  const { value: price } = getValueToShow(marketTezos?.price);
-  const { value: supply } = getValueToShow(marketTezos?.supply);
-  const { value: marketCup } = getValueToShow(marketTezos?.marketCup);
-  const { value: volume24h } = getValueToShow(marketTezos?.volume24h);
-  const priceChange7d = getPriceChange(marketTezos?.priceChange7d);
-  const priceChange24h = getPriceChange(marketTezos?.priceChange24h);
+  const { value: price } = formatRegularValue(marketTezos?.price);
+  const { value: supply } = formatPrice(marketTezos?.supply);
+  const { value: marketCup } = formatPrice(marketTezos?.marketCup);
+  const { value: volume24h } = formatPrice(marketTezos?.volume24h);
+  const priceChange7d = formatPriceChange(marketTezos?.priceChange7d);
+  const priceChange24h = formatPriceChange(marketTezos?.priceChange24h);
 
   return (
     <View>
