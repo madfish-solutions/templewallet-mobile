@@ -23,18 +23,6 @@ import { ManageImportedAccounts } from './manage-imported-accounts/manage-import
 
 const manageHdAccountsIndex = 0;
 
-enum AccountTypes {
-  HD = 'HD',
-  Imported = 'Imported'
-}
-
-const accountsLabels: Record<AccountTypes, string> = {
-  [AccountTypes.HD]: 'Create new HD account',
-  [AccountTypes.Imported]: 'Import an account'
-};
-
-const accountsOptions: Array<AccountTypes> = [AccountTypes.HD, AccountTypes.Imported];
-
 export const ManageAccounts = () => {
   const { navigate } = useNavigation();
   const { createHdAccount } = useShelter();
@@ -53,11 +41,6 @@ export const ManageAccounts = () => {
     ),
     []
   );
-
-  const handlers = {
-    [AccountTypes.HD]: () => createHdAccount(),
-    [AccountTypes.Imported]: () => navigate(ModalsEnum.ImportAccount)
-  };
 
   return (
     <>
@@ -78,16 +61,22 @@ export const ManageAccounts = () => {
         contentHeight={formatSize(180)}
         controller={revealSelectBottomSheetController}
       >
-        {accountsOptions.map(value => (
-          <BottomSheetActionButton
-            key={value}
-            title={accountsLabels[value]}
-            onPress={() => {
-              handlers[value]();
-              revealSelectBottomSheetController.close();
-            }}
-          />
-        ))}
+        <BottomSheetActionButton
+          key="create-new-hd-account"
+          title="Create new HD account"
+          onPress={() => {
+            createHdAccount();
+            revealSelectBottomSheetController.close();
+          }}
+        />
+        <BottomSheetActionButton
+          key="import-an-account"
+          title="Import an account"
+          onPress={() => {
+            navigate(ModalsEnum.ImportAccount);
+            revealSelectBottomSheetController.close();
+          }}
+        />
       </BottomSheet>
     </>
   );
