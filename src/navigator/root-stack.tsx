@@ -96,7 +96,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.AddToken}
               component={AddTokenModal}
-              options={useModalOptions('Add Token')}
+              options={useModalOptions('Add Asset')}
             />
             <RootStack.Screen
               name={ModalsEnum.RenameAccount}
