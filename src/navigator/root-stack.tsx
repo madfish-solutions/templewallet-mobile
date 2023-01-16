@@ -43,6 +43,7 @@ import { StacksEnum } from './enums/stacks.enum';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
+import { AddContactModal } from "../modals/add-contact-modal/add-contact-modal";
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
@@ -153,6 +154,12 @@ export const RootStackScreen = () => {
               name={ModalsEnum.AddCustomRpc}
               component={AddCustomRpcModal}
               options={useModalOptions('Add RPC')}
+            />
+
+            <RootStack.Screen
+              name={ModalsEnum.AddContact}
+              component={AddContactModal}
+              options={useModalOptions('Add address')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
