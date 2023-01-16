@@ -1,5 +1,7 @@
+import React from 'react';
 import { FlatList } from 'react-native';
 
+import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { generateScreenOptions } from '../../components/header/generate-screen-options.util';
 import { HeaderButton } from '../../components/header/header-button/header-button';
 import { HeaderTitle } from '../../components/header/header-title/header-title';
@@ -22,5 +24,11 @@ export const Contacts = () => {
     []
   );
 
-  return <FlatList data={contacts} renderItem={({ item }) => <ContactItem {...item} />} />;
+  return (
+    <FlatList
+      data={contacts}
+      renderItem={({ item }) => <ContactItem {...item} />}
+      ListEmptyComponent={<DataPlaceholder text="You have no contacts" />}
+    />
+  );
 };

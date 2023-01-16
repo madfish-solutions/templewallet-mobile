@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
@@ -12,28 +13,31 @@ import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormTextInput } from '../../form/form-text-input';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactAction } from '../../store/contacts/contacts-actions';
+import { editContactAction } from '../../store/contacts/contacts-actions';
 import { Contact } from '../../store/contacts/contacts-state';
 import { formatSize } from '../../styles/format-size';
-import { useContactFormValidationSchema } from './validation-schema';
+import { editContactFormValidationSchema } from './validation-schema';
 
-export const AddContactModal: FC = () => {
-  const { goBack } = useNavigation();
+export const EditContactModal: FC = () => {
   const dispatch = useDispatch();
-
-  const addContactFormValidationSchema = useContactFormValidationSchema();
+  const { goBack } = useNavigation();
+  const {
+    contact: { name, address }
+  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>().params;
 
   const onSubmit = (contact: Contact) => {
-    dispatch(addContactAction(contact));
+    dispatch(editContactAction(contact));
     goBack();
   };
 
   return (
     <Formik
+      validateOnBlur
       validateOnChange
-      initialValues={{ name: '', address: '' }}
-      validationSchema={addContactFormValidationSchema}
+      initialValues={{ name, address }}
+      validationSchema={editContactFormValidationSchema}
       onSubmit={onSubmit}
     >
       {({ submitForm, isValid }) => (

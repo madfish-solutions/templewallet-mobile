@@ -1,5 +1,6 @@
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
+import { Contact } from '../../store/contacts/contacts-state';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
@@ -18,7 +19,8 @@ export enum ModalsEnum {
   AddCustomRpc = 'AddCustomRpc',
   RemoveLiquidity = 'RemoveLiquidity',
   AddLiquidity = 'AddLiquidity',
-  AddContact = 'AddContact'
+  AddContact = 'AddContact',
+  EditContact = 'EditContact'
 }
 
 export type ModalsParamList = {
@@ -45,4 +47,5 @@ export type ModalsParamList = {
     bToken: TokenInterface;
   };
   [ModalsEnum.AddContact]: undefined;
+  [ModalsEnum.EditContact]: { contact: Contact };
 };

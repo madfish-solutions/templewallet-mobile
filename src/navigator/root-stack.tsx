@@ -18,6 +18,8 @@ import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-m
 import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
+import { AddContactModal } from '../modals/contact-modals/add-contact-modal';
+import { EditContactModal } from '../modals/contact-modals/edit-contact-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
@@ -43,7 +45,6 @@ import { StacksEnum } from './enums/stacks.enum';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
-import { AddContactModal } from "../modals/add-contact-modal/add-contact-modal";
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
@@ -91,7 +92,6 @@ export const RootStackScreen = () => {
               component={MainStackScreen}
               options={{ headerShown: false }}
             />
-
             <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
             <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
             <RootStack.Screen
@@ -149,17 +149,20 @@ export const RootStackScreen = () => {
               component={AddLiquidityModal}
               options={useModalOptions('Add Liquidity')}
             />
-
             <RootStack.Screen
               name={ModalsEnum.AddCustomRpc}
               component={AddCustomRpcModal}
               options={useModalOptions('Add RPC')}
             />
-
             <RootStack.Screen
               name={ModalsEnum.AddContact}
               component={AddContactModal}
               options={useModalOptions('Add address')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EditContact}
+              component={EditContactModal}
+              options={useModalOptions('Edit address')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

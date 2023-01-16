@@ -15,6 +15,6 @@ export const contactsReducers = createReducer<ContactsState>(contactsInitialStat
     }
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
-    state.contacts.filter(contact => contact.address !== payload.address);
+    state.contacts = state.contacts.filter(contact => contact.address !== payload.address);
   });
 });
