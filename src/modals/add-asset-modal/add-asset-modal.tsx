@@ -5,23 +5,23 @@ import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { AddTokenAddress } from './add-token-address/add-token-address';
-import { AddTokenInfo } from './add-token-info/add-token-info';
+import { AddAssetAddress } from './add-asset-address/add-asset-address';
+import { AddAssetInfo } from './add-asset-info/add-asset-info';
 
-export const AddTokenModal: FC = () => {
+export const AddAssetModal: FC = () => {
   const { goBack } = useNavigation();
   const { innerScreenIndex, setInnerScreenIndex } = useInnerScreenProgress(2);
 
-  usePageAnalytic(ModalsEnum.AddToken);
+  usePageAnalytic(ModalsEnum.AddAsset);
 
   return (
     <>
       <ModalStatusBar />
       {innerScreenIndex === 0 && (
-        <AddTokenAddress onCloseButtonPress={goBack} onFormSubmitted={() => setInnerScreenIndex(1)} />
+        <AddAssetAddress onCloseButtonPress={goBack} onFormSubmitted={() => setInnerScreenIndex(1)} />
       )}
       {innerScreenIndex === 1 && (
-        <AddTokenInfo onCancelButtonPress={() => setInnerScreenIndex(0)} onFormSubmitted={goBack} />
+        <AddAssetInfo onCancelButtonPress={() => setInnerScreenIndex(0)} onFormSubmitted={goBack} />
       )}
     </>
   );

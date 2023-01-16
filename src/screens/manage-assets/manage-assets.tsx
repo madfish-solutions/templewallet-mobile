@@ -30,7 +30,7 @@ export const ManageAssets = () => {
   useNavigationSetOptions(
     generateScreenOptions(
       <HeaderTitle title="Manage Assets" />,
-      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddToken)} />
+      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddAsset)} />
     ),
     []
   );
