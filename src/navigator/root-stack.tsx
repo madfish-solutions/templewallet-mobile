@@ -13,9 +13,9 @@ import { useQuickActions } from '../hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from '../hooks/use-reset-loading.hook';
 import { useWhitelist } from '../hooks/use-whitelist.hook';
+import { AddAssetModal } from '../modals/add-asset-modal/add-asset-modal';
 import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
-import { AddTokenModal } from '../modals/add-token-modal/add-token-modal';
 import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
@@ -94,9 +94,9 @@ export const RootStackScreen = () => {
             <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
             <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
             <RootStack.Screen
-              name={ModalsEnum.AddToken}
-              component={AddTokenModal}
-              options={useModalOptions('Add Token')}
+              name={ModalsEnum.AddAsset}
+              component={AddAssetModal}
+              options={useModalOptions('Add Asset')}
             />
             <RootStack.Screen
               name={ModalsEnum.RenameAccount}

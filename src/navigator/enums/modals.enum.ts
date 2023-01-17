@@ -6,7 +6,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 export enum ModalsEnum {
   Receive = 'Receive',
   Send = 'Send',
-  AddToken = 'AddToken',
+  AddAsset = 'AddAsset',
   RenameAccount = 'RenameAccount',
   SelectBaker = 'SelectBaker',
   Confirmation = 'Confirmation',
@@ -23,7 +23,7 @@ export enum ModalsEnum {
 export type ModalsParamList = {
   [ModalsEnum.Receive]: { token: TokenMetadataInterface };
   [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
-  [ModalsEnum.AddToken]: undefined;
+  [ModalsEnum.AddAsset]: undefined;
   [ModalsEnum.RenameAccount]: { account: AccountInterface };
   [ModalsEnum.SelectBaker]: undefined;
   [ModalsEnum.Confirmation]: ConfirmationModalParams;

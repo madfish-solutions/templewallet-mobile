@@ -23,14 +23,14 @@ import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
   AddTokenAddressFormValues
-} from './add-token-address.form';
+} from './add-asset-address.form';
 
 interface Props {
   onCloseButtonPress: EmptyFn;
   onFormSubmitted: EmptyFn;
 }
 
-export const AddTokenAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
+export const AddAssetAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const assetsList = useAssetsListSelector();
