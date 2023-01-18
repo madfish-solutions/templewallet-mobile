@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { FormDropdown } from '../../form/form-dropdown';
+import { FormSectionDropdown } from '../../form/form-section-dropdown';
 import { IAccountBase } from '../../interfaces/account.interface';
 import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
@@ -10,7 +10,7 @@ import { accountEqualityFn } from './account-equality-fn';
 
 interface Props {
   name: string;
-  list: IAccountBase[];
+  list: Array<{ title: string; data: Array<IAccountBase> }>;
 }
 
 const renderAccountValue: DropdownValueComponent<IAccountBase> = ({ value }) => (
@@ -19,11 +19,12 @@ const renderAccountValue: DropdownValueComponent<IAccountBase> = ({ value }) => 
   </DropdownItemContainer>
 );
 
-export const AccountFormDropdown: FC<Props> = ({ name, list }) => (
-  <FormDropdown
+export const AccountFormSectionDropdown: FC<Props> = ({ name, list }) => (
+  <FormSectionDropdown
+    isSearchable
     name={name}
-    description="Accounts"
     list={list}
+    description="Accounts and contacts"
     equalityFn={accountEqualityFn}
     renderValue={renderAccountValue}
     renderListItem={renderAccountListItem}

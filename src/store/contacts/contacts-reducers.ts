@@ -8,13 +8,13 @@ export const contactsReducers = createReducer<ContactsState>(contactsInitialStat
     state.contacts.push(payload);
   });
   builder.addCase(editContactAction, (state, { payload }) => {
-    const indexContactToEdit = state.contacts.findIndex(contact => contact.address === payload.address);
+    const indexContactToEdit = state.contacts.findIndex(contact => contact.publicKeyHash === payload.publicKeyHash);
 
     if (indexContactToEdit !== -1) {
       state.contacts[indexContactToEdit] = payload;
     }
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
-    state.contacts = state.contacts.filter(contact => contact.address !== payload.address);
+    state.contacts = state.contacts.filter(contact => contact.publicKeyHash !== payload.publicKeyHash);
   });
 });

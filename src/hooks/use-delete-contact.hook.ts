@@ -1,10 +1,10 @@
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { IAccountBase } from '../interfaces/account.interface';
 import { deleteContactAction } from '../store/contacts/contacts-actions';
-import { Contact } from '../store/contacts/contacts-state';
 
-export const useDeleteContactHandler = (contact: Contact) => {
+export const useDeleteContactHandler = (contact: IAccountBase) => {
   const dispatch = useDispatch();
 
   return () =>

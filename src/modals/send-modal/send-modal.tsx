@@ -4,7 +4,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
+import { AccountFormSectionDropdown } from '../../components/account-dropdown/account-form-section-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -19,8 +19,10 @@ import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-as
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
+import { IAccountBase } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { useContactsSelector } from '../../store/contacts/contacts-selectors';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -48,6 +50,7 @@ export const SendModal: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const visibleAccounts = useVisibleAccountsListSelector();
+  const contacts = useContactsSelector();
   const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -60,11 +63,23 @@ export const SendModal: FC = () => {
     [tezosToken, filteredAssetsList]
   );
 
-  const ownAccountsReceivers = useMemo(
-    () => visibleAccounts.filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash),
-    [visibleAccounts, selectedAccount.publicKeyHash]
+  const ownAccountsReceivers = useMemo<Array<{ title: string; data: Array<IAccountBase> }>>(
+    () => [
+      {
+        title: 'MY ACCOUNTS',
+        data: visibleAccounts
+          .filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash)
+          .map(({ name, publicKeyHash }) => ({ name, publicKeyHash }))
+      },
+      {
+        title: 'CONTACTS',
+        data: contacts
+      }
+    ],
+    [visibleAccounts, selectedAccount.publicKeyHash, contacts]
   );
-  const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
+  const transferBetweenOwnAccountsDisabled =
+    ownAccountsReceivers[0].data.length === 0 && ownAccountsReceivers[1].data.length === 0;
 
   usePageAnalytic(ModalsEnum.Send);
 
@@ -75,7 +90,7 @@ export const SendModal: FC = () => {
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      ownAccount: ownAccountsReceivers[0],
+      ownAccount: ownAccountsReceivers[0].data[0] ?? ownAccountsReceivers[1].data[0],
       transferBetweenOwnAccounts: false
     }),
     [filteredAssetsListWithTez, ownAccountsReceivers]
@@ -134,7 +149,7 @@ export const SendModal: FC = () => {
             />
             {values.transferBetweenOwnAccounts ? (
               <>
-                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+                <AccountFormSectionDropdown name="ownAccount" list={ownAccountsReceivers} />
                 <Divider size={formatSize(10)} />
               </>
             ) : (
@@ -152,7 +167,7 @@ export const SendModal: FC = () => {
                 name="transferBetweenOwnAccounts"
                 size={formatSize(16)}
               >
-                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+                <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
               </FormCheckbox>
             </View>
 

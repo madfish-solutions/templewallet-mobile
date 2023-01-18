@@ -1,9 +1,7 @@
-export interface Contact {
-  name: string;
-  address: string;
-}
+import { IAccountBase } from '../../interfaces/account.interface';
+
 export interface ContactsState {
-  contacts: Array<Contact>;
+  contacts: Array<IAccountBase>;
 }
 export const contactsInitialState: ContactsState = {
   contacts: []

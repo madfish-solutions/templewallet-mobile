@@ -4,11 +4,14 @@ import { LoadableEntityState } from '../store/types';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { ActivityGroup } from './activity.interface';
 
-export interface AccountInterface {
+export interface IAccountBase {
   name: string;
+  publicKeyHash: string;
+}
+
+export interface AccountInterface extends IAccountBase {
   type: AccountTypeEnum;
   publicKey: string;
-  publicKeyHash: string;
 
   /** @deprecated */
   isVisible?: boolean;

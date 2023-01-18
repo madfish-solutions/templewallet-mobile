@@ -12,9 +12,9 @@ import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormTextInput } from '../../form/form-text-input';
+import { IAccountBase } from '../../interfaces/account.interface';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addContactAction } from '../../store/contacts/contacts-actions';
-import { Contact } from '../../store/contacts/contacts-state';
 import { formatSize } from '../../styles/format-size';
 import { useAddContactFormValidationSchema } from './validation-schema';
 
@@ -24,7 +24,7 @@ export const AddContactModal: FC = () => {
 
   const addContactFormValidationSchema = useAddContactFormValidationSchema();
 
-  const onSubmit = (contact: Contact) => {
+  const onSubmit = (contact: IAccountBase) => {
     dispatch(addContactAction(contact));
     goBack();
   };
@@ -33,7 +33,7 @@ export const AddContactModal: FC = () => {
     <Formik
       validateOnBlur
       validateOnChange
-      initialValues={{ name: '', address: '' }}
+      initialValues={{ publicKeyHash: '', name: '' }}
       validationSchema={addContactFormValidationSchema}
       onSubmit={onSubmit}
     >
@@ -43,7 +43,7 @@ export const AddContactModal: FC = () => {
             <Label label="Name" />
             <FormTextInput name="name" />
             <Label label="Address" />
-            <FormAddressInput name="address" />
+            <FormAddressInput name="publicKeyHash" />
           </View>
           <View>
             <ButtonsContainer>

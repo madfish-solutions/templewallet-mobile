@@ -21,6 +21,9 @@ export const useContactItemStyles = createUseStyles(({ colors, typography }) => 
     marginLeft: formatSize(10),
     justifyContent: 'space-between'
   },
+  actions: {
+    flexDirection: 'row'
+  },
   name: {
     ...typography.numbersRegular15,
     color: colors.black

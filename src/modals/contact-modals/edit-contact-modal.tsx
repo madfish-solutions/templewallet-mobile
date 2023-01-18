@@ -13,10 +13,10 @@ import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormTextInput } from '../../form/form-text-input';
+import { IAccountBase } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { editContactAction } from '../../store/contacts/contacts-actions';
-import { Contact } from '../../store/contacts/contacts-state';
 import { formatSize } from '../../styles/format-size';
 import { editContactFormValidationSchema } from './validation-schema';
 
@@ -24,10 +24,10 @@ export const EditContactModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const {
-    contact: { name, address }
+    contact: { name, publicKeyHash }
   } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>().params;
 
-  const onSubmit = (contact: Contact) => {
+  const onSubmit = (contact: IAccountBase) => {
     dispatch(editContactAction(contact));
     goBack();
   };
@@ -36,7 +36,7 @@ export const EditContactModal: FC = () => {
     <Formik
       validateOnBlur
       validateOnChange
-      initialValues={{ name, address }}
+      initialValues={{ name, publicKeyHash }}
       validationSchema={editContactFormValidationSchema}
       onSubmit={onSubmit}
     >
