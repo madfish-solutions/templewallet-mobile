@@ -17,7 +17,8 @@ export const FormSectionDropdown = <T extends unknown>({
   renderValue,
   renderListItem,
   renderActionButtons,
-  isSearchable
+  isSearchable,
+  setSearchValue
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
@@ -33,6 +34,7 @@ export const FormSectionDropdown = <T extends unknown>({
         renderValue={renderValue}
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
+        setSearchValue={setSearchValue}
         onValueChange={helpers.setValue}
       />
       <ErrorMessage meta={meta} />

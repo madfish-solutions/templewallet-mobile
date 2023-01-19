@@ -18,17 +18,15 @@ import { FormAddressInput } from '../../form/form-address-input';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
+import { useFilteredReceiversList } from '../../hooks/use-filtered-receivers-list.hook';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
-import { IAccountBase } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addContactRequestAction } from '../../store/contacts/contacts-actions';
-import { useContactsSelector } from '../../store/contacts/contacts-selectors';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
-  useVisibleAccountsListSelector,
   useVisibleAssetListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -50,11 +48,10 @@ export const SendModal: FC = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const visibleAccounts = useVisibleAccountsListSelector();
-  const contacts = useContactsSelector();
   const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
@@ -64,23 +61,7 @@ export const SendModal: FC = () => {
     [tezosToken, filteredAssetsList]
   );
 
-  const ownAccountsReceivers = useMemo<Array<{ title: string; data: Array<IAccountBase> }>>(
-    () => [
-      {
-        title: 'MY ACCOUNTS',
-        data: visibleAccounts
-          .filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash)
-          .map(({ name, publicKeyHash }) => ({ name, publicKeyHash }))
-      },
-      {
-        title: 'CONTACTS',
-        data: contacts
-      }
-    ],
-    [visibleAccounts, selectedAccount.publicKeyHash, contacts]
-  );
-  const transferBetweenOwnAccountsDisabled =
-    ownAccountsReceivers[0].data.length === 0 && ownAccountsReceivers[1].data.length === 0;
+  const transferDisabled = filteredReceiversList.length === 0;
 
   usePageAnalytic(ModalsEnum.Send);
 
@@ -91,10 +72,10 @@ export const SendModal: FC = () => {
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      ownAccount: ownAccountsReceivers[0].data[0] ?? ownAccountsReceivers[1].data[0],
+      ownAccount: filteredReceiversList[0].data[0],
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsListWithTez, ownAccountsReceivers]
+    [filteredAssetsListWithTez]
   );
 
   const onSubmit = async ({
@@ -149,7 +130,11 @@ export const SendModal: FC = () => {
             />
             {values.transferBetweenOwnAccounts ? (
               <>
-                <AccountFormSectionDropdown name="ownAccount" list={ownAccountsReceivers} />
+                <AccountFormSectionDropdown
+                  name="ownAccount"
+                  list={filteredReceiversList}
+                  setSearchValue={handleSearchValueChange}
+                />
                 <Divider size={formatSize(10)} />
               </>
             ) : (
@@ -157,16 +142,10 @@ export const SendModal: FC = () => {
             )}
             <View
               onTouchStart={() =>
-                void (
-                  transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
-                )
+                void (transferDisabled && showWarningToast({ description: 'Create one more account' }))
               }
             >
-              <FormCheckbox
-                disabled={transferBetweenOwnAccountsDisabled}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-              >
+              <FormCheckbox disabled={transferDisabled} name="transferBetweenOwnAccounts" size={formatSize(16)}>
                 <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
               </FormCheckbox>
             </View>
