@@ -19,7 +19,7 @@ export const ContactItem: FC<IAccountBase> = ({ name, publicKeyHash }) => {
   const styles = useContactItemStyles();
   const handleDeleteContact = useDeleteContactHandler({ name, publicKeyHash });
 
-  const hadleEditItem = () => navigate(ModalsEnum.EditContact, { contact: { name, publicKeyHash } });
+  const hadleEditItem = () => navigate(ModalsEnum.EditContact, { name, publicKeyHash });
 
   return (
     <View style={styles.root}>
