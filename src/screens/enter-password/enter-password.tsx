@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
@@ -13,10 +13,8 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
 import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
@@ -33,7 +31,11 @@ import {
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
-export const EnterPassword = () => {
+interface Props {
+  atBootsplash: boolean;
+}
+
+export const EnterPassword = ({ atBootsplash }: Props) => {
   const styles = useEnterPasswordStyles();
 
   const { unlock, unlockWithBiometry } = useAppLock();
@@ -51,9 +53,10 @@ export const EnterPassword = () => {
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
-  useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
-    isBiometryAvailable
-  ]);
+  useEffect(
+    () => void (!atBootsplash && isBiometryAvailable && unlockWithBiometry()),
+    [isBiometryAvailable, atBootsplash]
+  );
 
   return (
     <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>

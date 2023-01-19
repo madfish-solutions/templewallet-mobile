@@ -1,5 +1,5 @@
 import { AnalyticsProvider } from '@segment/analytics-react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LogBox } from 'react-native';
 import { hide } from 'react-native-bootsplash';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -11,7 +11,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BiometryAvailabilityProvider } from '../biometry/biometry-availability.provider';
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../config/animation';
 import { HideBalanceProvider } from '../hooks/hide-balance/hide-balance.provider';
-import { useDelayedEffect } from '../hooks/use-delayed-effect.hook';
 import { RootStackScreen } from '../navigator/root-stack';
 import { AppLockContextProvider } from '../shelter/app-lock/app-lock';
 import { persistor, store } from '../store/store';
@@ -25,7 +24,13 @@ enableScreens();
 LogBox.ignoreAllLogs();
 
 export const App = () => {
-  useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void hide({ fade: true }), []);
+  const [atBootsplash, setAtBootsplash] = useState(true);
+  useEffect(() => {
+    (async () => {
+      await hide({ fade: true });
+      setTimeout(() => void setAtBootsplash(false), HIDE_SPLASH_SCREEN_TIMEOUT);
+    })();
+  }, []);
 
   return (
     <GestureHandlerRootView style={AppStyles.root}>
@@ -36,7 +41,7 @@ export const App = () => {
               <HideBalanceProvider>
                 <AppLockContextProvider>
                   <SafeAreaProvider>
-                    <RootStackScreen />
+                    <RootStackScreen atBootsplash={atBootsplash} />
                     <ToastProvider />
                   </SafeAreaProvider>
                 </AppLockContextProvider>

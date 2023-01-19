@@ -50,7 +50,11 @@ type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
-export const RootStackScreen = () => {
+interface Props {
+  atBootsplash: boolean;
+}
+
+export const RootStackScreen = ({ atBootsplash }: Props) => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
@@ -159,7 +163,7 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {isSplash && <SplashModal />}
-      {isAuthorised && isLocked && <EnterPassword />}
+      {isAuthorised && isLocked && <EnterPassword atBootsplash={atBootsplash} />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
       {isAppCheckFailed && <AppCheckWarning />}
