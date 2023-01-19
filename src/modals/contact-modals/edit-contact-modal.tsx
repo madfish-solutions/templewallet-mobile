@@ -23,9 +23,7 @@ import { editContactFormValidationSchema } from './validation-schema';
 export const EditContactModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
-  const {
-    contact: { name, publicKeyHash }
-  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>().params;
+  const { name, publicKeyHash } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>().params;
 
   const onSubmit = (contact: IAccountBase) => {
     dispatch(editContactAction(contact));

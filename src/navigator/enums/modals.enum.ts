@@ -45,6 +45,6 @@ export type ModalsParamList = {
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
-  [ModalsEnum.AddContact]: undefined;
-  [ModalsEnum.EditContact]: { contact: IAccountBase };
+  [ModalsEnum.AddContact]: IAccountBase | undefined;
+  [ModalsEnum.EditContact]: IAccountBase;
 };

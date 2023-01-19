@@ -22,6 +22,7 @@ import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit
 import { IAccountBase } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { addContactRequestAction } from '../../store/contacts/contacts-actions';
 import { useContactsSelector } from '../../store/contacts/contacts-selectors';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
@@ -116,16 +117,15 @@ export const SendModal: FC = () => {
       }
     }
 
-    void (
-      isDefined(amount) &&
+    void (isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
           asset,
           receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
-      )
-    );
+      ),
+    !transferBetweenOwnAccounts && dispatch(addContactRequestAction(receiverPublicKeyHash)));
   };
 
   return (

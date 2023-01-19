@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
@@ -13,14 +14,16 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormTextInput } from '../../form/form-text-input';
 import { IAccountBase } from '../../interfaces/account.interface';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addContactAction } from '../../store/contacts/contacts-actions';
 import { formatSize } from '../../styles/format-size';
 import { useAddContactFormValidationSchema } from './validation-schema';
 
 export const AddContactModal: FC = () => {
-  const { goBack } = useNavigation();
   const dispatch = useDispatch();
+  const { goBack } = useNavigation();
+  const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddContact>>();
 
   const addContactFormValidationSchema = useAddContactFormValidationSchema();
 
@@ -33,7 +36,7 @@ export const AddContactModal: FC = () => {
     <Formik
       validateOnBlur
       validateOnChange
-      initialValues={{ publicKeyHash: '', name: '' }}
+      initialValues={{ name: params?.name ?? '', publicKeyHash: params?.publicKeyHash ?? '' }}
       validationSchema={addContactFormValidationSchema}
       onSubmit={onSubmit}
     >

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
+import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
@@ -10,8 +13,11 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { addBlacklistedContactAction } from '../../store/contacts/contacts-actions';
+import { useAddContactActionSelector, useBlacklistedAddressesSelector } from '../../store/contacts/contacts-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -33,6 +39,17 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const addContactRequest = useAddContactActionSelector();
+  const blacklistedAddresses = useBlacklistedAddressesSelector();
+  const bottomSheetController = useBottomSheetController();
+
+  const handleClosePress = () => dispatch(addBlacklistedContactAction(addContactRequest));
+
+  useEffect(() => {
+    if (!blacklistedAddresses.includes(addContactRequest)) {
+      bottomSheetController.open();
+    }
+  }, [addContactRequest]);
 
   useWalletOpenTacker();
   usePageAnalytic(ScreensEnum.Wallet);
@@ -65,6 +82,23 @@ export const Wallet = () => {
       <TokenList />
 
       <BackupYourWalletOverlay />
+
+      <BottomSheet
+        title="Add this address to Contacts?"
+        description={addContactRequest}
+        cancelButtonText="Now now"
+        contentHeight={formatSize(180)}
+        controller={bottomSheetController}
+        onClosePress={handleClosePress}
+      >
+        <BottomSheetActionButton
+          title="Add address"
+          onPress={() => {
+            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: addContactRequest });
+            bottomSheetController.close();
+          }}
+        />
+      </BottomSheet>
     </>
   );
 };
