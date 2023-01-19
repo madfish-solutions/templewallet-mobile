@@ -43,9 +43,10 @@ import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/t
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
+import { TEZOS_DEXES_API_URL } from '../../../utils/env.utils';
 import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
+import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
