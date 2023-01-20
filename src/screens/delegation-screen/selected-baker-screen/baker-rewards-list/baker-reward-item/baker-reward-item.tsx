@@ -123,7 +123,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Baker fee:</Text>
               <Text style={styles.textBlack}>
-                {`${bakerFeePart * 100}% `}
+                {`${(bakerFeePart * 100).toFixed(2)}% `}
                 <Text style={styles.textGray}>({normalizedBakerFee.toString()} TEZ)</Text>
               </Text>
             </View>
