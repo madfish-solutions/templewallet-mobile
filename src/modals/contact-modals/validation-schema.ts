@@ -1,12 +1,12 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { useContactsAddressesSelector } from '../../store/contacts/contacts-selectors';
 import { isDefined } from '../../utils/is-defined';
 import { isValidAddress } from '../../utils/tezos.util';
 
-export const useAddContactFormValidationSchema = (): SchemaOf<IAccountBase> => {
+export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterface> => {
   const contactsAddresses = useContactsAddressesSelector();
 
   return object().shape({

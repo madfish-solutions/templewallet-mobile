@@ -2,14 +2,14 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { isAndroid } from '../../config/system';
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { AccountDropdownBase } from './account-dropdown-base';
 import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
-const renderAccountValue: DropdownValueComponent<IAccountBase> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value }) => (
   <AccountDropdownItem
     account={value}
     showFullData={false}
@@ -18,7 +18,11 @@ const renderAccountValue: DropdownValueComponent<IAccountBase> = ({ value }) => 
   />
 );
 
-export const CurrentAccountDropdown: FC<DropdownValueProps<IAccountBase>> = ({ value, list, onValueChange }) => (
+export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>> = ({
+  value,
+  list,
+  onValueChange
+}) => (
   <View style={CurrentAccountDropdownStyles.root}>
     <AccountDropdownBase
       value={value}

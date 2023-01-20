@@ -3,6 +3,6 @@ import { ContactsState } from './contacts-state';
 
 export const mockContactsState: ContactsState = {
   contacts: [mockHdAccountBase],
-  addContactRequest: '',
-  blacklistedAddresses: ['']
+  contactCandidatePkh: '',
+  ignoredAddresses: ['']
 };

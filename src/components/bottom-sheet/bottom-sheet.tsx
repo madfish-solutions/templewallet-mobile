@@ -21,7 +21,7 @@ interface Props extends BottomSheetControllerProps {
   title?: string;
   description: string;
   cancelButtonText?: string;
-  onClosePress?: EmptyFn;
+  onCancelButtonPress?: EmptyFn;
   contentHeight: number;
 }
 
@@ -29,7 +29,7 @@ export const BottomSheet: FC<Props> = ({
   title,
   description,
   cancelButtonText = 'Cancel',
-  onClosePress = emptyFn,
+  onCancelButtonPress = emptyFn,
   contentHeight,
   controller,
   children
@@ -62,7 +62,7 @@ export const BottomSheet: FC<Props> = ({
   };
   const handleCancelPress = () => {
     controller.close();
-    onClosePress();
+    onCancelButtonPress();
   };
 
   useEffect(() => {

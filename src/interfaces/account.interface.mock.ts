@@ -1,9 +1,9 @@
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
-import { AccountInterface, IAccountBase } from './account.interface';
+import { AccountInterface, AccountBaseInterface } from './account.interface';
 
-export const mockHdAccountBase: IAccountBase = {
-  name: 'Mock HD Account',
+export const mockHdAccountBase: AccountBaseInterface = {
+  name: 'MockContact',
   publicKeyHash: mockAccountCredentials.publicKeyHash
 };
 

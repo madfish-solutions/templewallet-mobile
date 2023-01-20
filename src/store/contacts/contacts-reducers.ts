@@ -3,7 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import {
   addBlacklistedContactAction,
   addContactAction,
-  addContactRequestAction,
+  addContactCandidatePkhAction,
   deleteContactAction,
   editContactAction
 } from './contacts-actions';
@@ -11,22 +11,24 @@ import { contactsInitialState, ContactsState } from './contacts-state';
 
 export const contactsReducers = createReducer<ContactsState>(contactsInitialState, builder => {
   builder.addCase(addContactAction, (state, { payload }) => {
-    state.contacts.push(payload);
+    state.contacts = [...state.contacts, payload];
   });
   builder.addCase(editContactAction, (state, { payload }) => {
-    const indexContactToEdit = state.contacts.findIndex(contact => contact.publicKeyHash === payload.publicKeyHash);
+    const contactIndex = state.contacts.findIndex(contact => contact.publicKeyHash === payload.publicKeyHash);
 
-    if (indexContactToEdit !== -1) {
-      state.contacts[indexContactToEdit] = payload;
+    if (contactIndex !== -1) {
+      const contactsCopy = [...state.contacts];
+      contactsCopy[contactIndex] = payload;
+      state.contacts = contactsCopy;
     }
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
     state.contacts = state.contacts.filter(contact => contact.publicKeyHash !== payload.publicKeyHash);
   });
-  builder.addCase(addContactRequestAction, (state, { payload }) => {
-    state.addContactRequest = payload;
+  builder.addCase(addContactCandidatePkhAction, (state, { payload }) => {
+    state.contactCandidatePkh = payload;
   });
   builder.addCase(addBlacklistedContactAction, (state, { payload }) => {
-    state.blacklistedAddresses.push(payload);
+    state.ignoredAddresses = [...state.ignoredAddresses, payload];
   });
 });

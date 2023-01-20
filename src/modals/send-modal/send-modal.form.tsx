@@ -4,12 +4,12 @@ import { AssetAmountInterface } from '../../components/asset-amount-input/asset-
 import { assetAmountValidation } from '../../form/validation/asset-amount';
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { walletAddressValidation } from '../../form/validation/wallet-address';
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 
 export interface SendModalFormValues {
   assetAmount: AssetAmountInterface;
   receiverPublicKeyHash: string;
-  ownAccount: IAccountBase;
+  receiver: AccountBaseInterface;
   transferBetweenOwnAccounts: boolean;
 }
 
@@ -20,10 +20,10 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
       value ? schema : walletAddressValidation
     )
     .ensure(),
-  ownAccount: object()
+  receiver: object()
     .shape({})
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
-    ) as SchemaOf<IAccountBase>,
+    ) as SchemaOf<AccountBaseInterface>,
   transferBetweenOwnAccounts: boolean().required()
 });

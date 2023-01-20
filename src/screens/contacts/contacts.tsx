@@ -27,7 +27,7 @@ export const Contacts = () => {
   return (
     <FlatList
       data={contacts}
-      renderItem={({ item }) => <ContactItem {...item} />}
+      renderItem={({ item }) => <ContactItem contact={item} />}
       ListEmptyComponent={<DataPlaceholder text="You have no contacts" />}
     />
   );

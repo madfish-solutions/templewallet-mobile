@@ -22,7 +22,7 @@ import { useFilteredReceiversList } from '../../hooks/use-filtered-receivers-lis
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactRequestAction } from '../../store/contacts/contacts-actions';
+import { addContactCandidatePkhAction } from '../../store/contacts/contacts-actions';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -61,7 +61,7 @@ export const SendModal: FC = () => {
     [tezosToken, filteredAssetsList]
   );
 
-  const transferDisabled = filteredReceiversList.length === 0;
+  const isTransferDisabled = filteredReceiversList.length === 0;
 
   usePageAnalytic(ModalsEnum.Send);
 
@@ -72,16 +72,16 @@ export const SendModal: FC = () => {
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      ownAccount: filteredReceiversList[0].data[0],
+      receiver: filteredReceiversList[0]?.data[0],
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsListWithTez]
+    [filteredAssetsListWithTez, filteredReceiversList]
   );
 
   const onSubmit = async ({
     assetAmount: { asset, amount },
     receiverPublicKeyHash,
-    ownAccount,
+    receiver,
     transferBetweenOwnAccounts
   }: SendModalFormValues) => {
     if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
@@ -102,11 +102,11 @@ export const SendModal: FC = () => {
       dispatch(
         sendAssetActions.submit({
           asset,
-          receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
+          receiverPublicKeyHash: transferBetweenOwnAccounts ? receiver.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
       ),
-    !transferBetweenOwnAccounts && dispatch(addContactRequestAction(receiverPublicKeyHash)));
+    !transferBetweenOwnAccounts && dispatch(addContactCandidatePkhAction(receiverPublicKeyHash)));
   };
 
   return (
@@ -131,7 +131,7 @@ export const SendModal: FC = () => {
             {values.transferBetweenOwnAccounts ? (
               <>
                 <AccountFormSectionDropdown
-                  name="ownAccount"
+                  name="receiver"
                   list={filteredReceiversList}
                   setSearchValue={handleSearchValueChange}
                 />
@@ -142,10 +142,10 @@ export const SendModal: FC = () => {
             )}
             <View
               onTouchStart={() =>
-                void (transferDisabled && showWarningToast({ description: 'Create one more account' }))
+                void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
               }
             >
-              <FormCheckbox disabled={transferDisabled} name="transferBetweenOwnAccounts" size={formatSize(16)}>
+              <FormCheckbox disabled={isTransferDisabled} name="transferBetweenOwnAccounts" size={formatSize(16)}>
                 <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
               </FormCheckbox>
             </View>

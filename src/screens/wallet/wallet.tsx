@@ -43,7 +43,7 @@ export const Wallet = () => {
   const blacklistedAddresses = useBlacklistedAddressesSelector();
   const bottomSheetController = useBottomSheetController();
 
-  const handleClosePress = () => dispatch(addBlacklistedContactAction(addContactRequest));
+  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(addContactRequest));
 
   useEffect(() => {
     if (!blacklistedAddresses.includes(addContactRequest)) {
@@ -89,7 +89,7 @@ export const Wallet = () => {
         cancelButtonText="Now now"
         contentHeight={formatSize(180)}
         controller={bottomSheetController}
-        onClosePress={handleClosePress}
+        onCancelButtonPress={handleCloseButtonPress}
       >
         <BottomSheetActionButton
           title="Add address"

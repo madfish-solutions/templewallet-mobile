@@ -1,4 +1,4 @@
-import { AccountInterface, IAccountBase } from '../../interfaces/account.interface';
+import { AccountInterface, AccountBaseInterface } from '../../interfaces/account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
@@ -45,6 +45,6 @@ export type ModalsParamList = {
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
-  [ModalsEnum.AddContact]: IAccountBase | undefined;
-  [ModalsEnum.EditContact]: IAccountBase;
+  [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
+  [ModalsEnum.EditContact]: AccountBaseInterface;
 };

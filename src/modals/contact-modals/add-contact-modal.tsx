@@ -13,7 +13,7 @@ import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../form/form-address-input';
 import { FormTextInput } from '../../form/form-text-input';
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addContactAction } from '../../store/contacts/contacts-actions';
@@ -27,16 +27,21 @@ export const AddContactModal: FC = () => {
 
   const addContactFormValidationSchema = useAddContactFormValidationSchema();
 
-  const onSubmit = (contact: IAccountBase) => {
+  const onSubmit = (contact: AccountBaseInterface) => {
     dispatch(addContactAction(contact));
     goBack();
+  };
+
+  const initialValues = {
+    name: params?.name ?? '',
+    publicKeyHash: params?.publicKeyHash ?? ''
   };
 
   return (
     <Formik
       validateOnBlur
       validateOnChange
-      initialValues={{ name: params?.name ?? '', publicKeyHash: params?.publicKeyHash ?? '' }}
+      initialValues={initialValues}
       validationSchema={addContactFormValidationSchema}
       onSubmit={onSubmit}
     >

@@ -1,16 +1,16 @@
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 
 export interface ContactsState {
-  contacts: Array<IAccountBase>;
-  blacklistedAddresses: Array<string>;
-  addContactRequest: string;
+  contacts: Array<AccountBaseInterface>;
+  ignoredAddresses: Array<string>;
+  contactCandidatePkh: string;
 }
 export const contactsInitialState: ContactsState = {
   contacts: [],
-  blacklistedAddresses: [],
-  addContactRequest: ''
+  ignoredAddresses: [],
+  contactCandidatePkh: ''
 };
 
-export interface ContactsRootState {
-  contacts: ContactsState;
+export interface ContactsBookRootState {
+  contactBook: ContactsState;
 }

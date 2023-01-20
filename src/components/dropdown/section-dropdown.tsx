@@ -1,9 +1,12 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useState } from 'react';
-import { FlatListProps, ListRenderItemInfo, SectionList, Text, useWindowDimensions, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, SectionList, Text, View } from 'react-native';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
+import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
+import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
 import { formatSize } from '../../styles/format-size';
+import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -14,7 +17,7 @@ import { useDropdownStyles } from './dropdown.styles';
 
 export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
-  list: Array<{ title: string; data: Array<T> }>;
+  list: Array<SectionDropdownDataInterface<T>>;
   isSearchable?: boolean;
   itemHeight?: number;
   setSearchValue?: EventFn<string>;
@@ -28,7 +31,7 @@ export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtr
 interface SectionDropdownValueProps<T> {
   value?: T;
   itemHeight?: number;
-  list: Array<{ title: string; data: Array<T> }>;
+  list: Array<SectionDropdownDataInterface<T>>;
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
 }
@@ -49,7 +52,7 @@ type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const DropdownComponent = <T extends unknown>({
+const SectionDropdownComponent = <T extends unknown>({
   value,
   list,
   description,
@@ -65,10 +68,10 @@ const DropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
-  const [ref, setRef] = useState<SectionList<T, { title: string; data: Array<T> }> | null>(null);
+  const [ref, setRef] = useState<SectionList<T, SectionDropdownDataInterface<T>> | null>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const contentHeight = 0.7 * useWindowDimensions().height;
+  const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -138,7 +141,7 @@ const DropdownComponent = <T extends unknown>({
           <SectionList
             sections={list}
             ref={ref => setRef(ref)}
-            getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
+            getItemLayout={createGetItemLayout(itemHeight)}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
@@ -155,4 +158,4 @@ const DropdownComponent = <T extends unknown>({
   );
 };
 
-export const SectionDropdown = memo(DropdownComponent) as typeof DropdownComponent;
+export const SectionDropdown = memo(SectionDropdownComponent) as typeof SectionDropdownComponent;

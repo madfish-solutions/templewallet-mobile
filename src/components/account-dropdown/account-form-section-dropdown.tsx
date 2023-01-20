@@ -2,7 +2,8 @@ import React, { FC } from 'react';
 
 import { EventFn } from '../../config/general';
 import { FormSectionDropdown } from '../../form/form-section-dropdown';
-import { IAccountBase } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
+import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
 import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -11,11 +12,11 @@ import { accountEqualityFn } from './account-equality-fn';
 
 interface Props {
   name: string;
-  list: Array<{ title: string; data: Array<IAccountBase> }>;
+  list: Array<SectionDropdownDataInterface<AccountBaseInterface>>;
   setSearchValue: EventFn<string>;
 }
 
-const renderAccountValue: DropdownValueComponent<IAccountBase> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value }) => (
   <DropdownItemContainer>
     <AccountDropdownItem account={value} actionIconName={IconNameEnum.TriangleDown} />
   </DropdownItemContainer>

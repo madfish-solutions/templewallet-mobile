@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { IAccountBase } from '../../../interfaces/account.interface';
+import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
 import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -18,7 +18,7 @@ import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
-  account = { name: '', publicKeyHash: '' },
+  account = emptyAccountBase,
   showFullData = true,
   actionIconName,
   isPublicKeyHashTextDisabled
@@ -50,6 +50,6 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   );
 };
 
-export const renderAccountListItem: DropdownListItemComponent<IAccountBase> = ({ item, isSelected }) => (
+export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item, isSelected }) => (
   <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );

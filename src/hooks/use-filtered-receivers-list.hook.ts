@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { IAccountBase } from '../interfaces/account.interface';
+import { AccountBaseInterface } from '../interfaces/account.interface';
+import { SectionDropdownDataInterface } from '../interfaces/section-dropdown-data.interface';
 import { useContactsSelector } from '../store/contacts/contacts-selectors';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from '../store/wallet/wallet-selectors';
 
@@ -15,7 +16,7 @@ export const useFilteredReceiversList = () => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   const filteredReceiversList = useMemo(() => {
-    const result: Array<{ title: string; data: Array<IAccountBase> }> = [];
+    const result: Array<SectionDropdownDataInterface<AccountBaseInterface>> = [];
 
     const searchValueLowerCase = searchValue.toLowerCase();
 

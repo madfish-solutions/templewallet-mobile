@@ -1,10 +1,12 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useState } from 'react';
-import { FlatListProps, ListRenderItemInfo, useWindowDimensions, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
+import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
 import { formatSize } from '../../styles/format-size';
+import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -74,7 +76,7 @@ const DropdownComponent = <T extends unknown>({
   const [ref, setRef] = useState<FlatList<T> | null>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const contentHeight = 0.7 * useWindowDimensions().height;
+  const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -131,7 +133,7 @@ const DropdownComponent = <T extends unknown>({
             ref={ref => {
               setRef(ref);
             }}
-            getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
+            getItemLayout={createGetItemLayout(itemHeight)}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
