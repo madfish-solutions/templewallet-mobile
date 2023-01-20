@@ -38,7 +38,7 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
         <ActivityGroupType group={group} />
 
         <View style={styles.exploreContainer}>
-          <PublicKeyHashText publicKeyHash={firstActivity.hash} />
+          <PublicKeyHashText style={styles.accountPkh} publicKeyHash={firstActivity.hash} />
           <Divider size={formatSize(4)} />
           <ExternalLinkButton url={tzktUrl(selectedRpcUrl, firstActivity.hash)} />
         </View>

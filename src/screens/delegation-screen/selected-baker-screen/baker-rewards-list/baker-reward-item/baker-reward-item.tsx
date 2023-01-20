@@ -99,7 +99,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <Text style={styles.bakerAlias}>{reward.baker.alias}</Text>
             <Divider size={formatSize(2)} />
             <View style={styles.row}>
-              <PublicKeyHashText publicKeyHash={reward.baker.address} />
+              <PublicKeyHashText style={styles.accountPkh} publicKeyHash={reward.baker.address} />
               <Divider size={formatSize(4)} />
               <ExternalLinkButton url={tzktUrl(selectedRpcUrl, reward.baker.address)} />
             </View>

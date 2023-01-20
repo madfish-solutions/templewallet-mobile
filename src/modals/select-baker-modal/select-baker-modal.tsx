@@ -1,22 +1,18 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
 import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { Label } from '../../components/label/label';
 import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { SearchInput } from '../../components/search-input/search-input';
+import { Sorter } from '../../components/sorter/sorter';
 import { BakersSortFieldEnum } from '../../enums/bakers-sort-field.enum';
 import { BakerInterface } from '../../interfaces/baker.interface';
 import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
@@ -51,7 +47,6 @@ const bakersSortFieldsOptions = [
 export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
-  const revealSelectBottomSheetController = useBottomSheetController();
   const [currentBaker] = useSelectedBakerSelector();
 
   const { trackEvent } = useAnalytics();
@@ -102,6 +97,8 @@ export const SelectBakerModal: FC = () => {
       }
     }
   };
+
+  const handleSortValueChange = (value: BakersSortFieldEnum) => setSortValue(value);
 
   useEffect(() => {
     if (isString(searchValue)) {
@@ -156,13 +153,14 @@ export const SelectBakerModal: FC = () => {
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
-          <View style={styles.sortSelector}>
-            <Text style={styles.sortByLabel}>Sort by</Text>
-            <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={revealSelectBottomSheetController.open}>
-              <Text style={styles.selectedBakerSortField}>{bakersSortFieldsLabels[sortValue]}</Text>
-              <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
-            </TouchableOpacity>
-          </View>
+
+          <Sorter
+            sortValue={sortValue}
+            description="Sort bakers by:"
+            sortFieldsOptions={bakersSortFieldsOptions}
+            sortFieldsLabels={bakersSortFieldsLabels}
+            onSetSortValue={handleSortValueChange}
+          />
         </View>
       </View>
 
@@ -184,23 +182,6 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
       </ModalButtonsContainer>
-
-      <BottomSheet
-        description="Sort bakers by:"
-        contentHeight={formatSize(260)}
-        controller={revealSelectBottomSheetController}
-      >
-        {bakersSortFieldsOptions.map(value => (
-          <BottomSheetActionButton
-            key={value}
-            title={bakersSortFieldsLabels[value]}
-            onPress={() => {
-              setSortValue(value);
-              revealSelectBottomSheetController.close();
-            }}
-          />
-        ))}
-      </BottomSheet>
     </>
   );
 };

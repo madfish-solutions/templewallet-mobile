@@ -259,12 +259,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           {isLiquidityProviderToken && (
             <>
               <View style={styles.balanceRow}>
-                <Text style={styles.balanceDescription}>Frozen Balance:</Text>
+                <Text style={styles.balanceText}>Frozen Balance:</Text>
                 <Divider size={formatSize(4)} />
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceValueText}
+                  style={styles.balanceText}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -272,13 +272,13 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             </>
           )}
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+            <Text style={styles.balanceText}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
             <Divider size={formatSize(4)} />
-            <HideBalance style={styles.balanceValueText}>
+            <HideBalance style={styles.balanceText}>
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceValueText}
+                style={styles.balanceText}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>

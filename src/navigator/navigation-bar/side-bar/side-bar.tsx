@@ -13,6 +13,7 @@ import { showErrorToast } from '../../../toast/toast.utils';
 import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
+  marketStackScreens,
   ScreensEnum,
   settingsStackScreens,
   swapStackScreens,
@@ -65,6 +66,12 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(swapStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
+          />
+          <SideBarButton
+            label="Market"
+            iconName={IconNameEnum.Market}
+            routeName={ScreensEnum.Market}
+            focused={isStackFocused(marketStackScreens)}
           />
           <DebugTapListener>
             <SideBarButton

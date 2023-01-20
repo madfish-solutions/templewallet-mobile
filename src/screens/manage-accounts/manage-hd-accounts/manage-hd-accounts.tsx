@@ -6,15 +6,12 @@ import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom
 import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
 import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from '../../../components/divider/divider';
-import { IconTitleNoBg } from '../../../components/icon-title-no-bg/icon-title-no-bg';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { SearchInput } from '../../../components/search-input/search-input';
 import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
 import { AccountInterface, emptyAccount } from '../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useShelter } from '../../../shelter/use-shelter.hook';
 import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
@@ -23,7 +20,6 @@ import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
   const { navigate } = useNavigation();
-  const { createHdAccount } = useShelter();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
@@ -79,8 +75,6 @@ export const ManageHdAccounts = () => {
         ))}
 
         <Divider />
-
-        <IconTitleNoBg icon={IconNameEnum.PlusCircle} text="CREATE NEW" onPress={createHdAccount} />
 
         <BottomSheet
           description="Select what do you want to reveal:"

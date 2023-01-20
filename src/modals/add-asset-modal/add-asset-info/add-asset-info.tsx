@@ -19,14 +19,14 @@ import { useAddTokenSuggestionSelector } from '../../../store/tokens-metadata/to
 import { addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
-import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-token-info.form';
+import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-asset-info.form';
 
 interface Props {
   onCancelButtonPress: EmptyFn;
   onFormSubmitted: EmptyFn;
 }
 
-export const AddTokenInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }) => {
+export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
   const tokenSuggestion = useAddTokenSuggestionSelector();
   const initialValues = {

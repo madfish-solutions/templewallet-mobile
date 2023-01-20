@@ -112,7 +112,11 @@ export class Shelter {
           })
         );
       }),
-      catchError(() => of(undefined))
+      catchError(error => {
+        console.error(error);
+
+        return of(undefined);
+      })
     );
   };
 
