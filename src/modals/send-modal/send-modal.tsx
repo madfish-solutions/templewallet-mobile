@@ -62,6 +62,7 @@ export const SendModal: FC = () => {
   );
 
   const isTransferDisabled = filteredReceiversList.length === 0;
+  const recipient = filteredReceiversList[0]?.data[0];
 
   usePageAnalytic(ModalsEnum.Send);
 
@@ -72,16 +73,16 @@ export const SendModal: FC = () => {
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      receiver: filteredReceiversList[0]?.data[0],
+      recipient,
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsListWithTez]
+    []
   );
 
   const onSubmit = async ({
     assetAmount: { asset, amount },
     receiverPublicKeyHash,
-    receiver,
+    recipient,
     transferBetweenOwnAccounts
   }: SendModalFormValues) => {
     if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
@@ -102,7 +103,7 @@ export const SendModal: FC = () => {
       dispatch(
         sendAssetActions.submit({
           asset,
-          receiverPublicKeyHash: transferBetweenOwnAccounts ? receiver.publicKeyHash : receiverPublicKeyHash,
+          receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
       ),
@@ -131,7 +132,7 @@ export const SendModal: FC = () => {
             {values.transferBetweenOwnAccounts ? (
               <>
                 <AccountFormSectionDropdown
-                  name="receiver"
+                  name="recipient"
                   list={filteredReceiversList}
                   setSearchValue={handleSearchValueChange}
                 />

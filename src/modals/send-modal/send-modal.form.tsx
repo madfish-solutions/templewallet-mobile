@@ -9,7 +9,7 @@ import { AccountBaseInterface } from '../../interfaces/account.interface';
 export interface SendModalFormValues {
   assetAmount: AssetAmountInterface;
   receiverPublicKeyHash: string;
-  receiver: AccountBaseInterface;
+  recipient: AccountBaseInterface;
   transferBetweenOwnAccounts: boolean;
 }
 
@@ -20,7 +20,7 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
       value ? schema : walletAddressValidation
     )
     .ensure(),
-  receiver: object()
+  recipient: object()
     .shape({})
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
