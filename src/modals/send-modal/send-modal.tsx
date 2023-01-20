@@ -75,7 +75,7 @@ export const SendModal: FC = () => {
       receiver: filteredReceiversList[0]?.data[0],
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsListWithTez, filteredReceiversList]
+    [filteredAssetsListWithTez]
   );
 
   const onSubmit = async ({
