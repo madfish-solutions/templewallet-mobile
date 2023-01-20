@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Divider } from '../../components/divider/divider';
-import { IconTitleNoBg } from '../../components/icon-title-no-bg/icon-title-no-bg';
+import { generateScreenOptions } from '../../components/header/generate-screen-options.util';
+import { HeaderButton } from '../../components/header/header-button/header-button';
+import { HeaderTitle } from '../../components/header/header-title/header-title';
+import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
@@ -23,19 +25,20 @@ export const NodeSettings = () => {
   const radioButtons = useMemo(() => rpcList.map(rpc => ({ label: rpc.name, value: rpc.url })), [rpcList]);
 
   usePageAnalytic(ScreensEnum.NodeSettings);
+
+  useNavigationSetOptions(
+    generateScreenOptions(
+      <HeaderTitle title="Default node (RPC)" />,
+      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddCustomRpc)} />
+    ),
+    []
+  );
+
   const handleChange = (newRpcUrl: string) => dispatch(setSelectedRpcUrl(newRpcUrl));
 
   return (
     <ScreenContainer>
       <StyledRadioButtonsGroup value={selectedRpcUrl} buttons={radioButtons} onChange={handleChange} />
-      <Divider />
-
-      <IconTitleNoBg
-        icon={IconNameEnum.PlusCircle}
-        text="ADD CUSTOM RPC"
-        onPress={() => navigate(ModalsEnum.AddCustomRpc)}
-      />
-      <Divider />
     </ScreenContainer>
   );
 };
