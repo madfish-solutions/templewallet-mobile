@@ -17,7 +17,10 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from '../../store/contacts/contacts-actions';
-import { useAddContactActionSelector, useBlacklistedAddressesSelector } from '../../store/contacts/contacts-selectors';
+import {
+  useContactCandidatePkhSelector,
+  useBlacklistedAddressesSelector
+} from '../../store/contacts/contacts-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -39,17 +42,17 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const addContactRequest = useAddContactActionSelector();
+  const contactCandidatePkh = useContactCandidatePkhSelector();
   const blacklistedAddresses = useBlacklistedAddressesSelector();
   const bottomSheetController = useBottomSheetController();
 
-  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(addContactRequest));
+  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidatePkh));
 
   useEffect(() => {
-    if (!blacklistedAddresses.includes(addContactRequest)) {
+    if (!blacklistedAddresses.includes(contactCandidatePkh)) {
       bottomSheetController.open();
     }
-  }, [addContactRequest]);
+  }, [contactCandidatePkh]);
 
   useWalletOpenTacker();
   usePageAnalytic(ScreensEnum.Wallet);
@@ -85,7 +88,7 @@ export const Wallet = () => {
 
       <BottomSheet
         title="Add this address to Contacts?"
-        description={addContactRequest}
+        description={contactCandidatePkh}
         cancelButtonText="Now now"
         contentHeight={formatSize(180)}
         controller={bottomSheetController}
@@ -94,7 +97,7 @@ export const Wallet = () => {
         <BottomSheetActionButton
           title="Add address"
           onPress={() => {
-            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: addContactRequest });
+            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidatePkh });
             bottomSheetController.close();
           }}
         />
