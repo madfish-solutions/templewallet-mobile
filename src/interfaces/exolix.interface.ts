@@ -81,8 +81,25 @@ export interface ExolixCurrenciesResponseInterface {
   data: Array<ExolixCurrenciesInterface>;
 }
 
-export interface RateInterface {
+export interface GetRateRequestData {
+  coinFrom: string;
+  coinFromNetwork: string;
+  coinTo: string;
+  coinToNetwork: string;
+  amount: number;
+}
+
+export interface GetRateResponse {
   toAmount: number;
-  rate: number | null;
   minAmount: number;
+  rate: number;
+  withdrawMin: number;
+  message: null;
+}
+
+export interface GetRateResponseWithAmountTooLow {
+  toAmount: number;
+  minAmount: number;
+  rate: null;
+  message: string;
 }
