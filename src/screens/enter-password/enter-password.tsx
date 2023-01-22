@@ -15,6 +15,7 @@ import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { FormPasswordInput } from '../../form/form-password-input';
+import { useAtBootsplash } from '../../hooks/use-hide-bootsplash';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
@@ -31,12 +32,10 @@ import {
 } from './enter-password.form';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
-interface Props {
-  atBootsplash: boolean;
-}
-
-export const EnterPassword = ({ atBootsplash }: Props) => {
+export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
+
+  const atBootsplash = useAtBootsplash();
 
   const { unlock, unlockWithBiometry } = useAppLock();
 
