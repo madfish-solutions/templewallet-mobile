@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { UNKNOWN_TOKEN_SYMBOL } from '../../config/general';
 import { AccountTypeEnum } from '../../enums/account-type.enum';
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { TokenInterface } from '../../token/interfaces/token.interface';
@@ -105,7 +106,13 @@ export const useTokensWithTezosListSelector = () => {
 export const useVisibleTokensListSelector = () => {
   const tokensList = useTokensListSelector();
 
-  return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
+  return useMemo(
+    () =>
+      tokensList.filter(
+        ({ visibility, symbol }) => visibility === VisibilityEnum.Visible && symbol !== UNKNOWN_TOKEN_SYMBOL
+      ),
+    [tokensList]
+  );
 };
 
 export const useCollectiblesListSelector = () => {

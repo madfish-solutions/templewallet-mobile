@@ -3,6 +3,7 @@ import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tokenMetadataApi, whitelistApi } from '../api.service';
+import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
@@ -79,7 +80,7 @@ export const normalizeTokenMetadata = (
     ? gasTokenMetadata
     : rawMetadata ?? {
         ...emptyTokenMetadata,
-        symbol: '???',
+        symbol: UNKNOWN_TOKEN_SYMBOL,
         name: `${tokenAddress} ${tokenId}`,
         address: tokenAddress,
         id: Number(tokenId ?? 0)
@@ -111,8 +112,8 @@ const getTokenExchangeRate = (state: RootState, slug: string) => {
 export const getTokenMetadata = (state: RootState, slug: string) => {
   const tokenMetadata = normalizeTokenMetadata(
     state.settings.selectedRpcUrl,
-    slug,
-    state.tokensMetadata.metadataRecord[slug]
+    slug
+    // state.tokensMetadata.metadataRecord[slug]
   );
   const exchangeRate = getTokenExchangeRate(state, slug);
 
