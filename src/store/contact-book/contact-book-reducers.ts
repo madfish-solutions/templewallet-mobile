@@ -3,13 +3,13 @@ import { createReducer } from '@reduxjs/toolkit';
 import {
   addBlacklistedContactAction,
   addContactAction,
-  addContactCandidatePkhAction,
+  addContactCandidateAddressAction,
   deleteContactAction,
   editContactAction
-} from './contacts-actions';
-import { contactsInitialState, ContactsState } from './contacts-state';
+} from './contact-book-actions';
+import { contactBookInitialState, ContactBookState } from './contact-book-state';
 
-export const contactsReducers = createReducer<ContactsState>(contactsInitialState, builder => {
+export const contactBookReducers = createReducer<ContactBookState>(contactBookInitialState, builder => {
   builder.addCase(addContactAction, (state, { payload }) => {
     state.contacts = [...state.contacts, payload];
   });
@@ -25,8 +25,8 @@ export const contactsReducers = createReducer<ContactsState>(contactsInitialStat
   builder.addCase(deleteContactAction, (state, { payload }) => {
     state.contacts = state.contacts.filter(contact => contact.publicKeyHash !== payload.publicKeyHash);
   });
-  builder.addCase(addContactCandidatePkhAction, (state, { payload }) => {
-    state.contactCandidatePkh = payload;
+  builder.addCase(addContactCandidateAddressAction, (state, { payload }) => {
+    state.contactCandidateAddress = payload;
   });
   builder.addCase(addBlacklistedContactAction, (state, { payload }) => {
     state.ignoredAddresses = [...state.ignoredAddresses, payload];

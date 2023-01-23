@@ -9,7 +9,7 @@ import { useNavigationSetOptions } from '../../components/header/use-navigation-
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useContactsSelector } from '../../store/contacts/contacts-selectors';
+import { useContactsSelector } from '../../store/contact-book/contact-book-selectors';
 import { ContactItem } from './contact-item/contact-item';
 
 export const Contacts = () => {

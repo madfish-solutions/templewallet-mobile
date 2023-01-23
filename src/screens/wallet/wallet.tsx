@@ -16,11 +16,11 @@ import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addBlacklistedContactAction } from '../../store/contacts/contacts-actions';
+import { addBlacklistedContactAction } from '../../store/contact-book/contact-book-actions';
 import {
-  useContactCandidatePkhSelector,
+  useContactCandidateAddressSelector,
   useBlacklistedAddressesSelector
-} from '../../store/contacts/contacts-selectors';
+} from '../../store/contact-book/contact-book-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -42,17 +42,17 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const contactCandidatePkh = useContactCandidatePkhSelector();
+  const contactCandidateAddress = useContactCandidateAddressSelector();
   const blacklistedAddresses = useBlacklistedAddressesSelector();
   const bottomSheetController = useBottomSheetController();
 
-  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidatePkh));
+  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
   useEffect(() => {
-    if (!blacklistedAddresses.includes(contactCandidatePkh)) {
+    if (!blacklistedAddresses.includes(contactCandidateAddress)) {
       bottomSheetController.open();
     }
-  }, [contactCandidatePkh]);
+  }, [contactCandidateAddress]);
 
   useWalletOpenTacker();
   usePageAnalytic(ScreensEnum.Wallet);
@@ -88,7 +88,7 @@ export const Wallet = () => {
 
       <BottomSheet
         title="Add this address to Contacts?"
-        description={contactCandidatePkh}
+        description={contactCandidateAddress}
         cancelButtonText="Now now"
         contentHeight={formatSize(180)}
         controller={bottomSheetController}
@@ -97,7 +97,7 @@ export const Wallet = () => {
         <BottomSheetActionButton
           title="Add address"
           onPress={() => {
-            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidatePkh });
+            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidateAddress });
             bottomSheetController.close();
           }}
         />

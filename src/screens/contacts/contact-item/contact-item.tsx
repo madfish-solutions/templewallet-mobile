@@ -10,7 +10,7 @@ import { WalletAddress } from '../../../components/wallet-address/wallet-address
 import { AccountBaseInterface } from '../../../interfaces/account.interface';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { deleteContactAction } from '../../../store/contacts/contacts-actions';
+import { deleteContactAction } from '../../../store/contact-book/contact-book-actions';
 import { formatSize } from '../../../styles/format-size';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { useContactItemStyles } from './contact-item.styles';

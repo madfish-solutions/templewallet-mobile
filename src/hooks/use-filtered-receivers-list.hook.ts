@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { AccountBaseInterface } from '../interfaces/account.interface';
 import { SectionDropdownDataInterface } from '../interfaces/section-dropdown-data.interface';
-import { useContactsSelector } from '../store/contacts/contacts-selectors';
+import { useContactsSelector } from '../store/contact-book/contact-book-selectors';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from '../store/wallet/wallet-selectors';
 
 export const useFilteredReceiversList = () => {

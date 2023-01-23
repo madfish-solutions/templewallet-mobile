@@ -14,8 +14,8 @@ import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
-import { contactsReducers } from './contacts/contacts-reducers';
-import { ContactsBookRootState } from './contacts/contacts-state';
+import { contactBookReducers } from './contact-book/contact-book-reducers';
+import { ContactsBookRootState } from './contact-book/contact-book-state';
 import { currencyReducers } from './currency/currency-reducers';
 import { CurrencyRootState } from './currency/currency-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
@@ -76,7 +76,7 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
-  contactBook: contactsReducers
+  contactBook: contactBookReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

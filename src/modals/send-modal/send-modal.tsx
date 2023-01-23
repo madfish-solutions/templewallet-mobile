@@ -22,7 +22,7 @@ import { useFilteredReceiversList } from '../../hooks/use-filtered-receivers-lis
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactCandidatePkhAction } from '../../store/contacts/contacts-actions';
+import { addContactCandidateAddressAction } from '../../store/contact-book/contact-book-actions';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -107,7 +107,7 @@ export const SendModal: FC = () => {
           amount: amount.toNumber()
         })
       ),
-    !transferBetweenOwnAccounts && dispatch(addContactCandidatePkhAction(receiverPublicKeyHash)));
+    !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
   };
 
   return (

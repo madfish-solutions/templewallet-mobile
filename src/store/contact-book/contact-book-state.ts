@@ -1,16 +1,16 @@
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 
-export interface ContactsState {
+export interface ContactBookState {
   contacts: Array<AccountBaseInterface>;
   ignoredAddresses: Array<string>;
-  contactCandidatePkh: string;
+  contactCandidateAddress: string;
 }
-export const contactsInitialState: ContactsState = {
+export const contactBookInitialState: ContactBookState = {
   contacts: [],
   ignoredAddresses: [],
-  contactCandidatePkh: ''
+  contactCandidateAddress: ''
 };
 
 export interface ContactsBookRootState {
-  contactBook: ContactsState;
+  contactBook: ContactBookState;
 }

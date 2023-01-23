@@ -16,7 +16,7 @@ import { FormTextInput } from '../../form/form-text-input';
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactAction } from '../../store/contacts/contacts-actions';
+import { addContactAction } from '../../store/contact-book/contact-book-actions';
 import { formatSize } from '../../styles/format-size';
 import { useAddContactFormValidationSchema } from './validation-schema';
 

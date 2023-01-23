@@ -2,7 +2,7 @@ import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from '../../form/validation/messages';
 import { AccountBaseInterface } from '../../interfaces/account.interface';
-import { useContactsAddressesSelector } from '../../store/contacts/contacts-selectors';
+import { useContactsAddressesSelector } from '../../store/contact-book/contact-book-selectors';
 import { isDefined } from '../../utils/is-defined';
 import { isValidAddress } from '../../utils/tezos.util';
 
