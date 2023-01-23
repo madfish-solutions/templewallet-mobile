@@ -63,9 +63,9 @@ export const TopTokensTable = () => {
       </View>
       <View style={styles.listContainer}>
         <SwipeListView
+          ref={ref}
           scrollEnabled
           disableRightSwipe
-          ref={ref}
           data={filteredTokensList}
           renderItem={renderItem}
           renderHiddenItem={({ item }) => <RightSwipeView id={item.id} onPress={closeAllOpenRows} />}
@@ -73,6 +73,8 @@ export const TopTokensTable = () => {
           keyExtractor={keyExtractor}
           rightOpenValue={formatSize(-148)}
           ListEmptyComponent={listEmptyComponent}
+          windowSize={10}
+          updateCellsBatchingPeriod={150}
         />
       </View>
     </View>
