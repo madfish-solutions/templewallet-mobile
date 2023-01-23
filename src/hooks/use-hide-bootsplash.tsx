@@ -3,7 +3,7 @@ import { hide } from 'react-native-bootsplash';
 
 import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../config/animation';
 
-const context = createContext(false);
+const context = createContext(true);
 
 const Provider = context.Provider;
 
