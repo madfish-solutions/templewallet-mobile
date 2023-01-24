@@ -10,6 +10,7 @@ import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.s
 interface RadioButton<T extends string> {
   value: T;
   label: string;
+  disableEdit?: boolean;
 }
 
 export interface RadioButtonsGroupProps<T extends string> {
@@ -39,15 +40,15 @@ export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onCh
     [buttons, value, styles, colors]
   );
 
-  function onPressRadioButton(radioButtonsArray: RadioButtonProps[]) {
+  const onRadioButtonPress = (radioButtonsArray: RadioButtonProps[]) => {
     const selectedButton = radioButtonsArray.find(radioButton => radioButton.selected);
 
     isDefined(selectedButton) && onChange(selectedButton.value as T);
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <RadioGroup radioButtons={radioButtons} onPress={onPressRadioButton} />
+      <RadioGroup radioButtons={radioButtons} onPress={onRadioButtonPress} />
     </View>
   );
 };

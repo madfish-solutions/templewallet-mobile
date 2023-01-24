@@ -5,6 +5,7 @@ import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
+  editCustomRpc,
   walletOpenedAction,
   changeTheme,
   requestManualBackupAction,
@@ -50,6 +51,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(addCustomRpc, (state, { payload: customRpc }) => ({
     ...state,
     rpcList: [...state.rpcList, customRpc]
+  }));
+  // builder.addCase(editCustomRpc, (state, { payload: { url, values: customRpc } }) => ({
+  //   ...state,
+  //   rpcList: [...state.rpcList, customRpc]
+  // }));
+  builder.addCase(editCustomRpc, (state, { payload: rpcList }) => ({
+    ...state,
+    rpcList
   }));
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,

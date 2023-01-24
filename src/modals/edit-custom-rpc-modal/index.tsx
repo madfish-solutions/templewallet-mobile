@@ -1,5 +1,6 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -13,41 +14,54 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { FormTextInput } from '../../form/form-text-input';
 import { RpcInterface } from '../../interfaces/rpc.interface';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
+import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addCustomRpc, setSelectedRpcUrl } from '../../store/settings/settings-actions';
-import { useRpcListSelector } from '../../store/settings/settings-selectors';
+import { editCustomRpc, setSelectedRpcUrl } from '../../store/settings/settings-actions';
+import { useRpcListSelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/toast.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
-import { addCustomRpcFormInitialValues, addCustomRpcFormValidationSchema } from './add-custom-rpc.form';
+import { editCustomRpcFormValidationSchema } from './edit-custom-rpc.form';
 
-export const AddCustomRpcModal: FC = () => {
+export const EditCustomRpcModal: FC = () => {
+  const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
+
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const rpcList = useRpcListSelector();
+  const selected = useSelectedRpcUrlSelector();
 
-  const handleSubmit = (newRpc: RpcInterface) => {
-    const duplicate = rpcList.find(rpc => rpc.name === newRpc.name || rpc.url === newRpc.url);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const initialValues = useMemo(() => rpcList.find(rpc => rpc.url === url), [url])!;
 
-    if (isDefined(duplicate)) {
-      showErrorToast({ description: `RPC already exists ${duplicate.name}(${duplicate.url})` });
-    } else {
-      dispatch(addCustomRpc(newRpc));
-      dispatch(setSelectedRpcUrl(newRpc.url));
-      goBack();
+  const handleSubmit = (values: RpcInterface) => {
+    const duplicate = rpcList.find(rpc => rpc.name === values.name || rpc.url === values.url);
+
+    if (duplicate != null) {
+      return void showErrorToast({ description: `RPC already exists ${duplicate.name}(${duplicate.url})` });
     }
+
+    const index = rpcList.findIndex(rpc => rpc.url === url);
+
+    if (index < 0) {
+      return void showErrorToast({ description: `RPC not found ${initialValues.name}(${initialValues.url})` });
+    }
+
+    const list = [...rpcList];
+    list.splice(index, 1, values);
+
+    dispatch(editCustomRpc(list));
+    if (url === selected) {
+      dispatch(setSelectedRpcUrl(values.url));
+    }
+
+    goBack();
   };
 
-  usePageAnalytic(ModalsEnum.AddCustomRpc);
+  usePageAnalytic(ModalsEnum.EditCustomRpc);
 
   return (
-    <Formik
-      initialValues={addCustomRpcFormInitialValues}
-      validationSchema={addCustomRpcFormValidationSchema}
-      onSubmit={handleSubmit}
-    >
+    <Formik initialValues={initialValues} validationSchema={editCustomRpcFormValidationSchema} onSubmit={handleSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />
@@ -64,7 +78,7 @@ export const AddCustomRpcModal: FC = () => {
             <ButtonsContainer>
               <ButtonLargeSecondary title="Close" onPress={goBack} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Add" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary title="Save" disabled={!isValid} onPress={submitForm} />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />
