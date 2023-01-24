@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getDefaultConfig } = require('metro-config');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
 
 module.exports = (async () => {
   const {
@@ -17,7 +19,11 @@ module.exports = (async () => {
       babelTransformerPath: require.resolve('react-native-svg-transformer')
     },
     resolver: {
-      extraNodeModules: require('node-libs-react-native'),
+      extraNodeModules: {
+        ...require('node-libs-react-native'),
+        /* This is a way to account for TS aliases (tsconfig paths) */
+        src: path.resolve(__dirname, 'src')
+      },
       assetExts: assetExts.filter(ext => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg']
     }
