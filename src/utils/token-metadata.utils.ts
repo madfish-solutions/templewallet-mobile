@@ -112,8 +112,8 @@ const getTokenExchangeRate = (state: RootState, slug: string) => {
 export const getTokenMetadata = (state: RootState, slug: string) => {
   const tokenMetadata = normalizeTokenMetadata(
     state.settings.selectedRpcUrl,
-    slug
-    // state.tokensMetadata.metadataRecord[slug]
+    slug,
+    state.tokensMetadata.metadataRecord[slug]
   );
   const exchangeRate = getTokenExchangeRate(state, slug);
 
