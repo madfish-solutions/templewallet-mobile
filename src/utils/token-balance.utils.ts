@@ -31,6 +31,18 @@ export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyH
     getTokenBalances(selectedRpcUrl, accountPublicKeyHash, true)
   ]).pipe(map(responses => responses.map(response => response.data).flat()));
 
+export const loadTokensBalancesFromTzkt$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
+  from(getTokenBalances(selectedRpcUrl, accountPublicKeyHash, false)).pipe(
+    map(response => {
+      console.log('response: ', response.data);
+
+      return response.data.map(value => ({
+        slug: `${value.token.contract.address}_${value.token.tokenId}`,
+        balance: value.balance
+      }));
+    })
+  );
+
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
     map(balance => balance.toFixed())

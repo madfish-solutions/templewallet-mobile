@@ -2,7 +2,7 @@ import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -16,7 +16,12 @@ import { sliceIntoChunks } from '../../utils/array.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isDcpNode } from '../../utils/network.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
-import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import {
+  loadAssetBalance$,
+  loadTezosBalance$,
+  loadTokensBalancesFromTzkt$,
+  loadTokensWithBalance$
+} from '../../utils/token-balance.utils';
 import { withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
@@ -64,34 +69,26 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
     toPayload(),
-    concatMap(payload =>
-      of(payload).pipe(
-        withSelectedAccount(state$),
-        withSelectedRpcUrl(state$),
-        switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
-          if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
-            return forkJoin(
-              payload.slugs.map(slug =>
-                loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
-              )
-            ).pipe(
-              delay(100),
-              map(data =>
-                loadTokensBalancesArrayActions.success({
-                  publicKeyHash: payload.publicKeyHash,
-                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
-                  selectedRpcUrl
-                })
-              )
-            );
-          }
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
+      console.log('payload: ', payload);
+      console.log('selectedAccount: ', selectedAccount);
+      console.log('selectedRpcUrl: ', selectedRpcUrl);
+      if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
+        loadTokensBalancesFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
+          map(data => {
+            return loadTokensBalancesArrayActions.success({
+              publicKeyHash: payload.publicKeyHash,
+              data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
+              selectedRpcUrl
+            });
+          })
+        );
+      }
 
-          return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(
-            delay(5)
-          );
-        })
-      )
-    )
+      return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(delay(5));
+    })
   );
 
 const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
