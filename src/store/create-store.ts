@@ -3,8 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Middleware } from 'redux';
 import createDebugger from 'redux-flipper';
 import { combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
-// import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
-import { persistReducer, persistStore } from 'redux-persist';
+import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
 import { Observable } from 'rxjs';
@@ -87,11 +86,9 @@ export const createStore = (...epics: Epic[]) => {
     reducer: persistedReducer,
     middleware: getDefaultMiddleware => {
       return getDefaultMiddleware({
-        immutableCheck: false,
-        serializableCheck: false
-        // serializableCheck: {
-        //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
-        // }
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+        }
       }).concat(middlewares);
     }
   });

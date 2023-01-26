@@ -1,16 +1,16 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useStyles = createUseStyles(({ colors, typography }) => ({
-  fullWidthBtn: {
+export const useIconTitleNoBgStyles = createUseStyles(({ colors, typography }) => ({
+  touchableOpacity: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: formatSize(8)
   },
-  fullWidthBtnText: {
+  text: {
     ...typography.tagline13Tag,
-    color: colors.destructive,
-    marginLeft: formatSize(2)
+    color: colors.orange,
+    marginLeft: formatSize(3)
   }
 }));

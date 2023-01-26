@@ -1,7 +1,3 @@
-export interface ItemProps extends RadioItemInterface {
-  onEditPress?: (id: string) => void;
-}
-
 export interface RadioItemInterface {
   borderColor?: string;
   color?: string;
@@ -27,3 +23,7 @@ export type RadioGroupProps = {
   onEditButtonPress?: (id: string) => void;
   items: RadioItemInterface[];
 };
+
+export interface ItemProps extends RadioItemInterface {
+  onEditPress?: (id: string) => void;
+}

@@ -1,15 +1,14 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
+import { IconTitleNoBg } from 'src/components/icon-title-no-bg/icon-title-no-bg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
@@ -26,12 +25,9 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { editCustomRpcFormValidationSchema } from './edit-custom-rpc.form';
-import { useStyles } from './styles';
 
 export const EditCustomRpcModal: FC = () => {
   const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
-
-  const styles = useStyles();
 
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
@@ -96,15 +92,9 @@ export const EditCustomRpcModal: FC = () => {
 
             <Label label="URL" />
             <FormTextInput name="url" placeholder="http://localhost:4444" autoCapitalize="none" />
+
+            <IconTitleNoBg icon={IconNameEnum.Trash} text="Delete RPC" onPress={onDeleteButtonPress} />
           </View>
-
-          <TouchableOpacity style={styles.fullWidthBtn} onPress={onDeleteButtonPress}>
-            <Icon name={IconNameEnum.Trash} />
-            <Text style={styles.fullWidthBtnText}>Delete RPC</Text>
-          </TouchableOpacity>
-
-          {/* eslint-disable-next-line react-native/no-inline-styles */}
-          <View style={{ flexGrow: 1 }} />
 
           <View>
             <ButtonsContainer>

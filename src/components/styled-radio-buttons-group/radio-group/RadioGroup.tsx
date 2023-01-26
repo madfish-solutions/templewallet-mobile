@@ -2,45 +2,39 @@ import { isEqual } from 'lodash-es';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { RadioButton } from './RadioButton';
+import { RadioItem } from './RadioItem';
 import { RadioItemInterface, RadioGroupProps } from './types';
 
-export function RadioGroup({
-  containerStyle,
-  layout = 'column',
-  onPress,
-  onEditButtonPress,
-  items: radioButtons
-}: RadioGroupProps) {
-  const [radioButtonsLocal, setRadioButtonsLocal] = useState<RadioItemInterface[]>(radioButtons);
+export function RadioGroup({ containerStyle, layout = 'column', onPress, onEditButtonPress, items }: RadioGroupProps) {
+  const [itemsLocal, setItemsLocal] = useState<RadioItemInterface[]>(items);
 
-  if (!isEqual(radioButtons, radioButtonsLocal)) {
-    setRadioButtonsLocal(radioButtons);
+  if (!isEqual(items, itemsLocal)) {
+    setItemsLocal(items);
   }
 
   function handlePress(id: string) {
-    for (const button of radioButtonsLocal) {
-      if (button.selected === true && button.id === id) {
+    for (const item of itemsLocal) {
+      if (item.selected === true && item.id === id) {
         return;
       }
-      button.selected = button.id === id;
+      item.selected = item.id === id;
     }
-    setRadioButtonsLocal([...radioButtonsLocal]);
+    setItemsLocal([...itemsLocal]);
     if (onPress) {
-      onPress(radioButtonsLocal);
+      onPress(itemsLocal);
     }
   }
 
   return (
     <View style={[styles.container, { flexDirection: layout }, containerStyle]}>
-      {radioButtonsLocal.map(button => (
-        <RadioButton
-          {...button}
-          key={button.id}
+      {itemsLocal.map(item => (
+        <RadioItem
+          {...item}
+          key={item.id}
           onPress={(id: string) => {
             handlePress(id);
-            if (button.onPress && typeof button.onPress === 'function') {
-              button.onPress(id);
+            if (item.onPress && typeof item.onPress === 'function') {
+              item.onPress(id);
             }
           }}
           onEditPress={onEditButtonPress}

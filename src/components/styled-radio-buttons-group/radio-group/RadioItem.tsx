@@ -9,7 +9,7 @@ import { useColors } from 'src/styles/use-colors';
 
 import { ItemProps } from './types';
 
-export function RadioButton({
+export function RadioItem({
   borderColor,
   color = '#444',
   containerStyle,
