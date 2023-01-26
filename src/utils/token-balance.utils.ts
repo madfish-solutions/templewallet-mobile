@@ -5,7 +5,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { getTzktApi } from '../api.service';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TzktAccountTokenBalance } from '../interfaces/tzkt.interface';
-import { getTokenType } from '../token/utils/token.utils';
+import { getTokenSlug, getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
@@ -35,7 +35,10 @@ export const loadTokensBalancesFromTzkt$ = (selectedRpcUrl: string, accountPubli
   from(getTokenBalances(selectedRpcUrl, accountPublicKeyHash, false)).pipe(
     map(response =>
       response.data.map(value => ({
-        slug: `${value.token.contract.address}_${value.token.tokenId}`,
+        slug: getTokenSlug({
+          address: value.token.contract.address,
+          id: value.token.tokenId
+        }),
         balance: value.balance
       }))
     )
