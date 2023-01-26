@@ -21,7 +21,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { addCustomRpcFormInitialValues, formValidationSchema } from './form.utils';
+import { formInitialValues, formValidationSchema } from './form.utils';
 
 export const AddCustomRpcModal: FC = () => {
   const dispatch = useDispatch();
@@ -43,11 +43,7 @@ export const AddCustomRpcModal: FC = () => {
   usePageAnalytic(ModalsEnum.AddCustomRpc);
 
   return (
-    <Formik
-      initialValues={addCustomRpcFormInitialValues}
-      validationSchema={formValidationSchema}
-      onSubmit={handleSubmit}
-    >
+    <Formik initialValues={formInitialValues} validationSchema={formValidationSchema} onSubmit={handleSubmit}>
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />

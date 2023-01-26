@@ -18,13 +18,13 @@ import { FormTextInput } from 'src/form/form-text-input';
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { editCustomRpc, removeCustomRpc, setSelectedRpcUrl } from 'src/store/settings/settings-actions';
-import { useRpcListSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { editCustomRpc, removeCustomRpc } from 'src/store/settings/settings-actions';
+import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { formValidationSchema } from './form.utils';
+import { formInitialValues, formValidationSchema } from './form.utils';
 
 export const EditCustomRpcModal: FC = () => {
   const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
@@ -32,10 +32,15 @@ export const EditCustomRpcModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const rpcList = useRpcListSelector();
-  const selected = useSelectedRpcUrlSelector();
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const initialValues = useMemo(() => rpcList.find(rpc => rpc.url === url), [url])!;
+  const initialValues = useMemo(() => {
+    const rpc = rpcList.find(rpc => rpc.url === url);
+    if (rpc == null) {
+      return formInitialValues;
+    }
+
+    return rpc;
+  }, [url]);
 
   const handleSubmit = (values: RpcInterface) => {
     const index = rpcList.findIndex(rpc => rpc.url === url);
@@ -44,20 +49,15 @@ export const EditCustomRpcModal: FC = () => {
       return void showErrorToast({ description: `RPC not found ${initialValues.name}(${initialValues.url})` });
     }
 
-    const list = [...rpcList];
-    list.splice(index, 1);
-    const duplicate = list.find(rpc => rpc.name === values.name || rpc.url === values.url);
+    const otherItems = [...rpcList];
+    otherItems.splice(index, 1);
+    const duplicate = otherItems.find(rpc => rpc.name === values.name || rpc.url === values.url);
 
     if (duplicate != null) {
       return void showErrorToast({ description: `RPC already exists ${duplicate.name}(${duplicate.url})` });
     }
 
-    list.splice(index, 0, values);
-
-    dispatch(editCustomRpc(list));
-    if (url === selected) {
-      dispatch(setSelectedRpcUrl(values.url));
-    }
+    dispatch(editCustomRpc({ url, values }));
 
     goBack();
   };

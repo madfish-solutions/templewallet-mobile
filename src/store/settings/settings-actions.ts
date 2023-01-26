@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { RpcInterface } from '../../interfaces/rpc.interface';
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
+import { RpcInterface } from 'src/interfaces/rpc.interface';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
 
 export const changeTheme = createAction<ThemesEnum>('settings/CHANGE_THEME');
 
@@ -14,7 +14,7 @@ export const setIsAnalyticsEnabled = createAction<boolean>('settings/SET_IS_ANAL
 export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE_HIDDEN');
 
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
-export const editCustomRpc = createAction<RpcInterface[]>('settings/EDIT_CUSTOM_RPC');
+export const editCustomRpc = createAction<{ url: string; values: RpcInterface }>('settings/EDIT_CUSTOM_RPC');
 export const removeCustomRpc = createAction<string>('settings/REMOVE_CUSTOM_RPC');
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
 export const setFiatCurrency = createAction<FiatCurrenciesEnum>('settings/SET_FIAT_CURRENCY');

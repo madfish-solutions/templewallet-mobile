@@ -8,7 +8,7 @@ interface FormValues {
   url: string;
 }
 
-export const addCustomRpcFormInitialValues: FormValues = {
+export const formInitialValues: FormValues = {
   name: '',
   url: ''
 };

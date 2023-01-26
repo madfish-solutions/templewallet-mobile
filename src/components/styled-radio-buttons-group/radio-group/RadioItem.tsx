@@ -79,11 +79,7 @@ export function RadioItem({
             <Divider size={formatSize(20)} />
 
             <Pressable onPress={handleEditPress} style={{ padding: formatSize(6) }}>
-              <Icon
-                name={IconNameEnum.Edit}
-                size={formatSize(11.41)}
-                color={editDisabled === true ? colors.disabled : undefined}
-              />
+              <Icon name={IconNameEnum.Edit} color={editDisabled === true ? colors.disabled : undefined} />
             </Pressable>
           </>
         )}

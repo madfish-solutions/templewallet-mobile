@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
@@ -54,23 +55,8 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     rpcList: [...state.rpcList, customRpc]
   }));
-  builder.addCase(editCustomRpc, (state, { payload: rpcList }) => ({
-    ...state,
-    rpcList
-  }));
-  builder.addCase(removeCustomRpc, (state, { payload: url }) => {
-    if (url === TEMPLE_RPC.url) {
-      return;
-    }
-    const index = state.rpcList.findIndex(rpc => rpc.url === url);
-    if (index < 0) {
-      return;
-    }
-    state.rpcList.splice(index, 1);
-    if (state.selectedRpcUrl === url) {
-      state.selectedRpcUrl = state.rpcList[0].url;
-    }
-  });
+  builder.addCase(editCustomRpc, (state, { payload: { url, values } }) => void alterCustomRPC(state, url, values));
+  builder.addCase(removeCustomRpc, (state, { payload: url }) => void alterCustomRPC(state, url));
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
@@ -148,3 +134,27 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     return state;
   });
 });
+
+const alterCustomRPC = (state: SettingsState, url: string, values?: RpcInterface) => {
+  if (url === TEMPLE_RPC.url) {
+    return;
+  }
+  const list = state.rpcList;
+  const index = list.findIndex(rpc => rpc.url === url);
+  if (index < 0) {
+    return;
+  }
+  if (values == null) {
+    // 'remove' case
+    list.splice(index, 1);
+    if (state.selectedRpcUrl === url) {
+      state.selectedRpcUrl = state.rpcList[0].url;
+    }
+  } else {
+    // 'edit' case
+    list.splice(index, 1, values);
+    if (url === state.selectedRpcUrl) {
+      state.selectedRpcUrl = values.url;
+    }
+  }
+};
