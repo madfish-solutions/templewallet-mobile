@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react';
 import { View, ViewStyle } from 'react-native';
-import { RadioButtonProps, RadioGroup } from 'react-native-radio-buttons-group';
 
-import { EventFn } from '../../config/general';
-import { useColors } from '../../styles/use-colors';
-import { isDefined } from '../../utils/is-defined';
+import { EventFn } from 'src/config/general';
+import { useColors } from 'src/styles/use-colors';
+
+import { RadioItemInterface, RadioGroup } from './radio-group';
 import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.styles';
 
 interface RadioButton<T extends string> {
   value: T;
   label: string;
-  disableEdit?: boolean;
+  editDisabled?: boolean;
 }
 
 export interface RadioButtonsGroupProps<T extends string> {
@@ -20,14 +20,21 @@ export interface RadioButtonsGroupProps<T extends string> {
 interface Props<T extends string> extends RadioButtonsGroupProps<T> {
   value: T;
   onChange: EventFn<T>;
+  onEditButtonPress?: (id: string) => void;
   labelStyle?: ViewStyle;
 }
 
-export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onChange, labelStyle }: Props<T>) => {
+export const StyledRadioButtonsGroup = <T extends string>({
+  value,
+  buttons,
+  onChange,
+  onEditButtonPress,
+  labelStyle
+}: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
-  const radioButtons = useMemo<RadioButtonProps[]>(
+  const radioButtons = useMemo<RadioItemInterface[]>(
     () =>
       buttons.map(radioButton => ({
         ...radioButton,
@@ -40,15 +47,15 @@ export const StyledRadioButtonsGroup = <T extends string>({ value, buttons, onCh
     [buttons, value, styles, colors]
   );
 
-  const onRadioButtonPress = (radioButtonsArray: RadioButtonProps[]) => {
+  const onRadioButtonPress = (radioButtonsArray: RadioItemInterface[]) => {
     const selectedButton = radioButtonsArray.find(radioButton => radioButton.selected);
 
-    isDefined(selectedButton) && onChange(selectedButton.value as T);
+    selectedButton && onChange(selectedButton.value as T);
   };
 
   return (
     <View style={styles.container}>
-      <RadioGroup radioButtons={radioButtons} onPress={onRadioButtonPress} />
+      <RadioGroup items={radioButtons} onPress={onRadioButtonPress} onEditButtonPress={onEditButtonPress} />
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { urlValidation } from '../../form/validation/url';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { urlValidation } from 'src/form/validation/url';
 
 type AddCustomRpcFormValues = {
   name: string;

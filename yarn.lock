@@ -4148,13 +4148,6 @@
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash.isequal@^4.5.6":
-  version "4.5.6"
-  resolved "https://registry.yarnpkg.com/@types/lodash.isequal/-/lodash.isequal-4.5.6.tgz#ff42a1b8e20caa59a97e446a77dc57db923bc02b"
-  integrity sha512-Ww4UGSe3DmtvLLJm2F16hDwEQSv7U0Rr8SujLUA2wHI2D2dm8kPu6Et+/y303LfjTIwSBKXB/YTUcAKpem/XEg==
-  dependencies:
-    "@types/lodash" "*"
-
 "@types/lodash.pickby@^4.6.6":
   version "4.6.6"
   resolved "https://registry.yarnpkg.com/@types/lodash.pickby/-/lodash.pickby-4.6.6.tgz#3dc39c2b38432f7a0c5e5627b0d5c0e3878b4f35"
@@ -11757,7 +11750,7 @@ lodash.flattendeep@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
   integrity sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
 
-lodash.isequal@4.5.0, lodash.isequal@^4.5.0:
+lodash.isequal@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
@@ -14147,13 +14140,6 @@ react-native-quick-actions@^0.3.13:
   version "0.3.13"
   resolved "https://registry.npmjs.org/react-native-quick-actions/-/react-native-quick-actions-0.3.13.tgz"
   integrity sha512-Vz13a0+NV0mzCh/29tNt0qDzWPh8i2srTQW8eCSzGFDArnVm1COTOhTD0FY0hWHlxRY0ahvX+BlezTDvsyAuMA==
-
-react-native-radio-buttons-group@^2.2.11:
-  version "2.2.11"
-  resolved "https://registry.yarnpkg.com/react-native-radio-buttons-group/-/react-native-radio-buttons-group-2.2.11.tgz#204cc00ce7b95800fba80800fdf960d35efff81d"
-  integrity sha512-dDvwkqrNLxNAv5CFYZmAnjrFCx9U4mW64iRqscrBQ6DQMPYj2P1wp9Z8Q9T28exiRn04JwZQRIyc1H0VInxn0w==
-  dependencies:
-    lodash.isequal "4.5.0"
 
 react-native-randombytes@^3.5.1, react-native-randombytes@^3.6.1:
   version "3.6.1"
