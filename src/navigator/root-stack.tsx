@@ -14,11 +14,11 @@ import { useResetKeychainOnInstall } from '../hooks/use-reset-keychain-on-instal
 import { useResetLoading } from '../hooks/use-reset-loading.hook';
 import { useWhitelist } from '../hooks/use-whitelist.hook';
 import { AddAssetModal } from '../modals/add-asset-modal/add-asset-modal';
-import { AddCustomRpcModal } from '../modals/add-custom-rpc-modal/add-custom-rpc-modal';
 import { AddLiquidityModal } from '../modals/add-liquidity-modal/add-liquidity-modal';
 import { CollectibleModal } from '../modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from '../modals/confirmation-modal/confirmation-modal';
-import { EditCustomRpcModal } from '../modals/edit-custom-rpc-modal';
+import { AddCustomRpcModal } from '../modals/custom-rpc-modals/add-modal';
+import { EditCustomRpcModal } from '../modals/custom-rpc-modals/edit-modal';
 import { EnableBiometryPasswordModal } from '../modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from '../modals/import-account-modal/import-account-modal';
 import { ReceiveModal } from '../modals/receive-modal/receive-modal';
