@@ -72,18 +72,15 @@ const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
-      console.log('payload: ', payload);
-      console.log('selectedAccount: ', selectedAccount);
-      console.log('selectedRpcUrl: ', selectedRpcUrl);
       if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
-        loadTokensBalancesFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
-          map(data => {
-            return loadTokensBalancesArrayActions.success({
+        return loadTokensBalancesFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
+          map(data =>
+            loadTokensBalancesArrayActions.success({
               publicKeyHash: payload.publicKeyHash,
               data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
               selectedRpcUrl
-            });
-          })
+            })
+          )
         );
       }
 
