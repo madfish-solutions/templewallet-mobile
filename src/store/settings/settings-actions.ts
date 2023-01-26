@@ -14,8 +14,8 @@ export const setIsAnalyticsEnabled = createAction<boolean>('settings/SET_IS_ANAL
 export const setIsBalanceHidden = createAction<boolean>('settings/SET_IS_BALANCE_HIDDEN');
 
 export const addCustomRpc = createAction<RpcInterface>('settings/ADD_CUSTOM_RPC');
-// export const editCustomRpc = createAction<{ url: string; values: RpcInterface }>('settings/EDIT_CUSTOM_RPC');
 export const editCustomRpc = createAction<RpcInterface[]>('settings/EDIT_CUSTOM_RPC');
+export const removeCustomRpc = createAction<string>('settings/REMOVE_CUSTOM_RPC');
 export const setSelectedRpcUrl = createAction<string>('settings/SET_SELECTED_RPC_URL');
 export const setFiatCurrency = createAction<FiatCurrenciesEnum>('settings/SET_FIAT_CURRENCY');
 export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');

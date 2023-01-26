@@ -1,11 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from '../../utils/rpc/rpc-list';
+import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
+
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 import {
   addCustomRpc,
   editCustomRpc,
+  removeCustomRpc,
   walletOpenedAction,
   changeTheme,
   requestManualBackupAction,
@@ -52,14 +54,23 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     rpcList: [...state.rpcList, customRpc]
   }));
-  // builder.addCase(editCustomRpc, (state, { payload: { url, values: customRpc } }) => ({
-  //   ...state,
-  //   rpcList: [...state.rpcList, customRpc]
-  // }));
   builder.addCase(editCustomRpc, (state, { payload: rpcList }) => ({
     ...state,
     rpcList
   }));
+  builder.addCase(removeCustomRpc, (state, { payload: url }) => {
+    if (url === TEMPLE_RPC.url) {
+      return;
+    }
+    const index = state.rpcList.findIndex(rpc => rpc.url === url);
+    if (index < 0) {
+      return;
+    }
+    state.rpcList.splice(index, 1);
+    if (state.selectedRpcUrl === url) {
+      state.selectedRpcUrl = state.rpcList[0].url;
+    }
+  });
   builder.addCase(setSelectedRpcUrl, (state, { payload: selectedRpcUrl }) => ({
     ...state,
     selectedRpcUrl
