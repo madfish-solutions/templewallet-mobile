@@ -18,7 +18,7 @@ import {
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
-import { fetchKUSDApy$, fetchTzBtcApy$ } from './utils';
+import { fetchUSDTApy$, fetchKUSDApy$, fetchTzBtcApy$ } from './utils';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -107,7 +107,7 @@ const loadTokensApyEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
     switchMap(() =>
-      forkJoin([fetchTzBtcApy$(), fetchKUSDApy$()]).pipe(
+      forkJoin([fetchUSDTApy$(), fetchTzBtcApy$(), fetchKUSDApy$()]).pipe(
         map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
       )
     )

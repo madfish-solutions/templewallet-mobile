@@ -18,6 +18,7 @@ const basicLightColors = {
   peach: '#FF5B00',
   liteOrange: '#E5E5EA',
   liteGreen: '#3EBD93',
+  dollarGreen: '#009393',
   darkGreen: '#143A3A'
 };
 
@@ -29,6 +30,7 @@ const basicDarkColors: typeof basicLightColors = {
   peach: '#FF5B00',
   liteOrange: '#242424',
   liteGreen: '#3EBD93',
+  dollarGreen: '#009393',
   darkGreen: '#143A3A'
 };
 

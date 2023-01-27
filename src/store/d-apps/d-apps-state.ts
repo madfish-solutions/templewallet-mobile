@@ -24,6 +24,10 @@ export const dAppsInitialState: DAppsState = {
       rate: 0,
       link: YUPANA_LINK
     },
+    [KNOWN_TOKENS_SLUGS.USDT]: {
+      rate: 0,
+      link: YUPANA_LINK
+    },
     [KNOWN_TOKENS_SLUGS.tzBTC]: {
       rate: 0,
       link: YUPANA_LINK
