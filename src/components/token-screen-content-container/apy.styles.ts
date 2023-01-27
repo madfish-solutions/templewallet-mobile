@@ -1,14 +1,14 @@
 import { ViewStyle } from 'react-native';
 
-import { createUseStyles } from '../../styles/create-use-styles';
-import { TZ_BTC_SLUG, KUSD_SLUG } from '../../token/data/token-slugs';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 
 export const useApyStyles = createUseStyles(
   ({ colors }): Record<string, ViewStyle> => ({
-    [KUSD_SLUG]: {
+    [KNOWN_TOKENS_SLUGS.KUSD]: {
       backgroundColor: colors.liteGreen
     },
-    [TZ_BTC_SLUG]: {
+    [KNOWN_TOKENS_SLUGS.tzBTC]: {
       backgroundColor: colors.blue
     }
   })

@@ -6,8 +6,6 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
-import { getTzBtcApy$ } from '../../apollo/kord-fi/get-tz-btc-apy';
-import { getKUSDApy$ } from '../../apollo/yupana/get-kusd-apy';
 import { BeaconHandler } from '../../beacon/beacon-handler';
 import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
@@ -20,6 +18,7 @@ import {
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
+import { fetchKUSDApy$, fetchTzBtcApy$ } from './utils';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -108,7 +107,7 @@ const loadTokensApyEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
     switchMap(() =>
-      forkJoin([getTzBtcApy$(), getKUSDApy$()]).pipe(
+      forkJoin([fetchTzBtcApy$(), fetchKUSDApy$()]).pipe(
         map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
       )
     )
