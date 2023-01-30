@@ -6,7 +6,8 @@ const getEnv = (key: string): string => Config[key] ?? '';
 export const READ_ONLY_SIGNER_PUBLIC_KEY = getEnv('READ_ONLY_SIGNER_PUBLIC_KEY');
 export const READ_ONLY_SIGNER_PUBLIC_KEY_HASH = getEnv('READ_ONLY_SIGNER_PUBLIC_KEY_HASH');
 
-export const SEGMENT_ANALYTICS_KEY = getEnv('SEGMENT_ANALYTICS_KEY');
+export const JITSU_ANALYTICS_KEY = getEnv('JITSU_ANALYTICS_KEY');
+export const JITSU_TRACKING_HOST = getEnv('JITSU_TRACKING_HOST');
 
 export const TEMPLE_WALLET_EXOLIX_API_KEY = getEnv('TEMPLE_WALLET_EXOLIX_API_KEY');
 

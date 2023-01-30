@@ -1,8 +1,8 @@
-import { createClient } from '@segment/analytics-react-native';
+import { jitsuClient } from '@jitsu/sdk-js';
 
-import { SEGMENT_ANALYTICS_KEY } from '../env.utils';
+import { JITSU_ANALYTICS_KEY, JITSU_TRACKING_HOST } from '../env.utils';
 
-export const segmentClient = createClient({
-  writeKey: SEGMENT_ANALYTICS_KEY,
-  debug: false
+export const jitsu = jitsuClient({
+  tracking_host: JITSU_TRACKING_HOST,
+  key: JITSU_ANALYTICS_KEY
 });
