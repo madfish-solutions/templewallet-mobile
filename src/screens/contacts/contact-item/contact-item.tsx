@@ -17,9 +17,10 @@ import { useContactItemStyles } from './contact-item.styles';
 
 interface Props {
   contact: AccountBaseInterface;
+  index: number;
 }
 
-export const ContactItem: FC<Props> = ({ contact }) => {
+export const ContactItem: FC<Props> = ({ contact, index }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const styles = useContactItemStyles();
@@ -37,7 +38,7 @@ export const ContactItem: FC<Props> = ({ contact }) => {
       }
     ]);
 
-  const hadleEditItem = () => navigate(ModalsEnum.EditContact, contact);
+  const hadleEditItem = () => navigate(ModalsEnum.EditContact, { contact, index });
 
   return (
     <View style={styles.root}>

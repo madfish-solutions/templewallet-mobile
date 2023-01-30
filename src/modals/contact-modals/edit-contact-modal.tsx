@@ -23,23 +23,20 @@ import { editContactFormValidationSchema } from './validation-schema';
 export const EditContactModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
-  const { name, publicKeyHash } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>().params;
+  const {
+    params: { contact, index }
+  } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>();
 
   const onSubmit = (contact: AccountBaseInterface) => {
-    dispatch(editContactAction(contact));
+    dispatch(editContactAction({ contact, index }));
     goBack();
-  };
-
-  const initialValues = {
-    name,
-    publicKeyHash
   };
 
   return (
     <Formik
       validateOnBlur
       validateOnChange
-      initialValues={initialValues}
+      initialValues={contact}
       validationSchema={editContactFormValidationSchema}
       onSubmit={onSubmit}
     >

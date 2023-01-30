@@ -1,11 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
+import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
+import { readOnlySignerAccount } from '../../../utils/read-only.signer.util';
+import { createReadOnlyTezosToolkit } from '../../../utils/rpc/tezos-toolkit.utils';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
@@ -24,7 +27,14 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   isPublicKeyHashTextDisabled
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const tezosToken = useTezosTokenSelector(account.publicKeyHash);
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const [tezosBalance, setTezosBalance] = useState('0');
+
+  useEffect(() => {
+    void createReadOnlyTezosToolkit(selectedRpcUrl, readOnlySignerAccount)
+      .tz.getBalance(account.publicKeyHash)
+      .then(value => setTezosBalance(value.toFixed()));
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -41,7 +51,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
+              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezosBalance} />
             </HideBalance>
           )}
         </View>

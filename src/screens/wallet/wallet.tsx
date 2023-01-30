@@ -19,7 +19,8 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from '../../store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
-  useBlacklistedAddressesSelector
+  useContactsAddressesSelector,
+  useIgnoredAddressesSelector
 } from '../../store/contact-book/contact-book-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
@@ -43,13 +44,14 @@ export const Wallet = () => {
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const contactCandidateAddress = useContactCandidateAddressSelector();
-  const blacklistedAddresses = useBlacklistedAddressesSelector();
+  const ignoredAddresses = useIgnoredAddressesSelector();
+  const contactsAddresses = useContactsAddressesSelector();
   const bottomSheetController = useBottomSheetController();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
   useEffect(() => {
-    if (!blacklistedAddresses.includes(contactCandidateAddress)) {
+    if (!ignoredAddresses.includes(contactCandidateAddress) && !contactsAddresses.includes(contactCandidateAddress)) {
       bottomSheetController.open();
     }
   }, [contactCandidateAddress]);
@@ -89,7 +91,7 @@ export const Wallet = () => {
       <BottomSheet
         title="Add this address to Contacts?"
         description={contactCandidateAddress}
-        cancelButtonText="Now now"
+        cancelButtonText="Not now"
         contentHeight={formatSize(180)}
         controller={bottomSheetController}
         onCancelButtonPress={handleCloseButtonPress}

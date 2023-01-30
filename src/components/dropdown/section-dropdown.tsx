@@ -139,6 +139,7 @@ const SectionDropdownComponent = <T extends unknown>({
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
           <SectionList
+            scrollEnabled={true}
             sections={list}
             ref={ref => setRef(ref)}
             getItemLayout={createGetItemLayout(itemHeight)}

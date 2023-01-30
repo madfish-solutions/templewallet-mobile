@@ -24,8 +24,7 @@ export const AddContactModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddContact>>();
-
-  const addContactFormValidationSchema = useAddContactFormValidationSchema();
+  const validationSchema = useAddContactFormValidationSchema();
 
   const onSubmit = (contact: AccountBaseInterface) => {
     dispatch(addContactAction(contact));
@@ -42,7 +41,7 @@ export const AddContactModal: FC = () => {
       validateOnBlur
       validateOnChange
       initialValues={initialValues}
-      validationSchema={addContactFormValidationSchema}
+      validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
       {({ submitForm, isValid }) => (

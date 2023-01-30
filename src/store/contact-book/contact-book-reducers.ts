@@ -14,13 +14,9 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
     state.contacts = [...state.contacts, payload];
   });
   builder.addCase(editContactAction, (state, { payload }) => {
-    const contactIndex = state.contacts.findIndex(contact => contact.publicKeyHash === payload.publicKeyHash);
-
-    if (contactIndex !== -1) {
-      const contactsCopy = [...state.contacts];
-      contactsCopy[contactIndex] = payload;
-      state.contacts = contactsCopy;
-    }
+    const contactsCopy = [...state.contacts];
+    contactsCopy[payload.index] = payload.contact;
+    state.contacts = contactsCopy;
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
     state.contacts = state.contacts.filter(contact => contact.publicKeyHash !== payload.publicKeyHash);
