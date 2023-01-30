@@ -34,7 +34,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
     void createReadOnlyTezosToolkit(selectedRpcUrl, readOnlySignerAccount)
       .tz.getBalance(account.publicKeyHash)
       .then(value => setTezosBalance(value.toFixed()));
-  }, []);
+  }, [selectedRpcUrl, account.publicKeyHash]);
 
   return (
     <View style={styles.root}>
