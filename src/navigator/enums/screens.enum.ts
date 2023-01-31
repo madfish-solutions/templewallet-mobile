@@ -67,10 +67,13 @@ export type ScreensParamList = {
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
-
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
+  [ScreensEnum.Buy]: undefined;
+  [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.AliceBob]: { min: number; max: number };
+  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -80,12 +83,6 @@ export type ScreensParamList = {
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
   [ScreensEnum.SwapQuestionsScreen]: undefined;
-
-  /** Buy stack **/
-  [ScreensEnum.Buy]: undefined;
-  [ScreensEnum.Exolix]: undefined;
-  [ScreensEnum.AliceBob]: { min: number; max: number };
-  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;

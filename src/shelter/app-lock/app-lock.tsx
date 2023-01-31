@@ -46,7 +46,7 @@ export const AppLockContextProvider: FC = ({ children }) => {
 
         return undefined;
       })
-      .catch(() => undefined);
+      .catch(error => void console.error(error));
 
     isDefined(password) && unlock(password);
   }, [unlock]);

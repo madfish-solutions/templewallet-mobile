@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -57,6 +57,8 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
+const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
+
 const DropdownComponent = <T extends unknown>({
   value,
   list,
@@ -73,9 +75,10 @@ const DropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
-  const [ref, setRef] = useState<FlatList<T> | null>(null);
+  const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
+  const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
   const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
@@ -99,7 +102,7 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || list.length === 0) {
+    if (!isDefined(ref.current) || !isDefined(value) || !isDefined(list) || list.length === 0) {
       return void 0;
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));
@@ -107,8 +110,8 @@ const DropdownComponent = <T extends unknown>({
     if (foundIndex >= list.length) {
       return void 0;
     }
-    ref.scrollToIndex({ index, animated: true });
-  }, [ref, value, list]);
+    ref.current.scrollToIndex({ index, animated: true });
+  }, [value, list]);
 
   return (
     <>
@@ -129,15 +132,15 @@ const DropdownComponent = <T extends unknown>({
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList
+            ref={ref}
             data={list}
-            ref={ref => {
-              setRef(ref);
-            }}
-            getItemLayout={createGetItemLayout(itemHeight)}
-            contentContainerStyle={styles.flatListContentContainer}
-            keyExtractor={keyExtractor}
             renderItem={renderItem}
-            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            contentContainerStyle={styles.flatListContentContainer}
+            ListEmptyComponent={ListEmptyComponent}
+            windowSize={10}
+            updateCellsBatchingPeriod={150}
           />
         </View>
 

@@ -17,12 +17,12 @@ import { getNetworkGasTokenMetadata } from '../../utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
-import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
+import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
-import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
+import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
@@ -54,6 +54,10 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
     isShowBalance={false}
     iconSize={formatSize(32)}
   />
+);
+
+const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
+  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );
 
 const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
