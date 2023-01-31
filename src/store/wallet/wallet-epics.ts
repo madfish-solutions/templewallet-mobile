@@ -115,9 +115,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
             loadTokensMetadataAction(assetWithoutMetadataSlugs),
-            loadTokensBalancesArrayActions.submit({
-              publicKeyHash: selectedAccount.publicKeyHash
-            })
+            loadTokensBalancesArrayActions.submit()
           ];
         }),
         catchError(err => of(loadTokensActions.fail(err.message)))

@@ -47,12 +47,10 @@ const mapTzktTokenBalance = (tztkBalances: Array<TzktAccountTokenBalance>) =>
 
 export const loadTokensBalancesArrayFromTzkt$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
   loadTokensBalancesFromTzkt$(selectedRpcUrl, accountPublicKeyHash).pipe(
-    map(([resA, resB]) => {
-      const resultA = mapTzktTokenBalance(resA.data);
-      const resultB = mapTzktTokenBalance(resB.data);
-
-      return [...resultA, ...resultB];
-    })
+    map(([tokenBalances, collectiblesBalances]) => [
+      ...mapTzktTokenBalance(tokenBalances.data),
+      ...mapTzktTokenBalance(collectiblesBalances.data)
+    ])
   );
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
