@@ -18,7 +18,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { editContactAction } from '../../store/contact-book/contact-book-actions';
 import { formatSize } from '../../styles/format-size';
-import { editContactFormValidationSchema } from './validation-schema';
+import { useEditContactFormValidationSchema } from './validation-schema';
 
 export const EditContactModal: FC = () => {
   const dispatch = useDispatch();
@@ -26,6 +26,7 @@ export const EditContactModal: FC = () => {
   const {
     params: { contact, index }
   } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>();
+  const editContactFormValidationSchema = useEditContactFormValidationSchema(index);
 
   const onSubmit = (contact: AccountBaseInterface) => {
     dispatch(editContactAction({ contact, index }));

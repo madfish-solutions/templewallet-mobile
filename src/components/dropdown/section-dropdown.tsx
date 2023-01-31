@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useState } from 'react';
-import { FlatListProps, ListRenderItemInfo, SectionList, Text, View } from 'react-native';
+import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC, memo, useCallback } from 'react';
+import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
@@ -68,7 +68,6 @@ const SectionDropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
-  const [ref, setRef] = useState<SectionList<T, SectionDropdownDataInterface<T>> | null>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = useDropdownHeight();
@@ -94,7 +93,7 @@ const SectionDropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || list.length === 0) {
+    if (!isDefined(value) || !isDefined(list) || list.length === 0) {
       return void 0;
     }
     let itemIndex = 0;
@@ -113,12 +112,7 @@ const SectionDropdownComponent = <T extends unknown>({
         break;
       }
     }
-    ref.scrollToLocation({
-      itemIndex,
-      sectionIndex,
-      animated: true
-    });
-  }, [ref, value, list]);
+  }, [value, list]);
 
   return (
     <>
@@ -138,10 +132,8 @@ const SectionDropdownComponent = <T extends unknown>({
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
-          <SectionList
-            scrollEnabled={true}
+          <BottomSheetSectionList
             sections={list}
-            ref={ref => setRef(ref)}
             getItemLayout={createGetItemLayout(itemHeight)}
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}

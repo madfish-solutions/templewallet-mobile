@@ -9,11 +9,14 @@ import {
 import { isDefined } from '../../utils/is-defined';
 import { isValidAddress } from '../../utils/tezos.util';
 
-export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterface> => {
-  const contactsAddresses = useContactsAddressesSelector();
-  const contactsNames = useContactsNamesSelector();
-
-  return object().shape({
+const baseValidationSchema = ({
+  contactsNames,
+  contactsAddresses
+}: {
+  contactsNames: Array<string>;
+  contactsAddresses: Array<string>;
+}) =>
+  object().shape({
     name: string()
       .required('Invalid name. It should be: 1-16 characters, without special symbols')
       .notOneOf(contactsNames, 'Contact with the same names already exists')
@@ -24,11 +27,17 @@ export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterfa
       .notOneOf(contactsAddresses, 'Contact with the same address already exists')
       .test('is-valid-address', 'Invalid address', value => (isDefined(value) ? isValidAddress(value) : false))
   });
+
+export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterface> => {
+  const contactsNames = useContactsNamesSelector();
+  const contactsAddresses = useContactsAddressesSelector();
+
+  return baseValidationSchema({ contactsNames, contactsAddresses });
 };
 
-export const editContactFormValidationSchema = object().shape({
-  name: string().required('Invalid name. It should be: 1-16 characters, without special symbols').min(1).max(16),
-  publicKeyHash: string()
-    .required(makeRequiredErrorMessage('Address'))
-    .test('is-valid-address', 'Invalid address', value => (isDefined(value) ? isValidAddress(value) : false))
-});
+export const useEditContactFormValidationSchema = (editContactIndex: number): SchemaOf<AccountBaseInterface> => {
+  const contactsNames = useContactsNamesSelector().filter((_, index) => editContactIndex !== index);
+  const contactsAddresses = useContactsAddressesSelector().filter((_, index) => editContactIndex !== index);
+
+  return baseValidationSchema({ contactsNames, contactsAddresses });
+};
