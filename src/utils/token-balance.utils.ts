@@ -25,23 +25,34 @@ const getTokenBalances = (selectedRpcUrl: string, account: string, isCollectible
     }
   });
 
-export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
+const loadTokensBalancesFromTzkt$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
   forkJoin([
     getTokenBalances(selectedRpcUrl, accountPublicKeyHash, false),
     getTokenBalances(selectedRpcUrl, accountPublicKeyHash, true)
-  ]).pipe(map(responses => responses.map(response => response.data).flat()));
+  ]);
 
-export const loadTokensBalancesFromTzkt$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
-  from(getTokenBalances(selectedRpcUrl, accountPublicKeyHash, false)).pipe(
-    map(response =>
-      response.data.map(value => ({
-        slug: getTokenSlug({
-          address: value.token.contract.address,
-          id: value.token.tokenId
-        }),
-        balance: value.balance
-      }))
-    )
+export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
+  loadTokensBalancesFromTzkt$(selectedRpcUrl, accountPublicKeyHash).pipe(
+    map(responses => responses.map(response => response.data).flat())
+  );
+
+const mapTzktTokenBalance = (tztkBalances: Array<TzktAccountTokenBalance>) =>
+  tztkBalances.map(value => ({
+    slug: getTokenSlug({
+      address: value.token.contract.address,
+      id: value.token.tokenId
+    }),
+    balance: value.balance
+  }));
+
+export const loadTokensBalancesArrayFromTzkt$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
+  loadTokensBalancesFromTzkt$(selectedRpcUrl, accountPublicKeyHash).pipe(
+    map(([resA, resB]) => {
+      const resultA = mapTzktTokenBalance(resA.data);
+      const resultB = mapTzktTokenBalance(resB.data);
+
+      return [...resultA, ...resultB];
+    })
   );
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>

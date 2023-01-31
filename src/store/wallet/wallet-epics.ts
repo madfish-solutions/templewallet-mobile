@@ -12,14 +12,13 @@ import { TokenBalanceResponse } from '../../interfaces/token-balance-response.in
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { sliceIntoChunks } from '../../utils/array.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isDcpNode } from '../../utils/network.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import {
   loadAssetBalance$,
+  loadTokensBalancesArrayFromTzkt$,
   loadTezosBalance$,
-  loadTokensBalancesFromTzkt$,
   loadTokensWithBalance$
 } from '../../utils/token-balance.utils';
 import { withMetadataSlugs } from '../../utils/token-metadata.utils';
@@ -68,24 +67,22 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
 const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
-    toPayload(),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
-      if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
-        return loadTokensBalancesFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
-          map(data =>
-            loadTokensBalancesArrayActions.success({
-              publicKeyHash: payload.publicKeyHash,
-              data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
-              selectedRpcUrl
-            })
-          )
-        );
-      }
-
-      return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(delay(5));
-    })
+    switchMap(([[_, selectedAccount], selectedRpcUrl]) =>
+      loadTokensBalancesArrayFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
+        map(data =>
+          loadTokensBalancesArrayActions.success({
+            publicKeyHash: selectedAccount.publicKeyHash,
+            data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
+            selectedRpcUrl
+          })
+        )
+      )
+    ),
+    catchError(([selectedAccount]) =>
+      of(loadTokensBalancesArrayActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
+    )
   );
 
 const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
@@ -118,12 +115,9 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
             loadTokensMetadataAction(assetWithoutMetadataSlugs),
-            ...sliceIntoChunks(allTokensSlugs, 3).map(slugs =>
-              loadTokensBalancesArrayActions.submit({
-                publicKeyHash: selectedAccount.publicKeyHash,
-                slugs
-              })
-            )
+            loadTokensBalancesArrayActions.submit({
+              publicKeyHash: selectedAccount.publicKeyHash
+            })
           ];
         }),
         catchError(err => of(loadTokensActions.fail(err.message)))
