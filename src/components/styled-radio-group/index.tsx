@@ -5,7 +5,7 @@ import { EventFn } from 'src/config/general';
 import { useColors } from 'src/styles/use-colors';
 
 import { RadioItemInterface, RadioGroup } from './radio-group';
-import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.styles';
+import { useStyledRadioButtonsGroupStyles } from './styles';
 
 interface StyledRadioItem<T extends string> {
   value: T;

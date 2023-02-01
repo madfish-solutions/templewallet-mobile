@@ -1,10 +1,7 @@
 import { useField } from 'formik';
 import React from 'react';
 
-import {
-  StyledRadioGroupProps,
-  StyledRadioGroup
-} from 'src/components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { StyledRadioGroupProps, StyledRadioGroup } from 'src/components/styled-radio-group';
 
 import { ErrorMessage } from './error-message/error-message';
 

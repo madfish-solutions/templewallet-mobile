@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { StyledRadioGroup } from 'src/components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { StyledRadioGroup } from 'src/components/styled-radio-group';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { setFiatCurrency } from 'src/store/settings/settings-actions';
 import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
