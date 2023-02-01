@@ -55,7 +55,8 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   actionsContainer: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    margin: formatSize(4)
+    margin: formatSize(4),
+    alignItems: 'center'
   },
   lowerContainer: {
     flexDirection: 'row'
@@ -67,5 +68,8 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   cellValueText: {
     ...typography.numbersRegular15,
     color: colors.black
+  },
+  accountPkh: {
+    height: formatSize(24)
   }
 }));

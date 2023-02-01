@@ -66,5 +66,8 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
   textGray: {
     ...typography.body15Regular,
     color: colors.gray1
+  },
+  accountPkh: {
+    height: formatSize(24)
   }
 }));

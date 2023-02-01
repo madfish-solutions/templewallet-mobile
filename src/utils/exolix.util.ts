@@ -1,8 +1,12 @@
+import axios from 'axios';
+
 import { exolixApi } from '../api.service';
 import {
   ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
-  RateInterface,
+  GetRateRequestData,
+  GetRateResponse,
+  GetRateResponseWithAmountTooLow,
   SubmitExchangePayload
 } from '../interfaces/exolix.interface';
 import { TopUpInputInterface } from '../interfaces/topup.interface';
@@ -48,15 +52,21 @@ const loadCurrency = async (page = 1) =>
     })
     .then(r => r.data);
 
-export const loadExolixRate = async (data: { coinFrom: string; coinTo: string; amount: number }) =>
-  exolixApi
-    .get('/rate', { params: { ...data, rateType: 'fixed' } })
-    .then(r => r.data as RateInterface)
-    .catch(error => {
-      if (isDefined(error.response)) {
-        return error.response.data;
+export const loadExolixRate = async (data: GetRateRequestData) =>
+  exolixApi.get<GetRateResponse>('/rate', { params: { ...data, rateType: 'fixed' } }).then(
+    r => r.data,
+    (error: unknown) => {
+      if (axios.isAxiosError(error) && error.response && error.response.status === 422) {
+        const data = error.response.data;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (typeof data === 'object' && data != null && (data as any).error == null) {
+          return data as GetRateResponseWithAmountTooLow;
+        }
       }
-    });
+      console.error(error);
+      throw error;
+    }
+  );
 
 export const submitExolixExchange = (data: SubmitExchangePayload) =>
   exolixApi.post<ExchangeDataInterface>('/transactions', { ...data, rateType: 'fixed' });
