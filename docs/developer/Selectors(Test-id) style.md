@@ -2,7 +2,7 @@ Selector style in the HTML elements:
 
 [data-testid="Page name/Page Element"]
 
-Examples: ![telegram-cloud-photo-size-2-5393406380704122641-y](https://user-images.githubusercontent.com/95026747/216106913-c8732550-0df4-4853-aced-d3c8a07692fb.jpg)
+Examples: (https://user-images.githubusercontent.com/95026747/216106913-c8732550-0df4-4853-aced-d3c8a07692fb.jpg)
 
 1. [data-testid=""] - Is the element attribute
 
