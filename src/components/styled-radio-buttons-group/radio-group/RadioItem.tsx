@@ -3,13 +3,12 @@ import { PixelRatio, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
-import { ItemProps } from './types';
+import { RadioItemInterface, ItemButtonInterface } from './types';
 
-export function RadioItem({
+export const RadioItem: React.FC<RadioItemInterface> = ({
   borderColor,
   color = '#444',
   containerStyle,
@@ -20,14 +19,11 @@ export function RadioItem({
   label,
   labelStyle,
   layout = 'row',
+  buttons,
   onPress,
-  onEditPress,
   selected = false,
-  size = 24,
-  editDisabled
-}: ItemProps) {
-  const colors = useColors();
-
+  size = 24
+}) => {
   const borderWidth = PixelRatio.roundToNearestPixel(size * 0.1);
   const sizeHalf = PixelRatio.roundToNearestPixel(size * 0.5);
   const sizeFull = PixelRatio.roundToNearestPixel(size);
@@ -41,9 +37,6 @@ export function RadioItem({
   }
 
   const handlePress = !disabled && onPress ? () => void onPress(id) : undefined;
-
-  const handleEditPress =
-    disabled === false && Boolean(editDisabled) === false && onEditPress ? () => void onEditPress(id) : undefined;
 
   const opacityStyle = { opacity: disabled ? 0.2 : 1 };
 
@@ -74,15 +67,9 @@ export function RadioItem({
           )}
         </View>
 
-        {onEditPress && (
-          <>
-            <Divider size={formatSize(20)} />
-
-            <Pressable onPress={handleEditPress} style={{ padding: formatSize(6) }}>
-              <Icon name={IconNameEnum.Edit} color={editDisabled === true ? colors.disabled : undefined} />
-            </Pressable>
-          </>
-        )}
+        {buttons?.map(button => (
+          <ItemButton {...button} />
+        ))}
 
         {Boolean(label) && <Text style={[margin, labelStyle]}>{label}</Text>}
       </Pressable>
@@ -90,7 +77,7 @@ export function RadioItem({
       {Boolean(description) && <Text style={[margin, descriptionStyle]}>{description}</Text>}
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -103,3 +90,19 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 });
+
+const ItemButton: React.FC<ItemButtonInterface> = ({ iconName, disabled, onPress }) => {
+  const colors = useColors();
+
+  const handlePress = disabled === true ? undefined : () => void onPress();
+
+  return (
+    <>
+      <Divider size={formatSize(20)} />
+
+      <Pressable onPress={handlePress} style={{ padding: formatSize(6) }}>
+        <Icon name={iconName} color={disabled === true ? colors.disabled : undefined} />
+      </Pressable>
+    </>
+  );
+};

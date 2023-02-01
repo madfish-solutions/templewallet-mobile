@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { RadioItem } from './RadioItem';
 import { RadioItemInterface, RadioGroupProps } from './types';
 
-export function RadioGroup({ containerStyle, layout = 'column', onPress, onEditButtonPress, items }: RadioGroupProps) {
+export function RadioGroup({ containerStyle, layout = 'column', onPress, items }: RadioGroupProps) {
   const [itemsLocal, setItemsLocal] = useState<RadioItemInterface[]>(items);
 
   if (!isEqual(items, itemsLocal)) {
@@ -37,7 +37,6 @@ export function RadioGroup({ containerStyle, layout = 'column', onPress, onEditB
               item.onPress(id);
             }
           }}
-          onEditPress={onEditButtonPress}
         />
       ))}
     </View>

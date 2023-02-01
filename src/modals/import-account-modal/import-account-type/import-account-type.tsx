@@ -39,7 +39,7 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Type of import" description="Select how would you like to import account." />
-            <FormRadioButtonsGroup name="type" buttons={importAccountTypeButtons} />
+            <FormRadioButtonsGroup name="type" items={importAccountTypeButtons} />
           </View>
           <View>
             <ButtonsContainer>

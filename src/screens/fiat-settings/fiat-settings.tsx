@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { Divider } from '../../components/divider/divider';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { StyledRadioGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { setFiatCurrency } from '../../store/settings/settings-actions';
 import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
@@ -16,7 +16,7 @@ export const FiatSettings = () => {
   const selectedFiatCurrency = useFiatCurrencySelector();
   const styles = useFiatSettingsStyles();
 
-  const radioButtons = useMemo(
+  const radioItems = useMemo(
     () =>
       FIAT_CURRENCIES.map(currency => ({
         label: `${currency.symbol}  ${currency.name} (${currency.fullname})`,
@@ -30,10 +30,10 @@ export const FiatSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup
+      <StyledRadioGroup
         labelStyle={styles.label}
         value={selectedFiatCurrency}
-        buttons={radioButtons}
+        items={radioItems}
         onChange={handleChange}
       />
       <Divider />

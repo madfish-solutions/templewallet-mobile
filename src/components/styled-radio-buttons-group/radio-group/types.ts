@@ -1,3 +1,5 @@
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+
 export interface RadioItemInterface {
   borderColor?: string;
   color?: string;
@@ -13,17 +15,19 @@ export interface RadioItemInterface {
   selected?: boolean;
   size?: number;
   value?: string;
-  editDisabled?: boolean;
+  buttons?: ItemButtonInterface[];
 }
 
 export type RadioGroupProps = {
   containerStyle?: object;
   layout?: 'row' | 'column';
   onPress?: (items: RadioItemInterface[]) => void;
-  onEditButtonPress?: (id: string) => void;
   items: RadioItemInterface[];
 };
 
-export interface ItemProps extends RadioItemInterface {
-  onEditPress?: (id: string) => void;
+export interface ItemButtonInterface {
+  key: string;
+  iconName: IconNameEnum;
+  disabled?: boolean;
+  onPress: () => void;
 }

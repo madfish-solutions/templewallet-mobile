@@ -7,7 +7,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { StyledRadioButtonsGroup } from 'src/components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { StyledRadioGroup } from 'src/components/styled-radio-buttons-group/styled-radio-buttons-group';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -23,12 +23,19 @@ export const NodeSettings = () => {
   const rpcList = useRpcListSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  const radioButtons = useMemo(
+  const radioItems = useMemo(
     () =>
       rpcList.map(rpc => ({
         label: rpc.name,
         value: rpc.url,
-        editDisabled: rpc.url === TEMPLE_RPC.url ? true : undefined
+        buttons: [
+          {
+            key: 'edit',
+            iconName: IconNameEnum.Edit,
+            disabled: rpc.url === TEMPLE_RPC.url ? true : undefined,
+            onPress: () => void navigate(ModalsEnum.EditCustomRpc, { url: rpc.url })
+          }
+        ]
       })),
     [rpcList]
   );
@@ -47,12 +54,7 @@ export const NodeSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup
-        value={selectedRpcUrl}
-        buttons={radioButtons}
-        onChange={handleChange}
-        onEditButtonPress={url => void navigate(ModalsEnum.EditCustomRpc, { url })}
-      />
+      <StyledRadioGroup value={selectedRpcUrl} items={radioItems} onChange={handleChange} />
     </ScreenContainer>
   );
 };

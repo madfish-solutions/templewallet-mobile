@@ -27,7 +27,7 @@ export const ImportAccountSeedDerivationPathForm: FC<Props> = ({ formValues }) =
 
   return (
     <>
-      <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
+      <FormRadioButtonsGroup name="derivationType" items={derivationTypeButtons} />
       {formValues.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && <FormTextInput name="derivationPath" />}
     </>
   );

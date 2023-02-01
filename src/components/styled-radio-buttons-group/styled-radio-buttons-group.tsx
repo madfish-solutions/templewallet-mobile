@@ -7,45 +7,37 @@ import { useColors } from 'src/styles/use-colors';
 import { RadioItemInterface, RadioGroup } from './radio-group';
 import { useStyledRadioButtonsGroupStyles } from './styled-radio-buttons-group.styles';
 
-interface RadioButton<T extends string> {
+interface StyledRadioItem<T extends string> {
   value: T;
   label: string;
-  /** Irrelevant, if `onEditButtonPress` is not passed as well */
-  editDisabled?: boolean;
+  buttons?: RadioItemInterface['buttons'];
 }
 
-export interface RadioButtonsGroupProps<T extends string> {
-  buttons: RadioButton<T>[];
+export interface StyledRadioGroupProps<T extends string> {
+  items: StyledRadioItem<T>[];
 }
 
-interface Props<T extends string> extends RadioButtonsGroupProps<T> {
+interface Props<T extends string> extends StyledRadioGroupProps<T> {
   value: T;
   onChange: EventFn<T>;
-  onEditButtonPress?: (id: string) => void;
   labelStyle?: ViewStyle;
 }
 
-export const StyledRadioButtonsGroup = <T extends string>({
-  value,
-  buttons,
-  onChange,
-  onEditButtonPress,
-  labelStyle
-}: Props<T>) => {
+export const StyledRadioGroup = <T extends string>({ value, items, onChange, labelStyle }: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
-  const items = useMemo<RadioItemInterface[]>(
+  const styledItems = useMemo<RadioItemInterface[]>(
     () =>
-      buttons.map(radioButton => ({
-        ...radioButton,
-        id: radioButton.value,
+      items.map(item => ({
+        ...item,
+        id: item.value,
         labelStyle: [styles.label, labelStyle],
         containerStyle: styles.itemContainer,
         color: colors.orange,
-        selected: radioButton.value === value
+        selected: item.value === value
       })),
-    [buttons, value, styles, colors]
+    [items, value, styles, colors]
   );
 
   const onRadioItemPress = (items: RadioItemInterface[]) => {
@@ -56,7 +48,7 @@ export const StyledRadioButtonsGroup = <T extends string>({
 
   return (
     <View style={styles.container}>
-      <RadioGroup items={items} onPress={onRadioItemPress} onEditButtonPress={onEditButtonPress} />
+      <RadioGroup items={styledItems} onPress={onRadioItemPress} />
     </View>
   );
 };
