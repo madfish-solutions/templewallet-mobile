@@ -4,7 +4,8 @@ import React from 'react';
 import {
   StyledRadioGroupProps,
   StyledRadioGroup
-} from '../components/styled-radio-buttons-group/styled-radio-buttons-group';
+} from 'src/components/styled-radio-buttons-group/styled-radio-buttons-group';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props<T extends string> extends StyledRadioGroupProps<T> {

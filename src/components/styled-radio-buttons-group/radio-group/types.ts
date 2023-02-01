@@ -12,18 +12,22 @@ export interface RadioItemInterface {
   labelStyle?: object;
   layout?: 'row' | 'column';
   onPress?: (id: string) => void;
-  selected?: boolean;
   size?: number;
   value?: string;
   buttons?: ItemButtonInterface[];
 }
 
-export type RadioGroupProps = {
+export interface RadioItemProps extends RadioItemInterface {
+  selected?: boolean;
+}
+
+export interface RadioGroupProps {
   containerStyle?: object;
   layout?: 'row' | 'column';
-  onPress?: (items: RadioItemInterface[]) => void;
+  onPress?: (id: string) => void;
   items: RadioItemInterface[];
-};
+  selectedId?: string;
+}
 
 export interface ItemButtonInterface {
   key: string;

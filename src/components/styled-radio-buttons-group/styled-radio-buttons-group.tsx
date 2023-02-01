@@ -40,15 +40,11 @@ export const StyledRadioGroup = <T extends string>({ value, items, onChange, lab
     [items, value, styles, colors]
   );
 
-  const onRadioItemPress = (items: RadioItemInterface[]) => {
-    const selectedItem = items.find(item => item.selected);
-
-    selectedItem && onChange(selectedItem.value as T);
-  };
+  const onRadioItemPress = (selectedId: string) => void onChange(selectedId as T);
 
   return (
     <View style={styles.container}>
-      <RadioGroup items={styledItems} onPress={onRadioItemPress} />
+      <RadioGroup items={styledItems} onPress={onRadioItemPress} selectedId={value} />
     </View>
   );
 };

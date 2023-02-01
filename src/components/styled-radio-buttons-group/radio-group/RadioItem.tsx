@@ -6,9 +6,9 @@ import { Icon } from 'src/components/icon/icon';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
-import { RadioItemInterface, ItemButtonInterface } from './types';
+import { RadioItemProps, ItemButtonInterface } from './types';
 
-export const RadioItem: React.FC<RadioItemInterface> = ({
+export const RadioItem: React.FC<RadioItemProps> = ({
   borderColor,
   color = '#444',
   containerStyle,
@@ -28,13 +28,8 @@ export const RadioItem: React.FC<RadioItemInterface> = ({
   const sizeHalf = PixelRatio.roundToNearestPixel(size * 0.5);
   const sizeFull = PixelRatio.roundToNearestPixel(size);
 
-  let orientation: ViewStyle = { flexDirection: 'row' };
-  let margin: ViewStyle = { marginLeft: 10 };
-
-  if (layout === 'column') {
-    orientation = { alignItems: 'center' };
-    margin = { marginTop: 10 };
-  }
+  const orientation: ViewStyle = layout === 'column' ? { alignItems: 'center' } : { flexDirection: 'row' };
+  const margin: ViewStyle = layout === 'column' ? { marginTop: 10 } : { marginLeft: 10 };
 
   const handlePress = !disabled && onPress ? () => void onPress(id) : undefined;
 
@@ -67,9 +62,14 @@ export const RadioItem: React.FC<RadioItemInterface> = ({
           )}
         </View>
 
-        {buttons?.map(button => (
-          <ItemButton {...button} />
-        ))}
+        {buttons && buttons.length && (
+          <>
+            <Divider size={formatSize(17)} />
+            {buttons?.map(button => (
+              <ItemButton {...button} />
+            ))}
+          </>
+        )}
 
         {Boolean(label) && <Text style={[margin, labelStyle]}>{label}</Text>}
       </Pressable>
@@ -97,12 +97,8 @@ const ItemButton: React.FC<ItemButtonInterface> = ({ iconName, disabled, onPress
   const handlePress = disabled === true ? undefined : () => void onPress();
 
   return (
-    <>
-      <Divider size={formatSize(20)} />
-
-      <Pressable onPress={handlePress} style={{ padding: formatSize(6) }}>
-        <Icon name={iconName} color={disabled === true ? colors.disabled : undefined} />
-      </Pressable>
-    </>
+    <Pressable onPress={handlePress} style={{ padding: formatSize(6), marginLeft: formatSize(10) }}>
+      <Icon name={iconName} color={disabled === true ? colors.disabled : undefined} />
+    </Pressable>
   );
 };

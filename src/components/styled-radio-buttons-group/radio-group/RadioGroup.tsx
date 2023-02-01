@@ -1,43 +1,37 @@
-import { isEqual } from 'lodash-es';
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { RadioItem } from './RadioItem';
-import { RadioItemInterface, RadioGroupProps } from './types';
+import { RadioGroupProps } from './types';
 
-export function RadioGroup({ containerStyle, layout = 'column', onPress, items }: RadioGroupProps) {
-  const [itemsLocal, setItemsLocal] = useState<RadioItemInterface[]>(items);
-
-  if (!isEqual(items, itemsLocal)) {
-    setItemsLocal(items);
-  }
-
-  function handlePress(id: string) {
-    for (const item of itemsLocal) {
-      if (item.selected === true && item.id === id) {
-        return;
-      }
-      item.selected = item.id === id;
+export function RadioGroup({ containerStyle, layout = 'column', onPress, items, selectedId }: RadioGroupProps) {
+  const handlePress = (id: string) => {
+    if (id !== selectedId && onPress) {
+      onPress(id);
     }
-    setItemsLocal([...itemsLocal]);
-    if (onPress) {
-      onPress(itemsLocal);
-    }
-  }
+  };
+
+  const itemsLocal = useMemo(
+    () =>
+      items.map(item => ({
+        key: item.id,
+        ...item,
+        selected: item.id === selectedId,
+        onPress: (id: string) => {
+          handlePress(id);
+
+          if (item.onPress) {
+            item.onPress(id);
+          }
+        }
+      })),
+    [items, selectedId]
+  );
 
   return (
     <View style={[styles.container, { flexDirection: layout }, containerStyle]}>
       {itemsLocal.map(item => (
-        <RadioItem
-          {...item}
-          key={item.id}
-          onPress={(id: string) => {
-            handlePress(id);
-            if (item.onPress && typeof item.onPress === 'function') {
-              item.onPress(id);
-            }
-          }}
-        />
+        <RadioItem {...item} />
       ))}
     </View>
   );
