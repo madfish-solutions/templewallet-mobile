@@ -5,7 +5,8 @@ import {
   addContactAction,
   addContactCandidateAddressAction,
   deleteContactAction,
-  editContactAction
+  editContactAction,
+  loadContactTezosBalance
 } from './contact-book-actions';
 import { contactBookInitialState, ContactBookState } from './contact-book-state';
 
@@ -26,5 +27,11 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
   });
   builder.addCase(addBlacklistedContactAction, (state, { payload }) => {
     state.ignoredAddresses = [...state.ignoredAddresses, payload];
+  });
+  builder.addCase(loadContactTezosBalance.success, (state, { payload: { publicKeyHash, tezosBalance } }) => {
+    state.contactsStateRecord = {
+      ...state.contactsStateRecord,
+      [publicKeyHash]: { tezosBalance }
+    };
   });
 });

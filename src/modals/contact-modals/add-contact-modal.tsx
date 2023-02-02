@@ -16,7 +16,7 @@ import { FormTextInput } from '../../form/form-text-input';
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactAction } from '../../store/contact-book/contact-book-actions';
+import { addContactAction, loadContactTezosBalance } from '../../store/contact-book/contact-book-actions';
 import { formatSize } from '../../styles/format-size';
 import { useAddContactFormValidationSchema } from './validation-schema';
 
@@ -28,6 +28,7 @@ export const AddContactModal: FC = () => {
 
   const onSubmit = (contact: AccountBaseInterface) => {
     dispatch(addContactAction(contact));
+    dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
     goBack();
   };
 

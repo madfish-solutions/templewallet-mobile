@@ -1,14 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
+import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
-import { readOnlySignerAccount } from '../../../utils/read-only.signer.util';
-import { createReadOnlyTezosToolkit } from '../../../utils/rpc/tezos-toolkit.utils';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
@@ -27,14 +25,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   isPublicKeyHashTextDisabled
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const [tezosBalance, setTezosBalance] = useState('0');
-
-  useEffect(() => {
-    void createReadOnlyTezosToolkit(selectedRpcUrl, readOnlySignerAccount)
-      .tz.getBalance(account.publicKeyHash)
-      .then(value => setTezosBalance(value.toFixed()));
-  }, [selectedRpcUrl, account.publicKeyHash]);
+  const tezos = useTezosTokenSelector(account.publicKeyHash);
 
   return (
     <View style={styles.root}>
@@ -51,7 +42,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezosBalance} />
+              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezos.balance} />
             </HideBalance>
           )}
         </View>
