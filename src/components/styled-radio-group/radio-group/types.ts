@@ -10,7 +10,6 @@ export interface RadioItemInterface {
   id: string;
   label?: string;
   labelStyle?: object;
-  layout?: 'row' | 'column';
   onPress?: (id: string) => void;
   size?: number;
   value?: string;
@@ -23,7 +22,6 @@ export interface RadioItemProps extends RadioItemInterface {
 
 export interface RadioGroupProps {
   containerStyle?: object;
-  layout?: 'row' | 'column';
   onPress?: (id: string) => void;
   items: RadioItemInterface[];
   selectedId?: string;

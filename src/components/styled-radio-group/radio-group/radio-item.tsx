@@ -1,11 +1,12 @@
 import React from 'react';
-import { PixelRatio, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { PixelRatio, Pressable, Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
+import { itemStyles } from './styles';
 import { RadioItemProps, ItemButtonInterface } from './types';
 
 export const RadioItem: React.FC<RadioItemProps> = ({
@@ -18,7 +19,6 @@ export const RadioItem: React.FC<RadioItemProps> = ({
   id,
   label,
   labelStyle,
-  layout = 'row',
   buttons,
   onPress,
   selected = false,
@@ -28,19 +28,16 @@ export const RadioItem: React.FC<RadioItemProps> = ({
   const sizeHalf = PixelRatio.roundToNearestPixel(size * 0.5);
   const sizeFull = PixelRatio.roundToNearestPixel(size);
 
-  const orientation: ViewStyle = layout === 'column' ? { alignItems: 'center' } : { flexDirection: 'row' };
-  const margin: ViewStyle = layout === 'column' ? { marginTop: 10 } : { marginLeft: 10 };
-
   const handlePress = !disabled && onPress ? () => void onPress(id) : undefined;
 
   const opacityStyle = { opacity: disabled ? 0.2 : 1 };
 
   return (
     <>
-      <Pressable onPress={handlePress} style={[styles.container, orientation, opacityStyle, containerStyle]}>
+      <Pressable onPress={handlePress} style={[itemStyles.container, opacityStyle, containerStyle]}>
         <View
           style={[
-            styles.border,
+            itemStyles.border,
             {
               borderColor: Boolean(borderColor) ? borderColor : color,
               borderWidth,
@@ -71,25 +68,13 @@ export const RadioItem: React.FC<RadioItemProps> = ({
           </>
         )}
 
-        {Boolean(label) && <Text style={[margin, labelStyle]}>{label}</Text>}
+        {Boolean(label) && <Text style={[itemStyles.text, labelStyle]}>{label}</Text>}
       </Pressable>
 
-      {Boolean(description) && <Text style={[margin, descriptionStyle]}>{description}</Text>}
+      {Boolean(description) && <Text style={[itemStyles.text, descriptionStyle]}>{description}</Text>}
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    marginHorizontal: 10,
-    marginVertical: 5
-  },
-  border: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});
 
 const ItemButton: React.FC<ItemButtonInterface> = ({ iconName, disabled, onPress }) => {
   const colors = useColors();

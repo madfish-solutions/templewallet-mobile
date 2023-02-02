@@ -4,4 +4,4 @@
 
 export type { RadioItemInterface } from './types';
 
-export { RadioGroup } from './RadioGroup';
+export { RadioGroup } from './radio-group';

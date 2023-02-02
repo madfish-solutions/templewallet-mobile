@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { RadioItem } from './RadioItem';
+import { RadioItem } from './radio-item';
+import { groupStyles } from './styles';
 import { RadioGroupProps } from './types';
 
-export function RadioGroup({ containerStyle, layout = 'column', onPress, items, selectedId }: RadioGroupProps) {
+export function RadioGroup({ containerStyle, onPress, items, selectedId }: RadioGroupProps) {
   const handlePress = (id: string) => {
     if (id !== selectedId && onPress) {
       onPress(id);
@@ -29,16 +30,10 @@ export function RadioGroup({ containerStyle, layout = 'column', onPress, items, 
   );
 
   return (
-    <View style={[styles.container, { flexDirection: layout }, containerStyle]}>
+    <View style={[groupStyles.container, containerStyle]}>
       {itemsLocal.map(item => (
         <RadioItem {...item} />
       ))}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center'
-  }
-});
