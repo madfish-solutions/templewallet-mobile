@@ -1,5 +1,6 @@
-import { BakerRewardInterface } from '../../interfaces/baker-reward.interface';
-import { BakerInterface } from '../../interfaces/baker.interface';
+import { BakerInterface } from 'src/apis/baking-bad';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+
 import { createActions } from '../create-actions';
 
 export const loadSelectedBakerActions = createActions<void, BakerInterface, string>('baking/LOAD_SELECTED_BAKER');

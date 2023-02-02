@@ -3,19 +3,19 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { AvatarImage } from '../../../../../components/avatar-image/avatar-image';
-import { Divider } from '../../../../../components/divider/divider';
-import { ExternalLinkButton } from '../../../../../components/icon/external-link-button/external-link-button';
-import { Icon } from '../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
-import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
-import { useKnownBakerSelector } from '../../../../../store/baking/baking-selectors';
-import { useSelectedRpcUrlSelector } from '../../../../../store/settings/settings-selectors';
-import { formatSize } from '../../../../../styles/format-size';
-import { isDefined } from '../../../../../utils/is-defined';
-import { tzktUrl } from '../../../../../utils/linking.util';
-import { mutezToTz } from '../../../../../utils/tezos.util';
+import { AvatarImage } from 'src/components/avatar-image/avatar-image';
+import { Divider } from 'src/components/divider/divider';
+import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { useBakerDetails } from 'src/hooks/use-baker-details.hook';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { tzktUrl } from 'src/utils/linking.util';
+import { mutezToTz } from 'src/utils/tezos.util';
+
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
 import { CycleStatus, getCycleStatusIcon } from '../utils/get-cycle-status-icon';
 import { getRewardsStats } from '../utils/get-rewards-stats';
@@ -36,7 +36,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const bakerDetails = useKnownBakerSelector(reward.baker.address);
+  const bakerDetails = useBakerDetails(reward.baker.address);
 
   const { ownBlocks, endorsements, missedOwnBlocks, missedEndorsements } = reward;
 
@@ -89,7 +89,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
     <View style={styles.rewardContainer}>
       <View style={styles.rewardBasicInfoContainer}>
         <View style={styles.row}>
-          {isDefined(bakerDetails) ? (
+          {bakerDetails && bakerDetails.logo ? (
             <AvatarImage size={formatSize(44)} uri={bakerDetails.logo} />
           ) : (
             <RobotIcon size={formatSize(44)} seed={reward.baker.address} />

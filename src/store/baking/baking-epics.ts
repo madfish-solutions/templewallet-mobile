@@ -4,12 +4,12 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { bakingBadApi, getTzktApi } from '../../api.service';
-import { BakerRewardInterface } from '../../interfaces/baker-reward.interface';
-import { BakerInterface, emptyBaker } from '../../interfaces/baker.interface';
-import { isDefined } from '../../utils/is-defined';
-import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { getTzktApi } from 'src/api.service';
+import { BakerInterface, bakingBadApi, fetchBaker, emptyBaker, buildUnknownBaker } from 'src/apis/baking-bad';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+
 import { RootState } from '../create-store';
 import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
@@ -23,14 +23,20 @@ const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$:
     switchMap(([[, selectedAccount], rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
         switchMap(bakerAddress => {
-          if (isDefined(bakerAddress)) {
-            return from(bakingBadApi.get<BakerInterface>(`/bakers/${bakerAddress}`)).pipe(map(({ data }) => data));
-          } else {
+          if (bakerAddress == null) {
             return of(emptyBaker);
           }
+
+          return from(fetchBaker(bakerAddress)).pipe(
+            map(baker => (baker != null ? baker : buildUnknownBaker(bakerAddress)))
+          );
         }),
         map(baker => loadSelectedBakerActions.success(baker)),
-        catchError(err => of(loadSelectedBakerActions.fail(err.message)))
+        catchError(error => {
+          console.error(error);
+
+          return of(loadSelectedBakerActions.fail(error.message));
+        })
       )
     )
   );
@@ -51,7 +57,11 @@ const loadBakersListEpic: Epic = (action$: Observable<Action>) =>
         })
       ).pipe(
         map(({ data }) => loadBakersListActions.success(data)),
-        catchError(err => of(loadBakersListActions.fail(err.message)))
+        catchError(error => {
+          console.error(error);
+
+          return of(loadBakersListActions.fail(error.message));
+        })
       )
     )
   );

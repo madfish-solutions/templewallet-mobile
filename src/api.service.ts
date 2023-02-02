@@ -7,8 +7,6 @@ import {
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
-export const bakingBadApi = axios.create({ baseURL: 'https://api.baking-bad.org/v2' });
-
 const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
 const dcpTzktApi = axios.create({ baseURL: 'https://explorer.tlnt.net:8001/v1' });
 
