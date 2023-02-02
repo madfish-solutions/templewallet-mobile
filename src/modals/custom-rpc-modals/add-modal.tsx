@@ -18,10 +18,9 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addCustomRpc, setSelectedRpcUrl } from 'src/store/settings/settings-actions';
 import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { formInitialValues, formValidationSchema } from './form.utils';
+import { formInitialValues, formValidationSchema, confirmUniqueRPC } from './form.utils';
 
 export const AddCustomRpcModal: FC = () => {
   const dispatch = useDispatch();
@@ -29,10 +28,8 @@ export const AddCustomRpcModal: FC = () => {
   const rpcList = useRpcListSelector();
 
   const handleSubmit = (newRpc: RpcInterface) => {
-    const duplicate = rpcList.find(rpc => rpc.name === newRpc.name || rpc.url === newRpc.url);
-
-    if (duplicate != null) {
-      return void showErrorToast({ description: `RPC already exists ${duplicate.name}(${duplicate.url})` });
+    if (confirmUniqueRPC(rpcList, newRpc)) {
+      return;
     }
 
     dispatch(addCustomRpc(newRpc));

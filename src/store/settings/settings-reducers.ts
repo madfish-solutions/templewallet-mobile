@@ -1,6 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
@@ -25,6 +24,7 @@ import {
   madeManualBackupAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
+import { alterCustomRPC } from './utils';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
@@ -134,27 +134,3 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     return state;
   });
 });
-
-const alterCustomRPC = (state: SettingsState, url: string, values?: RpcInterface) => {
-  if (url === TEMPLE_RPC.url) {
-    return;
-  }
-  const list = state.rpcList;
-  const index = list.findIndex(rpc => rpc.url === url);
-  if (index < 0) {
-    return;
-  }
-  if (values == null) {
-    // 'remove' case
-    list.splice(index, 1);
-    if (state.selectedRpcUrl === url) {
-      state.selectedRpcUrl = state.rpcList[0].url;
-    }
-  } else {
-    // 'edit' case
-    list.splice(index, 1, values);
-    if (url === state.selectedRpcUrl) {
-      state.selectedRpcUrl = values.url;
-    }
-  }
-};

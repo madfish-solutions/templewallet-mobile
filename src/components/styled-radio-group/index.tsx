@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { EventFn } from 'src/config/general';
@@ -27,24 +27,18 @@ export const StyledRadioGroup = <T extends string>({ value, items, onChange, lab
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
-  const styledItems = useMemo<RadioItemInterface[]>(
-    () =>
-      items.map(item => ({
-        ...item,
-        id: item.value,
-        labelStyle: [styles.label, labelStyle],
-        containerStyle: styles.itemContainer,
-        color: colors.orange,
-        selected: item.value === value
-      })),
-    [items, value, styles, colors]
-  );
-
-  const onRadioItemPress = (selectedId: string) => void onChange(selectedId as T);
+  const onRadioItemPress = (itemValue: string) => void onChange(itemValue as T);
 
   return (
     <View style={styles.container}>
-      <RadioGroup items={styledItems} onPress={onRadioItemPress} selectedId={value} />
+      <RadioGroup
+        items={items}
+        value={value}
+        onPress={onRadioItemPress}
+        color={colors.orange}
+        itemContainerStyle={styles.itemContainer}
+        itemLabelStyle={[styles.label, labelStyle]}
+      />
     </View>
   );
 };

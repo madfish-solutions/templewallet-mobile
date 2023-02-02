@@ -5,34 +5,33 @@ import { RadioItem } from './radio-item';
 import { groupStyles } from './styles';
 import { RadioGroupProps } from './types';
 
-export function RadioGroup({ containerStyle, onPress, items, selectedId }: RadioGroupProps) {
-  const handlePress = (id: string) => {
-    if (id !== selectedId && onPress) {
-      onPress(id);
-    }
-  };
+export function RadioGroup({
+  items,
+  value: currentValue,
+  color = '#444',
+  itemContainerStyle,
+  itemLabelStyle,
+  onPress
+}: RadioGroupProps) {
+  const itemsLocal = useMemo(() => {
+    const handlePress = (value: string) => {
+      if (value !== currentValue) {
+        onPress(value);
+      }
+    };
 
-  const itemsLocal = useMemo(
-    () =>
-      items.map(item => ({
-        key: item.id,
-        ...item,
-        selected: item.id === selectedId,
-        onPress: (id: string) => {
-          handlePress(id);
-
-          if (item.onPress) {
-            item.onPress(id);
-          }
-        }
-      })),
-    [items, selectedId]
-  );
+    return items.map(item => ({
+      key: item.value,
+      ...item,
+      selected: item.value === currentValue,
+      onPress: handlePress
+    }));
+  }, [items, currentValue]);
 
   return (
-    <View style={[groupStyles.container, containerStyle]}>
+    <View style={groupStyles.container}>
       {itemsLocal.map(item => (
-        <RadioItem {...item} />
+        <RadioItem {...item} color={color} containerStyle={itemContainerStyle} labelStyle={itemLabelStyle} />
       ))}
     </View>
   );

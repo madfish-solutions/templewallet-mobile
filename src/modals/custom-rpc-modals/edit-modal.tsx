@@ -24,7 +24,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { formInitialValues, formValidationSchema } from './form.utils';
+import { formInitialValues, formValidationSchema, confirmUniqueRPC } from './form.utils';
 
 export const EditCustomRpcModal: FC = () => {
   const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
@@ -51,10 +51,9 @@ export const EditCustomRpcModal: FC = () => {
 
     const otherItems = [...rpcList];
     otherItems.splice(index, 1);
-    const duplicate = otherItems.find(rpc => rpc.name === values.name || rpc.url === values.url);
 
-    if (duplicate != null) {
-      return void showErrorToast({ description: `RPC already exists ${duplicate.name}(${duplicate.url})` });
+    if (confirmUniqueRPC(otherItems, values)) {
+      return;
     }
 
     dispatch(editCustomRpc({ url, values }));

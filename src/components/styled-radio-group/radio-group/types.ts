@@ -1,30 +1,30 @@
+import { ViewStyle } from 'react-native';
+
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 
+type StyleType = ViewStyle | (ViewStyle | undefined)[];
+
 export interface RadioItemInterface {
-  borderColor?: string;
-  color?: string;
-  containerStyle?: object;
-  description?: string;
-  descriptionStyle?: object;
-  disabled?: boolean;
-  id: string;
+  value: string;
   label?: string;
-  labelStyle?: object;
-  onPress?: (id: string) => void;
-  size?: number;
-  value?: string;
   buttons?: ItemButtonInterface[];
 }
 
 export interface RadioItemProps extends RadioItemInterface {
   selected?: boolean;
+  color: string;
+  containerStyle?: StyleType;
+  labelStyle?: StyleType;
+  onPress?: (value: string) => void;
 }
 
 export interface RadioGroupProps {
-  containerStyle?: object;
-  onPress?: (id: string) => void;
   items: RadioItemInterface[];
-  selectedId?: string;
+  value?: string;
+  color?: string;
+  itemContainerStyle?: StyleType;
+  itemLabelStyle?: StyleType;
+  onPress: (value: string) => void;
 }
 
 export interface ItemButtonInterface {
