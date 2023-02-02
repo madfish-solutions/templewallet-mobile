@@ -5,18 +5,18 @@ import { RadioItem } from './radio-item';
 import { groupStyles } from './styles';
 import { RadioGroupProps } from './types';
 
-export function RadioGroup({
+export const RadioGroup = <T extends string>({
   items,
   value: currentValue,
   color = '#444',
   itemContainerStyle,
   itemLabelStyle,
   onPress
-}: RadioGroupProps) {
+}: RadioGroupProps<T>) => {
   const itemsLocal = useMemo(() => {
     const handlePress = (value: string) => {
       if (value !== currentValue) {
-        onPress(value);
+        onPress(value as T);
       }
     };
 
@@ -35,4 +35,4 @@ export function RadioGroup({
       ))}
     </View>
   );
-}
+};

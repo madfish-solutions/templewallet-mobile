@@ -4,13 +4,13 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 
 type StyleType = ViewStyle | (ViewStyle | undefined)[];
 
-export interface RadioItemInterface {
-  value: string;
+export interface RadioItemInterface<T extends string> {
+  value: T;
   label?: string;
   buttons?: ItemButtonInterface[];
 }
 
-export interface RadioItemProps extends RadioItemInterface {
+export interface RadioItemProps extends RadioItemInterface<string> {
   selected?: boolean;
   color: string;
   containerStyle?: StyleType;
@@ -18,13 +18,13 @@ export interface RadioItemProps extends RadioItemInterface {
   onPress?: (value: string) => void;
 }
 
-export interface RadioGroupProps {
-  items: RadioItemInterface[];
-  value?: string;
+export interface RadioGroupProps<T extends string> {
+  items: RadioItemInterface<T>[];
+  value?: T;
   color?: string;
   itemContainerStyle?: StyleType;
   itemLabelStyle?: StyleType;
-  onPress: (value: string) => void;
+  onPress: (value: T) => void;
 }
 
 export interface ItemButtonInterface {
