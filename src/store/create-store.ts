@@ -87,7 +87,11 @@ export const createStore = (...epics: Epic[]) => {
     middleware: getDefaultMiddleware => {
       return getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          warnAfter: 300
+        },
+        immutableCheck: {
+          warnAfter: 300
         }
       }).concat(middlewares);
     }

@@ -2,32 +2,30 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { Checkbox } from '../../../components/checkbox/checkbox';
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { RefreshControl } from '../../../components/refresh-control/refresh-control';
-import { Search } from '../../../components/search/search';
-import { isAndroid } from '../../../config/system';
-import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
-import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useTokensApyInfoSelector } from '../../../store/d-apps/d-apps-selectors';
-import { setZeroBalancesShown } from '../../../store/settings/settings-actions';
-import { useHideZeroBalancesSelector } from '../../../store/settings/settings-selectors';
-import {
-  useSelectedAccountTezosTokenSelector,
-  useVisibleTokensListSelector
-} from '../../../store/wallet/wallet-selectors';
-import { formatSize, formatSizeScaled } from '../../../styles/format-size';
-import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../../token/utils/token.utils';
-import { filterTezos } from '../../../utils/filter.util';
-import { createGetItemLayout } from '../../../utils/flat-list.utils';
+import { Checkbox } from 'src/components/checkbox/checkbox';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { RefreshControl } from 'src/components/refresh-control/refresh-control';
+import { Search } from 'src/components/search/search';
+import { isAndroid } from 'src/config/system';
+import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useTokensApyInfoSelector } from 'src/store/d-apps/d-apps-selectors';
+import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize, formatSizeScaled } from 'src/styles/format-size';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { filterTezos } from 'src/utils/filter.util';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
+
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
