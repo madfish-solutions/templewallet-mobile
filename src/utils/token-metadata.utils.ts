@@ -2,7 +2,7 @@ import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
-import { tokenMetadataApi, whitelistApi } from '../api.service';
+import { tezosMetadataApi, whitelistApi } from '../api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
@@ -148,7 +148,7 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> =>
-    from(tokenMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
+    from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
       map(({ data }) => transformDataToTokenMetadata(data, address, id)),
       filter(isDefined)
     ),
@@ -157,7 +157,7 @@ export const loadTokenMetadata$ = memoize(
 
 export const loadTokensMetadata$ = memoize(
   (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tokenMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
+    from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
       map(({ data }) =>
         data
           .map((token, index) => {

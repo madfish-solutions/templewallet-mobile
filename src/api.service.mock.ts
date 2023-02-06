@@ -1,7 +1,7 @@
-export const mockTokenMetadataApi = {
+export const mockTezosMetadataApi = {
   get: jest.fn()
 };
 
 jest.mock('./api.service', () => ({
-  tokenMetadataApi: mockTokenMetadataApi
+  tezosMetadataApi: mockTezosMetadataApi
 }));
