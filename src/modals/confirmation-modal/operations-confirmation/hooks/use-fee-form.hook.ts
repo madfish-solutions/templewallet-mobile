@@ -98,7 +98,11 @@ const applyEstimations = (initialParams: ParamsWithKind[], estimationsList: Esti
 const calcBasicFees = (opParams: ParamsWithKind[], reveal?: EstimationInterface) => {
   const basicFees = opParams.reduce(
     (prev, opParam) => {
-      const { fee = 0, storageLimit = 0 } = opParam.kind !== OpKind.ACTIVATION ? opParam : {};
+      if (opParam.kind === OpKind.ACTIVATION) {
+        return prev;
+      }
+
+      const { fee = 0, storageLimit = 0 } = opParam;
 
       return {
         gasFeeSum: prev.gasFeeSum.plus(mutezToTz(new BigNumber(fee), 6)),

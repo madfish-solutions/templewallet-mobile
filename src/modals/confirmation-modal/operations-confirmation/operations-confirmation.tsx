@@ -18,6 +18,8 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 import { tzToMutez } from 'src/utils/tezos.util';
 
 import { FeeFormInput } from './fee-form-input/fee-form-input';
@@ -56,7 +58,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
   } = useFeeForm(opParams, estimations.data);
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
-    if (testID != null) {
+    if (isTruthy(testID)) {
       trackEvent(testID, AnalyticsEventCategory.FormSubmit);
     }
 
@@ -71,12 +73,12 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
 
       const patchedOpParam = { ...opParam }; // Make copy;
 
-      if (gasFeeSum != null) {
+      if (isDefined(gasFeeSum)) {
         const isLastOpParam = index === opParams.length - 1;
         patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, metadata.decimals).toNumber() : 0;
       }
 
-      if (storageLimitSum != null && onlyOneOperation) {
+      if (isDefined(storageLimitSum) && onlyOneOperation) {
         patchedOpParam.storageLimit = storageLimitSum.toNumber();
       }
 

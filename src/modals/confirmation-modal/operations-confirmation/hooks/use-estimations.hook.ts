@@ -10,8 +10,11 @@ import { AccountInterface } from 'src/interfaces/account.interface';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 
-const FEE_PER_GAS_UNIT = 0.1;
+/** From @taquito/taquito */
+const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [data, setData] = useState<EstimationInterface[]>([]);
@@ -24,7 +27,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
         map(estimates =>
           estimates.map((estimate, i) => ({
             ...pick(estimate, 'gasLimit', 'storageLimit'),
-            suggestedFeeMutez: estimate.suggestedFeeMutez + getSuggestedFeeMutezCorrection(estimate, opParams[i]),
+            suggestedFeeMutez: getSuggestedFeeMutez(estimate, opParams[i]),
             // @ts-ignore
             minimalFeePerStorageByteMutez: Number(estimate.minimalFeePerStorageByteMutez)
           }))
@@ -52,10 +55,23 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
   return { data, isLoading };
 };
 
-const getSuggestedFeeMutezCorrection = (estimate: Estimate, opParam?: ParamsWithKind) => {
-  if (opParam == null || opParam.kind === OpKind.ACTIVATION || opParam.gasLimit == null) {
-    return 0;
+const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
+  if (
+    !isDefined(opParam) ||
+    opParam.kind === OpKind.ACTIVATION ||
+    !isTruthy(opParam.gasLimit) ||
+    opParam.gasLimit <= estimate.gasLimit
+  ) {
+    return estimate.suggestedFeeMutez;
   }
 
-  return opParam.gasLimit ? Math.ceil((opParam.gasLimit - estimate.gasLimit) * FEE_PER_GAS_UNIT) : 0;
+  /*
+    We want to respect dApp's `gasLimit` value, if it's greater than our estimate's.
+
+    Calculation of `estimate.gasLimit` is based on `consumed_milligas` value, and does not change on increasing `opParam.gasLimit`.
+    Calculation of `estimate.minimalFeeMutez` is in linear dependency with `estimate.gasLimit`.
+  */
+  const diff = Math.ceil((opParam.gasLimit - estimate.gasLimit) * MINIMAL_FEE_PER_GAS_MUTEZ);
+
+  return estimate.minimalFeeMutez + diff;
 };
