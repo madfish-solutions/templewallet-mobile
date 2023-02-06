@@ -184,20 +184,6 @@ export const MainStackScreen = () => {
                 component={NotificationsItem}
                 options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
-
-              {/** DApps stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.DApps}
-                component={DApps}
-                options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.LiquidityBakingDapp}
-                component={LiquidityBakingDapp}
-                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
-              />
-
-              {/** Buy stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
@@ -217,6 +203,18 @@ export const MainStackScreen = () => {
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              {/** DApps stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.DApps}
+                component={DApps}
+                options={{ animationEnabled: false, headerShown: false }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.LiquidityBakingDapp}
+                component={LiquidityBakingDapp}
+                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
+              />
 
               {/** Swap stack **/}
               <MainStack.Screen

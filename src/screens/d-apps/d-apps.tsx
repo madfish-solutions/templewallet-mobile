@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -9,15 +9,22 @@ import { Divider } from '../../components/divider/divider';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { SearchInput } from '../../components/search-input/search-input';
+import { CustomDAppInfo } from '../../interfaces/custom-dapps-info.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
+
+const renderItem: ListRenderItem<CustomDAppInfo> = item => <OthersDApp item={item} />;
+const keyExtractor = (item: CustomDAppInfo) => item.name;
+const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
+const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
   const dispatch = useDispatch();
@@ -73,11 +80,12 @@ export const DApps = () => {
       <Divider size={formatSize(16)} />
       <FlatList
         data={sortedDAppsList}
-        renderItem={item => <OthersDApp item={item} />}
-        keyExtractor={item => item.name}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
         numColumns={2}
         contentContainerStyle={styles.container}
-        ListEmptyComponent={<DataPlaceholder text="No records found." />}
+        ListEmptyComponent={ListEmptyComponent}
       />
     </>
   );
