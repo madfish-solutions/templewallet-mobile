@@ -28,7 +28,7 @@ export const fetchMarketTopTokens = () =>
         priceChange24h: coinInfo?.price_change_percentage_24h_in_currency,
         volume24h: coinInfo.total_volume,
         supply: coinInfo.circulating_supply,
-        marketCup: coinInfo.market_cap
+        marketCap: coinInfo.market_cap
       }))
     );
 
