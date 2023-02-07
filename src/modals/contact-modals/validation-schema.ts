@@ -18,10 +18,12 @@ const baseValidationSchema = ({
 }) =>
   object().shape({
     name: string()
-      .required('Invalid name. It should be: 1-16 characters, without special symbols')
+      .required('Invalid name. It should be: 1-16 characters')
       .notOneOf(contactsNames, 'Contact with the same names already exists')
-      .min(1)
-      .max(16),
+      .max(16, 'The contact name must be at most 16 characters')
+      .test('whitespaces', 'The contact name cannot include leading and trailing spaces', value =>
+        isDefined(value) ? value === value.trim() : false
+      ),
     publicKeyHash: string()
       .required(makeRequiredErrorMessage('Address'))
       .notOneOf(contactsAddresses, 'Contact with the same address already exists')
