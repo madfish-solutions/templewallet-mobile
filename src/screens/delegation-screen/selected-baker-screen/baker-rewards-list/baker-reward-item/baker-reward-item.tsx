@@ -13,7 +13,9 @@ import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
+import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
@@ -92,6 +94,8 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
     [ownBlocks, endorsements, missedOwnBlocks, missedEndorsements]
   );
 
+  const feeStr = formatToPercentStr(bakerFeePart);
+
   return (
     <View style={styles.rewardContainer}>
       <View style={styles.rewardBasicInfoContainer}>
@@ -130,7 +134,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Baker fee:</Text>
               <Text style={styles.textBlack}>
-                {bakerFeePart ? (bakerFeePart * 100).toFixed(2) : '--'}%
+                {isTruthy(feeStr) ? feeStr : '--'}%
                 <Text style={styles.textGray}>({normalizedBakerFee.toString()} TEZ)</Text>
               </Text>
             </View>

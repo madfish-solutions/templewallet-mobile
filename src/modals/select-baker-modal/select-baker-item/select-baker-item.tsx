@@ -12,7 +12,9 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
+import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
 import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
@@ -30,6 +32,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const { metadata } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+
+  const feeStr = formatToPercentStr(baker.fee);
 
   return (
     <TouchableOpacity
@@ -69,7 +73,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
       <View style={styles.lowerContainer}>
         <View>
           <Text style={styles.cellTitle}>Baker fee:</Text>
-          <Text style={styles.cellValueText}>{baker.fee ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
+          <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
         </View>
         <Divider size={formatSize(16)} />
         <View>

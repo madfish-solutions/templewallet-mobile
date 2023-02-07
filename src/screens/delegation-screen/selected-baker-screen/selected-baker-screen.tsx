@@ -14,7 +14,9 @@ import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
+import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
 import { BakerRewardsList } from './baker-rewards-list/baker-rewards-list';
@@ -31,6 +33,8 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
 
   const { metadata } = useNetworkInfo();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+
+  const feeStr = formatToPercentStr(baker.fee);
 
   return (
     <>
@@ -67,7 +71,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
         <View style={styles.lowerContainer}>
           <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{baker.fee ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
+            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>
