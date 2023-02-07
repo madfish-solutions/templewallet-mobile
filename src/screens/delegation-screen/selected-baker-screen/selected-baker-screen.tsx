@@ -67,7 +67,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
         <View style={styles.lowerContainer}>
           <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{isDefined(baker.fee) ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
+            <Text style={styles.cellValueText}>{baker.fee ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>

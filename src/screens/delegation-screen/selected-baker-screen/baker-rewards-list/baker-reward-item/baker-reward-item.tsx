@@ -10,7 +10,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { useBakerDetails } from 'src/hooks/use-baker-details.hook';
+import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { tzktUrl } from 'src/utils/linking.util';
@@ -36,7 +36,14 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const bakerDetails = useBakerDetails(reward.baker.address);
+  const bakersList = useBakersListSelector();
+
+  const bakerAddress = reward.baker.address;
+
+  const bakerDetails = useMemo(
+    () => bakersList.find(baker => baker.address === bakerAddress),
+    [bakersList, bakerAddress]
+  );
 
   const { ownBlocks, endorsements, missedOwnBlocks, missedEndorsements } = reward;
 
@@ -123,7 +130,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Baker fee:</Text>
               <Text style={styles.textBlack}>
-                {`${bakerFeePart * 100}% `}
+                {bakerFeePart ? (bakerFeePart * 100).toFixed(2) : '--'}%
                 <Text style={styles.textGray}>({normalizedBakerFee.toString()} TEZ)</Text>
               </Text>
             </View>

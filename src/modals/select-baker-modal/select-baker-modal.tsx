@@ -52,10 +52,12 @@ export const SelectBakerModal: FC = () => {
 
   const { trackEvent } = useAnalytics();
 
-  const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const [allBakers, setFilteredBakersList] = useState(bakersList);
+  const bakersList = useBakersListSelector();
+  const activeBakers = useMemo(() => bakersList.filter(baker => baker.serviceHealth === 'active'), [bakersList]);
+
+  const [allBakers, setFilteredBakersList] = useState(activeBakers);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
@@ -106,7 +108,7 @@ export const SelectBakerModal: FC = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: BakerInterface[] = [];
 
-      for (const baker of bakersList) {
+      for (const baker of activeBakers) {
         const { name, address } = baker;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || address.toLowerCase().includes(lowerCaseSearchValue)) {
@@ -116,9 +118,9 @@ export const SelectBakerModal: FC = () => {
 
       setFilteredBakersList(result);
     } else {
-      setFilteredBakersList(bakersList);
+      setFilteredBakersList(activeBakers);
     }
-  }, [searchValue, bakersList]);
+  }, [searchValue, activeBakers]);
 
   const sortedBakersList = useMemo(() => {
     switch (sortValue) {

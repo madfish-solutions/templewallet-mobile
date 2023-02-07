@@ -7,6 +7,7 @@ import { ofType } from 'ts-action-operators';
 import { getTzktApi } from 'src/api.service';
 import { BakerInterface, bakingBadApi, fetchBaker, emptyBaker, buildUnknownBaker } from 'src/apis/baking-bad';
 import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { isTruthy } from 'src/utils/is-truthy';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
@@ -23,13 +24,11 @@ const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$:
     switchMap(([[, selectedAccount], rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
         switchMap(bakerAddress => {
-          if (bakerAddress == null) {
+          if (!isTruthy(bakerAddress)) {
             return of(emptyBaker);
           }
 
-          return from(fetchBaker(bakerAddress)).pipe(
-            map(baker => (baker != null ? baker : buildUnknownBaker(bakerAddress)))
-          );
+          return from(fetchBaker(bakerAddress)).pipe(map(baker => baker || buildUnknownBaker(bakerAddress)));
         }),
         map(baker => loadSelectedBakerActions.success(baker)),
         catchError(error => {
@@ -51,8 +50,7 @@ const loadBakersListEpic: Epic = (action$: Observable<Action>) =>
             configs: true,
             insurance: true,
             contribution: true,
-            type: 'tezos_only,multiasset,tezos_dune',
-            health: 'active'
+            type: 'tezos_only,multiasset,tezos_dune'
           }
         })
       ).pipe(
