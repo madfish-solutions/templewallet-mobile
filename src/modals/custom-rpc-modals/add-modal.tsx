@@ -28,7 +28,7 @@ export const AddCustomRpcModal: FC = () => {
   const rpcList = useRpcListSelector();
 
   const handleSubmit = (newRpc: RpcInterface) => {
-    if (confirmUniqueRPC(rpcList, newRpc)) {
+    if (confirmUniqueRPC(rpcList, newRpc) === false) {
       return;
     }
 

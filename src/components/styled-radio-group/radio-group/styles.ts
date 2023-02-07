@@ -16,8 +16,5 @@ export const itemStyles = StyleSheet.create({
   border: {
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  text: {
-    marginTop: 10
   }
 });

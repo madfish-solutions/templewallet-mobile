@@ -52,7 +52,7 @@ export const EditCustomRpcModal: FC = () => {
     const otherItems = [...rpcList];
     otherItems.splice(index, 1);
 
-    if (confirmUniqueRPC(otherItems, values)) {
+    if (confirmUniqueRPC(otherItems, values) === false) {
       return;
     }
 

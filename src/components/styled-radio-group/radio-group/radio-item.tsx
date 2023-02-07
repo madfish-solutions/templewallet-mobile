@@ -5,6 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { getTruncatedProps } from 'src/utils/style.util';
 
 import { itemStyles } from './styles';
 import { RadioItemProps, ItemButtonInterface } from './types';
@@ -62,7 +63,7 @@ export const RadioItem: React.FC<RadioItemProps> = ({
         </>
       )}
 
-      {Boolean(label) && <Text style={[itemStyles.text, labelStyle]}>{label}</Text>}
+      <Text {...getTruncatedProps(labelStyle)}>{label}</Text>
     </Pressable>
   );
 };
