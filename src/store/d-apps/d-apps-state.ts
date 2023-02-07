@@ -6,18 +6,17 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 type TokenSlug = string;
-type TokensApyInfo = Record<TokenSlug, { rate: number }>;
 
 export interface DAppsState {
   permissions: LoadableEntityState<PermissionInfo[]>;
   dappsList: LoadableEntityState<CustomDAppInfo[]>;
-  tokensApyInfo: TokensApyInfo;
+  tokensApyRates: Record<TokenSlug, number>;
 }
 
 export const dAppsInitialState: DAppsState = {
   permissions: createEntity([]),
   dappsList: createEntity([]),
-  tokensApyInfo: {}
+  tokensApyRates: {}
 };
 
 export interface DAppsRootState {

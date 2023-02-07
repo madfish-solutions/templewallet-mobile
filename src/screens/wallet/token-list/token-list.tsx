@@ -15,7 +15,7 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useTokensApyInfoSelector } from 'src/store/d-apps/d-apps-selectors';
+import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
@@ -50,7 +50,7 @@ export const TokenList: FC = () => {
   const styles = useTokenListStyles();
 
   const { metadata } = useNetworkInfo();
-  const apyInfo = useTokensApyInfoSelector();
+  const apyRates = useTokensApyRatesSelector();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
@@ -94,9 +94,9 @@ export const TokenList: FC = () => {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      return <TokenListItem token={item} apy={apyInfo[getTokenSlug(item)]?.rate} />;
+      return <TokenListItem token={item} apy={apyRates[getTokenSlug(item)]} />;
     },
-    [apyInfo]
+    [apyRates]
   );
 
   return (

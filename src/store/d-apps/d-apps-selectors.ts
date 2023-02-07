@@ -6,4 +6,4 @@ const useDAppsSelector = () => useSelector(({ dApps }) => dApps);
 
 export const useDAppsListSelector = () => useDAppsSelector().dappsList.data;
 
-export const useTokensApyInfoSelector = () => useSelector(({ dApps }) => dApps.tokensApyInfo);
+export const useTokensApyRatesSelector = () => useSelector(({ dApps }) => dApps.tokensApyRates);

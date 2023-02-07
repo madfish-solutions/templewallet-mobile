@@ -36,7 +36,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
 
   const { isTezosNode } = useNetworkInfo();
 
-  const { rate: apyRate = 0, link: apyLink } = useTokenApyInfo(tokenSlug) || {};
+  const { rate: apyRate = 0, link: apyLink } = useTokenApyInfo(tokenSlug);
 
   if (showHistoryComponent && isTezos) {
     return isTezosNode ? (
