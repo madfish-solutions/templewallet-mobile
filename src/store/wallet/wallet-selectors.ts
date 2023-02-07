@@ -1,17 +1,18 @@
 import { useMemo } from 'react';
 
-import { UNKNOWN_TOKEN_SYMBOL } from '../../config/general';
-import { AccountTypeEnum } from '../../enums/account-type.enum';
-import { VisibilityEnum } from '../../enums/visibility.enum';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isDcpNode } from '../../utils/network.utils';
-import { jsonEqualityFn } from '../../utils/store.utils';
-import { isCollectible, isNonZeroBalance } from '../../utils/tezos.util';
-import { getTokenMetadata } from '../../utils/token-metadata.utils';
-import { getAccountState, getSelectedAccount } from '../../utils/wallet-account-state.utils';
-import { useTezosToken } from '../../utils/wallet.utils';
+import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isDcpNode } from 'src/utils/network.utils';
+import { jsonEqualityFn } from 'src/utils/store.utils';
+import { isCollectible, isNonZeroBalance } from 'src/utils/tezos.util';
+import { getTokenMetadata } from 'src/utils/token-metadata.utils';
+import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+import { useTezosToken } from 'src/utils/wallet.utils';
+
 import { useSelector } from '../selector';
 
 export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);

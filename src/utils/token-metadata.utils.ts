@@ -147,11 +147,28 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
       );
 
 export const loadTokenMetadata$ = memoize(
-  (address: string, id = 0): Observable<TokenMetadataInterface> =>
-    from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
+  (address: string, id = 0): Observable<TokenMetadataInterface> => {
+    const slug = `${address}_${id}`;
+    console.log('Loading metadata for:', slug);
+
+    return from(
+      tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`).then(
+        res => {
+          console.log('Metadata load result:', res.data);
+
+          return res;
+        },
+        error => {
+          console.error('Metadata load error:', error);
+
+          throw error;
+        }
+      )
+    ).pipe(
       map(({ data }) => transformDataToTokenMetadata(data, address, id)),
       filter(isDefined)
-    ),
+    );
+  },
   { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
 );
 

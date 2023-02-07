@@ -1,14 +1,16 @@
 import React, { FC, useState } from 'react';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { SvgXml } from 'react-native-svg';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
   formatImgUri
-} from '../../utils/image.utils';
-import { isDefined } from '../../utils/is-defined';
+} from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -103,9 +105,21 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         padding: formatSize(4)
       }}
     >
-      {isDefined(collectible) && isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri) && (
-        <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
-      )}
+      {isDefined(collectible.thumbnailUri) &&
+        isDefined(collectible.artifactUri) &&
+        (isSvgDataUriInUtf8Encoding(imageSrc) ? (
+          <SvgXml style={styles.image} xml={getXmlFromSvgDataUriInUtf8Encoding(imageSrc)} />
+        ) : (
+          <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
+        ))}
     </View>
   );
 };
+
+const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+
+const isSvgDataUriInUtf8Encoding = (uri: string) =>
+  uri.slice(0, SVG_DATA_URI_UTF8_PREFIX.length).toLowerCase() === SVG_DATA_URI_UTF8_PREFIX;
+
+const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
+  decodeURIComponent(uri).slice(SVG_DATA_URI_UTF8_PREFIX.length);

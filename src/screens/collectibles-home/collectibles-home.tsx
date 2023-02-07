@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Divider } from '../../components/divider/divider';
-import { HeaderCard } from '../../components/header-card/header-card';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { SearchInput } from '../../components/search-input/search-input';
-import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useVisibleCollectiblesListSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useVisibleCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
@@ -26,6 +27,8 @@ export const CollectiblesHome = () => {
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);
 
   const [isSearchMode] = useState(false);
+
+  const collectiblesList: typeof visibleCollectiblesList = isSearchMode ? filteredAssetsList : visibleCollectiblesList;
 
   return (
     <>
@@ -59,7 +62,8 @@ export const CollectiblesHome = () => {
           <PromotionCarousel />
         )}
       </HeaderCard>
-      <CollectiblesList collectiblesList={isSearchMode ? filteredAssetsList : visibleCollectiblesList} />
+
+      <CollectiblesList collectiblesList={collectiblesList} />
     </>
   );
 };
