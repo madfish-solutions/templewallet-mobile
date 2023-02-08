@@ -49,6 +49,43 @@ Example:
      * Import Account Button - "Page name/Import Account Button"
      * Delegate Tab - "Page name/Delegate Tab"
      * Private Key Input Field - "Page name/Private Key Input"
+     
+9) Available element names:
+
+     * Button:
+     
+         <img width="428" alt="image" src="https://user-images.githubusercontent.com/95026747/217494993-e63fb4e2-85a7-482e-801d-cb31209c99fe.png">
+
+     
+     * Input (Field):
+     
+         <img width="442" alt="image" src="https://user-images.githubusercontent.com/95026747/217495173-2fa1a3e0-5e6c-4f3e-bcac-0ec3238d311c.png">
+     
+    
+    * Tab: 
+     
+         <img width="476" alt="image" src="https://user-images.githubusercontent.com/95026747/217495908-7f67cefa-68e4-498a-b67c-daf56e5d320a.png">
+     
+    * Protected Mask:
+    
+         <img width="419" alt="image" src="https://user-images.githubusercontent.com/95026747/217497032-79d02392-db82-4228-89f4-ca8ef3d20f7b.png">
+    
+    * Value: 
+    
+         <img width="430" alt="image" src="https://user-images.githubusercontent.com/95026747/217498448-80ab591f-5edb-4c0f-8cee-670363d8e8ad.png">
+    
+    * Check Box: 
+    
+         <img width="442" alt="image" src="https://user-images.githubusercontent.com/95026747/217497591-c5363e40-7a8b-4e79-96a8-2d6457fee2d8.png">
+
+
+
+
+     
+     
+     
+     
+    
 
 
 
