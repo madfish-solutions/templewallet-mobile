@@ -1,6 +1,6 @@
 Selectors style:
 
-1) The file with selectors should have name: 'fileName'.selectors.ts   
+1) The file with selectors should have name: 'pageName'.selectors.ts   
 
 Example:  Settings.selectors.ts
 
