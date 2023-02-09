@@ -10,7 +10,7 @@ export interface MarketToken {
   priceChange24h: number | null;
   volume24h: number | null;
   supply: number | null;
-  marketCup: number | null;
+  marketCap: number | null;
 }
 
 export interface MarketTokenRaw {

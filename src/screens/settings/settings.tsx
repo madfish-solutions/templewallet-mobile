@@ -80,6 +80,7 @@ export const Settings = () => {
           <View style={styles.quoteContainer}>
             <Quote quote="It’s money 2.0, a huge, huge, huge deal." author="Chamath Palihapitiya" />
           </View>
+
           <Divider size={formatSize(8)} />
 
           <WhiteContainer>
@@ -90,6 +91,7 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+
             {!isManualBackupMade && (
               <>
                 <WhiteContainerDivider />
@@ -105,6 +107,7 @@ export const Settings = () => {
               </>
             )}
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
@@ -115,7 +118,9 @@ export const Settings = () => {
                 <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
               </View>
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
+
             <WhiteContainerAction disabled={true}>
               <WhiteContainerText text="Appearance" />
 
@@ -135,7 +140,9 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
+
             <WhiteContainerAction onPress={() => navigate(ScreensEnum.NotificationsSettings)}>
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Notifications" />
@@ -143,6 +150,7 @@ export const Settings = () => {
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
@@ -151,6 +159,7 @@ export const Settings = () => {
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
@@ -159,6 +168,7 @@ export const Settings = () => {
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
@@ -166,20 +176,25 @@ export const Settings = () => {
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
+
             <WhiteContainerAction onPress={handleShare}>
               <WhiteContainerText text="Share Temple Wallet" />
               <Icon name={IconNameEnum.Share} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider />
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButtonPress}>
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
           </TouchableOpacity>
+
           <Divider />
         </View>
+
         {!isTablet() && <OctopusWithLove />}
       </ScreenContainer>
     </>

@@ -1,10 +1,11 @@
 import { useFormikContext } from 'formik';
 import React, { FC, useEffect } from 'react';
 
-import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
-import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { FormTextInput } from '../../../form/form-text-input';
-import { getDerivationPath } from '../../../utils/keys.util';
+import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
+import { FormRadioButtonsGroup } from 'src/form/form-radio-buttons-group';
+import { FormTextInput } from 'src/form/form-text-input';
+import { getDerivationPath } from 'src/utils/keys.util';
+
 import { ImportAccountSeedValues } from './import-account-seed.form';
 
 const derivationTypeButtons = [
@@ -27,7 +28,7 @@ export const ImportAccountSeedDerivationPathForm: FC<Props> = ({ formValues }) =
 
   return (
     <>
-      <FormRadioButtonsGroup name="derivationType" buttons={derivationTypeButtons} />
+      <FormRadioButtonsGroup name="derivationType" items={derivationTypeButtons} />
       {formValues.derivationType === ImportAccountDerivationEnum.CUSTOM_PATH && <FormTextInput name="derivationPath" />}
     </>
   );

@@ -11,11 +11,18 @@ runs:
         cat << EOF > .env
         READ_ONLY_SIGNER_PUBLIC_KEY=${{ inputs.READ_ONLY_SIGNER_PUBLIC_KEY }}
         READ_ONLY_SIGNER_PUBLIC_KEY_HASH=${{ inputs.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+        
         SEGMENT_ANALYTICS_KEY=${{ inputs.SEGMENT_ANALYTICS_KEY }}
         TEMPLE_WALLET_EXOLIX_API_KEY=${{ inputs.TEMPLE_WALLET_EXOLIX_API_KEY }}
+        
         TEMPLE_WALLET_EVERSTAKE_API_KEY=${{ inputs.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
         TEMPLE_WALLET_EVERSTAKE_LINK_ID=${{ inputs.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
+        
         TEMPLE_WALLET_UTORG_SID=${{ inputs.TEMPLE_WALLET_UTORG_SID }}
+        
+        TEMPLE_WALLET_API_URL=${{ inputs.TEMPLE_WALLET_API_URL }}
+        TEZOS_METADATA_API_URL=${{ inputs.TEZOS_METADATA_API_URL }}
+        TEZOS_DEXES_API_URL=${{ inputs.TEZOS_DEXES_API_URL }}
         EOF
 
     - name: Write secrets to google-services.json

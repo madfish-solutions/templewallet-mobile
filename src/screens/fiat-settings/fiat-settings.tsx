@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Divider } from '../../components/divider/divider';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { StyledRadioButtonsGroup } from '../../components/styled-radio-buttons-group/styled-radio-buttons-group';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { setFiatCurrency } from '../../store/settings/settings-actions';
-import { useFiatCurrencySelector } from '../../store/settings/settings-selectors';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { FiatCurrenciesEnum, FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { StyledRadioGroup } from 'src/components/styled-radio-group';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { setFiatCurrency } from 'src/store/settings/settings-actions';
+import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { FiatCurrenciesEnum, FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
+
 import { useFiatSettingsStyles } from './fiat-settings.styles';
 
 export const FiatSettings = () => {
@@ -16,7 +17,7 @@ export const FiatSettings = () => {
   const selectedFiatCurrency = useFiatCurrencySelector();
   const styles = useFiatSettingsStyles();
 
-  const radioButtons = useMemo(
+  const radioItems = useMemo(
     () =>
       FIAT_CURRENCIES.map(currency => ({
         label: `${currency.symbol}  ${currency.name} (${currency.fullname})`,
@@ -30,10 +31,10 @@ export const FiatSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioButtonsGroup
+      <StyledRadioGroup
         labelStyle={styles.label}
         value={selectedFiatCurrency}
-        buttons={radioButtons}
+        items={radioItems}
         onChange={handleChange}
       />
       <Divider />

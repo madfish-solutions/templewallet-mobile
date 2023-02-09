@@ -1,4 +1,4 @@
-import { mockTokenMetadataApi } from '../api.service.mock';
+import { mockTezosMetadataApi } from '../api.service.mock';
 import { rxJsTestingHelper } from './testing.utis';
 import { loadTokenMetadata$, TokenMetadataResponse } from './token-metadata.utils';
 
@@ -13,7 +13,7 @@ describe('loadTokenMetadata$', () => {
   };
 
   beforeAll(() => {
-    mockTokenMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponse }));
+    mockTezosMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponse }));
   });
 
   it('should return correct TokenMetadataInterface structure', done =>
@@ -41,7 +41,7 @@ describe('loadTokenMetadata$', () => {
       symbol: undefined
     };
 
-    mockTokenMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutSymbol }));
+    mockTezosMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutSymbol }));
 
     loadTokenMetadata$(mockAddress).subscribe(
       rxJsTestingHelper(tokenMetadata => {
@@ -56,7 +56,7 @@ describe('loadTokenMetadata$', () => {
       name: undefined
     };
 
-    mockTokenMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutName }));
+    mockTezosMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutName }));
 
     loadTokenMetadata$(mockAddress).subscribe(
       rxJsTestingHelper(tokenMetadata => {
@@ -72,7 +72,7 @@ describe('loadTokenMetadata$', () => {
       name: undefined
     };
 
-    mockTokenMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutSymbolAndName }));
+    mockTezosMetadataApi.get.mockReturnValue(Promise.resolve({ data: mockApiResponseWithoutSymbolAndName }));
 
     loadTokenMetadata$(mockAddress).subscribe(
       rxJsTestingHelper(tokenMetadata => {

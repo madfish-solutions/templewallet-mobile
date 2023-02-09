@@ -2,7 +2,7 @@ import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
 import { combineEpics } from 'redux-observable';
-import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -12,11 +12,15 @@ import { TokenBalanceResponse } from '../../interfaces/token-balance-response.in
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { showErrorToast } from '../../toast/toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
-import { sliceIntoChunks } from '../../utils/array.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isDcpNode } from '../../utils/network.utils';
 import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
-import { loadAssetBalance$, loadTezosBalance$, loadTokensWithBalance$ } from '../../utils/token-balance.utils';
+import {
+  loadAssetBalance$,
+  loadTokensBalancesArrayFromTzkt$,
+  loadTezosBalance$,
+  loadTokensWithBalance$
+} from '../../utils/token-balance.utils';
 import { withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { getTransferParams$ } from '../../utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
@@ -63,34 +67,21 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
 const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
-    toPayload(),
-    concatMap(payload =>
-      of(payload).pipe(
-        withSelectedAccount(state$),
-        withSelectedRpcUrl(state$),
-        switchMap(([[payload, selectedAccount], selectedRpcUrl]) => {
-          if (selectedAccount.publicKeyHash === payload.publicKeyHash) {
-            return forkJoin(
-              payload.slugs.map(slug =>
-                loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, slug).pipe(map(balance => ({ slug, balance })))
-              )
-            ).pipe(
-              delay(100),
-              map(data =>
-                loadTokensBalancesArrayActions.success({
-                  publicKeyHash: payload.publicKeyHash,
-                  data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
-                  selectedRpcUrl
-                })
-              )
-            );
-          }
-
-          return of(loadTokensBalancesArrayActions.fail(`${payload.publicKeyHash} balance load SKIPPED`)).pipe(
-            delay(5)
-          );
-        })
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[_, selectedAccount], selectedRpcUrl]) =>
+      loadTokensBalancesArrayFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
+        map(data =>
+          loadTokensBalancesArrayActions.success({
+            publicKeyHash: selectedAccount.publicKeyHash,
+            data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
+            selectedRpcUrl
+          })
+        )
       )
+    ),
+    catchError(([selectedAccount]) =>
+      of(loadTokensBalancesArrayActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
     )
   );
 
@@ -124,12 +115,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
             loadTokensMetadataAction(assetWithoutMetadataSlugs),
-            ...sliceIntoChunks(allTokensSlugs, 3).map(slugs =>
-              loadTokensBalancesArrayActions.submit({
-                publicKeyHash: selectedAccount.publicKeyHash,
-                slugs
-              })
-            )
+            loadTokensBalancesArrayActions.submit()
           ];
         }),
         catchError(err => of(loadTokensActions.fail(err.message)))
