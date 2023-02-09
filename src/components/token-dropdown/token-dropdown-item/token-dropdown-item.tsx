@@ -8,7 +8,6 @@ import { isDefined } from '../../../utils/is-defined';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { Divider } from '../../divider/divider';
-import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
@@ -93,7 +92,3 @@ export const TokenDropdownItem: FC<Props> = ({
     </View>
   );
 };
-
-export const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
-  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
-);

@@ -1,10 +1,11 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, useWindowDimensions, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
+import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -55,6 +56,8 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
+const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
+
 const DropdownComponent = <T extends unknown>({
   value,
   list,
@@ -71,10 +74,11 @@ const DropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
-  const [ref, setRef] = useState<FlatList<T> | null>(null);
+  const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = 0.7 * useWindowDimensions().height;
+  const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -97,7 +101,7 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref) || !isDefined(value) || !isDefined(list) || list.length === 0) {
+    if (!isDefined(ref.current) || !isDefined(value) || !isDefined(list) || list.length === 0) {
       return void 0;
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));
@@ -105,8 +109,8 @@ const DropdownComponent = <T extends unknown>({
     if (foundIndex >= list.length) {
       return void 0;
     }
-    ref.scrollToIndex({ index, animated: true });
-  }, [ref, value, list]);
+    ref.current.scrollToIndex({ index, animated: true });
+  }, [value, list]);
 
   return (
     <>
@@ -127,15 +131,15 @@ const DropdownComponent = <T extends unknown>({
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
           <FlatList
+            ref={ref}
             data={list}
-            ref={ref => {
-              setRef(ref);
-            }}
-            getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
-            contentContainerStyle={styles.flatListContentContainer}
-            keyExtractor={keyExtractor}
             renderItem={renderItem}
-            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
+            keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
+            contentContainerStyle={styles.flatListContentContainer}
+            ListEmptyComponent={ListEmptyComponent}
+            windowSize={10}
+            updateCellsBatchingPeriod={150}
           />
         </View>
 
