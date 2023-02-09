@@ -16,6 +16,7 @@ export enum ModalsEnum {
   ImportAccount = 'ImportAccount',
   CollectibleModal = 'CollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
+  EditCustomRpc = 'EditCustomRpc',
   RemoveLiquidity = 'RemoveLiquidity',
   AddLiquidity = 'AddLiquidity'
 }
@@ -33,6 +34,7 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
+  [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.RemoveLiquidity]: {
     lpContractAddress: string;
     aToken: TokenInterface;

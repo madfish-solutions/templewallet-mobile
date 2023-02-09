@@ -1,22 +1,20 @@
 import { useField } from 'formik';
 import React from 'react';
 
-import {
-  RadioButtonsGroupProps,
-  StyledRadioButtonsGroup
-} from '../components/styled-radio-buttons-group/styled-radio-buttons-group';
+import { StyledRadioGroupProps, StyledRadioGroup } from 'src/components/styled-radio-group';
+
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props<T extends string> extends RadioButtonsGroupProps<T> {
+interface Props<T extends string> extends StyledRadioGroupProps<T> {
   name: string;
 }
 
-export const FormRadioButtonsGroup = <T extends string>({ name, buttons }: Props<T>) => {
+export const FormRadioButtonsGroup = <T extends string>({ name, items }: Props<T>) => {
   const [field, meta, helpers] = useField<T>(name);
 
   return (
     <>
-      <StyledRadioButtonsGroup<T> buttons={buttons} value={field.value} onChange={helpers.setValue} />
+      <StyledRadioGroup<T> items={items} value={field.value} onChange={helpers.setValue} />
       <ErrorMessage meta={meta} />
     </>
   );
