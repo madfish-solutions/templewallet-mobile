@@ -2,18 +2,19 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../../components/divider/divider';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EventFn } from '../../../config/general';
-import { ImportAccountTypeEnum } from '../../../enums/account-type.enum';
-import { FormRadioButtonsGroup } from '../../../form/form-radio-buttons-group';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../../styles/format-size';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { EventFn } from 'src/config/general';
+import { ImportAccountTypeEnum } from 'src/enums/account-type.enum';
+import { FormRadioButtonsGroup } from 'src/form/form-radio-buttons-group';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+
 import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from './import-account-type.form';
 
 interface Props {
@@ -39,7 +40,7 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Type of import" description="Select how would you like to import account." />
-            <FormRadioButtonsGroup name="type" buttons={importAccountTypeButtons} />
+            <FormRadioButtonsGroup name="type" items={importAccountTypeButtons} />
           </View>
           <View>
             <ButtonsContainer>
