@@ -39,7 +39,7 @@ export interface TzktAccountTokenBalance {
   token: {
     contract: TzktAlias;
     id: number;
-    metadata: {
+    metadata?: {
       artifactUri: string;
       creators: Array<string>;
       decimals: string;

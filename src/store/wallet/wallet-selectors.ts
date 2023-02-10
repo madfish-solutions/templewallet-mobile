@@ -57,6 +57,7 @@ export const useAssetsListSelector = (): TokenInterface[] =>
           token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
             ? VisibilityEnum.Visible
             : token.visibility;
+
         const metadata = getTokenMetadata(state, token.slug);
 
         return {
