@@ -135,7 +135,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
               <Text style={styles.cellTitle}>Baker fee:</Text>
               <Text style={styles.textBlack}>
                 {isTruthy(feeStr) ? feeStr : '--'}%
-                <Text style={styles.textGray}>({normalizedBakerFee.toString()} TEZ)</Text>
+                <Text style={styles.textGray}> ({normalizedBakerFee.toString()} TEZ)</Text>
               </Text>
             </View>
             <View style={styles.cellContainer}>
