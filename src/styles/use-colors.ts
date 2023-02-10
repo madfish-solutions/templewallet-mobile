@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { useThemeSelector } from '../store/settings/settings-selectors';
+import { useThemeSelector } from 'src/store/settings/settings-selectors';
+
 import { getColors } from './colors';
 
 export const useColors = () => {

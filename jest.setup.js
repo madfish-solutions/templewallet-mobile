@@ -21,5 +21,4 @@ import './src/mocks/react-native-themis.mock';
 import './src/mocks/react-native-toast-message.mock';
 import './src/mocks/react-navigation.mock';
 import './src/mocks/react-redux.mock';
-import './src/mocks/segment.mock';
 import './src/mocks/tezos.mock';

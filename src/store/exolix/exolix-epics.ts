@@ -6,7 +6,7 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { showErrorToast } from '../../toast/toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { segmentClient } from '../../utils/analytics/analytics.util';
+import { jitsu } from '../../utils/analytics/analytics.util';
 import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from '../../utils/exolix.util';
 import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
 import { RootState } from '../create-store';
@@ -52,7 +52,7 @@ const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>, state$: S
         concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(1)]),
         catchError(err => {
           isAnalyticsEnabled &&
-            segmentClient.track(AnalyticsEventCategory.General, {
+            jitsu.track(AnalyticsEventCategory.General, {
               userId,
               event: 'SubmitExolixExchangeError',
               timestamp: new Date().getTime(),
