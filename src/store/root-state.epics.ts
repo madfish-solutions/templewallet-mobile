@@ -22,7 +22,7 @@ const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: O
     catchError(err => of(resetKeychainOnInstallAction.fail(err.message)))
   );
 
-const resetApplicationAtSecretsEpic = (action$: Observable<Action>) => {
+const resetApplicationSubmitEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(resetApplicationAction.submit),
     switchMap(() => forkJoin([resetKeychain$(), resetBeacon$()])),
@@ -31,7 +31,7 @@ const resetApplicationAtSecretsEpic = (action$: Observable<Action>) => {
   );
 };
 
-const resetApplicationAtStateEpic = (action$: Observable<Action>) => {
+const resetApplicationSuccessEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(resetApplicationAction.success),
     concatMap(() => {
@@ -56,8 +56,8 @@ const navigateEpic = (action$: Observable<Action>) =>
   );
 
 export const rootStateEpics = combineEpics(
-  resetApplicationAtSecretsEpic,
-  resetApplicationAtStateEpic,
+  resetApplicationSubmitEpic,
+  resetApplicationSuccessEpic,
   navigateEpic,
   resetKeychainOnInstallEpic
 );
