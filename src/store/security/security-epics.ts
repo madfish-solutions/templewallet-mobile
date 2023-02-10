@@ -11,7 +11,7 @@ import { templeWalletApi } from '../../api.service';
 import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { segmentClient } from '../../utils/analytics/analytics.util';
+import { jitsu } from '../../utils/analytics/analytics.util';
 import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
 import { RootState } from '../create-store';
 import { checkApp } from './security-actions';
@@ -33,7 +33,7 @@ const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootS
         map(appCheck => appCheck.token),
         catchError(err => {
           isAnalyticsEnabled &&
-            segmentClient.track(AnalyticsEventCategory.General, {
+            jitsu.track(AnalyticsEventCategory.General, {
               userId,
               event: 'AppCheckError',
               timestamp: new Date().getTime(),

@@ -1,4 +1,3 @@
-import { AnalyticsProvider } from '@segment/analytics-react-native';
 import React from 'react';
 import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -14,7 +13,6 @@ import { RootStackScreen } from '../navigator/root-stack';
 import { AppLockContextProvider } from '../shelter/app-lock/app-lock';
 import { persistor, store } from '../store/store';
 import { ToastProvider } from '../toast/toast-provider';
-import { segmentClient } from '../utils/analytics/analytics.util';
 import { initSentry } from '../utils/sentry.utils';
 import { AppStyles } from './app.styles';
 
@@ -24,23 +22,21 @@ LogBox.ignoreAllLogs();
 
 export const App = () => (
   <GestureHandlerRootView style={AppStyles.root}>
-    <AnalyticsProvider client={segmentClient}>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={null}>
-          <BiometryAvailabilityProvider>
-            <HideBalanceProvider>
-              <AppLockContextProvider>
-                <SafeAreaProvider>
-                  <HideBootsplashProvider>
-                    <RootStackScreen />
-                  </HideBootsplashProvider>
-                  <ToastProvider />
-                </SafeAreaProvider>
-              </AppLockContextProvider>
-            </HideBalanceProvider>
-          </BiometryAvailabilityProvider>
-        </PersistGate>
-      </Provider>
-    </AnalyticsProvider>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <BiometryAvailabilityProvider>
+          <HideBalanceProvider>
+            <AppLockContextProvider>
+              <SafeAreaProvider>
+                <HideBootsplashProvider>
+                  <RootStackScreen />
+                </HideBootsplashProvider>
+                <ToastProvider />
+              </SafeAreaProvider>
+            </AppLockContextProvider>
+          </HideBalanceProvider>
+        </BiometryAvailabilityProvider>
+      </PersistGate>
+    </Provider>
   </GestureHandlerRootView>
 );
