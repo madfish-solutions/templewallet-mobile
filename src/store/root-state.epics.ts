@@ -4,10 +4,11 @@ import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } 
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { globalNavigationRef } from '../navigator/root-stack';
-import { Shelter } from '../shelter/shelter';
-import { resetBeacon$ } from '../utils/beacon.utils';
-import { resetKeychain$ } from '../utils/keychain.utils';
+import { globalNavigationRef } from 'src/navigator/root-stack';
+import { Shelter } from 'src/shelter/shelter';
+import { resetBeacon$ } from 'src/utils/beacon.utils';
+import { resetKeychain$ } from 'src/utils/keychain.utils';
+
 import { RootState } from './create-store';
 import { resetApplicationAction, resetKeychainOnInstallAction, untypedNavigateAction } from './root-state.actions';
 
@@ -21,14 +22,22 @@ const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: O
     catchError(err => of(resetKeychainOnInstallAction.fail(err.message)))
   );
 
-const resetApplicationEpic = (action$: Observable<Action>) => {
+const resetApplicationAtSecretsEpic = (action$: Observable<Action>) => {
   return action$.pipe(
     ofType(resetApplicationAction.submit),
     switchMap(() => forkJoin([resetKeychain$(), resetBeacon$()])),
-    map(() => {
+    map(() => resetApplicationAction.success()),
+    catchError(err => of(resetApplicationAction.fail(err.message)))
+  );
+};
+
+const resetApplicationAtStateEpic = (action$: Observable<Action>) => {
+  return action$.pipe(
+    ofType(resetApplicationAction.success),
+    concatMap(() => {
       Shelter.lockApp();
 
-      return resetApplicationAction.success();
+      return EMPTY;
     }),
     catchError(err => of(resetApplicationAction.fail(err.message)))
   );
@@ -46,4 +55,9 @@ const navigateEpic = (action$: Observable<Action>) =>
     })
   );
 
-export const rootStateEpics = combineEpics(resetApplicationEpic, navigateEpic, resetKeychainOnInstallEpic);
+export const rootStateEpics = combineEpics(
+  resetApplicationAtSecretsEpic,
+  resetApplicationAtStateEpic,
+  navigateEpic,
+  resetKeychainOnInstallEpic
+);
