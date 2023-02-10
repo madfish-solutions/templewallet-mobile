@@ -2,18 +2,19 @@ import React, { FC } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { delegationApy } from '../../config/general';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
-import { useTokensApyInfoSelector } from '../../store/d-apps/d-apps-selectors';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
-import { openUrl } from '../../utils/linking.util';
+import { delegationApy } from 'src/config/general';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking.util';
+
 import { Divider } from '../divider/divider';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
@@ -29,21 +30,13 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const apyStyles = useApyStyles();
   const { navigate } = useNavigation();
   const [, isBakerSelected] = useSelectedBakerSelector();
-  const apyInfo = useTokensApyInfoSelector();
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
   const tokenSlug = getTokenSlug(token);
-  const tokenApy = apyInfo[tokenSlug];
 
   const { isTezosNode } = useNetworkInfo();
 
-  const handleApyPress = () => {
-    const eventName = `${apyLinkSelectors[tokenApy.link]}/${token.name}`;
-
-    trackEvent(eventName, AnalyticsEventCategory.ButtonPress);
-
-    openUrl(tokenApy.link);
-  };
+  const { rate: apyRate = 0, link: apyLink } = useTokenApyInfo(tokenSlug);
 
   if (showHistoryComponent && isTezos) {
     return isTezosNode ? (
@@ -61,10 +54,21 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     );
   }
 
-  if (showHistoryComponent && isDefined(tokenApy) && tokenApy.rate > 0) {
+  const handleApyPress =
+    isDefined(apyLink) && apyRate !== 0
+      ? () => {
+          const eventName = `${apyLinkSelectors[apyLink]}/${token.name}`;
+
+          trackEvent(eventName, AnalyticsEventCategory.ButtonPress);
+
+          openUrl(apyLink);
+        }
+      : undefined;
+
+  if (showHistoryComponent && isDefined(handleApyPress)) {
     return (
       <TouchableOpacity onPress={handleApyPress} style={[styles.delegateContainer, apyStyles[tokenSlug]]}>
-        <Text style={styles.delegateText}>Get up to {tokenApy.rate}% APY </Text>
+        <Text style={styles.delegateText}>Get up to {apyRate}% APY </Text>
       </TouchableOpacity>
     );
   }
