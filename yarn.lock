@@ -13991,6 +13991,13 @@ react-native-camera@^4.2.1:
   dependencies:
     prop-types "^15.6.2"
 
+react-native-cloud-fs@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-cloud-fs/-/react-native-cloud-fs-2.5.0.tgz#52d5d90fc8697a95095467a2f77790a88e15da27"
+  integrity sha512-5WJWxNfXMYkpBfmFEIQ/761W6gBFmrOiMk3d/ulVAZtnMqyKPTSjZ10bk0jdLloEjvO1oaH0K/tEbyyZ0bCNMw==
+  dependencies:
+    user "0.0.0"
+
 react-native-codegen@^0.70.6:
   version "0.70.6"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.70.6.tgz#2ce17d1faad02ad4562345f8ee7cbe6397eda5cb"
@@ -16472,6 +16479,11 @@ use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.npmjs.org/use/-/use-3.1.1.tgz"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
+
+user@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/user/-/user-0.0.0.tgz#f27f1b23fc511f2a8efa40db55cfba123824e02a"
+  integrity sha512-eRNM5isOvr6aEFAGi1CqAkmLkYxW2NJ5ThhbD+6IJXYKM1mo7Gtxx4mQIveHz/5K3p/SVnlW9k17ETn+QAu8IQ==
 
 utf-8-validate@^5.0.2:
   version "5.0.9"

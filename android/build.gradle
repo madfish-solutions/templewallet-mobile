@@ -50,4 +50,14 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
     }
+
+    /*
+      For 'react-native-cloud-fs' fix
+      See: https://github.com/facebook/react-native/issues/35215#issuecomment-1304878829
+    */
+    configurations.all {
+        resolutionStrategy {
+            force 'com.facebook.react:react-native:0.70.6'
+        }
+    }
 }

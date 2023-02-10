@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
+import 'src/cloud';
+
 import { Divider } from '../../components/divider/divider';
 import { HeaderCard } from '../../components/header-card/header-card';
 import { Icon } from '../../components/icon/icon';
