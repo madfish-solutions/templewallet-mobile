@@ -1,11 +1,9 @@
-import RNCloudFs, * as AllRNCloudFs from 'react-native-cloud-fs';
-
-// RNCloudFs.isAvailable().then((res: unknown) => {
-//   console.log('RNCloudFs.isAvailable returned', res);
-// });
+import RNCloudFs from 'react-native-cloud-fs';
 
 console.log(1, Object.keys(RNCloudFs));
 
-console.log(2, Object.keys(AllRNCloudFs));
+RNCloudFs.loginIfNeeded().then((res: unknown) => {
+  console.log('RNCloudFs.loginIfNeeded returned', res);
+});
 
 export {};

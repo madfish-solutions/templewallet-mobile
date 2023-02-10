@@ -13991,10 +13991,10 @@ react-native-camera@^4.2.1:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-cloud-fs@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-cloud-fs/-/react-native-cloud-fs-2.5.0.tgz#52d5d90fc8697a95095467a2f77790a88e15da27"
-  integrity sha512-5WJWxNfXMYkpBfmFEIQ/761W6gBFmrOiMk3d/ulVAZtnMqyKPTSjZ10bk0jdLloEjvO1oaH0K/tEbyyZ0bCNMw==
+react-native-cloud-fs@2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-cloud-fs/-/react-native-cloud-fs-2.7.0.tgz#b2be2294056bcfc1d2513b34f275545f75b79230"
+  integrity sha512-HEheuzpXR91jWWsXSGAvrqka7wlAMEEhSSv3xbwNrbQf+ldc9LNihNjG5HGP9cGcjn+6w0UxpdMsSFuQUjPGuw==
   dependencies:
     user "0.0.0"
 
