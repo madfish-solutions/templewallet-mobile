@@ -38,7 +38,8 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
     marginRight: formatSize(6)
   },
   row: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'flex-start'
   },
   column: {
     flexDirection: 'column'

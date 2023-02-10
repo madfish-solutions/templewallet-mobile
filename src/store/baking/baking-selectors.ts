@@ -1,21 +1,14 @@
-import { BakerInterface, emptyBaker } from '../../interfaces/baker.interface';
+import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
+
 import { useSelector } from '../selector';
 
-const useBakingSelector = () => useSelector(({ baking }) => baking);
-
 export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
-  const selectedBaker = useBakingSelector().selectedBaker;
+  const selectedBaker = useSelector(state => state.baking.selectedBaker);
   const isBakerSelected = selectedBaker.address !== emptyBaker.address;
 
   return [selectedBaker, isBakerSelected];
 };
 
-export const useBakersListSelector = () => useBakingSelector().bakersList.data;
+export const useBakersListSelector = () => useSelector(state => state.baking.bakersList.data);
 
-export const useKnownBakerSelector = (bakerAddress: string) => {
-  const bakersList = useBakersListSelector();
-
-  return bakersList.find(baker => baker.address === bakerAddress);
-};
-
-export const useBakerRewardsListSelector = () => useBakingSelector().bakerRewardsList.data;
+export const useBakerRewardsListSelector = () => useSelector(state => state.baking.bakerRewardsList.data);
