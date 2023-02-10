@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { EMPTY, ObservableInput, of, Subject } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 
-import { Action } from '../../interfaces/action.interface';
-import { showErrorToast } from '../../toast/toast.utils';
+import { Action } from 'src/interfaces/action.interface';
+import { showErrorToast } from 'src/toast/toast.utils';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   project: (value: T, index: number) => O

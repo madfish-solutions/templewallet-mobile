@@ -3,19 +3,20 @@ import React, { FC, useMemo } from 'react';
 import { from } from 'rxjs';
 import { mapTo, switchMap } from 'rxjs/operators';
 
-import { BeaconHandler } from '../../../../beacon/beacon-handler';
-import { Divider } from '../../../../components/divider/divider';
-import { ApproveOperationRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-operation-request-action-payload.interface';
-import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { emptyAccount } from '../../../../interfaces/account.interface';
-import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
-import { navigateAction } from '../../../../store/root-state.actions';
-import { useSelectedRpcUrlSelector } from '../../../../store/settings/settings-selectors';
-import { waitForOperationCompletionAction } from '../../../../store/wallet/wallet-actions';
-import { useAccountsListSelector } from '../../../../store/wallet/wallet-selectors';
-import { showSuccessToast } from '../../../../toast/toast.utils';
-import { mapBeaconToTaquitoParams } from '../../../../utils/beacon.utils';
-import { sendTransaction$ } from '../../../../utils/wallet.utils';
+import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { Divider } from 'src/components/divider/divider';
+import { ApproveOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-operation-request-action-payload.interface';
+import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
+import { emptyAccount } from 'src/interfaces/account.interface';
+import { StacksEnum } from 'src/navigator/enums/stacks.enum';
+import { navigateAction } from 'src/store/root-state.actions';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
+import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { showSuccessToast } from 'src/toast/toast.utils';
+import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
+import { sendTransaction$ } from 'src/utils/wallet.utils';
+
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 
@@ -61,7 +62,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     [accounts, message.sourceAddress]
   );
 
-  const opParams = message.operationDetails.map(mapBeaconToTaquitoParams);
+  const opParams = useMemo(() => message.operationDetails.map(mapBeaconToTaquitoParams), [message]);
 
   return (
     <OperationsConfirmation
