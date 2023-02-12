@@ -19,6 +19,16 @@ export const formatImgUri = (origin = '') => {
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
+const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+
+export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
+
+const isSvgDataUriInUtf8Encoding = (uri: string) =>
+  uri.slice(0, SVG_DATA_URI_UTF8_PREFIX.length).toLowerCase() === SVG_DATA_URI_UTF8_PREFIX;
+
+export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
+  decodeURIComponent(uri).slice(SVG_DATA_URI_UTF8_PREFIX.length);
+
 export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   const [address, id] = assetSlug.split('_');
 
