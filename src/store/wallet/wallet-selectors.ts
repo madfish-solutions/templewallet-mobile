@@ -3,17 +3,16 @@ import { useMemo } from 'react';
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { useSelector } from 'src/store/selector';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible, isNonZeroBalance } from 'src/utils/tezos.util';
-import { getTokenMetadata } from 'src/utils/token-metadata.utils';
-import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+import { useGetTokenMetadata } from 'src/utils/token-metadata.utils';
+import { getAccountState, getSelectedAccount, useSelectedAccountState } from 'src/utils/wallet-account-state.utils';
 import { useTezosToken } from 'src/utils/wallet.utils';
-
-import { useSelector } from '../selector';
 
 export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);
 
@@ -43,30 +42,41 @@ export const useIsAuthorisedSelector = () => {
 
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
-export const useAssetsListSelector = (): TokenInterface[] =>
-  useSelector(state => {
-    const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
-    const isTezosNode = !isDcpNode(state.settings.selectedRpcUrl);
+export const useAssetsListSelector = (): TokenInterface[] => {
+  const selectedAccountState = useSelectedAccountState();
 
-    const tokensList = isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList;
+  const isTezosNode = useSelector(state => !isDcpNode(state.settings.selectedRpcUrl));
 
-    return tokensList
-      .filter(token => selectedAccountState.removedTokensList.indexOf(token.slug) === -1)
-      .map(token => {
+  const tokensList = isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList;
+
+  const filteredTokensList = useMemo(
+    () => tokensList.filter(token => selectedAccountState.removedTokensList.indexOf(token.slug) === -1),
+    [tokensList, selectedAccountState]
+  );
+
+  const getTokenMetadata = useGetTokenMetadata();
+
+  const result = useMemo(
+    () =>
+      filteredTokensList.map(token => {
         const visibility =
           token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
             ? VisibilityEnum.Visible
             : token.visibility;
 
-        const metadata = getTokenMetadata(state, token.slug);
+        const metadata = getTokenMetadata(token.slug);
 
         return {
           ...metadata,
           visibility,
           balance: token.balance
         };
-      });
-  }, jsonEqualityFn);
+      }),
+    [filteredTokensList, getTokenMetadata]
+  );
+
+  return result;
+};
 
 export const useVisibleAssetListSelector = () => {
   const tokensList = useAssetsListSelector();

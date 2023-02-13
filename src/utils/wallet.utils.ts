@@ -3,15 +3,18 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
-import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
-import { Shelter } from '../shelter/shelter';
-import { SettingsRootState } from '../store/settings/settings-state';
-import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
-import { WalletRootState } from '../store/wallet/wallet-state';
-import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { emptyToken } from '../token/interfaces/token.interface';
+import { AccountStateInterface, emptyAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { Shelter } from 'src/shelter/shelter';
+import { useSelector } from 'src/store/selector';
+import { SettingsRootState } from 'src/store/settings/settings-state';
+import { WalletRootState } from 'src/store/wallet/wallet-state';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { emptyToken } from 'src/token/interfaces/token.interface';
+
+import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { useGetTokenExchangeRate } from './token-metadata.utils';
 
 export const withSelectedAccount =
   <T>(state$: Observable<WalletRootState>) =>
@@ -60,14 +63,19 @@ export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opPar
   );
 
 export const useTezosToken = (balance: string) => {
-  const metadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+  const selectedRpcUrl = useSelector(state => state.settings.selectedRpcUrl);
+  const getTokenExchangeRate = useGetTokenExchangeRate();
+  const exchangeRate = useMemo(() => getTokenExchangeRate(TEZ_TOKEN_SLUG), [getTokenExchangeRate]);
+
+  const gasTokenMetadata = getNetworkGasTokenMetadata(selectedRpcUrl);
 
   return useMemo(
     () => ({
       ...emptyToken,
-      ...metadata,
+      ...gasTokenMetadata,
+      exchangeRate,
       balance
     }),
-    [metadata, balance]
+    [gasTokenMetadata, exchangeRate, balance]
   );
 };

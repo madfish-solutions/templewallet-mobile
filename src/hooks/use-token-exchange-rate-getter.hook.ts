@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
-import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { useFiatToUsdRateSelector } from '../store/settings/settings-selectors';
-import { isDefined } from '../utils/is-defined';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { isDefined } from 'src/utils/is-defined';
+import { useFiatToUsdRate } from 'src/utils/token-metadata.utils';
 
 export const useTokenExchangeRateGetter = () => {
   const tokenUsdExchangeRates = useUsdToTokenRates();
-  const fiatToUsdRate = useFiatToUsdRateSelector();
+  const fiatToUsdRate = useFiatToUsdRate();
 
   return useCallback(
     (slug: string) => {

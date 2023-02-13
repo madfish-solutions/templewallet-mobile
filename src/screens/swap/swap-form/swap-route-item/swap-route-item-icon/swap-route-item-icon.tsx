@@ -1,18 +1,18 @@
 import React, { FC } from 'react';
 
-import { Icon } from '../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
-import { TokenIcon } from '../../../../../components/token-icon/token-icon';
-import { useTokenMetadataSelector } from '../../../../../store/tokens-metadata/tokens-metadata-selectors';
-import { formatSize } from '../../../../../styles/format-size';
-import { isDefined } from '../../../../../utils/is-defined';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
+import { useTokenMetadata } from 'src/utils/token-metadata.utils';
 
 interface SwapRouteTokenIconProps {
   tokenSlug: string;
 }
 
 const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug }) => {
-  const tokenMetadata = useTokenMetadataSelector(tokenSlug);
+  const tokenMetadata = useTokenMetadata(tokenSlug);
 
   return (
     <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={formatSize(24)} />

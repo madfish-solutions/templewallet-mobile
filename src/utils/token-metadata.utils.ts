@@ -1,14 +1,16 @@
 import memoize from 'mem';
+import { useCallback, useMemo } from 'react';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
-import { tezosMetadataApi, whitelistApi } from '../api.service';
-import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
-import { RootState } from '../store/create-store';
-import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+import { tezosMetadataApi, whitelistApi } from 'src/api.service';
+import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import { useSelector } from 'src/store/selector';
+import { TokensMetadataRootState } from 'src/store/tokens-metadata/tokens-metadata-state';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { emptyTokenMetadata, TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+
 import { isDefined } from './is-defined';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
@@ -87,10 +89,10 @@ export const normalizeTokenMetadata = (
       };
 };
 
-export const getFiatToUsdRate = (state: RootState) => {
-  const fiatExchangeRates = state.currency.fiatToTezosRates.data;
-  const fiatCurrency = state.settings.fiatCurrency;
-  const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
+export const useFiatToUsdRate = () => {
+  const fiatExchangeRates = useSelector(state => state.currency.fiatToTezosRates.data);
+  const fiatCurrency = useSelector(state => state.settings.fiatCurrency);
+  const tezUsdExchangeRates = useSelector(state => state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG]);
 
   const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
   const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
@@ -102,25 +104,47 @@ export const getFiatToUsdRate = (state: RootState) => {
   return undefined;
 };
 
-const getTokenExchangeRate = (state: RootState, slug: string) => {
-  const tokenUsdExchangeRate = state.currency.usdToTokenRates.data[slug];
-  const fiatToUsdRate = getFiatToUsdRate(state);
+export const useGetTokenExchangeRate = () => {
+  const fiatToUsdRate = useFiatToUsdRate();
+  const usdToTokenRates = useSelector(state => state.currency.usdToTokenRates);
 
-  return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
+  return useCallback(
+    (slug: string) => {
+      const tokenUsdExchangeRate = usdToTokenRates.data[slug];
+
+      return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate)
+        ? tokenUsdExchangeRate * fiatToUsdRate
+        : undefined;
+    },
+    [fiatToUsdRate, usdToTokenRates]
+  );
 };
 
-export const getTokenMetadata = (state: RootState, slug: string) => {
-  const tokenMetadata = normalizeTokenMetadata(
-    state.settings.selectedRpcUrl,
-    slug,
-    state.tokensMetadata.metadataRecord[slug]
-  );
-  const exchangeRate = getTokenExchangeRate(state, slug);
+export const useTokenMetadata = (slug: string) => {
+  const getTokenMetadata = useGetTokenMetadata();
 
-  return {
-    ...tokenMetadata,
-    exchangeRate
-  };
+  return useMemo(() => getTokenMetadata(slug), [getTokenMetadata, slug]);
+};
+
+export const useGetTokenMetadata = () => {
+  const selectedRpcUrl = useSelector(state => state.settings.selectedRpcUrl);
+
+  const metadataRecord = useSelector(state => state.tokensMetadata.metadataRecord);
+
+  const getTokenExchangeRate = useGetTokenExchangeRate();
+
+  return useCallback(
+    (slug: string) => {
+      const tokenMetadata = normalizeTokenMetadata(selectedRpcUrl, slug, metadataRecord[slug]);
+      const exchangeRate = getTokenExchangeRate(slug);
+
+      return {
+        ...tokenMetadata,
+        exchangeRate
+      };
+    },
+    [selectedRpcUrl, metadataRecord, getTokenExchangeRate]
+  );
 };
 
 export const withMetadataSlugs =

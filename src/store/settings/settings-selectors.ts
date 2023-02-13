@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
-import { getFiatToUsdRate } from '../../utils/token-metadata.utils';
+import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
+
 import { useSelector } from '../selector';
 
 export const useThemeSelector = () => useSelector(({ settings }) => settings.theme);
@@ -16,8 +16,6 @@ export const useRpcListSelector = () => useSelector(({ settings }) => settings.r
 export const useSelectedRpcUrlSelector = () => useSelector(({ settings }) => settings.selectedRpcUrl);
 
 export const useFiatCurrencySelector = () => useSelector(({ settings }) => settings.fiatCurrency);
-
-export const useFiatToUsdRateSelector = () => useSelector(state => getFiatToUsdRate(state));
 
 export const useCurrentFiatCurrencyMetadataSelector = () => {
   const fiatCurrency = useFiatCurrencySelector();

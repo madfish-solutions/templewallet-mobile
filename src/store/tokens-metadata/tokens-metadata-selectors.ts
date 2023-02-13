@@ -1,9 +1,6 @@
-import { jsonEqualityFn } from '../../utils/store.utils';
-import { getTokenMetadata } from '../../utils/token-metadata.utils';
-import { useSelector } from '../selector';
+import { jsonEqualityFn } from 'src/utils/store.utils';
 
-export const useTokenMetadataSelector = (slug: string) =>
-  useSelector(state => getTokenMetadata(state, slug), jsonEqualityFn);
+import { useSelector } from '../selector';
 
 export const useTokensMetadataSelector = () =>
   useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord, jsonEqualityFn);
