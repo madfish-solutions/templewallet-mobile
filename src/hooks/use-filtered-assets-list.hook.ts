@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
-import { TokenInterface } from '../token/interfaces/token.interface';
-import { isString } from '../utils/is-string';
-import { isNonZeroBalance } from '../utils/tezos.util';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isString } from 'src/utils/is-string';
+import { isNonZeroBalance } from 'src/utils/tezos.util';
 
 export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
   const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
