@@ -2,8 +2,8 @@ import { TezosOperationType } from '@airgap/beacon-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
 import { of } from 'rxjs';
 
-import { BeaconHandler } from '../beacon/beacon-handler';
-import { SemiPartialTezosOperation } from '../types/semi-partial-tezos-operation';
+import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { SemiPartialTezosOperation } from 'src/types/semi-partial-tezos-operation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsWithKind => {
@@ -11,9 +11,9 @@ export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsW
 
   const walletParam = {
     ...rest,
-    fee: fee as any,
-    gasLimit: gas_limit as any,
-    storageLimit: storage_limit as any
+    fee: stringToNumber(fee),
+    gasLimit: stringToNumber(gas_limit),
+    storageLimit: stringToNumber(storage_limit)
   };
 
   switch (walletParam.kind) {
@@ -36,7 +36,7 @@ export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsW
         ...txRest,
         kind: walletParam.kind as any, // Beacon and taquito has different enums for op.kind
         mutez: true, // The balance was already converted from Tez (ꜩ) to Mutez (uꜩ)
-        amount: amount as any,
+        amount: Number(amount),
         to: destination,
         parameter: parameters
       };
@@ -45,6 +45,8 @@ export const mapBeaconToTaquitoParams = (op: SemiPartialTezosOperation): ParamsW
       return walletParam as any; // Beacon and taquito has different enums for op.kind
   }
 };
+
+const stringToNumber = (str?: string) => (Boolean(str) ? Number(str) : undefined);
 
 // pseudo async function as we don't need to wait until Beacon will remove all connections
 // (common async solution does not work without the Internet connection)

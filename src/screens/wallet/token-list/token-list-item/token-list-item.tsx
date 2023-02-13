@@ -1,13 +1,14 @@
 import React, { FC, memo, useCallback } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 
-import { AssetValueText } from '../../../../components/asset-value-text/asset-value-text';
-import { HideBalance } from '../../../../components/hide-balance/hide-balance';
-import { TokenContainer } from '../../../../components/token-container/token-container';
-import { TokenContainerProps } from '../../../../components/token-container/token-container.props';
-import { EmptyFn } from '../../../../config/general';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { HideBalance } from 'src/components/hide-balance/hide-balance';
+import { TokenContainer } from 'src/components/token-container/token-container';
+import { TokenContainerProps } from 'src/components/token-container/token-container.props';
+import { EmptyFn } from 'src/config/general';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+
 import { useTokenListItemStyles } from './token-list-item.styles';
 
 interface Props extends TokenContainerProps {
