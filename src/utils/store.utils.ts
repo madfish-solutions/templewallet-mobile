@@ -1,4 +1,3 @@
-import { EqualityFn } from 'react-redux';
+import { isEqual } from 'lodash-es';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const jsonEqualityFn: EqualityFn<any> = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+export const jsonEqualityFn = <T>(left: T, right: T) => isEqual(left, right);
