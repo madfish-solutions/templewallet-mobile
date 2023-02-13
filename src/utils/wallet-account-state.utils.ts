@@ -1,6 +1,9 @@
-import { AccountStateInterface, initialAccountState } from '../interfaces/account-state.interface';
-import { AccountInterface, initialAccount } from '../interfaces/account.interface';
-import { WalletState } from '../store/wallet/wallet-state';
+import { useMemo } from 'react';
+
+import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface, initialAccount } from 'src/interfaces/account.interface';
+import { useSelector } from 'src/store/selector';
+import { WalletState } from 'src/store/wallet/wallet-state';
 
 export const getSelectedAccount = (wallet: WalletState): AccountInterface => ({
   ...initialAccount,
@@ -11,3 +14,16 @@ export const getAccountState = (wallet: WalletState, publicKeyHash: string): Acc
   ...initialAccountState,
   ...wallet.accountsStateRecord[publicKeyHash]
 });
+
+export const useSelectedAccountState = (): AccountStateInterface => {
+  const walletAccountsStateRecord = useSelector(state => state.wallet.accountsStateRecord);
+  const selectedAccountPublicKeyHash = useSelector(state => state.wallet.selectedAccountPublicKeyHash);
+
+  return useMemo(
+    () => ({
+      ...initialAccountState,
+      ...walletAccountsStateRecord[selectedAccountPublicKeyHash]
+    }),
+    [walletAccountsStateRecord, selectedAccountPublicKeyHash]
+  );
+};

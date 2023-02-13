@@ -1,22 +1,23 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { TokenIcon } from '../../../components/token-icon/token-icon';
-import { useTezosMarketTokenSelector } from '../../../store/market/market-selectors';
-import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
-import { getTruncatedProps } from '../../../utils/style.util';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { useTezosMarketTokenSelector } from 'src/store/market/market-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+import { getTruncatedProps } from 'src/utils/style.util';
+import { useTokenMetadata } from 'src/utils/token-metadata.utils';
+
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
-  const tezosMetadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+  const tezosMetadata = useTokenMetadata(TEZ_TOKEN_SLUG);
   const marketTezos = useTezosMarketTokenSelector();
   const colors = useColors();
 
