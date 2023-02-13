@@ -163,12 +163,12 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.AddContact}
               component={AddContactModal}
-              options={useModalOptions('Add address')}
+              options={useModalOptions('Add contact')}
             />
             <RootStack.Screen
               name={ModalsEnum.EditContact}
               component={EditContactModal}
-              options={useModalOptions('Edit address')}
+              options={useModalOptions('Edit contact')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
