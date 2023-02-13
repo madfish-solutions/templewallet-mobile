@@ -1,20 +1,24 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AvatarImage } from '../../../components/avatar-image/avatar-image';
-import { ButtonSmallDelegate } from '../../../components/button/button-small/button-small-delegate/button-small-delegate';
-import { Divider } from '../../../components/divider/divider';
-import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
-import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { EmptyFn } from '../../../config/general';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { BakerRewardInterface } from '../../../interfaces/baker-reward.interface';
-import { BakerInterface } from '../../../interfaces/baker.interface';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { isDefined } from '../../../utils/is-defined';
-import { tzktUrl } from '../../../utils/linking.util';
-import { kFormatter } from '../../../utils/number.util';
+import { BakerInterface } from 'src/apis/baking-bad';
+import { AvatarImage } from 'src/components/avatar-image/avatar-image';
+import { ButtonSmallDelegate } from 'src/components/button/button-small/button-small-delegate/button-small-delegate';
+import { Divider } from 'src/components/divider/divider';
+import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
+import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { EmptyFn } from 'src/config/general';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
+import { tzktUrl } from 'src/utils/linking.util';
+import { formatToPercentStr } from 'src/utils/number-format.utils';
+import { kFormatter } from 'src/utils/number.util';
+
 import { BakerRewardsList } from './baker-rewards-list/baker-rewards-list';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
@@ -30,12 +34,18 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
   const { metadata } = useNetworkInfo();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
+  const feeStr = formatToPercentStr(baker.fee);
+
   return (
     <>
       <View style={styles.bakerCard}>
         <View style={styles.upperContainer}>
           <View style={styles.bakerContainer}>
-            <AvatarImage size={formatSize(44)} uri={baker.logo} />
+            {baker.logo ? (
+              <AvatarImage size={formatSize(44)} uri={baker.logo} />
+            ) : (
+              <RobotIcon size={formatSize(44)} seed={baker.address} />
+            )}
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText}>{baker.name}</Text>
@@ -61,7 +71,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
         <View style={styles.lowerContainer}>
           <View>
             <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{isDefined(baker.fee) ? (baker.fee * 100).toFixed(2) : '--'}%</Text>
+            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>

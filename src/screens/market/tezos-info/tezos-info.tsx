@@ -11,7 +11,7 @@ import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
 import { getTruncatedProps } from '../../../utils/style.util';
-import { circulatingSupplyAlert, marketCupAlert, volumeAlert } from './alerts';
+import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
@@ -25,7 +25,7 @@ export const TezosInfo = () => {
 
   const { value: price } = formatRegularValue(marketTezos?.price);
   const { value: supply } = formatPrice(marketTezos?.supply);
-  const { value: marketCup } = formatPrice(marketTezos?.marketCup);
+  const { value: marketCap } = formatPrice(marketTezos?.marketCap);
   const { value: volume24h } = formatPrice(marketTezos?.volume24h);
   const priceChange7d = formatPriceChange(marketTezos?.priceChange7d);
   const priceChange24h = formatPriceChange(marketTezos?.priceChange24h);
@@ -49,10 +49,10 @@ export const TezosInfo = () => {
 
           <View style={styles.displayFlex}>
             <View style={styles.tooltipContainer}>
-              <Text style={styles.subtitle13}>Market Cup</Text>
-              <TouchableIcon onPress={marketCupAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+              <Text style={styles.subtitle13}>Market Cap</Text>
+              <TouchableIcon onPress={marketCapAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
             </View>
-            <Text style={styles.regularText}>{marketCup} $</Text>
+            <Text style={styles.regularText}>{marketCap} $</Text>
           </View>
         </View>
 

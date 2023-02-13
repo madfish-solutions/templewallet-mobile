@@ -2,7 +2,8 @@ import {
   mockOriginationOperation,
   mockOtherTypesOperations,
   mockTransactionOperation
-} from '../types/semi-partial-tezos-operation.mock';
+} from 'src/types/semi-partial-tezos-operation.mock';
+
 import { mapBeaconToTaquitoParams } from './beacon.utils';
 
 describe('mapBeaconToTaquitoParams', () => {

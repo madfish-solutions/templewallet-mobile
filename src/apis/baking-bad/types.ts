@@ -1,3 +1,5 @@
+export type GetBakerResponseData = BakerInterface | '';
+
 export interface BakerInterface {
   address: string;
   name: string;
@@ -43,26 +45,3 @@ interface BakerConfig {
   ignored: string[];
   sources: string[];
 }
-
-export const emptyBaker: BakerInterface = {
-  address: '',
-  name: '',
-  logo: '',
-  balance: 0,
-  stakingBalance: 0,
-  stakingCapacity: 0,
-  maxStakingBalance: 0,
-  freeSpace: 0,
-  fee: 0,
-  minDelegation: 0,
-  payoutDelay: 0,
-  payoutPeriod: 0,
-  openForDelegation: false,
-  imatedRoi: 0,
-  serviceType: 'tezos_only',
-  serviceHealth: 'dead',
-  payoutTiming: 'no_data',
-  payoutAccuracy: 'no_data',
-  audit: '',
-  insuranceCoverage: 0
-};

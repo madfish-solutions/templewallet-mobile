@@ -1,18 +1,22 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { AvatarImage } from '../../../components/avatar-image/avatar-image';
-import { Divider } from '../../../components/divider/divider';
-import { ExternalLinkButton } from '../../../components/icon/external-link-button/external-link-button';
-import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
-import { EmptyFn } from '../../../config/general';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { BakerInterface } from '../../../interfaces/baker.interface';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { conditionalStyle } from '../../../utils/conditional-style';
-import { tzktUrl } from '../../../utils/linking.util';
-import { kFormatter } from '../../../utils/number.util';
+import { BakerInterface } from 'src/apis/baking-bad';
+import { AvatarImage } from 'src/components/avatar-image/avatar-image';
+import { Divider } from 'src/components/divider/divider';
+import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
+import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { EmptyFn } from 'src/config/general';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isTruthy } from 'src/utils/is-truthy';
+import { tzktUrl } from 'src/utils/linking.util';
+import { formatToPercentStr } from 'src/utils/number-format.utils';
+import { kFormatter } from 'src/utils/number.util';
+
 import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
@@ -28,6 +32,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
   const { metadata } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+
+  const feeStr = formatToPercentStr(baker.fee);
 
   return (
     <TouchableOpacity
@@ -46,7 +52,11 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
 
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
-          <AvatarImage size={formatSize(32)} uri={baker.logo} />
+          {baker.logo ? (
+            <AvatarImage size={formatSize(32)} uri={baker.logo} />
+          ) : (
+            <RobotIcon size={formatSize(32)} seed={baker.address} />
+          )}
           <Divider size={formatSize(10)} />
           <Text style={styles.nameText}>{baker.name}</Text>
         </View>
@@ -63,7 +73,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
       <View style={styles.lowerContainer}>
         <View>
           <Text style={styles.cellTitle}>Baker fee:</Text>
-          <Text style={styles.cellValueText}>{(baker.fee * 100).toFixed(2)}%</Text>
+          <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
         </View>
         <Divider size={formatSize(16)} />
         <View>

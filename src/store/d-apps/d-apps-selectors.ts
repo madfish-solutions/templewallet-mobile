@@ -5,4 +5,4 @@ export const usePermissionsSelector = () => useSelector(({ dApps }) => dApps.per
 
 export const useDAppsListSelector = () => useSelector(({ dApps }) => dApps.dappsList.data, jsonEqualityFn);
 
-export const useTokensApyInfoSelector = () => useSelector(({ dApps }) => dApps.tokensApyInfo);
+export const useTokensApyRatesSelector = () => useSelector(({ dApps }) => dApps.tokensApyRates);
