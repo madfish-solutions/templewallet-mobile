@@ -1,24 +1,27 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Quote } from '../../components/quote/quote';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Quote } from 'src/components/quote/quote';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { isAndroid } from 'src/config/system';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { WelcomeSelectors } from './welcome.selectors';
-import { useWelcomeStyles } from './welcome.styles';
+import { useWelcomeStyles, useCloudButtonActiveColorStyleConfig } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
+  const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   usePageAnalytic(ScreensEnum.Welcome);
 
@@ -28,12 +31,16 @@ export const Welcome = () => {
         <InsetSubstitute />
         <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
       </View>
+
       <Divider />
+
       <Quote
         quote="The only function of economic forecasting is to make astrology look more respectable."
         author="John Kenneth Galbraith"
       />
+
       <Divider />
+
       <View>
         <ButtonLargePrimary
           title="Create a new Wallet"
@@ -41,7 +48,23 @@ export const Welcome = () => {
           onPress={() => navigate(ScreensEnum.CreateAccount)}
           testID={WelcomeSelectors.CreateNewWalletButton}
         />
-        <Divider size={formatSize(24)} />
+
+        <View style={styles.orDivider}>
+          <View style={styles.orDividerLine} />
+          <Text style={styles.orDividerText}>or</Text>
+          <View style={styles.orDividerLine} />
+        </View>
+
+        <ButtonLargeSecondary
+          title={`Continue with ${isAndroid ? 'Google Drive' : 'iCloud'}`}
+          iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
+          activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
+          onPress={() => void 0}
+          testID={WelcomeSelectors.ContinueWithCloudButton}
+          testIDProperties={{ cloud: isAndroid ? 'Google Drive' : 'iCloud' }}
+        />
+
+        <Divider size={formatSize(16)} />
 
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonBox}>
@@ -60,6 +83,7 @@ export const Welcome = () => {
             />
           </View>
         </View>
+
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>
