@@ -5,6 +5,7 @@ import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import { RootState } from 'src/store/create-store';
 import { useSelector } from 'src/store/selector';
 import { TokensMetadataRootState } from 'src/store/tokens-metadata/tokens-metadata-state';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -13,6 +14,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { isDefined } from './is-defined';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
+import { jsonEqualityFn } from './store.utils';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -89,10 +91,10 @@ export const normalizeTokenMetadata = (
       };
 };
 
-export const useFiatToUsdRate = () => {
-  const fiatExchangeRates = useSelector(state => state.currency.fiatToTezosRates.data);
-  const fiatCurrency = useSelector(state => state.settings.fiatCurrency);
-  const tezUsdExchangeRates = useSelector(state => state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG]);
+const getFiatToUsdRate = (state: RootState) => {
+  const fiatExchangeRates = state.currency.fiatToTezosRates.data;
+  const fiatCurrency = state.settings.fiatCurrency;
+  const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
 
   const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
   const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
@@ -104,13 +106,17 @@ export const useFiatToUsdRate = () => {
   return undefined;
 };
 
+export const useFiatToUsdRate = () => useSelector(getFiatToUsdRate, jsonEqualityFn);
+
 export const useGetTokenExchangeRate = () => {
-  const fiatToUsdRate = useFiatToUsdRate();
-  const usdToTokenRates = useSelector(state => state.currency.usdToTokenRates);
+  const { fiatToUsdRate, usdToTokenRates } = useSelector(
+    state => ({ fiatToUsdRate: getFiatToUsdRate(state), usdToTokenRates: state.currency.usdToTokenRates.data }),
+    jsonEqualityFn
+  );
 
   return useCallback(
     (slug: string) => {
-      const tokenUsdExchangeRate = usdToTokenRates.data[slug];
+      const tokenUsdExchangeRate = usdToTokenRates[slug];
 
       return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate)
         ? tokenUsdExchangeRate * fiatToUsdRate
