@@ -151,20 +151,7 @@ export const loadTokenMetadata$ = memoize(
     const slug = `${address}_${id}`;
     console.log('Loading metadata for:', slug);
 
-    return from(
-      tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`).then(
-        res => {
-          console.log('Metadata load result:', res.data);
-
-          return res;
-        },
-        error => {
-          console.error('Metadata load error:', error);
-
-          throw error;
-        }
-      )
-    ).pipe(
+    return from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
       map(({ data }) => transformDataToTokenMetadata(data, address, id)),
       filter(isDefined)
     );
