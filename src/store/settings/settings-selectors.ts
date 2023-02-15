@@ -1,7 +1,9 @@
+import { pick } from 'lodash-es';
 import { useMemo } from 'react';
 
-import { FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
-import { getFiatToUsdRate } from '../../utils/token-metadata.utils';
+import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
+import { getFiatToUsdRate } from 'src/utils/token-metadata.utils';
+
 import { useSelector } from '../selector';
 
 export const useThemeSelector = () => useSelector(({ settings }) => settings.theme);
@@ -39,3 +41,6 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
 export const useIsManualBackupMadeSelector = () => useSelector(({ settings }) => settings.isManualBackupMade);
+
+export const useIsBackupMadeSelector = () =>
+  useSelector(({ settings }) => pick(settings, 'isManualBackupMade', 'isCloudBackupMade'));

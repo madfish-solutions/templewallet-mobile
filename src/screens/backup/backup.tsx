@@ -46,7 +46,9 @@ export const Backup = () => {
               Don’t risk your money! Backup your wallet so you can recover it if you lose this device.
             </Text>
           </View>
+
           <WhiteContainerDivider />
+
           <TouchableOpacity style={styles.actionButtonContainer} onPress={() => navigate(ScreensEnum.ManualBackup)}>
             <Text style={styles.actionButtonText}>Backup manually</Text>
           </TouchableOpacity>

@@ -10,7 +10,7 @@ import {
   removeCustomRpc,
   walletOpenedAction,
   changeTheme,
-  requestManualBackupAction,
+  requestSeedPhraseBackupAction,
   setFiatCurrency,
   setIsAnalyticsEnabled,
   setIsBalanceHidden,
@@ -83,9 +83,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
-  builder.addCase(requestManualBackupAction, state => ({
+  builder.addCase(requestSeedPhraseBackupAction, state => ({
     ...state,
-    isManualBackupMade: false
+    isManualBackupMade: false,
+    isCloudBackupMade: false
   }));
 
   builder.addCase(madeManualBackupAction, state => ({

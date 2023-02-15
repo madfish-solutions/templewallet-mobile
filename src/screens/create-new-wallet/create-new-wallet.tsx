@@ -16,7 +16,7 @@ import { FormCheckbox } from '../../form/form-checkbox';
 import { FormPasswordInput } from '../../form/form-password-input';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import {
-  requestManualBackupAction,
+  requestSeedPhraseBackupAction,
   setIsAnalyticsEnabled,
   showLoaderAction
 } from '../../store/settings/settings-actions';
@@ -41,7 +41,7 @@ export const CreateNewWallet = () => {
     dispatch(setIsAnalyticsEnabled(analytics));
     const seedPhrase = await generateSeed();
     importWallet({ seedPhrase, password, useBiometry });
-    dispatch(requestManualBackupAction());
+    dispatch(requestSeedPhraseBackupAction());
   };
 
   return (

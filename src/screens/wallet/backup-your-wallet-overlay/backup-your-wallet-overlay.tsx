@@ -2,12 +2,14 @@ import { Portal } from '@gorhom/portal';
 import React, { useContext } from 'react';
 import { View, Text } from 'react-native';
 
-import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useDropdownBottomSheetStyles } from '../../../components/bottom-sheet/bottom-sheet.styles';
-import { CurrentRouteNameContext } from '../../../navigator/current-route-name.context';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
+import { isAndroid } from 'src/config/system';
+import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
+
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
 
 export const BackupYourWalletOverlay = () => {
@@ -16,12 +18,16 @@ export const BackupYourWalletOverlay = () => {
   const styles = useBackupYourWalletOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 
-  const isManualBackupMade = useIsManualBackupMadeSelector();
+  const { isManualBackupMade, isCloudBackupMade } = useIsBackupMadeSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 
-  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isManualBackupMade;
+  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isManualBackupMade && !isCloudBackupMade;
 
-  return isShowOverlay ? (
+  if (!isShowOverlay) {
+    return null;
+  }
+
+  return (
     <Portal>
       <View style={styles.backdrop}>
         <View style={[dropdownBottomSheetStyles.root, styles.root]}>
@@ -31,13 +37,16 @@ export const BackupYourWalletOverlay = () => {
               {'Don’t lose your wallet! Save your access \nto accounts.'}
             </Text>
           </View>
+
+          <BottomSheetActionButton title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`} />
+
           <BottomSheetActionButton
-            title="Manual backup"
+            title="Backup manually"
             style={styles.manualBackupButton}
             onPress={() => navigate(ScreensEnum.ManualBackup)}
           />
         </View>
       </View>
     </Portal>
-  ) : null;
+  );
 };

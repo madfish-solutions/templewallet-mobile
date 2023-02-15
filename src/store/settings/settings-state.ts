@@ -21,6 +21,7 @@ export interface SettingsState {
   hideZeroBalances: boolean;
   isShowLoader: boolean;
   isManualBackupMade: boolean;
+  isCloudBackupMade: boolean;
   applicationOpenCounter: number;
 }
 
@@ -39,6 +40,7 @@ export const settingsInitialState: SettingsState = {
   hideZeroBalances: false,
   isShowLoader: false,
   isManualBackupMade: true,
+  isCloudBackupMade: true,
   applicationOpenCounter: 0
 };
 
