@@ -19,7 +19,6 @@ const fetchAllTokensBalances = async (selectedRpcUrl: string, account: string) =
   const balances: TzktAccountTokenBalance[] = [];
 
   await (async function recourse(offset: number) {
-    console.log('Recoursing with offset = ', offset);
     const response = await fetchTokensBalancesOnce(selectedRpcUrl, account, LIMIT, offset);
     const data = response.data;
 
