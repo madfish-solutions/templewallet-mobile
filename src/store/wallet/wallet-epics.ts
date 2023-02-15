@@ -65,7 +65,7 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
     )
   );
 
-const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
     withSelectedAccount(state$),
@@ -185,7 +185,7 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
 
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,
-  loadTokenBalanceEpic,
+  loadTokensBalancesEpic,
   loadTezosBalanceEpic,
   loadTokensWithBalancesEpic,
   sendAssetEpic,

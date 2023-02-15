@@ -13,20 +13,39 @@ import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwKS';
 
-const LIMIT = 600;
+const LIMIT = 10000;
 
-const fetchTokenBalances = (selectedRpcUrl: string, account: string) =>
+const fetchAllTokensBalances = async (selectedRpcUrl: string, account: string) => {
+  const balances: TzktAccountTokenBalance[] = [];
+
+  await (async function recourse(offset: number) {
+    console.log('Recoursing with offset = ', offset);
+    const response = await fetchTokensBalancesOnce(selectedRpcUrl, account, LIMIT, offset);
+    const data = response.data;
+
+    balances.push(...data);
+
+    if (data.length === LIMIT) {
+      await recourse(offset + LIMIT);
+    }
+  })(0);
+
+  return balances;
+};
+
+const fetchTokensBalancesOnce = (selectedRpcUrl: string, account: string, limit: number, offset = 0) =>
   getTzktApi(selectedRpcUrl).get<Array<TzktAccountTokenBalance>>('/tokens/balances', {
     params: {
       account,
       'token.contract.ne': TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS,
       'sort.desc': 'balance',
-      limit: LIMIT
+      limit,
+      offset
     }
   });
 
 export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
-  from(fetchTokenBalances(selectedRpcUrl, accountPublicKeyHash)).pipe(map(response => response.data));
+  from(fetchAllTokensBalances(selectedRpcUrl, accountPublicKeyHash));
 
 const mapTzktTokenBalance = (tztkBalances: Array<TzktAccountTokenBalance>) =>
   tztkBalances.map(value => ({
