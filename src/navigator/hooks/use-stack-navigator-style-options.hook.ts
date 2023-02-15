@@ -1,8 +1,8 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 
-import { formatSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
-import { useColors } from '../../styles/use-colors';
+import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
+import { useColors } from 'src/styles/use-colors';
 
 export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
   const colors = useColors();
