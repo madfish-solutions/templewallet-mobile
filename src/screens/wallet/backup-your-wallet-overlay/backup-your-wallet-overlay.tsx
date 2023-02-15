@@ -38,7 +38,10 @@ export const BackupYourWalletOverlay = () => {
             </Text>
           </View>
 
-          <BottomSheetActionButton title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`} />
+          <BottomSheetActionButton
+            title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`}
+            onPress={() => navigate(ScreensEnum.CloudBackup)}
+          />
 
           <BottomSheetActionButton
             title="Backup manually"

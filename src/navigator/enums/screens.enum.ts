@@ -47,6 +47,7 @@ export enum ScreensEnum {
   NodeSettings = 'NodeSettings',
   Backup = 'Backup',
   ManualBackup = 'ManualBackup',
+  CloudBackup = 'CloudBackup',
   NotificationsSettings = 'NotificationsSettings',
   Debug = 'Debug'
 }
@@ -96,6 +97,7 @@ export type ScreensParamList = {
   [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
+  [ScreensEnum.CloudBackup]: undefined;
   [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
