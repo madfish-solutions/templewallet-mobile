@@ -10,7 +10,7 @@ import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { emptyComponent } from '../../config/general';
+import { emptyComponent, emptyFn, EmptyFn } from '../../config/general';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
@@ -21,6 +21,7 @@ interface Props extends BottomSheetControllerProps {
   title?: string;
   description: string;
   cancelButtonText?: string;
+  onCancelButtonPress?: EmptyFn;
   contentHeight: number;
 }
 
@@ -28,6 +29,7 @@ export const BottomSheet: FC<Props> = ({
   title,
   description,
   cancelButtonText = 'Cancel',
+  onCancelButtonPress = emptyFn,
   contentHeight,
   controller,
   children
@@ -57,6 +59,10 @@ export const BottomSheet: FC<Props> = ({
   const handleChange = (index: number) => {
     setIsOpened(index !== -1);
     Keyboard.dismiss();
+  };
+  const handleCancelPress = () => {
+    controller.close();
+    onCancelButtonPress();
   };
 
   useEffect(() => {
@@ -95,7 +101,7 @@ export const BottomSheet: FC<Props> = ({
 
             {children}
 
-            <TouchableOpacity style={styles.cancelButton} onPress={controller.close}>
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
               <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
             </TouchableOpacity>
           </View>

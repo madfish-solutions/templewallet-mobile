@@ -1,5 +1,6 @@
 import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
+import { contactsEpics } from './contact-book/contact-book-epics';
 import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
 import { dAppsEpics } from './d-apps/d-apps-epics';
@@ -26,5 +27,6 @@ export const { store, persistor } = createStore(
   migrationEpics,
   advertisingEpics,
   marketEpics,
-  notificationsEpics
+  notificationsEpics,
+  contactsEpics
 );

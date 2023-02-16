@@ -91,7 +91,10 @@ export const Settings = () => {
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
-
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.Contacts)}>
+              <WhiteContainerText text="Contacts" />
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
             {!isManualBackupMade && (
               <>
                 <WhiteContainerDivider />

@@ -1,10 +1,10 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC, memo, useCallback } from 'react';
+import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
+import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
 import { formatSize } from '../../styles/format-size';
 import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -15,9 +15,9 @@ import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
-export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
-  list: T[];
+  list: Array<SectionDropdownDataInterface<T>>;
   isSearchable?: boolean;
   itemHeight?: number;
   setSearchValue?: EventFn<string>;
@@ -28,38 +28,31 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+interface SectionDropdownValueProps<T> {
   value?: T;
   itemHeight?: number;
-  list: T[];
+  list: Array<SectionDropdownDataInterface<T>>;
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
 }
 
-export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
-  renderValue: DropdownValueComponent<T>;
-  renderAccountListItem: DropdownListItemComponent<T>;
-};
+type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
-
-export type DropdownValueComponent<T> = FC<{
+type DropdownValueComponent<T> = FC<{
   value?: T;
   disabled?: boolean;
 }>;
 
-export type DropdownListItemComponent<T> = FC<{
+type DropdownListItemComponent<T> = FC<{
   item: T;
   isSelected: boolean;
 }>;
 
-export type DropdownActionButtonsComponent = FC<{
+type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
-
-const DropdownComponent = <T extends unknown>({
+const SectionDropdownComponent = <T extends unknown>({
   value,
   list,
   description,
@@ -74,11 +67,9 @@ const DropdownComponent = <T extends unknown>({
   keyExtractor,
   onValueChange,
   onLongPress
-}: DropdownProps<T> & DropdownValueProps<T>) => {
-  const ref = useRef<FlatList<T>>(null);
+}: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
   const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
@@ -102,15 +93,25 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref.current) || !isDefined(value) || !isDefined(list) || list.length === 0) {
+    if (!isDefined(value) || !isDefined(list) || list.length === 0) {
       return void 0;
     }
-    const foundIndex = list.findIndex(item => equalityFn(item, value));
-    const index = foundIndex > -1 ? foundIndex : 0;
-    if (foundIndex >= list.length) {
-      return void 0;
+    let itemIndex = 0;
+    let sectionIndex = 0;
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+
+      for (let j = 0; j < item.data.length; j++) {
+        if (equalityFn(item.data[j], value)) {
+          itemIndex = j;
+          sectionIndex = i;
+          break;
+        }
+      }
+      if (itemIndex !== 0 || sectionIndex !== 0) {
+        break;
+      }
     }
-    ref.current.scrollToIndex({ index, animated: true });
   }, [value, list]);
 
   return (
@@ -130,17 +131,15 @@ const DropdownComponent = <T extends unknown>({
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
-          <FlatList
-            ref={ref}
-            data={list}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
+          {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
+          <BottomSheetSectionList
+            sections={list}
+            getItemLayout={createGetItemLayout(itemHeight)}
             contentContainerStyle={styles.flatListContentContainer}
-            ListEmptyComponent={ListEmptyComponent}
-            windowSize={10}
-            updateCellsBatchingPeriod={150}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
           />
         </View>
 
@@ -152,4 +151,4 @@ const DropdownComponent = <T extends unknown>({
   );
 };
 
-export const Dropdown = memo(DropdownComponent) as typeof DropdownComponent;
+export const SectionDropdown = memo(SectionDropdownComponent) as typeof SectionDropdownComponent;
