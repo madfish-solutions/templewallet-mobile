@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
+import RNCloudFs from 'react-native-cloud-fs'; // ["copyToCloud", "deleteFromCloud", "fileExists", "getGoogleDriveDocument", "listFiles", "loginIfNeeded", "logout", "requestSignIn", "reset", "getConstants"]
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
@@ -9,7 +10,9 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { Shelter } from 'src/shelter/shelter';
 import { formatSize } from 'src/styles/format-size';
+import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import {
@@ -22,8 +25,27 @@ import { EnterCloudPasswordSelectors } from './selectors';
 export const CloudBackup = () => {
   usePageAnalytic(ScreensEnum.CloudBackup);
 
-  const handleSubmit = (values: EnterCloudPasswordFormValues) => {
-    console.log('Values: ', values);
+  const styles = useSetPasswordScreensCommonStyles();
+
+  const handleSubmit = ({ password }: EnterCloudPasswordFormValues) => {
+    console.log('Password: ', password);
+
+    Shelter.isPasswordCorrect$(password).subscribe(isPasswordCorrect => {
+      console.log('Is password correct: ', isPasswordCorrect);
+
+      if (isPasswordCorrect === false) {
+        return;
+      }
+
+      RNCloudFs.loginIfNeeded().then(
+        (res: unknown) => {
+          console.log('RNCloudFs.loginIfNeeded returned', res);
+        },
+        (error: unknown) => {
+          console.error('RNCloudFs.loginIfNeeded errored:', error);
+        }
+      );
+    });
   };
 
   return (
@@ -42,7 +64,7 @@ export const CloudBackup = () => {
             </View>
           </ScreenContainer>
 
-          <View>
+          <View style={styles.fixedButtonContainer}>
             <ButtonLargePrimary
               title="Confirm"
               disabled={!isValid}
