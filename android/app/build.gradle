@@ -136,6 +136,15 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    /*
+      For 'react-native-cloud-fs' fix. See:
+      - https://developer.android.com/reference/tools/gradle-api/7.2/com/android/build/api/dsl/ResourcesPackagingOptions
+      - https://github.com/google/android-fhir/issues/534#issuecomment-1067098894
+    */
+    packagingOptions {
+        pickFirst 'META-INF/DEPENDENCIES'
+    }
+
     defaultConfig {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -213,6 +222,7 @@ android {
             include (*reactNativeArchitectures())
         }
     }
+
     signingConfigs {
         release {
             storeFile file(KEYSTORE_STORE_FILE)
@@ -227,6 +237,7 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -264,6 +275,12 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "androidx.core:core-splashscreen:1.0.0"
+
+    /*
+      For 'react-native-cloud-fs' fix
+      See: https://stackoverflow.com/a/60492942/9371122
+    */
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
