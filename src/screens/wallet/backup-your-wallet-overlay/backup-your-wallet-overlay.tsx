@@ -1,6 +1,7 @@
 import { Portal } from '@gorhom/portal';
 import React, { useContext } from 'react';
 import { View, Text } from 'react-native';
+import RNCloudFs from 'react-native-cloud-fs';
 
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
@@ -38,10 +39,12 @@ export const BackupYourWalletOverlay = () => {
             </Text>
           </View>
 
-          <BottomSheetActionButton
-            title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`}
-            onPress={() => navigate(ScreensEnum.CloudBackup)}
-          />
+          {isCloudAvailable() && (
+            <BottomSheetActionButton
+              title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`}
+              onPress={() => navigate(ScreensEnum.CloudBackup)}
+            />
+          )}
 
           <BottomSheetActionButton
             title="Backup manually"
@@ -52,4 +55,12 @@ export const BackupYourWalletOverlay = () => {
       </View>
     </Portal>
   );
+};
+
+const isCloudAvailable = () => {
+  if (isAndroid === false) {
+    return RNCloudFs.isAvailable();
+  }
+
+  return true;
 };
