@@ -1,3 +1,5 @@
+import { isString } from './is-string';
+
 const IPFS_PROTOCOL_PREFIX = 'ipfs://';
 const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
 const OBJKT_RESIZE_3 = 'assets-003';
@@ -25,6 +27,24 @@ export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 
 const isSvgDataUriInUtf8Encoding = (uri: string) =>
   uri.slice(0, SVG_DATA_URI_UTF8_PREFIX.length).toLowerCase() === SVG_DATA_URI_UTF8_PREFIX;
+
+export const isImageRectangular = (uri?: string) => {
+  if (isString(uri) && isSvgDataUriInUtf8Encoding(uri)) {
+    const viewBoxVal = uri
+      .match(/viewBox=['"][0-9]+ [0-9]+ [0-9]+ [0-9]+['"]/g)?.[0]
+      ?.slice(9, -1)
+      .split(' ');
+
+    if (viewBoxVal) {
+      const [minX, minY, maxX, maxY] = viewBoxVal;
+      const width = Number(maxX) - Number(minX);
+      const height = Number(maxY) - Number(minY);
+      if (Number.isFinite(width) && Number.isFinite(height) && width !== height) {
+        return true;
+      }
+    }
+  }
+};
 
 export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
   decodeURIComponent(uri).slice(SVG_DATA_URI_UTF8_PREFIX.length);
