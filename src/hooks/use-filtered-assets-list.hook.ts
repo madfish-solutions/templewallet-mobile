@@ -1,18 +1,27 @@
 import { useMemo, useState } from 'react';
 
+import { useRoute3TokensSlugsSelector } from 'src/store/route3/route3-selectors';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
 export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
+  const route3TokensSlugs = useRoute3TokensSlugsSelector();
+
+  const assetListRoute3Join = useMemo(
+    () => assetsList.filter(asset => route3TokensSlugs.includes(toTokenSlug(asset.address, asset.id))),
+    [route3TokensSlugs]
+  );
   const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
-    () => assetsList.filter(asset => isNonZeroBalance(asset)),
+    () => assetListRoute3Join.filter(asset => isNonZeroBalance(asset)),
     [assetsList]
   );
 
   const [searchValue, setSearchValue] = useState<string>();
   const filteredAssetsList = useMemo<TokenInterface[]>(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
+    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetListRoute3Join;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();

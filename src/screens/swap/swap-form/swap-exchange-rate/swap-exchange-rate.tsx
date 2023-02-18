@@ -1,47 +1,47 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
-import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
 
-import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
+import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
-import { isDefined } from '../../../../utils/is-defined';
 import { formatAssetAmount } from '../../../../utils/number.util';
-import { mutezToTz } from '../../../../utils/tezos.util';
 import { ROUTING_FEE_PERCENT } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
-  inputAssets: AssetAmountInterface;
-  outputAssets: AssetAmountInterface;
-  bestTrade: Trade;
-  minimumReceivedAmount?: BigNumber;
+  slippageRatio: number;
+  inputAsset: TokenInterface;
+  outputAsset: TokenInterface;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTrade, minimumReceivedAmount }) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio }) => {
   const styles = useSwapExchangeRateStyles();
+  const { data: swapParams } = useRoute3SwapParamsSelector();
 
   const exchangeRate = useMemo(() => {
-    const tradeMutezInput = getTradeInputAmount(bestTrade);
-    const tradeMutezOutput = getTradeOutputAmount(bestTrade);
+    if (swapParams.input !== undefined && swapParams.output !== undefined) {
+      const tradeInput = new BigNumber(swapParams.input);
+      const tradeOutput = new BigNumber(swapParams.output);
+      const rate = tradeInput.dividedBy(tradeOutput);
 
-    if (tradeMutezInput && tradeMutezOutput && !tradeMutezInput.isEqualTo(0) && !tradeMutezOutput.isEqualTo(0)) {
-      const tradeTzInput = mutezToTz(tradeMutezInput, inputAssets.asset.decimals);
-      const tradeTzOutput = mutezToTz(tradeMutezOutput, outputAssets.asset.decimals);
-
-      return tradeTzInput.dividedBy(tradeTzOutput);
+      return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
     }
 
-    return undefined;
-  }, [bestTrade, inputAssets.asset.decimals, outputAssets.asset.decimals]);
+    return '---';
+  }, [swapParams]);
 
-  const displayedMinimumReceivedAmount = useMemo(
-    () =>
-      isDefined(minimumReceivedAmount) ? mutezToTz(minimumReceivedAmount, outputAssets.asset.decimals) : undefined,
-    [minimumReceivedAmount, outputAssets.asset.decimals]
-  );
+  const minimumReceivedAmount = useMemo(() => {
+    if (swapParams.output !== undefined) {
+      return `${swapParams.output * slippageRatio} ${outputAsset.symbol}`;
+    }
+
+    return '---';
+  }, [slippageRatio, swapParams.output]);
+
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',
@@ -65,19 +65,11 @@ export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTra
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Exchange rate</Text>
-        <Text style={styles.infoValue}>
-          {exchangeRate
-            ? `1 ${outputAssets.asset.symbol} = ${formatAssetAmount(exchangeRate)} ${inputAssets.asset.symbol}`
-            : '---'}
-        </Text>
+        <Text style={styles.infoValue}>{exchangeRate}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Minimum received</Text>
-        <Text style={styles.infoValue}>
-          {displayedMinimumReceivedAmount
-            ? `${formatAssetAmount(displayedMinimumReceivedAmount)} ${outputAssets.asset.symbol}`
-            : '---'}
-        </Text>
+        <Text style={styles.infoValue}>{minimumReceivedAmount}</Text>
       </View>
     </>
   );

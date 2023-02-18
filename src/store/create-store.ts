@@ -25,6 +25,8 @@ import { MarketRootState } from './market/market-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { NotificationsRootState } from './notifications/notifications-state';
 import { rootStateReducer } from './root-state.reducers';
+import { route3Reducer } from './route3/route3-reducers';
+import { Route3RootState } from './route3/route3-state';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
@@ -44,7 +46,8 @@ export type RootState = WalletRootState &
   ExolixRootState &
   AdvertisingRootState &
   MarketRootState &
-  NotificationsRootState;
+  NotificationsRootState &
+  Route3RootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -72,7 +75,8 @@ const rootReducer = rootStateReducer<RootState>({
   exolix: exolixReducers,
   advertising: advertisingReducers,
   market: marketReducers,
-  notifications: notificationsReducers
+  notifications: notificationsReducers,
+  route3: route3Reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

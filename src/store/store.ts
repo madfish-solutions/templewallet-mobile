@@ -8,6 +8,7 @@ import { marketEpics } from './market/market-epics';
 import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
 import { rootStateEpics } from './root-state.epics';
+import { route3Epics } from './route3/route3-epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
 import { tokensMetadataEpics } from './tokens-metadata/tokens-metadata-epics';
@@ -26,5 +27,6 @@ export const { store, persistor } = createStore(
   migrationEpics,
   advertisingEpics,
   marketEpics,
-  notificationsEpics
+  notificationsEpics,
+  route3Epics
 );

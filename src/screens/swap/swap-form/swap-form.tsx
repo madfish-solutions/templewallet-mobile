@@ -1,53 +1,42 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider, useFormik } from 'formik';
+import { FormikProvider, isString, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import {
-  getBestTradeExactInput,
-  getTradeOpParams,
-  getTradeOutputAmount,
-  getTradeOutputOperation,
-  Trade,
-  useAllRoutePairs,
-  useRoutePairsCombinations,
-  useTradeWithSlippageTolerance
-} from 'swap-router-sdk';
 
-import { AssetAmountInterface } from '../../../components/asset-amount-input/asset-amount-input';
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from '../../../components/divider/divider';
-import { Label } from '../../../components/label/label';
-import { RefreshControl } from '../../../components/refresh-control/refresh-control';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { tokenEqualityFn } from '../../../components/token-dropdown/token-equality-fn';
-import { FormAssetAmountInput } from '../../../form/form-asset-amount-input/form-asset-amount-input';
-import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
-import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
-import { ConfirmationTypeEnum } from '../../../interfaces/confirm-payload/confirmation-type.enum';
-import { SwapFormValues } from '../../../interfaces/swap-asset.interface';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { navigateAction } from '../../../store/root-state.actions';
-import { useSlippageSelector } from '../../../store/settings/settings-selectors';
+import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { useRoute3 } from 'src/hooks/use-route3.hook';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { navigateAction } from 'src/store/root-state.actions';
+import { loadRoute3SwapParamsAction, resetRoute3SwapParamsAction } from 'src/store/route3/route3-actions';
+import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
+import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import {
-  useSelectedAccountSelector,
+  useTokensWithTezosListSelector,
   useSelectedAccountTezosTokenSelector,
-  useTokensWithTezosListSelector
-} from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
-import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../../token/utils/token.utils';
-import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
-import { TEZOS_DEXES_API_URL } from '../../../utils/env.utils';
-import { isDefined } from '../../../utils/is-defined';
-import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO } from '../config';
-import { getRoutingFeeTransferParams } from '../swap.util';
+  useSelectedAccountSelector
+} from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { getTransferPermissions } from 'src/utils/swap-permissions.util';
+
+import { ROUTE3_CONTRACT } from '../config';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
@@ -62,16 +51,16 @@ interface SwapFormProps {
 
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
+  const getRoute3SwapParams = useRoute3();
   const { trackEvent } = useAnalytics();
-  const slippageTolerance = useSlippageSelector();
-  const assetsList = useTokensWithTezosListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const filteredRoutePairs = useMemo(
-    () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
-    [allRoutePairs.data]
-  );
+  const slippageTolerance = useSlippageSelector();
+
+  const { data: swapParams } = useRoute3SwapParamsSelector();
+  const assetsList = useTokensWithTezosListSelector();
+
+  const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
 
   const handleSubmit = async () => {
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
@@ -83,20 +72,31 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     };
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
-    const routingFeeOpParams = await getRoutingFeeTransferParams(
-      bestTradeWithSlippageTolerance,
-      feeAmount,
-      selectedAccount.publicKeyHash,
-      tezos
-    );
-    const tradeOpParams = await getTradeOpParams(
-      bestTradeWithSlippageTolerance,
-      selectedAccount.publicKeyHash,
-      tezos,
-      ROUTING_FEE_ADDRESS
+
+    if (!inputAssets.amount) {
+      return;
+    }
+
+    const tradeOpParams = await getRoute3SwapParams(
+      inputAssets.asset,
+      outputAssets.asset,
+      inputAssets.amount,
+      slippageRatio
     );
 
-    const opParams: Array<ParamsWithKind> = [...tradeOpParams, ...routingFeeOpParams].map(transferParams => ({
+    if (!tradeOpParams) {
+      return;
+    }
+
+    const { approve, revoke } = await getTransferPermissions(
+      tezos,
+      ROUTE3_CONTRACT,
+      selectedAccount.publicKeyHash,
+      inputAssets.asset,
+      inputAssets.amount
+    );
+
+    const opParams: Array<ParamsWithKind> = [...approve, tradeOpParams, ...revoke].map(transferParams => ({
       ...transferParams,
       kind: OpKind.TRANSACTION
     }));
@@ -141,41 +141,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     ? undefined
     : getTokenSlug(outputAssets.asset);
 
-  const routePairsCombinations = useRoutePairsCombinations(inputAssetSlug, outputAssetSlug, filteredRoutePairs);
-
-  const bestTrade = useMemo<Trade>(
-    () =>
-      inputAssets.amount && routePairsCombinations.length > 0
-        ? getBestTradeExactInput(inputAssets.amount, routePairsCombinations)
-        : [],
-    [inputAssets.amount, routePairsCombinations, outputAssets.asset]
-  );
-
-  const bestTradeWithSlippageTolerance = useTradeWithSlippageTolerance(
-    inputAssets.amount,
-    bestTrade,
-    slippageTolerance
-  );
-
-  const { feeAmount, minimumReceivedAmount } = useMemo(() => {
-    const bestTradeWithSlippageToleranceOutput = getTradeOutputAmount(bestTradeWithSlippageTolerance);
-    const tradeOutputOperation = getTradeOutputOperation(bestTradeWithSlippageTolerance);
-
-    if (isDefined(bestTradeWithSlippageToleranceOutput) && isDefined(tradeOutputOperation)) {
-      const feeAmount = bestTradeWithSlippageToleranceOutput.minus(
-        tradeOutputOperation.bTokenAmount.multipliedBy(ROUTING_FEE_RATIO).dividedToIntegerBy(1)
-      );
-      const minimumReceivedAmount = bestTradeWithSlippageToleranceOutput.minus(feeAmount);
-
-      return { feeAmount, minimumReceivedAmount };
-    } else {
-      const feeAmount = new BigNumber(0);
-      const minimumReceivedAmount = undefined;
-
-      return { feeAmount, minimumReceivedAmount };
-    }
-  }, [bestTradeWithSlippageTolerance]);
-
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true);
 
   const [searchValue, setSearchTezAssetsValue] = useState<string>();
@@ -206,21 +171,34 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   }, [searchValue, assetsList]);
 
   useEffect(() => {
-    if (bestTrade.length > 0) {
-      const bestTradeOutput = getTradeOutputAmount(bestTrade);
-      const displayedBestTradeOutput = isDefined(bestTradeOutput) ? bestTradeOutput.minus(feeAmount) : undefined;
+    dispatch(resetRoute3SwapParamsAction());
+  }, []);
 
-      setFieldValue('outputAssets.amount', displayedBestTradeOutput, false);
-    } else {
-      setFieldValue('outputAssets.amount', undefined, false);
-    }
-  }, [bestTrade, feeAmount]);
+  useEffect(() => {
+    setFieldValue('outputAssets', {
+      asset: outputAssets.asset,
+      amount:
+        swapParams.output === undefined
+          ? undefined
+          : new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals)
+    });
+  }, [swapParams.output, outputAssets.asset]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
       const isEmptyToken = tokenEqualityFn(newInputValue.asset, emptyTezosLikeToken);
       if (getTokenSlug(newInputValue.asset) === outputAssetSlug && !isEmptyToken) {
         setFieldValue('outputAssets', { asset: emptyTezosLikeToken, amount: undefined });
+      }
+
+      if (newInputValue.amount) {
+        dispatch(
+          loadRoute3SwapParamsAction.submit({
+            fromSymbol: inputAssets.asset.symbol === 'TEZ' ? 'xtz' : inputAssets.asset.symbol,
+            toSymbol: outputAssets.asset.symbol === 'TEZ' ? 'xtz' : outputAssets.asset.symbol,
+            amount: newInputValue.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+          })
+        );
       }
     },
     [outputAssetSlug, setFieldValue]
@@ -237,11 +215,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer
-        scrollViewRefreshControl={
-          <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={allRoutePairs.onRefresh} />
-        }
-      >
+      <ScreenContainer>
         <Divider size={formatSize(8)} />
         <FormAssetAmountInput
           name="inputAssets"
@@ -264,26 +238,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           setSearchValue={setSearchTezAssetsValue}
           onValueChange={handleOutputAssetsValueChange}
         />
-        <Label label="Swap route" />
         <View>
-          <SwapRoute
-            inputAssets={inputAssets}
-            outputAssets={outputAssets}
-            trade={bestTrade}
-            loadingHasFailed={allRoutePairs.hasFailed}
+          <SwapExchangeRate
+            inputAsset={inputAssets.asset}
+            slippageRatio={slippageRatio}
+            outputAsset={outputAssets.asset}
           />
-
-          <Divider />
-          <View>
-            <SwapExchangeRate
-              inputAssets={inputAssets}
-              outputAssets={outputAssets}
-              bestTrade={bestTrade}
-              minimumReceivedAmount={minimumReceivedAmount}
-            />
-          </View>
+          <SwapRoute />
         </View>
-        <Divider size={formatSize(16)} />
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />

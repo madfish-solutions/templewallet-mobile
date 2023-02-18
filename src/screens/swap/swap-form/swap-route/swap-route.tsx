@@ -1,64 +1,47 @@
-import React, { FC, useContext } from 'react';
-import { View } from 'react-native';
-import { Trade } from 'swap-router-sdk';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC, useState } from 'react';
+import { View, Text } from 'react-native';
 
-import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
-import { tokenEqualityFn } from '../../../../components/token-dropdown/token-equality-fn';
-import { CurrentRouteNameContext } from '../../../../navigator/current-route-name.context';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { useIsAuthorisedSelector } from '../../../../store/wallet/wallet-selectors';
-import { showErrorToast } from '../../../../toast/toast.utils';
-import { emptyTezosLikeToken } from '../../../../token/interfaces/token.interface';
-import { isDefined } from '../../../../utils/is-defined';
-import { SwapRouteInfo } from '../swap-route-info/swap-route-info';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
+
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
-import { SwapRouteStyles } from './swap-route.styles';
+import { useSwapRouteStyles } from './swap-route.styles';
 
-interface Props {
-  inputAssets: AssetAmountInterface;
-  outputAssets: AssetAmountInterface;
-  trade: Trade;
-  loadingHasFailed: boolean;
-}
+export const SwapRoute: FC = () => {
+  const styles = useSwapRouteStyles();
+  const { data: swapParams } = useRoute3SwapParamsSelector();
+  const [isRouteVisible, setIsVisible] = useState(false);
 
-const errorMessage = 'Pull to refresh or try again later';
+  const totalChains = swapParams.chains.length;
+  const totalHops = swapParams.chains.reduce((accum, chain) => accum + chain.hops.length, 0);
+  const shouldShowRoute = isRouteVisible && swapParams.chains.length > 0;
+  const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
-export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loadingHasFailed }) => {
-  const currentRouteName = useContext(CurrentRouteNameContext);
-  const isAuthorised = useIsAuthorisedSelector();
-
-  if (loadingHasFailed && currentRouteName === ScreensEnum.SwapScreen && isAuthorised) {
-    showErrorToast({ description: errorMessage });
-
-    return <SwapRouteInfo text={`Exchange rate data loading has failed. \n${errorMessage}`} />;
-  }
-
-  if (
-    tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken) ||
-    tokenEqualityFn(outputAssets.asset, emptyTezosLikeToken)
-  ) {
-    return <SwapRouteInfo text="Please, select tokens to swap" />;
-  }
-
-  if (!isDefined(inputAssets.amount) && !isDefined(outputAssets.amount)) {
-    return <SwapRouteInfo text="Please, enter swap amount" />;
-  }
-
-  if (trade.length === 0) {
-    return <SwapRouteInfo text="No quotes available" />;
-  }
+  const toggleRoutePress = () => setIsVisible(prevState => !prevState);
 
   return (
-    <View style={SwapRouteStyles.container}>
-      {trade.map((item, index) => {
-        return (
-          <SwapRouteItem
-            key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
-            tradeOperation={item}
-            isShowNextArrow={index !== trade.length - 1}
-          />
-        );
-      })}
+    <View style={styles.container}>
+      <View style={[styles.row, styles.flex, styles.mb12, { width: '100%' }]}>
+        <Text style={styles.infoText}>Swap route</Text>
+        <View style={styles.row}>
+          <Text style={styles.infoValue}>
+            {totalChains} chains / {totalHops} dexes
+          </Text>
+          <Divider size={12} />
+          <TouchableOpacity onPress={toggleRoutePress}>
+            <Icon name={iconName} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {shouldShowRoute &&
+        swapParams.chains.map((chain, index) => (
+          <View style={[styles.row, styles.flex, styles.mb8]}>
+            <SwapRouteItem key={index} chain={chain} />
+          </View>
+        ))}
     </View>
   );
 };

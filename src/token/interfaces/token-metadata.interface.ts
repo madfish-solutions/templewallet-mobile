@@ -10,6 +10,7 @@ export interface TokenMetadataInterface {
   thumbnailUri?: string;
   displayUri?: string;
   artifactUri?: string;
+  standard?: null | 'fa12' | 'fa2';
 
   // Stored as separate Record
   exchangeRate?: number;
@@ -20,5 +21,6 @@ export const emptyTokenMetadata: TokenMetadataInterface = {
   address: '',
   name: '',
   symbol: '',
-  decimals: 0
+  decimals: 0,
+  standard: 'fa12'
 };

@@ -1,18 +1,17 @@
-import { black } from '../../../../config/styles';
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
-import { generateShadow } from '../../../../styles/generate-shadow';
+import { createUseStyles } from 'src/styles/create-use-styles';
 
 export const useSwapRouteItem = createUseStyles(({ colors }) => ({
   container: {
-    ...generateShadow(1, black),
-    padding: formatSize(8),
-    borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG,
+    position: 'relative',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%'
   },
-  lastTokenContainer: {
-    marginLeft: formatSize(-4)
+  amount: {
+    color: colors.gray2
+  },
+  percantage: {
+    color: colors.blue
   }
 }));
