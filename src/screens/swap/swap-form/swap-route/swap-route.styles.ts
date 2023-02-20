@@ -2,16 +2,13 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useSwapRouteStyles = createUseStyles(({ colors }) => ({
-  container: {
-    flexDirection: 'column',
-    alignItems: 'center',
+  flex: {
+    flex: 1,
     justifyContent: 'space-between'
   },
   row: {
-    flexDirection: 'row'
-  },
-  flex: {
-    justifyContent: 'space-between'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   infoText: {
     fontSize: formatSize(14),

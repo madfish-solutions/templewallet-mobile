@@ -15,7 +15,7 @@ export interface Route3SwapParamsRequest {
   amount: string;
 }
 
-export interface Route3Hop {
+interface Route3Hop {
   dex: number;
   forward: boolean;
 }

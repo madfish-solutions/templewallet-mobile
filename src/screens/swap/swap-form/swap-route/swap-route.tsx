@@ -23,22 +23,20 @@ export const SwapRoute: FC = () => {
   const toggleRoutePress = () => setIsVisible(prevState => !prevState);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.row, styles.flex, styles.mb12, { width: '100%' }]}>
+    <View>
+      <TouchableOpacity style={[styles.flex, styles.row, styles.mb12]} onPress={toggleRoutePress}>
         <Text style={styles.infoText}>Swap route</Text>
         <View style={styles.row}>
           <Text style={styles.infoValue}>
             {totalChains} chains / {totalHops} dexes
           </Text>
           <Divider size={12} />
-          <TouchableOpacity onPress={toggleRoutePress}>
-            <Icon name={iconName} />
-          </TouchableOpacity>
+          <Icon name={iconName} />
         </View>
-      </View>
+      </TouchableOpacity>
       {shouldShowRoute &&
         swapParams.chains.map((chain, index) => (
-          <View key={index} style={[styles.row, styles.flex, styles.mb8]}>
+          <View key={index} style={styles.mb8}>
             <SwapRouteItem chain={chain} />
           </View>
         ))}

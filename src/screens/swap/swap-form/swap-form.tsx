@@ -34,10 +34,12 @@ import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 import { getRoute3TokenSymbol } from 'src/utils/route3.util';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
-import { ROUTE3_CONTRACT } from '../config';
+import { ROUTE3_CONTRACT, ROUTING_FEE_RATIO } from '../config';
+import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
@@ -78,12 +80,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       return;
     }
 
-    const tradeOpParams = await getRoute3SwapParams(
-      inputAssets.asset,
+    const routingFeeOpParams = await getRoutingFeeTransferParams(
       outputAssets.asset,
-      inputAssets.amount,
-      slippageRatio
+      routingFreeAtomic,
+      selectedAccount.publicKeyHash,
+      tezos
     );
+
+    const tradeOpParams = await getRoute3SwapParams(inputAssets.asset, outputAssets.asset, minimumReceivedAmountAtomic);
 
     if (!tradeOpParams) {
       return;
@@ -97,10 +101,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       inputAssets.amount
     );
 
-    const opParams: Array<ParamsWithKind> = [...approve, tradeOpParams, ...revoke].map(transferParams => ({
-      ...transferParams,
-      kind: OpKind.TRANSACTION
-    }));
+    const opParams: Array<ParamsWithKind> = [...approve, tradeOpParams, ...revoke, ...routingFeeOpParams].map(
+      transferParams => ({
+        ...transferParams,
+        kind: OpKind.TRANSACTION
+      })
+    );
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
@@ -134,6 +140,24 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
   const { inputAssets, outputAssets } = values;
+
+  const { routingFreeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
+    if (isDefined(swapParams.output)) {
+      const swapOutputAtomic = new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals);
+      const routingFreeAtomic = swapOutputAtomic.minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO)).integerValue();
+      const minimumReceivedAmountAtomic = swapOutputAtomic
+        .minus(routingFreeAtomic)
+        .multipliedBy(slippageRatio)
+        .integerValue();
+
+      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+    } else {
+      const routingFreeAtomic = new BigNumber(0);
+      const minimumReceivedAmountAtomic = new BigNumber(0);
+
+      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+    }
+  }, [swapParams, slippageRatio]);
 
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined

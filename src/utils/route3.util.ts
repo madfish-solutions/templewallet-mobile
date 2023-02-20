@@ -11,6 +11,7 @@ import {
   Route3Token
 } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 
 export const fetchgetRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
@@ -46,4 +47,10 @@ export const getRoute3TokenSymbol = (token: TokenInterface) => {
   }
 
   return token.symbol;
+};
+
+export const getRoute3Token = (token: TokenInterface, route3Tokens: Array<Route3Token>) => {
+  const fromTokenSlug = toTokenSlug(token.address, token.id);
+
+  return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === fromTokenSlug);
 };
