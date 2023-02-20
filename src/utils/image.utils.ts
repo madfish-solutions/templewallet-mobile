@@ -49,6 +49,8 @@ export const isImageRectangular = (uri?: string) => {
 export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
   decodeURIComponent(uri).slice(SVG_DATA_URI_UTF8_PREFIX.length);
 
+export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 -$2');
+
 export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   const [address, id] = assetSlug.split('_');
 

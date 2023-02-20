@@ -1,8 +1,8 @@
 import { isEqual } from 'lodash-es';
 import React, { memo } from 'react';
-import { XmlProps, SvgXml } from 'react-native-svg';
+import { XmlProps, SvgWithCss } from 'react-native-svg';
 
-import { isImgUriDataUri, getXmlFromSvgDataUriInUtf8Encoding } from 'src/utils/image.utils';
+import { isImgUriDataUri, getXmlFromSvgDataUriInUtf8Encoding, fixSvgXml } from 'src/utils/image.utils';
 
 type Props = Omit<XmlProps, 'xml'> & { dataUri: string };
 
@@ -12,9 +12,9 @@ export const DataUriImage = memo<Props>(
       throw new Error('URI format is unknown');
     }
 
-    const xml = getXmlFromSvgDataUriInUtf8Encoding(dataUri);
+    const xml = fixSvgXml(getXmlFromSvgDataUriInUtf8Encoding(dataUri));
 
-    return <SvgXml {...props} xml={xml} />;
+    return <SvgWithCss {...props} xml={xml} />;
   },
   (prevProps, nextProps) => isEqual(prevProps, nextProps)
 );
