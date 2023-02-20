@@ -36,11 +36,11 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
 
   const minimumReceivedAmount = useMemo(() => {
     if (swapParams.output !== undefined) {
-      return `${swapParams.output * slippageRatio} ${outputAsset.symbol}`;
+      return `${(swapParams.output * slippageRatio).toFixed(outputAsset.decimals)} ${outputAsset.symbol}`;
     }
 
     return '---';
-  }, [slippageRatio, swapParams.output]);
+  }, [slippageRatio, swapParams.output, outputAsset.decimals]);
 
   const routingFeeAlert = () =>
     Alert.alert(

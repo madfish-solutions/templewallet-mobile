@@ -10,6 +10,7 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export const fetchgetRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
@@ -37,4 +38,12 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
   }
 
   return hops;
+};
+
+export const getRoute3TokenSymbol = (token: TokenInterface) => {
+  if (token.symbol === 'TEZ') {
+    return 'xtz';
+  }
+
+  return token.symbol;
 };

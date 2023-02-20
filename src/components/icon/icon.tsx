@@ -7,7 +7,7 @@ import { iconNameMap } from './icon-name.map';
 
 export interface IconProps {
   name: IconNameEnum;
-  size?: number;
+  size?: number | string;
   width?: number;
   height?: number;
   color?: string;

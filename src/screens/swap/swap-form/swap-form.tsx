@@ -20,7 +20,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
-import { loadRoute3SwapParamsAction, resetRoute3SwapParamsAction } from 'src/store/route3/route3-actions';
+import { loadRoute3SwapParamsAction } from 'src/store/route3/route3-actions';
 import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import {
@@ -34,6 +34,7 @@ import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { getRoute3TokenSymbol } from 'src/utils/route3.util';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
 import { ROUTE3_CONTRACT } from '../config';
@@ -170,9 +171,22 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     }
   }, [searchValue, assetsList]);
 
+  const subscription = tezos.stream.subscribeBlock('head');
   useEffect(() => {
-    dispatch(resetRoute3SwapParamsAction());
-  }, []);
+    subscription.on('data', () => {
+      if (inputAssets.amount) {
+        dispatch(
+          loadRoute3SwapParamsAction.submit({
+            fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+            toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+            amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+          })
+        );
+      }
+    });
+
+    return () => subscription.close();
+  }, [inputAssets.amount]);
 
   useEffect(() => {
     setFieldValue('outputAssets', {
@@ -182,7 +196,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           ? undefined
           : new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals)
     });
-  }, [swapParams.output, outputAssets.asset]);
+  }, [swapParams.output]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
@@ -194,9 +208,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       if (newInputValue.amount) {
         dispatch(
           loadRoute3SwapParamsAction.submit({
-            fromSymbol: inputAssets.asset.symbol === 'TEZ' ? 'xtz' : inputAssets.asset.symbol,
-            toSymbol: outputAssets.asset.symbol === 'TEZ' ? 'xtz' : outputAssets.asset.symbol,
-            amount: newInputValue.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+            fromSymbol: getRoute3TokenSymbol(newInputValue.asset),
+            toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+            amount: newInputValue.amount.dividedBy(10 ** newInputValue.asset.decimals).toFixed()
           })
         );
       }
@@ -209,8 +223,18 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       if (getTokenSlug(newOutputValue.asset) === inputAssetSlug) {
         setFieldValue('inputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
+
+      if (inputAssets.amount !== undefined) {
+        dispatch(
+          loadRoute3SwapParamsAction.submit({
+            fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+            toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
+            amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+          })
+        );
+      }
     },
-    [inputAssetSlug, setFieldValue]
+    [inputAssetSlug, setFieldValue, inputAssets.amount]
   );
 
   return (

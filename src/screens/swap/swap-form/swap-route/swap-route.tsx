@@ -38,8 +38,8 @@ export const SwapRoute: FC = () => {
       </View>
       {shouldShowRoute &&
         swapParams.chains.map((chain, index) => (
-          <View style={[styles.row, styles.flex, styles.mb8]}>
-            <SwapRouteItem key={index} chain={chain} />
+          <View key={index} style={[styles.row, styles.flex, styles.mb8]}>
+            <SwapRouteItem chain={chain} />
           </View>
         ))}
     </View>

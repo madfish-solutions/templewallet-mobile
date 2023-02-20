@@ -17,11 +17,11 @@ import { useSwapSettingsStyles } from './swap-settings.styles';
 
 const mapSlippageToIndex = (slippage: number): number => {
   switch (slippage) {
-    case 0.75:
+    case 0.25:
       return 0;
-    case 1.5:
+    case 0.5:
       return 1;
-    case 3:
+    case 0.75:
       return 2;
     default:
       return 3;
@@ -42,11 +42,11 @@ export const SwapSettingsScreen: FC = () => {
 
     switch (tokenTypeIndex) {
       case 0:
-        return updateSlippageTolerance(0.75);
+        return updateSlippageTolerance(0.25);
       case 1:
-        return updateSlippageTolerance(1.5);
+        return updateSlippageTolerance(0.5);
       case 2:
-        return updateSlippageTolerance(3.0);
+        return updateSlippageTolerance(0.75);
       case 3: {
         if (!slippageTolerance) {
           return;
@@ -73,7 +73,7 @@ export const SwapSettingsScreen: FC = () => {
       <Label label="Slippage tolerance" />
       <TextSegmentControl
         selectedIndex={inputTypeIndex}
-        values={['0.75%', '1.5%', '3.0%', 'Custom']}
+        values={['0.25%', '0.5%', '0.75%', 'Custom']}
         onChange={handleTokenInputTypeChange}
       />
       <Divider size={formatSize(10)} />
