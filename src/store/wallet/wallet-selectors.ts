@@ -132,10 +132,14 @@ export const useIsVisibleSelector = (publicKeyHash: string) =>
   });
 
 export const useTezosTokenSelector = (publicKeyHash: string) => {
-  const tezosBalance = useSelector(({ wallet }) => {
-    const accountState = getAccountState(wallet, publicKeyHash);
+  const tezosBalance = useSelector(state => {
+    if (state.wallet.accounts.find(account => account.publicKeyHash === publicKeyHash)) {
+      const accountState = getAccountState(state.wallet, publicKeyHash);
 
-    return accountState.tezosBalance;
+      return accountState.tezosBalance;
+    }
+
+    return state.contactBook.contactsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
   });
 
   return useTezosToken(tezosBalance);

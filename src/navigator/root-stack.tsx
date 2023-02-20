@@ -17,6 +17,8 @@ import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { AddLiquidityModal } from 'src/modals/add-liquidity-modal/add-liquidity-modal';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
+import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal';
+import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal';
 import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal';
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
@@ -160,6 +162,16 @@ export const RootStackScreen = () => {
               name={ModalsEnum.EditCustomRpc}
               component={EditCustomRpcModal}
               options={useModalOptions('Edit RPC')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.AddContact}
+              component={AddContactModal}
+              options={useModalOptions('Add contact')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EditContact}
+              component={EditContactModal}
+              options={useModalOptions('Edit contact')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

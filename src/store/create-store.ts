@@ -14,6 +14,8 @@ import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
+import { contactBookReducers } from './contact-book/contact-book-reducers';
+import { ContactsBookRootState } from './contact-book/contact-book-state';
 import { currencyReducers } from './currency/currency-reducers';
 import { CurrencyRootState } from './currency/currency-state';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
@@ -47,7 +49,8 @@ export type RootState = WalletRootState &
   AdvertisingRootState &
   MarketRootState &
   NotificationsRootState &
-  Route3RootState;
+  Route3RootState &
+  ContactsBookRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -76,7 +79,8 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
-  route3: route3Reducer
+  route3: route3Reducer,
+  contactBook: contactBookReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

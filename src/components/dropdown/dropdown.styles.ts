@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useDropdownStyles = createUseStyles(({ colors }) => ({
+export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
   valueContainer: {
     flexGrow: 1,
     flexShrink: 1
@@ -14,5 +14,12 @@ export const useDropdownStyles = createUseStyles(({ colors }) => ({
   flatListContentContainer: {
     justifyContent: 'space-between',
     padding: formatSize(8)
+  },
+  sectionHeaderText: {
+    ...typography.numbersMedium13,
+    color: colors.gray2,
+    backgroundColor: colors.pageBG,
+    paddingVertical: formatSize(4),
+    letterSpacing: formatSize(-0.1)
   }
 }));
