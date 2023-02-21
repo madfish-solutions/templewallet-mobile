@@ -25,6 +25,6 @@ export const mockRootState: RootState = {
   advertising: mockAdvertisingState,
   market: mockMarketState,
   notifications: mockNotificationsState,
-  route3: mockSwapState,
+  swap: mockSwapState,
   contactBook: mockContactBookState
 };

@@ -12,4 +12,3 @@ export const useSwapTokensSlugsSelector = () =>
   );
 export const useSwapParamsSelector = () => useSelector(state => state.swap.swapParams);
 export const useSwapDexesSelector = () => useSelector(state => state.swap.dexes);
-export const useSwapContractSelector = () => useSelector(state => state.swap.swapContract);
