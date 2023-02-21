@@ -20,6 +20,7 @@ import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-scree
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import PackageJSON from '../../../package.json';
 import { AesEncryptor } from './aes-encryptor';
 import {
   EnterCloudPasswordFormValues,
@@ -52,6 +53,7 @@ export const CloudBackup = () => {
     let loggedInToCloud = false;
     try {
       loggedInToCloud = isAndroid ? await RNCloudFs.loginIfNeeded() : true;
+      console.log('RNCloudFs.loginIfNeeded resulted:', loggedInToCloud);
     } catch (error) {
       console.error('RNCloudFs.loginIfNeeded errored:', { error });
     }
@@ -68,7 +70,13 @@ export const CloudBackup = () => {
 
     const mnemonic = await new Promise<string>(resolve => Shelter.revealSeedPhrase$().subscribe(m => void resolve(m)));
 
-    const encryptedData = await encryptor.encrypt(password, JSON.stringify(mnemonic));
+    const encryptedData = await encryptor.encrypt(
+      password,
+      JSON.stringify({
+        version: PackageJSON.version,
+        mnemonic
+      })
+    );
 
     await RNFS.writeFile(path, encryptedData, 'utf8');
 

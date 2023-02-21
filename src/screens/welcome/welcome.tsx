@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import RNCloudFs from 'react-native-cloud-fs';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -13,10 +14,13 @@ import { isAndroid } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles, useCloudButtonActiveColorStyleConfig } from './welcome.styles';
+
+const CLOUD_WALLET_FOLDER = 'temple-wallet';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
@@ -24,6 +28,36 @@ export const Welcome = () => {
   const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   usePageAnalytic(ScreensEnum.Welcome);
+
+  const onContinueWithCloudButtonPress = async () => {
+    let loggedInToCloud = false;
+    try {
+      loggedInToCloud = isAndroid ? await RNCloudFs.loginIfNeeded() : true;
+      console.log('RNCloudFs.loginIfNeeded resulted:', loggedInToCloud);
+    } catch (error) {
+      console.error('RNCloudFs.loginIfNeeded errored:', { error });
+    }
+
+    if (!loggedInToCloud) {
+      return void showErrorToast({ description: 'Failed to log-in' });
+    }
+
+    const filename = 'wallet-backup.json';
+    const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
+
+    const backups = await RNCloudFs.listFiles({
+      scope: 'hidden',
+      targetPath: CLOUD_WALLET_FOLDER
+    });
+
+    const backupFile = backups.files?.find(file => file.name === targetPath);
+
+    if (backupFile) {
+      return void navigate(ScreensEnum.ContinueWithCloud);
+    }
+
+    return void navigate(ScreensEnum.CreateAccount, { withCloud: true });
+  };
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -45,7 +79,7 @@ export const Welcome = () => {
         <ButtonLargePrimary
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}
-          onPress={() => navigate(ScreensEnum.CreateAccount)}
+          onPress={() => navigate(ScreensEnum.CreateAccount, {})}
           testID={WelcomeSelectors.CreateNewWalletButton}
         />
 
@@ -59,7 +93,7 @@ export const Welcome = () => {
           title={`Continue with ${isAndroid ? 'Google Drive' : 'iCloud'}`}
           iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
           activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
-          onPress={() => void 0}
+          onPress={onContinueWithCloudButtonPress}
           testID={WelcomeSelectors.ContinueWithCloudButton}
           testIDProperties={{ cloud: isAndroid ? 'Google Drive' : 'iCloud' }}
         />

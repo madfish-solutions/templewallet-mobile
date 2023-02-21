@@ -27,6 +27,7 @@ import { AliceBob } from 'src/screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from 'src/screens/buy/debit/utorg/utorg';
 import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
@@ -134,6 +135,13 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.CreateAccount}
                 component={CreateNewWallet}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.ContinueWithCloud}
+                component={ContinueWithCloud}
+                options={generateScreenOptions(
+                  <HeaderTitle title={`Restore from ${isAndroid ? 'Google Drive' : 'iCloud'}`} />
+                )}
               />
             </>
           ) : (
