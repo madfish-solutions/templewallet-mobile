@@ -5,14 +5,14 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
+import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
 import { useSwapRouteStyles } from './swap-route.styles';
 
 export const SwapRoute: FC = () => {
   const styles = useSwapRouteStyles();
-  const { data: swapParams } = useRoute3SwapParamsSelector();
+  const { data: swapParams } = useSwapParamsSelector();
   const [isRouteVisible, setIsVisible] = useState(false);
 
   const totalChains = swapParams.chains.length;

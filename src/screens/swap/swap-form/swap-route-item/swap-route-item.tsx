@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
-import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
+import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import { kFormatter } from 'src/utils/number.util';
 
 import { HopItem } from '../hop-item/hop-item';
@@ -22,7 +22,7 @@ const calculatePercentage = (base: number, part: number) => ((BASE * part) / bas
 
 export const SwapRouteItem: FC<Props> = ({ chain }) => {
   const styles = useSwapRouteItem();
-  const { data: swapParams } = useRoute3SwapParamsSelector();
+  const { data: swapParams } = useSwapParamsSelector();
 
   return (
     <View style={[styles.flex, styles.container]}>
@@ -31,7 +31,7 @@ export const SwapRouteItem: FC<Props> = ({ chain }) => {
         <Text style={styles.percantage}>{calculatePercentage(swapParams.input ?? 1, chain.input)}%</Text>
       </View>
       <View style={[styles.flex, styles.hopsContainer]}>
-        <Icon size="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
+        <Icon width="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
         {chain.hops.map(({ dex }, index) => (
           <HopItem key={index} dexId={dex} />
         ))}

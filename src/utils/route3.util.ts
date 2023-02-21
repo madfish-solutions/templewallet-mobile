@@ -13,7 +13,7 @@ import {
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
-export const fetchgetRoute3Tokens = () =>
+export const fetchRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
 export const fetchRoute3SwapParams$ = ({ fromSymbol, toSymbol, amount }: Route3SwapParamsRequest) =>

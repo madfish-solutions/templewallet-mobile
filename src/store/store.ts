@@ -9,9 +9,9 @@ import { marketEpics } from './market/market-epics';
 import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
 import { rootStateEpics } from './root-state.epics';
-import { route3Epics } from './route3/route3-epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
+import { route3Epics } from './swap/swap-epics';
 import { tokensMetadataEpics } from './tokens-metadata/tokens-metadata-epics';
 import { walletEpics } from './wallet/wallet-epics';
 

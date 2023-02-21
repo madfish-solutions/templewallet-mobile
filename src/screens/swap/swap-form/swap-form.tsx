@@ -9,20 +9,22 @@ import { useDispatch } from 'react-redux';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
-import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useBlockLevel } from 'src/hooks/use-block-level.hook';
+import { useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
-import { useRoute3 } from 'src/hooks/use-route3.hook';
+import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
-import { loadRoute3SwapParamsAction } from 'src/store/route3/route3-actions';
-import { useRoute3SwapParamsSelector } from 'src/store/route3/route3-selectors';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { loadSwapParamsAction } from 'src/store/swap/swap-actions';
+import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import {
   useTokensWithTezosListSelector,
   useSelectedAccountTezosTokenSelector,
@@ -36,9 +38,8 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { getRoute3TokenSymbol } from 'src/utils/route3.util';
-import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
-import { ROUTE3_CONTRACT, ROUTING_FEE_RATIO } from '../config';
+import { ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -54,14 +55,15 @@ interface SwapFormProps {
 
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
-  const getRoute3SwapParams = useRoute3();
+  const getSwapParams = useSwap();
   const { trackEvent } = useAnalytics();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const slippageTolerance = useSlippageSelector();
+  const blockLevel = useBlockLevel();
 
-  const { data: swapParams } = useRoute3SwapParamsSelector();
-  const assetsList = useTokensWithTezosListSelector();
+  const { data: swapParams } = useSwapParamsSelector();
+  const tokensList = useTokensWithTezosListSelector();
 
   const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
 
@@ -87,26 +89,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       tezos
     );
 
-    const tradeOpParams = await getRoute3SwapParams(inputAssets.asset, outputAssets.asset, minimumReceivedAmountAtomic);
+    const swapOpParams = await getSwapParams(inputAssets.asset, outputAssets.asset, minimumReceivedAmountAtomic);
 
-    if (!tradeOpParams) {
+    if (swapOpParams === undefined) {
       return;
     }
 
-    const { approve, revoke } = await getTransferPermissions(
-      tezos,
-      ROUTE3_CONTRACT,
-      selectedAccount.publicKeyHash,
-      inputAssets.asset,
-      inputAssets.amount
-    );
-
-    const opParams: Array<ParamsWithKind> = [...approve, tradeOpParams, ...revoke, ...routingFeeOpParams].map(
-      transferParams => ({
-        ...transferParams,
-        kind: OpKind.TRANSACTION
-      })
-    );
+    const opParams: Array<ParamsWithKind> = [...swapOpParams, ...routingFeeOpParams].map(transferParams => ({
+      ...transferParams,
+      kind: OpKind.TRANSACTION
+    }));
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
@@ -166,12 +158,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     ? undefined
     : getTokenSlug(outputAssets.asset);
 
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true);
+  const { filteredTokensList, setSearchValue } = useFilteredSwapTokensList(tokensList, true);
 
   const [searchValue, setSearchTezAssetsValue] = useState<string>();
 
   const assetsListWithTez = useMemo(() => {
-    const sourceArray = assetsList;
+    const sourceArray = filteredTokensList;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -193,24 +185,19 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     } else {
       return sourceArray;
     }
-  }, [searchValue, assetsList]);
+  }, [searchValue, tokensList]);
 
-  const subscription = tezos.stream.subscribeBlock('head');
   useEffect(() => {
-    subscription.on('data', () => {
-      if (inputAssets.amount) {
-        dispatch(
-          loadRoute3SwapParamsAction.submit({
-            fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
-            toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-            amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
-          })
-        );
-      }
-    });
-
-    return () => subscription.close();
-  }, [inputAssets.amount]);
+    if (inputAssets.amount) {
+      dispatch(
+        loadSwapParamsAction.submit({
+          fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+          toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+          amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+        })
+      );
+    }
+  }, [blockLevel]);
 
   useEffect(() => {
     setFieldValue('outputAssets', {
@@ -231,7 +218,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       if (newInputValue.amount) {
         dispatch(
-          loadRoute3SwapParamsAction.submit({
+          loadSwapParamsAction.submit({
             fromSymbol: getRoute3TokenSymbol(newInputValue.asset),
             toSymbol: getRoute3TokenSymbol(outputAssets.asset),
             amount: newInputValue.amount.dividedBy(10 ** newInputValue.asset.decimals).toFixed()
@@ -250,7 +237,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       if (inputAssets.amount !== undefined) {
         dispatch(
-          loadRoute3SwapParamsAction.submit({
+          loadSwapParamsAction.submit({
             fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
             toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
             amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
@@ -270,7 +257,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           label="From"
           isSearchable
           maxButton
-          assetsList={filteredAssetsList}
+          assetsList={filteredTokensList}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}
         />
@@ -294,6 +281,10 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           />
           <SwapRoute />
         </View>
+        <Disclaimer
+          title="Disclaimer"
+          texts={['Temple wallet provides an interface to interact with the 3route DEX aggregator.']}
+        />
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />

@@ -1,18 +1,27 @@
 import { useMemo, useState } from 'react';
 
+import { useSwapTokensSlugsSelector } from 'src/store/swap/swap-selectors';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
-export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
-  const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
-    () => assetsList.filter(asset => isNonZeroBalance(asset)),
-    [assetsList]
+export const useFilteredSwapTokensList = (tokensList: TokenInterface[], isHideZeroBalance = false) => {
+  const swapTokensSlugs = useSwapTokensSlugsSelector();
+
+  const swapTokensListJoin = useMemo(
+    () => tokensList.filter(token => swapTokensSlugs.includes(toTokenSlug(token.address, token.id))),
+    [swapTokensSlugs]
+  );
+  const nonZeroBalanceTokensList = useMemo<TokenInterface[]>(
+    () => swapTokensListJoin.filter(token => isNonZeroBalance(token)),
+    [tokensList]
   );
 
   const [searchValue, setSearchValue] = useState<string>();
-  const filteredAssetsList = useMemo<TokenInterface[]>(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
+  const filteredTokensList = useMemo<TokenInterface[]>(() => {
+    const sourceArray = isHideZeroBalance ? nonZeroBalanceTokensList : swapTokensListJoin;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -34,10 +43,10 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBa
     } else {
       return sourceArray;
     }
-  }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
+  }, [isHideZeroBalance, searchValue, tokensList, nonZeroBalanceTokensList]);
 
   return {
-    filteredAssetsList,
+    filteredTokensList,
     isHideZeroBalance,
     searchValue,
     setSearchValue

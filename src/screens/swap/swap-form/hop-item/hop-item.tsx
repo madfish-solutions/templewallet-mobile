@@ -5,7 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3DexTypeEnum } from 'src/enums/route3.enum';
-import { useRoute3DexesSelector } from 'src/store/route3/route3-selectors';
+import { useSwapDexesSelector } from 'src/store/swap/swap-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
@@ -18,7 +18,7 @@ interface Props {
 
 export const HopItem: FC<Props> = ({ dexId }) => {
   const styles = useHopItemStyles();
-  const { data: route3Dexes } = useRoute3DexesSelector();
+  const { data: route3Dexes } = useSwapDexesSelector();
   const dex = route3Dexes.find(dex => dex.id === dexId);
 
   const dexIcon: IconNameEnum = useMemo(() => {

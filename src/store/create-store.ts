@@ -27,12 +27,12 @@ import { MarketRootState } from './market/market-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { NotificationsRootState } from './notifications/notifications-state';
 import { rootStateReducer } from './root-state.reducers';
-import { route3Reducer } from './route3/route3-reducers';
-import { Route3RootState } from './route3/route3-state';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
+import { swapReducer } from './swap/swap-reducers';
+import { Route3RootState } from './swap/swap-state';
 import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
@@ -79,7 +79,7 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
-  route3: route3Reducer,
+  swap: swapReducer,
   contactBook: contactBookReducers
 });
 

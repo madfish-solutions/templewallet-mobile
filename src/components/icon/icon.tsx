@@ -1,15 +1,14 @@
 import React, { FC, useMemo } from 'react';
 import { ViewStyle } from 'react-native';
+import { SvgProps } from 'react-native-svg';
 
 import { formatSize } from '../../styles/format-size';
 import { IconNameEnum } from './icon-name.enum';
 import { iconNameMap } from './icon-name.map';
 
-export interface IconProps {
+export interface IconProps extends SvgProps {
   name: IconNameEnum;
-  size?: number | string;
-  width?: number;
-  height?: number;
+  size?: number;
   color?: string;
   style?: ViewStyle;
 }

@@ -21,8 +21,6 @@ export const getRoutingFeeTransferParams = async (
     ];
   }
 
-  console.log('outputAsset: ', outputAsset);
-
   const assetContract = await tezos.wallet.at(outputAsset.address);
 
   if (outputAsset.standard === 'fa12') {
