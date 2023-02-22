@@ -20,6 +20,7 @@ import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import {
+  madeCloudBackupAction,
   requestSeedPhraseBackupAction,
   setIsAnalyticsEnabled,
   showLoaderAction
@@ -41,44 +42,48 @@ export const CreateNewWallet = () => {
 
   const {
     backupToCloud,
-    password: passwordParam,
-    mnemonic
+    password: passwordFromRoute,
+    mnemonic: mnemonicFromRoute
   } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
-  const initialValues = isString(passwordParam)
+  const initialValues = isString(passwordFromRoute)
     ? {
         ...createNewPasswordInitialValues,
-        password: passwordParam,
-        passwordConfirmation: passwordParam
+        password: passwordFromRoute,
+        passwordConfirmation: passwordFromRoute
       }
     : createNewPasswordInitialValues;
 
   const handleSubmit = async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
     dispatch(showLoaderAction());
     dispatch(setIsAnalyticsEnabled(analytics));
-    console.log('mnemonic = ', mnemonic);
-    const seedPhrase = isString(mnemonic) ? mnemonic : await generateSeed();
-    importWallet({ seedPhrase, password, useBiometry });
 
-    if (!isString(mnemonic)) {
-      dispatch(requestSeedPhraseBackupAction());
-    }
+    const seedPhrase = isString(mnemonicFromRoute) ? mnemonicFromRoute : await generateSeed();
+
+    importWallet({ seedPhrase, password, useBiometry });
 
     //
 
     if (backupToCloud !== true) {
+      if (!isString(mnemonicFromRoute)) {
+        dispatch(requestSeedPhraseBackupAction());
+      }
+
       return;
     }
 
     try {
       await saveCloudBackup(seedPhrase, password);
     } catch (error) {
-      return void showErrorToast({ description: 'Failed to save file' });
+      dispatch(requestSeedPhraseBackupAction());
+
+      return void showErrorToast({ description: 'Failed to back up to cloud' });
     }
 
+    dispatch(madeCloudBackupAction());
     showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
   };
 

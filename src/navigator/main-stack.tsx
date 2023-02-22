@@ -27,7 +27,6 @@ import { AliceBob } from 'src/screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from 'src/screens/buy/debit/utorg/utorg';
 import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
-import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
@@ -44,6 +43,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
+import { RestoreFromCloud } from 'src/screens/restore-from-cloud';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
@@ -137,8 +137,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
               />
               <MainStack.Screen
-                name={ScreensEnum.ContinueWithCloud}
-                component={ContinueWithCloud}
+                name={ScreensEnum.RestoreFromCloud}
+                component={RestoreFromCloud}
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>

@@ -21,7 +21,8 @@ import {
   setSlippage,
   setZeroBalancesShown,
   toggleDomainAddressShown,
-  madeManualBackupAction
+  madeManualBackupAction,
+  madeCloudBackupAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -92,6 +93,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(madeManualBackupAction, state => ({
     ...state,
     isManualBackupMade: true
+  }));
+
+  builder.addCase(madeCloudBackupAction, state => ({
+    ...state,
+    isCloudBackupMade: true
   }));
 
   builder.addCase(walletOpenedAction, state => ({

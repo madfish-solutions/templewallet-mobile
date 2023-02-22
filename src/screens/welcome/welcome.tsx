@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import RNCloudFs from 'react-native-cloud-fs';
 
-import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable } from 'src/cloud-backup';
+import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable, loginToCloudIfNeeded } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -29,13 +28,7 @@ export const Welcome = () => {
   usePageAnalytic(ScreensEnum.Welcome);
 
   const onContinueWithCloudButtonPress = async () => {
-    let loggedInToCloud = false;
-    try {
-      loggedInToCloud = isAndroid ? await RNCloudFs.loginIfNeeded() : true;
-      console.log('RNCloudFs.loginIfNeeded resulted:', loggedInToCloud);
-    } catch (error) {
-      console.error('RNCloudFs.loginIfNeeded errored:', { error });
-    }
+    const loggedInToCloud = await loginToCloudIfNeeded();
 
     if (!loggedInToCloud) {
       return void showErrorToast({ description: 'Failed to log-in' });
@@ -44,11 +37,13 @@ export const Welcome = () => {
     const backupFile = await fetchCloudBackupFileDetails();
 
     if (backupFile) {
-      return void navigate(ScreensEnum.ContinueWithCloud, { fileId: backupFile.id });
+      return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
     }
 
     return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
   };
+
+  const cloudIsAvailable = isCloudAvailable();
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -80,7 +75,7 @@ export const Welcome = () => {
           <View style={styles.orDividerLine} />
         </View>
 
-        {isCloudAvailable() ? (
+        {cloudIsAvailable ? (
           <>
             <ButtonLargeSecondary
               title={`Continue with ${cloudTitle}`}

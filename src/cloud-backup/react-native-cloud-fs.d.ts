@@ -1,3 +1,5 @@
+type Scope = 'visible' | 'hidden';
+
 declare module 'react-native-cloud-fs' {
   const defaultExport: {
     /** iOS only */
@@ -16,7 +18,7 @@ declare module 'react-native-cloud-fs' {
 
     // getConstants:
 
-    listFiles: (details: { scope: 'hidden'; targetPath: string }) => Promise<{
+    listFiles: (details: { scope: Scope; targetPath: string }) => Promise<{
       files?: {
         id: string;
         name: string;
@@ -30,7 +32,7 @@ declare module 'react-native-cloud-fs' {
      */
     copyToCloud: (details: {
       mimeType: string;
-      scope: 'hidden';
+      scope: Scope;
       sourcePath: { path: string };
       targetPath: string;
     }) => Promise<string>;
@@ -39,12 +41,12 @@ declare module 'react-native-cloud-fs' {
       details:
         | {
             // iOS
-            scope: 'hidden';
+            scope: Scope;
             targetPath: string;
           }
         | {
             // Android
-            scope: 'hidden';
+            scope: Scope;
             fileId: string;
           }
     ) => Promise<boolean>;
@@ -53,6 +55,7 @@ declare module 'react-native-cloud-fs' {
 
     getGoogleDriveDocument: (fileId: string) => Promise<string>;
 
+    /** Absent on Android */
     getIcloudDocument: (fileName: string) => Promise<string>;
   };
 

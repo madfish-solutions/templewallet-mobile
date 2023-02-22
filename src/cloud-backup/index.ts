@@ -26,6 +26,16 @@ export const isCloudAvailable = () => {
   return RNCloudFs.isAvailable();
 };
 
+export const loginToCloudIfNeeded = async () => {
+  try {
+    return isAndroid ? await RNCloudFs.loginIfNeeded() : true;
+  } catch (error) {
+    console.error(error);
+
+    return false;
+  }
+};
+
 export const fetchCloudBackupFileDetails = async () => {
   const backups = await RNCloudFs.listFiles({
     scope: 'hidden',

@@ -18,21 +18,19 @@ import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-scree
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ContinueWithCloudFormValues, ContinueWithCloudInitialValues, ContinueWithCloudValidationSchema } from './form';
-import { ContinueWithCloudSelectors } from './selectors';
+import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
+import { RestoreFromCloudSelectors } from './selectors';
 
-export const ContinueWithCloud = () => {
-  usePageAnalytic(ScreensEnum.ContinueWithCloud);
+export const RestoreFromCloud = () => {
+  usePageAnalytic(ScreensEnum.RestoreFromCloud);
 
-  const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ContinueWithCloud>>().params;
+  const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.RestoreFromCloud>>().params;
 
   const { navigate } = useNavigation();
 
-  // const { goBack } = useNavigation();
-
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = async ({ password, reusePassword }: ContinueWithCloudFormValues) => {
+  const handleSubmit = async ({ password, reusePassword }: RestoreFromCloudFormValues) => {
     console.log('Password: ', password);
 
     let backup: BackupFileInterface | undefined;
@@ -52,27 +50,25 @@ export const ContinueWithCloud = () => {
 
   return (
     <Formik
-      initialValues={ContinueWithCloudInitialValues}
-      validationSchema={ContinueWithCloudValidationSchema}
+      initialValues={RestoreFromCloudInitialValues}
+      validationSchema={RestoreFromCloudValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
         <>
-          <ScreenContainer isFullScreenMode={true}>
+          <ScreenContainer>
             <View>
               <Divider size={formatSize(12)} />
               <Label label="Backup password" description="Enter your backup password to restore a wallet." />
-              <FormPasswordInput name="password" testID={ContinueWithCloudSelectors.PasswordInput} />
+              <FormPasswordInput name="password" testID={RestoreFromCloudSelectors.PasswordInput} />
             </View>
 
             <View style={[styles.checkboxContainer, styles.removeMargin]}>
-              <FormCheckbox name="reusePassword" testID={ContinueWithCloudSelectors.ReusePasswordCheckbox}>
+              <FormCheckbox name="reusePassword" testID={RestoreFromCloudSelectors.ReusePasswordCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Use this password as App password</Text>
               </FormCheckbox>
             </View>
-
-            <View style={{ flex: 1 }} />
           </ScreenContainer>
 
           <View style={styles.fixedButtonContainer}>
@@ -80,7 +76,7 @@ export const ContinueWithCloud = () => {
               title="Next"
               disabled={!isValid}
               onPress={submitForm}
-              testID={ContinueWithCloudSelectors.SubmitButton}
+              testID={RestoreFromCloudSelectors.SubmitButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

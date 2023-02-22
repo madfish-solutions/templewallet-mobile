@@ -1,19 +1,20 @@
 import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
-import RNCloudFs from 'react-native-cloud-fs';
+import { useDispatch } from 'react-redux';
 
-import { saveCloudBackup } from 'src/cloud-backup';
+import { loginToCloudIfNeeded, saveCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { isAndroid } from 'src/config/system';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
+import { madeCloudBackupAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
@@ -31,11 +32,11 @@ export const CloudBackup = () => {
 
   const { goBack } = useNavigation();
 
+  const dispatch = useDispatch();
+
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
-    console.log('Password: ', password);
-
     const isPasswordCorrect = await new Promise<boolean>(resolve => {
       Shelter.isPasswordCorrect$(password).subscribe(resolve);
     });
@@ -44,13 +45,7 @@ export const CloudBackup = () => {
       return void showErrorToast({ description: 'Wrong password' });
     }
 
-    let loggedInToCloud = false;
-    try {
-      loggedInToCloud = isAndroid ? await RNCloudFs.loginIfNeeded() : true;
-      console.log('RNCloudFs.loginIfNeeded resulted:', loggedInToCloud);
-    } catch (error) {
-      console.error('RNCloudFs.loginIfNeeded errored:', { error });
-    }
+    const loggedInToCloud = await loginToCloudIfNeeded();
 
     if (!loggedInToCloud) {
       return void showErrorToast({ description: 'Failed to log-in' });
@@ -64,8 +59,8 @@ export const CloudBackup = () => {
       return void showErrorToast({ description: 'Failed to save file' });
     }
 
+    dispatch(madeCloudBackupAction());
     showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-    // navigate(ScreensEnum.);
     goBack();
   };
 
@@ -83,6 +78,13 @@ export const CloudBackup = () => {
               <Label label="Backup password" description="Enter your wallet password to confirm backup." />
               <FormPasswordInput name="password" testID={CloudBackupSelectors.PasswordInput} />
             </View>
+
+            <Disclaimer
+              title="Don’t forget your password!"
+              texts={[
+                'This password will be used for your backup. You will need it in order to restore your wallet from backup in the future.'
+              ]}
+            />
           </ScreenContainer>
 
           <View style={styles.fixedButtonContainer}>
