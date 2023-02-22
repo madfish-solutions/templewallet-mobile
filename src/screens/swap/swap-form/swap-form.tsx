@@ -136,11 +136,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { routingFreeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
     if (isDefined(swapParams.output)) {
       const swapOutputAtomic = new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals);
-      const routingFreeAtomic = swapOutputAtomic.minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO)).integerValue();
+      const routingFreeAtomic = swapOutputAtomic
+        .minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO))
+        .integerValue(BigNumber.ROUND_DOWN);
       const minimumReceivedAmountAtomic = swapOutputAtomic
         .minus(routingFreeAtomic)
         .multipliedBy(slippageRatio)
-        .integerValue();
+        .integerValue(BigNumber.ROUND_DOWN);
 
       return { routingFreeAtomic, minimumReceivedAmountAtomic };
     } else {
