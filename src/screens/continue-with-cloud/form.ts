@@ -1,15 +1,18 @@
-import { object, SchemaOf } from 'yup';
+import { object, boolean, SchemaOf } from 'yup';
 
 import { passwordValidation } from 'src/form/validation/password';
 
-export type EnterCloudPasswordFormValues = {
+export type ContinueWithCloudFormValues = {
   password: string;
+  reusePassword: boolean;
 };
 
-export const EnterCloudPasswordValidationSchema: SchemaOf<EnterCloudPasswordFormValues> = object().shape({
-  password: passwordValidation
+export const ContinueWithCloudValidationSchema: SchemaOf<ContinueWithCloudFormValues> = object().shape({
+  password: passwordValidation,
+  reusePassword: boolean().required()
 });
 
-export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
-  password: ''
+export const ContinueWithCloudInitialValues: ContinueWithCloudFormValues = {
+  password: '',
+  reusePassword: true
 };

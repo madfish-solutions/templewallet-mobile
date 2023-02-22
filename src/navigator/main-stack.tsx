@@ -4,13 +4,13 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
+import { cloudTitle } from 'src/cloud-backup';
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderAction } from 'src/components/header/header-action/header-actions';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
-import { isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
@@ -139,9 +139,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.ContinueWithCloud}
                 component={ContinueWithCloud}
-                options={generateScreenOptions(
-                  <HeaderTitle title={`Restore from ${isAndroid ? 'Google Drive' : 'iCloud'}`} />
-                )}
+                options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
           ) : (
@@ -305,9 +303,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.CloudBackup}
                 component={CloudBackup}
-                options={generateScreenOptions(
-                  <HeaderTitle title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`} />
-                )}
+                options={generateScreenOptions(<HeaderTitle title={`Backup to ${cloudTitle}`} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsSettings}

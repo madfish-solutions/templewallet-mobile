@@ -56,7 +56,7 @@ export class AesEncryptor {
     }
   };
 
-  decrypt = async (password: any, encryptedString: any) => {
+  decrypt = async (password: string, encryptedString: string) => {
     try {
       const encryptedData = JSON.parse(encryptedString);
       const key = await this.keyFromPassword(password, encryptedData.salt);

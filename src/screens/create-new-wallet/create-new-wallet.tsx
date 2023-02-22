@@ -1,28 +1,34 @@
+import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
+import { isString } from 'lodash-es';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { CheckboxLabel } from '../../components/checkbox-description/checkbox-label';
-import { Divider } from '../../components/divider/divider';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Label } from '../../components/label/label';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { TextLink } from '../../components/text-link/text-link';
-import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../config/socials';
-import { FormBiometryCheckbox } from '../../form/form-biometry-checkbox/form-biometry-checkbox';
-import { FormCheckbox } from '../../form/form-checkbox';
-import { FormPasswordInput } from '../../form/form-password-input';
-import { useShelter } from '../../shelter/use-shelter.hook';
+import { saveCloudBackup } from 'src/cloud-backup';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TextLink } from 'src/components/text-link/text-link';
+import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socials';
+import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
+import { FormCheckbox } from 'src/form/form-checkbox';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useShelter } from 'src/shelter/use-shelter.hook';
 import {
   requestSeedPhraseBackupAction,
   setIsAnalyticsEnabled,
   showLoaderAction
-} from '../../store/settings/settings-actions';
-import { formatSize } from '../../styles/format-size';
-import { useSetPasswordScreensCommonStyles } from '../../styles/set-password-screens-common-styles';
-import { generateSeed } from '../../utils/keys.util';
+} from 'src/store/settings/settings-actions';
+import { formatSize } from 'src/styles/format-size';
+import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { generateSeed } from 'src/utils/keys.util';
+
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
@@ -33,23 +39,51 @@ import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 export const CreateNewWallet = () => {
   const dispatch = useDispatch();
 
+  const {
+    backupToCloud,
+    password: passwordParam,
+    mnemonic
+  } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
+
+  const initialValues = isString(passwordParam)
+    ? {
+        ...createNewPasswordInitialValues,
+        password: passwordParam,
+        passwordConfirmation: passwordParam
+      }
+    : createNewPasswordInitialValues;
 
   const handleSubmit = async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
     dispatch(showLoaderAction());
     dispatch(setIsAnalyticsEnabled(analytics));
-    const seedPhrase = await generateSeed();
+    console.log('mnemonic = ', mnemonic);
+    const seedPhrase = isString(mnemonic) ? mnemonic : await generateSeed();
     importWallet({ seedPhrase, password, useBiometry });
-    dispatch(requestSeedPhraseBackupAction());
+
+    if (!isString(mnemonic)) {
+      dispatch(requestSeedPhraseBackupAction());
+    }
+
+    //
+
+    if (backupToCloud !== true) {
+      return;
+    }
+
+    try {
+      await saveCloudBackup(seedPhrase, password);
+    } catch (error) {
+      return void showErrorToast({ description: 'Failed to save file' });
+    }
+
+    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
   };
 
   return (
-    <Formik
-      initialValues={createNewPasswordInitialValues}
-      validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}
-    >
+    <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
       {({ submitForm, isValid }) => (
         <>
           <ScreenContainer isFullScreenMode={true}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import RNCloudFs from 'react-native-cloud-fs';
 
+import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -19,8 +20,6 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles, useCloudButtonActiveColorStyleConfig } from './welcome.styles';
-
-const CLOUD_WALLET_FOLDER = 'temple-wallet';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
@@ -42,21 +41,13 @@ export const Welcome = () => {
       return void showErrorToast({ description: 'Failed to log-in' });
     }
 
-    const filename = 'wallet-backup.json';
-    const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
-
-    const backups = await RNCloudFs.listFiles({
-      scope: 'hidden',
-      targetPath: CLOUD_WALLET_FOLDER
-    });
-
-    const backupFile = backups.files?.find(file => file.name === targetPath);
+    const backupFile = await fetchCloudBackupFileDetails();
 
     if (backupFile) {
-      return void navigate(ScreensEnum.ContinueWithCloud);
+      return void navigate(ScreensEnum.ContinueWithCloud, { fileId: backupFile.id });
     }
 
-    return void navigate(ScreensEnum.CreateAccount, { withCloud: true });
+    return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
   };
 
   return (
@@ -89,16 +80,20 @@ export const Welcome = () => {
           <View style={styles.orDividerLine} />
         </View>
 
-        <ButtonLargeSecondary
-          title={`Continue with ${isAndroid ? 'Google Drive' : 'iCloud'}`}
-          iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
-          activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
-          onPress={onContinueWithCloudButtonPress}
-          testID={WelcomeSelectors.ContinueWithCloudButton}
-          testIDProperties={{ cloud: isAndroid ? 'Google Drive' : 'iCloud' }}
-        />
+        {isCloudAvailable() ? (
+          <>
+            <ButtonLargeSecondary
+              title={`Continue with ${cloudTitle}`}
+              iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
+              activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
+              onPress={onContinueWithCloudButtonPress}
+              testID={WelcomeSelectors.ContinueWithCloudButton}
+              testIDProperties={{ cloud: cloudTitle }}
+            />
 
-        <Divider size={formatSize(16)} />
+            <Divider size={formatSize(16)} />
+          </>
+        ) : null}
 
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonBox}>

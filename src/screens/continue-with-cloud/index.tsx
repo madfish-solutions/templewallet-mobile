@@ -1,54 +1,59 @@
+import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-// import { isString } from 'lodash-es';
 import React from 'react';
-import { View } from 'react-native';
-// import RNCloudFs from 'react-native-cloud-fs';
-// import * as RNFS from 'react-native-fs';
+import { View, Text } from 'react-native';
 
+import { BackupFileInterface, fetchCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-// import { isAndroid } from 'src/config/system';
+import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
-import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-// import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-// import { Shelter } from 'src/shelter/shelter';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-// import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-// import PackageJSON from '../../../package.json';
-// import { AesEncryptor } from './aes-encryptor';
-import {
-  EnterCloudPasswordFormValues,
-  EnterCloudPasswordInitialValues,
-  EnterCloudPasswordValidationSchema
-} from './form';
-import { EnterCloudPasswordSelectors } from './selectors';
-
-// const CLOUD_WALLET_FOLDER = 'temple-wallet';
-// const encryptor = new AesEncryptor();
+import { ContinueWithCloudFormValues, ContinueWithCloudInitialValues, ContinueWithCloudValidationSchema } from './form';
+import { ContinueWithCloudSelectors } from './selectors';
 
 export const ContinueWithCloud = () => {
-  usePageAnalytic(ScreensEnum.CloudBackup);
+  usePageAnalytic(ScreensEnum.ContinueWithCloud);
+
+  const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ContinueWithCloud>>().params;
+
+  const { navigate } = useNavigation();
 
   // const { goBack } = useNavigation();
 
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
+  const handleSubmit = async ({ password, reusePassword }: ContinueWithCloudFormValues) => {
     console.log('Password: ', password);
 
-    //
+    let backup: BackupFileInterface | undefined;
+    try {
+      backup = await fetchCloudBackup(password, fileId);
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Couldn't restore wallet";
+
+      return void showErrorToast({ description });
+    }
+
+    return void navigate(ScreensEnum.CreateAccount, {
+      password: reusePassword ? password : undefined,
+      mnemonic: backup.mnemonic
+    });
   };
 
   return (
     <Formik
-      initialValues={EnterCloudPasswordInitialValues}
-      validationSchema={EnterCloudPasswordValidationSchema}
+      initialValues={ContinueWithCloudInitialValues}
+      validationSchema={ContinueWithCloudValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ submitForm, isValid }) => (
@@ -56,9 +61,18 @@ export const ContinueWithCloud = () => {
           <ScreenContainer isFullScreenMode={true}>
             <View>
               <Divider size={formatSize(12)} />
-              <Label label="Backup Password" description="Enter your backup password to restore a wallet." />
-              <FormPasswordInput name="password" testID={EnterCloudPasswordSelectors.PasswordInput} />
+              <Label label="Backup password" description="Enter your backup password to restore a wallet." />
+              <FormPasswordInput name="password" testID={ContinueWithCloudSelectors.PasswordInput} />
             </View>
+
+            <View style={[styles.checkboxContainer, styles.removeMargin]}>
+              <FormCheckbox name="reusePassword" testID={ContinueWithCloudSelectors.ReusePasswordCheckbox}>
+                <Divider size={formatSize(8)} />
+                <Text style={styles.checkboxText}>Use this password as App password</Text>
+              </FormCheckbox>
+            </View>
+
+            <View style={{ flex: 1 }} />
           </ScreenContainer>
 
           <View style={styles.fixedButtonContainer}>
@@ -66,7 +80,7 @@ export const ContinueWithCloud = () => {
               title="Next"
               disabled={!isValid}
               onPress={submitForm}
-              testID={EnterCloudPasswordSelectors.SubmitButton}
+              testID={ContinueWithCloudSelectors.SubmitButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

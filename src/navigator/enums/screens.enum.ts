@@ -1,4 +1,4 @@
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
@@ -58,8 +58,8 @@ export type ScreensParamList = {
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
-  [ScreensEnum.CreateAccount]: { withCloud?: boolean };
-  [ScreensEnum.ContinueWithCloud]: undefined;
+  [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; password?: string; mnemonic?: string };
+  [ScreensEnum.ContinueWithCloud]: { fileId: string };
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;

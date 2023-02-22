@@ -1,11 +1,10 @@
 import { Portal } from '@gorhom/portal';
 import React, { useContext } from 'react';
 import { View, Text } from 'react-native';
-import RNCloudFs from 'react-native-cloud-fs';
 
+import { cloudTitle, isCloudAvailable } from 'src/cloud-backup';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
-import { isAndroid } from 'src/config/system';
 import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -41,7 +40,7 @@ export const BackupYourWalletOverlay = () => {
 
           {isCloudAvailable() && (
             <BottomSheetActionButton
-              title={`Backup to ${isAndroid ? 'Google Drive' : 'iCloud'}`}
+              title={`Backup to ${cloudTitle}`}
               onPress={() => navigate(ScreensEnum.CloudBackup)}
             />
           )}
@@ -55,12 +54,4 @@ export const BackupYourWalletOverlay = () => {
       </View>
     </Portal>
   );
-};
-
-const isCloudAvailable = () => {
-  if (isAndroid === false) {
-    return RNCloudFs.isAvailable();
-  }
-
-  return true;
 };
