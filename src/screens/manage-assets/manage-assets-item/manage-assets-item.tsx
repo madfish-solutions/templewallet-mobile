@@ -2,18 +2,18 @@ import React, { FC } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { Switch } from '../../../components/switch/switch';
-import { TokenContainer } from '../../../components/token-container/token-container';
-import { VisibilityEnum } from '../../../enums/visibility.enum';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { removeTokenAction, toggleTokenVisibilityAction } from '../../../store/wallet/wallet-actions';
-import { formatSize } from '../../../styles/format-size';
-import { TokenInterface } from '../../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../../token/utils/token.utils';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { Switch } from 'src/components/switch/switch';
+import { TokenContainer } from 'src/components/token-container/token-container';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { removeTokenAction, toggleTokenVisibilityAction } from 'src/store/wallet/wallet-actions';
+import { formatSize } from 'src/styles/format-size';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 
 interface Props {
   asset: TokenInterface;
