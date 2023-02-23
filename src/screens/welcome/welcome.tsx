@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable, loginToCloudIfNeeded } from 'src/cloud-backup';
+import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable, requestSignInToCloud } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -28,7 +28,7 @@ export const Welcome = () => {
   usePageAnalytic(ScreensEnum.Welcome);
 
   const onContinueWithCloudButtonPress = async () => {
-    const loggedInToCloud = await loginToCloudIfNeeded();
+    const loggedInToCloud = await requestSignInToCloud();
 
     if (!loggedInToCloud) {
       return void showErrorToast({ description: 'Failed to log-in' });

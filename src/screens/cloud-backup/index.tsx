@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { loginToCloudIfNeeded, saveCloudBackup } from 'src/cloud-backup';
+import { requestSignInToCloud, saveCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
@@ -43,7 +43,7 @@ export const CloudBackup = () => {
       return void showErrorToast({ description: 'Wrong password' });
     }
 
-    const loggedInToCloud = await loginToCloudIfNeeded();
+    const loggedInToCloud = await requestSignInToCloud();
 
     if (!loggedInToCloud) {
       return void showErrorToast({ description: 'Failed to log-in' });

@@ -1,3 +1,4 @@
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { isString } from 'lodash';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
@@ -27,8 +28,39 @@ export const isCloudAvailable = () => {
 };
 
 export const loginToCloudIfNeeded = async () => {
+  if (!isAndroid) {
+    return true;
+  }
+
   try {
-    return isAndroid ? await RNCloudFs.loginIfNeeded() : true;
+    return await RNCloudFs.loginIfNeeded();
+  } catch (error) {
+    console.error(error);
+
+    return false;
+  }
+};
+
+export const requestSignInToCloud = async () => {
+  if (!isAndroid) {
+    return true;
+  }
+
+  try {
+    GoogleSignin.configure();
+
+    await GoogleSignin.signOut();
+    /* Syncing signed-in state to RNCloudFS */
+    await RNCloudFs.logout();
+
+    const user = await GoogleSignin.signIn();
+
+    if (user == null) {
+      return false;
+    }
+
+    /* Syncing signed-in state to RNCloudFS */
+    return await RNCloudFs.loginIfNeeded();
   } catch (error) {
     console.error(error);
 

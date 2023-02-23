@@ -275,7 +275,6 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "androidx.core:core-splashscreen:1.0.0"
-    // implementation 'com.google.android.play:core:1.8.2'
 
     /*
       For 'react-native-cloud-fs' fix
@@ -305,9 +304,11 @@ dependencies {
         implementation jscFlavor
     }
 
-    // compile ('com.google.android.gms:play-services-drive:10.2.0') {
-    //     force = true;
-    // }
+    implementation("com.google.android.gms:play-services-drive:17.0.0") {
+        force = true;
+    }
+
+    implementation project(':react-native-cloud-fs')
 }
 
 if (isNewArchitectureEnabled()) {
