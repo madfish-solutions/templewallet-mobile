@@ -4,9 +4,9 @@ import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 
 import { isAndroid } from 'src/config/system';
+import * as AesEncryption from 'src/utils/aes-encryption';
 
 import PackageJSON from '../../package.json';
-import { AesEncryptor } from './aes-encryptor';
 
 export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
 
@@ -25,20 +25,6 @@ export const isCloudAvailable = () => {
   }
 
   return RNCloudFs.isAvailable();
-};
-
-export const loginToCloudIfNeeded = async () => {
-  if (!isAndroid) {
-    return true;
-  }
-
-  try {
-    return await RNCloudFs.loginIfNeeded();
-  } catch (error) {
-    console.error(error);
-
-    return false;
-  }
 };
 
 export const requestSignInToCloud = async () => {
@@ -80,14 +66,12 @@ export const fetchCloudBackupFileDetails = async () => {
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
   const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
 
-  const encryptor = new AesEncryptor();
-
   const fileContent: BackupFileInterface = {
     version: PackageJSON.version,
     mnemonic
   };
 
-  const encryptedData = await encryptor.encrypt(password, JSON.stringify(fileContent));
+  const encryptedData = await AesEncryption.encrypt(password, JSON.stringify(fileContent));
 
   await RNFS.writeFile(localPath, encryptedData, 'utf8');
 
@@ -136,10 +120,8 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
     throw new Error('Cloud backup not found');
   }
 
-  const encryptor = new AesEncryptor();
-
   try {
-    const backupFileStr = await encryptor.decrypt(password, encryptedBackup);
+    const backupFileStr = await AesEncryption.decrypt(password, encryptedBackup);
 
     return JSON.parse(backupFileStr);
   } catch (error) {
