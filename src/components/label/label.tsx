@@ -30,8 +30,10 @@ export const Label: FC<Props> = ({ label, description, isOptional = false }) => 
       {isDefined(description) && (
         <Text style={styles.description}>
           {Array.isArray(description)
-            ? description.map(item => (
-                <Text style={item.bold === true ? styles.boldDescriptionPiece : undefined}>{item.text}</Text>
+            ? description.map((item, index) => (
+                <Text key={index} style={item.bold === true ? styles.boldDescriptionPiece : undefined}>
+                  {item.text}
+                </Text>
               ))
             : description}
         </Text>

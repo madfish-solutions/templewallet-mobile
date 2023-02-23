@@ -97,7 +97,7 @@ export const CreateNewWallet = () => {
               <Label
                 label="Password"
                 description={
-                  Boolean(backupToCloud) === false
+                  Boolean(backupToCloud)
                     ? [
                         { text: 'A password is used to' },
                         { text: ' protect', bold: true },

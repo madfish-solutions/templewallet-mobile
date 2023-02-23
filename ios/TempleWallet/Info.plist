@@ -92,5 +92,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>NSUbiquitousContainers</key>
+  <dict>
+    <key>iCloud.com.madfish.temple-wallet</key>
+    <dict>
+        <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+        <true/>
+        <key>NSUbiquitousContainerSupportedFolderLevels</key>
+        <string>One</string>
+        <key>NSUbiquitousContainerName</key>
+        <string>com.madfish.temple-wallet</string>
+    </dict>
+  </dict>
 </dict>
 </plist>

@@ -74,7 +74,7 @@ export const fetchCloudBackupFileDetails = async () => {
     targetPath: CLOUD_WALLET_FOLDER
   });
 
-  return backups.files?.find(file => file.name === targetPath);
+  return backups.files?.find(file => file.name.endsWith(filename));
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
