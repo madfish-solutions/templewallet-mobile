@@ -160,7 +160,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     ? undefined
     : getTokenSlug(outputAssets.asset);
 
-  const { filteredTokensList, setSearchValue } = useFilteredSwapTokensList(tokensList, true);
+  const { filteredTokensList, setSearchValue } = useFilteredSwapTokensList(tokensList);
 
   const [searchValue, setSearchTezAssetsValue] = useState<string>();
 

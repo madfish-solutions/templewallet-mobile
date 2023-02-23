@@ -70,6 +70,6 @@ export const useSwap = () => {
 
       return resultParams;
     },
-    [tezos, selectedAccount.publicKeyHash, swapParams.chains, swapParams.output]
+    [tezos, selectedAccount.publicKeyHash, swapParams.chains, swapParams.output, swapContract]
   );
 };

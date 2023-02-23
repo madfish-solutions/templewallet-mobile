@@ -11,7 +11,7 @@ import { notificationsEpics } from './notifications/notifications-epics';
 import { rootStateEpics } from './root-state.epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
-import { route3Epics } from './swap/swap-epics';
+import { swapEpics } from './swap/swap-epics';
 import { tokensMetadataEpics } from './tokens-metadata/tokens-metadata-epics';
 import { walletEpics } from './wallet/wallet-epics';
 
@@ -29,6 +29,6 @@ export const { store, persistor } = createStore(
   advertisingEpics,
   marketEpics,
   notificationsEpics,
-  route3Epics,
+  swapEpics,
   contactsEpics
 );

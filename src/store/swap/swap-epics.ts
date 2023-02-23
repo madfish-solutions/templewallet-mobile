@@ -41,4 +41,4 @@ const loadSwapDexesEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-export const route3Epics = combineEpics(loadSwapTokensEpic, loadSwapParamsEpic, loadSwapDexesEpic);
+export const swapEpics = combineEpics(loadSwapTokensEpic, loadSwapParamsEpic, loadSwapDexesEpic);
