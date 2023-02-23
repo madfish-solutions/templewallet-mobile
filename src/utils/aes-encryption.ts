@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// import * as crypto from 'crypto';
 import { NativeModules } from 'react-native';
 
 import { isAndroid } from 'src/config/system';
 
 const AesEncryption = NativeModules.Aes;
+
+interface Encrypted {
+  cipher: any;
+  iv: string;
+}
 
 export const encrypt = async (password: string, text: string) => {
   try {
@@ -64,7 +68,7 @@ const encryptWithKey = (text: string, keyBase64: any) => {
   }));
 };
 
-const decryptWithKey = (encryptedData: any, key: any) =>
+const decryptWithKey = (encryptedData: Encrypted, key: any) =>
   AesEncryption.decrypt(encryptedData.cipher, key, encryptedData.iv);
 
 const btoa = (data: string) => Buffer.from(data).toString('base64');
