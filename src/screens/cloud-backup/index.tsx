@@ -37,9 +37,7 @@ export const CloudBackup = () => {
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
-    const isPasswordCorrect = await new Promise<boolean>(resolve => {
-      Shelter.isPasswordCorrect$(password).subscribe(resolve);
-    });
+    const isPasswordCorrect = await Shelter.isPasswordCorrect(password);
 
     if (isPasswordCorrect === false) {
       return void showErrorToast({ description: 'Wrong password' });

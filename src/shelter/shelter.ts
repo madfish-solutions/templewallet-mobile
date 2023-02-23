@@ -189,4 +189,9 @@ export class Shelter {
 
   static isPasswordCorrect$ = (password: string) =>
     hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
+
+  static isPasswordCorrect = (password: string) =>
+    new Promise<boolean>(resolve => {
+      Shelter.isPasswordCorrect$(password).subscribe(resolve);
+    });
 }

@@ -94,7 +94,20 @@ export const CreateNewWallet = () => {
           <ScreenContainer isFullScreenMode={true}>
             <View>
               <Divider size={formatSize(12)} />
-              <Label label="Password" description="A password is used to protect the wallet." />
+              <Label
+                label="Password"
+                description={
+                  Boolean(backupToCloud) === false
+                    ? [
+                        { text: 'A password is used to' },
+                        { text: ' protect', bold: true },
+                        { text: ' and' },
+                        { text: ' backup', bold: true },
+                        { text: ' the wallet.' }
+                      ]
+                    : 'A password is used to protect the wallet.'
+                }
+              />
               <FormPasswordInput
                 isShowPasswordStrengthIndicator
                 name="password"

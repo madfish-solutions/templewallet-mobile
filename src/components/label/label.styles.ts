@@ -16,6 +16,11 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.gray1,
     marginBottom: formatSize(4)
   },
+  boldDescriptionPiece: {
+    ...typography.caption13Semibold
+    // color: colors.gray1,
+    // marginBottom: formatSize(4)
+  },
   labelContainer: {
     flexDirection: 'row',
     alignItems: 'baseline'
