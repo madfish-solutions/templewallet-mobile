@@ -27,6 +27,7 @@ import { AliceBob } from 'src/screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from 'src/screens/buy/debit/utorg/utorg';
 import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { Contacts } from 'src/screens/contacts/contacts';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
@@ -264,6 +265,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManageAccounts}
                 component={ManageAccounts}
                 options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Contacts}
+                component={Contacts}
+                options={generateScreenOptions(<HeaderTitle title="Contacts" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.About}

@@ -4,7 +4,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
+import { AccountFormSectionDropdown } from '../../components/account-dropdown/account-form-section-dropdown';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -18,14 +18,15 @@ import { FormAddressInput } from '../../form/form-address-input';
 import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from '../../form/form-checkbox';
 import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
+import { useFilteredReceiversList } from '../../hooks/use-filtered-receivers-list.hook';
 import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { addContactCandidateAddressAction } from '../../store/contact-book/contact-book-actions';
 import { sendAssetActions } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
-  useVisibleAccountsListSelector,
   useVisibleAssetListSelector
 } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -47,10 +48,10 @@ export const SendModal: FC = () => {
 
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const visibleAccounts = useVisibleAccountsListSelector();
   const assetsList = useVisibleAssetListSelector();
   const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
@@ -60,11 +61,8 @@ export const SendModal: FC = () => {
     [tezosToken, filteredAssetsList]
   );
 
-  const ownAccountsReceivers = useMemo(
-    () => visibleAccounts.filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash),
-    [visibleAccounts, selectedAccount.publicKeyHash]
-  );
-  const transferBetweenOwnAccountsDisabled = ownAccountsReceivers.length === 0;
+  const isTransferDisabled = filteredReceiversList.length === 0;
+  const recipient = filteredReceiversList[0]?.data[0];
 
   usePageAnalytic(ModalsEnum.Send);
 
@@ -75,16 +73,16 @@ export const SendModal: FC = () => {
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
-      ownAccount: ownAccountsReceivers[0],
+      recipient,
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsListWithTez, ownAccountsReceivers]
+    []
   );
 
   const onSubmit = async ({
     assetAmount: { asset, amount },
     receiverPublicKeyHash,
-    ownAccount,
+    recipient,
     transferBetweenOwnAccounts
   }: SendModalFormValues) => {
     if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
@@ -101,16 +99,15 @@ export const SendModal: FC = () => {
       }
     }
 
-    void (
-      isDefined(amount) &&
+    void (isDefined(amount) &&
       dispatch(
         sendAssetActions.submit({
           asset,
-          receiverPublicKeyHash: transferBetweenOwnAccounts ? ownAccount.publicKeyHash : receiverPublicKeyHash,
+          receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
           amount: amount.toNumber()
         })
-      )
-    );
+      ),
+    !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
   };
 
   return (
@@ -134,7 +131,11 @@ export const SendModal: FC = () => {
             />
             {values.transferBetweenOwnAccounts ? (
               <>
-                <AccountFormDropdown name="ownAccount" list={ownAccountsReceivers} />
+                <AccountFormSectionDropdown
+                  name="recipient"
+                  list={filteredReceiversList}
+                  setSearchValue={handleSearchValueChange}
+                />
                 <Divider size={formatSize(10)} />
               </>
             ) : (
@@ -142,17 +143,11 @@ export const SendModal: FC = () => {
             )}
             <View
               onTouchStart={() =>
-                void (
-                  transferBetweenOwnAccountsDisabled && showWarningToast({ description: 'Create one more account' })
-                )
+                void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
               }
             >
-              <FormCheckbox
-                disabled={transferBetweenOwnAccountsDisabled}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-              >
-                <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+              <FormCheckbox disabled={isTransferDisabled} name="transferBetweenOwnAccounts" size={formatSize(16)}>
+                <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
               </FormCheckbox>
             </View>
 

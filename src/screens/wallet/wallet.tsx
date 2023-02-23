@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
+import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from '../../components/divider/divider';
 import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from '../../components/header-card/header-card';
@@ -10,8 +13,15 @@ import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
 import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
+import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { addBlacklistedContactAction } from '../../store/contact-book/contact-book-actions';
+import {
+  useContactCandidateAddressSelector,
+  useContactsAddressesSelector,
+  useIgnoredAddressesSelector
+} from '../../store/contact-book/contact-book-selectors';
 import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
@@ -33,6 +43,18 @@ export const Wallet = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const contactCandidateAddress = useContactCandidateAddressSelector();
+  const ignoredAddresses = useIgnoredAddressesSelector();
+  const contactsAddresses = useContactsAddressesSelector();
+  const bottomSheetController = useBottomSheetController();
+
+  const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
+
+  useEffect(() => {
+    if (!ignoredAddresses.includes(contactCandidateAddress) && !contactsAddresses.includes(contactCandidateAddress)) {
+      bottomSheetController.open();
+    }
+  }, [contactCandidateAddress]);
 
   useWalletOpenTacker();
   usePageAnalytic(ScreensEnum.Wallet);
@@ -62,9 +84,27 @@ export const Wallet = () => {
 
         <CollectiblesHomeSwipeButton />
       </HeaderCard>
+
       <TokenList />
 
       <BackupYourWalletOverlay />
+
+      <BottomSheet
+        title="Add this address to Contacts?"
+        description={contactCandidateAddress}
+        cancelButtonText="Not now"
+        contentHeight={formatSize(180)}
+        controller={bottomSheetController}
+        onCancelButtonPress={handleCloseButtonPress}
+      >
+        <BottomSheetActionButton
+          title="Add address"
+          onPress={() => {
+            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidateAddress });
+            bottomSheetController.close();
+          }}
+        />
+      </BottomSheet>
     </>
   );
 };

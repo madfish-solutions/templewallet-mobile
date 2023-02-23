@@ -1,6 +1,3 @@
-
-![application screenshot](./docs/assets/readmeScreenshot.png)
-
 # 📝 About
 
 Temple Wallet -  is a non-custodial crypto wallet for interacting with the Tezos ecosystem.
@@ -14,27 +11,55 @@ Other important features include:
 - Delegation to bakers
 - Light/Dark mode switching
 
-## ▶️ Installation
+![application screenshot](./docs/assets/readmeScreenshot.png)
 
-To run application from source code locally - please follow [environment setup instructions](https://reactnative.dev/docs/environment-setup).
+# ▶️ Installation
 
-Clone repository
+Follow this steps to build and run wallet locally.
+
+## Setting up the development environment
+
+1. Install [Node.js](https://nodejs.org)
+
+2. Install yarn
+```
+sudo npm install --global yarn
+```
+
+3. Set up the [React Native development environment](https://reactnative.dev/docs/environment-setup).
+3.1 Select **React Native CLI Quickstart**.
+3.2 Select your **Development OS**.
+3.3 Set up both **Target OS**
+
+![React Native environment setup screenshot](./docs/assets/reactNativeEnvironmentSetupScreenshoot.png)
+
+## Setting up the project
+
+1. Clone repository
 ```
 git clone https://github.com/madfish-solutions/templewallet-mobile.git && cd templewallet-mobile
 ```
 
-Install dependencies
+2. Install dependencies
 ```
 yarn
 yarn ios:pods
 ```
 
-To start app run
+3. Create `.env` file
 ```
-# Android application
-yarn android
+cp .env.dist .env
+```
 
-# iOS application
+## Running the application
+
+To start the Android application run
+```
+yarn android
+```
+
+To start the iOS application run
+```
 yarn ios
 ```
 

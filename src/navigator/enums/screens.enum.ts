@@ -41,6 +41,7 @@ export enum ScreensEnum {
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
+  Contacts = 'Contacts',
   About = 'About',
   DAppsSettings = 'DAppsSettings',
   FiatSettings = 'FiatSettings',
@@ -92,6 +93,7 @@ export type ScreensParamList = {
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
+  [ScreensEnum.Contacts]: undefined;
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.FiatSettings]: undefined;
@@ -129,6 +131,7 @@ export const marketStackScreens = [ScreensEnum.Market];
 export const settingsStackScreens = [
   ScreensEnum.Settings,
   ScreensEnum.ManageAccounts,
+  ScreensEnum.Contacts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
   ScreensEnum.SecureSettings,

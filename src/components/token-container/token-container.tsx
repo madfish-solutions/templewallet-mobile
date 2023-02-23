@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { getTruncatedProps } from '../../utils/style.util';
+import { formatSize } from 'src/styles/format-size';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { getTruncatedProps } from 'src/utils/style.util';
+
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
 import { useApyStyles } from '../token-screen-content-container/apy.styles';
