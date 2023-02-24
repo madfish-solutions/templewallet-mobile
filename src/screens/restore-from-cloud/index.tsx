@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { BackupFileInterface, fetchCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -17,6 +16,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { BackupFileInterface, fetchCloudBackup } from 'src/utils/cloud-backup';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';

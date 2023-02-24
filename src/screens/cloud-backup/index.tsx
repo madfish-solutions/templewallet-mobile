@@ -3,7 +3,6 @@ import React from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { requestSignInToCloud, saveCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
@@ -19,6 +18,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { requestSignInToCloud, saveCloudBackup } from 'src/utils/cloud-backup';
 
 import {
   EnterCloudPasswordFormValues,

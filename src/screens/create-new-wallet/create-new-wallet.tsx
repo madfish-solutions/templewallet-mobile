@@ -5,7 +5,6 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { saveCloudBackup } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
@@ -28,6 +27,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { saveCloudBackup } from 'src/utils/cloud-backup';
 import { generateSeed } from 'src/utils/keys.util';
 
 import {

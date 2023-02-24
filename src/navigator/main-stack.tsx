@@ -4,7 +4,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
-import { cloudTitle } from 'src/cloud-backup';
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderAction } from 'src/components/header/header-action/header-actions';
@@ -64,6 +63,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { loadTezosBalanceActions, loadTokensActions } from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';

@@ -6,7 +6,7 @@ import * as RNFS from 'react-native-fs';
 import { isAndroid } from 'src/config/system';
 import * as AesEncryption from 'src/utils/aes-encryption';
 
-import PackageJSON from '../../package.json';
+import PackageJSON from '../../../package.json';
 
 export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
 

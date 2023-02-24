@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { cloudTitle, fetchCloudBackupFileDetails, isCloudAvailable, requestSignInToCloud } from 'src/cloud-backup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -16,6 +15,12 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import {
+  cloudTitle,
+  fetchCloudBackupFileDetails,
+  isCloudAvailable,
+  requestSignInToCloud
+} from 'src/utils/cloud-backup';
 
 import { WelcomeSelectors } from './welcome.selectors';
 import { useWelcomeStyles, useCloudButtonActiveColorStyleConfig } from './welcome.styles';
