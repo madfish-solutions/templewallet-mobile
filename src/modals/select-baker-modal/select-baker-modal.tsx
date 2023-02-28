@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { BakerInterface } from 'src/apis/baking-bad';
@@ -26,6 +26,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
+import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
@@ -78,26 +79,41 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
-      const isRecommendedBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
+      handleDeletation(selectedBaker.address);
+    } else if (isDefined(searchValue) && isValidAddress(searchValue)) {
+      console.log('here');
 
-      if (isRecommendedBakerSelected) {
-        trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
-      }
+      Alert.alert('Are you sure?', undefined, [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Yes',
+          style: 'default',
+          onPress: () => handleDeletation(searchValue)
+        }
+      ]);
+    }
+  };
 
-      if (currentBaker.address === selectedBaker.address) {
-        showErrorToast({
-          title: 'Re-delegation is not possible',
-          description: 'Already delegated funds to this baker.'
-        });
-      } else {
-        navigate(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams: [
-            { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
-          ],
-          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
-        });
-      }
+  const handleDeletation = (delegate: string) => {
+    const isRecommendedBakerSelected = delegate === RECOMMENDED_BAKER_ADDRESS;
+
+    if (isRecommendedBakerSelected) {
+      trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+    }
+    if (currentBaker.address === delegate) {
+      showErrorToast({
+        title: 'Re-delegation is not possible',
+        description: 'Already delegated funds to this baker.'
+      });
+    } else {
+      navigate(ModalsEnum.Confirmation, {
+        type: ConfirmationTypeEnum.InternalOperations,
+        opParams: [{ kind: OpKind.DELEGATION, delegate, source: selectedAccount.publicKeyHash }],
+        ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
+      });
     }
   };
 
@@ -176,14 +192,18 @@ export const SelectBakerModal: FC = () => {
         style={styles.flatList}
         windowSize={10}
         ListEmptyComponent={
-          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
+          <DataPlaceholder text={'Bakers do not match filter criteria.\n But you still can delegate.'} />
         }
       />
 
       <ModalButtonsContainer>
         <ButtonLargeSecondary title="Close" onPress={goBack} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
+        <ButtonLargePrimary
+          title="Next"
+          disabled={!isDefined(searchValue) && !isDefined(selectedBaker)}
+          onPress={handleNextPress}
+        />
       </ModalButtonsContainer>
     </>
   );
