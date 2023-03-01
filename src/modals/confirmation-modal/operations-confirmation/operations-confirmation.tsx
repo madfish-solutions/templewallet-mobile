@@ -135,7 +135,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
             <ButtonLargeSecondary title="Back" disabled={isLoading} onPress={goBack} />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary
-              title="Confirm"
+              title="Confirmfd"
               disabled={estimations.isLoading || isLoading || !isValid}
               onPress={submitForm}
             />

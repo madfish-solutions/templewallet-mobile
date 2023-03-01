@@ -8,21 +8,21 @@ export const COMMON_PROMOTION_CAROUSEL_DATA = [
   <PromotionCarouselItem
     link={supportUkraine}
     source={require('./banners/ukraine.png')}
-    testID={PromotionCarouselSelectors.SupportUkraine}
+    testID={PromotionCarouselSelectors.supportUkraine}
   />,
   <PromotionCarouselItem
     link={madfishLink}
     source={require('./banners/madfish.png')}
-    testID={PromotionCarouselSelectors.MadFishBlog}
+    testID={PromotionCarouselSelectors.madFishBlog}
   />,
   <PromotionCarouselItem
     link={yupanaLink}
     source={require('./banners/yupana.png')}
-    testID={PromotionCarouselSelectors.Yupana}
+    testID={PromotionCarouselSelectors.yupana}
   />,
   <PromotionCarouselItem
     link={quipuLink}
     source={require('./banners/quipu.png')}
-    testID={PromotionCarouselSelectors.QuipuSwap}
+    testID={PromotionCarouselSelectors.quipuSwap}
   />
 ];

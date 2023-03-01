@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
 import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -28,7 +29,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
   itemHeight?: number;
   list: T[];

@@ -11,6 +11,7 @@ import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useContactsSelector } from '../../store/contact-book/contact-book-selectors';
 import { ContactItem } from './contact-item/contact-item';
+import { ContactsSelectors } from './contacts.selectors';
 
 export const Contacts = () => {
   const { navigate } = useNavigation();
@@ -19,7 +20,11 @@ export const Contacts = () => {
   useNavigationSetOptions(
     generateScreenOptions(
       <HeaderTitle title="Contacts" />,
-      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddContact)} />
+      <HeaderButton
+        iconName={IconNameEnum.PlusIconOrange}
+        onPress={() => navigate(ModalsEnum.AddContact)}
+        testID={ContactsSelectors.addContactButton}
+      />
     ),
     []
   );
@@ -29,6 +34,7 @@ export const Contacts = () => {
       data={contacts}
       renderItem={({ item, index }) => <ContactItem contact={item} index={index} />}
       ListEmptyComponent={<DataPlaceholder text="You have no contacts" />}
+      testID={ContactsSelectors.contact}
     />
   );
 };

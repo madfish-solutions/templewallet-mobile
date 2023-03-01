@@ -9,8 +9,10 @@ import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useImportedAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { setTestID } from '../../../utils/test-id.utils';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
+import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
 
 export const ManageImportedAccounts = () => {
   const { navigate } = useNavigation();
@@ -23,7 +25,11 @@ export const ManageImportedAccounts = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <SearchInput
+        placeholder="Search accounts"
+        onChangeText={debouncedSetSearch}
+        {...setTestID(ManageImportedAccountsSelectors.searchAccountsInput)}
+      />
       <Divider size={formatSize(8)} />
       <InfoText />
       <ScreenContainer>

@@ -33,7 +33,7 @@ export const NotificationsSettings = () => {
           <Switch
             value={isNewsEnabled}
             onChange={value => dispatch(setIsNewsEnabledAction(value))}
-            testID={NotificationsSettingsSelectors.NewsSwitch}
+            testID={NotificationsSettingsSelectors.newsSwitch}
           />
         </WhiteContainerAction>
       </WhiteContainer>

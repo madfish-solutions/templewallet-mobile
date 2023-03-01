@@ -24,7 +24,8 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { formInitialValues, formValidationSchema, confirmUniqueRPC } from './form.utils';
+import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
+import { EditModalSelectors } from './edit-modal.selectors';
 
 export const EditCustomRpcModal: FC = () => {
   const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
@@ -87,19 +88,34 @@ export const EditCustomRpcModal: FC = () => {
 
           <View>
             <Label label="Name" />
-            <FormTextInput name="name" placeholder="My custom network" />
+            <FormTextInput name="name" placeholder="My custom network" testID={EditModalSelectors.nameInput} />
 
             <Label label="URL" />
-            <FormTextInput name="url" placeholder="http://localhost:4444" autoCapitalize="none" />
+            <FormTextInput
+              name="url"
+              placeholder="http://localhost:4444"
+              autoCapitalize="none"
+              testID={EditModalSelectors.urlInput}
+            />
 
-            <IconTitleNoBg icon={IconNameEnum.Trash} text="Delete RPC" onPress={onDeleteButtonPress} />
+            <IconTitleNoBg
+              icon={IconNameEnum.Trash}
+              text="Delete RPC"
+              onPress={onDeleteButtonPress}
+              testID={EditModalSelectors.deleteRpcButton}
+            />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} testID={EditModalSelectors.closeButton} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Save" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Save"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={EditModalSelectors.saveButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

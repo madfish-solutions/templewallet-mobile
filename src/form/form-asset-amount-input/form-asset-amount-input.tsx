@@ -4,13 +4,15 @@ import React, { FC, useCallback } from 'react';
 import { AssetAmountInput, AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from '../../components/asset-amount-input/asset-amount-input.props';
 import { emptyFn, EventFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { hasError } from '../../utils/has-error';
 import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
-    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'> {
+    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'>,
+    TestIdProps {
   name: string;
   setSearchValue?: EventFn<string>;
 }

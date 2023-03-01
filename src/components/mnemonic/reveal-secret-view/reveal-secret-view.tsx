@@ -9,6 +9,7 @@ import { StyledTextInput } from '../../styled-text-input/styled-text-input';
 import { StyledTextInputStyles } from '../../styled-text-input/styled-text-input.styles';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
+import { RevealSecretViewSelectors } from './reveal-secret-view.selectors';
 
 interface Props {
   value?: string;
@@ -17,9 +18,19 @@ interface Props {
 
 export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress }) => (
   <View style={MnemonicStyles.container}>
-    <StyledTextInput value={value} editable={false} multiline={true} style={StyledTextInputStyles.mnemonicInput} />
+    <StyledTextInput
+      value={value}
+      editable={false}
+      multiline={true}
+      style={StyledTextInputStyles.mnemonicInput}
+      testID={RevealSecretViewSelectors.secretsValue}
+    />
     <View style={MnemonicStyles.buttonsContainer}>
-      <ButtonSmallSecondary title="COPY" onPress={() => copyStringToClipboard(value)} />
+      <ButtonSmallSecondary
+        title="COPY"
+        onPress={() => copyStringToClipboard(value)}
+        testID={RevealSecretViewSelectors.copyButton}
+      />
     </View>
     {!isString(value) && <ProtectedOverlay onPress={onProtectedOverlayPress} />}
   </View>

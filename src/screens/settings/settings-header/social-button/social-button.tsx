@@ -3,11 +3,12 @@ import React, { FC } from 'react';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { formatSize } from '../../../../styles/format-size';
 import { openUrl } from '../../../../utils/linking.util';
 import { useSocialButtonStyles } from './social-button.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   iconName: IconNameEnum;
   url: string;
 }

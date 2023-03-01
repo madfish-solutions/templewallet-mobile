@@ -32,6 +32,7 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
 import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } from './remove-liquidity-modal.form';
+import { RemoveLiquidityModalSelectors } from './remove-liquidity-modal.selectors';
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
@@ -207,7 +208,11 @@ export const RemoveLiquidityModal = () => {
                 </View>
               </ScreenContainer>
               <ButtonsFloatingContainer>
-                <ButtonLargePrimary title="Remove" onPress={submitForm} />
+                <ButtonLargePrimary
+                  title="Remove"
+                  onPress={submitForm}
+                  testID={RemoveLiquidityModalSelectors.removeButton}
+                />
               </ButtonsFloatingContainer>
               <InsetSubstitute type="bottom" />
             </>

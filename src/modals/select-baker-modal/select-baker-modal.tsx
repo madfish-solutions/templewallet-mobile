@@ -27,7 +27,9 @@ import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
+import { setTestID } from '../../utils/test-id.utils';
 import { BakerListItem } from './baker-list-item/baker-list-item';
+import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
@@ -152,7 +154,11 @@ export const SelectBakerModal: FC = () => {
           />
         </View>
         <View style={styles.searchContainer}>
-          <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
+          <SearchInput
+            placeholder="Search baker"
+            onChangeText={debouncedSetSearchValue}
+            {...setTestID(SelectBakerModalSelectors.searchBakerInput)}
+          />
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
@@ -163,6 +169,7 @@ export const SelectBakerModal: FC = () => {
             sortFieldsOptions={bakersSortFieldsOptions}
             sortFieldsLabels={bakersSortFieldsLabels}
             onSetSortValue={handleSortValueChange}
+            testID={SelectBakerModalSelectors.sortByDropDownButton}
           />
         </View>
       </View>
@@ -170,7 +177,12 @@ export const SelectBakerModal: FC = () => {
       <FlatList
         data={finalBakersList}
         renderItem={({ item }) => (
-          <BakerListItem item={item} selected={item.address === selectedBaker?.address} onPress={setSelectedBaker} />
+          <BakerListItem
+            item={item}
+            selected={item.address === selectedBaker?.address}
+            onPress={setSelectedBaker}
+            testID={SelectBakerModalSelectors.bakerItem}
+          />
         )}
         keyExtractor={item => item.address}
         style={styles.flatList}
@@ -181,9 +193,14 @@ export const SelectBakerModal: FC = () => {
       />
 
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Close" onPress={goBack} />
+        <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
+        <ButtonLargePrimary
+          title="Next"
+          disabled={!isDefined(selectedBaker)}
+          onPress={handleNextPress}
+          testID={SelectBakerModalSelectors.nextButton}
+        />
       </ModalButtonsContainer>
     </>
   );

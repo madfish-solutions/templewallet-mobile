@@ -19,6 +19,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
+import { CollectibleModalSelectors } from './collectible-modal.selectors';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -49,6 +50,7 @@ export const CollectibleModal = () => {
             title="Send"
             iconName={IconNameEnum.ArrowUp}
             onPress={() => navigate(ModalsEnum.Send, { token: collectible })}
+            testID={CollectibleModalSelectors.sendButton}
           />
         </ButtonsContainer>
 

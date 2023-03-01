@@ -20,6 +20,7 @@ import { addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-asset-info.form';
+import { AddAssetInfoSelectors } from './add-asset-info.selectors';
 
 interface Props {
   onCancelButtonPress: EmptyFn;
@@ -55,28 +56,37 @@ export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Symbol" description="Token symbol, like ‘USD’ for United States Dollar" />
-            <FormTextInput name="symbol" />
+            <FormTextInput name="symbol" testID={AddAssetInfoSelectors.symbolInput} />
 
             <Label label="Name" description="Token name, like ‘Bitcoin’ for BTC assets." />
-            <FormTextInput name="name" />
+            <FormTextInput name="name" testID={AddAssetInfoSelectors.nameInput} />
 
             <Label
               label="Decimals"
               description="A number of decimal places after point. For example: 8 for BTC, 2 for USD."
             />
-            <FormNumericInput name="decimals" decimals={0} />
+            <FormNumericInput name="decimals" decimals={0} testID={AddAssetInfoSelectors.decimalsInput} />
 
             <Label label="Icon URL" description="Image URL for token logo." isOptional={true} />
-            <FormTextInput name="thumbnailUri" />
+            <FormTextInput name="thumbnailUri" testID={AddAssetInfoSelectors.iconUrlInput} />
 
             <Divider />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Back" onPress={onCancelButtonPress} />
+              <ButtonLargeSecondary
+                title="Back"
+                onPress={onCancelButtonPress}
+                testID={AddAssetInfoSelectors.backButton}
+              />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Confirm" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Confirm"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={AddAssetInfoSelectors.confirmButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

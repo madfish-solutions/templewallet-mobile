@@ -13,6 +13,7 @@ import { Switch } from '../../../../components/switch/switch';
 import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
 import { AccountInterface } from '../../../../interfaces/account.interface';
+import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from '../../../../store/wallet/wallet-actions';
@@ -20,9 +21,10 @@ import { useIsVisibleSelector, useTezosTokenSelector } from '../../../../store/w
 import { formatSize } from '../../../../styles/format-size';
 import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTruncatedProps } from '../../../../utils/style.util';
+import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   account: AccountInterface;
   selectedAccount: AccountInterface;
   onRevealButtonPress: EventFn<AccountInterface>;
@@ -44,7 +46,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <RobotIcon seed={account.publicKeyHash} />
           <View style={styles.accountContainerData}>
             <Text {...getTruncatedProps(styles.accountText)}>{account.name}</Text>
-            <WalletAddress publicKeyHash={account.publicKeyHash} />
+            <WalletAddress
+              publicKeyHash={account.publicKeyHash}
+              testID={ManageAccountItemSelectors.accountPublicHashButton}
+            />
           </View>
         </View>
 
@@ -54,6 +59,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
             name={IconNameEnum.Edit}
             size={formatSize(16)}
             onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+            testID={ManageAccountItemSelectors.editButton}
           />
           <Divider size={formatSize(16)} />
 
@@ -79,6 +85,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
                   })
                 )
               }
+              testID={ManageAccountItemSelectors.hideAccountToggle}
             />
           </View>
         </View>
@@ -100,6 +107,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           title="Reveal"
           marginBottom={formatSize(8)}
           onPress={() => onRevealButtonPress(account)}
+          testID={ManageAccountItemSelectors.revealButton}
         />
       </View>
     </View>

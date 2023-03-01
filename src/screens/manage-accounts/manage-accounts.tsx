@@ -17,6 +17,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { ManageAccountsSelectors } from './manage-accounts.selectors';
 import { useManageAccountsStyles } from './manage-accounts.styles';
 import { ManageHdAccounts } from './manage-hd-accounts/manage-hd-accounts';
 import { ManageImportedAccounts } from './manage-imported-accounts/manage-imported-accounts';
@@ -37,7 +38,11 @@ export const ManageAccounts = () => {
   useNavigationSetOptions(
     generateScreenOptions(
       <HeaderTitle title="Manage Accounts" />,
-      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => revealSelectBottomSheetController.open()} />
+      <HeaderButton
+        iconName={IconNameEnum.PlusIconOrange}
+        onPress={() => revealSelectBottomSheetController.open()}
+        testID={ManageAccountsSelectors.addAccountButton}
+      />
     ),
     []
   );
@@ -68,6 +73,7 @@ export const ManageAccounts = () => {
             createHdAccount();
             revealSelectBottomSheetController.close();
           }}
+          testID={ManageAccountsSelectors.createNewHDAccount}
         />
         <BottomSheetActionButton
           key="import-an-account"
@@ -76,6 +82,7 @@ export const ManageAccounts = () => {
             navigate(ModalsEnum.ImportAccount);
             revealSelectBottomSheetController.close();
           }}
+          testID={ManageAccountsSelectors.importAnAccountButton}
         />
       </BottomSheet>
     </>

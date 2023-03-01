@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { isAndroid, EMPTY_PUBLIC_KEY_HASH } from '../../config/system';
 import { useDomainName } from '../../hooks/use-domain-name.hook';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { toggleDomainAddressShown } from '../../store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from '../../store/settings/settings-selectors';
 import { formatSize } from '../../styles/format-size';
@@ -15,7 +16,7 @@ import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { useWalletAddressStyles } from './wallet-address.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   publicKeyHash: string;
   disabled?: boolean;
   isPublicKeyHashTextDisabled?: boolean;

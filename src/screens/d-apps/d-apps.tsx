@@ -17,6 +17,8 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { isDefined } from '../../utils/is-defined';
+import { setTestID } from '../../utils/test-id.utils';
+import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
@@ -59,7 +61,11 @@ export const DApps = () => {
   return (
     <>
       <InsetSubstitute type="top" />
-      <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} />
+      <SearchInput
+        placeholder="Search Dapp"
+        onChangeText={setSearchQuery}
+        {...setTestID(DAppsSelectors.searchDAppsInput)}
+      />
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Integrated</Text>
       <Divider size={formatSize(20)} />
@@ -69,6 +75,7 @@ export const DApps = () => {
           iconName={IconNameEnum.LbDappIcon}
           title="Liquidity Baking"
           description="Create XTZ/tzBTC & earn XTZ"
+          testID={DAppsSelectors.integratedDApp}
         />
       </View>
       <Divider size={formatSize(20)} />
@@ -86,6 +93,7 @@ export const DApps = () => {
         numColumns={2}
         contentContainerStyle={styles.container}
         ListEmptyComponent={ListEmptyComponent}
+        testID={DAppsSelectors.othersDApps}
       />
     </>
   );

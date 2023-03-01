@@ -3,10 +3,11 @@ import React, { FC } from 'react';
 
 import { MnemonicInput } from '../components/mnemonic/mnemonic-input/mnemonic-input';
 import { MnemonicProps } from '../components/mnemonic/mnemonic.props';
+import { TestIdProps } from '../interfaces/test-id.props';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<MnemonicProps, 'placeholder' | 'testID'> {
+interface Props extends Pick<MnemonicProps, 'placeholder' | 'testID'>, TestIdProps {
   name: string;
 }
 

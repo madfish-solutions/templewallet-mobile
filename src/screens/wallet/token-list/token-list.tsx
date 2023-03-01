@@ -108,6 +108,7 @@ export const TokenList: FC = () => {
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
             onChange={handleHideZeroBalanceChange}
+            testID={TokenListSelectors.hideZeroBalanceCheckBox}
           >
             <Divider size={formatSize(4)} />
             <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
@@ -119,17 +120,19 @@ export const TokenList: FC = () => {
             name={IconNameEnum.Clock}
             size={formatSize(16)}
             onPress={() => navigate(ScreensEnum.Activity)}
+            testID={TokenListSelectors.activityButton}
           />
           <Divider size={formatSize(24)} />
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
             onPress={() => navigate(ScreensEnum.ManageAssets)}
+            testID={TokenListSelectors.manageAssetsButton}
           />
         </Search>
       </View>
 
-      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.TokenList}>
+      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.tokenList}>
         <FlatList
           scrollEnabled
           data={renderData}

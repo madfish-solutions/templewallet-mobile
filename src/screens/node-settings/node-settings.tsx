@@ -16,6 +16,8 @@ import { useRpcListSelector, useSelectedRpcUrlSelector } from 'src/store/setting
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
+import { NodeSettingsSelectors } from './node-settings.selectors';
+
 export const NodeSettings = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
@@ -45,7 +47,11 @@ export const NodeSettings = () => {
   useNavigationSetOptions(
     generateScreenOptions(
       <HeaderTitle title="Default node (RPC)" />,
-      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddCustomRpc)} />
+      <HeaderButton
+        iconName={IconNameEnum.PlusIconOrange}
+        onPress={() => navigate(ModalsEnum.AddCustomRpc)}
+        testID={NodeSettingsSelectors.addNodeButton}
+      />
     ),
     []
   );

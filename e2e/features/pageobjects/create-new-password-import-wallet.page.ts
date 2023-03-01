@@ -3,10 +3,10 @@ import { findElement } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class CreateNewPasswordImportAccountPage extends Page {
-  passwordInputImportAccount = findElement(CreateNewPasswordSelectors.PasswordInput);
-  repeatPasswordInputImportAccount = findElement(CreateNewPasswordSelectors.RepeatPasswordInput);
-  acceptTermsCheckboxImportAccount = findElement(CreateNewPasswordSelectors.AcceptTermsCheckbox);
-  importButtonImportAccount = findElement(CreateNewPasswordSelectors.ImportButton);
+  passwordInputImportAccount = findElement(CreateNewPasswordSelectors.passwordInput);
+  repeatPasswordInputImportAccount = findElement(CreateNewPasswordSelectors.repeatPasswordInput);
+  acceptTermsCheckboxImportAccount = findElement(CreateNewPasswordSelectors.acceptTermsCheckbox);
+  importButtonImportAccount = findElement(CreateNewPasswordSelectors.createButton);
 
   async isVisible() {
     await this.passwordInputImportAccount.waitForDisplayed();

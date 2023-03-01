@@ -4,12 +4,13 @@ import { GestureResponderEvent } from 'react-native';
 
 import { EmptyFn, EventFn } from '../../../config/general';
 import { isAndroid } from '../../../config/system';
+import { TestIdProps } from '../../../interfaces/test-id.props';
 import { formatSize } from '../../../styles/format-size';
 import { generateHitSlop } from '../../../styles/generate-hit-slop';
 import { Icon, IconProps } from '../icon';
 import { TouchableIconStyles } from './touchable-icon.styles';
 
-interface Props extends IconProps {
+interface Props extends IconProps, TestIdProps {
   disabled?: boolean;
   onPress: EmptyFn | EventFn<GestureResponderEvent>;
 }
