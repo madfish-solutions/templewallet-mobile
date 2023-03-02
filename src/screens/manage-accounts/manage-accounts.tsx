@@ -73,7 +73,7 @@ export const ManageAccounts = () => {
             createHdAccount();
             revealSelectBottomSheetController.close();
           }}
-          testID={ManageAccountsSelectors.createNewHDAccount}
+          testID={ManageAccountsSelectors.createNewHDAccountButton}
         />
         <BottomSheetActionButton
           key="import-an-account"
