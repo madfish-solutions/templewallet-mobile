@@ -2,9 +2,9 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { isString } from 'lodash';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
+import { secureCellSealWithPassphraseEncrypt64, secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 import { isAndroid } from 'src/config/system';
-import * as AesEncryption from 'src/utils/aes-encryption';
 
 import PackageJSON from '../../../package.json';
 
@@ -71,7 +71,7 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
     mnemonic
   };
 
-  const encryptedData = await AesEncryption.encrypt(password, JSON.stringify(fileContent));
+  const encryptedData = await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(fileContent));
 
   await RNFS.writeFile(localPath, encryptedData, 'utf8');
 
@@ -84,7 +84,7 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
       targetPath
     });
   } catch (error) {
-    console.error('RNCloudFs.copyToCloud errored:', { error });
+    console.error(error);
 
     throw new Error('Failed to save file');
   }
@@ -101,7 +101,7 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
   try {
     fileExists = await RNCloudFs.fileExists(isAndroid ? { scope: 'hidden', fileId } : { scope: 'hidden', targetPath });
   } catch (error) {
-    console.error('File doesnt exist:', { error });
+    console.error(error);
 
     throw new Error('Failed to save file');
   }
@@ -121,7 +121,7 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
   }
 
   try {
-    const backupFileStr = await AesEncryption.decrypt(password, encryptedBackup);
+    const backupFileStr = await secureCellSealWithPassphraseDecrypt64(password, encryptedBackup);
 
     return JSON.parse(backupFileStr);
   } catch (error) {

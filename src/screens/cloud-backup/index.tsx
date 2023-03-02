@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { firstValueFrom } from 'rxjs';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -37,7 +38,7 @@ export const CloudBackup = () => {
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
-    const isPasswordCorrect = await Shelter.isPasswordCorrect(password);
+    const isPasswordCorrect = await firstValueFrom(Shelter.isPasswordCorrect$(password));
 
     if (isPasswordCorrect === false) {
       return void showErrorToast({ description: 'Wrong password' });

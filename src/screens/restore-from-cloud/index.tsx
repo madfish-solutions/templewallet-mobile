@@ -31,8 +31,6 @@ export const RestoreFromCloud = () => {
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = async ({ password, reusePassword }: RestoreFromCloudFormValues) => {
-    console.log('Password: ', password);
-
     let backup: BackupFileInterface | undefined;
     try {
       backup = await fetchCloudBackup(password, fileId);
