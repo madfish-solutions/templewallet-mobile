@@ -1,13 +1,12 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { BakerInterface } from 'src/apis/baking-bad';
+import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
@@ -79,40 +78,30 @@ export const SelectBakerModal: FC = () => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
-      handleDeletation(selectedBaker.address);
-    } else if (isDefined(searchValue) && isValidAddress(searchValue)) {
-      console.log('here');
+      const isRecommendedBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
 
-      Alert.alert('Are you sure?', undefined, [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Yes',
-          style: 'default',
-          onPress: () => handleDeletation(searchValue)
-        }
-      ]);
-    }
-  };
+      if (isRecommendedBakerSelected) {
+        trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+      }
 
-  const handleDeletation = (delegate: string) => {
-    const isRecommendedBakerSelected = delegate === RECOMMENDED_BAKER_ADDRESS;
-
-    if (isRecommendedBakerSelected) {
-      trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
-    }
-    if (currentBaker.address === delegate) {
-      showErrorToast({
-        title: 'Re-delegation is not possible',
-        description: 'Already delegated funds to this baker.'
-      });
-    } else {
+      if (currentBaker.address === selectedBaker.address) {
+        showErrorToast({
+          title: 'Re-delegation is not possible',
+          description: 'Already delegated funds to this baker.'
+        });
+      } else {
+        navigate(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams: [
+            { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
+          ],
+          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
+        });
+      }
+    } else if (isString(searchValue)) {
       navigate(ModalsEnum.Confirmation, {
         type: ConfirmationTypeEnum.InternalOperations,
-        opParams: [{ kind: OpKind.DELEGATION, delegate, source: selectedAccount.publicKeyHash }],
-        ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
+        opParams: [{ kind: OpKind.DELEGATION, delegate: searchValue, source: selectedAccount.publicKeyHash }]
       });
     }
   };
@@ -145,9 +134,9 @@ export const SelectBakerModal: FC = () => {
       case BakersSortFieldEnum.Fee:
         return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
       case BakersSortFieldEnum.Staking:
-        return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
+        return [...filteredBakersList].sort((a, b) => (b.stakingBalance ?? 0) - (a.stakingBalance ?? 0));
       default:
-        return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
+        return [...filteredBakersList].sort((a, b) => (b.freeSpace ?? 0) - (a.freeSpace ?? 0));
     }
   }, [filteredBakersList, sortValue]);
 
@@ -192,7 +181,11 @@ export const SelectBakerModal: FC = () => {
         style={styles.flatList}
         windowSize={10}
         ListEmptyComponent={
-          <DataPlaceholder text={'Bakers do not match filter criteria.\n But you still can delegate.'} />
+          <BakerListItem
+            item={{ ...emptyBaker, name: 'Unknown baker', address: searchValue ?? '' }}
+            onPress={setSelectedBaker}
+            selected
+          />
         }
       />
 
@@ -201,7 +194,7 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title="Next"
-          disabled={!isDefined(searchValue) && !isDefined(selectedBaker)}
+          disabled={!isDefined(selectedBaker) && !isValidAddress(searchValue ?? '')}
           onPress={handleNextPress}
         />
       </ModalButtonsContainer>

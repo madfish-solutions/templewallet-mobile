@@ -12,6 +12,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
@@ -79,13 +80,15 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         <View>
           <Text style={styles.cellTitle}>Space:</Text>
           <Text style={styles.cellValueText}>
-            {baker.freeSpace.toFixed(2)} {metadata.symbol}
+            {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
           </Text>
         </View>
         <Divider size={formatSize(16)} />
         <View>
           <Text style={styles.cellTitle}>Staking:</Text>
-          <Text style={styles.cellValueText}>{kFormatter(baker.stakingBalance)}</Text>
+          <Text style={styles.cellValueText}>
+            {isTruthy(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
