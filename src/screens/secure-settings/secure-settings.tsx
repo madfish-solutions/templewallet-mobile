@@ -57,7 +57,7 @@ export const SecureSettings = () => {
           <Switch
             value={analyticsEnabled}
             onChange={value => dispatch(setIsAnalyticsEnabled(value))}
-            testID={SecureSettingsSelectors.analyticsSwitch}
+            testID={SecureSettingsSelectors.analyticsToggle}
           />
         </WhiteContainerAction>
       </WhiteContainer>
@@ -70,7 +70,7 @@ export const SecureSettings = () => {
               <Switch
                 value={isBiometryAvailable}
                 onChange={handleBiometrySwitch}
-                testID={SecureSettingsSelectors.biometricsSwitch}
+                testID={SecureSettingsSelectors.biometricsToggle}
               />
             </WhiteContainerAction>
           </WhiteContainer>
@@ -83,7 +83,7 @@ export const SecureSettings = () => {
           <Switch
             value={isBalanceHiddenSetting}
             onChange={value => dispatch(setIsBalanceHidden(value))}
-            testID={SecureSettingsSelectors.hideModeOnLaunchSwitch}
+            testID={SecureSettingsSelectors.hideModeOnLaunchToggle}
           />
         </WhiteContainerAction>
       </WhiteContainer>

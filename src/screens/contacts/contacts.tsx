@@ -34,7 +34,7 @@ export const Contacts = () => {
       data={contacts}
       renderItem={({ item, index }) => <ContactItem contact={item} index={index} />}
       ListEmptyComponent={<DataPlaceholder text="You have no contacts" />}
-      testID={ContactsSelectors.contact}
+      testID={ContactsSelectors.contactItem}
     />
   );
 };

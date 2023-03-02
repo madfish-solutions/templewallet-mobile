@@ -68,7 +68,6 @@ export const Wallet = () => {
             value={selectedAccount}
             list={visibleAccounts}
             onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
-            testID={WalletSelectors.accountDropDownButton}
           />
 
           <Divider />

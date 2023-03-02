@@ -1,3 +1,3 @@
 export enum CollectiblesHomeSwipeButtonSelectors {
-  collectiblesButton = 'Wallet/<<<COLLECTIBLES<<< Button'
+  collectiblesButton = 'Wallet/COLLECTIBLES Button'
 }

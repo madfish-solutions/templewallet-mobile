@@ -1,5 +1,5 @@
 export enum SecureSettingsSelectors {
-  analyticsSwitch = 'Settings Secure/Analytics Toggle',
-  biometricsSwitch = 'Settings Secure/Biometrics Toggle',
-  hideModeOnLaunchSwitch = 'Settings Secure/Hide mode on Launch Toggle '
+  analyticsToggle = 'Settings Secure/Analytics Toggle',
+  biometricsToggle = 'Settings Secure/Biometrics Toggle',
+  hideModeOnLaunchToggle = 'Settings Secure/Hide mode on Launch Toggle '
 }
