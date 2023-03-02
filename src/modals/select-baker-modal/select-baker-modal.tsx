@@ -27,7 +27,6 @@ import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
-import { setTestID } from '../../utils/test-id.utils';
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
@@ -157,7 +156,7 @@ export const SelectBakerModal: FC = () => {
           <SearchInput
             placeholder="Search baker"
             onChangeText={debouncedSetSearchValue}
-            {...setTestID(SelectBakerModalSelectors.searchBakerInput)}
+            testID={SelectBakerModalSelectors.searchBakerInput}
           />
         </View>
         <View style={styles.upperContainer}>

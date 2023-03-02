@@ -1,3 +1,3 @@
 export enum NotificationsSettingsSelectors {
-  newsSwitch = 'Settings Notifications/News Toggle'
+  newsToggle = 'Settings Notifications/News Toggle'
 }

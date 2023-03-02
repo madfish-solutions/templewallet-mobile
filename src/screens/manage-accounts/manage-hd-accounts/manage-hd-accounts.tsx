@@ -14,7 +14,6 @@ import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { setTestID } from '../../../utils/test-id.utils';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
 import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
@@ -51,7 +50,7 @@ export const ManageHdAccounts = () => {
       <SearchInput
         placeholder="Search accounts"
         onChangeText={debouncedSetSearch}
-        {...setTestID(ManageHdAccountsSelectors.searchAccountsInput)}
+        testID={ManageHdAccountsSelectors.searchAccountsInput}
       />
       <Divider size={formatSize(8)} />
       <View style={styles.revealSeedPhraseContainer}>

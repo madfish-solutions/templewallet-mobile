@@ -3,18 +3,17 @@ import React, { FC } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { setTestID } from '../../utils/test-id.utils';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSearchInputStyles } from './search-input.styles';
 
-export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur'>> = ({
-  value,
-  placeholder,
-  onChangeText = emptyFn,
-  onBlur = emptyFn
-}) => {
+type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> & TestIdProps;
+
+export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn, onBlur = emptyFn, testID }) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
 
@@ -32,6 +31,7 @@ export const SearchInput: FC<Pick<TextInputProps, 'value' | 'placeholder' | 'onC
         placeholderTextColor={colors.gray2}
         onChangeText={debouncedOnChangeText}
         onBlur={onBlur}
+        {...setTestID(testID)}
       />
     </View>
   );

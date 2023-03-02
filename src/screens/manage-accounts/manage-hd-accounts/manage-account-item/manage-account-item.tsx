@@ -13,7 +13,6 @@ import { Switch } from '../../../../components/switch/switch';
 import { WalletAddress } from '../../../../components/wallet-address/wallet-address';
 import { EventFn } from '../../../../config/general';
 import { AccountInterface } from '../../../../interfaces/account.interface';
-import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { ModalsEnum } from '../../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from '../../../../store/wallet/wallet-actions';
@@ -24,7 +23,7 @@ import { getTruncatedProps } from '../../../../utils/style.util';
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
-interface Props extends TestIdProps {
+interface Props {
   account: AccountInterface;
   selectedAccount: AccountInterface;
   onRevealButtonPress: EventFn<AccountInterface>;
@@ -46,10 +45,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <RobotIcon seed={account.publicKeyHash} />
           <View style={styles.accountContainerData}>
             <Text {...getTruncatedProps(styles.accountText)}>{account.name}</Text>
-            <WalletAddress
-              publicKeyHash={account.publicKeyHash}
-              testID={ManageAccountItemSelectors.accountPublicHashButton}
-            />
+            <WalletAddress publicKeyHash={account.publicKeyHash} />
           </View>
         </View>
 
