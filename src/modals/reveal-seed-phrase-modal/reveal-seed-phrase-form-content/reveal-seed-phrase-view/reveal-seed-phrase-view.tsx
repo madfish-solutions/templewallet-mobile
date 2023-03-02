@@ -2,16 +2,16 @@ import React, { FC, useEffect, useState } from 'react';
 
 import { OVERLAY_SHOW_TIMEOUT } from '../../../../components/mnemonic/mnemonic.config';
 import { RevealSecretView } from '../../../../components/mnemonic/reveal-secret-view/reveal-secret-view';
+import { RevealSecretViewSelectors } from '../../../../components/mnemonic/reveal-secret-view/reveal-secret-view.selectors';
 import { useActiveTimer } from '../../../../hooks/use-active-timer.hook';
 import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { setTestID } from '../../../../utils/test-id.utils';
 
 interface Props extends TestIdProps {
   publicKeyHash: string;
 }
 
-export const RevealSeedPhraseView: FC<Props> = ({ publicKeyHash, testID }) => {
+export const RevealSeedPhraseView: FC<Props> = ({ publicKeyHash }) => {
   const { revealSeedPhrase } = useShelter();
   const { activeTimer, clearActiveTimer } = useActiveTimer();
 
@@ -34,6 +34,10 @@ export const RevealSeedPhraseView: FC<Props> = ({ publicKeyHash, testID }) => {
   };
 
   return (
-    <RevealSecretView value={seedPhrase} onProtectedOverlayPress={handleProtectedOverlayPress} {...setTestID(testID)} />
+    <RevealSecretView
+      value={seedPhrase}
+      onProtectedOverlayPress={handleProtectedOverlayPress}
+      testID={RevealSecretViewSelectors.seedPhraseValue}
+    />
   );
 };

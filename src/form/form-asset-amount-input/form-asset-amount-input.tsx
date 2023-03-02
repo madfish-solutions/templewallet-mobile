@@ -6,7 +6,6 @@ import { AssetAmountInputProps } from '../../components/asset-amount-input/asset
 import { emptyFn, EventFn } from '../../config/general';
 import { TestIdProps } from '../../interfaces/test-id.props';
 import { hasError } from '../../utils/has-error';
-import { setTestID } from '../../utils/test-id.utils';
 import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
@@ -62,7 +61,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         setSearchValue={setSearchValue}
         onBlur={handleBlur}
         onValueChange={handleValueChange}
-        {...setTestID(testID)}
+        testID={testID}
       />
       <ErrorMessage meta={meta} />
     </>

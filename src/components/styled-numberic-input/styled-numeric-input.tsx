@@ -3,7 +3,6 @@ import React, { FC } from 'react';
 import { emptyFn } from '../../config/general';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { setTestID } from '../../utils/test-id.utils';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { StyledNumericInputProps } from './styled-numeric-input.props';
 
@@ -41,7 +40,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
       onBlur={handleBlur}
       onFocus={handleFocus}
       onChangeText={handleChange}
-      {...setTestID(testID)}
+      testID={testID}
     />
   );
 };

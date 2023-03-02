@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { EmptyFn } from '../../../config/general';
+import { TestIdProps } from '../../../interfaces/test-id.props';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isString } from '../../../utils/is-string';
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
@@ -11,19 +12,19 @@ import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
 import { RevealSecretViewSelectors } from './reveal-secret-view.selectors';
 
-interface Props {
+interface Props extends TestIdProps {
   value?: string;
   onProtectedOverlayPress: EmptyFn;
 }
 
-export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress }) => (
+export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress, testID }) => (
   <View style={MnemonicStyles.container}>
     <StyledTextInput
       value={value}
       editable={false}
       multiline={true}
       style={StyledTextInputStyles.mnemonicInput}
-      testID={RevealSecretViewSelectors.secretsValue}
+      testID={testID}
     />
     <View style={MnemonicStyles.buttonsContainer}>
       <ButtonSmallSecondary

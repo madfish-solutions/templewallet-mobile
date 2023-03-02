@@ -4,7 +4,6 @@ import { View, ViewStyle } from 'react-native';
 import { useColors } from 'src/styles/use-colors';
 
 import { TestIdProps } from '../../interfaces/test-id.props';
-import { setTestID } from '../../utils/test-id.utils';
 import { RadioItemInterface, RadioGroup } from './radio-group';
 import { useStyledRadioButtonsGroupStyles } from './styles';
 
@@ -31,7 +30,7 @@ export const StyledRadioGroup = <T extends string>({ value, items, onChange, lab
         color={colors.orange}
         itemContainerStyle={styles.itemContainer}
         itemLabelStyle={[styles.label, labelStyle]}
-        {...setTestID(testID)}
+        testID={testID}
       />
     </View>
   );

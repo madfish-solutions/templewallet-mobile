@@ -60,7 +60,12 @@ export const NodeSettings = () => {
 
   return (
     <ScreenContainer>
-      <StyledRadioGroup value={selectedRpcUrl} items={radioItems} onChange={handleChange} />
+      <StyledRadioGroup
+        value={selectedRpcUrl}
+        items={radioItems}
+        onChange={handleChange}
+        testID={NodeSettingsSelectors.nodeRadioButton}
+      />
     </ScreenContainer>
   );
 };
