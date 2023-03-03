@@ -9,7 +9,7 @@ import { useDescriptionStyles, useLabelStyles } from './label.styles';
 
 interface Props {
   label?: string;
-  description?: string | { text: string; bold?: boolean }[];
+  description?: DescriptionType;
   isOptional?: boolean;
 }
 
@@ -33,8 +33,10 @@ export const Label: FC<Props> = ({ label, description, isOptional = false }) => 
   );
 };
 
+type DescriptionType = string | { text: string; bold?: boolean }[];
+
 interface DescriptionProps {
-  description: string | { text: string; bold?: boolean }[];
+  description: DescriptionType;
 }
 
 const Description: FC<DescriptionProps> = ({ description }) => {
@@ -44,7 +46,7 @@ const Description: FC<DescriptionProps> = ({ description }) => {
     return (
       <Text style={styles.description}>
         {description.map((item, index) => (
-          <Text key={index} style={item.bold === true ? styles.boldDescriptionPiece : undefined}>
+          <Text key={index} style={Boolean(item.bold) ? styles.boldDescriptionPiece : undefined}>
             {item.text}
           </Text>
         ))}

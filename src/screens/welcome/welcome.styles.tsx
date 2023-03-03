@@ -22,12 +22,14 @@ export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
     marginBottom: formatSize(16)
   },
   orDividerLine: {
-    flex: 0.444776119,
+    flex: 1,
     height: formatSize(1),
     backgroundColor: colors.gray1
   },
   orDividerText: {
     ...typography.caption13Regular,
+    width: formatSize(37),
+    textAlign: 'center',
     color: colors.gray1
   }
 }));

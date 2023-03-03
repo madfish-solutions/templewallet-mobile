@@ -43,9 +43,8 @@ export const CreateNewWallet = () => {
   const { backupToCloud, useRestoredCloudBackup } =
     useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
-  const restoredCloudBackup = getRestoredCloudBackup(useRestoredCloudBackup);
-
-  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = restoredCloudBackup;
+  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } =
+    getRestoredCloudBackup(useRestoredCloudBackup);
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
