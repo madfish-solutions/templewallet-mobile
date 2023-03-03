@@ -1,7 +1,7 @@
 import { TokenInterface } from '../../token/interfaces/token.interface';
 
 export interface CollectibleIconProps {
-  collectible?: TokenInterface;
+  collectible: TokenInterface;
   size: number;
   iconSize?: CollectibleIconSize;
 }

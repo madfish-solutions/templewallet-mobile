@@ -5,7 +5,7 @@ import { TokenIcon } from '../../../../components/token-icon/token-icon';
 import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
 import { MarketToken } from '../../../../store/market/market.interfaces';
 import { useColors } from '../../../../styles/use-colors';
-import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../../utils/market.util';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../../utils/market.util';
 import { getTruncatedProps } from '../../../../utils/style.util';
 import { useRowStyles } from './row.styles';
 
@@ -15,15 +15,12 @@ export const Row: FC<MarketToken> = ({ priceChange24h, price, imageUrl, symbol, 
   const { tez: tezosExchangeRate } = useUsdToTokenRates();
 
   const priceChangeColor = getPriceChangeColor(priceChange24h, colors);
-  const { value: priceFormatted, valueEstimatedInTezos: priceEstimatedInTezos } = getValueToShow(
-    price,
-    tezosExchangeRate
-  );
-  const { value: volume24hFormatted, valueEstimatedInTezos: volumeEstimatedInTezos } = getValueToShow(
+  const { value: priceFormatted, valueEstimatedInTezos: priceEstimatedInTezos } = formatPrice(price, tezosExchangeRate);
+  const { value: volume24hFormatted, valueEstimatedInTezos: volumeEstimatedInTezos } = formatRegularValue(
     volume24h,
     tezosExchangeRate
   );
-  const priceChange24hFormatted = getPriceChange(priceChange24h);
+  const priceChange24hFormatted = formatPriceChange(priceChange24h);
 
   return (
     <View style={styles.container}>

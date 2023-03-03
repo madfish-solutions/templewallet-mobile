@@ -38,7 +38,8 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
     marginRight: formatSize(6)
   },
   row: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'flex-start'
   },
   column: {
     flexDirection: 'column'
@@ -66,5 +67,8 @@ export const useBakerRewardItemStyles = createUseStyles(({ colors, typography })
   textGray: {
     ...typography.body15Regular,
     color: colors.gray1
+  },
+  accountPkh: {
+    height: formatSize(24)
   }
 }));

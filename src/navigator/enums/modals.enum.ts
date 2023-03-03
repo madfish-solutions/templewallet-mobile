@@ -1,4 +1,4 @@
-import { AccountInterface } from '../../interfaces/account.interface';
+import { AccountInterface, AccountBaseInterface } from '../../interfaces/account.interface';
 import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
@@ -6,7 +6,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 export enum ModalsEnum {
   Receive = 'Receive',
   Send = 'Send',
-  AddToken = 'AddToken',
+  AddAsset = 'AddAsset',
   RenameAccount = 'RenameAccount',
   SelectBaker = 'SelectBaker',
   Confirmation = 'Confirmation',
@@ -16,14 +16,17 @@ export enum ModalsEnum {
   ImportAccount = 'ImportAccount',
   CollectibleModal = 'CollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
+  EditCustomRpc = 'EditCustomRpc',
   RemoveLiquidity = 'RemoveLiquidity',
-  AddLiquidity = 'AddLiquidity'
+  AddLiquidity = 'AddLiquidity',
+  AddContact = 'AddContact',
+  EditContact = 'EditContact'
 }
 
 export type ModalsParamList = {
   [ModalsEnum.Receive]: { token: TokenMetadataInterface };
   [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
-  [ModalsEnum.AddToken]: undefined;
+  [ModalsEnum.AddAsset]: undefined;
   [ModalsEnum.RenameAccount]: { account: AccountInterface };
   [ModalsEnum.SelectBaker]: undefined;
   [ModalsEnum.Confirmation]: ConfirmationModalParams;
@@ -33,6 +36,7 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
+  [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.RemoveLiquidity]: {
     lpContractAddress: string;
     aToken: TokenInterface;
@@ -43,4 +47,6 @@ export type ModalsParamList = {
     aToken: TokenInterface;
     bToken: TokenInterface;
   };
+  [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
+  [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
 };

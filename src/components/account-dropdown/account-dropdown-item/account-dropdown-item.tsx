@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AccountInterface, emptyAccount } from '../../../interfaces/account.interface';
+import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
 import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { getTruncatedProps } from '../../../utils/style.util';
@@ -18,13 +19,13 @@ import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
 export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
-  account = emptyAccount,
+  account = emptyAccountBase,
   showFullData = true,
   actionIconName,
   isPublicKeyHashTextDisabled
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const tezosToken = useTezosTokenSelector(account.publicKeyHash);
+  const tezos = useTezosTokenSelector(account.publicKeyHash);
 
   return (
     <View style={styles.root}>
@@ -41,7 +42,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
+              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezos.balance} />
             </HideBalance>
           )}
         </View>
@@ -50,6 +51,6 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   );
 };
 
-export const renderAccountListItem: DropdownListItemComponent<AccountInterface> = ({ item, isSelected }) => (
+export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item, isSelected }) => (
   <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );

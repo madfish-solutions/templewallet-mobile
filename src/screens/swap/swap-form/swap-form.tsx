@@ -43,16 +43,15 @@ import { emptyTezosLikeToken, TokenInterface } from '../../../token/interfaces/t
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../utils/analytics/use-analytics.hook';
+import { TEZOS_DEXES_API_URL } from '../../../utils/env.utils';
 import { isDefined } from '../../../utils/is-defined';
 import { isString } from '../../../utils/is-string';
-import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO, TEZOS_DEXES_API_URL } from '../config';
+import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
-import { SwapPriceUpdateBar } from './swap-price-update-bar/swap-price-update-bar';
-import { useSwapPriceUpdateInfo } from './swap-price-update-bar/swap-price-update-info.hook';
-import { SwapPriceUpdateText } from './swap-price-update-bar/swap-price-update-text';
+import { SwapFormSelectors } from './swap-form.selectors';
 import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
@@ -70,7 +69,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
-  const priceUpdateInfo = useSwapPriceUpdateInfo(allRoutePairs.block);
   const filteredRoutePairs = useMemo(
     () => allRoutePairs.data.filter(routePair => KNOWN_DEX_TYPES.includes(routePair.dexType)),
     [allRoutePairs.data]
@@ -240,19 +238,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   return (
     <FormikProvider value={formik}>
-      <SwapPriceUpdateBar
-        nowTimestamp={priceUpdateInfo.nowTimestamp}
-        blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
-      />
       <ScreenContainer
         scrollViewRefreshControl={
           <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={allRoutePairs.onRefresh} />
         }
       >
-        <SwapPriceUpdateText
-          nowTimestamp={priceUpdateInfo.nowTimestamp}
-          blockEndTimestamp={priceUpdateInfo.blockEndTimestamp}
-        />
         <Divider size={formatSize(8)} />
         <FormAssetAmountInput
           name="inputAssets"
@@ -262,6 +252,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           assetsList={filteredAssetsList}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}
+          testID={SwapFormSelectors.fromAssetAmountInput}
         />
         <SwapAssetsButton />
         <FormAssetAmountInput
@@ -274,6 +265,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           assetsList={assetsListWithTez}
           setSearchValue={setSearchTezAssetsValue}
           onValueChange={handleOutputAssetsValueChange}
+          testID={SwapFormSelectors.toAssetAmountInput}
         />
         <Label label="Swap route" />
         <View>
@@ -297,7 +289,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <Divider size={formatSize(16)} />
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
+        <ButtonLargePrimary
+          disabled={submitCount !== 0 && !isValid}
+          title="Swap"
+          onPress={submitForm}
+          testID={SwapFormSelectors.swapButton}
+        />
       </ButtonsFloatingContainer>
     </FormikProvider>
   );

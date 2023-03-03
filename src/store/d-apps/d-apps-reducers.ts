@@ -30,19 +30,9 @@ export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builde
     ...state,
     dappsList: createEntity([], false, error)
   }));
-  builder.addCase(loadTokensApyActions.success, (state, { payload: apyRecords }) => {
-    const slugs = Object.keys(apyRecords);
-    const tokensApy = slugs.reduce(
-      (acc, slug) => ({
-        ...acc,
-        [slug]: {
-          ...state.tokensApyInfo[slug],
-          rate: apyRecords[slug]
-        }
-      }),
-      {}
-    );
+  builder.addCase(loadTokensApyActions.success, (state, { payload: loadedRates }) => {
+    const tokensApyRates = { ...state.tokensApyRates, ...loadedRates };
 
-    return { ...state, tokensApyInfo: { ...state.tokensApyInfo, ...tokensApy } };
+    return { ...state, tokensApyRates };
   });
 });

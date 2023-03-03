@@ -1,3 +1,3 @@
 export enum VerifySeedPhraseSelectors {
-  NextButton = 'Next button on Verify your seed page'
+  nextButton = 'Verify Seed Phrase/Next Button'
 }

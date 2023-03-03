@@ -7,6 +7,7 @@ import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { SwapFormValues } from '../../../../interfaces/swap-asset.interface';
 import { formatSize } from '../../../../styles/format-size';
+import { SwapFormSelectors } from '../swap-form.selectors';
 import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {
@@ -29,6 +30,7 @@ export const SwapAssetsButton: FC = () => {
         onPress={() => swapAction(inputAssets, outputAssets)}
         name={IconNameEnum.SwapArrow}
         size={formatSize(24)}
+        testID={SwapFormSelectors.swapAssetsButton}
       />
     </View>
   );

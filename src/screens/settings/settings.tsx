@@ -59,15 +59,15 @@ export const Settings = () => {
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   const handleShare = useCallback(() => {
-    trackEvent(SettingsSelectors.Share, AnalyticsEventCategory.ButtonPress);
+    trackEvent(SettingsSelectors.shareTempleWalletButton, AnalyticsEventCategory.ButtonPress);
     Share.share({
       message: SHARE_CONTENT
     })
       .then(() => {
-        trackEvent(SettingsSelectors.ShareSuccess, AnalyticsEventCategory.ButtonPress);
+        trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
       })
       .catch(() => {
-        trackEvent(SettingsSelectors.ShareError, AnalyticsEventCategory.ButtonPress);
+        trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress);
       });
   }, [trackEvent]);
 
@@ -80,14 +80,25 @@ export const Settings = () => {
           <View style={styles.quoteContainer}>
             <Quote quote="It’s money 2.0, a huge, huge, huge deal." author="Chamath Palihapitiya" />
           </View>
+
           <Divider size={formatSize(8)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.ManageAccounts)}>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.ManageAccounts)}
+              testID={SettingsSelectors.accountsButton}
+            >
               <View style={styles.actionsContainer}>
                 <RobotIcon seed={publicKeyHash} size={formatSize(32)} />
                 <WhiteContainerText text="Accounts" />
               </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.Contacts)}
+              testID={SettingsSelectors.contactsButton}
+            >
+              <WhiteContainerText text="Contacts" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
             {!isManualBackupMade && (
@@ -105,17 +116,23 @@ export const Settings = () => {
               </>
             )}
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.FiatSettings)}>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.FiatSettings)}
+              testID={SettingsSelectors.defaultCurrencyButton}
+            >
               <WhiteContainerText text="Default Currency" />
               <View style={styles.shevronContainer}>
                 <Text style={styles.shevronText}>{fiatCurrency}</Text>
                 <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
               </View>
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
+
             <WhiteContainerAction disabled={true}>
               <WhiteContainerText text="Appearance" />
 
@@ -124,62 +141,89 @@ export const Settings = () => {
                 values={['Light', 'Dark']}
                 width={formatSize(120)}
                 onChange={handleThemeSegmentControlChange}
+                testID={SettingsSelectors.appearanceToggle}
               />
             </WhiteContainerAction>
 
             <WhiteContainerDivider />
 
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.SecureSettings)}>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.SecureSettings)}
+              testID={SettingsSelectors.secureButton}
+            >
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Secure" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.NotificationsSettings)}>
+
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.NotificationsSettings)}
+              testID={SettingsSelectors.notificationsButton}
+            >
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Notifications" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.DAppsSettings)}>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.DAppsSettings)}
+              testID={SettingsSelectors.authorizedDAppsButton}
+            >
               <WhiteContainerText text="Authorized DApps" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.NodeSettings)}>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.NodeSettings)}
+              testID={SettingsSelectors.defaultNodeRPCButton}
+            >
               <WhiteContainerText text="Default node (RPC)" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)}>
+            <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)} testID={SettingsSelectors.aboutButton}>
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
+
             <WhiteContainerDivider />
-            <WhiteContainerAction onPress={handleShare}>
+
+            <WhiteContainerAction onPress={handleShare} testID={SettingsSelectors.shareTempleWalletButton}>
               <WhiteContainerText text="Share Temple Wallet" />
               <Icon name={IconNameEnum.Share} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>
+
           <Divider />
 
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButtonPress}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogoutButtonPress}
+            testID={SettingsSelectors.resetWalletButton}
+          >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
           </TouchableOpacity>
+
           <Divider />
         </View>
+
         {!isTablet() && <OctopusWithLove />}
       </ScreenContainer>
     </>

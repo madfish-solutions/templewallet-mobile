@@ -40,6 +40,7 @@ export enum ScreensEnum {
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
+  Contacts = 'Contacts',
   About = 'About',
   DAppsSettings = 'DAppsSettings',
   FiatSettings = 'FiatSettings',
@@ -70,6 +71,10 @@ export type ScreensParamList = {
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
+  [ScreensEnum.Buy]: undefined;
+  [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.AliceBob]: { min: number; max: number };
+  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -80,11 +85,8 @@ export type ScreensParamList = {
   [ScreensEnum.SwapSettingsScreen]: undefined;
   [ScreensEnum.SwapQuestionsScreen]: undefined;
 
-  /** Buy stack **/
-  [ScreensEnum.Buy]: undefined;
-  [ScreensEnum.Exolix]: undefined;
-  [ScreensEnum.AliceBob]: { min: number; max: number };
-  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
+  /** Market stack **/
+  [ScreensEnum.Market]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
@@ -92,6 +94,7 @@ export type ScreensParamList = {
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
+  [ScreensEnum.Contacts]: undefined;
   [ScreensEnum.About]: undefined;
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.FiatSettings]: undefined;
@@ -128,6 +131,7 @@ export const marketStackScreens = [ScreensEnum.Market];
 export const settingsStackScreens = [
   ScreensEnum.Settings,
   ScreensEnum.ManageAccounts,
+  ScreensEnum.Contacts,
   ScreensEnum.About,
   ScreensEnum.DAppsSettings,
   ScreensEnum.SecureSettings,

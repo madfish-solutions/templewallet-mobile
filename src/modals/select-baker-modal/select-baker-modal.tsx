@@ -4,29 +4,31 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
-import { Divider } from '../../components/divider/divider';
-import { Label } from '../../components/label/label';
-import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
-import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { SearchInput } from '../../components/search-input/search-input';
-import { Sorter } from '../../components/sorter/sorter';
-import { BakersSortFieldEnum } from '../../enums/bakers-sort-field.enum';
-import { BakerInterface } from '../../interfaces/baker.interface';
-import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useBakersListSelector, useSelectedBakerSelector } from '../../store/baking/baking-selectors';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { showErrorToast } from '../../toast/toast.utils';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
-import { isString } from '../../utils/is-string';
+import { BakerInterface } from 'src/apis/baking-bad';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { Divider } from 'src/components/divider/divider';
+import { Label } from 'src/components/label/label';
+import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { Sorter } from 'src/components/sorter/sorter';
+import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
+
 import { BakerListItem } from './baker-list-item/baker-list-item';
+import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
@@ -51,10 +53,12 @@ export const SelectBakerModal: FC = () => {
 
   const { trackEvent } = useAnalytics();
 
-  const bakersList = useBakersListSelector();
   const selectedAccount = useSelectedAccountSelector();
 
-  const [allBakers, setFilteredBakersList] = useState(bakersList);
+  const bakersList = useBakersListSelector();
+  const activeBakers = useMemo(() => bakersList.filter(baker => baker.serviceHealth === 'active'), [bakersList]);
+
+  const [allBakers, setFilteredBakersList] = useState(activeBakers);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
@@ -105,7 +109,7 @@ export const SelectBakerModal: FC = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: BakerInterface[] = [];
 
-      for (const baker of bakersList) {
+      for (const baker of activeBakers) {
         const { name, address } = baker;
 
         if (name.toLowerCase().includes(lowerCaseSearchValue) || address.toLowerCase().includes(lowerCaseSearchValue)) {
@@ -115,9 +119,9 @@ export const SelectBakerModal: FC = () => {
 
       setFilteredBakersList(result);
     } else {
-      setFilteredBakersList(bakersList);
+      setFilteredBakersList(activeBakers);
     }
-  }, [searchValue, bakersList]);
+  }, [searchValue, activeBakers]);
 
   const sortedBakersList = useMemo(() => {
     switch (sortValue) {
@@ -149,7 +153,11 @@ export const SelectBakerModal: FC = () => {
           />
         </View>
         <View style={styles.searchContainer}>
-          <SearchInput placeholder="Search baker" onChangeText={debouncedSetSearchValue} />
+          <SearchInput
+            placeholder="Search baker"
+            onChangeText={debouncedSetSearchValue}
+            testID={SelectBakerModalSelectors.searchBakerInput}
+          />
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
@@ -160,6 +168,7 @@ export const SelectBakerModal: FC = () => {
             sortFieldsOptions={bakersSortFieldsOptions}
             sortFieldsLabels={bakersSortFieldsLabels}
             onSetSortValue={handleSortValueChange}
+            testID={SelectBakerModalSelectors.sortByDropDownButton}
           />
         </View>
       </View>
@@ -167,7 +176,12 @@ export const SelectBakerModal: FC = () => {
       <FlatList
         data={finalBakersList}
         renderItem={({ item }) => (
-          <BakerListItem item={item} selected={item.address === selectedBaker?.address} onPress={setSelectedBaker} />
+          <BakerListItem
+            item={item}
+            selected={item.address === selectedBaker?.address}
+            onPress={setSelectedBaker}
+            testID={SelectBakerModalSelectors.bakerItem}
+          />
         )}
         keyExtractor={item => item.address}
         style={styles.flatList}
@@ -178,9 +192,14 @@ export const SelectBakerModal: FC = () => {
       />
 
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Close" onPress={goBack} />
+        <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Next" disabled={!isDefined(selectedBaker)} onPress={handleNextPress} />
+        <ButtonLargePrimary
+          title="Next"
+          disabled={!isDefined(selectedBaker)}
+          onPress={handleNextPress}
+          testID={SelectBakerModalSelectors.nextButton}
+        />
       </ModalButtonsContainer>
     </>
   );

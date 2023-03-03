@@ -2,13 +2,16 @@ import React, { FC, useState } from 'react';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
-  formatImgUri
-} from '../../utils/image.utils';
-import { isDefined } from '../../utils/is-defined';
+  formatImgUri,
+  isImgUriDataUri
+} from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
+
+import { DataUriImage } from '../data-uri-image';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -103,9 +106,13 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         padding: formatSize(4)
       }}
     >
-      {isDefined(collectible) && isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri) && (
-        <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
-      )}
+      {isDefined(collectible.thumbnailUri) &&
+        isDefined(collectible.artifactUri) &&
+        (isImgUriDataUri(imageSrc) ? (
+          <DataUriImage style={styles.image} dataUri={imageSrc} />
+        ) : (
+          <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
+        ))}
     </View>
   );
 };

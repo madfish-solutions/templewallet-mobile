@@ -64,13 +64,13 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               <FormPasswordInput
                 isShowPasswordStrengthIndicator
                 name="password"
-                testID={CreateNewPasswordSyncAccountSelectors.PasswordInput}
+                testID={CreateNewPasswordSyncAccountSelectors.passwordInput}
               />
 
               <Label label="Repeat Password" description="Please enter the password again." />
               <FormPasswordInput
                 name="passwordConfirmation"
-                testID={CreateNewPasswordSyncAccountSelectors.RepeatPasswordInput}
+                testID={CreateNewPasswordSyncAccountSelectors.repeatPasswordInput}
               />
             </View>
           </ScreenContainer>
@@ -79,7 +79,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               title="Sync"
               disabled={!isValid}
               onPress={submitForm}
-              testID={CreateNewPasswordSyncAccountSelectors.SyncButton}
+              testID={CreateNewPasswordSyncAccountSelectors.syncButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

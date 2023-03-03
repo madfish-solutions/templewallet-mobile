@@ -1,9 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 
-import { ExchangePayload, RateInterface } from '../../../../../../interfaces/exolix.interface';
-import { TopUpInputInterface } from '../../../../../../interfaces/topup.interface';
-import { loadExolixRate } from '../../../../../../utils/exolix.util';
-import { isDefined } from '../../../../../../utils/is-defined';
+import { ExchangePayload } from 'src/interfaces/exolix.interface';
+import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { loadExolixRate } from 'src/utils/exolix.util';
+import { isDefined } from 'src/utils/is-defined';
 
 const maxDollarValue = 10000;
 const avgCommission = 300;
@@ -27,9 +27,14 @@ export const loadMinMaxFields = (
     amount: (maxDollarValue + avgCommission) / outputTokenPrice
   };
 
-  loadExolixRate(forwardExchangeData).then((responseData: RateInterface) => {
-    setFieldValue('coinFrom.max', new BigNumber(responseData.toAmount));
-  });
+  loadExolixRate(forwardExchangeData).then(
+    responseData => {
+      setFieldValue('coinFrom.max', new BigNumber(responseData.toAmount));
+    },
+    error => {
+      console.error({ error });
+    }
+  );
 
   const backwardExchangeData = {
     coinFrom: inputAssetCode,
@@ -39,9 +44,14 @@ export const loadMinMaxFields = (
     amount: 1
   };
 
-  loadExolixRate(backwardExchangeData).then((responseData: RateInterface) => {
-    setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
-  });
+  loadExolixRate(backwardExchangeData).then(
+    responseData => {
+      setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
+    },
+    error => {
+      console.error({ error });
+    }
+  );
 };
 
 export const getProperNetworkFullName = (currency?: TopUpInputInterface) =>
@@ -55,7 +65,7 @@ export const updateOutputInputValue = (
   requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,
   setFieldValue: setFieldType
 ) => {
-  loadExolixRate(requestData).then((responseData: RateInterface) => {
+  loadExolixRate(requestData).then(responseData => {
     if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
       setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
     }

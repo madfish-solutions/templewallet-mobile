@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 
 import { OVERLAY_SHOW_TIMEOUT } from '../../../components/mnemonic/mnemonic.config';
 import { RevealSecretView } from '../../../components/mnemonic/reveal-secret-view/reveal-secret-view';
+import { RevealSecretViewSelectors } from '../../../components/mnemonic/reveal-secret-view/reveal-secret-view.selectors';
 import { useActiveTimer } from '../../../hooks/use-active-timer.hook';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 
@@ -31,5 +32,11 @@ export const RevealPrivateKeyView: FC<Props> = ({ publicKeyHash }) => {
       }
     });
 
-  return <RevealSecretView value={secretKey} onProtectedOverlayPress={handleProtectedOverlayPress} />;
+  return (
+    <RevealSecretView
+      value={secretKey}
+      onProtectedOverlayPress={handleProtectedOverlayPress}
+      testID={RevealSecretViewSelectors.privateKeyValue}
+    />
+  );
 };

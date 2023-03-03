@@ -1,8 +1,9 @@
 import { ParamListBase } from '@react-navigation/native';
 import { createAction } from '@reduxjs/toolkit';
 
-import { NavigationArgsType } from '../interfaces/navigation-args.type';
-import { NavigationParamList } from '../navigator/hooks/use-navigation.hook';
+import { NavigationArgsType } from 'src/interfaces/navigation-args.type';
+import { NavigationParamList } from 'src/navigator/hooks/use-navigation.hook';
+
 import { createActions } from './create-actions';
 
 export const emptyAction = createAction('root/EMPTY_ACTION');
@@ -12,6 +13,7 @@ export const resetKeychainOnInstallAction = createActions('root/RESET_KEYCHAIN_O
 
 export const untypedNavigateAction =
   createAction<NavigationArgsType<ParamListBase, keyof ParamListBase>>('navigation/NAVIGATE');
+
 export const navigateAction = <RouteName extends keyof NavigationParamList>(
   ...navigationArgs: NavigationArgsType<NavigationParamList, RouteName>
 ) => createAction<NavigationArgsType<NavigationParamList, RouteName>>('navigation/NAVIGATE')(navigationArgs);

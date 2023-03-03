@@ -511,15 +511,10 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - segment-analytics-react-native (2.8.0):
-    - React-Core
-    - sovran-react-native
   - Sentry (7.24.1):
     - Sentry/Core (= 7.24.1)
   - Sentry/Core (7.24.1)
   - SocketRocket (0.6.0)
-  - sovran-react-native (0.4.4):
-    - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -615,8 +610,6 @@ DEPENDENCIES:
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSha256 (from `../node_modules/react-native-sha256`)
   - RNSVG (from `../node_modules/react-native-svg`)
-  - "segment-analytics-react-native (from `../node_modules/@segment/analytics-react-native`)"
-  - "sovran-react-native (from `../node_modules/@segment/sovran-react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -782,10 +775,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sha256"
   RNSVG:
     :path: "../node_modules/react-native-svg"
-  segment-analytics-react-native:
-    :path: "../node_modules/@segment/analytics-react-native"
-  sovran-react-native:
-    :path: "../node_modules/@segment/sovran-react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -880,10 +869,8 @@ SPEC CHECKSUMS:
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  segment-analytics-react-native: f550cb6d5d5f67eb8099f78108f8ded1052cd5e4
   Sentry: 1ed2d3f2973658bf6ab7ed43857c8e321a1625dd
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  sovran-react-native: 5f9715a62b50008d72c0cf904cb08c8377777b62
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

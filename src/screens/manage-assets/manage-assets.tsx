@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { Divider } from '../../components/divider/divider';
-import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { Divider } from 'src/components/divider/divider';
+import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
+import { HeaderButton } from 'src/components/header/header-button/header-button';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { useManageAssetsStyles } from './manage-assets.styles';
 import { ManageCollectibles } from './manage-collectibles/manage-collectibles';
 import { ManageTokens } from './manage-tokens/manage-tokens';
@@ -13,12 +21,20 @@ import { ManageTokens } from './manage-tokens/manage-tokens';
 const manageTokensIndex = 0;
 
 export const ManageAssets = () => {
+  const { navigate } = useNavigation();
   const styles = useManageAssetsStyles();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageTokens = segmentedControlIndex === manageTokensIndex;
 
   usePageAnalytic(ScreensEnum.ManageAssets);
+  useNavigationSetOptions(
+    generateScreenOptions(
+      <HeaderTitle title="Manage Assets" />,
+      <HeaderButton iconName={IconNameEnum.PlusIconOrange} onPress={() => navigate(ModalsEnum.AddAsset)} />
+    ),
+    []
+  );
 
   return (
     <>

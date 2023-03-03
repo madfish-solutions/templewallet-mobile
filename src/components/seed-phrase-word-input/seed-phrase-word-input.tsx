@@ -20,7 +20,7 @@ export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, i
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} {...setTestID(SeedPhraseWordInputSelectors.Title)}>
+      <Text style={styles.title} {...setTestID(SeedPhraseWordInputSelectors.wordTitle)}>
         Word {index + 1}{' '}
       </Text>
 
@@ -34,7 +34,7 @@ export const SeedPhraseWordInput: FC<SeedPhraseWordInputProps> = ({ inputName, i
         onChangeText={field.onChange(inputName)}
         style={styles.wordInput}
         textAlign="center"
-        testID={SeedPhraseWordInputSelectors.Input}
+        testID={SeedPhraseWordInputSelectors.wordInput}
       />
     </View>
   );

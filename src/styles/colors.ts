@@ -1,47 +1,44 @@
-import { ThemesEnum } from '../interfaces/theme.enum';
-import { hexa } from '../utils/style.util';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { hexa } from 'src/utils/style.util';
 
 const accentColors = {
+  adding: '#34CC4E',
+  destructive: '#FF3B30',
   orange: '#FF5B00',
-  blue: '#1373E4'
+  blue: '#1373E4',
+  peach: '#FF5B00',
+  liteGreen: '#3EBD93',
+  darkGreen: '#143A3A',
+  dollarGreen: '#009393'
 };
+
 const accentAlphaColors = {
   orange10: hexa(accentColors.orange, 0.1),
   blue10: hexa(accentColors.blue, 0.1)
 };
 
 const basicLightColors = {
-  adding: '#34CC4E',
-  destructive: '#FF3B30',
   black: '#000000',
   white: '#ffffff',
-  peach: '#FF5B00',
-  liteOrange: '#E5E5EA',
-  liteGreen: '#3EBD93',
-  darkGreen: '#143A3A'
+  liteOrange: '#E5E5EA'
 };
 
 const basicDarkColors: typeof basicLightColors = {
-  adding: '#34CC4E',
-  destructive: '#FF3B30',
   black: '#ffffff',
   white: '#000000',
-  peach: '#FF5B00',
-  liteOrange: '#242424',
-  liteGreen: '#3EBD93',
-  darkGreen: '#143A3A'
+  liteOrange: '#242424'
 };
 
 const basicLightAlphaColors = {
   black10: hexa(basicLightColors.black, 0.1),
   black16: hexa(basicLightColors.black, 0.16),
-  peach10: hexa(basicLightColors.peach, 0.1)
+  peach10: hexa(accentColors.peach, 0.1)
 };
 
 const basicDarkAlphaColors: typeof basicLightAlphaColors = {
   black10: hexa(basicDarkColors.black, 0.1),
   black16: hexa(basicDarkColors.black, 0.16),
-  peach10: hexa(basicDarkColors.peach, 0.1)
+  peach10: hexa(accentColors.peach, 0.1)
 };
 
 const graybaseLightColors = {
@@ -50,6 +47,7 @@ const graybaseLightColors = {
   gray3: '#C2C2C8',
   gray4: '#F4F4F4'
 };
+
 const graybaseDarkColors: typeof graybaseLightColors = {
   gray1: '#9C9C9C',
   gray2: '#848484',
@@ -77,23 +75,31 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   input: '#2D2D2D'
 };
 
-const lightTheme = {
+const commonTheme = {
   ...accentColors,
-  ...accentAlphaColors,
+  ...accentAlphaColors
+};
+
+const lightTheme = {
+  ...commonTheme,
+
   ...basicLightColors,
   ...basicLightAlphaColors,
   ...graybaseLightColors,
   ...backgroundLightColors
 };
 
-export type Colors = Record<keyof typeof lightTheme, string>;
+const darkTheme: typeof lightTheme = {
+  ...commonTheme,
 
-export const getColors = (theme: ThemesEnum): Colors => ({
-  ...lightTheme,
-  ...(theme === ThemesEnum.dark && {
-    ...basicDarkColors,
-    ...basicDarkAlphaColors,
-    ...graybaseDarkColors,
-    ...backgroundDarkColors
-  })
-});
+  ...basicDarkColors,
+  ...basicDarkAlphaColors,
+  ...graybaseDarkColors,
+  ...backgroundDarkColors
+};
+
+type Color = keyof typeof lightTheme;
+
+export type Colors = Record<Color, string>;
+
+export const getColors = (theme: ThemesEnum): Colors => (theme === ThemesEnum.dark ? darkTheme : lightTheme);

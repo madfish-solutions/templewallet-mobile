@@ -24,13 +24,14 @@ import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-ba
 import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
 import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, TZ_BTC_SLUG } from '../../token/data/token-slugs';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, KNOWN_TOKENS_SLUGS } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { LiquidityBakingDappSelectors } from './liquidity-baking-dapp.selectors';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
 const DATA_REFRESH_INTERVAL = 50 * 1000;
@@ -46,7 +47,7 @@ export const LiquidityBakingDapp = () => {
   const lpContract = useContract(LIQUIDITY_BAKING_DEX_ADDRESS, liquidityBakingStorageInitialValue);
 
   const aToken = useSelectedAccountTezosTokenSelector();
-  const bToken = assetsList.find(token => getTokenSlug(token) === TZ_BTC_SLUG) ?? emptyToken;
+  const bToken = assetsList.find(token => getTokenSlug(token) === KNOWN_TOKENS_SLUGS.tzBTC) ?? emptyToken;
 
   const aTokenPool = lpContract.storage.xtzPool;
 
@@ -113,6 +114,7 @@ export const LiquidityBakingDapp = () => {
                   bToken
                 })
               }
+              testID={LiquidityBakingDappSelectors.removeButton}
             />
           </View>
           <Divider size={formatSize(16)} />
@@ -123,6 +125,7 @@ export const LiquidityBakingDapp = () => {
               onPress={() =>
                 navigate(ModalsEnum.AddLiquidity, { lpContractAddress: LIQUIDITY_BAKING_DEX_ADDRESS, aToken, bToken })
               }
+              testID={LiquidityBakingDappSelectors.addButton}
             />
           </View>
         </ButtonsContainer>

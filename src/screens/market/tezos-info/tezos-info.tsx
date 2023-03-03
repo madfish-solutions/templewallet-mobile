@@ -9,9 +9,10 @@ import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { getPriceChange, getPriceChangeColor, getValueToShow } from '../../../utils/market.util';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
 import { getTruncatedProps } from '../../../utils/style.util';
-import { circulatingSupplyAlert, marketCupAlert, volumeAlert } from './alerts';
+import { MarketSelectors } from '../market.selectors';
+import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
@@ -23,12 +24,12 @@ export const TezosInfo = () => {
   const priceChange24hColor = getPriceChangeColor(marketTezos?.priceChange24h, colors);
   const priceChange7dColor = getPriceChangeColor(marketTezos?.priceChange7d, colors);
 
-  const { value: price } = getValueToShow(marketTezos?.price);
-  const { value: supply } = getValueToShow(marketTezos?.supply);
-  const { value: marketCup } = getValueToShow(marketTezos?.marketCup);
-  const { value: volume24h } = getValueToShow(marketTezos?.volume24h);
-  const priceChange7d = getPriceChange(marketTezos?.priceChange7d);
-  const priceChange24h = getPriceChange(marketTezos?.priceChange24h);
+  const { value: price } = formatRegularValue(marketTezos?.price);
+  const { value: supply } = formatPrice(marketTezos?.supply);
+  const { value: marketCap } = formatPrice(marketTezos?.marketCap);
+  const { value: volume24h } = formatPrice(marketTezos?.volume24h);
+  const priceChange7d = formatPriceChange(marketTezos?.priceChange7d);
+  const priceChange24h = formatPriceChange(marketTezos?.priceChange24h);
 
   return (
     <View>
@@ -49,10 +50,15 @@ export const TezosInfo = () => {
 
           <View style={styles.displayFlex}>
             <View style={styles.tooltipContainer}>
-              <Text style={styles.subtitle13}>Market Cup</Text>
-              <TouchableIcon onPress={marketCupAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+              <Text style={styles.subtitle13}>Market Cap</Text>
+              <TouchableIcon
+                onPress={marketCapAlert}
+                name={IconNameEnum.InfoFilled}
+                size={formatSize(24)}
+                testID={MarketSelectors.marketCupAlertButton}
+              />
             </View>
-            <Text style={styles.regularText}>{marketCup} $</Text>
+            <Text style={styles.regularText}>{marketCap} $</Text>
           </View>
         </View>
 
@@ -73,7 +79,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.flex1, styles.mr8]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
             <Text style={styles.subtitle13}>Volume (24H)</Text>
-            <TouchableIcon onPress={volumeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+            <TouchableIcon
+              onPress={volumeAlert}
+              name={IconNameEnum.InfoFilled}
+              size={formatSize(24)}
+              testID={MarketSelectors.volume24HAlertButton}
+            />
           </View>
           <Text style={styles.regularText}>{volume24h} $</Text>
         </View>
@@ -81,7 +92,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.flex1]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
             <Text style={styles.subtitle13}>Circulating Supply</Text>
-            <TouchableIcon onPress={circulatingSupplyAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+            <TouchableIcon
+              onPress={circulatingSupplyAlert}
+              name={IconNameEnum.InfoFilled}
+              size={formatSize(24)}
+              testID={MarketSelectors.circulatingSupplyAlertButton}
+            />
           </View>
           <Text style={styles.regularText}>{supply} TEZ</Text>
         </View>

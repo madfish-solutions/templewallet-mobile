@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
@@ -13,10 +13,9 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { Label } from '../../components/label/label';
 import { Quote } from '../../components/quote/quote';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { HIDE_SPLASH_SCREEN_TIMEOUT } from '../../config/animation';
 import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { FormPasswordInput } from '../../form/form-password-input';
-import { useDelayedEffect } from '../../hooks/use-delayed-effect.hook';
+import { useAtBootsplash } from '../../hooks/use-hide-bootsplash';
 import { usePasswordLock } from '../../hooks/use-password-lock.hook';
 import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
@@ -31,10 +30,13 @@ import {
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
+import { EnterPasswordSelectors } from './enter-password.selectors';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
   const styles = useEnterPasswordStyles();
+
+  const atBootsplash = useAtBootsplash();
 
   const { unlock, unlockWithBiometry } = useAppLock();
 
@@ -51,9 +53,10 @@ export const EnterPassword = () => {
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
-  useDelayedEffect(HIDE_SPLASH_SCREEN_TIMEOUT, () => void (isBiometryAvailable && unlockWithBiometry()), [
-    isBiometryAvailable
-  ]);
+  useEffect(
+    () => void (!atBootsplash && isBiometryAvailable && unlockWithBiometry()),
+    [isBiometryAvailable, atBootsplash]
+  );
 
   return (
     <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
@@ -83,6 +86,7 @@ export const EnterPassword = () => {
                     {...(isDisabled && {
                       error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
                     })}
+                    testID={EnterPasswordSelectors.passwordInput}
                   />
                 </View>
                 {isBiometryAvailable && (
@@ -97,14 +101,23 @@ export const EnterPassword = () => {
               </View>
 
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="Unlock" disabled={!isValid || isDisabled} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Unlock"
+                disabled={!isValid || isDisabled}
+                onPress={submitForm}
+                testID={EnterPasswordSelectors.unlockButton}
+              />
               <Divider />
             </View>
           )}
         </Formik>
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
-        <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
+        <ButtonLink
+          title="Erase Data"
+          onPress={handleResetDataButtonPress}
+          testID={EnterPasswordSelectors.eraseDataButtonLink}
+        />
         <InsetSubstitute type="bottom" />
       </View>
       <ToastProvider />

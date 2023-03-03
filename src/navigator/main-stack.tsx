@@ -25,6 +25,7 @@ import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
 import { Utorg } from '../screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
+import { Contacts } from '../screens/contacts/contacts';
 import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
 import { DApps } from '../screens/d-apps/d-apps';
@@ -184,20 +185,6 @@ export const MainStackScreen = () => {
                 component={NotificationsItem}
                 options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
-
-              {/** DApps stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.DApps}
-                component={DApps}
-                options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.LiquidityBakingDapp}
-                component={LiquidityBakingDapp}
-                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
-              />
-
-              {/** Buy stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
@@ -217,6 +204,18 @@ export const MainStackScreen = () => {
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              {/** DApps stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.DApps}
+                component={DApps}
+                options={{ animationEnabled: false, headerShown: false }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.LiquidityBakingDapp}
+                component={LiquidityBakingDapp}
+                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
+              />
 
               {/** Swap stack **/}
               <MainStack.Screen
@@ -257,6 +256,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManageAccounts}
                 component={ManageAccounts}
                 options={generateScreenOptions(<HeaderTitle title="Manage Accounts" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Contacts}
+                component={Contacts}
+                options={generateScreenOptions(<HeaderTitle title="Contacts" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.About}

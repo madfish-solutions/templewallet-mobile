@@ -4,13 +4,15 @@ import React, { FC, useCallback } from 'react';
 import { AssetAmountInput, AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from '../../components/asset-amount-input/asset-amount-input.props';
 import { emptyFn, EventFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { hasError } from '../../utils/has-error';
 import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
-    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'> {
+    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'>,
+    TestIdProps {
   name: string;
   setSearchValue?: EventFn<string>;
 }
@@ -26,7 +28,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   selectionOptions = undefined,
   maxButton = false,
   setSearchValue = emptyFn,
-  onValueChange = emptyFn
+  onValueChange = emptyFn,
+  testID
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<AssetAmountInterface>(name);
@@ -58,6 +61,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         setSearchValue={setSearchValue}
         onBlur={handleBlur}
         onValueChange={handleValueChange}
+        testID={testID}
       />
       <ErrorMessage meta={meta} />
     </>

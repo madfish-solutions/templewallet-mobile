@@ -4,10 +4,10 @@ import { findElement, findElements } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class VerifySeedPhrasePage extends Page {
-  verifyYourSeedNextButton = findElement(VerifySeedPhraseSelectors.NextButton);
+  verifyYourSeedNextButton = findElement(VerifySeedPhraseSelectors.nextButton);
 
-  getConfirmationTitles = () => findElements(SeedPhraseWordInputSelectors.Title);
-  getConfirmationInputs = () => findElements(SeedPhraseWordInputSelectors.Input);
+  getConfirmationTitles = () => findElements(SeedPhraseWordInputSelectors.wordTitle);
+  getConfirmationInputs = () => findElements(SeedPhraseWordInputSelectors.wordInput);
 
   async isVisible() {
     await this.verifyYourSeedNextButton.waitForDisplayed();

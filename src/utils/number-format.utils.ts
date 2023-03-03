@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
 export const formatOrdinalNumber = (n: number) => {
@@ -19,4 +20,20 @@ export const formatOrdinalNumber = (n: number) => {
   }
 
   return n + 'th';
+};
+
+export const formatToPercentStr = (value: number | BigNumber, zeroIsInvalid = true): string | undefined => {
+  if (value instanceof BigNumber) {
+    if (!value.isFinite() || (zeroIsInvalid && value.isZero())) {
+      return;
+    }
+
+    return value.times(100).toFixed(2);
+  }
+
+  if (!Number.isFinite(value) || (zeroIsInvalid && value === 0)) {
+    return;
+  }
+
+  return (value * 100).toFixed(2);
 };

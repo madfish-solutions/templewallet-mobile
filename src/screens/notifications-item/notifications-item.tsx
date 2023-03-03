@@ -19,6 +19,7 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatDateOutput } from '../../utils/date.utils';
 import { isDefined } from '../../utils/is-defined';
+import { NotificationItemSelectors } from './notification-item.selectors';
 import { NotificationsItemContent } from './notifications-item-content/notifications-item-content';
 import { IMAGE_HEIGHT, useNotificationsItemStyles } from './notifications-item.styles';
 
@@ -66,7 +67,7 @@ export const NotificationsItem: FC = () => {
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonsContainer>
-          <ButtonLargePrimary title="Got it" onPress={() => goBack()} />
+          <ButtonLargePrimary title="Got it" onPress={() => goBack()} testID={NotificationItemSelectors.gotItButton} />
         </ButtonsContainer>
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>

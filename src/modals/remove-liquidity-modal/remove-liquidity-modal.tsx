@@ -23,7 +23,7 @@ import { getTransactionTimeoutDate } from '../../op-params/op-params.utils';
 import { loadTokenMetadataActions } from '../../store/tokens-metadata/tokens-metadata-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
-import { SIRS_SLUG, SIRS_TOKEN_ADDRESS, SIRS_TOKEN_ID } from '../../token/data/token-slugs';
+import { KNOWN_TOKENS_SLUGS, SIRS_TOKEN } from '../../token/data/token-slugs';
 import { emptyToken } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
@@ -32,6 +32,7 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
 import { RemoveLiquidityModalFormValues, removeLiquidityModalValidationSchema } from './remove-liquidity-modal.form';
+import { RemoveLiquidityModalSelectors } from './remove-liquidity-modal.selectors';
 import { useRemoveLiquidityModalStyles } from './remove-liquidity-modal.styles';
 
 export const RemoveLiquidityModal = () => {
@@ -51,7 +52,7 @@ export const RemoveLiquidityModal = () => {
   const styles = useRemoveLiquidityModalStyles();
 
   const lpToken = useMemo(
-    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === SIRS_SLUG) ?? emptyToken,
+    () => tokensList.find(candidateToken => getTokenSlug(candidateToken) === KNOWN_TOKENS_SLUGS.SIRS) ?? emptyToken,
     [tokensList]
   );
 
@@ -90,16 +91,7 @@ export const RemoveLiquidityModal = () => {
   usePageAnalytic(ModalsEnum.RemoveLiquidity, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 
   useEffect(
-    () =>
-      void (
-        lpToken.address === emptyToken.address &&
-        dispatch(
-          loadTokenMetadataActions.submit({
-            address: SIRS_TOKEN_ADDRESS,
-            id: SIRS_TOKEN_ID
-          })
-        )
-      ),
+    () => void (lpToken.address === emptyToken.address && dispatch(loadTokenMetadataActions.submit(SIRS_TOKEN))),
     [lpToken]
   );
 
@@ -216,7 +208,11 @@ export const RemoveLiquidityModal = () => {
                 </View>
               </ScreenContainer>
               <ButtonsFloatingContainer>
-                <ButtonLargePrimary title="Remove" onPress={submitForm} />
+                <ButtonLargePrimary
+                  title="Remove"
+                  onPress={submitForm}
+                  testID={RemoveLiquidityModalSelectors.removeButton}
+                />
               </ButtonsFloatingContainer>
               <InsetSubstitute type="bottom" />
             </>

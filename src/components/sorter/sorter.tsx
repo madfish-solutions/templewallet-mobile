@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { EventFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -10,7 +11,7 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSorterStyles } from './sorter.styles';
 
-interface Props<T extends string> {
+interface Props<T extends string> extends TestIdProps {
   sortValue: T;
   description: string;
   sortFieldsOptions: Array<T>;

@@ -10,6 +10,7 @@ import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable
 import { PublicKeyHashText } from '../../../components/public-key-hash-text/public-key-hash-text';
 import { removePermissionAction } from '../../../store/d-apps/d-apps-actions';
 import { formatSize } from '../../../styles/format-size';
+import { DAppsSettingsSelectors } from '../d-apps.settings.selectors';
 import { usePermissionItemStyles } from './permission-item.styles';
 
 interface Props {
@@ -47,7 +48,12 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
           <PublicKeyHashText publicKeyHash={permission.publicKey} />
         </View>
       </View>
-      <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={removePermissionHandler} />
+      <TouchableIcon
+        name={IconNameEnum.Trash}
+        size={formatSize(16)}
+        onPress={removePermissionHandler}
+        testID={DAppsSettingsSelectors.trashButton}
+      />
     </View>
   );
 };

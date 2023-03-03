@@ -17,12 +17,12 @@ import { getNetworkGasTokenMetadata } from '../../utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
-import { Dropdown, DropdownValueComponent } from '../dropdown/dropdown';
+import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
-import { renderTokenListItem, TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
+import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
@@ -56,6 +56,10 @@ const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => 
   />
 );
 
+const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
+  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
+);
+
 const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
@@ -70,7 +74,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
-  onValueChange
+  onValueChange,
+  testID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -226,6 +231,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
+          testID={testID}
         />
         <Divider size={formatSize(8)} />
 
@@ -259,12 +265,12 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           {isLiquidityProviderToken && (
             <>
               <View style={styles.balanceRow}>
-                <Text style={styles.balanceDescription}>Frozen Balance:</Text>
+                <Text style={styles.balanceText}>Frozen Balance:</Text>
                 <Divider size={formatSize(4)} />
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceValueText}
+                  style={styles.balanceText}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -272,13 +278,13 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             </>
           )}
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceDescription}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+            <Text style={styles.balanceText}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
             <Divider size={formatSize(4)} />
-            <HideBalance style={styles.balanceValueText}>
+            <HideBalance style={styles.balanceText}>
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceValueText}
+                style={styles.balanceText}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>

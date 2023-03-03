@@ -1,9 +1,8 @@
+import { jsonEqualityFn } from '../../utils/store.utils';
 import { useSelector } from '../selector';
 
 export const usePermissionsSelector = () => useSelector(({ dApps }) => dApps.permissions);
 
-const useDAppsSelector = () => useSelector(({ dApps }) => dApps);
+export const useDAppsListSelector = () => useSelector(({ dApps }) => dApps.dappsList.data, jsonEqualityFn);
 
-export const useDAppsListSelector = () => useDAppsSelector().dappsList.data;
-
-export const useTokensApyInfoSelector = () => useSelector(({ dApps }) => dApps.tokensApyInfo);
+export const useTokensApyRatesSelector = () => useSelector(({ dApps }) => dApps.tokensApyRates);

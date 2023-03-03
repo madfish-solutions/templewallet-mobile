@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { AccountInterface } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useShelter } from '../../shelter/use-shelter.hook';
@@ -38,7 +38,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountInterface>> = ({
+export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface>> = ({
   value,
   list,
   onValueChange,

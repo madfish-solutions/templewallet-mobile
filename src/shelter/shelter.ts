@@ -112,7 +112,11 @@ export class Shelter {
           })
         );
       }),
-      catchError(() => of(undefined))
+      catchError(error => {
+        console.error(error);
+
+        return of(undefined);
+      })
     );
   };
 
@@ -181,7 +185,7 @@ export class Shelter {
 
   static disableBiometryPassword$ = () => from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY)));
 
-  static getBiometryPassword = () => Keychain.getGenericPassword(biometryKeychainOptions);
+  static getBiometryPassword = async () => Keychain.getGenericPassword(biometryKeychainOptions);
 
   static isPasswordCorrect$ = (password: string) =>
     hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
