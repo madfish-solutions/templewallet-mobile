@@ -71,7 +71,7 @@ export const Welcome = () => {
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}
           onPress={() => navigate(ScreensEnum.CreateAccount, {})}
-          testID={WelcomeSelectors.CreateNewWalletButton}
+          testID={WelcomeSelectors.createNewWalletButton}
         />
 
         <View style={styles.orDivider}>
@@ -87,7 +87,7 @@ export const Welcome = () => {
               iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
               activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
               onPress={onContinueWithCloudButtonPress}
-              testID={WelcomeSelectors.ContinueWithCloudButton}
+              testID={WelcomeSelectors.continueWithCloudButton}
               testIDProperties={{ cloud: cloudTitle }}
             />
 
@@ -101,7 +101,7 @@ export const Welcome = () => {
               title="Import"
               iconName={IconNameEnum.DownloadCloud}
               onPress={() => navigate(ScreensEnum.ImportAccount)}
-              testID={WelcomeSelectors.ImportExistingWalletButton}
+              testID={WelcomeSelectors.importExistingWalletButton}
             />
           </View>
           <View style={styles.buttonBox}>

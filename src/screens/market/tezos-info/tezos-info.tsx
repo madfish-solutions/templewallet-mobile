@@ -11,6 +11,7 @@ import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
 import { getTruncatedProps } from '../../../utils/style.util';
+import { MarketSelectors } from '../market.selectors';
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
@@ -50,7 +51,12 @@ export const TezosInfo = () => {
           <View style={styles.displayFlex}>
             <View style={styles.tooltipContainer}>
               <Text style={styles.subtitle13}>Market Cap</Text>
-              <TouchableIcon onPress={marketCapAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+              <TouchableIcon
+                onPress={marketCapAlert}
+                name={IconNameEnum.InfoFilled}
+                size={formatSize(24)}
+                testID={MarketSelectors.marketCupAlertButton}
+              />
             </View>
             <Text style={styles.regularText}>{marketCap} $</Text>
           </View>
@@ -73,7 +79,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.flex1, styles.mr8]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
             <Text style={styles.subtitle13}>Volume (24H)</Text>
-            <TouchableIcon onPress={volumeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+            <TouchableIcon
+              onPress={volumeAlert}
+              name={IconNameEnum.InfoFilled}
+              size={formatSize(24)}
+              testID={MarketSelectors.volume24HAlertButton}
+            />
           </View>
           <Text style={styles.regularText}>{volume24h} $</Text>
         </View>
@@ -81,7 +92,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.flex1]}>
           <View style={[styles.tooltipContainer, styles.mb8]}>
             <Text style={styles.subtitle13}>Circulating Supply</Text>
-            <TouchableIcon onPress={circulatingSupplyAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+            <TouchableIcon
+              onPress={circulatingSupplyAlert}
+              name={IconNameEnum.InfoFilled}
+              size={formatSize(24)}
+              testID={MarketSelectors.circulatingSupplyAlertButton}
+            />
           </View>
           <Text style={styles.regularText}>{supply} TEZ</Text>
         </View>

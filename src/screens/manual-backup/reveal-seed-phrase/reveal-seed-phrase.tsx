@@ -55,14 +55,17 @@ export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
               label="Seed phrase"
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
-            <RevealSeedPhraseView publicKeyHash={selectedAccount.publicKeyHash} />
+            <RevealSeedPhraseView
+              publicKeyHash={selectedAccount.publicKeyHash}
+              testID={RevealSeedPhraseSelectors.tapToRevealProtectedMask}
+            />
           </View>
 
           <View>
             <NewSeedPhraseAttention />
             <Divider />
             <View style={styles.checkboxContainer}>
-              <FormCheckbox name="madeSeedPhraseBackup" testID={RevealSeedPhraseSelectors.MadeSeedPhraseBackupCheckbox}>
+              <FormCheckbox name="madeSeedPhraseBackup" testID={RevealSeedPhraseSelectors.madeSeedPhraseBackupCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </FormCheckbox>
@@ -76,7 +79,7 @@ export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
                 title="Next"
                 disabled={!isValid}
                 onPress={submitForm}
-                testID={RevealSeedPhraseSelectors.NextButton}
+                testID={RevealSeedPhraseSelectors.nextButton}
               />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />

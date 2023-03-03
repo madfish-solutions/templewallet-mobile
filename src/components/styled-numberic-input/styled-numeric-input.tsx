@@ -15,7 +15,8 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   isShowCleanButton,
   onBlur,
   onFocus,
-  onChange = emptyFn
+  onChange = emptyFn,
+  testID
 }) => {
   const { metadata } = useNetworkInfo();
 
@@ -39,6 +40,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
       onBlur={handleBlur}
       onFocus={handleFocus}
       onChangeText={handleChange}
+      testID={testID}
     />
   );
 };

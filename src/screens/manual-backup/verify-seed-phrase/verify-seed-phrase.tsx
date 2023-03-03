@@ -150,7 +150,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
               title="Next"
               disabled={!isValid}
               onPress={submitForm}
-              testID={VerifySeedPhraseSelectors.NextButton}
+              testID={VerifySeedPhraseSelectors.nextButton}
             />
           </View>
           <InsetSubstitute type="bottom" />

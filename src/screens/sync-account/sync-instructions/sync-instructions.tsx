@@ -10,6 +10,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
+import { SyncInstructionsSelectors } from './sync-instructions.selectors';
 import { useSyncInstructionsStyles } from './sync-instructions.styles';
 
 const syncSteps = [
@@ -46,7 +47,11 @@ export const SyncInstructions = () => {
       </View>
       <Divider />
       <View style={styles.buttonContainer}>
-        <ButtonLargePrimary title="Scan QR" onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+        <ButtonLargePrimary
+          title="Scan QR"
+          onPress={() => navigate(ScreensEnum.ScanQrCode)}
+          testID={SyncInstructionsSelectors.scanQRButton}
+        />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

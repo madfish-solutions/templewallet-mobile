@@ -11,6 +11,7 @@ import { EmptyFn } from '../../../config/general';
 import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
 import { formatSize } from '../../../styles/format-size';
 import { SocialButton } from '../../settings/settings-header/social-button/social-button';
+import { AboutDelegationScreenSelectors } from './about-delegation-screen.selectors';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 
 interface Props {
@@ -54,17 +55,41 @@ export const AboutDelegationScreen: FC<Props> = ({ onDelegatePress }) => {
           <Text style={styles.text}>In case you have any questions, write them in our communities</Text>
           <Divider size={formatSize(20)} />
           <View style={styles.buttonLinksContainer}>
-            <SocialButton iconName={IconNameEnum.Telegram} url={telegramUrl} />
-            <SocialButton iconName={IconNameEnum.Discord} url={discordUrl} />
-            <SocialButton iconName={IconNameEnum.Twitter} url={twitterUrl} />
-            <SocialButton iconName={IconNameEnum.YouTube} url={youTubeUrl} />
-            <SocialButton iconName={IconNameEnum.Reddit} url={redditUrl} />
+            <SocialButton
+              iconName={IconNameEnum.Telegram}
+              url={telegramUrl}
+              testID={AboutDelegationScreenSelectors.telegramButton}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Discord}
+              url={discordUrl}
+              testID={AboutDelegationScreenSelectors.discordButton}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Twitter}
+              url={twitterUrl}
+              testID={AboutDelegationScreenSelectors.twitterButton}
+            />
+            <SocialButton
+              iconName={IconNameEnum.YouTube}
+              url={youTubeUrl}
+              testID={AboutDelegationScreenSelectors.youTubeButton}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Reddit}
+              url={redditUrl}
+              testID={AboutDelegationScreenSelectors.redditButton}
+            />
           </View>
           <Divider size={formatSize(24)} />
         </View>
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonDelegatePrimary title="Delegate" onPress={onDelegatePress} />
+        <ButtonDelegatePrimary
+          title="Delegate"
+          onPress={onDelegatePress}
+          testID={AboutDelegationScreenSelectors.delegateButton}
+        />
       </ButtonsFloatingContainer>
     </>
   );

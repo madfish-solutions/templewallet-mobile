@@ -25,7 +25,7 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
       <>
         <View style={ImportWalletFromSeedPhraseStyles.seedPhraseInputContainer}>
           <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
-          <FormMnemonicInput name="seedPhrase" testID={ImportWalletFromSeedPhraseSelectors.SeedPhraseInput} />
+          <FormMnemonicInput name="seedPhrase" testID={ImportWalletFromSeedPhraseSelectors.seedPhraseInput} />
           <AndroidKeyboardDisclaimer />
         </View>
         <View>
@@ -33,7 +33,7 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
             title="Next"
             disabled={!isValid}
             onPress={submitForm}
-            testID={ImportWalletFromSeedPhraseSelectors.NextButton}
+            testID={ImportWalletFromSeedPhraseSelectors.nextButton}
           />
           <InsetSubstitute type="bottom" />
         </View>

@@ -1,7 +1,8 @@
 export enum CreateNewWalletSelectors {
-  PasswordInput = 'Password Input on Create a new Wallet page',
-  RepeatPasswordInput = 'Repeat Password Input on Create a new Wallet page',
-  AcceptTermsCheckbox = 'Accept Terms Checkbox on Create a new Wallet page',
-  AnalyticsCheckbox = 'Analytics Checkbox on Create a new Wallet page',
-  CreateButton = 'Create button on Create a new Wallet page'
+  passwordInput = 'Create a new Wallet/Password Input',
+  repeatPasswordInput = 'Create a new Wallet/Repeat Password Input',
+  acceptTermsCheckbox = 'Create a new Wallet/Accept Terms Check Box',
+  analyticsCheckbox = 'Create a new Wallet/Analytics Check Box',
+  useBiometricsToUnlockCheckBox = 'Create a new Wallet/Use Biometrics to unlock the app Check Box',
+  createButton = 'Create a new Wallet/Create Button'
 }

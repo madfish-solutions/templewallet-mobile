@@ -3,10 +3,10 @@ import { findElement } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class CreateNewWalletPage extends Page {
-  passwordInput = findElement(CreateNewWalletSelectors.PasswordInput);
-  repeatPasswordInput = findElement(CreateNewWalletSelectors.RepeatPasswordInput);
-  acceptTermsCheckbox = findElement(CreateNewWalletSelectors.AcceptTermsCheckbox);
-  createButton = findElement(CreateNewWalletSelectors.CreateButton);
+  passwordInput = findElement(CreateNewWalletSelectors.passwordInput);
+  repeatPasswordInput = findElement(CreateNewWalletSelectors.repeatPasswordInput);
+  acceptTermsCheckbox = findElement(CreateNewWalletSelectors.acceptTermsCheckbox);
+  createButton = findElement(CreateNewWalletSelectors.createButton);
 
   async isVisible() {
     await this.passwordInput.waitForDisplayed();

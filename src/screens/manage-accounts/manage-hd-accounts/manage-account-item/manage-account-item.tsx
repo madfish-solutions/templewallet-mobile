@@ -20,6 +20,7 @@ import { useIsVisibleSelector, useTezosTokenSelector } from '../../../../store/w
 import { formatSize } from '../../../../styles/format-size';
 import { showWarningToast } from '../../../../toast/toast.utils';
 import { getTruncatedProps } from '../../../../utils/style.util';
+import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
@@ -54,6 +55,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
             name={IconNameEnum.Edit}
             size={formatSize(16)}
             onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+            testID={ManageAccountItemSelectors.editButton}
           />
           <Divider size={formatSize(16)} />
 
@@ -79,6 +81,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
                   })
                 )
               }
+              testID={ManageAccountItemSelectors.hideAccountToggle}
             />
           </View>
         </View>
@@ -100,6 +103,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           title="Reveal"
           marginBottom={formatSize(8)}
           onPress={() => onRevealButtonPress(account)}
+          testID={ManageAccountItemSelectors.revealButton}
         />
       </View>
     </View>

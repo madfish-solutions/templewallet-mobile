@@ -30,6 +30,7 @@ import {
   enterPasswordInitialValues,
   enterPasswordValidationSchema
 } from './enter-password.form';
+import { EnterPasswordSelectors } from './enter-password.selectors';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
@@ -85,6 +86,7 @@ export const EnterPassword = () => {
                     {...(isDisabled && {
                       error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
                     })}
+                    testID={EnterPasswordSelectors.passwordInput}
                   />
                 </View>
                 {isBiometryAvailable && (
@@ -99,14 +101,23 @@ export const EnterPassword = () => {
               </View>
 
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="Unlock" disabled={!isValid || isDisabled} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Unlock"
+                disabled={!isValid || isDisabled}
+                onPress={submitForm}
+                testID={EnterPasswordSelectors.unlockButton}
+              />
               <Divider />
             </View>
           )}
         </Formik>
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
-        <ButtonLink title="Erase Data" onPress={handleResetDataButtonPress} />
+        <ButtonLink
+          title="Erase Data"
+          onPress={handleResetDataButtonPress}
+          testID={EnterPasswordSelectors.eraseDataButtonLink}
+        />
         <InsetSubstitute type="bottom" />
       </View>
       <ToastProvider />

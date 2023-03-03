@@ -19,6 +19,7 @@ import {
   importAccountPrivateKeyInitialValues,
   importAccountPrivateKeyValidationSchema
 } from './import-account-private-key.form';
+import { ImportAccountPrivateKeySelectors } from './import-account-private-key.selectors';
 
 interface Props {
   onBackHandler: EmptyFn;
@@ -45,14 +46,27 @@ export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
           <View>
             <Divider size={formatSize(12)} />
             <Label label="Private key" description="The Secret key of the Account you want to import." />
-            <FormMnemonicInput name="privateKey" placeholder="e.g. AFVEWNWEQwt34QRVGEWBFDSAd" />
+            <FormMnemonicInput
+              name="privateKey"
+              placeholder="e.g. AFVEWNWEQwt34QRVGEWBFDSAd"
+              testID={ImportAccountPrivateKeySelectors.privateKeyInput}
+            />
             <AndroidKeyboardDisclaimer />
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
+              <ButtonLargeSecondary
+                title="Back"
+                onPress={onBackHandler}
+                testID={ImportAccountPrivateKeySelectors.backButton}
+              />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Import"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={ImportAccountPrivateKeySelectors.importButton}
+              />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
           </View>

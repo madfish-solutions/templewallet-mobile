@@ -11,6 +11,7 @@ import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle, isCloudAvailable } from 'src/utils/cloud-backup';
 
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
+import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
   const { navigate } = useNavigation();
@@ -49,6 +50,7 @@ export const BackupYourWalletOverlay = () => {
             title="Backup manually"
             style={styles.manualBackupButton}
             onPress={() => navigate(ScreensEnum.ManualBackup)}
+            testID={BackupYourWalletSelectors.manualBackupButton}
           />
         </View>
       </View>

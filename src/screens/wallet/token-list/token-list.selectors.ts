@@ -1,3 +1,6 @@
 export enum TokenListSelectors {
-  TokenList = 'TokenList'
+  tokenList = 'Wallet/Token List',
+  hideZeroBalanceCheckBox = 'Wallet/Hide Zero Balance Check Box',
+  activityButton = 'Wallet/Activity Button',
+  manageAssetsButton = 'Wallet/Manage Assets Button'
 }

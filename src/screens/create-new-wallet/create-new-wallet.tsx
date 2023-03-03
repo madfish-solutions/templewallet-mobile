@@ -110,18 +110,18 @@ export const CreateNewWallet = () => {
               <FormPasswordInput
                 isShowPasswordStrengthIndicator
                 name="password"
-                testID={CreateNewWalletSelectors.PasswordInput}
+                testID={CreateNewWalletSelectors.passwordInput}
               />
 
               <Label label="Repeat Password" description="Please enter the password again." />
-              <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.RepeatPasswordInput} />
+              <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
 
-              <View style={styles.checkboxContainer}>
+              <View style={styles.checkboxContainer} testID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}>
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
               <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={CreateNewWalletSelectors.AnalyticsCheckbox}>
+                <FormCheckbox name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Analytics</Text>
                 </FormCheckbox>
@@ -134,7 +134,7 @@ export const CreateNewWallet = () => {
 
             <View>
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" testID={CreateNewWalletSelectors.AcceptTermsCheckbox}>
+                <FormCheckbox name="acceptTerms" testID={CreateNewWalletSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Accept terms</Text>
                 </FormCheckbox>
@@ -150,7 +150,7 @@ export const CreateNewWallet = () => {
               title="Create"
               disabled={!isValid}
               onPress={submitForm}
-              testID={CreateNewWalletSelectors.CreateButton}
+              testID={CreateNewWalletSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

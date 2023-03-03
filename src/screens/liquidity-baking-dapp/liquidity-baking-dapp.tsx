@@ -31,6 +31,7 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
 import { mutezToTz } from '../../utils/tezos.util';
+import { LiquidityBakingDappSelectors } from './liquidity-baking-dapp.selectors';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
 const DATA_REFRESH_INTERVAL = 50 * 1000;
@@ -113,6 +114,7 @@ export const LiquidityBakingDapp = () => {
                   bToken
                 })
               }
+              testID={LiquidityBakingDappSelectors.removeButton}
             />
           </View>
           <Divider size={formatSize(16)} />
@@ -123,6 +125,7 @@ export const LiquidityBakingDapp = () => {
               onPress={() =>
                 navigate(ModalsEnum.AddLiquidity, { lpContractAddress: LIQUIDITY_BAKING_DEX_ADDRESS, aToken, bToken })
               }
+              testID={LiquidityBakingDappSelectors.addButton}
             />
           </View>
         </ButtonsContainer>

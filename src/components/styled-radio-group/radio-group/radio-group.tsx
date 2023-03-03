@@ -11,7 +11,8 @@ export const RadioGroup = <T extends string>({
   color = '#444',
   itemContainerStyle,
   itemLabelStyle,
-  onPress
+  onPress,
+  testID
 }: RadioGroupProps<T>) => {
   const itemsLocal = useMemo(() => {
     const handlePress = (value: string) => {
@@ -31,7 +32,13 @@ export const RadioGroup = <T extends string>({
   return (
     <View style={groupStyles.container}>
       {itemsLocal.map(item => (
-        <RadioItem {...item} color={color} containerStyle={itemContainerStyle} labelStyle={itemLabelStyle} />
+        <RadioItem
+          {...item}
+          color={color}
+          containerStyle={itemContainerStyle}
+          labelStyle={itemLabelStyle}
+          testID={testID}
+        />
       ))}
     </View>
   );
