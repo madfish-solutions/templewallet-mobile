@@ -1,7 +1,7 @@
 import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useWelcomeStyles = createUseStyles(({ typography }) => ({
+export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
   imageView: {
     marginTop: formatSize(108),
     alignItems: 'center'
@@ -24,11 +24,11 @@ export const useWelcomeStyles = createUseStyles(({ typography }) => ({
   orDividerLine: {
     flex: 0.444776119,
     height: formatSize(1),
-    backgroundColor: '#707070'
+    backgroundColor: colors.gray1
   },
   orDividerText: {
     ...typography.caption13Regular,
-    color: '#707070'
+    color: colors.gray1
   }
 }));
 

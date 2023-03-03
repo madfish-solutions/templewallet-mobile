@@ -87,30 +87,30 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
     });
   } catch (error) {
     console.error(error);
-
-    throw new Error('Failed to save file');
   }
 
-  await RNFS.unlink(localPath).catch(error => {
-    console.error(error);
-  });
+  await RNFS.unlink(localPath).catch(console.error);
 
-  if (!isString(fileId)) {
-    throw new Error('Failed to save file');
-  }
-
-  let fileExists: boolean;
-  try {
-    fileExists = await RNCloudFs.fileExists(isAndroid ? { scope: 'hidden', fileId } : { scope: 'hidden', targetPath });
-  } catch (error) {
-    console.error(error);
-
-    throw new Error('Failed to save file');
-  }
+  const fileExists = await checkIfBackupExists(fileId);
 
   if (fileExists === false) {
     throw new Error('Failed to save file');
   }
+};
+
+const checkIfBackupExists = async (fileId?: string) => {
+  if (!isString(fileId)) {
+    return false;
+  }
+
+  let fileExists = false;
+  try {
+    fileExists = await RNCloudFs.fileExists(isAndroid ? { scope: 'hidden', fileId } : { scope: 'hidden', targetPath });
+  } catch (error) {
+    console.error(error);
+  }
+
+  return fileExists;
 };
 
 export const fetchCloudBackup = async (password: string, fileId: string): Promise<BackupFileInterface> => {

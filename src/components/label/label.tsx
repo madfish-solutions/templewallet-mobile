@@ -5,7 +5,7 @@ import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
 import { Divider } from '../divider/divider';
-import { useLabelStyles } from './label.styles';
+import { useDescriptionStyles, useLabelStyles } from './label.styles';
 
 interface Props {
   label?: string;
@@ -27,17 +27,30 @@ export const Label: FC<Props> = ({ label, description, isOptional = false }) => 
           </>
         )}
       </View>
-      {isDefined(description) && (
-        <Text style={styles.description}>
-          {Array.isArray(description)
-            ? description.map((item, index) => (
-                <Text key={index} style={item.bold === true ? styles.boldDescriptionPiece : undefined}>
-                  {item.text}
-                </Text>
-              ))
-            : description}
-        </Text>
-      )}
+
+      {isDefined(description) && <Description description={description} />}
     </View>
   );
+};
+
+interface DescriptionProps {
+  description: string | { text: string; bold?: boolean }[];
+}
+
+const Description: FC<DescriptionProps> = ({ description }) => {
+  const styles = useDescriptionStyles();
+
+  if (Array.isArray(description)) {
+    return (
+      <Text style={styles.description}>
+        {description.map((item, index) => (
+          <Text key={index} style={item.bold === true ? styles.boldDescriptionPiece : undefined}>
+            {item.text}
+          </Text>
+        ))}
+      </Text>
+    );
+  }
+
+  return <Text style={styles.description}>{description}</Text>;
 };

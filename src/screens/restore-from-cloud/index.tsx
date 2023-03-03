@@ -57,11 +57,11 @@ export const RestoreFromCloud = () => {
             <View>
               <Divider size={formatSize(12)} />
               <Label label="Backup password" description="Enter your backup password to restore a wallet." />
-              <FormPasswordInput name="password" testID={RestoreFromCloudSelectors.PasswordInput} />
+              <FormPasswordInput name="password" testID={RestoreFromCloudSelectors.passwordInput} />
             </View>
 
             <View style={[styles.checkboxContainer, styles.removeMargin]}>
-              <FormCheckbox name="reusePassword" testID={RestoreFromCloudSelectors.ReusePasswordCheckbox}>
+              <FormCheckbox name="reusePassword" testID={RestoreFromCloudSelectors.reusePasswordCheckbox}>
                 <Divider size={formatSize(8)} />
                 <Text style={styles.checkboxText}>Use this password as App password</Text>
               </FormCheckbox>
@@ -73,7 +73,7 @@ export const RestoreFromCloud = () => {
               title="Next"
               disabled={!isValid}
               onPress={submitForm}
-              testID={RestoreFromCloudSelectors.SubmitButton}
+              testID={RestoreFromCloudSelectors.submitButton}
             />
             <InsetSubstitute type="bottom" />
           </View>

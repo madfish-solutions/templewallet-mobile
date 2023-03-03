@@ -1,5 +1,5 @@
 export enum RestoreFromCloudSelectors {
-  PasswordInput = "Password Input on 'Restore With Cloud' page",
-  SubmitButton = "Button 'Next' on 'Restore With Cloud' page",
-  ReusePasswordCheckbox = "Reuse password checkbox on 'Restore With Cloud' page"
+  passwordInput = 'Restore From Cloud/Password Input',
+  submitButton = 'Restore From Cloud/Next Button',
+  reusePasswordCheckbox = 'Restore From Cloud/Use password as app password Checkbox'
 }
