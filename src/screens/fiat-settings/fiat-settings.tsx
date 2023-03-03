@@ -10,6 +10,7 @@ import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { FiatCurrenciesEnum, FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
 
+import { FiatSettingsSelectors } from './fiat-settings.selectors';
 import { useFiatSettingsStyles } from './fiat-settings.styles';
 
 export const FiatSettings = () => {
@@ -36,6 +37,7 @@ export const FiatSettings = () => {
         value={selectedFiatCurrency}
         items={radioItems}
         onChange={handleChange}
+        testID={FiatSettingsSelectors.fiatRadioButton}
       />
       <Divider />
     </ScreenContainer>

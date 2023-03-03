@@ -16,6 +16,7 @@ import {
   enableBiometryPasswordModalInitialValues,
   enableBiometryPasswordModalValidationSchema
 } from './enable-biometry-password-modal.form';
+import { EnableBiometryPasswordModalSelectors } from './enable-biometry-password-modal.selectors';
 
 export const EnableBiometryPasswordModal = () => {
   const { enableBiometryPassword } = useShelter();
@@ -34,12 +35,16 @@ export const EnableBiometryPasswordModal = () => {
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Current password" description="A password is used to protect the wallet." />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput name="password" testID={EnableBiometryPasswordModalSelectors.currentPasswordInput} />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargePrimary title="Approve" onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Approve"
+                onPress={submitForm}
+                testID={EnableBiometryPasswordModalSelectors.approveButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

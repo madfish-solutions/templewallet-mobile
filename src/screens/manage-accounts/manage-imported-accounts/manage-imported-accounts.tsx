@@ -11,6 +11,7 @@ import { useImportedAccountListSelector, useSelectedAccountSelector } from '../.
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
+import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
 
 export const ManageImportedAccounts = () => {
   const { navigate } = useNavigation();
@@ -23,7 +24,11 @@ export const ManageImportedAccounts = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <SearchInput
+        placeholder="Search accounts"
+        onChangeText={debouncedSetSearch}
+        testID={ManageImportedAccountsSelectors.searchAccountsInput}
+      />
       <Divider size={formatSize(8)} />
       <InfoText />
       <ScreenContainer>

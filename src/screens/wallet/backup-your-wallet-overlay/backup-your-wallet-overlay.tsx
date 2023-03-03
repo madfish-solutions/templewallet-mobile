@@ -9,6 +9,7 @@ import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
+import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
   const { navigate } = useNavigation();
@@ -35,6 +36,7 @@ export const BackupYourWalletOverlay = () => {
             title="Manual backup"
             style={styles.manualBackupButton}
             onPress={() => navigate(ScreensEnum.ManualBackup)}
+            testID={BackupYourWalletSelectors.manualBackupButton}
           />
         </View>
       </View>

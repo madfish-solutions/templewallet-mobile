@@ -24,6 +24,7 @@ import {
   addTokenAddressFormValidationSchema,
   AddTokenAddressFormValues
 } from './add-asset-address.form';
+import { AddAssetAddressSelectors } from './add-asset-address.selectors';
 
 interface Props {
   onCloseButtonPress: EmptyFn;
@@ -64,23 +65,32 @@ export const AddAssetAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
         <ScreenContainer isFullScreenMode={true}>
           <View>
             <Label label="Address" description="Address of deployed token contract." />
-            <FormAddressInput name="address" />
+            <FormAddressInput name="address" testID={AddAssetAddressSelectors.addressInput} />
 
             <Label
               label="Token ID"
               description="A non negative integer number that identifies the token inside FA2 contract"
               isOptional={true}
             />
-            <FormNumericInput name="id" decimals={0} />
+            <FormNumericInput name="id" decimals={0} testID={AddAssetAddressSelectors.tokenIdInput} />
 
             <Divider />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={onCloseButtonPress} />
+              <ButtonLargeSecondary
+                title="Close"
+                onPress={onCloseButtonPress}
+                testID={AddAssetAddressSelectors.closeButton}
+              />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Next"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={AddAssetAddressSelectors.nextButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

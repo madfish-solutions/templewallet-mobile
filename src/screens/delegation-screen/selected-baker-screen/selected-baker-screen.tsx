@@ -20,6 +20,7 @@ import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
 import { BakerRewardsList } from './baker-rewards-list/baker-rewards-list';
+import { SelectedBakerScreenSelectors } from './selected-baker-screen.selectors';
 import { useSelectedBakerScreenStyles } from './selected-baker-screen.styles';
 
 interface Props {
@@ -53,7 +54,10 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
+                <ExternalLinkButton
+                  url={tzktUrl(selectedRpcUrl, baker.address)}
+                  testID={SelectedBakerScreenSelectors.selectedBakerTZKTlink}
+                />
               </View>
             </View>
           </View>
@@ -63,6 +67,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             marginTop={formatSize(8)}
             marginRight={formatSize(8)}
             onPress={onRedelegatePress}
+            testID={SelectedBakerScreenSelectors.redelegateButton}
           />
         </View>
 

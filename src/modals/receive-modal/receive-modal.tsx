@@ -22,6 +22,7 @@ import { useColors } from '../../styles/use-colors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isString } from '../../utils/is-string';
+import { ReceiveModalSelectors } from './receive-modal.selectors';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
 export const ReceiveModal: FC = () => {
@@ -76,7 +77,15 @@ export const ReceiveModal: FC = () => {
       </View>
       <Divider size={formatSize(8)} />
 
-      <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress}>
+      <TouchableOpacity
+        style={styles.publicKeyHashContainer}
+        onPress={handleCopyButtonPress}
+        testID={
+          isShownDomainName && isString(domainName)
+            ? ReceiveModalSelectors.domainSwitchButton
+            : ReceiveModalSelectors.publicAddressSwitchButton
+        }
+      >
         {isShownDomainName && isString(domainName) ? (
           <Text style={styles.publicKeyHash}>{domainName}</Text>
         ) : (

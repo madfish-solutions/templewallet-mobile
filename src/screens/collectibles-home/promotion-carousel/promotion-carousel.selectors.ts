@@ -1,6 +1,6 @@
 export enum PromotionCarouselSelectors {
-  QuipuSwap = 'PromotionCarousel/QuipuSwap',
-  Yupana = 'PromotionCarousel/Yupana',
-  SupportUkraine = 'PromotionCarousel/SupportUkraine',
-  MadFishBlog = 'PromotionCarousel/MadFishBlog'
+  quipuSwapBanner = 'Promotion Carousel/QuipuSwap Banner',
+  yupanaBanner = 'Promotion Carousel/Yupana Banner',
+  supportUkraineBanner = 'Promotion Carousel/Support Ukraine Banner',
+  madFishBlogBanner = 'Promotion Carousel/MadFish Blog Banner'
 }

@@ -13,6 +13,7 @@ import { useSlippageSelector } from '../../../store/settings/settings-selectors'
 import { formatSize } from '../../../styles/format-size';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
+import { SwapSettingsSelectors } from './swap-settings.selectors';
 import { useSwapSettingsStyles } from './swap-settings.styles';
 
 const mapSlippageToIndex = (slippage: number): number => {
@@ -75,6 +76,7 @@ export const SwapSettingsScreen: FC = () => {
         selectedIndex={inputTypeIndex}
         values={['0.75%', '1.5%', '3.0%', 'Custom']}
         onChange={handleTokenInputTypeChange}
+        testID={SwapSettingsSelectors.slippageToleranceToggle}
       />
       <Divider size={formatSize(10)} />
       {inputTypeIndex === 3 && (
@@ -84,6 +86,7 @@ export const SwapSettingsScreen: FC = () => {
           editable={true}
           isShowCleanButton
           onChange={onHandleChange}
+          testID={SwapSettingsSelectors.customInput}
         />
       )}
       <Text style={styles.desctiption}>

@@ -8,6 +8,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useIsNewNotificationsAvailableSelector } from '../../../store/notifications/notifications-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
+import { NotificationBellSelectors } from './notification-bell.selectors';
 import { NotificationsBellStyles } from './notifications-bell.styles';
 
 export const NotificationsBell = () => {
@@ -17,7 +18,11 @@ export const NotificationsBell = () => {
   const isNewNotificationsAvailable = useIsNewNotificationsAvailableSelector();
 
   return (
-    <TouchableOpacity style={NotificationsBellStyles.iconContainer} onPress={() => navigate(ScreensEnum.Notifications)}>
+    <TouchableOpacity
+      style={NotificationsBellStyles.iconContainer}
+      onPress={() => navigate(ScreensEnum.Notifications)}
+      testID={NotificationBellSelectors.notificationBellButton}
+    >
       {isNewNotificationsAvailable && (
         <Icon
           name={IconNameEnum.NotificationDot}

@@ -2,10 +2,12 @@ import React, { FC, useEffect, useState } from 'react';
 
 import { OVERLAY_SHOW_TIMEOUT } from '../../../../components/mnemonic/mnemonic.config';
 import { RevealSecretView } from '../../../../components/mnemonic/reveal-secret-view/reveal-secret-view';
+import { RevealSecretViewSelectors } from '../../../../components/mnemonic/reveal-secret-view/reveal-secret-view.selectors';
 import { useActiveTimer } from '../../../../hooks/use-active-timer.hook';
+import { TestIdProps } from '../../../../interfaces/test-id.props';
 import { useShelter } from '../../../../shelter/use-shelter.hook';
 
-interface Props {
+interface Props extends TestIdProps {
   publicKeyHash: string;
 }
 
@@ -31,5 +33,11 @@ export const RevealSeedPhraseView: FC<Props> = ({ publicKeyHash }) => {
     });
   };
 
-  return <RevealSecretView value={seedPhrase} onProtectedOverlayPress={handleProtectedOverlayPress} />;
+  return (
+    <RevealSecretView
+      value={seedPhrase}
+      onProtectedOverlayPress={handleProtectedOverlayPress}
+      testID={RevealSecretViewSelectors.seedPhraseValue}
+    />
+  );
 };
