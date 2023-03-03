@@ -16,7 +16,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { BackupFileInterface, fetchCloudBackup } from 'src/utils/cloud-backup';
+import { BackupFileInterface, fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';
@@ -31,7 +31,7 @@ export const RestoreFromCloud = () => {
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = async ({ password, reusePassword }: RestoreFromCloudFormValues) => {
-    let backup: BackupFileInterface | undefined;
+    let backup: BackupFileInterface;
     try {
       backup = await fetchCloudBackup(password, fileId);
     } catch (error) {
@@ -40,10 +40,9 @@ export const RestoreFromCloud = () => {
       return void showErrorToast({ description });
     }
 
-    return void navigate(ScreensEnum.CreateAccount, {
-      password: reusePassword ? password : undefined,
-      mnemonic: backup.mnemonic
-    });
+    const useRestoredCloudBackup = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
+
+    return void navigate(ScreensEnum.CreateAccount, { useRestoredCloudBackup });
   };
 
   return (

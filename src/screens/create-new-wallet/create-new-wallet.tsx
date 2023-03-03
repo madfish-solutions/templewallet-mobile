@@ -27,7 +27,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
-import { saveCloudBackup } from 'src/utils/cloud-backup';
+import { saveCloudBackup, getRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { generateSeed } from 'src/utils/keys.util';
 
 import {
@@ -40,20 +40,21 @@ import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 export const CreateNewWallet = () => {
   const dispatch = useDispatch();
 
-  const {
-    backupToCloud,
-    password: passwordFromRoute,
-    mnemonic: mnemonicFromRoute
-  } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+  const { backupToCloud, useRestoredCloudBackup } =
+    useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+
+  const restoredCloudBackup = getRestoredCloudBackup(useRestoredCloudBackup);
+
+  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = restoredCloudBackup;
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
-  const initialValues = isString(passwordFromRoute)
+  const initialValues = isString(cloudBackupPassword)
     ? {
         ...createNewPasswordInitialValues,
-        password: passwordFromRoute,
-        passwordConfirmation: passwordFromRoute
+        password: cloudBackupPassword,
+        passwordConfirmation: cloudBackupPassword
       }
     : createNewPasswordInitialValues;
 
@@ -61,14 +62,12 @@ export const CreateNewWallet = () => {
     dispatch(showLoaderAction());
     dispatch(setIsAnalyticsEnabled(analytics));
 
-    const seedPhrase = isString(mnemonicFromRoute) ? mnemonicFromRoute : await generateSeed();
+    const seedPhrase = isString(cloudBackupMnemonic) ? cloudBackupMnemonic : await generateSeed();
 
     importWallet({ seedPhrase, password, useBiometry });
 
-    //
-
-    if (backupToCloud !== true) {
-      if (!isString(mnemonicFromRoute)) {
+    if (!Boolean(backupToCloud)) {
+      if (!isString(cloudBackupMnemonic)) {
         dispatch(requestSeedPhraseBackupAction());
       }
 

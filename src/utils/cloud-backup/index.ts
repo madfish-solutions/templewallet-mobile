@@ -8,6 +8,8 @@ import { isAndroid } from 'src/config/system';
 
 import PackageJSON from '../../../package.json';
 
+export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
+
 export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
 
 const CLOUD_WALLET_FOLDER = 'temple-wallet';

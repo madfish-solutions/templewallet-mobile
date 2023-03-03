@@ -40,7 +40,7 @@ export const CloudBackup = () => {
   const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
     const isPasswordCorrect = await firstValueFrom(Shelter.isPasswordCorrect$(password));
 
-    if (isPasswordCorrect === false) {
+    if (!isPasswordCorrect) {
       return void showErrorToast({ description: 'Wrong password' });
     }
 

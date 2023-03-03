@@ -59,7 +59,7 @@ export type ScreensParamList = {
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
-  [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; password?: string; mnemonic?: string };
+  [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; useRestoredCloudBackup?: number };
   [ScreensEnum.RestoreFromCloud]: { fileId: string };
 
   /** Wallet stack **/
