@@ -11,6 +11,8 @@ const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
 export const useNumericInput = (
   value: BigNumber | undefined,
   decimals: number,
+  minValue = DEFAULT_MIN_VALUE,
+  maxValue = DEFAULT_MAX_VALUE,
   onChange: EventFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
   onFocus: TextInputProps['onFocus'] = emptyFn
@@ -40,9 +42,12 @@ export const useNumericInput = (
         normalizedStringValue = normalizedStringValue.substring(0, indexOfDot + decimals + 1);
       }
 
-      if (newValue.gte(DEFAULT_MIN_VALUE) && newValue.lte(DEFAULT_MAX_VALUE)) {
+      if (newValue.gte(minValue) && newValue.lte(maxValue)) {
         setStringValue(normalizedStringValue);
         onChange(normalizedStringValue !== '' ? newValue : undefined);
+        console.log('handleChange', normalizedStringValue, newValue.toString());
+      } else {
+        console.log('handleChange2', normalizedStringValue, newValue.toString());
       }
     },
     [decimals, setStringValue, onChange]
