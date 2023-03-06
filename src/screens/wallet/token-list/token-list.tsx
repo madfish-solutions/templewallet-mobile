@@ -23,7 +23,7 @@ import { formatSize, formatSizeScaled } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { filterTezos } from 'src/utils/filter.util';
+import { shouldFilterTezos } from 'src/utils/filter.util';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 
 import { TezosToken } from './token-list-item/tezos-token';
@@ -44,7 +44,7 @@ const keyExtractor = (item: FlatListItem) => {
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
-export const TokenList: FC = () => {
+export const TokensList: FC = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const styles = useTokenListStyles();
@@ -57,21 +57,22 @@ export const TokenList: FC = () => {
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const isHideZeroBalanceMemo = useHideZeroBalancesSelector();
+  const isHideZeroBalance = useHideZeroBalancesSelector();
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);
-  const { filteredAssetsList, isHideZeroBalance, searchValue, setSearchValue } = useFilteredAssetsList(
+  const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
-    isHideZeroBalanceMemo
+    isHideZeroBalance,
+    true
   );
   const isShowTezos = useMemo(
-    () => filterTezos(tezosToken.balance, isHideZeroBalance, metadata, searchValue),
+    () => shouldFilterTezos(tezosToken.balance, isHideZeroBalance, metadata, searchValue),
     [tezosToken.balance, isHideZeroBalance, searchValue]
   );
 
   const flatListData = useMemo<FlatListItem[]>(
-    () => [...((isShowTezos ? [TEZ_TOKEN_SLUG] : []) as Array<typeof TEZ_TOKEN_SLUG>), ...filteredAssetsList],
+    () => (isShowTezos ? [TEZ_TOKEN_SLUG, ...filteredAssetsList] : filteredAssetsList),
     [isShowTezos, filteredAssetsList]
   );
 

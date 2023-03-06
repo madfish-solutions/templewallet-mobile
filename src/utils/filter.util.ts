@@ -1,7 +1,8 @@
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+
 import { isString } from './is-string';
 
-export const filterTezos = (
+export const shouldFilterTezos = (
   tezosBalance: string,
   isHideZeroBalance: boolean,
   gasTokenMetadata: TokenMetadataInterface,
