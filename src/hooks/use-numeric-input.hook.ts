@@ -5,14 +5,14 @@ import { NativeSyntheticEvent, TextInputFocusEventData, TextInputProps } from 'r
 import { emptyFn, EmptyFn, EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
 
-const DEFAULT_MIN_VALUE = new BigNumber(0);
-const DEFAULT_MAX_VALUE = new BigNumber(Number.MAX_SAFE_INTEGER);
+const DEFAULT_MIN_VALUE = 0;
+const DEFAULT_MAX_VALUE = Number.MAX_SAFE_INTEGER;
 
 export const useNumericInput = (
   value: BigNumber | undefined,
   decimals: number,
-  minValue = DEFAULT_MIN_VALUE,
-  maxValue = DEFAULT_MAX_VALUE,
+  minValue: BigNumber.Value = DEFAULT_MIN_VALUE,
+  maxValue: BigNumber.Value = DEFAULT_MAX_VALUE,
   onChange: EventFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
   onFocus: TextInputProps['onFocus'] = emptyFn
@@ -45,9 +45,6 @@ export const useNumericInput = (
       if (newValue.gte(minValue) && newValue.lte(maxValue)) {
         setStringValue(normalizedStringValue);
         onChange(normalizedStringValue !== '' ? newValue : undefined);
-        console.log('handleChange', normalizedStringValue, newValue.toString());
-      } else {
-        console.log('handleChange2', normalizedStringValue, newValue.toString());
       }
     },
     [decimals, setStringValue, onChange]
