@@ -50,5 +50,5 @@ const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
     const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
     const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
 
-    return aDollarValue.eq(bDollarValue) ? 0 : aDollarValue.gt(bDollarValue) ? -1 : 1;
+    return bDollarValue.minus(aDollarValue).toNumber();
   });
