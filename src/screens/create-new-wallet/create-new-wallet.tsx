@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import { isString } from 'lodash-es';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -40,22 +40,24 @@ import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 export const CreateNewWallet = () => {
   const dispatch = useDispatch();
 
-  const { backupToCloud, useRestoredCloudBackup } =
-    useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+  const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
-  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } =
-    getRestoredCloudBackup(useRestoredCloudBackup);
+  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = getRestoredCloudBackup(cloudBackupId);
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
-  const initialValues = isString(cloudBackupPassword)
-    ? {
-        ...createNewPasswordInitialValues,
-        password: cloudBackupPassword,
-        passwordConfirmation: cloudBackupPassword
-      }
-    : createNewPasswordInitialValues;
+  const initialValues = useMemo(
+    () =>
+      isString(cloudBackupPassword)
+        ? {
+            ...createNewPasswordInitialValues,
+            password: cloudBackupPassword,
+            passwordConfirmation: cloudBackupPassword
+          }
+        : createNewPasswordInitialValues,
+    [cloudBackupPassword]
+  );
 
   const handleSubmit = async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
     dispatch(showLoaderAction());

@@ -40,9 +40,9 @@ export const RestoreFromCloud = () => {
       return void showErrorToast({ description });
     }
 
-    const useRestoredCloudBackup = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
+    const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
 
-    return void navigate(ScreensEnum.CreateAccount, { useRestoredCloudBackup });
+    return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
   };
 
   return (
