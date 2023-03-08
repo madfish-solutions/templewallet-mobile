@@ -74,10 +74,20 @@ export const useVisibleAssetListSelector = () => {
   return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
 };
 
-export const useTokensListSelector = () => {
+export const useTokensListSelector = (filterZeroBalance = false) => {
   const assetsList = useAssetsListSelector();
 
-  return useMemo(() => assetsList.filter(({ artifactUri }) => !isDefined(artifactUri)), [assetsList]);
+  return useMemo(
+    () =>
+      assetsList.filter(asset => {
+        if (isDefined(asset.artifactUri) || (filterZeroBalance && !isNonZeroBalance(asset))) {
+          return false;
+        }
+
+        return true;
+      }),
+    [assetsList]
+  );
 };
 
 export const useTokenSelector = (tokenSlug: string) => {
@@ -89,24 +99,22 @@ export const useTokenSelector = (tokenSlug: string) => {
   );
 };
 
-export const useTokensWithTezosListSelector = () => {
-  const assetsList = useAssetsListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
-
-  return useMemo(
-    () => [tezosToken, ...assetsList].filter(({ artifactUri }) => !isDefined(artifactUri)),
-    [assetsList, tezosToken]
-  );
-};
-
-export const useVisibleTokensListSelector = () => {
+export const useVisibleTokensListSelector = (filterZeroBalance = false) => {
   const tokensList = useTokensListSelector();
 
   return useMemo(
     () =>
-      tokensList.filter(
-        ({ visibility, symbol }) => visibility === VisibilityEnum.Visible && symbol !== UNKNOWN_TOKEN_SYMBOL
-      ),
+      tokensList.filter(asset => {
+        if (
+          asset.visibility !== VisibilityEnum.Visible ||
+          asset.symbol === UNKNOWN_TOKEN_SYMBOL ||
+          (filterZeroBalance && !isNonZeroBalance(asset))
+        ) {
+          return false;
+        }
+
+        return true;
+      }),
     [tokensList]
   );
 };

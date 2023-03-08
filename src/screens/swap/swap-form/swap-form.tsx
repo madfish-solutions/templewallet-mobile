@@ -35,7 +35,7 @@ import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
-  useTokensWithTezosListSelector
+  useTokensListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -45,7 +45,6 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEZOS_DEXES_API_URL } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
-// import { isString } from 'src/utils/is-string';
 
 import { KNOWN_DEX_TYPES, ROUTING_FEE_ADDRESS, ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
@@ -66,7 +65,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
-  const assetsList = useTokensWithTezosListSelector();
+  const assetsList = useTokensListSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const allRoutePairs = useAllRoutePairs(TEZOS_DEXES_API_URL);
@@ -115,8 +115,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       })
     );
   };
-
-  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   const formik = useFormik<SwapFormValues>({
     initialValues: {
@@ -178,13 +176,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     }
   }, [bestTradeWithSlippageTolerance]);
 
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true);
+  const { filteredAssetsList: fromAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true);
 
-  const { filteredAssetsList: assetsListWithTez, setSearchValue: setSearchTezAssetsValue } = useFilteredAssetsList(
+  const fromAssetsListWithTezos = useMemo(() => [tezosToken, ...fromAssetsList], [fromAssetsList]);
+
+  const { filteredAssetsList: toAssetsList, setSearchValue: setSearchTezAssetsValue } = useFilteredAssetsList(
     assetsList,
     false,
     true
   );
+
+  const toAssetsListWithTez = useMemo(() => [tezosToken, ...toAssetsList], [toAssetsList]);
 
   useEffect(() => {
     if (bestTrade.length > 0) {
@@ -224,17 +226,19 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         }
       >
         <Divider size={formatSize(8)} />
+
         <FormAssetAmountInput
           name="inputAssets"
           label="From"
           isSearchable
           maxButton
-          assetsList={filteredAssetsList}
+          assetsList={fromAssetsListWithTezos}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
         />
         <SwapAssetsButton />
+
         <FormAssetAmountInput
           name="outputAssets"
           label="To"
@@ -242,12 +246,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toUsdToggle={false}
           editable={false}
           isSearchable
-          assetsList={assetsListWithTez}
+          assetsList={toAssetsListWithTez}
           setSearchValue={setSearchTezAssetsValue}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
         />
+
         <Label label="Swap route" />
+
         <View>
           <SwapRoute
             inputAssets={inputAssets}
@@ -257,6 +263,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           />
 
           <Divider />
+
           <View>
             <SwapExchangeRate
               inputAssets={inputAssets}
@@ -266,8 +273,10 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             />
           </View>
         </View>
+
         <Divider size={formatSize(16)} />
       </ScreenContainer>
+
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
           disabled={submitCount !== 0 && !isValid}

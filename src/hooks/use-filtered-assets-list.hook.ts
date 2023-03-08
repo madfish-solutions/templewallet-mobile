@@ -12,16 +12,14 @@ export const useFilteredAssetsList = (
   isHideZeroBalance = false,
   sortByDollarValueDecrease = false
 ) => {
-  const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
-    () => assetsList.filter(asset => isNonZeroBalance(asset)),
-    [assetsList]
+  const sourceArray = useMemo<TokenInterface[]>(
+    () => (isHideZeroBalance ? assetsList.filter(asset => isNonZeroBalance(asset)) : assetsList),
+    [assetsList, isHideZeroBalance]
   );
 
   const [searchValue, setSearchValue] = useState<string>();
 
   const filteredAssetsList = useMemo<TokenInterface[]>(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
-
     if (!isString(searchValue)) {
       return sortByDollarValueDecrease ? applySortByDollarValueDecrease([...sourceArray]) : sourceArray;
     }
@@ -36,7 +34,7 @@ export const useFilteredAssetsList = (
     );
 
     return sortByDollarValueDecrease ? applySortByDollarValueDecrease(result) : sourceArray;
-  }, [searchValue, assetsList, nonZeroBalanceAssetsList, isHideZeroBalance, sortByDollarValueDecrease]);
+  }, [searchValue, sourceArray, isHideZeroBalance, sortByDollarValueDecrease]);
 
   return {
     filteredAssetsList,

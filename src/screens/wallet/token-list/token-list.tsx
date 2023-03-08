@@ -56,16 +56,12 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const visibleTokensList = useVisibleTokensListSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
+  const visibleTokensList = useVisibleTokensListSelector(isHideZeroBalance);
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);
-  const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
-    visibleTokensList,
-    isHideZeroBalance,
-    true
-  );
+  const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(visibleTokensList, false, true);
   const isShowTezos = useMemo(
     () => shouldFilterTezos(tezosToken.balance, isHideZeroBalance, metadata, searchValue),
     [tezosToken.balance, isHideZeroBalance, searchValue]
