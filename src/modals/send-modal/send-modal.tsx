@@ -31,7 +31,7 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
-import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -51,17 +51,12 @@ export const SendModal: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true, true);
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true, true, tezosToken);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
-
-  const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...filteredAssetsList],
-    [tezosToken, filteredAssetsList]
-  );
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
@@ -71,14 +66,14 @@ export const SendModal: FC = () => {
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       assetAmount: {
-        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
+        asset: filteredAssetsList.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
       recipient,
       transferBetweenOwnAccounts: false
     }),
-    []
+    [filteredAssetsList]
   );
 
   const onSubmit = async ({
@@ -129,7 +124,7 @@ export const SendModal: FC = () => {
               maxButton
               name="assetAmount"
               label="Asset"
-              assetsList={filteredAssetsListWithTez}
+              assetsList={filteredAssetsList}
               testID={SendModalSelectors.assetInput}
             />
             <Divider />

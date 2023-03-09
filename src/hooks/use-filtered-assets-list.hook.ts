@@ -13,7 +13,7 @@ export const useFilteredAssetsList = (
   filterZeroBalances = false,
   sortByDollarValueDecrease = false,
   leadingAsset?: TokenInterface,
-  leadingAssetIsSearchable = true
+  leadingAssetIsFilterable = true
 ) => {
   const sourceArray = useMemo<TokenInterface[]>(
     () => (filterZeroBalances ? assetsList.filter(asset => isNonZeroBalance(asset)) : assetsList),
@@ -35,15 +35,21 @@ export const useFilteredAssetsList = (
   }, [searchValue, sourceArray, sortByDollarValueDecrease]);
 
   const filteredAssetsList = useMemo(() => {
-    if (
-      !isDefined(leadingAsset) ||
-      (leadingAssetIsSearchable && isString(searchValue) && !isAssetSearched(leadingAsset, searchValue.toLowerCase()))
-    ) {
+    if (!isDefined(leadingAsset)) {
       return searchedAssetsList;
     }
 
+    if (leadingAssetIsFilterable) {
+      if (filterZeroBalances && !isNonZeroBalance(leadingAsset)) {
+        return searchedAssetsList;
+      }
+      if (isString(searchValue) && !isAssetSearched(leadingAsset, searchValue.toLowerCase())) {
+        return searchedAssetsList;
+      }
+    }
+
     return [leadingAsset, ...searchedAssetsList];
-  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsSearchable]);
+  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsFilterable]);
 
   return {
     filteredAssetsList,

@@ -176,14 +176,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     }
   }, [bestTradeWithSlippageTolerance]);
 
-  const { filteredAssetsList: fromAssetsListWithTezos, setSearchValue } = useFilteredAssetsList(
+  const { filteredAssetsList: fromAssetsList, setSearchValue: setFromSearchValue } = useFilteredAssetsList(
     assetsList,
     true,
     true,
     tezosToken
   );
 
-  const { filteredAssetsList: toAssetsListWithTez, setSearchValue: setSearchTezAssetsValue } = useFilteredAssetsList(
+  const nonEmptyFromAssetsList = fromAssetsList.length ? fromAssetsList : [tezosToken];
+
+  const { filteredAssetsList: toAssetsList, setSearchValue: setToSearchValue } = useFilteredAssetsList(
     assetsList,
     false,
     true,
@@ -234,8 +236,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           label="From"
           isSearchable
           maxButton
-          assetsList={fromAssetsListWithTezos}
-          setSearchValue={setSearchValue}
+          assetsList={nonEmptyFromAssetsList}
+          setSearchValue={setFromSearchValue}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
         />
@@ -248,8 +250,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toUsdToggle={false}
           editable={false}
           isSearchable
-          assetsList={toAssetsListWithTez}
-          setSearchValue={setSearchTezAssetsValue}
+          assetsList={toAssetsList}
+          setSearchValue={setToSearchValue}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
         />
