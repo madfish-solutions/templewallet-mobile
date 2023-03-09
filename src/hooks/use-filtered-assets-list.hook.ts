@@ -31,7 +31,7 @@ export const useFilteredAssetsList = (
 
     const result = sourceArray.filter(asset => isAssetSearched(asset, lowerCaseSearchValue));
 
-    return sortByDollarValueDecrease ? applySortByDollarValueDecrease(result) : sourceArray;
+    return sortByDollarValueDecrease ? applySortByDollarValueDecrease(result) : result;
   }, [searchValue, sourceArray, sortByDollarValueDecrease]);
 
   const filteredAssetsList = useMemo(() => {
@@ -43,7 +43,7 @@ export const useFilteredAssetsList = (
     }
 
     return [leadingAsset, ...searchedAssetsList];
-  }, [searchedAssetsList, leadingAsset]);
+  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsSearchable]);
 
   return {
     filteredAssetsList,
