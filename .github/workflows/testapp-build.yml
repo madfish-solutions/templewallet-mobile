@@ -75,6 +75,13 @@ jobs:
         if: ${{ github.event.inputs.android == 'true' }}
         run: yarn android:release:apk
 
+      - name: Retain Android artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Upload Android artifact to TestApp.io
         if: ${{ github.event.inputs.android == 'true' }}
         uses: testappio/github-action@v5
@@ -119,6 +126,13 @@ jobs:
           mobileprovision-base64: ${{ secrets.ADHOC_MOBILEPROVISION_BASE64 }}
           code-signing-identity: ${{ secrets.CODE_SIGNING_IDENTITY }}
           team-id: ${{ secrets.TEAM_ID }}
+
+      - name: Retain iOS artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ios/build/TempleWallet.ipa
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Upload iOS artifact to TestApp.io
         if: ${{ github.event.inputs.ios == 'true' }}

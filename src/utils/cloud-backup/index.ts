@@ -26,7 +26,7 @@ export const isCloudAvailable = () => {
     return true;
   }
 
-  return RNCloudFs.isAvailable();
+  return RNCloudFs?.isAvailable();
 };
 
 export const requestSignInToCloud = async () => {
@@ -50,7 +50,7 @@ export const requestSignInToCloud = async () => {
     /* Syncing signed-in state to RNCloudFS */
     return await RNCloudFs.loginIfNeeded();
   } catch (error) {
-    console.error(error);
+    console.error('requestSignInToCloud error:', { error });
 
     return false;
   }
