@@ -176,17 +176,19 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     }
   }, [bestTradeWithSlippageTolerance]);
 
-  const { filteredAssetsList: fromAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true);
-
-  const fromAssetsListWithTezos = useMemo(() => [tezosToken, ...fromAssetsList], [fromAssetsList]);
-
-  const { filteredAssetsList: toAssetsList, setSearchValue: setSearchTezAssetsValue } = useFilteredAssetsList(
+  const { filteredAssetsList: fromAssetsListWithTezos, setSearchValue } = useFilteredAssetsList(
     assetsList,
-    false,
-    true
+    true,
+    true,
+    tezosToken
   );
 
-  const toAssetsListWithTez = useMemo(() => [tezosToken, ...toAssetsList], [toAssetsList]);
+  const { filteredAssetsList: toAssetsListWithTez, setSearchValue: setSearchTezAssetsValue } = useFilteredAssetsList(
+    assetsList,
+    false,
+    true,
+    tezosToken
+  );
 
   useEffect(() => {
     if (bestTrade.length > 0) {

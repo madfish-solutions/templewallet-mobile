@@ -74,13 +74,13 @@ export const useVisibleAssetListSelector = () => {
   return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
 };
 
-export const useTokensListSelector = (filterZeroBalance = false) => {
+export const useTokensListSelector = (filterZeroBalances = false) => {
   const assetsList = useAssetsListSelector();
 
   return useMemo(
     () =>
       assetsList.filter(asset => {
-        if (isDefined(asset.artifactUri) || (filterZeroBalance && !isNonZeroBalance(asset))) {
+        if (isDefined(asset.artifactUri) || (filterZeroBalances && !isNonZeroBalance(asset))) {
           return false;
         }
 
@@ -99,7 +99,7 @@ export const useTokenSelector = (tokenSlug: string) => {
   );
 };
 
-export const useVisibleTokensListSelector = (filterZeroBalance = false) => {
+export const useVisibleTokensListSelector = (filterZeroBalances = false) => {
   const tokensList = useTokensListSelector();
 
   return useMemo(
@@ -108,7 +108,7 @@ export const useVisibleTokensListSelector = (filterZeroBalance = false) => {
         if (
           asset.visibility !== VisibilityEnum.Visible ||
           asset.symbol === UNKNOWN_TOKEN_SYMBOL ||
-          (filterZeroBalance && !isNonZeroBalance(asset))
+          (filterZeroBalances && !isNonZeroBalance(asset))
         ) {
           return false;
         }
