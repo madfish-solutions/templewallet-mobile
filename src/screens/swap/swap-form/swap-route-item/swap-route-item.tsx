@@ -32,8 +32,8 @@ export const SwapRouteItem: FC<Props> = ({ chain }) => {
       </View>
       <View style={[styles.flex, styles.hopsContainer]}>
         <Icon width="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
-        {chain.hops.map(({ dex }, index) => (
-          <HopItem key={index} dexId={dex} />
+        {chain.hops.map((hop, index) => (
+          <HopItem key={index} hop={hop} />
         ))}
       </View>
       <View style={styles.amountsContainer}>

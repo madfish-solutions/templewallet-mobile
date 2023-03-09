@@ -5,6 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3DexTypeEnum } from 'src/enums/route3.enum';
+import { Route3Hop } from 'src/interfaces/route3.interface';
 import { useSwapDexesSelector } from 'src/store/swap/swap-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -13,13 +14,13 @@ import { SwapRouteItemIcon } from '../swap-route-item/swap-route-item-icon/swap-
 import { useHopItemStyles } from './hop-item.styles';
 
 interface Props {
-  dexId: number;
+  hop: Route3Hop;
 }
 
-export const HopItem: FC<Props> = ({ dexId }) => {
+export const HopItem: FC<Props> = ({ hop }) => {
   const styles = useHopItemStyles();
   const { data: route3Dexes } = useSwapDexesSelector();
-  const dex = route3Dexes.find(dex => dex.id === dexId);
+  const dex = route3Dexes.find(dex => dex.id === hop.dex);
 
   const dexIcon: IconNameEnum = useMemo(() => {
     switch (dex?.type) {
@@ -47,12 +48,15 @@ export const HopItem: FC<Props> = ({ dexId }) => {
     }
   }, [dex?.type]);
 
-  const aTokenSlug = toTokenSlug(dex?.token1.contract ?? '', dex?.token1.tokenId ?? 0);
-  const bTokenSlug = toTokenSlug(dex?.token2.contract ?? '', dex?.token2.tokenId ?? 0);
+  const aToken = hop.forward ? dex?.token1 : dex?.token2;
+  const bToken = hop.forward ? dex?.token2 : dex?.token1;
+
+  const aTokenSlug = toTokenSlug(aToken?.contract ?? '', aToken?.tokenId ?? 0);
+  const bTokenSlug = toTokenSlug(bToken?.contract ?? '', bToken?.tokenId ?? 0);
 
   return (
     <View style={styles.container}>
-      <Icon name={dexIcon} size={formatSize(24)} />
+      <Icon name={dexIcon} size={formatSize(20)} />
       <Divider size={formatSize(4)} />
       <SwapRouteItemIcon tokenSlug={aTokenSlug} />
       <View style={styles.lastTokenContainer}>

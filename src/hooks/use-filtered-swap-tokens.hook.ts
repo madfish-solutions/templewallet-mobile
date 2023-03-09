@@ -8,6 +8,8 @@ import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
 export const useFilteredSwapTokensList = (tokensList: TokenInterface[]) => {
+  console.log('tokensList: ', JSON.stringify(tokensList, null, 2));
+
   const swapTokensSlugs = useSwapTokensSlugsSelector();
 
   const swapTokensListJoin = useMemo(

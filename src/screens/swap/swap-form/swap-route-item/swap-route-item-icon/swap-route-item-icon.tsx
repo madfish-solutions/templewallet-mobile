@@ -9,13 +9,14 @@ import { isDefined } from '../../../../../utils/is-defined';
 
 interface SwapRouteTokenIconProps {
   tokenSlug: string;
+  size?: number;
 }
 
-const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug }) => {
+const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug, size = 24 }) => {
   const tokenMetadata = useTokenMetadataSelector(tokenSlug);
 
   return (
-    <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={formatSize(24)} />
+    <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={formatSize(size)} />
   );
 };
 
@@ -25,7 +26,7 @@ interface SwapRouteItemIconProps {
 
 export const SwapRouteItemIcon: FC<SwapRouteItemIconProps> = ({ tokenSlug }) =>
   isDefined(tokenSlug) ? (
-    <SwapRouteTokenIcon tokenSlug={tokenSlug} />
+    <SwapRouteTokenIcon tokenSlug={tokenSlug} size={20} />
   ) : (
-    <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} />
+    <Icon name={IconNameEnum.NoNameToken} size={formatSize(20)} />
   );

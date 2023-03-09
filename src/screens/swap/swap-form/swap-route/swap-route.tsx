@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -15,6 +15,12 @@ export const SwapRoute: FC = () => {
   const { data: swapParams } = useSwapParamsSelector();
   const [isRouteVisible, setIsVisible] = useState(false);
 
+  useEffect(() => {
+    if (swapParams.chains.length === 0) {
+      setIsVisible(false);
+    }
+  }, [swapParams.chains]);
+
   const totalChains = swapParams.chains.length;
   const totalHops = swapParams.chains.reduce((accum, chain) => accum + chain.hops.length, 0);
   const shouldShowRoute = isRouteVisible && swapParams.chains.length > 0;
@@ -24,14 +30,18 @@ export const SwapRoute: FC = () => {
 
   return (
     <View>
-      <TouchableOpacity style={[styles.flex, styles.row, styles.mb12]} onPress={toggleRoutePress}>
+      <TouchableOpacity
+        style={[styles.flex, styles.row, styles.mb12]}
+        onPress={toggleRoutePress}
+        disabled={!Boolean(swapParams.output)}
+      >
         <Text style={styles.infoText}>Swap route</Text>
         <View style={styles.row}>
           <Text style={styles.infoValue}>
             {totalChains} chains / {totalHops} dexes
           </Text>
           <Divider size={12} />
-          <Icon name={iconName} />
+          <Icon name={iconName} color={!Boolean(swapParams.output) ? '#DDDDDD' : '#FF6B00'} />
         </View>
       </TouchableOpacity>
       {shouldShowRoute &&

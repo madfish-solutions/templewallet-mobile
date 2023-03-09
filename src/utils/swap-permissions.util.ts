@@ -15,13 +15,15 @@ export const getTransferPermissions = async (
     revoke: []
   };
 
+  console.log('tokenToSpend: ', tokenToSpend.standard);
+
   if (tokenToSpend.symbol === 'TEZ') {
     return permissions;
   }
 
   const assetContract = await tezos.wallet.at(tokenToSpend.address);
   if (tokenToSpend.standard === 'fa12') {
-    const reset = assetContract.methods.approve(spender, new BigNumber(0)).toTransferParams({ mutez: true });
+    const reset = assetContract.methods.approve(spender, 0).toTransferParams({ mutez: true });
     const spend = assetContract.methods
       .approve(spender, amount.multipliedBy(10 ** tokenToSpend.decimals))
       .toTransferParams({ mutez: true });

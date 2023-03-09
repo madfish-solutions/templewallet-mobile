@@ -23,7 +23,7 @@ import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { loadSwapParamsAction } from 'src/store/swap/swap-actions';
+import { loadSwapParamsAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import {
   useTokensWithTezosListSelector,
@@ -151,7 +151,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       return { routingFreeAtomic, minimumReceivedAmountAtomic };
     }
-  }, [swapParams, slippageRatio]);
+  }, [swapParams.output, slippageRatio]);
 
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined
@@ -226,6 +226,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             amount: newInputValue.amount.dividedBy(10 ** newInputValue.asset.decimals).toFixed()
           })
         );
+      } else {
+        dispatch(resetSwapParamsAction());
       }
     },
     [outputAssetSlug, setFieldValue]
@@ -245,6 +247,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
           })
         );
+      } else {
+        dispatch(resetSwapParamsAction());
       }
     },
     [inputAssetSlug, setFieldValue, inputAssets.amount]
