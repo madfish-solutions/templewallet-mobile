@@ -11,10 +11,13 @@ export const usePromotionItemStyles = createUseStyles(({ colors, typography }) =
     backgroundColor: colors.cardBG
   },
   loaderContainer: {
+    backgroundColor: colors.cardBG,
     justifyContent: 'center',
     alignItems: 'center',
     height: formatSize(112),
-    width: formatSize(343)
+    width: formatSize(343),
+    borderRadius: formatSize(10),
+    ...generateShadow(1, black)
   },
   rewardContainer: {
     position: 'relative'

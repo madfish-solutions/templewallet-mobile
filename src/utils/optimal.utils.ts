@@ -1,5 +1,10 @@
 import { optimalApi } from '../api.service';
 
+export enum OptimalPromotionAdType {
+  TwMobile = 'tw-mobile',
+  TwToken = 'tw-token'
+}
+
 export interface OptimalPromotionInterface {
   body: string;
   campaign_type: string;
@@ -20,12 +25,12 @@ export interface OptimalPromotionInterface {
   view_url: string;
 }
 
-export const getOptimalPromotion = () =>
+export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
   optimalApi
     .get<OptimalPromotionInterface>('api/v1/decision', {
       params: {
         publisher: 'templewallet', // your-publisher-slug
-        ad_types: 'tw-mobile', // tw-fullview | tw-popup | tw-mobile
+        ad_types: adType,
         div_ids: 'ad'
       }
     })

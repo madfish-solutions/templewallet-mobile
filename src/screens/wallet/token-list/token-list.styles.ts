@@ -6,7 +6,7 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: colors.pageBG,
-    paddingLeft: formatSize(16)
+    paddingLeft: formatSize(8)
   },
   headerContainer: {
     height: formatSize(40),
@@ -25,5 +25,13 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
   hideZeroBalanceText: {
     ...typography.caption11Regular,
     color: colors.gray1
+  },
+  promotionItemWrapper: {
+    paddingVertical: formatSize(12),
+    borderBottomWidth: formatSize(0.5),
+    borderBottomColor: colors.lines
+  },
+  promotionItem: {
+    width: formatSize(359)
   }
 }));

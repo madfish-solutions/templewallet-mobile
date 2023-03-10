@@ -14,5 +14,8 @@ export const useTokenListItemStyles = createUseStyles(({ colors, typography }) =
   valueText: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  container: {
+    marginLeft: formatSize(8)
   }
 }));

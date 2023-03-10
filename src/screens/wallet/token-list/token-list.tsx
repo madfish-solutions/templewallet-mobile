@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -7,6 +7,8 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
@@ -16,6 +18,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
@@ -25,6 +28,7 @@ import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { filterTezos } from 'src/utils/filter.util';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -46,7 +50,8 @@ const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
 export const TokenList: FC = () => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigation = useNavigation();
+  const { navigate } = navigation;
   const styles = useTokenListStyles();
 
   const { metadata } = useNetworkInfo();
@@ -77,10 +82,26 @@ export const TokenList: FC = () => {
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
 
-  const renderData = useMemo(
-    () => addPlaceholdersForAndroid(flatListData, screenFillingItemsCount),
-    [flatListData, screenFillingItemsCount]
-  );
+  const renderData = useMemo(() => {
+    const noAdsData = addPlaceholdersForAndroid(flatListData, screenFillingItemsCount);
+
+    if (isHideZeroBalance && flatListData.length === 0) {
+      return noAdsData;
+    }
+
+    return [...noAdsData.slice(0, 3), { ...emptyToken, address: 'ad' }, ...noAdsData.slice(3, noAdsData.length)];
+  }, [flatListData, screenFillingItemsCount, isHideZeroBalance]);
+
+  useEffect(() => {
+    const listener = () => {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+    };
+    navigation.addListener('focus', listener);
+
+    return () => {
+      navigation.removeListener('focus', listener);
+    };
+  }, [dispatch, navigation]);
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
@@ -88,6 +109,14 @@ export const TokenList: FC = () => {
     ({ item }) => {
       if (item === TEZ_TOKEN_SLUG) {
         return <TezosToken />;
+      }
+
+      if (item.address === 'ad') {
+        return (
+          <View style={styles.promotionItemWrapper}>
+            <OptimalPromotionItem variant={OptimalPromotionVariantEnum.Text} style={styles.promotionItem} />
+          </View>
+        );
       }
 
       if (item.address.startsWith('filler') === true) {
