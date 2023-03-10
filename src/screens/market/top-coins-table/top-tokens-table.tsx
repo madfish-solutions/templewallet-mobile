@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
 import { useFilteredMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
@@ -48,6 +50,7 @@ export const TopTokensTable = () => {
 
   return (
     <View style={styles.rootContainer}>
+      <OptimalPromotionItem style={styles.promotion} />
       <Filters
         sortFiled={sortFiled}
         segmentControlIndex={segmentControlIndex}

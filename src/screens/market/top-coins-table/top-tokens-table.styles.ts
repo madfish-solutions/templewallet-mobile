@@ -28,5 +28,10 @@ export const useTopTokensTableStyles = createUseStyles(({ colors, typography }) 
   },
   name: {
     textAlign: 'center'
+  },
+  promotion: {
+    paddingVertical: formatSize(12),
+    borderBottomWidth: formatSize(1),
+    borderColor: colors.lines
   }
 }));

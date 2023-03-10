@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+
 import { HeaderCard } from '../../components/header-card/header-card';
 import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -17,6 +19,7 @@ export const Market = () => {
   const initDataLoading = () => {
     dispatch(loadMarketTopTokenActions.submit());
     dispatch(loadMarketTokensSlugsActions.submit());
+    dispatch(loadPartnersPromoActions.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL);
