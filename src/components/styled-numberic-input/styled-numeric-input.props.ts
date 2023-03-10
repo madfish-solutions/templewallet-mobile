@@ -1,14 +1,15 @@
 import { BigNumber } from 'bignumber.js';
 
 import { EventFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { StyledTextInputProps } from '../styled-text-input/styled-text-input.props';
 
 export interface StyledNumericInputProps
-  extends Pick<
-    StyledTextInputProps,
-    'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'
-  > {
+  extends TestIdProps,
+    Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'> {
   value?: BigNumber;
+  minValue?: BigNumber.Value;
+  maxValue?: BigNumber.Value;
   decimals?: number;
   onChange?: EventFn<BigNumber | undefined>;
 }

@@ -74,7 +74,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
-  onValueChange
+  onValueChange,
+  testID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -146,6 +147,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     numericInputValue,
     value.asset.decimals,
+    undefined,
+    undefined,
     onChange,
     onBlur,
     onFocus
@@ -230,6 +233,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
+          testID={testID}
         />
         <Divider size={formatSize(8)} />
 

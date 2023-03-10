@@ -1,5 +1,8 @@
+import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
+
+import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { tezosMetadataApi, whitelistApi } from '../api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
@@ -149,21 +152,30 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
         )
       );
 
-export const loadTokenMetadata$ = (address: string, id = 0): Observable<TokenMetadataInterface> =>
-  from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
-    map(({ data }) => transformDataToTokenMetadata(data, address, id)),
-    filter(isDefined)
-  );
+export const loadTokenMetadata$ = memoize(
+  (address: string, id = 0): Observable<TokenMetadataInterface> => {
+    const slug = `${address}_${id}`;
+    console.log('Loading metadata for:', slug);
 
-export const loadTokensMetadata$ = (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-  from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
-    map(({ data }) =>
-      data
-        .map((token, index) => {
-          const [address, id] = slugs[index].split('_');
+    return from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
+      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
+      filter(isDefined)
+    );
+  },
+  { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
+);
 
-          return transformDataToTokenMetadata(token, address, Number(id));
-        })
-        .filter(isDefined)
+export const loadTokensMetadata$ = memoize(
+  (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
+    from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
+      map(({ data }) =>
+        data
+          .map((token, index) => {
+            const [address, id] = slugs[index].split('_');
+
+            return transformDataToTokenMetadata(token, address, Number(id));
+          })
+          .filter(isDefined)
+      )
     )
-  );
+);

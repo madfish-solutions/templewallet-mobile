@@ -7,23 +7,24 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
-import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { showErrorToast } from '../../toast/toast.utils';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isDcpNode } from '../../utils/network.utils';
-import { createReadOnlyTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isDcpNode } from 'src/utils/network.utils';
+import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import {
   loadAssetBalance$,
   loadTokensBalancesArrayFromTzkt$,
   loadTezosBalance$,
   loadTokensWithBalance$
-} from '../../utils/token-balance.utils';
-import { withMetadataSlugs } from '../../utils/token-metadata.utils';
-import { getTransferParams$ } from '../../utils/transfer-params.utils';
-import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from '../../utils/wallet.utils';
+} from 'src/utils/token-balance.utils';
+import { withMetadataSlugs } from 'src/utils/token-metadata.utils';
+import { getTransferParams$ } from 'src/utils/transfer-params.utils';
+import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -64,7 +65,7 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
     )
   );
 
-const loadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
     withSelectedAccount(state$),
@@ -184,7 +185,7 @@ const addTokenMetadataEpic = (action$: Observable<Action>) =>
 
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,
-  loadTokenBalanceEpic,
+  loadTokensBalancesEpic,
   loadTezosBalanceEpic,
   loadTokensWithBalancesEpic,
   sendAssetEpic,

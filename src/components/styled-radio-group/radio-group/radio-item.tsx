@@ -6,6 +6,7 @@ import { Icon } from 'src/components/icon/icon';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { getTruncatedProps } from 'src/utils/style.util';
+import { setTestID } from 'src/utils/test-id.utils';
 
 import { itemStyles } from './styles';
 import { RadioItemProps, ItemButtonInterface } from './types';
@@ -20,7 +21,8 @@ export const RadioItem: React.FC<RadioItemProps> = ({
   containerStyle,
   labelStyle,
   buttons,
-  onPress
+  onPress,
+  testID
 }) => {
   const borderWidth = PixelRatio.roundToNearestPixel(SIZE * 0.1);
   const sizeHalf = PixelRatio.roundToNearestPixel(SIZE * 0.5);
@@ -29,7 +31,7 @@ export const RadioItem: React.FC<RadioItemProps> = ({
   const handlePress = onPress ? () => void onPress(value) : undefined;
 
   return (
-    <Pressable onPress={handlePress} style={[itemStyles.container, containerStyle]}>
+    <Pressable onPress={handlePress} style={[itemStyles.container, containerStyle]} {...setTestID(testID)}>
       <View
         style={[
           itemStyles.border,

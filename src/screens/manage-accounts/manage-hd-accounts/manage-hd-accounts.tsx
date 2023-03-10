@@ -16,6 +16,7 @@ import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../s
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
+import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
 import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
@@ -46,7 +47,11 @@ export const ManageHdAccounts = () => {
 
   return (
     <>
-      <SearchInput placeholder="Search accounts" onChangeText={debouncedSetSearch} />
+      <SearchInput
+        placeholder="Search accounts"
+        onChangeText={debouncedSetSearch}
+        testID={ManageHdAccountsSelectors.searchAccountsInput}
+      />
       <Divider size={formatSize(8)} />
       <View style={styles.revealSeedPhraseContainer}>
         <Text style={styles.revealSeedPhraseText}>Seed phrase is the same for all your HD accounts</Text>
@@ -56,6 +61,7 @@ export const ManageHdAccounts = () => {
           marginTop={formatSize(4)}
           marginBottom={formatSize(4)}
           onPress={() => navigate(ModalsEnum.RevealSeedPhrase, {})}
+          testID={ManageHdAccountsSelectors.seedPhraseButton}
         />
       </View>
 
@@ -81,8 +87,16 @@ export const ManageHdAccounts = () => {
           contentHeight={formatSize(180)}
           controller={revealSelectBottomSheetController}
         >
-          <BottomSheetActionButton title="Reveal Private key" onPress={handleRevealPrivateKeyButtonPress} />
-          <BottomSheetActionButton title="Reveal Seed Phrase" onPress={handleRevealSeedPhraseButtonPress} />
+          <BottomSheetActionButton
+            title="Reveal Private key"
+            onPress={handleRevealPrivateKeyButtonPress}
+            testID={ManageHdAccountsSelectors.revealPrivateKeyButton}
+          />
+          <BottomSheetActionButton
+            title="Reveal Seed Phrase"
+            onPress={handleRevealSeedPhraseButtonPress}
+            testID={ManageHdAccountsSelectors.revealSeedPhraseButton}
+          />
         </BottomSheet>
       </ScreenContainer>
     </>

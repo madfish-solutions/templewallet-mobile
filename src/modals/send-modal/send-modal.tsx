@@ -37,6 +37,7 @@ import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.ut
 import { isDefined } from '../../utils/is-defined';
 import { isValidAddress } from '../../utils/tezos.util';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
+import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
 
 export const SendModal: FC = () => {
@@ -122,7 +123,13 @@ export const SendModal: FC = () => {
           <ModalStatusBar />
           <View>
             <Divider size={formatSize(8)} />
-            <FormAssetAmountInput maxButton name="assetAmount" label="Asset" assetsList={filteredAssetsListWithTez} />
+            <FormAssetAmountInput
+              maxButton
+              name="assetAmount"
+              label="Asset"
+              assetsList={filteredAssetsListWithTez}
+              testID={SendModalSelectors.assetInput}
+            />
             <Divider />
 
             <Label
@@ -139,14 +146,23 @@ export const SendModal: FC = () => {
                 <Divider size={formatSize(10)} />
               </>
             ) : (
-              <FormAddressInput name="receiverPublicKeyHash" placeholder="e.g. address" />
+              <FormAddressInput
+                name="receiverPublicKeyHash"
+                placeholder="e.g. address"
+                testID={SendModalSelectors.toInput}
+              />
             )}
             <View
               onTouchStart={() =>
                 void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
               }
             >
-              <FormCheckbox disabled={isTransferDisabled} name="transferBetweenOwnAccounts" size={formatSize(16)}>
+              <FormCheckbox
+                disabled={isTransferDisabled}
+                name="transferBetweenOwnAccounts"
+                size={formatSize(16)}
+                testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
+              >
                 <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
               </FormCheckbox>
             </View>
@@ -156,9 +172,19 @@ export const SendModal: FC = () => {
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} disabled={isLoading} />
+              <ButtonLargeSecondary
+                title="Close"
+                onPress={goBack}
+                disabled={isLoading}
+                testID={SendModalSelectors.closeButton}
+              />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Send" onPress={submitForm} disabled={isLoading} />
+              <ButtonLargePrimary
+                title="Send"
+                onPress={submitForm}
+                disabled={isLoading}
+                testID={SendModalSelectors.sendButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

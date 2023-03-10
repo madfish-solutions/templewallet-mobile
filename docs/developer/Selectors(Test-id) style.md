@@ -77,6 +77,34 @@ Example:
     * Check Box: 
     
          <img width="442" alt="image" src="https://user-images.githubusercontent.com/95026747/217497591-c5363e40-7a8b-4e79-96a8-2d6457fee2d8.png">
+    
+    * Link (Button Link):
+
+         <img width="332" alt="image" src="https://user-images.githubusercontent.com/95026747/222751129-5c73c100-a6e4-4942-b0d4-e6256ade537c.png">
+         
+    * Banner:
+
+         <img width="1040" alt="image" src="https://user-images.githubusercontent.com/95026747/222753896-176eb9bd-ab50-46a4-b650-aa479a84caa8.png">
+         
+    * Item (Content Item):
+
+        1. <img width="302" alt="image" src="https://user-images.githubusercontent.com/95026747/222754580-9a94d9fc-7729-4157-9314-b8579a0aec70.png">
+         
+         
+        2. <img width="189" alt="image" src="https://user-images.githubusercontent.com/95026747/222755109-c246192c-ca70-4933-a786-7a628084f46d.png">
+ 
+    * Radio Button:
+
+        <img width="295" alt="image" src="https://user-images.githubusercontent.com/95026747/222756771-d763b713-8137-4512-a639-2da16ba8b059.png">
+        
+    * Toggle: 
+
+       <img width="292" alt="image" src="https://user-images.githubusercontent.com/95026747/222757440-e83296b5-b804-4f08-80ae-454b736b4d3d.png">
+ 
+
+
+
+
 
 
 

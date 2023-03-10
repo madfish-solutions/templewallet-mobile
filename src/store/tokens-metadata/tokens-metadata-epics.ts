@@ -37,7 +37,11 @@ const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
           loadTokenSuggestionActions.success(tokenMetadata),
           addTokensMetadataAction([tokenMetadata])
         ]),
-        catchError(err => of(loadTokenSuggestionActions.fail(err.message)))
+        catchError(error => {
+          console.error(error);
+
+          return of(loadTokenSuggestionActions.fail(error.message));
+        })
       )
     )
   );

@@ -8,6 +8,8 @@ import { StyledNumericInputProps } from './styled-numeric-input.props';
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
+  minValue,
+  maxValue,
   decimals,
   editable,
   placeholder,
@@ -15,13 +17,16 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   isShowCleanButton,
   onBlur,
   onFocus,
-  onChange = emptyFn
+  onChange = emptyFn,
+  testID
 }) => {
   const { metadata } = useNetworkInfo();
 
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     value,
     decimals ?? metadata.decimals,
+    minValue,
+    maxValue,
     onChange,
     onBlur,
     onFocus
@@ -39,6 +44,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
       onBlur={handleBlur}
       onFocus={handleFocus}
       onChangeText={handleChange}
+      testID={testID}
     />
   );
 };

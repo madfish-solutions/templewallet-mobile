@@ -13,6 +13,7 @@ import { useSlippageSelector } from '../../../store/settings/settings-selectors'
 import { formatSize } from '../../../styles/format-size';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../utils/is-defined';
+import { SwapSettingsSelectors } from './swap-settings.selectors';
 import { useSwapSettingsStyles } from './swap-settings.styles';
 
 const mapSlippageToIndex = (slippage: number): number => {
@@ -75,19 +76,22 @@ export const SwapSettingsScreen: FC = () => {
         selectedIndex={inputTypeIndex}
         values={['0.25%', '0.5%', '0.75%', 'Custom']}
         onChange={handleTokenInputTypeChange}
+        testID={SwapSettingsSelectors.slippageToleranceToggle}
       />
       <Divider size={formatSize(10)} />
       {inputTypeIndex === 3 && (
         <StyledNumericInput
           value={new BigNumber(slippageTolerance)}
+          maxValue={30}
           decimals={2}
           editable={true}
           isShowCleanButton
           onChange={onHandleChange}
+          testID={SwapSettingsSelectors.customInput}
         />
       )}
       <Text style={styles.desctiption}>
-        Slippage tolerance is a setting for the limit of price slippage you are willing to accept.
+        Slippage tolerance is a setting for the limit of price slippage you are willing to accept (max 30%).
       </Text>
     </ScrollView>
   );

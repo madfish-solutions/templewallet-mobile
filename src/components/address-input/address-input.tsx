@@ -3,6 +3,7 @@ import React, { FC, useRef } from 'react';
 import { TextInput, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { isString } from '../../utils/is-string';
 import { ButtonSmallSecondary } from '../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
@@ -10,9 +11,9 @@ import { StyledTextInputProps } from '../styled-text-input/styled-text-input.pro
 import { StyledTextInputStyles } from '../styled-text-input/styled-text-input.styles';
 import { AddressInputStyles } from './address-input.styles';
 
-type Props = Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'>;
+type Props = Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'> & TestIdProps;
 
-export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, onChangeText = emptyFn }) => {
+export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, onChangeText = emptyFn, testID }) => {
   const inputRef = useRef<TextInput>(null);
 
   const handlePasteButtonPress = async () => {
@@ -33,6 +34,7 @@ export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, o
         isShowCleanButton={true}
         onBlur={onBlur}
         onChangeText={onChangeText}
+        testID={testID}
       />
       {!isString(value) && (
         <View style={AddressInputStyles.buttonsContainer}>

@@ -14,6 +14,7 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
+import { PasscodeSelectors } from './passcode.selectors';
 import { usePassCodeStyles } from './passcode.styles';
 
 export const PassCode = () => {
@@ -48,7 +49,11 @@ export const PassCode = () => {
         </View>
       </View>
       <View>
-        <ButtonLargePrimary title="Go to Settings" onPress={handleSettings} />
+        <ButtonLargePrimary
+          title="Go to Settings"
+          onPress={handleSettings}
+          testID={PasscodeSelectors.goToSettingsButton}
+        />
         <InsetSubstitute type="bottom" />
       </View>
     </ScreenContainer>

@@ -19,6 +19,7 @@ import { updateAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
+import { RenameAccountModalSelectors } from './rename-account-modal.selectors';
 
 export const RenameAccountModal = () => {
   const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RenameAccount>>().params.account;
@@ -48,16 +49,16 @@ export const RenameAccountModal = () => {
           <ModalStatusBar />
           <View>
             <Label label="Name" description="Rename your account by any name you wish." />
-            <FormTextInput name="name" />
+            <FormTextInput name="name" testID={RenameAccountModalSelectors.nameInput} />
 
             <Divider />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} testID={RenameAccountModalSelectors.closeButton} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Save" onPress={submitForm} />
+              <ButtonLargePrimary title="Save" onPress={submitForm} testID={RenameAccountModalSelectors.saveButton} />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

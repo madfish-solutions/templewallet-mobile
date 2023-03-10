@@ -34,6 +34,7 @@ import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-you
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { TokenList } from './token-list/token-list';
+import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
@@ -71,7 +72,11 @@ export const Wallet = () => {
 
           <Divider />
 
-          <TouchableIcon name={IconNameEnum.QrScanner} onPress={() => navigate(ScreensEnum.ScanQrCode)} />
+          <TouchableIcon
+            name={IconNameEnum.QrScanner}
+            onPress={() => navigate(ScreensEnum.ScanQrCode)}
+            testID={WalletSelectors.scanQRButton}
+          />
           <Divider size={formatSize(24)} />
           <NotificationsBell />
         </View>
@@ -84,6 +89,7 @@ export const Wallet = () => {
 
         <CollectiblesHomeSwipeButton />
       </HeaderCard>
+
       <TokenList />
 
       <BackupYourWalletOverlay />
@@ -102,6 +108,7 @@ export const Wallet = () => {
             navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidateAddress });
             bottomSheetController.close();
           }}
+          testID={WalletSelectors.addAddressButton}
         />
       </BottomSheet>
     </>

@@ -4,10 +4,11 @@ import { Animated, View } from 'react-native';
 
 import { EventFn } from '../../config/general';
 import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
+import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
-export interface SegmentedControlProps<T> {
+export interface SegmentedControlProps<T> extends TestIdProps {
   selectedIndex: number;
   values: T[];
   width?: number;

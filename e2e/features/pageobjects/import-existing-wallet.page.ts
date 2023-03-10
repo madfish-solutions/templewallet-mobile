@@ -3,8 +3,8 @@ import { findElement } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class ImportExistingWalletPage extends Page {
-  seedPhraseInput = findElement(ImportWalletFromSeedPhraseSelectors.SeedPhraseInput);
-  nextButton = findElement(ImportWalletFromSeedPhraseSelectors.NextButton);
+  seedPhraseInput = findElement(ImportWalletFromSeedPhraseSelectors.seedPhraseInput);
+  nextButton = findElement(ImportWalletFromSeedPhraseSelectors.nextButton);
 
   async isVisible() {
     await this.seedPhraseInput.waitForDisplayed();

@@ -44,6 +44,7 @@ import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
+import { SwapFormSelectors } from './swap-form.selectors';
 import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
@@ -266,6 +267,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           assetsList={filteredTokensList}
           setSearchValue={setSearchValue}
           onValueChange={handleInputAssetsValueChange}
+          testID={SwapFormSelectors.fromAssetAmountInput}
         />
         <SwapAssetsButton />
         <FormAssetAmountInput
@@ -278,6 +280,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           assetsList={assetsListWithTez}
           setSearchValue={setSearchTezAssetsValue}
           onValueChange={handleOutputAssetsValueChange}
+          testID={SwapFormSelectors.toAssetAmountInput}
         />
         <View>
           <SwapExchangeRate
@@ -291,7 +294,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         <SwapDisclaimer />
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />
+        <ButtonLargePrimary
+          disabled={submitCount !== 0 && !isValid}
+          title="Swap"
+          onPress={submitForm}
+          testID={SwapFormSelectors.swapButton}
+        />
       </ButtonsFloatingContainer>
     </FormikProvider>
   );

@@ -86,18 +86,18 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
               <FormPasswordInput
                 isShowPasswordStrengthIndicator
                 name="password"
-                testID={CreateNewPasswordSelectors.PasswordInput}
+                testID={CreateNewPasswordSelectors.passwordInput}
               />
 
               <Label label="Repeat Password" description="Please enter the password again." />
-              <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.RepeatPasswordInput} />
+              <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.repeatPasswordInput} />
 
-              <View style={styles.checkboxContainer}>
+              <View style={styles.checkboxContainer} testID={CreateNewPasswordSelectors.useBiometricsToUnlockCheckBox}>
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
               <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.AnalyticsCheckbox}>
+                <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.analyticsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Analytics</Text>
                 </FormCheckbox>
@@ -110,7 +110,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
             <View>
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.AcceptTermsCheckbox}>
+                <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Accept terms</Text>
                 </FormCheckbox>
@@ -126,7 +126,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
               title="Create"
               disabled={!isValid}
               onPress={submitForm}
-              testID={CreateNewPasswordSelectors.ImportButton}
+              testID={CreateNewPasswordSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />
           </View>
