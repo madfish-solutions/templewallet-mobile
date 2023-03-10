@@ -26,7 +26,6 @@ export enum ScreensEnum {
   /** Swap stack **/
   SwapScreen = 'SwapScreen',
   SwapSettingsScreen = 'SwapSettingsScreen',
-  SwapQuestionsScreen = 'SwapQuestionsScreen',
 
   /** Buy stack **/
   Buy = 'Buy',
@@ -82,7 +81,6 @@ export type ScreensParamList = {
   /** Swap stack **/
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
-  [ScreensEnum.SwapQuestionsScreen]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
@@ -118,11 +116,7 @@ export const walletStackScreens = [
   ScreensEnum.NotificationsItem
 ];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
-export const swapStackScreens = [
-  ScreensEnum.SwapScreen,
-  ScreensEnum.SwapSettingsScreen,
-  ScreensEnum.SwapQuestionsScreen
-];
+export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
 export const settingsStackScreens = [
   ScreensEnum.Settings,

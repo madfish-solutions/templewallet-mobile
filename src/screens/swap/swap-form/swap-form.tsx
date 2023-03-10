@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
@@ -42,6 +41,7 @@ import { getRoute3TokenSymbol } from 'src/utils/route3.util';
 import { ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
+import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
 import { swapFormValidationSchema } from './swap-form.form';
 import { SwapRoute } from './swap-route/swap-route';
@@ -287,10 +287,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           />
           <SwapRoute />
         </View>
-        <Disclaimer
-          title="Disclaimer"
-          texts={['Temple wallet provides an interface to interact with the 3route DEX aggregator.']}
-        />
+
+        <SwapDisclaimer />
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonLargePrimary disabled={submitCount !== 0 && !isValid} title="Swap" onPress={submitForm} />

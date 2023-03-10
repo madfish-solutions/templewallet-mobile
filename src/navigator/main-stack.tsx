@@ -45,7 +45,6 @@ import { Notifications } from '../screens/notifications/notifications';
 import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from '../screens/secure-settings/secure-settings';
 import { Settings } from '../screens/settings/settings';
-import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
 import { SwapScreen } from '../screens/swap/swap';
 import { AfterSyncQRScan } from '../screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -231,12 +230,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.SwapQuestionsScreen}
-                component={SwapQuestionsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Market stack **/}

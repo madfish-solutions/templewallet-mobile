@@ -1,4 +1,3 @@
-import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
@@ -7,8 +6,11 @@ import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+import {
+  emptyTokenMetadata,
+  TokenMetadataInterface,
+  TokenStandardsEnum
+} from '../token/interfaces/token-metadata.interface';
 import { isDefined } from './is-defined';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
@@ -65,7 +67,8 @@ const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string
   decimals: token.metadata.decimals,
   symbol: token.metadata.symbol ?? token.metadata.name?.substring(0, 8) ?? '???',
   name: token.metadata.name ?? token.metadata.symbol ?? 'Unknown Token',
-  thumbnailUri: token.metadata.thumbnailUri
+  thumbnailUri: token.metadata.thumbnailUri,
+  standard: token.type === 'FA12' ? TokenStandardsEnum.Fa12 : TokenStandardsEnum.Fa2
 });
 
 export const normalizeTokenMetadata = (
@@ -146,26 +149,21 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
         )
       );
 
-export const loadTokenMetadata$ = memoize(
-  (address: string, id = 0): Observable<TokenMetadataInterface> =>
-    from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
-      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
-      filter(isDefined)
-    ),
-  { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
-);
+export const loadTokenMetadata$ = (address: string, id = 0): Observable<TokenMetadataInterface> =>
+  from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
+    map(({ data }) => transformDataToTokenMetadata(data, address, id)),
+    filter(isDefined)
+  );
 
-export const loadTokensMetadata$ = memoize(
-  (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
-      map(({ data }) =>
-        data
-          .map((token, index) => {
-            const [address, id] = slugs[index].split('_');
+export const loadTokensMetadata$ = (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
+  from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
+    map(({ data }) =>
+      data
+        .map((token, index) => {
+          const [address, id] = slugs[index].split('_');
 
-            return transformDataToTokenMetadata(token, address, Number(id));
-          })
-          .filter(isDefined)
-      )
+          return transformDataToTokenMetadata(token, address, Number(id));
+        })
+        .filter(isDefined)
     )
-);
+  );

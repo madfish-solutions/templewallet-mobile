@@ -1,6 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
+import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { ROUTING_FEE_ADDRESS } from './config';
@@ -23,14 +24,14 @@ export const getRoutingFeeTransferParams = async (
 
   const assetContract = await tezos.wallet.at(outputAsset.address);
 
-  if (outputAsset.standard === 'fa12') {
+  if (outputAsset.standard === TokenStandardsEnum.Fa12) {
     return [
       assetContract.methods
         .transfer(senderPublicKeyHash, ROUTING_FEE_ADDRESS, feeAmountAtomic)
         .toTransferParams({ mutez: true })
     ];
   }
-  if (outputAsset.standard === 'fa2') {
+  if (outputAsset.standard === TokenStandardsEnum.Fa2) {
     return [
       assetContract.methods
         .transfer([

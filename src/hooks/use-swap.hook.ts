@@ -27,8 +27,6 @@ export const useSwap = () => {
 
   return useCallback(
     async (fromToken: TokenInterface, toToken: TokenInterface, minimumReceivedAmountAtomic: BigNumber) => {
-      console.log('fromToken: ', fromToken.standard);
-
       const resultParams: Array<TransferParams> = [];
       const fromRoute3Token = getRoute3Token(fromToken, swapTokens);
       const toRotue3Token = getRoute3Token(toToken, swapTokens);

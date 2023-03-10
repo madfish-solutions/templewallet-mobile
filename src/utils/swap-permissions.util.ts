@@ -1,6 +1,7 @@
 import { TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
+import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export const getTransferPermissions = async (
@@ -15,21 +16,19 @@ export const getTransferPermissions = async (
     revoke: []
   };
 
-  console.log('tokenToSpend: ', tokenToSpend.standard);
-
   if (tokenToSpend.symbol === 'TEZ') {
     return permissions;
   }
 
   const assetContract = await tezos.wallet.at(tokenToSpend.address);
-  if (tokenToSpend.standard === 'fa12') {
+  if (tokenToSpend.standard === TokenStandardsEnum.Fa12) {
     const reset = assetContract.methods.approve(spender, 0).toTransferParams({ mutez: true });
     const spend = assetContract.methods
       .approve(spender, amount.multipliedBy(10 ** tokenToSpend.decimals))
       .toTransferParams({ mutez: true });
     permissions.approve.push(reset);
     permissions.approve.push(spend);
-  } else {
+  } else if (tokenToSpend.standard === TokenStandardsEnum.Fa2) {
     const spend = assetContract.methods
       .update_operators([
         {
