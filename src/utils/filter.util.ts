@@ -1,4 +1,5 @@
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+import { isSearchValueIncluded } from './is-search-value-included.util';
 import { isString } from './is-string';
 
 export const filterTezos = (
@@ -15,7 +16,7 @@ export const filterTezos = (
     const lowerCaseSearchValue = searchValue.toLowerCase();
     const { name, symbol } = gasTokenMetadata;
 
-    if (!(name.toLowerCase().includes(lowerCaseSearchValue) || symbol.toLowerCase().includes(lowerCaseSearchValue))) {
+    if (!isSearchValueIncluded(lowerCaseSearchValue, name.toLowerCase(), symbol.toLowerCase())) {
       return false;
     }
   }

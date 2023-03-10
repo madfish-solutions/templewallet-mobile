@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { isSearchValueIncluded } from 'src/utils/is-search-value-included.util';
+
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { selectSortValue } from '../store/market/market-actions';
 import {
@@ -34,7 +36,7 @@ export const useFilteredMarketTokens = () => {
       for (const token of sortedMarketTokens) {
         const { name, symbol } = token;
 
-        if (name.toLowerCase().includes(lowerCaseSearchValue) || symbol.toLowerCase().includes(lowerCaseSearchValue)) {
+        if (isSearchValueIncluded(lowerCaseSearchValue, name.toLowerCase(), symbol.toLowerCase())) {
           result.push(token);
         }
       }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isSearchValueIncluded } from 'src/utils/is-search-value-included.util';
 import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
 
@@ -22,9 +23,7 @@ export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBa
         const { name, symbol, address } = asset;
 
         if (
-          name.toLowerCase().includes(lowerCaseSearchValue) ||
-          symbol.toLowerCase().includes(lowerCaseSearchValue) ||
-          address.toLowerCase().includes(lowerCaseSearchValue)
+          isSearchValueIncluded(lowerCaseSearchValue, name.toLowerCase(), symbol.toLowerCase(), address.toLowerCase())
         ) {
           result.push(asset);
         }

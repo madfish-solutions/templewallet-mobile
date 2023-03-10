@@ -12,12 +12,10 @@ interface SwapRouteTokenIconProps {
   size?: number;
 }
 
-const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug, size = 24 }) => {
+const SwapRouteTokenIcon: FC<SwapRouteTokenIconProps> = ({ tokenSlug, size = formatSize(24) }) => {
   const tokenMetadata = useTokenMetadataSelector(tokenSlug);
 
-  return (
-    <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={formatSize(size)} />
-  );
+  return <TokenIcon iconName={tokenMetadata.iconName} thumbnailUri={tokenMetadata.thumbnailUri} size={size} />;
 };
 
 interface SwapRouteItemIconProps {
@@ -26,7 +24,7 @@ interface SwapRouteItemIconProps {
 
 export const SwapRouteItemIcon: FC<SwapRouteItemIconProps> = ({ tokenSlug }) =>
   isDefined(tokenSlug) ? (
-    <SwapRouteTokenIcon tokenSlug={tokenSlug} size={20} />
+    <SwapRouteTokenIcon tokenSlug={tokenSlug} size={formatSize(20)} />
   ) : (
     <Icon name={IconNameEnum.NoNameToken} size={formatSize(20)} />
   );
