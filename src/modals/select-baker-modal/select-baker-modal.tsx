@@ -32,6 +32,9 @@ import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
+const DISCLAIMER_MESSAGE =
+  'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
+const UNKNOWN_BAKER_NAME = 'Unknown baker';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -96,14 +99,10 @@ export const SelectBakerModal: FC = () => {
           opParams: [
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
-          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
+          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
+          ...(selectedBaker.name === UNKNOWN_BAKER_NAME && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
-    } else if (isString(searchValue)) {
-      navigate(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams: [{ kind: OpKind.DELEGATION, delegate: searchValue, source: selectedAccount.publicKeyHash }]
-      });
     }
   };
 
@@ -193,9 +192,9 @@ export const SelectBakerModal: FC = () => {
         windowSize={10}
         ListEmptyComponent={
           <BakerListItem
-            item={{ ...emptyBaker, name: 'Unknown baker', address: searchValue ?? '' }}
+            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '' }}
             onPress={setSelectedBaker}
-            selected
+            selected={searchValue === selectedBaker?.address}
           />
         }
       />
@@ -205,7 +204,7 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title="Next"
-          disabled={!isDefined(selectedBaker) && !isValidAddress(searchValue ?? '')}
+          disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
           onPress={handleNextPress}
           testID={SelectBakerModalSelectors.nextButton}
         />
