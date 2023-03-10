@@ -26,8 +26,7 @@ export const getTransferPermissions = async (
     const spend = assetContract.methods
       .approve(spender, amount.multipliedBy(10 ** tokenToSpend.decimals))
       .toTransferParams({ mutez: true });
-    permissions.approve.push(reset);
-    permissions.approve.push(spend);
+    permissions.approve.push(reset, spend);
   } else if (tokenToSpend.standard === TokenStandardsEnum.Fa2) {
     const spend = assetContract.methods
       .update_operators([
