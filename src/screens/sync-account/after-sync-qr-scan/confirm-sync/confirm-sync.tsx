@@ -54,11 +54,11 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
                 {...(isDisabled && {
                   error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
                 })}
-                testID={ConfirmSyncSelectors.PasswordInput}
+                testID={ConfirmSyncSelectors.passwordInput}
               />
 
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.UsePreviousPasswordCheckbox}>
+                <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.useAsAppPasswordCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Use as App Password</Text>
                 </FormCheckbox>
@@ -69,7 +69,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               </View>
 
               <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.AnalyticsCheckbox}>
+                <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.analyticsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Analytics</Text>
                 </FormCheckbox>
@@ -90,7 +90,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
             </View>
             <View>
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.AcceptTermsCheckbox}>
+                <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Accept terms</Text>
                 </FormCheckbox>
@@ -106,7 +106,9 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               title={values.usePrevPassword === true ? 'Sync' : 'Next'}
               disabled={!isValid || isDisabled}
               onPress={submitForm}
-              testID={ConfirmSyncSelectors.SyncOrNextButton}
+              testID={
+                values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
+              }
             />
             <InsetSubstitute type="bottom" />
           </View>

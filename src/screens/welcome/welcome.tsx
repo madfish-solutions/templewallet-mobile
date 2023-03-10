@@ -39,7 +39,7 @@ export const Welcome = () => {
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}
           onPress={() => navigate(ScreensEnum.CreateAccount)}
-          testID={WelcomeSelectors.CreateNewWalletButton}
+          testID={WelcomeSelectors.createNewWalletButton}
         />
         <Divider size={formatSize(24)} />
 
@@ -49,7 +49,7 @@ export const Welcome = () => {
               title="Import"
               iconName={IconNameEnum.DownloadCloud}
               onPress={() => navigate(ScreensEnum.ImportAccount)}
-              testID={WelcomeSelectors.ImportExistingWalletButton}
+              testID={WelcomeSelectors.importExistingWalletButton}
             />
           </View>
           <View style={styles.buttonBox}>

@@ -67,6 +67,7 @@ export type ScreensParamList = {
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: undefined;
   [ScreensEnum.Activity]: undefined;
+
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
@@ -83,6 +84,9 @@ export type ScreensParamList = {
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
   [ScreensEnum.SwapQuestionsScreen]: undefined;
+
+  /** Market stack **/
+  [ScreensEnum.Market]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;

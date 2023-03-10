@@ -1,4 +1,4 @@
 export enum ImportWalletFromSeedPhraseSelectors {
-  SeedPhraseInput = 'Seed Phrase Input on Import existing Wallet page',
-  NextButton = 'Next button on Import existing Wallet page'
+  seedPhraseInput = 'Import Existing Wallet/Seed Phrase Input',
+  nextButton = 'Import Existing Wallet/Next Button'
 }

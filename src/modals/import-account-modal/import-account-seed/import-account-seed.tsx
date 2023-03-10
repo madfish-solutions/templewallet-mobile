@@ -29,6 +29,7 @@ import {
   importAccountSeedValidationSchema,
   ImportAccountSeedValues
 } from './import-account-seed.form';
+import { ImportAccountSeedSelectors } from './import-account-seed.selectors';
 
 interface Props {
   onBackHandler: EmptyFn;
@@ -67,7 +68,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
               <Divider size={formatSize(12)} />
               <View style={ImportAccountStyles.seedPhraseInputContainer}>
                 <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />
-                <FormMnemonicInput name="seedPhrase" />
+                <FormMnemonicInput name="seedPhrase" testID={ImportAccountSeedSelectors.seedPhraseInput} />
               </View>
               <AndroidKeyboardDisclaimer />
               <Divider size={formatSize(12)} />
@@ -83,15 +84,24 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
                 isOptional
                 description={'That is NOT a wallet password.\nUsed for additional mnemonic derivation.'}
               />
-              <FormPasswordInput name="password" />
+              <FormPasswordInput name="password" testID={ImportAccountSeedSelectors.passwordInput} />
               <Divider size={formatSize(12)} />
             </View>
           </ScreenContainer>
           <ButtonsFloatingContainer>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Back" onPress={onBackHandler} />
+              <ButtonLargeSecondary
+                title="Back"
+                onPress={onBackHandler}
+                testID={ImportAccountSeedSelectors.backButton}
+              />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Import" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Import"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={ImportAccountSeedSelectors.importButton}
+              />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
           </ButtonsFloatingContainer>

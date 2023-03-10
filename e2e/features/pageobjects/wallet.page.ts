@@ -3,7 +3,7 @@ import { findElement } from '../../utils/search.utils';
 import { Page } from './page';
 
 export class WalletPage extends Page {
-  tokenList = findElement(TokenListSelectors.TokenList);
+  tokenList = findElement(TokenListSelectors.tokenList);
 
   async isVisible() {
     await this.tokenList.waitForDisplayed();

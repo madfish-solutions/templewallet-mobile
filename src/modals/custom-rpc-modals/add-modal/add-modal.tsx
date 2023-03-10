@@ -20,7 +20,8 @@ import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { formInitialValues, formValidationSchema, confirmUniqueRPC } from './form.utils';
+import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
+import { AddModalSelectors } from './add-modal.selectors';
 
 export const AddCustomRpcModal: FC = () => {
   const dispatch = useDispatch();
@@ -47,17 +48,27 @@ export const AddCustomRpcModal: FC = () => {
 
           <View>
             <Label label="Name" />
-            <FormTextInput name="name" placeholder="My custom network" />
+            <FormTextInput name="name" placeholder="My custom network" testID={AddModalSelectors.nameInput} />
 
             <Label label="URL" />
-            <FormTextInput name="url" placeholder="http://localhost:4444" autoCapitalize="none" />
+            <FormTextInput
+              name="url"
+              placeholder="http://localhost:4444"
+              autoCapitalize="none"
+              testID={AddModalSelectors.urlInput}
+            />
           </View>
 
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddModalSelectors.closeButton} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Add" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Add"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={AddModalSelectors.addButton}
+              />
             </ButtonsContainer>
 
             <InsetSubstitute type="bottom" />

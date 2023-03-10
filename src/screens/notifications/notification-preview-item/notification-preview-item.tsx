@@ -14,6 +14,7 @@ import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { formatDateOutput } from '../../../utils/date.utils';
+import { NotificationsSelectors } from '../notifications.selectors';
 import { useNotificationPreviewItemStyles } from './notification-preview-item.styles';
 
 const NotificationsIconMap: Record<NotificationType, IconNameEnum> = {
@@ -40,6 +41,7 @@ export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
         conditionalStyle(notification.status === NotificationStatus.Read, styles.containerRead)
       ]}
       onPress={handlePress}
+      testID={NotificationsSelectors.notificationPreviewButton}
     >
       <View style={styles.iconContainer}>
         {notification.status === NotificationStatus.New && (

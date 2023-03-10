@@ -18,16 +18,17 @@ import { tzktUrl } from 'src/utils/linking.util';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
+import { TestIdProps } from '../../../interfaces/test-id.props';
 import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   baker: BakerInterface;
   selected: boolean;
   onPress: EmptyFn;
 }
 
-export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
+export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID }) => {
   const styles = useSelectBakerItemStyles();
   const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
   const { metadata } = useNetworkInfo();
@@ -44,6 +45,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress }) => {
         conditionalStyle(isRecommendedBaker, styles.containerPaddingWithRecommended)
       ]}
       onPress={onPress}
+      testID={testID}
     >
       {isRecommendedBaker && (
         <View style={styles.recommendedContainer}>
