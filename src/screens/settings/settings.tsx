@@ -164,7 +164,7 @@ export const Settings = () => {
               testID={SettingsSelectors.notificationsButton}
             >
               <View style={styles.actionsContainer}>
-                <WhiteContainerText text="Notifications" />
+                <WhiteContainerText text="Notifications and Ads" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>

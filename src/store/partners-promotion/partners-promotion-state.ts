@@ -7,11 +7,13 @@ import { mockPartnersPromotion } from './partners-promotion-state.mock';
 export interface PartnersPromotionState {
   promotion: LoadableEntityState<OptimalPromotionInterface>;
   seenPromotionIds: Array<string>;
+  isEnabled: boolean;
 }
 
 export const partnersPromotionInitialState: PartnersPromotionState = {
   promotion: createEntity(mockPartnersPromotion),
-  seenPromotionIds: []
+  seenPromotionIds: [],
+  isEnabled: true
 };
 
 export interface PartnersPromotionRootState {

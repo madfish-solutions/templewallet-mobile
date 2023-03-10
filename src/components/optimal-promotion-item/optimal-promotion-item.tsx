@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { skipPartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import {
+  useIsPartnersPromoEnabledSelector,
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector,
   useSeenPartnersPromoIdsSelector
@@ -21,8 +22,9 @@ export const OptimalPromotionItem: FC<Props> = ({ testID, style }) => {
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
   const seenPromoIds = useSeenPartnersPromoIdsSelector();
+  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
-  if (seenPromoIds.includes(partnersPromotion.id)) {
+  if (seenPromoIds.includes(partnersPromotion.id) || !partnersPromotionEnabled) {
     return null;
   }
 

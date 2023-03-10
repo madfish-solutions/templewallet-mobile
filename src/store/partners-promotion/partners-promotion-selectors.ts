@@ -4,3 +4,4 @@ export const usePartnersPromoSelector = () => useSelector(state => state.partner
 export const useSeenPartnersPromoIdsSelector = () =>
   useSelector(({ partnersPromotion }) => partnersPromotion.seenPromotionIds);
 export const usePartnersPromoLoadingSelector = () => useSelector(state => state.partnersPromotion.promotion.isLoading);
+export const useIsPartnersPromoEnabledSelector = () => useSelector(state => state.partnersPromotion.isEnabled);
