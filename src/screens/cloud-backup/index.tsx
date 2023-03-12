@@ -44,10 +44,17 @@ export const CloudBackup = () => {
       return void showErrorToast({ description: 'Wrong password' });
     }
 
-    const loggedInToCloud = await requestSignInToCloud();
+    try {
+      const loggedInToCloud = await requestSignInToCloud();
 
-    if (!loggedInToCloud) {
-      return void showErrorToast({ description: 'Failed to log-in' });
+      if (!loggedInToCloud) {
+        return;
+      }
+    } catch (error) {
+      return void showErrorToast({
+        title: 'Failed to log-in',
+        description: (error as Error)?.message ?? 'Unknown reason'
+      });
     }
 
     const mnemonic = await new Promise<string>(resolve => Shelter.revealSeedPhrase$().subscribe(m => void resolve(m)));

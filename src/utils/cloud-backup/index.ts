@@ -1,4 +1,4 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { isString } from 'lodash';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
@@ -34,33 +34,41 @@ export const requestSignInToCloud = async () => {
     return true;
   }
 
+  await assureGooglePlayServicesAvailable();
+
+  GoogleSignin.configure({
+    scopes: ['https://www.googleapis.com/auth/drive.file']
+  });
+
+  await preLogOut();
+
   try {
-    const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-
-    if (!hasPlayServices) {
-      return false;
-    }
-
-    GoogleSignin.configure({
-      scopes: ['https://www.googleapis.com/auth/drive.file']
-    });
-
-    await GoogleSignin.signOut();
-    /* Syncing signed-in state to RNCloudFS */
-    await RNCloudFs.logout();
-
     const user = await GoogleSignin.signIn();
 
     if (user == null) {
       return false;
     }
+  } catch (error) {
+    console.error('GoogleSignin.signIn { error }:', { error });
 
+    if (
+      [statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(
+        (error as { code: keyof typeof statusCodes })?.code
+      )
+    ) {
+      return false;
+    }
+
+    throw new Error('Failed to sign-in with Google');
+  }
+
+  try {
     /* Syncing signed-in state to RNCloudFS */
     return await RNCloudFs.loginIfNeeded();
   } catch (error) {
-    console.error('requestSignInToCloud { error }:', { error });
+    console.error('RNCloudFs.loginIfNeeded { error }:', { error });
 
-    return false;
+    throw new Error('Failed to sync sign-in status');
   }
 };
 
@@ -138,5 +146,30 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
     console.error(error);
 
     throw new Error('Password is incorrect');
+  }
+};
+
+const assureGooglePlayServicesAvailable = async () => {
+  let hasPlayServices = false;
+  try {
+    hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  } catch (error) {
+    console.error('GoogleSignin.hasPlayServices { error }:', { error });
+  }
+
+  if (!hasPlayServices) {
+    throw new Error('Google Play services are not available');
+  }
+};
+
+const preLogOut = async () => {
+  try {
+    await GoogleSignin.signOut();
+    /* Syncing signed-in state to RNCloudFS */
+    await RNCloudFs.logout();
+  } catch (error) {
+    console.error('preLogOut() { error }:', { error });
+
+    throw new Error('Failed to pre-log-out');
   }
 };

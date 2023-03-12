@@ -33,10 +33,17 @@ export const Welcome = () => {
   usePageAnalytic(ScreensEnum.Welcome);
 
   const onContinueWithCloudButtonPress = async () => {
-    const loggedInToCloud = await requestSignInToCloud();
+    try {
+      const loggedInToCloud = await requestSignInToCloud();
 
-    if (!loggedInToCloud) {
-      return void showErrorToast({ description: 'Failed to log-in' });
+      if (!loggedInToCloud) {
+        return;
+      }
+    } catch (error) {
+      return void showErrorToast({
+        title: 'Failed to log-in',
+        description: (error as Error)?.message ?? 'Unknown reason'
+      });
     }
 
     const backupFile = await fetchCloudBackupFileDetails();
