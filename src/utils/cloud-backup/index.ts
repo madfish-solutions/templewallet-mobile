@@ -35,7 +35,15 @@ export const requestSignInToCloud = async () => {
   }
 
   try {
-    GoogleSignin.configure();
+    const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+    if (!hasPlayServices) {
+      return false;
+    }
+
+    GoogleSignin.configure({
+      scopes: ['https://www.googleapis.com/auth/drive.file']
+    });
 
     await GoogleSignin.signOut();
     /* Syncing signed-in state to RNCloudFS */
@@ -50,7 +58,7 @@ export const requestSignInToCloud = async () => {
     /* Syncing signed-in state to RNCloudFS */
     return await RNCloudFs.loginIfNeeded();
   } catch (error) {
-    console.error('requestSignInToCloud error:', { error });
+    console.error('requestSignInToCloud { error }:', { error });
 
     return false;
   }
@@ -94,7 +102,7 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
   const fileExists = await checkIfBackupExists(fileId);
 
   if (fileExists === false) {
-    throw new Error('Failed to save file');
+    throw new Error('File not found after saving');
   }
 };
 

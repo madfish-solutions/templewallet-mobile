@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-apply plugin: "com.google.gms.google-services"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
@@ -98,8 +97,10 @@ def enableSeparateBuildPerCPUArchitecture = false
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
+ *
+ * `false` since 'react-native-cloud-fs'
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore.
@@ -136,13 +137,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    /*
-      For 'react-native-cloud-fs' fix. See:
-      - https://developer.android.com/reference/tools/gradle-api/7.2/com/android/build/api/dsl/ResourcesPackagingOptions
-      - https://github.com/google/android-fhir/issues/534#issuecomment-1067098894
-    */
     packagingOptions {
-        pickFirst 'META-INF/DEPENDENCIES'
+        /*
+          Build fix since 'react-native-cloud-fs'. See:
+          - https://developer.android.com/reference/tools/gradle-api/7.2/com/android/build/api/dsl/ResourcesPackagingOptions
+          - https://github.com/google/android-fhir/issues/534#issuecomment-1067098894
+        */
+        exclude 'META-INF/DEPENDENCIES'
     }
 
     defaultConfig {
@@ -276,12 +277,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "androidx.core:core-splashscreen:1.0.0"
 
-    /*
-      For 'react-native-cloud-fs' fix
-      See: https://stackoverflow.com/a/60492942/9371122
-    */
-    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
@@ -304,11 +299,11 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation("com.google.android.gms:play-services-drive:17.0.0") {
-        force = true;
-    }
-
-    implementation project(':react-native-cloud-fs')
+    /*
+      Build fix since 'react-native-cloud-fs'
+      See: https://stackoverflow.com/a/60492942/9371122
+    */
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 }
 
 if (isNewArchitectureEnabled()) {
@@ -335,6 +330,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+apply plugin: "com.google.gms.google-services"
 
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:

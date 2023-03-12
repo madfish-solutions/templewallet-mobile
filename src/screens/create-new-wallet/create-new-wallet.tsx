@@ -80,7 +80,10 @@ export const CreateNewWallet = () => {
     } catch (error) {
       dispatch(requestSeedPhraseBackupAction());
 
-      return void showErrorToast({ description: 'Failed to back up to cloud' });
+      return void showErrorToast({
+        title: 'Failed to back up to cloud',
+        description: (error as Error)?.message ?? ''
+      });
     }
 
     dispatch(madeCloudBackupAction());

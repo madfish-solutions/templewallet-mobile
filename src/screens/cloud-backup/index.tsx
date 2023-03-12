@@ -55,7 +55,10 @@ export const CloudBackup = () => {
     try {
       await saveCloudBackup(mnemonic, password);
     } catch (error) {
-      return void showErrorToast({ description: 'Failed to save file' });
+      return void showErrorToast({
+        title: 'Failed to back up to cloud',
+        description: (error as Error)?.message ?? ''
+      });
     }
 
     dispatch(madeCloudBackupAction());
