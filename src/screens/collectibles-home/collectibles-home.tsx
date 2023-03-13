@@ -15,7 +15,6 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
-import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
@@ -51,17 +50,11 @@ export const CollectiblesHome = () => {
 
         <Divider />
 
-        {isSearchMode ? (
-          <>
-            <SearchInput placeholder="Type here..." onChangeText={setSearchValue} />
+        <SearchInput placeholder="Type here..." onChangeText={setSearchValue} />
 
-            <Text style={[styles.descriptionText, styles.widthPaddingHorizontal]}>
-              Search collectibles by name, sybmol or address.
-            </Text>
-          </>
-        ) : (
-          <PromotionCarousel />
-        )}
+        <Text style={[styles.descriptionText, styles.widthPaddingHorizontal]}>
+          Search collectibles by name, sybmol or address.
+        </Text>
       </HeaderCard>
 
       <CollectiblesList collectiblesList={collectiblesList} />

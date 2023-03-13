@@ -21,10 +21,16 @@ import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
+  shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
 }
 
-export const OptimalPromotionItem: FC<Props> = ({ testID, style, variant = OptimalPromotionVariantEnum.Image }) => {
+export const OptimalPromotionItem: FC<Props> = ({
+  testID,
+  style,
+  shouldShowCloseButton = true,
+  variant = OptimalPromotionVariantEnum.Image
+}) => {
   const dispatch = useDispatch();
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
@@ -55,7 +61,7 @@ export const OptimalPromotionItem: FC<Props> = ({ testID, style, variant = Optim
           </View>
           <Text style={styles.content}>{partnersPromotion.copy.content}</Text>
         </View>
-        <TouchableIcon name={IconNameEnum.X} onPress={handleClose} size={formatSize(16)} />
+        {shouldShowCloseButton && <TouchableIcon name={IconNameEnum.X} onPress={handleClose} size={formatSize(16)} />}
       </View>
     );
   }
@@ -67,7 +73,7 @@ export const OptimalPromotionItem: FC<Props> = ({ testID, style, variant = Optim
       link={partnersPromotion.link}
       loading={partnersPromotionLoading}
       shouldShowAdBage
-      shouldShowCloseButton
+      shouldShowCloseButton={shouldShowCloseButton}
       style={style}
       onCloseButtonClick={handleClose}
     />

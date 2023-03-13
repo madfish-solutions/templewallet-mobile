@@ -5,3 +5,7 @@ export const useSeenPartnersPromoIdsSelector = () =>
   useSelector(({ partnersPromotion }) => partnersPromotion.seenPromotionIds);
 export const usePartnersPromoLoadingSelector = () => useSelector(state => state.partnersPromotion.promotion.isLoading);
 export const useIsPartnersPromoEnabledSelector = () => useSelector(state => state.partnersPromotion.isEnabled);
+export const useIsCurrentPromotionSkipped = () =>
+  useSelector(({ partnersPromotion }) =>
+    partnersPromotion.seenPromotionIds.some(id => id === partnersPromotion.promotion.data?.id)
+  );

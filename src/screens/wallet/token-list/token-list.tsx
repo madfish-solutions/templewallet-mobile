@@ -47,6 +47,7 @@ const keyExtractor = (item: FlatListItem) => {
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
+const ITEMS_BEFORE_AD = 4;
 
 export const TokenList: FC = () => {
   const dispatch = useDispatch();
@@ -85,11 +86,15 @@ export const TokenList: FC = () => {
   const renderData = useMemo(() => {
     const noAdsData = addPlaceholdersForAndroid(flatListData, screenFillingItemsCount);
 
-    if (isHideZeroBalance && flatListData.length === 0) {
+    if ((isHideZeroBalance && flatListData.length === 0) || (searchValue?.length ?? 0) > 0) {
       return noAdsData;
     }
 
-    return [...noAdsData.slice(0, 3), { ...emptyToken, address: 'ad' }, ...noAdsData.slice(3, noAdsData.length)];
+    return [
+      ...noAdsData.slice(0, ITEMS_BEFORE_AD),
+      { ...emptyToken, address: 'ad' },
+      ...noAdsData.slice(ITEMS_BEFORE_AD, noAdsData.length)
+    ];
   }, [flatListData, screenFillingItemsCount, isHideZeroBalance]);
 
   useEffect(() => {
