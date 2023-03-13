@@ -2,38 +2,39 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { CurrentAccountDropdown } from '../../components/account-dropdown/current-account-dropdown';
-import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
-import { Divider } from '../../components/divider/divider';
-import { HeaderCardActionButtons } from '../../components/header-card-action-buttons/header-card-action-buttons';
-import { HeaderCard } from '../../components/header-card/header-card';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-import { TokenEquityValue } from '../../components/token-equity-value/token-equity-value';
-import { useWalletOpenTacker } from '../../hooks/use-wallet-open-tacker.hook';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addBlacklistedContactAction } from '../../store/contact-book/contact-book-actions';
+import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
+import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
+import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
   useContactsAddressesSelector,
   useIgnoredAddressesSelector
-} from '../../store/contact-book/contact-book-selectors';
-import { setSelectedAccountAction } from '../../store/wallet/wallet-actions';
+} from 'src/store/contact-book/contact-book-selectors';
+import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
-} from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+} from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
-import { TokenList } from './token-list/token-list';
+import { TokensList } from './token-list/token-list';
 import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
@@ -90,7 +91,7 @@ export const Wallet = () => {
         <CollectiblesHomeSwipeButton />
       </HeaderCard>
 
-      <TokenList />
+      <TokensList />
 
       <BackupYourWalletOverlay />
 

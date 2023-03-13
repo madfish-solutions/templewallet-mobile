@@ -14,7 +14,6 @@ import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
@@ -26,7 +25,6 @@ import { formatSize, formatSizeScaled } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { filterTezos } from 'src/utils/filter.util';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
@@ -49,44 +47,38 @@ const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 const ITEMS_BEFORE_AD = 4;
 
-export const TokenList: FC = () => {
+export const TokensList: FC = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { navigate } = navigation;
   const styles = useTokenListStyles();
 
-  const { metadata } = useNetworkInfo();
   const apyRates = useTokensApyRatesSelector();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const isHideZeroBalanceMemo = useHideZeroBalancesSelector();
+
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
   }, []);
-  const { filteredAssetsList, isHideZeroBalance, searchValue, setSearchValue } = useFilteredAssetsList(
-    visibleTokensList,
-    isHideZeroBalanceMemo
-  );
-  const isShowTezos = useMemo(
-    () => filterTezos(tezosToken.balance, isHideZeroBalance, metadata, searchValue),
-    [tezosToken.balance, isHideZeroBalance, searchValue]
-  );
 
-  const flatListData = useMemo<FlatListItem[]>(
-    () => [...((isShowTezos ? [TEZ_TOKEN_SLUG] : []) as Array<typeof TEZ_TOKEN_SLUG>), ...filteredAssetsList],
-    [isShowTezos, filteredAssetsList]
+  const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
+    visibleTokensList,
+    isHideZeroBalance,
+    true,
+    tezosToken
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
 
   const renderData = useMemo(() => {
-    const noAdsData = addPlaceholdersForAndroid(flatListData, screenFillingItemsCount);
+    const noAdsData = addPlaceholdersForAndroid(filteredAssetsList, screenFillingItemsCount);
 
-    if ((isHideZeroBalance && flatListData.length === 0) || (searchValue?.length ?? 0) > 0) {
+    if ((isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0) {
       return noAdsData;
     }
 
@@ -95,7 +87,7 @@ export const TokenList: FC = () => {
       { ...emptyToken, address: 'ad' },
       ...noAdsData.slice(ITEMS_BEFORE_AD, noAdsData.length)
     ];
-  }, [flatListData, screenFillingItemsCount, isHideZeroBalance]);
+  }, [filteredAssetsList, screenFillingItemsCount, isHideZeroBalance]);
 
   useEffect(() => {
     const listener = () => {

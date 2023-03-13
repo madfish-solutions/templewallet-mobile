@@ -1,45 +1,72 @@
+import { BigNumber } from 'bignumber.js';
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getDollarValue } from 'src/utils/balance.utils';
+import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
+import { isTruthy } from 'src/utils/is-truthy';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
 
-export const useFilteredAssetsList = (assetsList: TokenInterface[], isHideZeroBalance = false) => {
-  const nonZeroBalanceAssetsList = useMemo<TokenInterface[]>(
-    () => assetsList.filter(asset => isNonZeroBalance(asset)),
-    [assetsList]
+export const useFilteredAssetsList = (
+  assetsList: TokenInterface[],
+  filterZeroBalances = false,
+  sortByDollarValueDecrease = false,
+  leadingAsset?: TokenInterface,
+  leadingAssetIsFilterable = true
+) => {
+  const sourceArray = useMemo<TokenInterface[]>(
+    () => (filterZeroBalances ? assetsList.filter(asset => isNonZeroBalance(asset)) : assetsList),
+    [assetsList, filterZeroBalances]
   );
 
   const [searchValue, setSearchValue] = useState<string>();
-  const filteredAssetsList = useMemo<TokenInterface[]>(() => {
-    const sourceArray = isHideZeroBalance ? nonZeroBalanceAssetsList : assetsList;
 
-    if (isString(searchValue)) {
-      const lowerCaseSearchValue = searchValue.toLowerCase();
-      const result: TokenInterface[] = [];
-
-      for (const asset of sourceArray) {
-        const { name, symbol, address } = asset;
-
-        if (
-          name.toLowerCase().includes(lowerCaseSearchValue) ||
-          symbol.toLowerCase().includes(lowerCaseSearchValue) ||
-          address.toLowerCase().includes(lowerCaseSearchValue)
-        ) {
-          result.push(asset);
-        }
-      }
-
-      return result;
-    } else {
-      return sourceArray;
+  const searchedAssetsList = useMemo<TokenInterface[]>(() => {
+    if (!isString(searchValue)) {
+      return sortByDollarValueDecrease ? applySortByDollarValueDecrease([...sourceArray]) : sourceArray;
     }
-  }, [isHideZeroBalance, searchValue, assetsList, nonZeroBalanceAssetsList]);
+
+    const lowerCaseSearchValue = searchValue.toLowerCase();
+
+    const result = sourceArray.filter(asset => isAssetSearched(asset, lowerCaseSearchValue));
+
+    return sortByDollarValueDecrease ? applySortByDollarValueDecrease(result) : result;
+  }, [searchValue, sourceArray, sortByDollarValueDecrease]);
+
+  const filteredAssetsList = useMemo(() => {
+    if (!isDefined(leadingAsset)) {
+      return searchedAssetsList;
+    }
+
+    if (leadingAssetIsFilterable) {
+      if (filterZeroBalances && !isNonZeroBalance(leadingAsset)) {
+        return searchedAssetsList;
+      }
+      if (isString(searchValue) && !isAssetSearched(leadingAsset, searchValue.toLowerCase())) {
+        return searchedAssetsList;
+      }
+    }
+
+    return [leadingAsset, ...searchedAssetsList];
+  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsFilterable]);
 
   return {
     filteredAssetsList,
-    isHideZeroBalance,
     searchValue,
     setSearchValue
   };
 };
+
+const isAssetSearched = ({ name, symbol, address }: TokenInterface, lowerCaseSearchValue: string) =>
+  name.toLowerCase().includes(lowerCaseSearchValue) ||
+  symbol.toLowerCase().includes(lowerCaseSearchValue) ||
+  address.toLowerCase().includes(lowerCaseSearchValue);
+
+const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
+  assets.sort((a, b) => {
+    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
+    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
+
+    return bDollarValue.minus(aDollarValue).toNumber();
+  });
