@@ -27,9 +27,12 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.gray1
   },
   promotionItemWrapper: {
-    paddingVertical: formatSize(12),
+    paddingVertical: formatSize(12)
+  },
+  promotionItemBorder: {
+    marginLeft: formatSize(8),
     borderBottomWidth: formatSize(0.5),
-    borderBottomColor: colors.lines
+    borderColor: colors.lines
   },
   promotionItem: {
     width: formatSize(359)

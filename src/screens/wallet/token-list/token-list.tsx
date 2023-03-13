@@ -18,6 +18,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
@@ -61,6 +62,7 @@ export const TokensList: FC = () => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
+  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -78,7 +80,11 @@ export const TokensList: FC = () => {
   const renderData = useMemo(() => {
     const noAdsData = addPlaceholdersForAndroid(filteredAssetsList, screenFillingItemsCount);
 
-    if ((isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0) {
+    if (
+      (isHideZeroBalance && filteredAssetsList.length === 0) ||
+      (searchValue?.length ?? 0) > 0 ||
+      !partnersPromotionEnabled
+    ) {
       return noAdsData;
     }
 
@@ -87,7 +93,7 @@ export const TokensList: FC = () => {
       { ...emptyToken, address: 'ad' },
       ...noAdsData.slice(ITEMS_BEFORE_AD, noAdsData.length)
     ];
-  }, [filteredAssetsList, screenFillingItemsCount, isHideZeroBalance]);
+  }, [filteredAssetsList, screenFillingItemsCount, isHideZeroBalance, partnersPromotionEnabled, searchValue]);
 
   useEffect(() => {
     const listener = () => {
@@ -110,13 +116,16 @@ export const TokensList: FC = () => {
 
       if (item.address === 'ad') {
         return (
-          <View style={styles.promotionItemWrapper}>
-            <OptimalPromotionItem
-              variant={OptimalPromotionVariantEnum.Text}
-              style={styles.promotionItem}
-              testID={TokenListSelectors.promotion}
-            />
-          </View>
+          <>
+            <View style={styles.promotionItemWrapper}>
+              <OptimalPromotionItem
+                variant={OptimalPromotionVariantEnum.Text}
+                style={styles.promotionItem}
+                testID={TokenListSelectors.promotion}
+              />
+            </View>
+            <View style={styles.promotionItemBorder} />
+          </>
         );
       }
 
