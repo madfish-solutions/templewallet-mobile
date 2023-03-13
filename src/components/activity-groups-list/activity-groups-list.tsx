@@ -9,6 +9,7 @@ import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { OptimalPromotionItem } from '../optimal-promotion-item/optimal-promotion-item';
 import { RefreshControl } from '../refresh-control/refresh-control';
 import { ActivityGroupItem } from './activity-group-item/activity-group-item';
+import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
 import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
 interface Props {
@@ -57,7 +58,10 @@ export const ActivityGroupsList: FC<Props> = ({
     <>
       {shouldShowPromotion && (
         <View style={styles.promotionItemWrapper}>
-          <OptimalPromotionItem style={[styles.promotionItem, styles.centeredItem]} />
+          <OptimalPromotionItem
+            style={[styles.promotionItem, styles.centeredItem]}
+            testID={ActivityGroupsListSelectors.promotion}
+          />
         </View>
       )}
       <DataPlaceholder text="No Activity records were found" />
@@ -76,7 +80,7 @@ export const ActivityGroupsList: FC<Props> = ({
             <ActivityGroupItem group={item} />
             {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
               <View style={styles.promotionItemWrapper}>
-                <OptimalPromotionItem style={styles.promotionItem} />
+                <OptimalPromotionItem style={styles.promotionItem} testID={ActivityGroupsListSelectors.promotion} />
               </View>
             )}
           </>

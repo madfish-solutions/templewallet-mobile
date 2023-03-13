@@ -42,6 +42,7 @@ export const TextPromotionItem: FC<Props> = ({
 
   return (
     <TouchableOpacity
+      testID={testID}
       style={[styles.container, style]}
       onPress={() => {
         trackEvent(testID, AnalyticsEventCategory.General);

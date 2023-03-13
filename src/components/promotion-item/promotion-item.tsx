@@ -43,6 +43,7 @@ export const PromotionItem: FC<Props> = memo(
 
     return (
       <TouchableOpacity
+        testID={testID}
         style={[styles.container, style]}
         onPress={() => {
           trackEvent(testID, AnalyticsEventCategory.General);

@@ -53,7 +53,7 @@ export const CollectiblesHome = () => {
         <SearchInput placeholder="Type here..." onChangeText={setSearchValue} />
 
         <Text style={[styles.descriptionText, styles.widthPaddingHorizontal]}>
-          Search collectibles by name, sybmol or address.
+          Search collectibles by name, symbol or address.
         </Text>
       </HeaderCard>
 

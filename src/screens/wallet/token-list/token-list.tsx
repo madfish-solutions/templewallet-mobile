@@ -111,7 +111,11 @@ export const TokensList: FC = () => {
       if (item.address === 'ad') {
         return (
           <View style={styles.promotionItemWrapper}>
-            <OptimalPromotionItem variant={OptimalPromotionVariantEnum.Text} style={styles.promotionItem} />
+            <OptimalPromotionItem
+              variant={OptimalPromotionVariantEnum.Text}
+              style={styles.promotionItem}
+              testID={TokenListSelectors.promotion}
+            />
           </View>
         );
       }

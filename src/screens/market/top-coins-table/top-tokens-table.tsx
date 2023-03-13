@@ -2,13 +2,14 @@ import React, { useRef } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
+import { MarketToken } from 'src/store/market/market.interfaces';
+import { formatSize } from 'src/styles/format-size';
 
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { useFakeRefreshControlProps } from '../../../hooks/use-fake-refresh-control-props.hook';
-import { useFilteredMarketTokens } from '../../../hooks/use-filtered-market-tokens.hook';
-import { MarketToken } from '../../../store/market/market.interfaces';
-import { formatSize } from '../../../styles/format-size';
+import { MarketSelectors } from '../market.selectors';
 import { Filters } from './filters/filters';
 import { RightSwipeView } from './right-swipe-view/right-swipe-view';
 import { Row } from './row/row';
@@ -50,7 +51,7 @@ export const TopTokensTable = () => {
 
   return (
     <View style={styles.rootContainer}>
-      <OptimalPromotionItem style={styles.promotion} />
+      <OptimalPromotionItem style={styles.promotion} testID={MarketSelectors.promotion} />
       <Filters
         sortFiled={sortFiled}
         segmentControlIndex={segmentControlIndex}
