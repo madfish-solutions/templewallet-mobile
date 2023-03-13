@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { StyleProp, ViewStyle } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -11,12 +10,9 @@ import {
   usePartnersPromoSelector,
   useSeenPartnersPromoIdsSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { formatSize } from 'src/styles/format-size';
 
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PromotionItem } from '../promotion-item/promotion-item';
-import { useOptimalPromotionItemStyles } from './optimal-promotion-item.styles';
+import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {
@@ -36,7 +32,6 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
   const seenPromoIds = useSeenPartnersPromoIdsSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const styles = useOptimalPromotionItemStyles();
 
   const handleClose = () => dispatch(skipPartnersPromotionAction(partnersPromotion.id));
 
@@ -45,24 +40,18 @@ export const OptimalPromotionItem: FC<Props> = ({
   }
 
   if (variant === OptimalPromotionVariantEnum.Text) {
-    return partnersPromotionLoading ? (
-      <View style={[styles.loaderContainer, style]}>
-        <ActivityIndicator />
-      </View>
-    ) : (
-      <View style={[styles.container, style]}>
-        <FastImage style={styles.image} source={{ uri: partnersPromotion.image }} resizeMode="contain" />
-        <View style={styles.textsContainer}>
-          <View style={styles.headline}>
-            <Text style={styles.headlineText}>{partnersPromotion.copy.headline}</Text>
-            <View style={styles.adLabel}>
-              <Text style={styles.adLabelText}>AD</Text>
-            </View>
-          </View>
-          <Text style={styles.content}>{partnersPromotion.copy.content}</Text>
-        </View>
-        {shouldShowCloseButton && <TouchableIcon name={IconNameEnum.X} onPress={handleClose} size={formatSize(16)} />}
-      </View>
+    return (
+      <TextPromotionItem
+        testID={testID}
+        content={partnersPromotion.copy.content}
+        headline={partnersPromotion.copy.headline}
+        imageUri={partnersPromotion.image}
+        link={partnersPromotion.link}
+        loading={partnersPromotionLoading}
+        shouldShowCloseButton={shouldShowCloseButton}
+        style={style}
+        onClose={handleClose}
+      />
     );
   }
 

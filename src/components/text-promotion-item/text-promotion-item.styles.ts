@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useOptimalPromotionItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useTextPromotionItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     paddingHorizontal: formatSize(8),
     paddingVertical: formatSize(12),
@@ -60,7 +60,6 @@ export const useOptimalPromotionItemStyles = createUseStyles(({ colors, typograp
     height: formatSize(80),
     borderRadius: formatSize(10),
     justifyContent: 'center',
-    alignItems: 'center',
-    ...generateShadow(1, black)
+    alignItems: 'center'
   }
 }));
