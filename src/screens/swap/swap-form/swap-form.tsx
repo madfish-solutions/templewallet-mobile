@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -12,6 +12,7 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
@@ -19,12 +20,13 @@ import { useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.ho
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { Route3SwapParamsResponse } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { createEntity } from 'src/store/create-entity';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { loadSwapParamsAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
-import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
+import { LoadableEntityState } from 'src/store/types';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
@@ -37,7 +39,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
-import { getRoute3TokenSymbol } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
 
 import { ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
@@ -49,6 +51,17 @@ import { SwapFormSelectors } from './swap-form.selectors';
 import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
+const TEMPLE_TOKEN: TokenInterface = {
+  address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
+  decimals: 6,
+  exchangeRate: 0.38158038815461065,
+  id: 0,
+  name: 'Quipuswap Governance Token',
+  symbol: 'QUIPU',
+  thumbnailUri: 'ipfs://Qmb2GiHN9EjcrN29J6y9PsXu3ZDosXTv6uLUWGZfRRSzS2/quipu.png',
+  balance: '0',
+  visibility: VisibilityEnum.Visible
+};
 
 interface SwapFormProps {
   inputToken?: TokenInterface;
@@ -66,7 +79,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const blockLevel = useBlockLevel();
 
-  const { data: swapParams } = useSwapParamsSelector();
+  const [swapParams, setSwapParams] = useState<LoadableEntityState<Route3SwapParamsResponse>>(
+    createEntity({ input: 0, output: 0, chains: [] })
+  );
 
   const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
 
@@ -84,24 +99,46 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     if (!inputAssets.amount) {
       return;
     }
+    const inputAmountAtomic = new BigNumber(swapParams.data.input ?? 0).multipliedBy(10 ** inputAssets.asset.decimals);
+
+    const swapOpParams = await getSwapParams(
+      inputAssets.asset,
+      outputAssets.asset,
+      inputAmountAtomic,
+      minimumReceivedAmountAtomic,
+      swapParams.data.chains
+    );
+
+    const swapToTempleParams = await fetchRoute3SwapParams({
+      fromSymbol: getRoute3TokenSymbol(outputAssets.asset),
+      toSymbol: getRoute3TokenSymbol(TEMPLE_TOKEN),
+      amount: routingFeeAtomic.dividedBy(10 ** outputAssets.asset.decimals).toFixed()
+    });
+
+    const swapToTempleTokenOpParams = await getSwapParams(
+      outputAssets.asset,
+      TEMPLE_TOKEN,
+      routingFeeAtomic,
+      routingFeeAtomic,
+      swapToTempleParams.chains
+    );
 
     const routingFeeOpParams = await getRoutingFeeTransferParams(
       outputAssets.asset,
-      routingFreeAtomic,
+      routingFeeAtomic.dividedToIntegerBy(2),
       selectedAccount.publicKeyHash,
       tezos
     );
-
-    const swapOpParams = await getSwapParams(inputAssets.asset, outputAssets.asset, minimumReceivedAmountAtomic);
-
-    if (swapOpParams === undefined) {
+    if (swapOpParams === undefined || swapToTempleTokenOpParams === undefined) {
       return;
     }
 
-    const opParams: Array<ParamsWithKind> = [...swapOpParams, ...routingFeeOpParams].map(transferParams => ({
-      ...transferParams,
-      kind: OpKind.TRANSACTION
-    }));
+    const opParams: Array<ParamsWithKind> = [...swapOpParams, ...swapToTempleTokenOpParams, ...routingFeeOpParams].map(
+      transferParams => ({
+        ...transferParams,
+        kind: OpKind.TRANSACTION
+      })
+    );
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
@@ -134,25 +171,25 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
   const { inputAssets, outputAssets } = values;
 
-  const { routingFreeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
-    if (isDefined(swapParams.output)) {
-      const swapOutputAtomic = new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals);
-      const routingFreeAtomic = swapOutputAtomic
+  const { routingFeeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
+    if (isDefined(swapParams.data.output)) {
+      const swapOutputAtomic = new BigNumber(swapParams.data.output).multipliedBy(10 ** outputAssets.asset.decimals);
+      const routingFeeAtomic = swapOutputAtomic
         .minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO))
         .integerValue(BigNumber.ROUND_DOWN);
       const minimumReceivedAmountAtomic = swapOutputAtomic
-        .minus(routingFreeAtomic)
+        .minus(routingFeeAtomic)
         .multipliedBy(slippageRatio)
         .integerValue(BigNumber.ROUND_DOWN);
 
-      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+      return { routingFeeAtomic, minimumReceivedAmountAtomic };
     } else {
-      const routingFreeAtomic = new BigNumber(0);
+      const routingFeeAtomic = new BigNumber(0);
       const minimumReceivedAmountAtomic = new BigNumber(0);
 
-      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+      return { routingFeeAtomic, minimumReceivedAmountAtomic };
     }
-  }, [swapParams.output, slippageRatio]);
+  }, [swapParams.data.output, slippageRatio]);
 
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined
@@ -172,13 +209,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   useEffect(() => {
     if (inputAssets.amount) {
-      dispatch(
-        loadSwapParamsAction.submit({
-          fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
-          toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-          amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
-        })
-      );
+      fetchRoute3SwapParams({
+        fromSymbol: inputAssets.asset.symbol,
+        toSymbol: outputAssets.asset.symbol,
+        amount: inputAssets.amount.toFixed()
+      }).then(params => setSwapParams(createEntity(params)));
     }
   }, [blockLevel]);
 
@@ -186,11 +221,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     setFieldValue('outputAssets', {
       asset: outputAssets.asset,
       amount:
-        swapParams.output === undefined
+        swapParams.data.output === undefined
           ? undefined
-          : new BigNumber(swapParams.output).multipliedBy(10 ** outputAssets.asset.decimals)
+          : new BigNumber(swapParams.data.output).multipliedBy(10 ** outputAssets.asset.decimals)
     });
-  }, [swapParams.output]);
+  }, [swapParams.data.output]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
@@ -200,15 +235,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       }
 
       if (newInputValue.amount) {
-        dispatch(
-          loadSwapParamsAction.submit({
-            fromSymbol: getRoute3TokenSymbol(newInputValue.asset),
-            toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-            amount: newInputValue.amount.dividedBy(10 ** newInputValue.asset.decimals).toFixed()
-          })
-        );
+        fetchRoute3SwapParams({
+          fromSymbol: getRoute3TokenSymbol(newInputValue.asset),
+          toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+          amount: newInputValue.amount.dividedBy(10 ** newInputValue.asset.decimals).toFixed()
+        }).then(params => setSwapParams(createEntity(params)));
       } else {
-        dispatch(resetSwapParamsAction());
+        setSwapParams(createEntity({ input: 0, output: 0, chains: [] }));
       }
     },
     [outputAssetSlug, setFieldValue]
@@ -220,16 +253,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         setFieldValue('inputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
 
-      if (inputAssets.amount !== undefined) {
-        dispatch(
-          loadSwapParamsAction.submit({
-            fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
-            toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
-            amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
-          })
-        );
+      if (inputAssets.amount) {
+        fetchRoute3SwapParams({
+          fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+          toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
+          amount: inputAssets.amount.dividedBy(10 ** inputAssets.asset.decimals).toFixed()
+        }).then(params => setSwapParams(createEntity(params)));
       } else {
-        dispatch(resetSwapParamsAction());
+        setSwapParams(createEntity({ input: 0, output: 0, chains: [] }));
       }
     },
     [inputAssetSlug, setFieldValue, inputAssets.amount]
@@ -266,11 +297,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         />
         <View>
           <SwapExchangeRate
+            swapParams={swapParams.data}
             inputAsset={inputAssets.asset}
             slippageRatio={slippageRatio}
             outputAsset={outputAssets.asset}
           />
-          <SwapRoute />
+          <SwapRoute swapParams={swapParams.data} />
         </View>
 
         <SwapDisclaimer />

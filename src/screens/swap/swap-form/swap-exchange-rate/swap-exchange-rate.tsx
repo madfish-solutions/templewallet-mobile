@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 
-import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
+import { Route3SwapParamsResponse } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -16,11 +16,11 @@ interface Props {
   slippageRatio: number;
   inputAsset: TokenInterface;
   outputAsset: TokenInterface;
+  swapParams: Route3SwapParamsResponse;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio }) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, swapParams }) => {
   const styles = useSwapExchangeRateStyles();
-  const { data: swapParams } = useSwapParamsSelector();
 
   const exchangeRate = useMemo(() => {
     if (swapParams.input !== undefined && swapParams.output !== undefined) {

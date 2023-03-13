@@ -5,14 +5,17 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
+import { Route3SwapParamsResponse } from 'src/interfaces/route3.interface';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
 import { useSwapRouteStyles } from './swap-route.styles';
 
-export const SwapRoute: FC = () => {
+interface Props {
+  swapParams: Route3SwapParamsResponse;
+}
+
+export const SwapRoute: FC<Props> = ({ swapParams }) => {
   const styles = useSwapRouteStyles();
-  const { data: swapParams } = useSwapParamsSelector();
   const [isRouteVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export const SwapRoute: FC = () => {
       {shouldShowRoute &&
         swapParams.chains.map((chain, index) => (
           <View key={index} style={styles.mb8}>
-            <SwapRouteItem chain={chain} />
+            <SwapRouteItem chain={chain} input={swapParams.input ?? 1} output={swapParams.output ?? 1} />
           </View>
         ))}
     </View>

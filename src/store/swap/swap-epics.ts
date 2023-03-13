@@ -1,11 +1,11 @@
 import { combineEpics, Epic } from 'redux-observable';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
-import { ofType, toPayload } from 'ts-action-operators';
+import { ofType } from 'ts-action-operators';
 
-import { fetchRoute3Tokens, fetchRoute3Dexes$, fetchRoute3SwapParams$ } from 'src/utils/route3.util';
+import { fetchRoute3Tokens, fetchRoute3Dexes$ } from 'src/utils/route3.util';
 
-import { loadSwapDexesAction, loadSwapParamsAction, loadSwapTokensAction } from './swap-actions';
+import { loadSwapDexesAction, loadSwapTokensAction } from './swap-actions';
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -14,18 +14,6 @@ const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
       fetchRoute3Tokens().pipe(
         map(tokens => loadSwapTokensAction.success(tokens)),
         catchError(err => of(loadSwapTokensAction.fail(err.message)))
-      )
-    )
-  );
-
-const loadSwapParamsEpic: Epic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadSwapParamsAction.submit),
-    toPayload(),
-    switchMap(payload =>
-      fetchRoute3SwapParams$(payload).pipe(
-        map(swapParams => loadSwapParamsAction.success(swapParams)),
-        catchError(err => of(loadSwapParamsAction.fail(err.message)))
       )
     )
   );
@@ -41,4 +29,4 @@ const loadSwapDexesEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-export const swapEpics = combineEpics(loadSwapTokensEpic, loadSwapParamsEpic, loadSwapDexesEpic);
+export const swapEpics = combineEpics(loadSwapTokensEpic, loadSwapDexesEpic);

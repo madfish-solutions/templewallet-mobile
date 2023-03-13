@@ -4,7 +4,6 @@ import { View, Text } from 'react-native';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
-import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import { kFormatter } from 'src/utils/number.util';
 
 import { HopItem } from '../hop-item/hop-item';
@@ -12,6 +11,8 @@ import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {
   chain: Route3Chain;
+  input: number;
+  output: number;
 }
 
 const BASE = 100;
@@ -20,15 +21,14 @@ const AMOUNT_DECIMALS = 1;
 
 const calculatePercentage = (base: number, part: number) => ((BASE * part) / base).toFixed(PERCENTAGE_DECIMALS);
 
-export const SwapRouteItem: FC<Props> = ({ chain }) => {
+export const SwapRouteItem: FC<Props> = ({ chain, input, output }) => {
   const styles = useSwapRouteItem();
-  const { data: swapParams } = useSwapParamsSelector();
 
   return (
     <View style={[styles.flex, styles.container]}>
       <View style={styles.amountsContainer}>
         <Text style={styles.amount}>{kFormatter(Number(chain.input.toFixed(AMOUNT_DECIMALS)))}</Text>
-        <Text style={styles.percantage}>{calculatePercentage(swapParams.input ?? 1, chain.input)}%</Text>
+        <Text style={styles.percantage}>{calculatePercentage(input, chain.input)}%</Text>
       </View>
       <View style={[styles.flex, styles.hopsContainer]}>
         <Icon width="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
@@ -38,7 +38,7 @@ export const SwapRouteItem: FC<Props> = ({ chain }) => {
       </View>
       <View style={styles.amountsContainer}>
         <Text style={styles.amount}>{kFormatter(Number(chain.output.toFixed(AMOUNT_DECIMALS)))}</Text>
-        <Text style={styles.percantage}>{calculatePercentage(swapParams.output ?? 1, chain.output)}%</Text>
+        <Text style={styles.percantage}>{calculatePercentage(output, chain.output)}%</Text>
       </View>
     </View>
   );

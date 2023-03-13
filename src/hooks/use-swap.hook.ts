@@ -2,9 +2,9 @@ import { TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Route3ContractInterface } from 'src/interfaces/route3.interface';
+import { Route3ContractInterface, Route3Chain } from 'src/interfaces/route3.interface';
 import { ROUTE3_CONTRACT } from 'src/screens/swap/config';
-import { useSwapParamsSelector, useSwapTokensSelector } from 'src/store/swap/swap-selectors';
+import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getRoute3Token, mapToRoute3ExecuteHops } from 'src/utils/route3.util';
@@ -17,7 +17,6 @@ const APP_ID = 2;
 export const useSwap = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const { data: swapParams } = useSwapParamsSelector();
   const { data: swapTokens } = useSwapTokensSelector();
   const [swapContract, setSwapContract] = useState<Route3ContractInterface>();
 
@@ -26,7 +25,13 @@ export const useSwap = () => {
   }, []);
 
   return useCallback(
-    async (fromToken: TokenInterface, toToken: TokenInterface, minimumReceivedAmountAtomic: BigNumber) => {
+    async (
+      fromToken: TokenInterface,
+      toToken: TokenInterface,
+      inputAmountAtomic: BigNumber,
+      minimumReceivedAmountAtomic: BigNumber,
+      chains: Array<Route3Chain>
+    ) => {
       const resultParams: Array<TransferParams> = [];
       const fromRoute3Token = getRoute3Token(fromToken, swapTokens);
       const toRotue3Token = getRoute3Token(toToken, swapTokens);
@@ -35,14 +40,12 @@ export const useSwap = () => {
         return;
       }
 
-      const inputAmountAtomic = new BigNumber(swapParams.input ?? 0).multipliedBy(10 ** fromToken.decimals);
-
       const swapOpParams = swapContract.methods.execute(
         fromRoute3Token.id,
         toRotue3Token.id,
         minimumReceivedAmountAtomic,
         selectedAccount.publicKeyHash,
-        mapToRoute3ExecuteHops(swapParams.chains, fromRoute3Token.decimals),
+        mapToRoute3ExecuteHops(chains, fromRoute3Token.decimals),
         APP_ID
       );
 
@@ -70,6 +73,6 @@ export const useSwap = () => {
 
       return resultParams;
     },
-    [tezos, selectedAccount.publicKeyHash, swapParams.chains, swapParams.output, swapContract]
+    [tezos, selectedAccount.publicKeyHash, swapContract]
   );
 };

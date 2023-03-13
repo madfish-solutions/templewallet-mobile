@@ -1,4 +1,4 @@
-export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
+export const ROUTING_FEE_ADDRESS = 'tz1burnburnburnburnburnburnburjAYjjX';
 
 export const ROUTE3_CONTRACT = 'KT1Tuta6vbpHhZ15ixsYD3qJdhnpEAuogLQ9';
 
