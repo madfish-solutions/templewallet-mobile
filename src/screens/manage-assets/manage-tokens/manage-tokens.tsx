@@ -1,13 +1,14 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { SearchInput } from '../../../components/search-input/search-input';
-import { useFilteredAssetsList } from '../../../hooks/use-filtered-assets-list.hook';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useTokensListSelector } from '../../../store/wallet/wallet-selectors';
-import { getTokenSlug } from '../../../token/utils/token.utils';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
@@ -17,7 +18,7 @@ export const ManageTokens = () => {
   const { isTezosNode } = useNetworkInfo();
 
   const tokensList = useTokensListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList, false, true);
 
   return (
     <>
