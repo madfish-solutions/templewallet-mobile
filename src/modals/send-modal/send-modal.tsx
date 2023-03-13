@@ -4,38 +4,39 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountFormSectionDropdown } from '../../components/account-dropdown/account-form-section-dropdown';
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../components/divider/divider';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Label } from '../../components/label/label';
-import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
-import { FormAddressInput } from '../../form/form-address-input';
-import { FormAssetAmountInput } from '../../form/form-asset-amount-input/form-asset-amount-input';
-import { FormCheckbox } from '../../form/form-checkbox';
-import { useFilteredAssetsList } from '../../hooks/use-filtered-assets-list.hook';
-import { useFilteredReceiversList } from '../../hooks/use-filtered-receivers-list.hook';
-import { useReadOnlyTezosToolkit } from '../../hooks/use-read-only-tezos-toolkit.hook';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { addContactCandidateAddressAction } from '../../store/contact-book/contact-book-actions';
-import { sendAssetActions } from '../../store/wallet/wallet-actions';
+import { AccountFormSectionDropdown } from 'src/components/account-dropdown/account-form-section-dropdown';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { FormAddressInput } from 'src/form/form-address-input';
+import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
+import { FormCheckbox } from 'src/form/form-checkbox';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
+import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useVisibleAssetListSelector
-} from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { showWarningToast, showErrorToast } from '../../toast/toast.utils';
-import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isTezosDomainNameValid, tezosDomainsResolver } from '../../utils/dns.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isValidAddress } from '../../utils/tezos.util';
+} from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
+import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isValidAddress } from 'src/utils/tezos.util';
+
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
@@ -50,17 +51,12 @@ export const SendModal: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true);
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true, true, tezosToken);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
-
-  const filteredAssetsListWithTez = useMemo<TokenInterface[]>(
-    () => [tezosToken, ...filteredAssetsList],
-    [tezosToken, filteredAssetsList]
-  );
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
@@ -70,14 +66,14 @@ export const SendModal: FC = () => {
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       assetAmount: {
-        asset: filteredAssetsListWithTez.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
+        asset: filteredAssetsList.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
       recipient,
       transferBetweenOwnAccounts: false
     }),
-    []
+    [filteredAssetsList]
   );
 
   const onSubmit = async ({
@@ -121,13 +117,14 @@ export const SendModal: FC = () => {
       {({ values, submitForm }) => (
         <ScreenContainer isFullScreenMode={true}>
           <ModalStatusBar />
+
           <View>
             <Divider size={formatSize(8)} />
             <FormAssetAmountInput
               maxButton
               name="assetAmount"
               label="Asset"
-              assetsList={filteredAssetsListWithTez}
+              assetsList={filteredAssetsList}
               testID={SendModalSelectors.assetInput}
             />
             <Divider />
@@ -152,6 +149,7 @@ export const SendModal: FC = () => {
                 testID={SendModalSelectors.toInput}
               />
             )}
+
             <View
               onTouchStart={() =>
                 void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
