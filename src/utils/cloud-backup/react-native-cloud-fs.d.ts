@@ -25,16 +25,18 @@ declare module 'react-native-cloud-fs' {
 
     requestSignIn: () => void;
 
-    /** Broken - does nothing */
     logout: () => Promise<boolean>;
 
-    /** Broken - won't return */
+    /**
+     * (!) Don't await - won't return.
+     * (!) Broken - does nothing
+     */
     reset: () => Promise<boolean>;
 
     // getConstants:
 
     /**
-     * (!) Won't return, if not signed-in
+     * (!) Won't return, if not signed-in via `loginIfNeeded`
      */
     listFiles: (options: { scope: Scope; targetPath: string }) => Promise<
       | {

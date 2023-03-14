@@ -1,6 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import { isString } from 'lodash-es';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -8,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -28,6 +29,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { saveCloudBackup, getRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { isString } from 'src/utils/is-string';
 import { generateSeed } from 'src/utils/keys.util';
 
 import {
@@ -43,6 +45,17 @@ export const CreateNewWallet = () => {
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = getRestoredCloudBackup(cloudBackupId);
+
+  const isRestoreFromCloudFlow = isString(cloudBackupMnemonic);
+
+  useNavigationSetOptions(
+    {
+      headerTitle: () => (
+        <HeaderTitle title={isRestoreFromCloudFlow ? 'Create a new password' : 'Create a new Wallet'} />
+      )
+    },
+    [isRestoreFromCloudFlow]
+  );
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
@@ -63,12 +76,12 @@ export const CreateNewWallet = () => {
     dispatch(showLoaderAction());
     dispatch(setIsAnalyticsEnabled(analytics));
 
-    const seedPhrase = isString(cloudBackupMnemonic) ? cloudBackupMnemonic : await generateSeed();
+    const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
 
     importWallet({ seedPhrase, password, useBiometry });
 
     if (!Boolean(backupToCloud)) {
-      if (!isString(cloudBackupMnemonic)) {
+      if (!isRestoreFromCloudFlow) {
         dispatch(requestSeedPhraseBackupAction());
       }
 
