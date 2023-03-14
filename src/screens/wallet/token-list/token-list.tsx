@@ -135,7 +135,7 @@ export const TokensList: FC = () => {
 
       return <TokenListItem token={item} apy={apyRates[getTokenSlug(item)]} />;
     },
-    [apyRates]
+    [apyRates, styles]
   );
 
   return (

@@ -48,7 +48,7 @@ export const PromotionCarousel = () => {
     }
 
     return result;
-  }, [activePromotion, currentPromotionSkipped]);
+  }, [activePromotion, currentPromotionSkipped, partnersPromotionEnabled, styles]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { ActivityIndicator, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -25,56 +25,48 @@ interface Props extends TestIdProps {
   onClose?: () => void;
 }
 
-export const TextPromotionItem: FC<Props> = ({
-  content,
-  headline,
-  imageUri,
-  link,
-  loading = false,
-  shouldShowCloseButton,
-  style,
-  testID,
-  onClose = emptyFn
-}) => {
-  const { trackEvent } = useAnalytics();
+export const TextPromotionItem: FC<Props> = memo(
+  ({ content, headline, imageUri, link, loading = false, shouldShowCloseButton, style, testID, onClose = emptyFn }) => {
+    const { trackEvent } = useAnalytics();
 
-  const styles = useTextPromotionItemStyles();
+    const styles = useTextPromotionItemStyles();
 
-  return (
-    <TouchableOpacity
-      testID={testID}
-      style={[styles.container, style]}
-      onPress={() => {
-        trackEvent(testID, AnalyticsEventCategory.General);
-        openUrl(link);
-      }}
-    >
-      {loading ? (
-        <View style={[styles.loaderContainer, style]}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <>
-          <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" />
-          <View style={styles.textsContainer}>
-            <View style={styles.headline}>
-              <Text style={styles.headlineText}>{headline}</Text>
-              <View style={styles.adLabel}>
-                <Text style={styles.adLabelText}>AD</Text>
-              </View>
-            </View>
-            <Text style={styles.content}>{content}</Text>
+    return (
+      <TouchableOpacity
+        testID={testID}
+        style={[styles.container, style]}
+        onPress={() => {
+          trackEvent(testID, AnalyticsEventCategory.General);
+          openUrl(link);
+        }}
+      >
+        {loading ? (
+          <View style={[styles.loaderContainer, style]}>
+            <ActivityIndicator />
           </View>
-          {shouldShowCloseButton && (
-            <TouchableIcon
-              name={IconNameEnum.X}
-              onPress={onClose}
-              size={formatSize(16)}
-              testID={TextPromotionItemSelectors.closeButton}
-            />
-          )}
-        </>
-      )}
-    </TouchableOpacity>
-  );
-};
+        ) : (
+          <>
+            <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" />
+            <View style={styles.textsContainer}>
+              <View style={styles.headline}>
+                <Text style={styles.headlineText}>{headline}</Text>
+                <View style={styles.adLabel}>
+                  <Text style={styles.adLabelText}>AD</Text>
+                </View>
+              </View>
+              <Text style={styles.content}>{content}</Text>
+            </View>
+            {shouldShowCloseButton && (
+              <TouchableIcon
+                name={IconNameEnum.X}
+                onPress={onClose}
+                size={formatSize(16)}
+                testID={TextPromotionItemSelectors.closeButton}
+              />
+            )}
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
