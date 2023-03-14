@@ -22,7 +22,6 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     alignSelf: 'center'
   },
   promotionItem: {
-    width: formatSize(343),
-    borderRadius: formatSize(10)
+    width: formatSize(343)
   }
 }));
