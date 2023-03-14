@@ -50,8 +50,7 @@ const ITEMS_BEFORE_AD = 4;
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const { navigate } = navigation;
+  const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
@@ -99,12 +98,12 @@ export const TokensList: FC = () => {
     const listener = () => {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
     };
-    navigation.addListener('focus', listener);
+    addNavigationListener('focus', listener);
 
     return () => {
-      navigation.removeListener('focus', listener);
+      removeNavigationListener('focus', listener);
     };
-  }, [dispatch, navigation]);
+  }, [dispatch, addNavigationListener, removeNavigationListener]);
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 

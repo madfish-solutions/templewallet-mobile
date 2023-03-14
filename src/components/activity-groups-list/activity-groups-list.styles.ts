@@ -14,7 +14,7 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     paddingVertical: formatSize(4)
   },
   promotionItemWrapper: {
-    paddingVertical: 12,
+    paddingVertical: formatSize(12),
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines
   },
