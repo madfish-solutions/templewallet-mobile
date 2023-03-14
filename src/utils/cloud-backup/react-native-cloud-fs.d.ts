@@ -25,6 +25,8 @@ declare module 'react-native-cloud-fs' {
 
     requestSignIn: () => void;
 
+    syncCloud: () => Promise<void>;
+
     logout: () => Promise<boolean>;
 
     /**

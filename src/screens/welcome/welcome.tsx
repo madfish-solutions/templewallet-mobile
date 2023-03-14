@@ -19,7 +19,8 @@ import {
   cloudTitle,
   fetchCloudBackupFileDetails,
   isCloudAvailable,
-  requestSignInToCloud
+  requestSignInToCloud,
+  syncCloud
 } from 'src/utils/cloud-backup';
 
 import { WelcomeSelectors } from './welcome.selectors';
@@ -45,6 +46,8 @@ export const Welcome = () => {
         description: (error as Error)?.message ?? 'Unknown reason'
       });
     }
+
+    await syncCloud();
 
     const backupFile = await fetchCloudBackupFileDetails();
 

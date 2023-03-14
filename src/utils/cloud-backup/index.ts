@@ -4,7 +4,7 @@ import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 import { secureCellSealWithPassphraseEncrypt64, secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 
 import PackageJSON from '../../../package.json';
 
@@ -30,7 +30,7 @@ export const isCloudAvailable = () => {
 };
 
 export const requestSignInToCloud = async () => {
-  if (!isAndroid) {
+  if (isIOS) {
     return true;
   }
 
@@ -49,7 +49,7 @@ export const requestSignInToCloud = async () => {
       return false;
     }
   } catch (error) {
-    console.error('GoogleSignin.signIn { error }:', { error });
+    console.error('GoogleSignin.signIn error:', { error });
 
     if (
       [statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(
@@ -66,9 +66,15 @@ export const requestSignInToCloud = async () => {
     /* Syncing signed-in state to RNCloudFS */
     return await RNCloudFs.loginIfNeeded();
   } catch (error) {
-    console.error('RNCloudFs.loginIfNeeded { error }:', { error });
+    console.error('RNCloudFs.loginIfNeeded error:', { error });
 
     throw new Error('Failed to sync sign-in status');
+  }
+};
+
+export const syncCloud = async () => {
+  if (isIOS) {
+    return await RNCloudFs.syncCloud();
   }
 };
 
@@ -154,7 +160,7 @@ const assureGooglePlayServicesAvailable = async () => {
   try {
     hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
   } catch (error) {
-    console.error('GoogleSignin.hasPlayServices { error }:', { error });
+    console.error('GoogleSignin.hasPlayServices error:', { error });
   }
 
   if (!hasPlayServices) {
@@ -168,7 +174,7 @@ const preLogOut = async () => {
     /* Syncing signed-in state to RNCloudFS */
     await RNCloudFs.logout();
   } catch (error) {
-    console.error('preLogOut() { error }:', { error });
+    console.error('preLogOut() error:', { error });
 
     throw new Error('Failed to pre-log-out');
   }
