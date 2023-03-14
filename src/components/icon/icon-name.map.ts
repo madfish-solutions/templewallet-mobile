@@ -13,6 +13,7 @@ import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
@@ -24,6 +25,7 @@ import CloseIcon from './assets/close.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
+import CreditCardIcon from './assets/credit-card.svg';
 import CycleStatusFutureIcon from './assets/cycle-status-future.svg';
 import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
@@ -252,6 +254,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.Buy]: BuyIcon,
+  [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
+  [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon

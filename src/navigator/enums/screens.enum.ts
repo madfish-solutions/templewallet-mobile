@@ -30,6 +30,7 @@ export enum ScreensEnum {
 
   /** Buy stack **/
   Buy = 'Buy',
+  BuyWithCreditCard = 'BuyWithCreditCard',
   Exolix = 'Exolix',
   AliceBob = 'AliceBob',
   Utorg = 'Utorg',
@@ -72,6 +73,7 @@ export type ScreensParamList = {
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
   [ScreensEnum.Buy]: undefined;
+  [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
   [ScreensEnum.AliceBob]: { min: number; max: number };
   [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
@@ -116,6 +118,7 @@ export const walletStackScreens = [
   ScreensEnum.Activity,
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
+  ScreensEnum.BuyWithCreditCard,
   ScreensEnum.Exolix,
   ScreensEnum.AliceBob,
   ScreensEnum.Notifications,

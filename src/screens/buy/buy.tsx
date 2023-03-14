@@ -1,46 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
-import { Disclaimer } from '../../components/disclaimer/disclaimer';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { CryptoTopup } from './crypto/crypto-topup';
-import { Debit } from './debit/debit';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-const TABS = [
-  {
-    id: 0,
-    name: 'Crypto',
-    component: <CryptoTopup />
-  },
-  {
-    id: 1,
-    name: 'Debit/Credit Card',
-    component: <Debit />
-  }
-];
+import { BuySelectors } from './buy.selectors';
+import { useBuyStyles } from './buy.styles';
+import { TopUpOptionNew } from './components/top-up-option-new/top-up-option-new';
 
 export const Buy = () => {
   const { isDcpNode, metadata } = useNetworkInfo();
-  const [tab, setTab] = useState(TABS[isDcpNode ? 1 : 0]);
-
-  const handleTabChange = (newTabIndex: number) => setTab(TABS[newTabIndex]);
+  const styles = useBuyStyles();
+  const { navigate } = useNavigation();
 
   usePageAnalytic(ScreensEnum.Buy);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
-      <View>
-        <TextSegmentControl selectedIndex={tab.id} values={TABS.map(x => x.name)} onChange={handleTabChange} />
-        {tab.component}
+      <View style={styles.optionsContainer}>
+        <TopUpOptionNew
+          title="Buy with Crypto"
+          iconName={IconNameEnum.BuyWithCrypto}
+          disabled={isDcpNode}
+          testID={BuySelectors.buyWithCrypto}
+          onPress={() => navigate(ScreensEnum.Exolix)}
+        />
+        <TopUpOptionNew
+          title="Buy with Debit/Credit Card"
+          iconName={IconNameEnum.CreditCard}
+          testID={BuySelectors.buyWithCreditCard}
+          onPress={() => navigate(ScreensEnum.BuyWithCreditCard)}
+        />
       </View>
       <Disclaimer
         title="Disclaimer"
         texts={[
-          `Temple integrated third-party solutions to buy ${metadata.symbol} with crypto or a Debit/Credit card. Choose a provider, follow guides, get ${metadata.symbol} on your account.`
+          `Temple integrated third-party solutions to buy ${metadata.symbol} with crypto or a Debit/Credit card.`
         ]}
       />
     </ScreenContainer>

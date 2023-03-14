@@ -22,8 +22,9 @@ import { Activity } from '../screens/activity/activity';
 import { Backup } from '../screens/backup/backup';
 import { Buy } from '../screens/buy/buy';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
-import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
-import { Utorg } from '../screens/buy/debit/utorg/utorg';
+import { BuyWithCreditCard } from '../screens/buy/debit/buy-with-credit-card';
+/* import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
+import { Utorg } from '../screens/buy/debit/utorg/utorg'; */
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { Contacts } from '../screens/contacts/contacts';
 import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
@@ -188,22 +189,28 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.AliceBob}
-                component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.Utorg}
-                component={Utorg}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              <MainStack.Screen
+                name={ScreensEnum.BuyWithCreditCard}
+                component={BuyWithCreditCard}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
+
+              {/* <MainStack.Screen
+                name={ScreensEnum.AliceBob}
+                component={AliceBob}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+              /> */}
+
+              {/* <MainStack.Screen
+                name={ScreensEnum.Utorg}
+                component={Utorg}
+                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+              /> */}
 
               {/** DApps stack **/}
               <MainStack.Screen
