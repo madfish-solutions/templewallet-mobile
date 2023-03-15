@@ -13897,9 +13897,9 @@ react-native-camera@^4.2.1:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-cloud-fs@rainbow-me/react-native-cloud-fs#c5bcc4699e9725ffe1160c635c9f19db92e82f9f:
+react-native-cloud-fs@madfish-solutions/react-native-cloud-fs#c5bcc4699e9725ffe1160c635c9f19db92e82f9f:
   version "2.5.0"
-  resolved "https://codeload.github.com/rainbow-me/react-native-cloud-fs/tar.gz/c5bcc4699e9725ffe1160c635c9f19db92e82f9f"
+  resolved "https://codeload.github.com/madfish-solutions/react-native-cloud-fs/tar.gz/c5bcc4699e9725ffe1160c635c9f19db92e82f9f"
 
 react-native-codegen@^0.70.6:
   version "0.70.6"
