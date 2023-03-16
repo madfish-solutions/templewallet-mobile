@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { firstValueFrom } from 'rxjs';
 
@@ -19,7 +19,13 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { requestSignInToCloud, saveCloudBackup } from 'src/utils/cloud-backup';
+import {
+  cloudTitle,
+  fetchCloudBackupFileDetails,
+  requestSignInToCloud,
+  saveCloudBackup,
+  syncCloud
+} from 'src/utils/cloud-backup';
 
 import {
   EnterCloudPasswordFormValues,
@@ -31,13 +37,13 @@ import { CloudBackupSelectors } from './selectors';
 export const CloudBackup = () => {
   usePageAnalytic(ScreensEnum.CloudBackup);
 
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
 
   const dispatch = useDispatch();
 
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = async ({ password }: EnterCloudPasswordFormValues) => {
+  const handleSubmit = async ({ password }: EnterCloudPasswordFormValues): Promise<void> => {
     const isPasswordCorrect = await firstValueFrom(Shelter.isPasswordCorrect$(password));
 
     if (!isPasswordCorrect) {
@@ -57,20 +63,64 @@ export const CloudBackup = () => {
       });
     }
 
-    const mnemonic = await new Promise<string>(resolve => Shelter.revealSeedPhrase$().subscribe(m => void resolve(m)));
-
     try {
-      await saveCloudBackup(mnemonic, password);
+      await syncCloud();
     } catch (error) {
       return void showErrorToast({
-        title: 'Failed to back up to cloud',
-        description: (error as Error)?.message ?? ''
+        title: 'Failed to sync cloud',
+        description: (error as Error)?.message ?? 'Unknown reason'
       });
     }
 
-    dispatch(madeCloudBackupAction());
-    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-    goBack();
+    const backupFile = await fetchCloudBackupFileDetails();
+
+    if (backupFile) {
+      return void Alert.alert(
+        `Your ${cloudTitle} account already has a wallet backup.`,
+        [
+          'If you create a new backup, your previous one will be irretrievably deleted.',
+          ` Instead, you can reveal and manually save your seed phrase or change your ${cloudTitle} account to keep a new backup.`,
+          `\n\nRemember, one ${cloudTitle} account can only have one wallet backup.`
+        ].join(),
+        [
+          {
+            text: 'Backup manually',
+            onPress: () => void navigate(ScreensEnum.ManualBackup)
+          },
+          {
+            text: 'Create a new backup',
+            onPress: proceedWithSaving
+          },
+          {
+            text: 'Change an account',
+            style: 'cancel',
+            onPress: () => void handleSubmit({ password })
+          }
+        ],
+        { cancelable: true }
+      );
+    }
+
+    await proceedWithSaving();
+
+    async function proceedWithSaving() {
+      const mnemonic = await new Promise<string>(resolve =>
+        Shelter.revealSeedPhrase$().subscribe(m => void resolve(m))
+      );
+
+      try {
+        await saveCloudBackup(mnemonic, password);
+      } catch (error) {
+        return void showErrorToast({
+          title: 'Failed to back up to cloud',
+          description: (error as Error)?.message ?? ''
+        });
+      }
+
+      dispatch(madeCloudBackupAction());
+      showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+      goBack();
+    }
   };
 
   return (

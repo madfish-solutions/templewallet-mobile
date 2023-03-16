@@ -47,7 +47,14 @@ export const Welcome = () => {
       });
     }
 
-    await syncCloud();
+    try {
+      await syncCloud();
+    } catch (error) {
+      return void showErrorToast({
+        title: 'Failed to sync cloud',
+        description: (error as Error)?.message ?? 'Unknown reason'
+      });
+    }
 
     const backupFile = await fetchCloudBackupFileDetails();
 

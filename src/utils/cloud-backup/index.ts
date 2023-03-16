@@ -73,8 +73,16 @@ export const requestSignInToCloud = async () => {
 };
 
 export const syncCloud = async () => {
-  if (isIOS) {
-    return await RNCloudFs.syncCloud();
+  if (!isIOS) {
+    return;
+  }
+
+  try {
+    await RNCloudFs.syncCloud();
+  } catch (error) {
+    console.error('RNCloudFs.syncCloud error:', error);
+
+    throw error;
   }
 };
 

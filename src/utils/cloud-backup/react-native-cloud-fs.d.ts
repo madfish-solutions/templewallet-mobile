@@ -1,13 +1,15 @@
 type Scope = 'visible' | 'hidden';
 
-interface GoogleDriveFileDetails {
+interface CloudFileDetailsBase {
   id: string;
   name: string;
   /** ISO */
   lastModified: string;
 }
 
-interface ICloudFileDetails extends GoogleDriveFileDetails {
+type GoogleDriveFileDetails = CloudFileDetailsBase;
+
+interface ICloudFileDetails extends CloudFileDetailsBase {
   isFile: boolean;
   isDirectory: boolean;
   path: string;
