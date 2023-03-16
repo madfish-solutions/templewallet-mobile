@@ -1,11 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import {
-  loadPartnersPromoActions,
-  setIsPromotionEnabledAction,
-  skipPartnersPromotionAction
-} from './partners-promotion-actions';
+import { loadPartnersPromoActions, setIsPromotionEnabledAction } from './partners-promotion-actions';
 import { partnersPromotionInitialState } from './partners-promotion-state';
 
 export const partnersPromotionReducers = createReducer(partnersPromotionInitialState, builder => {
@@ -20,10 +16,6 @@ export const partnersPromotionReducers = createReducer(partnersPromotionInitialS
   builder.addCase(loadPartnersPromoActions.fail, (state, { payload }) => ({
     ...state,
     promotion: createEntity(state.promotion.data, false, payload)
-  }));
-  builder.addCase(skipPartnersPromotionAction, (state, { payload }) => ({
-    ...state,
-    seenPromotionIds: [...state.seenPromotionIds, payload]
   }));
   builder.addCase(setIsPromotionEnabledAction, (state, { payload }) => ({
     ...state,

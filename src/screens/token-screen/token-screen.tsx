@@ -13,10 +13,7 @@ import { TokenScreenContentContainer } from 'src/components/token-screen-content
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import {
-  useIsCurrentPromotionSkipped,
-  useIsPartnersPromoEnabledSelector
-} from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,7 +29,6 @@ export const TokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
-  const currentPromotionSkipped = useIsCurrentPromotionSkipped();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const token = useMemo(
     () =>
@@ -71,7 +67,7 @@ export const TokenScreen = () => {
           <ActivityGroupsList
             handleUpdate={handleUpdate}
             activityGroups={activities}
-            shouldShowPromotion={!currentPromotionSkipped && partnersPromotionEnabled}
+            shouldShowPromotion={partnersPromotionEnabled}
           />
         }
         infoComponent={<TokenInfo token={token} />}

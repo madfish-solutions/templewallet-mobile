@@ -1,7 +1,7 @@
 import React from 'react';
-import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 
@@ -24,27 +24,13 @@ export const NotificationsSettings = () => {
 
   const isNewsEnabled = useIsNewsEnabledSelector();
   const isAdsEnabled = useIsPartnersPromoEnabledSelector();
+  const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
 
   const handleAdsToggle = (value: boolean) => {
     if (value) {
       dispatch(setIsPromotionEnabledAction(value));
     } else {
-      Alert.alert(
-        'Are you sure you want to turn off all ads?',
-        "We don't like ads either, but it helps our team grow and improve the user experience for our \
-wallet. You can turn ads off everywhere with one click, or leave the display ads and support the development team.",
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel'
-          },
-          {
-            text: 'Disable',
-            style: 'destructive',
-            onPress: () => dispatch(setIsPromotionEnabledAction(value))
-          }
-        ]
-      );
+      disablePromotionAfterConfirmation();
     }
   };
 

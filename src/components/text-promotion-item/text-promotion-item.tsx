@@ -5,12 +5,13 @@ import FastImage from 'react-native-fast-image';
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking.util';
 
+import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { TextPromotionItemSelectors } from './text-promotion-item.selectors';
 import { useTextPromotionItemStyles } from './text-promotion-item.styles';
 
@@ -28,7 +29,7 @@ interface Props extends TestIdProps {
 export const TextPromotionItem: FC<Props> = memo(
   ({ content, headline, imageUri, link, loading = false, shouldShowCloseButton, style, testID, onClose = emptyFn }) => {
     const { trackEvent } = useAnalytics();
-
+    const colors = useColors();
     const styles = useTextPromotionItemStyles();
 
     return (
@@ -57,12 +58,15 @@ export const TextPromotionItem: FC<Props> = memo(
               <Text style={styles.content}>{content}</Text>
             </View>
             {shouldShowCloseButton && (
-              <TouchableIcon
-                name={IconNameEnum.X}
-                onPress={onClose}
-                size={formatSize(16)}
-                testID={TextPromotionItemSelectors.closeButton}
-              />
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  trackEvent(TextPromotionItemSelectors.closeButton, AnalyticsEventCategory.General);
+                  onClose();
+                }}
+              >
+                <Icon name={IconNameEnum.X} size={formatSize(16)} color={colors.peach} />
+              </TouchableOpacity>
             )}
           </>
         )}

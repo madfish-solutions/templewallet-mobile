@@ -1,14 +1,12 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { useDispatch } from 'react-redux';
 
+import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { skipPartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import {
   useIsPartnersPromoEnabledSelector,
   usePartnersPromoLoadingSelector,
-  usePartnersPromoSelector,
-  useSeenPartnersPromoIdsSelector
+  usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
 
 import { PromotionItem } from '../promotion-item/promotion-item';
@@ -27,15 +25,12 @@ export const OptimalPromotionItem: FC<Props> = ({
   shouldShowCloseButton = true,
   variant = OptimalPromotionVariantEnum.Image
 }) => {
-  const dispatch = useDispatch();
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
-  const seenPromoIds = useSeenPartnersPromoIdsSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
 
-  const handleClose = () => dispatch(skipPartnersPromotionAction(partnersPromotion.id));
-
-  if (seenPromoIds.includes(partnersPromotion.id) || !partnersPromotionEnabled) {
+  if (!partnersPromotionEnabled) {
     return null;
   }
 
@@ -50,7 +45,7 @@ export const OptimalPromotionItem: FC<Props> = ({
         loading={partnersPromotionLoading}
         shouldShowCloseButton={shouldShowCloseButton}
         style={style}
-        onClose={handleClose}
+        onClose={disablePromotionAfterConfirmation}
       />
     );
   }
@@ -64,7 +59,7 @@ export const OptimalPromotionItem: FC<Props> = ({
       shouldShowAdBage
       shouldShowCloseButton={shouldShowCloseButton}
       style={style}
-      onCloseButtonClick={handleClose}
+      onCloseButtonClick={disablePromotionAfterConfirmation}
     />
   );
 };

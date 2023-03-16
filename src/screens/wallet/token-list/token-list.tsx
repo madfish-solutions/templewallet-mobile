@@ -77,21 +77,17 @@ export const TokensList: FC = () => {
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
 
   const renderData = useMemo(() => {
-    const noAdsData = addPlaceholdersForAndroid(filteredAssetsList, screenFillingItemsCount);
-
-    if (
+    const shouldHidePromotion =
       (isHideZeroBalance && filteredAssetsList.length === 0) ||
       (searchValue?.length ?? 0) > 0 ||
-      !partnersPromotionEnabled
-    ) {
-      return noAdsData;
+      !partnersPromotionEnabled;
+
+    const assetsListWithPromotion = [...filteredAssetsList];
+    if (!shouldHidePromotion) {
+      assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, { ...emptyToken, address: 'ad' });
     }
 
-    return [
-      ...noAdsData.slice(0, ITEMS_BEFORE_AD),
-      { ...emptyToken, address: 'ad' },
-      ...noAdsData.slice(ITEMS_BEFORE_AD, noAdsData.length)
-    ];
+    return addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount);
   }, [filteredAssetsList, screenFillingItemsCount, isHideZeroBalance, partnersPromotionEnabled, searchValue]);
 
   useEffect(() => {
@@ -115,7 +111,7 @@ export const TokensList: FC = () => {
 
       if (item.address === 'ad') {
         return (
-          <>
+          <View>
             <View style={styles.promotionItemWrapper}>
               <OptimalPromotionItem
                 variant={OptimalPromotionVariantEnum.Text}
@@ -124,7 +120,7 @@ export const TokensList: FC = () => {
               />
             </View>
             <View style={styles.promotionItemBorder} />
-          </>
+          </View>
         );
       }
 

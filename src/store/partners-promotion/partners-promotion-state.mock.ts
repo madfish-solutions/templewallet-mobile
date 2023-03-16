@@ -23,6 +23,5 @@ export const mockPartnersPromotion = {
 
 export const mockPartnersPromotionState: PartnersPromotionState = {
   promotion: createEntity(mockPartnersPromotion),
-  seenPromotionIds: [],
   isEnabled: true
 };

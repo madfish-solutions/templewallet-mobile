@@ -5,10 +5,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
-import {
-  useIsCurrentPromotionSkipped,
-  useIsPartnersPromoEnabledSelector
-} from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -19,7 +16,6 @@ import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
-  const currentPromotionSkipped = useIsCurrentPromotionSkipped();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const styles = usePromotionCarouselStyles();
 
@@ -37,7 +33,7 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (!currentPromotionSkipped && partnersPromotionEnabled) {
+    if (partnersPromotionEnabled) {
       result.unshift(
         <OptimalPromotionItem
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
@@ -48,7 +44,7 @@ export const PromotionCarousel = () => {
     }
 
     return result;
-  }, [activePromotion, currentPromotionSkipped, partnersPromotionEnabled, styles]);
+  }, [activePromotion, partnersPromotionEnabled, styles]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);

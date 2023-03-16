@@ -51,8 +51,9 @@ export const useTextPromotionItemStyles = createUseStyles(({ colors, typography 
   },
   closeButton: {
     position: 'absolute',
-    top: formatSize(12),
-    right: formatSize(12)
+    top: formatSize(6),
+    right: formatSize(6),
+    padding: formatSize(6)
   },
   loaderContainer: {
     backgroundColor: colors.cardBG,
