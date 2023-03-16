@@ -1,17 +1,18 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { WhiteContainer } from '../../components/white-container/white-container';
-import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useIsManualBackupMadeSelector } from '../../store/settings/settings-selectors';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { WhiteContainer } from 'src/components/white-container/white-container';
+import { WhiteContainerDivider } from 'src/components/white-container/white-container-divider/white-container-divider';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { useBackupStyles } from './backup.styles';
 
 const iconSize = formatSize(32);
@@ -21,7 +22,7 @@ export const Backup = () => {
   const styles = useBackupStyles();
   const { navigate } = useNavigation();
 
-  const isManualBackupMade = useIsManualBackupMadeSelector();
+  const { isManualBackupMade } = useIsBackupMadeSelector();
 
   usePageAnalytic(ScreensEnum.Backup);
 

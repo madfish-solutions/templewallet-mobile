@@ -1,16 +1,17 @@
 import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
-import { isDefined } from '../../../utils/is-defined';
+import { DebugTapListener } from 'src/components/debug-tap-listener/debug-tap-listener';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -30,7 +31,7 @@ export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
-  const isManualBackupMade = useIsManualBackupMadeSelector();
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
 
   const { isDcpNode } = useNetworkInfo();
 
@@ -79,7 +80,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
               iconName={IconNameEnum.Settings}
               routeName={ScreensEnum.Settings}
               focused={isStackFocused(settingsStackScreens)}
-              showNotificationDot={!isManualBackupMade}
+              showNotificationDot={!isAnyBackupMade}
             />
           </DebugTapListener>
         </View>

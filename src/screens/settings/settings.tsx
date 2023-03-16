@@ -24,7 +24,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { changeTheme } from '../../store/settings/settings-actions';
 import {
   useFiatCurrencySelector,
-  useIsManualBackupMadeSelector,
+  useIsAnyBackupMadeSelector,
   useThemeSelector
 } from '../../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
@@ -44,7 +44,7 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
-  const isManualBackupMade = useIsManualBackupMadeSelector();
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
 
   const { trackEvent } = useAnalytics();
 
@@ -101,7 +101,7 @@ export const Settings = () => {
               <WhiteContainerText text="Contacts" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
-            {!isManualBackupMade && (
+            {!isAnyBackupMade && (
               <>
                 <WhiteContainerDivider />
                 <WhiteContainerAction onPress={() => navigate(ScreensEnum.Backup)}>

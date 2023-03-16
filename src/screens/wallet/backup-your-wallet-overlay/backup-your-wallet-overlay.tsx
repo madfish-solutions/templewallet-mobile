@@ -7,7 +7,7 @@ import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom
 import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle, isCloudAvailable } from 'src/utils/cloud-backup';
 
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
@@ -19,10 +19,10 @@ export const BackupYourWalletOverlay = () => {
   const styles = useBackupYourWalletOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 
-  const { isManualBackupMade, isCloudBackupMade } = useIsBackupMadeSelector();
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 
-  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isManualBackupMade && !isCloudBackupMade;
+  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isAnyBackupMade;
 
   if (!isShowOverlay) {
     return null;

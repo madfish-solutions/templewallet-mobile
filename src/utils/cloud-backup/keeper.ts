@@ -8,7 +8,7 @@ interface KeptRestoredBackup {
   password?: string;
 }
 
-let keptBackup: KeptRestoredBackup;
+let keptBackup: KeptRestoredBackup | undefined;
 
 export const keepRestoredCloudBackup = ({ mnemonic }: BackupFileInterface, password?: string) => {
   const id = Date.now();

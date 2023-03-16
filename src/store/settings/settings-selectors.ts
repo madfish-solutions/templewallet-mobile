@@ -1,4 +1,3 @@
-import { pick } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
@@ -40,7 +39,12 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
-export const useIsManualBackupMadeSelector = () => useSelector(({ settings }) => settings.isManualBackupMade);
+export const useIsBackupMadeSelector = () => {
+  const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
+  const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);
 
-export const useIsBackupMadeSelector = () =>
-  useSelector(({ settings }) => pick(settings, 'isManualBackupMade', 'isCloudBackupMade'));
+  return useMemo(() => ({ isManualBackupMade, isCloudBackupMade }), [isManualBackupMade, isCloudBackupMade]);
+};
+
+export const useIsAnyBackupMadeSelector = () =>
+  useSelector(({ settings }) => settings.isManualBackupMade || settings.isCloudBackupMade);
