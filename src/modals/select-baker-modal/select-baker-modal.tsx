@@ -76,7 +76,10 @@ export const SelectBakerModal: FC = () => {
     [allBakers]
   );
 
-  const debouncedSetSearchValue = debounce(setSearchValue);
+  const debouncedSetSearchValue = debounce((value: string) => {
+    setSearchValue(value);
+    setSelectedBaker(undefined);
+  });
 
   usePageAnalytic(ModalsEnum.SelectBaker);
 
@@ -145,6 +148,8 @@ export const SelectBakerModal: FC = () => {
     [recommendedBakers, sortedBakersList]
   );
 
+  const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
+
   return (
     <>
       <ModalStatusBar />
@@ -162,6 +167,7 @@ export const SelectBakerModal: FC = () => {
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
+          {isValidBakerAddress && <Text style={styles.errorText}>Not valid address</Text>}
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
