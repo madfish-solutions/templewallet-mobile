@@ -47,7 +47,9 @@ export const TextPromotionItem: FC<Props> = memo(
           </View>
         ) : (
           <>
-            <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" />
+            <View style={styles.imageContainer}>
+              <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" />
+            </View>
             <View style={styles.textsContainer}>
               <View style={styles.headline}>
                 <Text style={styles.headlineText}>{headline}</Text>

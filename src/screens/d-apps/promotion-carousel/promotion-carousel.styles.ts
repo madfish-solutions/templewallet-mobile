@@ -7,6 +7,6 @@ export const usePromotionCarouselStyles = createUseStyles(({ colors }) => ({
   },
   promotionItem: {
     backgroundColor: colors.pageBG,
-    width: formatSize(375)
+    width: '100%'
   }
 }));

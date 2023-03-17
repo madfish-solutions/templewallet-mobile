@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { SearchInput } from 'src/components/search-input/search-input';
-import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useVisibleCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
@@ -22,12 +19,7 @@ export const CollectiblesHome = () => {
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  const visibleCollectiblesList = useVisibleCollectiblesListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);
-
-  const [isSearchMode] = useState(false);
-
-  const collectiblesList: typeof visibleCollectiblesList = isSearchMode ? filteredAssetsList : visibleCollectiblesList;
+  const collectiblesList = useVisibleCollectiblesListSelector();
 
   return (
     <>
@@ -47,14 +39,6 @@ export const CollectiblesHome = () => {
             <Icon name={IconNameEnum.ArrowRight} size={formatSize(16)} />
           </TouchableOpacity>
         </View>
-
-        <Divider />
-
-        <SearchInput placeholder="Type here..." onChangeText={setSearchValue} />
-
-        <Text style={[styles.descriptionText, styles.widthPaddingHorizontal]}>
-          Search collectibles by name, symbol or address.
-        </Text>
       </HeaderCard>
 
       <CollectiblesList collectiblesList={collectiblesList} />
