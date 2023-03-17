@@ -167,7 +167,7 @@ export const SelectBakerModal: FC = () => {
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
-          {isValidBakerAddress && <Text style={styles.errorText}>Not valid address</Text>}
+          {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
