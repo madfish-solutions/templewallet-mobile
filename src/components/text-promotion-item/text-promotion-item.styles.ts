@@ -47,7 +47,7 @@ export const useTextPromotionItemStyles = createUseStyles(({ colors, typography 
   },
   adLabelText: {
     ...typography.tagline11Tag,
-    color: colors.white
+    color: 'white'
   },
   content: {
     ...typography.caption13Regular,
