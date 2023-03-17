@@ -30,6 +30,7 @@
   "dependencies": {
     "@airgap/beacon-sdk": "3.1.4",
     "@apollo/client": "^3.7.1",
+    "@babel/plugin-proposal-decorators": "^7.21.0",
     "@babel/preset-typescript": "^7.18.6",
     "@dicebear/avatars": "4.10.1",
     "@dicebear/avatars-bottts-sprites": "4.10.1",
@@ -122,6 +123,7 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vm-browserify": "^1.1.2",
+    "youves-sdk": "https://github.com/youves-com/youves-sdk",
     "yup": "^0.32.11"
   },
   "devDependencies": {

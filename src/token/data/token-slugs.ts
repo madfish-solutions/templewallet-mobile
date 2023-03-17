@@ -5,7 +5,7 @@ export const SIRS_TOKEN = {
   id: 0
 };
 
-export const KNOWN_TOKENS_SLUGS = {
+export const KNOWN_TOKENS_SLUGS: Record<string, string> = {
   tzBTC: toTokenSlug('KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn', 0),
   KUSD: toTokenSlug('KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV', 0),
   uUSD: toTokenSlug('KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW', 0),

@@ -1,3 +1,4 @@
+import { basicLightColors } from '../../styles/colors';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -36,7 +37,7 @@ export const useTokenContainerStyles = createUseStyles(({ colors, typography }) 
   },
   apyText: {
     ...typography.tagline11Tag,
-    color: colors.white
+    color: basicLightColors.white
   },
   nameText: {
     ...typography.numbersRegular11,

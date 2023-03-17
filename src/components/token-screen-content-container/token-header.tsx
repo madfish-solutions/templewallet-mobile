@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -15,6 +16,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
+import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { Divider } from '../divider/divider';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
@@ -66,9 +68,13 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
       : undefined;
 
   if (showHistoryComponent && isDefined(handleApyPress)) {
+    const label = getDelegateText(token);
+
     return (
       <TouchableOpacity onPress={handleApyPress} style={[styles.delegateContainer, apyStyles[tokenSlug]]}>
-        <Text style={styles.delegateText}>Get up to {apyRate}% APY </Text>
+        <Text style={styles.delegateText}>
+          Get up to {new BigNumber(apyRate).decimalPlaces(2).toFixed()}% {label}
+        </Text>
       </TouchableOpacity>
     );
   }

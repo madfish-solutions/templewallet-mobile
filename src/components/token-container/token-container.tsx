@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
@@ -6,6 +7,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getTruncatedProps } from 'src/utils/style.util';
 
+import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
 import { useApyStyles } from '../token-screen-content-container/apy.styles';
@@ -17,6 +19,8 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }
   const apyStyles = useApyStyles();
   const tokenSlug = getTokenSlug(token);
 
+  const label = getDelegateText(token);
+
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
@@ -27,7 +31,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }
             <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
             {isDefined(apy) && apy > 0 && (
               <View style={[styles.apyContainer, apyStyles[tokenSlug]]}>
-                <Text style={styles.apyText}>APY: {apy}%</Text>
+                <Text style={styles.apyText}>{`${label}: ${new BigNumber(apy).decimalPlaces(2).toFixed()}%`}</Text>
               </View>
             )}
           </View>
