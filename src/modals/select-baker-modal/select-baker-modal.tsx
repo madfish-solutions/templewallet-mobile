@@ -103,7 +103,7 @@ export const SelectBakerModal: FC = () => {
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
-          ...(selectedBaker.name === UNKNOWN_BAKER_NAME && { disclaimerMessage: DISCLAIMER_MESSAGE })
+          ...(Boolean(selectedBaker.isUnknownBaker) && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
     }
@@ -198,7 +198,7 @@ export const SelectBakerModal: FC = () => {
         windowSize={10}
         ListEmptyComponent={
           <BakerListItem
-            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '' }}
+            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
             onPress={setSelectedBaker}
             selected={searchValue === selectedBaker?.address}
           />

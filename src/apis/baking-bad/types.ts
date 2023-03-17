@@ -22,6 +22,7 @@ export interface BakerInterface {
   audit: string;
   insuranceCoverage: number;
   config?: BakerConfig;
+  isUnknownBaker?: boolean;
 }
 
 interface BakerValueHistoryItem<T> {
