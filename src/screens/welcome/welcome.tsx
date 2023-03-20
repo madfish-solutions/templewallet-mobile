@@ -56,13 +56,20 @@ export const Welcome = () => {
       });
     }
 
-    const backupFile = await fetchCloudBackupFileDetails();
+    try {
+      const backupFile = await fetchCloudBackupFileDetails();
 
-    if (backupFile) {
-      return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
+      if (backupFile) {
+        return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
+      }
+
+      return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
+    } catch (error) {
+      return void showErrorToast({
+        title: 'Failed to read from cloud',
+        description: (error as Error)?.message ?? 'Unknown reason'
+      });
     }
-
-    return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
   };
 
   const cloudIsAvailable = isCloudAvailable();

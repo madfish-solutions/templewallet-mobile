@@ -66,6 +66,18 @@
 	<string>Allow to use camera for QR-code scan</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
+  <key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.com.madfish.temple-wallet</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>com.madfish.temple-wallet</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>One</string>
+		</dict>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Bold.ttf</string>

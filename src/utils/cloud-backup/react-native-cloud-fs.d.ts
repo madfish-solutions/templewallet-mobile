@@ -27,6 +27,7 @@ declare module 'react-native-cloud-fs' {
 
     requestSignIn: () => void;
 
+    /** iOS only */
     syncCloud: () => Promise<void>;
 
     logout: () => Promise<boolean>;
@@ -58,7 +59,7 @@ declare module 'react-native-cloud-fs' {
     copyToCloud: (options: {
       mimeType: string;
       scope: Scope;
-      sourcePath: { path: string };
+      sourcePath: { path: string } | { uri: string };
       targetPath: string;
     }) => Promise<string>;
 

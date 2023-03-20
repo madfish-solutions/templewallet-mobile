@@ -12,7 +12,7 @@ export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
 
-const CLOUD_WALLET_FOLDER = 'temple-wallet';
+const CLOUD_WALLET_FOLDER = 'com.madfish.temple-wallet';
 const filename = 'wallet-backup.json';
 const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 
@@ -117,6 +117,10 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
     });
   } catch (error) {
     console.error(error);
+
+    await RNFS.unlink(localPath).catch(console.error);
+
+    throw new Error('Failed to upload to cloud');
   }
 
   await RNFS.unlink(localPath).catch(console.error);
