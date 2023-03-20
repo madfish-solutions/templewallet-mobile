@@ -68,12 +68,12 @@
 	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.com.madfish.temple-wallet</key>
+		<key>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>com.madfish.temple-wallet</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>One</string>
 		</dict>

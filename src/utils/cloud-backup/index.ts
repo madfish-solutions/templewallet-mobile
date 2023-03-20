@@ -12,13 +12,14 @@ export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
 
-const CLOUD_WALLET_FOLDER = 'com.madfish.temple-wallet';
+const CLOUD_WALLET_FOLDER = 'temple-wallet-mobile';
 const filename = 'wallet-backup.json';
 const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 
 export interface BackupFileInterface {
   version: string;
   mnemonic: string;
+  platformOS: 'ios' | 'android';
 }
 
 export const isCloudAvailable = () => {
@@ -100,7 +101,8 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
 
   const fileContent: BackupFileInterface = {
     version: PackageJSON.version,
-    mnemonic
+    mnemonic,
+    platformOS: isIOS ? 'ios' : 'android'
   };
 
   const encryptedData = await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(fileContent));
