@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { openUrl } from 'src/utils/linking.util';
+
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
@@ -22,7 +24,7 @@ interface Props {
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const { metadata } = useNetworkInfo();
+  const { metadata, isTezosNode } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
@@ -44,7 +46,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       </View>
       <Divider size={formatSize(8)} />
       <View style={styles.buttonContainer}>
-        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
+        <ButtonMedium
+          title="Buy"
+          iconName={IconNameEnum.ShoppingCard}
+          onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl('https://buy.chainbits.com'))}
+        />
       </View>
       <Divider size={formatSize(8)} />
       <View

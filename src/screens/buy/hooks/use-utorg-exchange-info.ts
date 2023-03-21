@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAvailableFiatCurrencies, getMinMaxExchangeValue } from '../../../utils/utorg.utils';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { getAvailableFiatCurrencies, getMinMaxExchangeValue } from 'src/utils/utorg.utils';
 
 export const useUtorgExchangeInfo = () => {
+  const { isDcpNode } = useNetworkInfo();
   const [currencies, setCurrencies] = useState<string[]>([]);
   const [minAmount, setMinAmount] = useState(0);
   const [maxAmount, setMaxAmount] = useState(0);
   const [isError, setIsError] = useState(false);
 
-  const isDisabled = minAmount === 0 || currencies.length === 0 || isError;
+  const isDisabled = minAmount === 0 || currencies.length === 0 || isDcpNode || isError;
 
   const updateMinMaxRequest = useCallback(() => {
     getMinMaxExchangeValue()

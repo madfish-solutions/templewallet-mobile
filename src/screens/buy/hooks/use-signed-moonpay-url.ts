@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { templeWalletApi } from '../../../api.service';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
+import { templeWalletApi } from 'src/api.service';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 
 const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
 const API_KEY = 'pk_live_PrSDks3YtrreqFifd0BsIji7xPXjSGx';
 const CURRENCY_CODE = 'xtz';
 
 export const useSignedMoonPayUrl = () => {
+  const { isDcpNode } = useNetworkInfo();
   const selectedAccount = useSelectedAccountSelector();
   const defaultUrl = `${MOONPAY_DOMAIN}?apiKey=${API_KEY}&currencyCode=${CURRENCY_CODE}&colorCode=%23ed8936`;
 
@@ -15,8 +17,8 @@ export const useSignedMoonPayUrl = () => {
   const [isMoonPayError, setIsError] = useState(false);
 
   const isMoonPayDisabled = useMemo(
-    () => signedMoonPayUrl === '' || isMoonPayError,
-    [signedMoonPayUrl, isMoonPayError]
+    () => signedMoonPayUrl === '' || isMoonPayError || isDcpNode,
+    [signedMoonPayUrl, isMoonPayError, isDcpNode]
   );
 
   const url = `${defaultUrl}&walletAddress=${selectedAccount.publicKeyHash}`;

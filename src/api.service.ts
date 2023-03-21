@@ -14,6 +14,8 @@ const dcpTzktApi = axios.create({ baseURL: 'https://explorer-api.tlnt.net/v1' })
 
 export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl) ? dcpTzktApi : tzktApi);
 
+export const moonPayApi = axios.create({ baseURL: 'https://api.moonpay.com' });
+
 export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API_URL + '/api' });
 
 export const tezosMetadataApi = axios.create({ baseURL: TEZOS_METADATA_API_URL });

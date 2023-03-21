@@ -110,7 +110,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       'Otherwise, you may lose your assets',
       'permanently.'
     ],
-    [inputCurrency.name]
+    [inputCurrency]
   );
 
   return (
@@ -165,8 +165,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
               </View>
               <Divider size={formatSize(16)} />
               <Text style={styles.thirdParty}>
-                The token exchange feature is provided by a third party. The Temple wallet is not responsible for the
-                work of third-party services.
+                The token exchange feature is provided by Exolix as third party provider. Temple wallet is not
+                responsible for the work of third-party services.
               </Text>
             </View>
           </ScreenContainer>

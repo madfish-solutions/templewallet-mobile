@@ -9,6 +9,7 @@ const accentColors = {
   peach: '#FF5B00',
   liteGreen: '#3EBD93',
   darkGreen: '#143A3A',
+  accentDarkGray: '#434343',
   dollarGreen: '#009393'
 };
 

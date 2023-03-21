@@ -14,7 +14,7 @@ import { useBuyStyles } from './buy.styles';
 import { TopUpOptionNew } from './components/top-up-option-new/top-up-option-new';
 
 export const Buy = () => {
-  const { isDcpNode, metadata } = useNetworkInfo();
+  const { metadata } = useNetworkInfo();
   const styles = useBuyStyles();
   const { navigate } = useNavigation();
 
@@ -26,7 +26,6 @@ export const Buy = () => {
         <TopUpOptionNew
           title="Buy with Crypto"
           iconName={IconNameEnum.BuyWithCrypto}
-          disabled={isDcpNode}
           testID={BuySelectors.buyWithCrypto}
           onPress={() => navigate(ScreensEnum.Exolix)}
         />

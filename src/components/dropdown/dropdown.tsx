@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
@@ -20,6 +20,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   list: T[];
   isSearchable?: boolean;
   itemHeight?: number;
+  itemContainerStyle?: StyleProp<ViewStyle>;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
@@ -64,6 +65,7 @@ const DropdownComponent = <T extends unknown>({
   list,
   description,
   itemHeight = formatSize(64),
+  itemContainerStyle,
   disabled = false,
   isSearchable = false,
   setSearchValue = emptyFn,
@@ -92,7 +94,7 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>
