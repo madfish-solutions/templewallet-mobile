@@ -66,7 +66,7 @@
 	<string>Allow to use camera for QR-code scan</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
-  <key>NSUbiquitousContainers</key>
+	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</key>
 		<dict>
