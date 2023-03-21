@@ -24,7 +24,13 @@ const ConfirmationModalContent: FC = () => {
 
   switch (params.type) {
     case ConfirmationTypeEnum.InternalOperations:
-      return <InternalOperationsConfirmation opParams={params.opParams} testID={params.testID} />;
+      return (
+        <InternalOperationsConfirmation
+          opParams={params.opParams}
+          testID={params.testID}
+          disclaimerMessage={params.disclaimerMessage}
+        />
+      );
     case ConfirmationTypeEnum.DAppOperations:
       return <DAppOperationsConfirmation loading={params.loading} message={params.message} />;
     default:
