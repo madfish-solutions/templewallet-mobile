@@ -119,7 +119,6 @@ jobs:
           workspace-path: ios/TempleWallet.xcworkspace
           scheme: TempleWallet
           export-method: ad-hoc
-          export-options: ios/TempleWallet/exportOptions.plist
           configuration: Release
           output-path: ios/build/TempleWallet.ipa
           p12-base64: ${{ secrets.P12_BASE64 }}
