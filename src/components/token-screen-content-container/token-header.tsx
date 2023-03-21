@@ -73,7 +73,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     return (
       <TouchableOpacity onPress={handleApyPress} style={[styles.delegateContainer, apyStyles[tokenSlug]]}>
         <Text style={styles.delegateText}>
-          Get up to {new BigNumber(apyRate).decimalPlaces(2).toFixed()}% {label}
+          Get up to {new BigNumber(apyRate).decimalPlaces(2).toFixed(2)}% {label}
         </Text>
       </TouchableOpacity>
     );

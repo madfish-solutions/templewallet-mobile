@@ -31,7 +31,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }
             <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
             {isDefined(apy) && apy > 0 && (
               <View style={[styles.apyContainer, apyStyles[tokenSlug]]}>
-                <Text style={styles.apyText}>{`${label}: ${new BigNumber(apy).decimalPlaces(2).toFixed()}%`}</Text>
+                <Text style={styles.apyText}>{`${label}: ${new BigNumber(apy).decimalPlaces(2).toFixed(2)}%`}</Text>
               </View>
             )}
           </View>

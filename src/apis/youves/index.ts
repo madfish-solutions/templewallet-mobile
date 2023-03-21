@@ -38,11 +38,7 @@ export const getYOUTokenApr$ = (
 ): Observable<number> => {
   const unifiedStaking = new UnifiedStaking(toolkit, indexerConfig, mainnetNetworkConstants);
 
-  return from(
-    unifiedStaking
-      // @ts-ignore
-      .getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)
-  ).pipe(
+  return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
     map(value => Number(value.multipliedBy(100))),
     catchError(error => {
       console.log('Youves error: get YOU token APR', error);
