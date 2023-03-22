@@ -34,10 +34,11 @@ import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
-type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
+const AD_PLACEHOLDER = 'ad';
+type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG | typeof AD_PLACEHOLDER;
 const keyExtractor = (item: FlatListItem) => {
-  if (item === TEZ_TOKEN_SLUG) {
-    return TEZ_TOKEN_SLUG;
+  if (item === TEZ_TOKEN_SLUG || item === AD_PLACEHOLDER) {
+    return item;
   }
 
   return getTokenSlug(item);
@@ -83,9 +84,9 @@ export const TokensList: FC = () => {
       (searchValue?.length ?? 0) > 0 ||
       !partnersPromotionEnabled;
 
-    const assetsListWithPromotion = [...filteredAssetsList];
+    const assetsListWithPromotion: FlatListItem[] = [...filteredAssetsList];
     if (!shouldHidePromotion && !promotionErrorOccurred) {
-      assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, { ...emptyToken, address: 'ad' });
+      assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, AD_PLACEHOLDER);
     }
 
     return addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount);
@@ -118,7 +119,7 @@ export const TokensList: FC = () => {
         return <TezosToken />;
       }
 
-      if (item.address === 'ad') {
+      if (item === AD_PLACEHOLDER) {
         return (
           <View>
             <View style={styles.promotionItemWrapper}>
