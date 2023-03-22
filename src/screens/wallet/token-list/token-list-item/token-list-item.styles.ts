@@ -16,6 +16,6 @@ export const useTokenListItemStyles = createUseStyles(({ colors, typography }) =
     color: colors.gray1
   },
   container: {
-    marginLeft: formatSize(8)
+    marginLeft: formatSize(16)
   }
 }));

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 
@@ -18,6 +18,7 @@ export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const styles = usePromotionCarouselStyles();
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -33,18 +34,19 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromotionEnabled) {
+    if (partnersPromotionEnabled && !promotionErrorOccurred) {
       result.unshift(
         <OptimalPromotionItem
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}
+          onImageError={() => setPromotionErrorOccurred(true)}
         />
       );
     }
 
     return result;
-  }, [activePromotion, partnersPromotionEnabled, styles]);
+  }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);

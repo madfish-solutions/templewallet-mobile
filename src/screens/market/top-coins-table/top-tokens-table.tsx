@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -29,6 +29,7 @@ export const TopTokensTable = () => {
     handleSelectorChange
   } = useFilteredMarketTokens();
   const ref = useRef<SwipeListView<MarketToken>>(null);
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -51,7 +52,13 @@ export const TopTokensTable = () => {
 
   return (
     <View style={styles.rootContainer}>
-      <OptimalPromotionItem style={styles.promotion} testID={MarketSelectors.promotion} />
+      {!promotionErrorOccurred && (
+        <OptimalPromotionItem
+          style={styles.promotion}
+          testID={MarketSelectors.promotion}
+          onImageError={() => setPromotionErrorOccurred(true)}
+        />
+      )}
       <Filters
         sortFiled={sortFiled}
         segmentControlIndex={segmentControlIndex}

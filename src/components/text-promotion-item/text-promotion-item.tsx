@@ -24,10 +24,22 @@ interface Props extends TestIdProps {
   shouldShowCloseButton: boolean;
   style?: StyleProp<ViewStyle>;
   onClose?: () => void;
+  onImageError?: () => void;
 }
 
 export const TextPromotionItem: FC<Props> = memo(
-  ({ content, headline, imageUri, link, loading = false, shouldShowCloseButton, style, testID, onClose = emptyFn }) => {
+  ({
+    content,
+    headline,
+    imageUri,
+    link,
+    loading = false,
+    shouldShowCloseButton,
+    style,
+    testID,
+    onClose = emptyFn,
+    onImageError
+  }) => {
     const { trackEvent } = useAnalytics();
     const colors = useColors();
     const styles = useTextPromotionItemStyles();
@@ -48,7 +60,7 @@ export const TextPromotionItem: FC<Props> = memo(
         ) : (
           <>
             <View style={styles.imageContainer}>
-              <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" />
+              <FastImage style={styles.image} source={{ uri: imageUri }} resizeMode="contain" onError={onImageError} />
             </View>
             <View style={styles.textsContainer}>
               <View style={styles.headline}>

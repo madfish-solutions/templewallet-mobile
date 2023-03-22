@@ -23,6 +23,7 @@ interface Props extends TestIdProps {
   shouldShowCloseButton?: boolean;
   style?: StyleProp<ViewStyle>;
   onCloseButtonClick?: () => void;
+  onImageError?: () => void;
 }
 
 export const PromotionItem: FC<Props> = memo(
@@ -34,7 +35,8 @@ export const PromotionItem: FC<Props> = memo(
     shouldShowAdBage = false,
     shouldShowCloseButton = false,
     style,
-    onCloseButtonClick
+    onCloseButtonClick,
+    onImageError
   }) => {
     const { trackEvent } = useAnalytics();
 
@@ -73,9 +75,15 @@ export const PromotionItem: FC<Props> = memo(
               </TouchableOpacity>
             )}
             {typeof source === 'string' ? (
-              <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
+              <SvgUri
+                style={styles.bannerImage}
+                height={formatSize(112)}
+                width={formatSize(343)}
+                uri={source}
+                onError={onImageError}
+              />
             ) : (
-              <FastImage style={styles.bannerImage} source={source} />
+              <FastImage style={styles.bannerImage} source={source} onError={onImageError} />
             )}
           </View>
         )}

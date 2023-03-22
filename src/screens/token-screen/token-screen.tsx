@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
@@ -30,6 +30,7 @@ export const TokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const token = useMemo(
     () =>
       tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
@@ -67,7 +68,8 @@ export const TokenScreen = () => {
           <ActivityGroupsList
             handleUpdate={handleUpdate}
             activityGroups={activities}
-            shouldShowPromotion={partnersPromotionEnabled}
+            shouldShowPromotion={partnersPromotionEnabled && !promotionErrorOccurred}
+            onOptimalPromotionImageError={() => setPromotionErrorOccurred(true)}
           />
         }
         infoComponent={<TokenInfo token={token} />}

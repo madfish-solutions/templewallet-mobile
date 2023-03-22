@@ -56,6 +56,7 @@ export const TokensList: FC = () => {
   const apyRates = useTokensApyRatesSelector();
 
   const [flatlistHeight, setFlatlistHeight] = useState(0);
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -83,16 +84,24 @@ export const TokensList: FC = () => {
       !partnersPromotionEnabled;
 
     const assetsListWithPromotion = [...filteredAssetsList];
-    if (!shouldHidePromotion) {
+    if (!shouldHidePromotion && !promotionErrorOccurred) {
       assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, { ...emptyToken, address: 'ad' });
     }
 
     return addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount);
-  }, [filteredAssetsList, screenFillingItemsCount, isHideZeroBalance, partnersPromotionEnabled, searchValue]);
+  }, [
+    filteredAssetsList,
+    screenFillingItemsCount,
+    isHideZeroBalance,
+    partnersPromotionEnabled,
+    promotionErrorOccurred,
+    searchValue
+  ]);
 
   useEffect(() => {
     const listener = () => {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+      setPromotionErrorOccurred(false);
     };
     addNavigationListener('focus', listener);
 
@@ -117,6 +126,7 @@ export const TokensList: FC = () => {
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={TokenListSelectors.promotion}
+                onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>
             <View style={styles.promotionItemBorder} />

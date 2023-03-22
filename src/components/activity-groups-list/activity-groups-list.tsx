@@ -16,12 +16,14 @@ interface Props {
   activityGroups: ActivityGroup[];
   shouldShowPromotion?: boolean;
   handleUpdate?: () => void;
+  onOptimalPromotionImageError?: () => void;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
   handleUpdate = emptyFn,
-  shouldShowPromotion = false
+  shouldShowPromotion = false,
+  onOptimalPromotionImageError
 }) => {
   const styles = useActivityGroupsListStyles();
 
@@ -61,6 +63,7 @@ export const ActivityGroupsList: FC<Props> = ({
           <OptimalPromotionItem
             style={[styles.promotionItem, styles.centeredItem]}
             testID={ActivityGroupsListSelectors.promotion}
+            onImageError={onOptimalPromotionImageError}
           />
         </View>
       )}
@@ -80,7 +83,11 @@ export const ActivityGroupsList: FC<Props> = ({
             <ActivityGroupItem group={item} />
             {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
               <View style={styles.promotionItemWrapper}>
-                <OptimalPromotionItem style={styles.promotionItem} testID={ActivityGroupsListSelectors.promotion} />
+                <OptimalPromotionItem
+                  style={styles.promotionItem}
+                  testID={ActivityGroupsListSelectors.promotion}
+                  onImageError={onOptimalPromotionImageError}
+                />
               </View>
             )}
           </>

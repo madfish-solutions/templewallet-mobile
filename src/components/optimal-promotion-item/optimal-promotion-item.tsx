@@ -17,13 +17,15 @@ interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
+  onImageError?: () => void;
 }
 
 export const OptimalPromotionItem: FC<Props> = ({
   testID,
   style,
   shouldShowCloseButton = true,
-  variant = OptimalPromotionVariantEnum.Image
+  variant = OptimalPromotionVariantEnum.Image,
+  onImageError
 }) => {
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
@@ -46,6 +48,7 @@ export const OptimalPromotionItem: FC<Props> = ({
         shouldShowCloseButton={shouldShowCloseButton}
         style={style}
         onClose={disablePromotionAfterConfirmation}
+        onImageError={onImageError}
       />
     );
   }
@@ -60,6 +63,7 @@ export const OptimalPromotionItem: FC<Props> = ({
       shouldShowCloseButton={shouldShowCloseButton}
       style={style}
       onCloseButtonClick={disablePromotionAfterConfirmation}
+      onImageError={onImageError}
     />
   );
 };
