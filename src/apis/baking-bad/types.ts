@@ -5,10 +5,10 @@ export interface BakerInterface {
   name: string;
   logo: string;
   balance: number;
-  stakingBalance: number;
+  stakingBalance?: number;
   stakingCapacity: number;
   maxStakingBalance: number;
-  freeSpace: number;
+  freeSpace?: number;
   fee: number;
   minDelegation: number;
   payoutDelay: number;
@@ -22,6 +22,7 @@ export interface BakerInterface {
   audit: string;
   insuranceCoverage: number;
   config?: BakerConfig;
+  isUnknownBaker?: boolean;
 }
 
 interface BakerValueHistoryItem<T> {

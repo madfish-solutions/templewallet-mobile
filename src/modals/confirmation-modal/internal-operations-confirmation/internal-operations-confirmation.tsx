@@ -3,6 +3,9 @@ import React, { FC } from 'react';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { isTruthy } from 'src/utils/is-truthy';
+
 import { everstakeApi } from '../../../api.service';
 import { HeaderTitle } from '../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
@@ -49,7 +52,7 @@ const approveInternalOperationRequest = ({
     })
   );
 
-export const InternalOperationsConfirmation: FC<Props> = ({ opParams, testID }) => {
+export const InternalOperationsConfirmation: FC<Props> = ({ opParams, disclaimerMessage, testID }) => {
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
 
@@ -71,6 +74,10 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, testID }) 
     []
   );
 
+  const disclaimer = isTruthy(disclaimerMessage) ? (
+    <Disclaimer title="Disclaimer" texts={[disclaimerMessage]} />
+  ) : undefined;
+
   return (
     <OperationsConfirmation
       sender={selectedAccount}
@@ -78,6 +85,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, testID }) 
       isLoading={isLoading}
       onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
       testID={testID}
+      disclaimer={disclaimer}
     />
   );
 };
