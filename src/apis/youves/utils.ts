@@ -3,10 +3,10 @@ import { AssetDefinition } from 'youves-sdk/src/networks.base';
 
 import { YouvesTokensEnum } from './enums';
 
-const youvesTokensNames: string[] = [YouvesTokensEnum.UBTC, YouvesTokensEnum.UUSD];
+const youvesTokensIds: string[] = [YouvesTokensEnum.UBTC, YouvesTokensEnum.UUSD];
 
 export const youvesTokensRecord = Object.values(contracts.mainnet)
-  .filter(token => youvesTokensNames.includes(token.id))
+  .filter(token => youvesTokensIds.includes(token.id))
   .reduce(
     (acc: Record<string, AssetDefinition>, token) => ({
       ...acc,

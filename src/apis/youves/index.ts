@@ -11,6 +11,7 @@ import { MAINNET_SMARTPY_RPC, YOUVES_INDEXER_URL } from './constants';
 
 const toolkit = new TezosToolkit(getFastRpcClient(MAINNET_SMARTPY_RPC));
 const indexerConfig = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
+const MULTIPLIER = 100;
 
 class MemoryStorage implements Storage {
   public storage: Map<string, any>;
@@ -39,7 +40,7 @@ export const getYOUTokenApr$ = (
   const unifiedStaking = new UnifiedStaking(toolkit, indexerConfig, mainnetNetworkConstants);
 
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
-    map(value => Number(value.multipliedBy(100))),
+    map(value => Number(value.multipliedBy(MULTIPLIER))),
     catchError(error => {
       console.log('Youves error: get YOU token APR', error);
 
@@ -60,7 +61,7 @@ export const getYouvesTokenApr$ = (token: AssetDefinition): Observable<number> =
   });
 
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
-    map(value => Number(value.multipliedBy(100))),
+    map(value => Number(value.multipliedBy(MULTIPLIER))),
     catchError(error => {
       console.log(`Youves error: get ${token.id} token APR`, error);
 
