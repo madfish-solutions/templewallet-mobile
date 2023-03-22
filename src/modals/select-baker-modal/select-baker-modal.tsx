@@ -170,6 +170,9 @@ export const SelectBakerModal: FC = () => {
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
+          {searchValue === selectedAccount.publicKeyHash && (
+            <Text style={styles.errorText}>You can not delegate to yourself</Text>
+          )}
         </View>
         {isTezosNode && (
           <View style={styles.upperContainer}>
@@ -202,29 +205,29 @@ export const SelectBakerModal: FC = () => {
           style={styles.flatList}
           windowSize={10}
           ListEmptyComponent={
+            searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
+              <BakerListItem
+                item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+                onPress={setSelectedBaker}
+                selected={searchValue === selectedBaker?.address}
+              />
+            ) : undefined
+          }
+        />
+      )}
+
+      {isDcpNode &&
+        isValidAddress(searchValue ?? '') &&
+        searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() && (
+          <View style={styles.dcpBaker}>
+            <Divider size={formatSize(16)} />
             <BakerListItem
               item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
               onPress={setSelectedBaker}
               selected={searchValue === selectedBaker?.address}
             />
-          }
-        />
-      )}
-
-      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue !== selectedAccount.publicKeyHash && (
-        <View style={styles.dcpBaker}>
-          <Divider size={formatSize(16)} />
-          <BakerListItem
-            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-            onPress={setSelectedBaker}
-            selected={searchValue === selectedBaker?.address}
-          />
-        </View>
-      )}
-
-      {isDcpNode && searchValue === selectedAccount.publicKeyHash && (
-        <Text style={styles.errorText}>You can not delegate to yourself</Text>
-      )}
+          </View>
+        )}
 
       <View style={isDcpNode && styles.buttons}>
         <ModalButtonsContainer>
