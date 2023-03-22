@@ -14,6 +14,7 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -53,6 +54,7 @@ export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
+  const { isTezosNode, isDcpNode } = useNetworkInfo();
 
   const { trackEvent } = useAnalytics();
 
@@ -169,52 +171,73 @@ export const SelectBakerModal: FC = () => {
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
         </View>
-        <View style={styles.upperContainer}>
-          <Text style={styles.infoText}>The higher the better</Text>
+        {isTezosNode && (
+          <View style={styles.upperContainer}>
+            <Text style={styles.infoText}>The higher the better</Text>
 
-          <Sorter
-            sortValue={sortValue}
-            description="Sort bakers by:"
-            sortFieldsOptions={bakersSortFieldsOptions}
-            sortFieldsLabels={bakersSortFieldsLabels}
-            onSetSortValue={handleSortValueChange}
-            testID={SelectBakerModalSelectors.sortByDropDownButton}
-          />
-        </View>
+            <Sorter
+              sortValue={sortValue}
+              description="Sort bakers by:"
+              sortFieldsOptions={bakersSortFieldsOptions}
+              sortFieldsLabels={bakersSortFieldsLabels}
+              onSetSortValue={handleSortValueChange}
+              testID={SelectBakerModalSelectors.sortByDropDownButton}
+            />
+          </View>
+        )}
       </View>
 
-      <FlatList
-        data={finalBakersList}
-        renderItem={({ item }) => (
-          <BakerListItem
-            item={item}
-            selected={item.address === selectedBaker?.address}
-            onPress={setSelectedBaker}
-            testID={SelectBakerModalSelectors.bakerItem}
-          />
-        )}
-        keyExtractor={item => item.address}
-        style={styles.flatList}
-        windowSize={10}
-        ListEmptyComponent={
+      {isTezosNode && (
+        <FlatList
+          data={finalBakersList}
+          renderItem={({ item }) => (
+            <BakerListItem
+              item={item}
+              selected={item.address === selectedBaker?.address}
+              onPress={setSelectedBaker}
+              testID={SelectBakerModalSelectors.bakerItem}
+            />
+          )}
+          keyExtractor={item => item.address}
+          style={styles.flatList}
+          windowSize={10}
+          ListEmptyComponent={
+            <BakerListItem
+              item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+              onPress={setSelectedBaker}
+              selected={searchValue === selectedBaker?.address}
+            />
+          }
+        />
+      )}
+
+      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue !== selectedAccount.publicKeyHash && (
+        <View style={styles.dcpBaker}>
+          <Divider size={formatSize(16)} />
           <BakerListItem
             item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
             onPress={setSelectedBaker}
             selected={searchValue === selectedBaker?.address}
           />
-        }
-      />
+        </View>
+      )}
 
-      <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
-        <Divider size={formatSize(16)} />
-        <ButtonLargePrimary
-          title="Next"
-          disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
-          onPress={handleNextPress}
-          testID={SelectBakerModalSelectors.nextButton}
-        />
-      </ModalButtonsContainer>
+      {isDcpNode && searchValue === selectedAccount.publicKeyHash && (
+        <Text style={styles.errorText}>You can not delegate to yourself</Text>
+      )}
+
+      <View style={isDcpNode && styles.buttons}>
+        <ModalButtonsContainer>
+          <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
+          <Divider size={formatSize(16)} />
+          <ButtonLargePrimary
+            title="Next"
+            disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
+            onPress={handleNextPress}
+            testID={SelectBakerModalSelectors.nextButton}
+          />
+        </ModalButtonsContainer>
+      </View>
     </>
   );
 };
