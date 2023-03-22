@@ -130,7 +130,7 @@ export const TokensList: FC = () => {
                 onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>
-            <View style={styles.promotionItemBorder} />
+            <View style={isAndroid ? styles.promotionItemBorderAndroid : styles.promotionItemBorderIOS} />
           </View>
         );
       }
