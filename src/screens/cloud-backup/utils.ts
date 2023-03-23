@@ -3,28 +3,14 @@ import { firstValueFrom } from 'rxjs';
 
 import { isAndroid } from 'src/config/system';
 import { Shelter } from 'src/shelter/shelter';
-import { showErrorToast } from 'src/toast/toast.utils';
+import { ToastError } from 'src/toast/toast.utils';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
 export const assurePasswordIsCorrect = async (password: string) => {
   const isPasswordCorrect = await firstValueFrom(Shelter.isPasswordCorrect$(password));
 
   if (!isPasswordCorrect) {
-    throw new Error('Wrong password');
-  }
-};
-
-export const callWithErrorToast = <R>(callback: () => R, title: string, takeDescriptionFromErrorMsg = false) => {
-  try {
-    return callback();
-  } catch (error) {
-    if (takeDescriptionFromErrorMsg) {
-      showErrorToast({ title, description: (error as Error)?.message });
-    } else {
-      showErrorToast({ description: title });
-    }
-
-    throw error;
+    throw new ToastError('Wrong password');
   }
 };
 

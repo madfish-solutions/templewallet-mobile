@@ -13,7 +13,7 @@ import { isAndroid } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
+import { callWithToastErrorThrown, callWithShowErrorToastOnError } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
   cloudTitle,
@@ -33,44 +33,24 @@ export const Welcome = () => {
 
   usePageAnalytic(ScreensEnum.Welcome);
 
-  const onContinueWithCloudButtonPress = async () => {
-    try {
-      const loggedInToCloud = await requestSignInToCloud();
+  const onContinueWithCloudButtonPress = () =>
+    callWithShowErrorToastOnError(async () => {
+      const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
 
       if (!loggedInToCloud) {
         return;
       }
-    } catch (error) {
-      return void showErrorToast({
-        title: 'Failed to log-in',
-        description: (error as Error)?.message ?? 'Unknown reason'
-      });
-    }
 
-    try {
-      await syncCloud();
-    } catch (error) {
-      return void showErrorToast({
-        title: 'Failed to sync cloud',
-        description: (error as Error)?.message ?? 'Unknown reason'
-      });
-    }
+      await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
 
-    try {
-      const backupFile = await fetchCloudBackupFileDetails();
+      const backupFile = await callWithToastErrorThrown(fetchCloudBackupFileDetails, 'Failed to read from cloud', true);
 
       if (backupFile) {
         return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
       }
 
       return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
-    } catch (error) {
-      return void showErrorToast({
-        title: 'Failed to read from cloud',
-        description: (error as Error)?.message ?? 'Unknown reason'
-      });
-    }
-  };
+    });
 
   const cloudIsAvailable = isCloudAvailable();
 

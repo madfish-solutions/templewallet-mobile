@@ -27,7 +27,7 @@ import {
 } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { callWithShowErrorToastOnError, ToastError, showSuccessToast } from 'src/toast/toast.utils';
 import { saveCloudBackup, getRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
 import { generateSeed } from 'src/utils/keys.util';
@@ -72,36 +72,34 @@ export const CreateNewWallet = () => {
     [cloudBackupPassword]
   );
 
-  const handleSubmit = async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
-    dispatch(showLoaderAction());
-    dispatch(setIsAnalyticsEnabled(analytics));
+  const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) =>
+    callWithShowErrorToastOnError(async () => {
+      dispatch(showLoaderAction());
+      dispatch(setIsAnalyticsEnabled(analytics));
 
-    const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
+      const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
 
-    importWallet({ seedPhrase, password, useBiometry });
+      importWallet({ seedPhrase, password, useBiometry });
 
-    if (!Boolean(backupToCloud)) {
-      if (!isRestoreFromCloudFlow) {
-        dispatch(requestSeedPhraseBackupAction());
+      if (!Boolean(backupToCloud)) {
+        if (!isRestoreFromCloudFlow) {
+          dispatch(requestSeedPhraseBackupAction());
+        }
+
+        return;
       }
 
-      return;
-    }
+      try {
+        await saveCloudBackup(seedPhrase, password);
+      } catch (error) {
+        dispatch(requestSeedPhraseBackupAction());
 
-    try {
-      await saveCloudBackup(seedPhrase, password);
-    } catch (error) {
-      dispatch(requestSeedPhraseBackupAction());
+        throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
+      }
 
-      return void showErrorToast({
-        title: 'Failed to back up to cloud',
-        description: (error as Error)?.message ?? ''
-      });
-    }
-
-    dispatch(madeCloudBackupAction());
-    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-  };
+      dispatch(madeCloudBackupAction());
+      showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+    });
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>

@@ -1,5 +1,7 @@
 import Toast from 'react-native-toast-message';
 
+import { isString } from 'src/utils/is-string';
+
 import { EmptyFn } from '../config/general';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 import { errorMessageFilter } from '../utils/error-message.util';
@@ -58,6 +60,44 @@ export const showErrorToast = ({ description, title, onPress, isCopyButtonVisibl
       isCopyButtonVisible
     }
   });
+};
+
+export class ToastError extends Error {
+  constructor(public title: string, public description?: string) {
+    super();
+  }
+}
+
+export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R>) => {
+  try {
+    return await callback();
+  } catch (error) {
+    if (error instanceof ToastError) {
+      const { title, description } = error;
+
+      if (isString(description)) {
+        showErrorToast({ title, description });
+      } else {
+        showErrorToast({ description: title });
+      }
+    } else {
+      showErrorToast({ description: 'Something went wrong' });
+    }
+
+    throw error;
+  }
+};
+
+export const callWithToastErrorThrown = async <R>(
+  callback: () => R,
+  title: string,
+  takeDescriptionFromErrorMsg = false
+) => {
+  try {
+    return await callback();
+  } catch (error) {
+    throw new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
+  }
 };
 
 export const showSuccessToast = ({ description, title, onPress, operationHash }: ToastProps) =>
