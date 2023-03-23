@@ -20,6 +20,7 @@ import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import {
+  hideLoaderAction,
   madeCloudBackupAction,
   requestSeedPhraseBackupAction,
   setIsAnalyticsEnabled,
@@ -73,33 +74,36 @@ export const CreateNewWallet = () => {
   );
 
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) =>
-    callWithShowErrorToastOnError(async () => {
-      dispatch(showLoaderAction());
-      dispatch(setIsAnalyticsEnabled(analytics));
+    callWithShowErrorToastOnError(
+      async () => {
+        dispatch(showLoaderAction());
+        dispatch(setIsAnalyticsEnabled(analytics));
 
-      const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
+        const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
 
-      importWallet({ seedPhrase, password, useBiometry });
+        importWallet({ seedPhrase, password, useBiometry });
 
-      if (!Boolean(backupToCloud)) {
-        if (!isRestoreFromCloudFlow) {
-          dispatch(requestSeedPhraseBackupAction());
+        if (!Boolean(backupToCloud)) {
+          if (!isRestoreFromCloudFlow) {
+            dispatch(requestSeedPhraseBackupAction());
+          }
+
+          return;
         }
 
-        return;
-      }
+        try {
+          await saveCloudBackup(seedPhrase, password);
+        } catch (error) {
+          dispatch(requestSeedPhraseBackupAction());
 
-      try {
-        await saveCloudBackup(seedPhrase, password);
-      } catch (error) {
-        dispatch(requestSeedPhraseBackupAction());
+          throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
+        }
 
-        throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
-      }
-
-      dispatch(madeCloudBackupAction());
-      showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-    });
+        dispatch(madeCloudBackupAction());
+        showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+      },
+      () => void dispatch(hideLoaderAction())
+    );
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>

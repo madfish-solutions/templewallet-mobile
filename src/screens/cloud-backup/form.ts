@@ -6,7 +6,7 @@ import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
-import { madeCloudBackupAction } from 'src/store/settings/settings-actions';
+import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { callWithToastErrorThrown, callWithShowErrorToastOnError, showSuccessToast } from 'src/toast/toast.utils';
 import { fetchCloudBackupFileDetails, requestSignInToCloud, saveCloudBackup, syncCloud } from 'src/utils/cloud-backup';
 
@@ -29,39 +29,53 @@ export const useHandleSubmit = () => {
   const dispatch = useDispatch();
 
   const proceedWithSaving = async (password: string) => {
+    dispatch(showLoaderAction());
+
     const mnemonic = await firstValueFrom(Shelter.revealSeedPhrase$());
 
     await callWithToastErrorThrown(() => saveCloudBackup(mnemonic, password), 'Failed to back up to cloud', true);
 
     dispatch(madeCloudBackupAction());
+    dispatch(hideLoaderAction());
     showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
     goBack();
   };
 
   const handleSubmit = ({ password }: EnterCloudPasswordFormValues): Promise<void> =>
-    callWithShowErrorToastOnError(async () => {
-      await assurePasswordIsCorrect(password);
+    callWithShowErrorToastOnError(
+      async () => {
+        dispatch(showLoaderAction());
 
-      const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
+        await assurePasswordIsCorrect(password);
 
-      if (!loggedInToCloud) {
-        return;
-      }
+        const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
 
-      await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
+        if (!loggedInToCloud) {
+          return;
+        }
 
-      const backupFile = await callWithToastErrorThrown(fetchCloudBackupFileDetails, 'Failed to read from cloud', true);
+        await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
 
-      if (backupFile) {
-        return void alertOnExistingBackup(
-          () => void handleSubmit({ password }),
-          () => void callWithShowErrorToastOnError(() => proceedWithSaving(password)),
-          () => void navigate(ScreensEnum.ManualBackup)
+        const backupFile = await callWithToastErrorThrown(
+          fetchCloudBackupFileDetails,
+          'Failed to read from cloud',
+          true
         );
-      }
 
-      await proceedWithSaving(password);
-    });
+        dispatch(hideLoaderAction());
+
+        if (backupFile) {
+          return void alertOnExistingBackup(
+            () => void handleSubmit({ password }),
+            () => void callWithShowErrorToastOnError(() => proceedWithSaving(password)),
+            () => void navigate(ScreensEnum.ManualBackup)
+          );
+        }
+
+        await proceedWithSaving(password);
+      },
+      () => void dispatch(hideLoaderAction())
+    );
 
   return handleSubmit;
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -12,6 +13,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { isAndroid } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { callWithToastErrorThrown, callWithShowErrorToastOnError } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -33,24 +35,37 @@ export const Welcome = () => {
 
   usePageAnalytic(ScreensEnum.Welcome);
 
+  const dispatch = useDispatch();
+
   const onContinueWithCloudButtonPress = () =>
-    callWithShowErrorToastOnError(async () => {
-      const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
+    callWithShowErrorToastOnError(
+      async () => {
+        dispatch(showLoaderAction());
 
-      if (!loggedInToCloud) {
-        return;
-      }
+        const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
 
-      await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
+        if (!loggedInToCloud) {
+          return;
+        }
 
-      const backupFile = await callWithToastErrorThrown(fetchCloudBackupFileDetails, 'Failed to read from cloud', true);
+        await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
 
-      if (backupFile) {
-        return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
-      }
+        const backupFile = await callWithToastErrorThrown(
+          fetchCloudBackupFileDetails,
+          'Failed to read from cloud',
+          true
+        );
 
-      return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
-    });
+        dispatch(hideLoaderAction());
+
+        if (backupFile) {
+          return void navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
+        }
+
+        return void navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
+      },
+      () => void dispatch(hideLoaderAction())
+    );
 
   const cloudIsAvailable = isCloudAvailable();
 

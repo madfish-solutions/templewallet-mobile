@@ -68,10 +68,16 @@ export class ToastError extends Error {
   }
 }
 
-export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R>) => {
+export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R>, cleanup?: () => void) => {
   try {
     return await callback();
   } catch (error) {
+    try {
+      cleanup?.();
+    } catch (e) {
+      console.error(e);
+    }
+
     if (error instanceof ToastError) {
       const { title, description } = error;
 
