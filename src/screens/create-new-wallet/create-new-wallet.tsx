@@ -73,6 +73,19 @@ export const CreateNewWallet = () => {
     [cloudBackupPassword]
   );
 
+  const doBackupToCloud = async (seedPhrase: string, password: string) => {
+    try {
+      await saveCloudBackup(seedPhrase, password);
+    } catch (error) {
+      dispatch(requestSeedPhraseBackupAction());
+
+      throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
+    }
+
+    dispatch(madeCloudBackupAction());
+    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+  };
+
   const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) =>
     callWithShowErrorToastOnError(
       async () => {
@@ -83,24 +96,13 @@ export const CreateNewWallet = () => {
 
         importWallet({ seedPhrase, password, useBiometry });
 
-        if (!Boolean(backupToCloud)) {
-          if (!isRestoreFromCloudFlow) {
-            dispatch(requestSeedPhraseBackupAction());
-          }
-
-          return;
+        if (Boolean(backupToCloud)) {
+          return void (await doBackupToCloud(seedPhrase, password));
         }
 
-        try {
-          await saveCloudBackup(seedPhrase, password);
-        } catch (error) {
+        if (!isRestoreFromCloudFlow) {
           dispatch(requestSeedPhraseBackupAction());
-
-          throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
         }
-
-        dispatch(madeCloudBackupAction());
-        showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
       },
       () => void dispatch(hideLoaderAction())
     );
