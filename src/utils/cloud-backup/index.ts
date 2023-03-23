@@ -1,12 +1,13 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { isString } from 'lodash';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 import { secureCellSealWithPassphraseEncrypt64, secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 import { isAndroid, isIOS } from 'src/config/system';
+import { isString } from 'src/utils/is-string';
 
 import PackageJSON from '../../../package.json';
+import { rejectOnTimeout } from '../timeouts.util';
 
 export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
@@ -32,6 +33,8 @@ export const isCloudAvailable = () => {
 
 export const requestSignInToCloud = async () => {
   if (isIOS) {
+    await syncCloud();
+
     return true;
   }
 
@@ -73,18 +76,25 @@ export const requestSignInToCloud = async () => {
   }
 };
 
-export const syncCloud = async () => {
-  if (!isIOS) {
+const ICLOUD_SYNCING_TIMEOUT = 15000;
+let iCloudWasSynced = false;
+
+const syncCloud = async () => {
+  if (!isIOS || iCloudWasSynced) {
     return;
   }
 
-  try {
-    await RNCloudFs.syncCloud();
-  } catch (error) {
-    console.error('RNCloudFs.syncCloud error:', error);
+  await rejectOnTimeout(
+    RNCloudFs.syncCloud().catch(error => {
+      console.error('RNCloudFs.syncCloud error:', error);
 
-    throw error;
-  }
+      throw new Error('Failed to sync cloud');
+    }),
+    ICLOUD_SYNCING_TIMEOUT,
+    new Error('Cloud syncing took too long')
+  );
+
+  iCloudWasSynced = true;
 };
 
 export const fetchCloudBackupFileDetails = async () => {

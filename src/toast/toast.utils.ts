@@ -87,6 +87,8 @@ export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R
         showErrorToast({ description: title });
       }
     } else {
+      console.error(error);
+
       showErrorToast({ description: 'Something went wrong' });
     }
 

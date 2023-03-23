@@ -21,8 +21,7 @@ import {
   cloudTitle,
   fetchCloudBackupFileDetails,
   isCloudAvailable,
-  requestSignInToCloud,
-  syncCloud
+  requestSignInToCloud
 } from 'src/utils/cloud-backup';
 
 import { WelcomeSelectors } from './welcome.selectors';
@@ -47,8 +46,6 @@ export const Welcome = () => {
         if (!loggedInToCloud) {
           return;
         }
-
-        await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
 
         const backupFile = await callWithToastErrorThrown(
           fetchCloudBackupFileDetails,

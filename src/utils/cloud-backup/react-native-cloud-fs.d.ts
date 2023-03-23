@@ -27,7 +27,9 @@ declare module 'react-native-cloud-fs' {
 
     requestSignIn: () => void;
 
-    /** iOS only */
+    /** iOS only
+     * (!) Hangs for too long in emulator
+     */
     syncCloud: () => Promise<void>;
 
     logout: () => Promise<boolean>;

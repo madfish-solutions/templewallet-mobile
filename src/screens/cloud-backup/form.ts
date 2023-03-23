@@ -8,7 +8,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { callWithToastErrorThrown, callWithShowErrorToastOnError, showSuccessToast } from 'src/toast/toast.utils';
-import { fetchCloudBackupFileDetails, requestSignInToCloud, saveCloudBackup, syncCloud } from 'src/utils/cloud-backup';
+import { fetchCloudBackupFileDetails, requestSignInToCloud, saveCloudBackup } from 'src/utils/cloud-backup';
 
 import { alertOnExistingBackup, assurePasswordIsCorrect } from './utils';
 
@@ -53,8 +53,6 @@ export const useHandleSubmit = () => {
         if (!loggedInToCloud) {
           return;
         }
-
-        await callWithToastErrorThrown(syncCloud, 'Failed to sync cloud');
 
         const backupFile = await callWithToastErrorThrown(
           fetchCloudBackupFileDetails,
