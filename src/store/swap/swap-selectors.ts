@@ -10,5 +10,4 @@ export const useSwapTokensSlugsSelector = () =>
       toTokenSlug(contract ?? emptyTokenMetadata.address, tokenId ?? emptyTokenMetadata.id)
     )
   );
-export const useSwapParamsSelector = () => useSelector(state => state.swap.swapParams);
 export const useSwapDexesSelector = () => useSelector(state => state.swap.dexes);

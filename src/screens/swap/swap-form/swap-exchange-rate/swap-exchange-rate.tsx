@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 
-import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -16,31 +15,32 @@ interface Props {
   slippageRatio: number;
   inputAsset: TokenInterface;
   outputAsset: TokenInterface;
+  inputAmount: number | undefined;
+  outputAmount: number | undefined;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio }) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, inputAmount, outputAmount }) => {
   const styles = useSwapExchangeRateStyles();
-  const { data: swapParams } = useSwapParamsSelector();
 
   const exchangeRate = useMemo(() => {
-    if (swapParams.input !== undefined && swapParams.output !== undefined) {
-      const tradeInput = new BigNumber(swapParams.input);
-      const tradeOutput = new BigNumber(swapParams.output);
+    if (inputAmount !== undefined && outputAmount !== undefined) {
+      const tradeInput = new BigNumber(inputAmount);
+      const tradeOutput = new BigNumber(outputAmount);
       const rate = tradeInput.dividedBy(tradeOutput);
 
       return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
     }
 
     return '---';
-  }, [swapParams]);
+  }, [inputAmount, outputAmount]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (swapParams.output !== undefined) {
-      return `${(swapParams.output * slippageRatio).toFixed(outputAsset.decimals)} ${outputAsset.symbol}`;
+    if (outputAmount !== undefined) {
+      return `${(outputAmount * slippageRatio).toFixed(6)} ${outputAsset.symbol}`;
     }
 
     return '---';
-  }, [slippageRatio, swapParams.output, outputAsset.decimals]);
+  }, [slippageRatio, outputAmount, outputAsset.decimals]);
 
   const routingFeeAlert = () =>
     Alert.alert(

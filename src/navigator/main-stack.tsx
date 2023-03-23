@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { loadSwapDexesAction, loadSwapTokensAction } from 'src/store/swap/swap-actions';
+
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from '../components/header/exolix-screen-options';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
@@ -90,6 +92,8 @@ export const MainStackScreen = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
+    dispatch(loadSwapTokensAction.submit());
+    dispatch(loadSwapDexesAction.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { useSwapTokensSlugsSelector } from 'src/store/swap/swap-selectors';
+import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
@@ -9,9 +10,10 @@ import { isNonZeroBalance } from '../utils/tezos.util';
 
 export const useFilteredSwapTokensList = (tokensList: TokenInterface[]) => {
   const swapTokensSlugs = useSwapTokensSlugsSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
 
   const swapTokensListJoin = useMemo(
-    () => tokensList.filter(token => swapTokensSlugs.includes(toTokenSlug(token.address, token.id))),
+    () => [tezosToken, ...tokensList.filter(token => swapTokensSlugs.includes(toTokenSlug(token.address, token.id)))],
     [swapTokensSlugs]
   );
   const nonZeroBalanceTokensList = useMemo<TokenInterface[]>(

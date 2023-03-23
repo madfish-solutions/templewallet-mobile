@@ -24,6 +24,12 @@ export const useSwapRouteItem = createUseStyles(({ colors }) => ({
   amount: {
     color: colors.gray2
   },
+  alignEnd: {
+    alignSelf: 'flex-end'
+  },
+  alignStart: {
+    alignSelf: 'flex-start'
+  },
   percantage: {
     color: colors.blue
   }
