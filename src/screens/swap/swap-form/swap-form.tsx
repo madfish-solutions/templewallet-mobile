@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider, useFormik } from 'formik';
+import { FormikProvider, isEmptyArray, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -14,8 +14,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
-import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
-import { useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
+import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -24,11 +23,7 @@ import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
-  useTokensListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -60,7 +55,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const getSwapParams = useSwap();
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
-  const assetsList = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
@@ -99,6 +93,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       minimumReceivedAmountAtomic,
       swapParamsLocal.chains
     );
+
+    console.log('swapOpParams: ', swapOpParams);
 
     if (swapOpParams === undefined) {
       return;
@@ -167,14 +163,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     ? undefined
     : getTokenSlug(outputAssets.asset);
 
-  const { filteredTokensList, setSearchValue } = useFilteredSwapTokensList(assetsList);
-
-  const { filteredAssetsList: toAssetsList, setSearchValue: setToSearchValue } = useFilteredAssetsList(
-    assetsList,
-    false,
-    true,
-    tezosToken
-  );
+  const {
+    filteredTokensList: fromTokensList,
+    searchValue: fromSeactValue,
+    setSearchValue: setSearchValueFromTokens
+  } = useFilteredSwapTokensList(TokensInputsEnum.From);
+  const {
+    filteredTokensList: toTokensList,
+    searchValue: toSeactValue,
+    setSearchValue: setSearchValueToTokens
+  } = useFilteredSwapTokensList(TokensInputsEnum.To);
 
   useEffect(() => {
     fetchRoute3SwapParams({
@@ -235,8 +233,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           label="From"
           isSearchable
           maxButton
-          assetsList={filteredTokensList}
-          setSearchValue={setSearchValue}
+          assetsList={fromTokensList}
+          searchValue={fromSeactValue}
+          setSearchValue={setSearchValueFromTokens}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
         />
@@ -249,8 +248,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toUsdToggle={false}
           editable={false}
           isSearchable
-          assetsList={toAssetsList}
-          setSearchValue={setToSearchValue}
+          assetsList={toTokensList}
+          searchValue={toSeactValue}
+          setSearchValue={setSearchValueToTokens}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
         />
@@ -270,7 +270,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
-          disabled={(submitCount !== 0 && !isValid) || swapParamsLocal.chains.length === 0}
+          disabled={(submitCount !== 0 && !isValid) || (submitCount !== 0 && isEmptyArray(swapParamsLocal.chains))}
           title="Swap"
           onPress={submitForm}
           testID={SwapFormSelectors.swapButton}

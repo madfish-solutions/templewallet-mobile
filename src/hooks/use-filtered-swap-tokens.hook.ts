@@ -1,33 +1,52 @@
 import { useMemo, useState } from 'react';
 
-import { useSwapTokensSlugsSelector } from 'src/store/swap/swap-selectors';
-import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
+import { useSelectedAccountTezosTokenSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
 
-export const useFilteredSwapTokensList = (tokensList: TokenInterface[]) => {
-  const swapTokensSlugs = useSwapTokensSlugsSelector();
+export enum TokensInputsEnum {
+  From = 'From',
+  To = 'To'
+}
+
+export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = TokensInputsEnum.From) => {
+  const { data: swapTokens } = useSwapTokensSelector();
+  const userTokens = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
 
-  const swapTokensListJoin = useMemo(
-    () => [tezosToken, ...tokensList.filter(token => swapTokensSlugs.includes(toTokenSlug(token.address, token.id)))],
-    [swapTokensSlugs]
+  const balances = useMemo<Record<string, string>>(
+    () =>
+      [tezosToken, ...userTokens].reduce(
+        (accumulator, token) => ({ ...accumulator, [toTokenSlug(token.address, token.id)]: token.balance }),
+        {}
+      ),
+    [userTokens]
   );
-  const nonZeroBalanceTokensList = useMemo<TokenInterface[]>(
-    () => swapTokensListJoin.filter(token => isNonZeroBalance(token)),
-    [tokensList]
-  );
+
+  const swapTokensWithBalances = useMemo<Array<TokenInterface>>(() => {
+    const result = swapTokens.map(token => ({
+      ...token,
+      balance: balances[toTokenSlug(token.address, token.id)] ?? '0'
+    }));
+
+    return result;
+  }, [swapTokens, tezosToken, balances]);
+
+  const fromTokens = useMemo(() => swapTokensWithBalances.filter(isNonZeroBalance), [swapTokensWithBalances]);
 
   const [searchValue, setSearchValue] = useState<string>();
   const filteredTokensList = useMemo<TokenInterface[]>(() => {
+    const source = tokensInput === TokensInputsEnum.From ? fromTokens : swapTokensWithBalances;
+
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: TokenInterface[] = [];
 
-      for (const asset of nonZeroBalanceTokensList) {
+      for (const asset of source) {
         const { name, symbol, address } = asset;
 
         if (
@@ -41,9 +60,9 @@ export const useFilteredSwapTokensList = (tokensList: TokenInterface[]) => {
 
       return result;
     } else {
-      return nonZeroBalanceTokensList;
+      return source;
     }
-  }, [searchValue, tokensList, nonZeroBalanceTokensList]);
+  }, [searchValue, fromTokens, swapTokensWithBalances]);
 
   return {
     filteredTokensList,

@@ -6,7 +6,7 @@ import { route3InitialState } from './swap-state';
 
 export const swapReducer = createReducer(route3InitialState, builder => {
   builder.addCase(loadSwapTokensAction.submit, state => {
-    state.tokens = createEntity([...state.tokens.data], true);
+    state.tokens = createEntity([], true);
   });
   builder.addCase(loadSwapTokensAction.success, (state, { payload }) => {
     state.tokens = createEntity(payload, false);

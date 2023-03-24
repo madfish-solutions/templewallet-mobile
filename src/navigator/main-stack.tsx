@@ -92,12 +92,12 @@ export const MainStackScreen = () => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensActions.submit());
     dispatch(loadSelectedBakerActions.submit());
-    dispatch(loadSwapTokensAction.submit());
-    dispatch(loadSwapDexesAction.submit());
   };
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
     dispatch(loadNotificationsAction.submit());
+    dispatch(loadSwapTokensAction.submit());
+    dispatch(loadSwapDexesAction.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [

@@ -19,6 +19,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   description: string;
   list: T[];
   isSearchable?: boolean;
+  searchValue?: string;
   itemHeight?: number;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
@@ -66,6 +67,7 @@ const DropdownComponent = <T extends unknown>({
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
+  searchValue,
   setSearchValue = emptyFn,
   equalityFn,
   renderValue,
@@ -130,7 +132,9 @@ const DropdownComponent = <T extends unknown>({
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
+          {isSearchable && (
+            <SearchInput value={searchValue} placeholder="Search assets" onChangeText={setSearchValue} />
+          )}
           <FlatList
             ref={ref}
             data={list}

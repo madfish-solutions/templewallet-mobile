@@ -7,7 +7,7 @@ import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 export const getTokenSlug = <T extends { address?: string; id?: number | string }>({ address, id }: T) =>
   toTokenSlug(address, id);
 
-export const toTokenSlug = (address?: string, id?: number | string) =>
+export const toTokenSlug = (address?: string | null, id?: number | string | null) =>
   isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;
 
 const assertTokenContractType = (contract: ContractType, tokenType: TokenTypeEnum) => {

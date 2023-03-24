@@ -28,14 +28,16 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
       const tradeOutput = new BigNumber(outputAmount);
       const rate = tradeInput.dividedBy(tradeOutput);
 
-      return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
+      if (rate.isFinite()) {
+        return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
+      }
     }
 
     return '---';
   }, [inputAmount, outputAmount]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (outputAmount !== undefined) {
+    if (outputAmount !== undefined && outputAmount > 0) {
       return `${(outputAmount * slippageRatio).toFixed(6)} ${outputAsset.symbol}`;
     }
 

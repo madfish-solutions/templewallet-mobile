@@ -25,6 +25,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   editable,
   toUsdToggle = true,
   isSearchable = false,
+  searchValue,
   selectionOptions = undefined,
   maxButton = false,
   setSearchValue = emptyFn,
@@ -58,6 +59,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         toUsdToggle={toUsdToggle}
         selectionOptions={selectionOptions}
         maxButton={maxButton}
+        searchValue={searchValue}
         setSearchValue={setSearchValue}
         onBlur={handleBlur}
         onValueChange={handleValueChange}
