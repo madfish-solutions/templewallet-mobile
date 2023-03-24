@@ -17,6 +17,8 @@ const CLOUD_WALLET_FOLDER = 'temple-wallet-mobile';
 const filename = 'wallet-backup.json';
 const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 
+const CLOUD_REQUEST_TIMEOUT = 15000;
+
 export interface BackupFileInterface {
   version: string;
   mnemonic: string;
@@ -70,7 +72,6 @@ export const requestSignInToCloud = async () => {
   }
 };
 
-const ICLOUD_SYNCING_TIMEOUT = 15000;
 let iCloudWasSynced = false;
 
 const syncCloud = async () => {
@@ -84,7 +85,7 @@ const syncCloud = async () => {
 
       throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),
-    ICLOUD_SYNCING_TIMEOUT,
+    CLOUD_REQUEST_TIMEOUT,
     new Error('Cloud syncing took too long. See if iCloud is enabled')
   );
 
@@ -158,22 +159,30 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
     ? RNCloudFs.getGoogleDriveDocument(fileId)
     : RNCloudFs.getIcloudDocument(filename);
 
-  const encryptedBackup = await encryptedBackupPromise.catch(error => {
-    console.error('RNCloudFs.get${cloud}Document error:', error);
-  });
+  const encryptedBackup = await rejectOnTimeout(
+    encryptedBackupPromise.catch(error => {
+      console.error('RNCloudFs.get${cloud}Document error:', error);
+    }),
+    CLOUD_REQUEST_TIMEOUT,
+    new Error('Reading cloud took too long')
+  );
 
   if (!isString(encryptedBackup)) {
     throw new Error('Cloud backup not found');
   }
 
-  try {
-    const backupFileStr = await secureCellSealWithPassphraseDecrypt64(password, encryptedBackup);
+  const backupFileStr = await secureCellSealWithPassphraseDecrypt64(password, encryptedBackup).catch(error => {
+    console.error(error);
 
+    throw new Error('Password is incorrect');
+  });
+
+  try {
     return JSON.parse(backupFileStr);
   } catch (error) {
     console.error(error);
 
-    throw new Error('Could not decrypt backup. Password might be incorrect');
+    throw new Error('Backup is broken');
   }
 };
 
@@ -186,7 +195,7 @@ const assureGooglePlayServicesAvailable = async () => {
   }
 
   if (!hasPlayServices) {
-    throw new Error('Google Play services are not available');
+    throw new Error("Google Play services aren't available");
   }
 };
 

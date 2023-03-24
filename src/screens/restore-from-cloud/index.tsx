@@ -2,6 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
@@ -12,6 +13,7 @@ import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { callWithShowErrorToastOnError, callWithToastErrorThrown } from 'src/toast/toast.utils';
@@ -27,21 +29,29 @@ export const RestoreFromCloud = () => {
   const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.RestoreFromCloud>>().params;
 
   const { navigate } = useNavigation();
+  const dispatch = useDispatch();
 
   const styles = useSetPasswordScreensCommonStyles();
 
   const handleSubmit = ({ password, reusePassword }: RestoreFromCloudFormValues) =>
-    callWithShowErrorToastOnError(async () => {
-      const backup = await callWithToastErrorThrown(
-        () => fetchCloudBackup(password, fileId),
-        "Couldn't restore wallet",
-        true
-      );
+    callWithShowErrorToastOnError(
+      async () => {
+        dispatch(showLoaderAction());
 
-      const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
+        const backup = await callWithToastErrorThrown(
+          () => fetchCloudBackup(password, fileId),
+          "Couldn't restore wallet",
+          true
+        );
 
-      return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
-    });
+        const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
+
+        dispatch(hideLoaderAction());
+
+        return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
+      },
+      () => void dispatch(hideLoaderAction())
+    );
 
   return (
     <Formik
