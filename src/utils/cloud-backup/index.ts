@@ -23,13 +23,7 @@ export interface BackupFileInterface {
   platformOS: 'ios' | 'android';
 }
 
-export const isCloudAvailable = () => {
-  if (isAndroid) {
-    return true;
-  }
-
-  return RNCloudFs?.isAvailable();
-};
+export const isCloudAvailable = () => (isAndroid ? true : isIOS ? Boolean(RNCloudFs?.isAvailable()) : false);
 
 export const requestSignInToCloud = async () => {
   if (isIOS) {
@@ -88,10 +82,10 @@ const syncCloud = async () => {
     RNCloudFs.syncCloud().catch(error => {
       console.error('RNCloudFs.syncCloud error:', error);
 
-      throw new Error('Failed to sync cloud');
+      throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),
     ICLOUD_SYNCING_TIMEOUT,
-    new Error('Cloud syncing took too long')
+    new Error('Cloud syncing took too long. See if iCloud is enabled')
   );
 
   iCloudWasSynced = true;
@@ -160,9 +154,13 @@ const checkIfBackupExists = async (fileId?: string) => {
 };
 
 export const fetchCloudBackup = async (password: string, fileId: string): Promise<BackupFileInterface> => {
-  const encryptedBackup = isAndroid
-    ? await RNCloudFs.getGoogleDriveDocument(fileId)
-    : await RNCloudFs.getIcloudDocument(filename);
+  const encryptedBackupPromise = isAndroid
+    ? RNCloudFs.getGoogleDriveDocument(fileId)
+    : RNCloudFs.getIcloudDocument(filename);
+
+  const encryptedBackup = await encryptedBackupPromise.catch(error => {
+    console.error('RNCloudFs.get${cloud}Document error:', error);
+  });
 
   if (!isString(encryptedBackup)) {
     throw new Error('Cloud backup not found');
@@ -175,7 +173,7 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
   } catch (error) {
     console.error(error);
 
-    throw new Error('Password is incorrect');
+    throw new Error('Could not decrypt backup. Password might be incorrect');
   }
 };
 

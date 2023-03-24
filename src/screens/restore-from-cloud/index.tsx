@@ -14,9 +14,9 @@ import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum'
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { showErrorToast } from 'src/toast/toast.utils';
+import { callWithShowErrorToastOnError, callWithToastErrorThrown } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { BackupFileInterface, fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';
@@ -30,20 +30,18 @@ export const RestoreFromCloud = () => {
 
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleSubmit = async ({ password, reusePassword }: RestoreFromCloudFormValues) => {
-    let backup: BackupFileInterface;
-    try {
-      backup = await fetchCloudBackup(password, fileId);
-    } catch (error) {
-      const description = error instanceof Error ? error.message : "Couldn't restore wallet";
+  const handleSubmit = ({ password, reusePassword }: RestoreFromCloudFormValues) =>
+    callWithShowErrorToastOnError(async () => {
+      const backup = await callWithToastErrorThrown(
+        () => fetchCloudBackup(password, fileId),
+        "Couldn't restore wallet",
+        true
+      );
 
-      return void showErrorToast({ description });
-    }
+      const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
 
-    const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
-
-    return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
-  };
+      return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
+    });
 
   return (
     <Formik

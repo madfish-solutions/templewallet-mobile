@@ -83,7 +83,12 @@ declare module 'react-native-cloud-fs' {
 
     getGoogleDriveDocument: (fileId: string) => Promise<string>;
 
-    /** Absent on Android */
+    /**
+     * (!) Absent on Android
+     * (!) Throws, when file is not found
+     *
+     * @argument fileName // (!) Yes, filename, not full path!
+     */
     getIcloudDocument: (fileName: string) => Promise<string>;
   };
 

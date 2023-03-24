@@ -1,6 +1,6 @@
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const rejectOnTimeout = <R>(promise: Promise<R>, timeout: number, timeoutRejectValue: unknown): Promise<R> =>
+export const rejectOnTimeout = <R>(promise: Promise<R>, timeout: number, timeoutRejectValue: unknown) =>
   Promise.race([
     promise,
     new Promise((_, reject) => setTimeout(() => reject(timeoutRejectValue), timeout))
