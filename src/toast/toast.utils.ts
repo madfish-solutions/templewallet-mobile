@@ -1,5 +1,5 @@
 import Toast from 'react-native-toast-message';
-import { of } from 'rxjs';
+import { catchError, ObservableInput, of, OperatorFunction } from 'rxjs';
 
 import { EmptyFn } from 'src/config/general';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
@@ -78,18 +78,22 @@ export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R
       console.error(e);
     }
 
-    if (error instanceof ToastError) {
-      const { title, description } = error;
+    let title: string;
+    let description: string | undefined;
 
-      if (isString(description)) {
-        showErrorToast({ title, description });
-      } else {
-        showErrorToast({ description: title });
-      }
+    if (error instanceof ToastError) {
+      title = error.title;
+      description = error.description;
     } else {
       console.error(error);
 
-      showErrorToast({ description: 'Something went wrong' });
+      title = 'Something went wrong';
+    }
+
+    if (isString(description)) {
+      showErrorToast({ title, description });
+    } else {
+      showErrorToast({ description: title });
     }
 
     throw error;
@@ -108,16 +112,18 @@ export const callWithToastErrorThrown = async <R>(
   }
 };
 
-export const showSuccessToast = ({ description, title, onPress, operationHash }: ToastProps) =>
-  Toast.show({
-    type: ToastTypeEnum.Success,
-    text1: title,
-    text2: description,
-    onPress,
-    props: {
-      operationHash
-    }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const catchThrowToastError = <T, O extends ObservableInput<any>>(
+  title: string,
+  takeDescriptionFromErrorMsg = false
+): OperatorFunction<T, T> => {
+  return catchError<T, O>((error: unknown) => {
+    // if (error instanceof ToastError) throw
+    throw error instanceof ToastError
+      ? error
+      : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
   });
+};
 
 export const buildErrorToaster$ = (fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {
   return (error: unknown) => {
@@ -143,6 +149,17 @@ export const buildErrorToaster$ = (fallbackTitle?: string, takeDescriptionFromEr
     return of(void 0);
   };
 };
+
+export const showSuccessToast = ({ description, title, onPress, operationHash }: ToastProps) =>
+  Toast.show({
+    type: ToastTypeEnum.Success,
+    text1: title,
+    text2: description,
+    onPress,
+    props: {
+      operationHash
+    }
+  });
 
 export const showWarningToast = ({ description, title, onPress }: ToastProps) =>
   Toast.show({

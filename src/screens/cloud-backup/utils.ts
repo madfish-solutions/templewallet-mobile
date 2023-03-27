@@ -1,18 +1,7 @@
 import { Alert, AlertButton } from 'react-native';
-import { firstValueFrom } from 'rxjs';
 
 import { isAndroid } from 'src/config/system';
-import { Shelter } from 'src/shelter/shelter';
-import { ToastError } from 'src/toast/toast.utils';
 import { cloudTitle } from 'src/utils/cloud-backup';
-
-export const assurePasswordIsCorrect = async (password: string) => {
-  const isPasswordCorrect = await firstValueFrom(Shelter.isPasswordCorrect$(password));
-
-  if (!isPasswordCorrect) {
-    throw new ToastError('Wrong password');
-  }
-};
 
 export const alertOnExistingBackup = (
   onChangeAccountPress: () => void,

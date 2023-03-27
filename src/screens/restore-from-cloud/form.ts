@@ -1,16 +1,16 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { catchError, filter, from, map, Subject, switchMap, tap } from 'rxjs';
+import { catchError, filter, from, map, switchMap, tap } from 'rxjs';
 import { object, boolean, SchemaOf } from 'yup';
 
 import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { buildErrorToaster$, ToastError } from 'src/toast/toast.utils';
+import { buildErrorToaster$, catchThrowToastError } from 'src/toast/toast.utils';
 import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isDefined } from 'src/utils/is-defined';
+import { useSubjectSubscription$ } from 'src/utils/rxjs.utils';
 
 export type RestoreFromCloudFormValues = {
   password: string;
@@ -33,34 +33,27 @@ export const useHandleSubmit = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
 
-  const restoreFromCloud$ = useMemo(
-    () => new Subject<{ password: string; fileId: string; reusePassword: boolean }>(),
-    []
+  const submit$ = useSubjectSubscription$<{ password: string; fileId: string; reusePassword: boolean }>(
+    subject$ =>
+      subject$
+        .pipe(
+          tap(() => dispatch(showLoaderAction())),
+          switchMap(({ password, fileId, reusePassword }) =>
+            from(fetchCloudBackup(password, fileId)).pipe(
+              catchThrowToastError("Couldn't restore wallet", true),
+              map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined)),
+              catchError(buildErrorToaster$())
+            )
+          ),
+          tap(() => dispatch(hideLoaderAction())),
+          filter(isDefined)
+        )
+        .subscribe(cloudBackupId => void navigate(ScreensEnum.CreateAccount, { cloudBackupId })),
+    [fileId, dispatch, navigate]
   );
 
-  useEffect(() => {
-    const restoreFromCloudSubscription = restoreFromCloud$
-      .pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(({ password, fileId, reusePassword }) =>
-          from(fetchCloudBackup(password, fileId)).pipe(
-            catchError(error => {
-              throw new ToastError("Couldn't restore wallet", (error as Error)?.message);
-            }),
-            map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined)),
-            catchError(buildErrorToaster$())
-          )
-        ),
-        tap(() => dispatch(hideLoaderAction())),
-        filter(isDefined)
-      )
-      .subscribe(cloudBackupId => void navigate(ScreensEnum.CreateAccount, { cloudBackupId }));
-
-    return () => restoreFromCloudSubscription.unsubscribe();
-  }, [restoreFromCloud$, fileId, dispatch, navigate]);
-
   const handleSubmit = ({ password, reusePassword }: RestoreFromCloudFormValues) =>
-    restoreFromCloud$.next({ password, fileId, reusePassword });
+    submit$.next({ password, fileId, reusePassword });
 
   return handleSubmit;
 };
