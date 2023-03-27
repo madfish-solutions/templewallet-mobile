@@ -51,7 +51,7 @@ export const useHandleSubmit = () => {
         const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
 
         if (!loggedInToCloud) {
-          return;
+          return void dispatch(hideLoaderAction());
         }
 
         const backupFile = await callWithToastErrorThrown(
