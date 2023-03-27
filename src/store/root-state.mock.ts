@@ -1,5 +1,6 @@
 import { mockAdvertisingState } from './advertising/advertising-state.mock';
 import { mockBakingState } from './baking/baking-state.mock';
+import { mockBuyWithCreditCardState } from './buy-with-credit-card/buy-with-credit-card-state.mock';
 import { mockContactBookState } from './contact-book/contact-book-state.mock';
 import { RootState } from './create-store';
 import { mockCurrencyState } from './currency/currency-state.mock';
@@ -24,5 +25,6 @@ export const mockRootState: RootState = {
   advertising: mockAdvertisingState,
   market: mockMarketState,
   notifications: mockNotificationsState,
-  contactBook: mockContactBookState
+  contactBook: mockContactBookState,
+  buyWithCreditCard: mockBuyWithCreditCardState
 };

@@ -1,6 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+
 import { Divider } from '../../../../components/divider/divider';
 import { DropdownListItemComponent } from '../../../../components/dropdown/dropdown';
 import { Icon } from '../../../../components/icon/icon';
@@ -29,7 +31,7 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
   const styles = useTopUpTokenDropdownItemStyles();
 
   const tokenIcon = useMemo(() => {
-    if (token?.code === 'UAH' && token?.name === 'Hryvnia') {
+    if (token?.code === 'UAH' && token?.type === TopUpInputTypeEnum.Fiat) {
       return <Icon name={IconNameEnum.Uah} size={iconSize} />;
     } else if (token?.code === 'XTZ') {
       return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
@@ -50,7 +52,7 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
             {token?.code}
           </Text>
           <Divider size={formatSize(8)} />
-          {!isDropdownClosed && (
+          {!isDropdownClosed && token?.type !== TopUpInputTypeEnum.Fiat && (
             <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
               {token?.name}
             </Text>
@@ -61,7 +63,11 @@ export const TopUpTokenDropdownItem: FC<Props> = ({
         {token?.name !== '' && (
           <View style={styles.row}>
             <Text {...getTruncatedProps(styles.textRegular13)}>
-              {isDropdownClosed ? token?.networkShortName ?? token?.networkFullName : getProperNetworkFullName(token)}
+              {isDropdownClosed &&
+                token?.type === TopUpInputTypeEnum.Crypto &&
+                (token?.networkShortName ?? token?.networkFullName)}
+              {!isDropdownClosed && token?.type === TopUpInputTypeEnum.Crypto && getProperNetworkFullName(token)}
+              {token?.type === TopUpInputTypeEnum.Fiat && token?.name}
             </Text>
 
             <Divider size={formatSize(4)} />

@@ -27,6 +27,9 @@ interface utorgCurrencyInfo {
   allowTag: boolean;
 }
 
+export const UTORG_FIAT_ICONS_BASE_URL = 'https://utorg.pro/img/flags2/icon-';
+export const UTORG_CRYPTO_ICONS_BASE_URL = 'https://utorg.pro/img/cryptoIcons';
+
 export const createOrder = (amount: number, paymentCurrency: string, address: string) =>
   utorgApi
     .post<{ data: { url: string } }>('/order/init', {
@@ -39,14 +42,17 @@ export const createOrder = (amount: number, paymentCurrency: string, address: st
     })
     .then(r => r.data.data.url);
 
-export const convertFiatAmountToXtz = (paymentAmount: number, fromCurrency: string) =>
+export const convertFiatAmountToCrypto = (paymentAmount: number, fromCurrency: string, toCurrency: string) =>
   utorgApi
     .post<{ data: number }>('/tools/convert', {
       fromCurrency,
       paymentAmount,
-      toCurrency: 'XTZ'
+      toCurrency
     })
     .then(r => r.data.data);
+
+export const convertFiatAmountToXtz = (paymentAmount: number, fromCurrency: string) =>
+  convertFiatAmountToCrypto(paymentAmount, fromCurrency, 'XTZ');
 
 export const getExchangeRate = (fromCurrency: string, paymentAmount?: BigNumber) => {
   const finalPaymentAmount = isDefined(paymentAmount) ? (paymentAmount.eq(0) ? 1 : paymentAmount.toNumber()) : 1;
@@ -55,7 +61,8 @@ export const getExchangeRate = (fromCurrency: string, paymentAmount?: BigNumber)
     res => Math.round((res / finalPaymentAmount) * 10000) / 10000
   );
 };
-const getCurrenciesInfo = () =>
+
+export const getCurrenciesInfo = () =>
   utorgApi.post<{ data: utorgCurrencyInfo[] }>('/settings/currency').then(r => r.data.data);
 
 export const getMinMaxExchangeValue = () =>

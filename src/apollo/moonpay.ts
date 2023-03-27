@@ -14,8 +14,8 @@ interface CryptoCurrenciesResponse {
     name: string;
     code: string;
     icon: string;
-    minBuyAmount: number;
-    maxBuyAmount: number;
+    minBuyAmount: number | null;
+    maxBuyAmount: number | null;
     networkCode: string;
     supportsLiveMode: boolean;
     isSuspended: boolean;
@@ -68,12 +68,12 @@ const FIAT_CURRENCIES_QUERY = gql`
   }
 `;
 
-export const fetchCryptoCurrencies$ = () =>
+export const fetchMoonpayCryptoCurrencies$ = () =>
   apolloMoonPayClient
     .query<CryptoCurrenciesResponse>(CRYPTO_CURRENCIES_QUERY, { apiKey: MOONPAY_API_KEY })
     .pipe(map(data => data.cryptoCurrencies));
 
-export const fetchFiatCurrencies$ = () =>
+export const fetchMoonpayFiatCurrencies$ = () =>
   apolloMoonPayClient
     .query<FiatCurrenciesResponse>(FIAT_CURRENCIES_QUERY, { apiKey: MOONPAY_API_KEY })
     .pipe(map(data => data.fiatCurrencies));

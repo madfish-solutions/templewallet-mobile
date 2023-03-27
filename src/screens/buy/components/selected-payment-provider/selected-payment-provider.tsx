@@ -23,7 +23,9 @@ export const SelectedPaymentProvider: DropdownValueComponent<PaymentProviderInte
         <View>
           <Text style={styles.name}>{value.name}</Text>
           <Text style={styles.limitRange}>
-            {value.minInputAmount} - {value.maxInputAmount} {value.inputSymbol}
+            {isDefined(value.minInputAmount) && isDefined(value.maxInputAmount) && isDefined(value.inputSymbol)
+              ? `${value.minInputAmount} - ${value.maxInputAmount} ${value.inputSymbol}`
+              : '---'}
           </Text>
         </View>
       ) : (

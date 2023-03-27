@@ -1,6 +1,8 @@
+import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
@@ -10,13 +12,23 @@ import { Dropdown } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+// import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import {
+  loadAliceBobCurrenciesActions,
+  loadLocationActions,
+  loadMoonPayCryptoCurrenciesActions,
+  loadMoonPayFiatCurrenciesActions,
+  loadUtorgCurrenciesActions
+} from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
+// import { useProviderCurrenciesErrorSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { makeFiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { renderPaymentProviderOption } from '../components/payment-provider/payment-provider';
@@ -26,79 +38,55 @@ import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amoun
 import { outputTokensList as exolixOutputTokensList } from '../crypto/exolix/config';
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from './buy-with-credit-card.form';
 import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
-/* import { useAliceBobPairInfo } from '../hooks/use-alice-bob-pair-info';
-import { useSignedMoonPayUrl } from '../hooks/use-signed-moonpay-url';
-import { useUtorgExchangeInfo } from '../hooks/use-utorg-exchange-info'; */
-import { useFilteredCurrencies } from './hooks/use-filtered-currencies-list.hook';
+import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
+import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
+import { usePaymentOptions } from './hooks/use-payment-options';
 
-const UTORG_USD_ICON_URL = 'https://utorg.pro/img/flags2/icon-US.svg';
 const DEFAULT_CURRENCY = {
   code: 'USD',
-  icon: UTORG_USD_ICON_URL,
-  name: '',
+  icon: 'https://static.moonpay.com/widget/currencies/usd.svg',
+  name: 'US Dollar',
   network: '',
-  networkFullName: ''
+  networkFullName: '',
+  type: TopUpInputTypeEnum.Fiat
 };
 
-const mockCurrenciesSymbols = ['USD', 'EUR', 'UAH'];
-const mockPaymentProviders: PaymentProviderInterface[] = [
-  {
-    name: 'MoonPay',
-    iconName: IconNameEnum.MoonPay,
-    kycRequired: true,
-    isBestPrice: true,
-    minInputAmount: 5,
-    maxInputAmount: 1000,
-    inputAmount: 10,
-    inputSymbol: 'USD',
-    outputAmount: 8.9,
-    outputSymbol: 'TEZ'
-  },
-  {
-    name: 'Utorg',
-    iconName: IconNameEnum.Utorg,
-    kycRequired: false,
-    isBestPrice: true,
-    minInputAmount: 5,
-    maxInputAmount: 1000,
-    inputAmount: 10,
-    inputSymbol: 'USD',
-    outputAmount: 8.8,
-    outputSymbol: 'TEZ'
-  },
-  {
-    name: 'Alice-Bob',
-    iconName: IconNameEnum.AliceBob,
-    kycRequired: true,
-    isBestPrice: false,
-    minInputAmount: 5,
-    maxInputAmount: 1000,
-    inputAmount: 10,
-    inputSymbol: 'USD',
-    outputAmount: 8.7,
-    outputSymbol: 'TEZ'
-  }
-];
+const newValueInputAssetChangedFn = (newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
+  asset: newAsset,
+  amount,
+  min: newAsset.minAmount,
+  max: newAsset.maxAmount
+});
 
 // TODO: add selectors and analytics
 export const BuyWithCreditCard: FC = () => {
-  const { isTezosNode } = useNetworkInfo();
+  const dispatch = useDispatch();
   const colors = useColors();
   const styles = useBuyWithCreditCardStyles();
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
+  /* const error1 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.AliceBob);
+  const error2 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.MoonPay);
+  const error3 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.Utorg);
+  console.log('x1', error1, error2, error3); */
 
   const { trackEvent } = useAnalytics();
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
-  /* const { signedMoonPayUrl, isMoonPayError, isMoonPayDisabled } = useSignedMoonPayUrl();
-  const { availableUtorgCurrencies, minUtorgExchangeAmount, maxUtorgExchangeAmount, isUtorgError, isUtorgDisabled } =
-    useUtorgExchangeInfo();
-  const { minAliceBobExchangeAmount, maxAliceBobExchangeAmount, isAliceBobError, isAliceBobDisabled } =
-    useAliceBobPairInfo(); */
+  useEffect(() => {
+    dispatch(loadLocationActions.submit());
+    dispatch(loadMoonPayFiatCurrenciesActions.submit());
+    dispatch(loadMoonPayCryptoCurrenciesActions.submit());
+    dispatch(loadUtorgCurrenciesActions.submit());
+    dispatch(loadAliceBobCurrenciesActions.submit());
+  }, []);
 
-  const { filteredCurrencies, setSearchValue } = useFilteredCurrencies(mockCurrenciesSymbols);
-
-  const outputTokensList = useMemo(() => [exolixOutputTokensList[0]], [isTezosNode]);
+  const {
+    allCurrencies: allFiatCurrencies,
+    filteredCurrencies: filteredFiatCurrencies,
+    setSearchValue: setInputSearchValue
+  } = useFilteredFiatCurrencies();
+  const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
+    useFilteredCryptoCurrencies();
 
   const handleSubmit = useCallback((values: BuyWithCreditCardFormValues) => {
     trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
@@ -118,7 +106,7 @@ export const BuyWithCreditCard: FC = () => {
         amount: undefined
       },
       getOutput: {
-        asset: outputTokensList[0],
+        asset: exolixOutputTokensList[0],
         amount: undefined
       }
     },
@@ -128,24 +116,60 @@ export const BuyWithCreditCard: FC = () => {
 
   const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
 
+  const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
+    values.sendInput.amount,
+    values.sendInput.asset,
+    values.getOutput.asset
+  );
+
+  useEffect(() => {
+    const newInputAsset = allFiatCurrencies.find(({ code }) => code === values.sendInput.asset.code);
+
+    if (isDefined(newInputAsset) && newInputAsset !== values.sendInput.asset) {
+      setFieldValue('sendInput', newValueInputAssetChangedFn(newInputAsset, values.sendInput.amount));
+    }
+  }, [formik, allFiatCurrencies]);
+
+  useEffect(() => {
+    const newPaymentOption = allPaymentOptions.find(({ id }) => id === values.paymentProvider?.id);
+
+    if (isDefined(newPaymentOption) && newPaymentOption !== values.paymentProvider) {
+      handlePaymentProviderChange(newPaymentOption);
+    }
+  }, [formik, allPaymentOptions]);
+
   const exchangeRate = useMemo(() => {
     const inputAmount = values.sendInput.amount;
     const outputAmount = values.getOutput.amount;
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
-      return inputAmount.div(outputAmount);
+      return outputAmount.div(inputAmount);
     }
 
     return undefined;
   }, [values.sendInput.amount, values.getOutput.amount]);
 
-  const handleInputValueChange = (newInput: TopUpAssetAmountInterface) => {
-    console.log('TODO: calculate output amount properly');
-    setFieldValue('getOutput.amount', isDefined(newInput.amount) ? newInput.amount.div(2) : undefined);
+  const handlePaymentProviderChange = async (newProvider?: PaymentProviderInterface) => {
+    await setFieldValue('paymentProvider', newProvider);
+    const newOutputAmount = newProvider?.outputAmount;
+    await setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined);
   };
 
-  const handlePaymentProviderChange = (newProvider?: PaymentProviderInterface) => {
-    console.log('TODO: recalculate output amount');
-    setFieldValue('paymentProvider', newProvider);
+  const handleInputValueChange = async (newInput: TopUpAssetAmountInterface) => {
+    setIsLoading(true);
+    const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
+    const patchedPaymentOptions: PaymentProviderInterface[] = paymentOptionsToDisplay
+      .map(({ id, ...rest }) => ({
+        ...rest,
+        id,
+        outputAmount: amounts[id]
+      }))
+      .sort(makeFiatPurchaseProvidersSortPredicate(newInput.amount));
+    const bestPaymentOption = patchedPaymentOptions[0];
+    const newOutputAmount = bestPaymentOption?.outputAmount;
+
+    await setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined);
+    await handlePaymentProviderChange(bestPaymentOption);
+    setIsLoading(false);
   };
 
   return (
@@ -158,25 +182,12 @@ export const BuyWithCreditCard: FC = () => {
               name="sendInput"
               label="Send"
               isSearchable
-              assetsList={filteredCurrencies}
+              assetsList={filteredFiatCurrencies}
+              newValueAssetChangedFn={newValueInputAssetChangedFn}
               onValueChange={handleInputValueChange}
-              onBlur={() => setFieldTouched('getOutput')}
-              setSearchValue={setSearchValue}
+              onBlur={() => setFieldTouched('sendInput')}
+              setSearchValue={setInputSearchValue}
             />
-            <View style={styles.limitsView}>
-              <View style={styles.singleLimitView}>
-                <Text style={styles.limitLabel}>Min:</Text>
-                <Text style={styles.limitValue}>
-                  {isDefined(values.sendInput.min) ? `${values.sendInput.min} ${values.sendInput.asset.code}` : '---'}
-                </Text>
-              </View>
-              <View style={styles.singleLimitView}>
-                <Text style={styles.limitLabel}>Max:</Text>
-                <Text style={styles.limitValue}>
-                  {isDefined(values.sendInput.max) ? `${values.sendInput.max} ${values.sendInput.asset.code}` : '---'}
-                </Text>
-              </View>
-            </View>
             <Divider size={formatSize(8)} />
             <View style={styles.arrowContainer}>
               <Icon size={formatSize(24)} name={IconNameEnum.ArrowDown} color={colors.peach} />
@@ -185,15 +196,16 @@ export const BuyWithCreditCard: FC = () => {
             <TopUpFormAssetAmountInput
               name="getOutput"
               label="Get"
-              editable={false}
-              assetsList={outputTokensList}
-              singleAsset
+              isSearchable
+              assetsList={filteredCryptoCurrencies}
+              onBlur={() => setFieldTouched('getOutput')}
+              setSearchValue={setOutputSearchValue}
             />
           </FormikProvider>
           <Divider />
           <Dropdown
             value={values.paymentProvider}
-            list={mockPaymentProviders}
+            list={paymentOptionsToDisplay}
             description="Select payment provider"
             itemHeight={formatSize(81)}
             equalityFn={(a, b) => a.name === b?.name}

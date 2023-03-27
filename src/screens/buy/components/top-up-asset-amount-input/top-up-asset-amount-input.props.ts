@@ -20,6 +20,7 @@ export interface TopUpFormAssetAmountInputProps {
   editable?: boolean;
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
+  newValueAssetChangedFn?: (newAsset: TopUpInputInterface, amount: BigNumber | undefined) => TopUpAssetAmountInterface;
   setSearchValue?: EventFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];

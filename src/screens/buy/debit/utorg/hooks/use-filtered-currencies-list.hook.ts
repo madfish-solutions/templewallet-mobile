@@ -1,6 +1,8 @@
 import { debounce } from 'lodash-es';
 import { useMemo, useState } from 'react';
 
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+
 import { TopUpInputInterface } from '../../../../../interfaces/topup.interface';
 
 const UTORG_FIAT_ICONS_BASE_URL = 'https://utorg.pro/img/flags2/icon-';
@@ -14,7 +16,8 @@ export const useFilteredCurrencies = (currencies: string[]) => {
     icon: UTORG_FIAT_ICONS_BASE_URL + currencyName.slice(0, -1) + '.svg',
     name: '',
     network: '',
-    networkFullName: ''
+    networkFullName: '',
+    type: TopUpInputTypeEnum.Fiat
   }));
 
   const filteredCurrencies = useMemo<TopUpInputInterface[]>(() => {

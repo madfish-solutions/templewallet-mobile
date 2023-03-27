@@ -51,7 +51,7 @@ const PaymentProvider: DropdownListItemComponent<PaymentProviderInterface> = ({ 
         <View style={styles.providerInfoContainer}>
           <Text style={styles.infoTitle}>{item.name}</Text>
           <Text style={styles.infoSubtitle}>
-            {isDefined(item.inputSymbol)
+            {isDefined(item.minInputAmount) && isDefined(item.maxInputAmount) && isDefined(item.inputSymbol)
               ? `${item.minInputAmount} - ${item.maxInputAmount} ${item.inputSymbol}`
               : '---'}
           </Text>

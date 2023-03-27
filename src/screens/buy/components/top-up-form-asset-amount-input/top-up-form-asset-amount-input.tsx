@@ -16,6 +16,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   singleAsset = false,
   editable,
   isSearchable = false,
+  newValueAssetChangedFn,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
   onBlur = emptyFn
@@ -49,6 +50,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       isSearchable={isSearchable}
       editable={editable}
       setSearchValue={setSearchValue}
+      newValueAssetChangedFn={newValueAssetChangedFn}
       onBlur={handleBlur}
       onValueChange={handleValueChange}
     />

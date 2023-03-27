@@ -3,6 +3,8 @@ import { StyleProp, View } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
+import { MOONPAY_ASSETS_BASIC_URL } from 'src/utils/moonpay.utils';
+
 import { formatSizeScaled } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -13,6 +15,9 @@ interface Props {
   size?: number;
 }
 
+const flagWidth = 21;
+const flagHeight = 15;
+
 export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(32) }) => {
   const [isFailed, setIsFailed] = useState(false);
   const styles = useStaticTokenIconStyles();
@@ -21,12 +26,18 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
     () => ({ width: size, height: size, display: isFailed ? 'none' : 'flex' }),
     [size, isFailed]
   );
+  const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);
+  const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
 
   return (
     <>
       {uri.endsWith('.svg') ? (
         <View style={[styles.center, { width: size, height: size, borderRadius: size / 2 }]}>
-          <SvgUri width={21} height={15} uri={uri} />
+          <SvgUri
+            width={isMoonpayIcon ? size : flagWidth * flagScaleFactor}
+            height={isMoonpayIcon ? size : flagHeight * flagScaleFactor}
+            uri={uri}
+          />
         </View>
       ) : (
         <View style={[styles.container, { borderRadius: size / 2 }]}>

@@ -3,6 +3,8 @@ import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+
 import { templeWalletApi } from '../../../../api.service';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
@@ -29,7 +31,8 @@ const hryvnia: TopUpInputInterface = {
   icon: '',
   network: '',
   networkFullName: '',
-  networkShortName: 'Hryvnia'
+  networkShortName: 'Hryvnia',
+  type: TopUpInputTypeEnum.Fiat
 };
 
 export const AliceBob: FC = () => {
