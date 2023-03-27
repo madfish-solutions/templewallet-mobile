@@ -4,7 +4,7 @@ import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
 
 import { isDefined } from './is-defined';
 
-export const getRangeDistance = (
+const getRangeDistance = (
   { minInputAmount = 0, maxInputAmount = Infinity }: PaymentProviderInterface,
   inputAmount?: BigNumber | number
 ) => {

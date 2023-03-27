@@ -215,8 +215,6 @@ export const BuyWithCreditCard: FC = () => {
     setIsLoading(false);
   };
 
-  console.log('x0', formik.errors);
-
   return (
     <>
       <ScreenContainer isFullScreenMode>

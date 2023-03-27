@@ -107,7 +107,7 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
   [TopUpProviderEnum.AliceBob]: async inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
 };
 
-export const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
+const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
   [TopUpProviderEnum.MoonPay]: {
     name: 'MoonPay',
     id: TopUpProviderEnum.MoonPay,

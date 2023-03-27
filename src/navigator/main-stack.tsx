@@ -21,10 +21,8 @@ import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Backup } from '../screens/backup/backup';
 import { Buy } from '../screens/buy/buy';
+import { BuyWithCreditCard } from '../screens/buy/buy-with-credit-card/buy-with-credit-card';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
-import { BuyWithCreditCard } from '../screens/buy/debit/buy-with-credit-card';
-/* import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
-import { Utorg } from '../screens/buy/debit/utorg/utorg'; */
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { Contacts } from '../screens/contacts/contacts';
 import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
@@ -199,18 +197,6 @@ export const MainStackScreen = () => {
                 component={BuyWithCreditCard}
                 options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
-
-              {/* <MainStack.Screen
-                name={ScreensEnum.AliceBob}
-                component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              /> */}
-
-              {/* <MainStack.Screen
-                name={ScreensEnum.Utorg}
-                component={Utorg}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              /> */}
 
               {/** DApps stack **/}
               <MainStack.Screen
