@@ -14,6 +14,7 @@ const indexerConfig = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
 const MULTIPLIER = 100;
 
 class MemoryStorage implements Storage {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   public storage: Map<string, any>;
 
   constructor() {

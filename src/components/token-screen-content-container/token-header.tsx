@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -40,6 +40,8 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
 
   const { rate: apyRate = 0, link: apyLink } = useTokenApyInfo(tokenSlug);
 
+  const apyRateValue = useMemo(() => new BigNumber(apyRate).decimalPlaces(2).toFixed(2), [apyRate]);
+
   if (showHistoryComponent && isTezos) {
     return isTezosNode ? (
       <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
@@ -73,7 +75,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     return (
       <TouchableOpacity onPress={handleApyPress} style={[styles.delegateContainer, apyStyles[tokenSlug]]}>
         <Text style={styles.delegateText}>
-          Get up to {new BigNumber(apyRate).decimalPlaces(2).toFixed(2)}% {label}
+          Get up to {apyRateValue}% {label}
         </Text>
       </TouchableOpacity>
     );
