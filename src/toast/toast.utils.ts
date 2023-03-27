@@ -1,10 +1,10 @@
 import Toast from 'react-native-toast-message';
+import { of } from 'rxjs';
 
+import { EmptyFn } from 'src/config/general';
+import { ToastTypeEnum } from 'src/enums/toast-type.enum';
+import { errorMessageFilter } from 'src/utils/error-message.util';
 import { isString } from 'src/utils/is-string';
-
-import { EmptyFn } from '../config/general';
-import { ToastTypeEnum } from '../enums/toast-type.enum';
-import { errorMessageFilter } from '../utils/error-message.util';
 
 interface ToastProps {
   description: string;
@@ -97,7 +97,7 @@ export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R
 };
 
 export const callWithToastErrorThrown = async <R>(
-  callback: () => R,
+  callback: () => Promise<R>,
   title: string,
   takeDescriptionFromErrorMsg = false
 ) => {
@@ -118,6 +118,31 @@ export const showSuccessToast = ({ description, title, onPress, operationHash }:
       operationHash
     }
   });
+
+export const buildErrorToaster$ = (fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {
+  return (error: unknown) => {
+    let title: string;
+    let description: string | undefined;
+
+    if (error instanceof ToastError) {
+      title = error.title;
+      description = error.description;
+    } else {
+      console.error(error);
+
+      title = isString(fallbackTitle) ? fallbackTitle : 'Something went wrong';
+      description = takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined;
+    }
+
+    if (isString(description)) {
+      showErrorToast({ title, description });
+    } else {
+      showErrorToast({ description: title });
+    }
+
+    return of(void 0);
+  };
+};
 
 export const showWarningToast = ({ description, title, onPress }: ToastProps) =>
   Toast.show({
