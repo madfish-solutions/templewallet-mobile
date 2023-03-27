@@ -13,6 +13,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 // import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -23,13 +24,19 @@ import {
   loadMoonPayFiatCurrenciesActions,
   loadUtorgCurrenciesActions
 } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
+import { useUserIdSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 // import { useProviderCurrenciesErrorSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { createOrder as createAliceBobOrder } from 'src/utils/alice-bob.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { makeFiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking.util';
+import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
+import { createOrder as createUtorgOrder } from 'src/utils/utorg.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider/payment-provider';
 import { SelectedPaymentProvider } from '../components/selected-payment-provider/selected-payment-provider';
@@ -63,6 +70,8 @@ export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
   const colors = useColors();
   const styles = useBuyWithCreditCardStyles();
+  const { publicKeyHash } = useSelectedAccountSelector();
+  const userId = useUserIdSelector();
   const [isLoading, setIsLoading] = useState(false);
   /* const error1 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.AliceBob);
   const error2 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.MoonPay);
@@ -88,15 +97,49 @@ export const BuyWithCreditCard: FC = () => {
   const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
     useFilteredCryptoCurrencies();
 
-  const handleSubmit = useCallback((values: BuyWithCreditCardFormValues) => {
-    trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-      inputAmount: values.sendInput.amount?.toString(),
-      inputAsset: values.sendInput.asset.code,
-      outputAmount: values.getOutput.amount?.toString(),
-      outputAsset: values.getOutput.asset.code,
-      provider: values.paymentProvider?.name
-    });
-    console.log('TODO: implement work with various platforms');
+  const handleSubmit = useCallback(async (values: BuyWithCreditCardFormValues) => {
+    try {
+      setIsLoading(true);
+      trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        inputAmount: values.sendInput.amount?.toString(),
+        inputAsset: values.sendInput.asset.code,
+        outputAmount: values.getOutput.amount?.toString(),
+        outputAsset: values.getOutput.asset.code,
+        provider: values.paymentProvider?.name
+      });
+
+      const inputAmount = values.sendInput.amount;
+      const outputAmount = values.getOutput.amount;
+      if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
+        setIsLoading(false);
+
+        return;
+      }
+
+      let urlToOpen: string;
+      switch (values.paymentProvider?.id) {
+        case TopUpProviderEnum.MoonPay:
+          urlToOpen = await getSignedMoonPayUrl(
+            values.getOutput.asset.code,
+            '#ed8936',
+            publicKeyHash,
+            inputAmount.toNumber(),
+            values.sendInput.asset.code
+          );
+          break;
+        case TopUpProviderEnum.Utorg:
+          urlToOpen = await createUtorgOrder(outputAmount.toNumber(), values.sendInput.asset.code, publicKeyHash);
+          break;
+        default:
+          const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
+          urlToOpen = payUrl;
+      }
+      openUrl(urlToOpen);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const formik = useFormik<BuyWithCreditCardFormValues>({
@@ -171,6 +214,8 @@ export const BuyWithCreditCard: FC = () => {
     await handlePaymentProviderChange(bestPaymentOption);
     setIsLoading(false);
   };
+
+  console.log('x0', formik.errors);
 
   return (
     <>

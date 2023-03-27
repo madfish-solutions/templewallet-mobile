@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { boolean, number, object, SchemaOf, string } from 'yup';
+import { number, object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
@@ -82,15 +82,8 @@ export const BuyWithCreditCardValidationSchema: SchemaOf<BuyWithCreditCardFormVa
   paymentProvider: object()
     .shape({
       name: string().required(),
-      logo: string().required(),
-      kycRequired: boolean().required(),
-      isBestPrice: boolean().required(),
-      minInputAmount: number().required(),
-      maxInputAmount: number().required(),
-      inputAmount: number(),
-      inputSymbol: string(),
-      outputAmount: number(),
-      outputSymbol: string()
+      id: string().required(),
+      iconName: string().required()
     })
     .required('Please select payment provider')
 });
