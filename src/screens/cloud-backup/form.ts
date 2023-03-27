@@ -38,9 +38,11 @@ export const useHandleSubmit = () => {
           tap(() => dispatch(showLoaderAction())),
           switchMap(password =>
             Shelter.revealSeedPhrase$().pipe(
-              // Here, error might be thrown too
-              switchMap(mnemonic => from(saveCloudBackup(mnemonic, password))),
-              catchThrowToastError('Failed to back up to cloud', true),
+              switchMap(mnemonic =>
+                from(
+                  saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true))
+                )
+              ),
               map(() => {
                 dispatch(madeCloudBackupAction());
                 showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
@@ -62,12 +64,12 @@ export const useHandleSubmit = () => {
           tap(() => dispatch(showLoaderAction())),
           switchMap(password =>
             Shelter.isPasswordCorrect$(password).pipe(
-              catchThrowToastError('Wrong password'),
-              switchMap(() => from(requestSignInToCloud())),
+              catchError(catchThrowToastError('Wrong password')),
+              switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true)))),
               filter(isTruthy),
-              catchThrowToastError('Failed to log-in', true),
-              switchMap(() => from(fetchCloudBackupFileDetails())),
-              catchThrowToastError('Failed to read from cloud', true),
+              switchMap(() =>
+                from(fetchCloudBackupFileDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
+              ),
               map(backupFile => ({ backupFile, password })),
               catchError(buildErrorToaster$())
             )

@@ -100,20 +100,16 @@ export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R
   }
 };
 
-export const callWithToastErrorThrown = async <R>(
-  callback: () => Promise<R>,
-  title: string,
-  takeDescriptionFromErrorMsg = false
-) => {
-  try {
-    return await callback();
-  } catch (error) {
-    throw new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
-  }
-};
+export const catchThrowToastError =
+  (title: string, takeDescriptionFromErrorMsg = false) =>
+  (error: unknown) => {
+    throw error instanceof ToastError
+      ? error
+      : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
+  };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const catchThrowToastError = <T, O extends ObservableInput<any>>(
+const _catchThrowToastError = <T, O extends ObservableInput<any>>(
   title: string,
   takeDescriptionFromErrorMsg = false
 ): OperatorFunction<T, T> => {
@@ -123,6 +119,10 @@ export const catchThrowToastError = <T, O extends ObservableInput<any>>(
       ? error
       : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
   });
+};
+
+const throwToastError = (title: string, error?: unknown, takeDescriptionFromErrorMsg = false) => {
+  throw new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
 };
 
 export const buildErrorToaster$ = (fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {

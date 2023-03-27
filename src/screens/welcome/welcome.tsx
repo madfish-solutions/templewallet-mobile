@@ -15,7 +15,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
-import { callWithToastErrorThrown, callWithShowErrorToastOnError } from 'src/toast/toast.utils';
+import { callWithShowErrorToastOnError, catchThrowToastError } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
   cloudTitle,
@@ -41,16 +41,14 @@ export const Welcome = () => {
       async () => {
         dispatch(showLoaderAction());
 
-        const loggedInToCloud = await callWithToastErrorThrown(requestSignInToCloud, 'Failed to log-in', true);
+        const loggedInToCloud = await requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true));
 
         if (!loggedInToCloud) {
           return;
         }
 
-        const backupFile = await callWithToastErrorThrown(
-          fetchCloudBackupFileDetails,
-          'Failed to read from cloud',
-          true
+        const backupFile = await fetchCloudBackupFileDetails().catch(
+          catchThrowToastError('Failed to read from cloud', true)
         );
 
         dispatch(hideLoaderAction());

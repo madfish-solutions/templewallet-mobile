@@ -39,8 +39,7 @@ export const useHandleSubmit = () => {
         .pipe(
           tap(() => dispatch(showLoaderAction())),
           switchMap(({ password, fileId, reusePassword }) =>
-            from(fetchCloudBackup(password, fileId)).pipe(
-              catchThrowToastError("Couldn't restore wallet", true),
+            from(fetchCloudBackup(password, fileId).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
               map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined)),
               catchError(buildErrorToaster$())
             )
