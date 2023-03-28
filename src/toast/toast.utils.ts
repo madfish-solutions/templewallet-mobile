@@ -1,5 +1,5 @@
 import Toast from 'react-native-toast-message';
-import { catchError, ObservableInput, of, OperatorFunction } from 'rxjs';
+import { of } from 'rxjs';
 
 import { EmptyFn } from 'src/config/general';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
@@ -100,6 +100,13 @@ export const callWithShowErrorToastOnError = async <R>(callback: () => Promise<R
   }
 };
 
+/** For the `catch` blocks & `Promise.prototype.catch()`
+ *
+ * Example:
+ * ```typescript
+ *   asyncFn().catch(catchThrowToastError('Title of the error'))
+ * ```
+ */
 export const catchThrowToastError =
   (title: string, takeDescriptionFromErrorMsg = false) =>
   (error: unknown) => {
@@ -107,23 +114,6 @@ export const catchThrowToastError =
       ? error
       : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
   };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const _catchThrowToastError = <T, O extends ObservableInput<any>>(
-  title: string,
-  takeDescriptionFromErrorMsg = false
-): OperatorFunction<T, T> => {
-  return catchError<T, O>((error: unknown) => {
-    // if (error instanceof ToastError) throw
-    throw error instanceof ToastError
-      ? error
-      : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
-  });
-};
-
-const throwToastError = (title: string, error?: unknown, takeDescriptionFromErrorMsg = false) => {
-  throw new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
-};
 
 export const buildErrorToaster$ = (fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {
   return (error: unknown) => {
