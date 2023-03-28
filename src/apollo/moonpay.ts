@@ -36,8 +36,8 @@ interface FiatCurrenciesResponse {
 }
 
 const CRYPTO_CURRENCIES_QUERY = gql`
-  query cryptoCurrencies($apiKey: String!, $currencyCodes: [String!]) {
-    cryptoCurrencies(apiKey: $apiKey, currencyCodes: $currencyCodes) {
+  query cryptoCurrencies($apiKey: String!) {
+    cryptoCurrencies(apiKey: $apiKey) {
       id
       name
       code

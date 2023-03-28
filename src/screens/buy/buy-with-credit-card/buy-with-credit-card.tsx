@@ -14,25 +14,24 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-// import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import {
   loadAliceBobCurrenciesActions,
-  loadLocationActions,
   loadMoonPayCryptoCurrenciesActions,
   loadMoonPayFiatCurrenciesActions,
   loadUtorgCurrenciesActions
 } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
-// import { useProviderCurrenciesErrorSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { createOrder as createAliceBobOrder } from 'src/utils/alice-bob.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { makeFiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
+import { fiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
@@ -73,16 +72,11 @@ export const BuyWithCreditCard: FC = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const userId = useUserIdSelector();
   const [isLoading, setIsLoading] = useState(false);
-  /* const error1 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.AliceBob);
-  const error2 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.MoonPay);
-  const error3 = useProviderCurrenciesErrorSelector(TopUpProviderEnum.Utorg);
-  console.log('x1', error1, error2, error3); */
 
   const { trackEvent } = useAnalytics();
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
   useEffect(() => {
-    dispatch(loadLocationActions.submit());
     dispatch(loadMoonPayFiatCurrenciesActions.submit());
     dispatch(loadMoonPayCryptoCurrenciesActions.submit());
     dispatch(loadUtorgCurrenciesActions.submit());
@@ -97,50 +91,49 @@ export const BuyWithCreditCard: FC = () => {
   const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
     useFilteredCryptoCurrencies();
 
-  const handleSubmit = useCallback(async (values: BuyWithCreditCardFormValues) => {
-    try {
-      setIsLoading(true);
-      trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-        inputAmount: values.sendInput.amount?.toString(),
-        inputAsset: values.sendInput.asset.code,
-        outputAmount: values.getOutput.amount?.toString(),
-        outputAsset: values.getOutput.asset.code,
-        provider: values.paymentProvider?.name
-      });
+  const handleSubmit = useCallback(
+    async (values: BuyWithCreditCardFormValues) => {
+      try {
+        trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+          inputAmount: values.sendInput.amount?.toString(),
+          inputAsset: values.sendInput.asset.code,
+          outputAmount: values.getOutput.amount?.toString(),
+          outputAsset: values.getOutput.asset.code,
+          provider: values.paymentProvider?.name
+        });
 
-      const inputAmount = values.sendInput.amount;
-      const outputAmount = values.getOutput.amount;
-      if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
-        setIsLoading(false);
+        const inputAmount = values.sendInput.amount;
+        const outputAmount = values.getOutput.amount;
 
-        return;
+        if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
+          return;
+        }
+
+        let urlToOpen: string;
+        switch (values.paymentProvider?.id) {
+          case TopUpProviderEnum.MoonPay:
+            urlToOpen = await getSignedMoonPayUrl(
+              values.getOutput.asset.code,
+              '#ed8936',
+              publicKeyHash,
+              inputAmount.toNumber(),
+              values.sendInput.asset.code
+            );
+            break;
+          case TopUpProviderEnum.Utorg:
+            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), values.sendInput.asset.code, publicKeyHash);
+            break;
+          default:
+            const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
+            urlToOpen = payUrl;
+        }
+        openUrl(urlToOpen);
+      } catch (error) {
+        showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
-
-      let urlToOpen: string;
-      switch (values.paymentProvider?.id) {
-        case TopUpProviderEnum.MoonPay:
-          urlToOpen = await getSignedMoonPayUrl(
-            values.getOutput.asset.code,
-            '#ed8936',
-            publicKeyHash,
-            inputAmount.toNumber(),
-            values.sendInput.asset.code
-          );
-          break;
-        case TopUpProviderEnum.Utorg:
-          urlToOpen = await createUtorgOrder(outputAmount.toNumber(), values.sendInput.asset.code, publicKeyHash);
-          break;
-        default:
-          const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
-          urlToOpen = payUrl;
-      }
-      openUrl(urlToOpen);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [trackEvent]
+  );
 
   const formik = useFormik<BuyWithCreditCardFormValues>({
     initialValues: {
@@ -158,18 +151,32 @@ export const BuyWithCreditCard: FC = () => {
   });
 
   const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
+  const { asset: inputAsset } = values.sendInput;
+  const { asset: outputAsset } = values.getOutput;
 
   const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
     values.sendInput.amount,
-    values.sendInput.asset,
-    values.getOutput.asset
+    inputAsset,
+    outputAsset
+  );
+
+  const handlePaymentProviderChange = useCallback(
+    async (newProvider?: PaymentProviderInterface) => {
+      const newOutputAmount = newProvider?.outputAmount;
+      await Promise.all([
+        setFieldValue('paymentProvider', newProvider),
+        setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined)
+      ]);
+    },
+    [setFieldValue]
   );
 
   useEffect(() => {
-    const newInputAsset = allFiatCurrencies.find(({ code }) => code === values.sendInput.asset.code);
+    const { asset: currentInputAsset, amount: currentInputAmount } = formik.values.sendInput;
+    const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
 
-    if (isDefined(newInputAsset) && newInputAsset !== values.sendInput.asset) {
-      setFieldValue('sendInput', newValueInputAssetChangedFn(newInputAsset, values.sendInput.amount));
+    if (isDefined(newInputAsset) && newInputAsset !== currentInputAsset) {
+      setFieldValue('sendInput', newValueInputAssetChangedFn(newInputAsset, currentInputAmount));
     }
   }, [formik, allFiatCurrencies]);
 
@@ -179,23 +186,17 @@ export const BuyWithCreditCard: FC = () => {
     if (isDefined(newPaymentOption) && newPaymentOption !== values.paymentProvider) {
       handlePaymentProviderChange(newPaymentOption);
     }
-  }, [formik, allPaymentOptions]);
+  }, [formik, allPaymentOptions, handlePaymentProviderChange]);
 
   const exchangeRate = useMemo(() => {
     const inputAmount = values.sendInput.amount;
     const outputAmount = values.getOutput.amount;
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
-      return outputAmount.div(inputAmount);
+      return outputAmount.div(inputAmount).decimalPlaces(6);
     }
 
     return undefined;
   }, [values.sendInput.amount, values.getOutput.amount]);
-
-  const handlePaymentProviderChange = async (newProvider?: PaymentProviderInterface) => {
-    await setFieldValue('paymentProvider', newProvider);
-    const newOutputAmount = newProvider?.outputAmount;
-    await setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined);
-  };
 
   const handleInputValueChange = async (newInput: TopUpAssetAmountInterface) => {
     setIsLoading(true);
@@ -206,11 +207,9 @@ export const BuyWithCreditCard: FC = () => {
         id,
         outputAmount: amounts[id]
       }))
-      .sort(makeFiatPurchaseProvidersSortPredicate(newInput.amount));
+      .sort(fiatPurchaseProvidersSortPredicate);
     const bestPaymentOption = patchedPaymentOptions[0];
-    const newOutputAmount = bestPaymentOption?.outputAmount;
 
-    await setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined);
     await handlePaymentProviderChange(bestPaymentOption);
     setIsLoading(false);
   };
@@ -262,7 +261,9 @@ export const BuyWithCreditCard: FC = () => {
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
-              {isDefined(exchangeRate) ? `1 ${values.sendInput.asset.code} ≈ ${exchangeRate} XTZ` : '---'}
+              {isDefined(exchangeRate) && isDefined(inputAsset.code)
+                ? `1 ${inputAsset.code} ≈ ${exchangeRate} ${outputAsset.code}`
+                : '---'}
             </Text>
           </View>
         </View>

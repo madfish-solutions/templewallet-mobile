@@ -5,7 +5,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { getTezUahPairEstimation } from 'src/utils/alice-bob.utils';
-import { makeFiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
+import { fiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getMoonPayBuyQuote } from 'src/utils/moonpay.utils';
 import { convertFiatAmountToCrypto } from 'src/utils/utorg.utils';
@@ -183,7 +183,7 @@ export const usePaymentOptions = (
         ({ minInputAmount, maxInputAmount }, index) =>
           !errorsFlags[index] && isDefined(minInputAmount) && isDefined(maxInputAmount)
       )
-      .sort(makeFiatPurchaseProvidersSortPredicate(allPaymentOptions[0].inputAmount));
+      .sort(fiatPurchaseProvidersSortPredicate);
 
     if (result.length < 2) {
       return result;
@@ -197,7 +197,9 @@ export const usePaymentOptions = (
         bestPriceOptionIndex = i;
       }
     }
-    result[bestPriceOptionIndex].isBestPrice = true;
+    for (let i = 0; i < result.length; i++) {
+      result[i].isBestPrice = i === bestPriceOptionIndex;
+    }
 
     return result;
   }, [allPaymentOptions, moonPayIsError, utorgIsError, aliceBobIsError]);

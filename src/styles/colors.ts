@@ -10,7 +10,8 @@ const accentColors = {
   liteGreen: '#3EBD93',
   darkGreen: '#143A3A',
   accentDarkGray: '#434343',
-  dollarGreen: '#009393'
+  dollarGreen: '#009393',
+  kolibriGreen: '#46BC94'
 };
 
 const accentAlphaColors = {

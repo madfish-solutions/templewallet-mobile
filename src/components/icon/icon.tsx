@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 
 import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
@@ -12,7 +12,7 @@ export interface IconProps extends TestIdProps {
   width?: number;
   height?: number;
   color?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Icon: FC<IconProps> = ({

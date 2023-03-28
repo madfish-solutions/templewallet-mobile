@@ -8,14 +8,14 @@ import { isDefined } from 'src/utils/is-defined';
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
 export const useFilteredCryptoCurrencies = () => {
-  const moonpayFiatCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MoonPay);
-  const utorgFiatCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.Utorg);
-  const aliceBobFiatCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.AliceBob);
+  const moonpayCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MoonPay);
+  const utorgCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.Utorg);
+  const aliceBobCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.AliceBob);
 
   const topUpCurrencies = useMemo(
     () =>
       Object.values(
-        [...utorgFiatCurrencies, ...moonpayFiatCurrencies, ...aliceBobFiatCurrencies].reduce<
+        [...moonpayCryptoCurrencies, ...utorgCryptoCurrencies, ...aliceBobCryptoCurrencies].reduce<
           Record<string, TopUpInputInterface>
         >((acc, currency) => {
           if (!isDefined(acc[currency.code])) {
@@ -25,7 +25,7 @@ export const useFilteredCryptoCurrencies = () => {
           return acc;
         }, {})
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayFiatCurrencies, utorgFiatCurrencies, aliceBobFiatCurrencies]
+    [moonpayCryptoCurrencies, utorgCryptoCurrencies, aliceBobCryptoCurrencies]
   );
 
   return useFilteredCurrencies(topUpCurrencies);

@@ -4,7 +4,7 @@ import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
 
 import { isDefined } from './is-defined';
 
-const getRangeDistance = (
+export const getRangeDistance = (
   { minInputAmount = 0, maxInputAmount = Infinity }: PaymentProviderInterface,
   inputAmount?: BigNumber | number
 ) => {
@@ -20,21 +20,16 @@ const getRangeDistance = (
   );
 };
 
-export const makeFiatPurchaseProvidersSortPredicate =
-  (inputAmount?: BigNumber | number) => (providerA: PaymentProviderInterface, providerB: PaymentProviderInterface) => {
-    const rangeDistanceA = getRangeDistance(providerA, inputAmount);
-    const rangeDistanceB = getRangeDistance(providerB, inputAmount);
+export const fiatPurchaseProvidersSortPredicate = (
+  providerA: PaymentProviderInterface,
+  providerB: PaymentProviderInterface
+) => {
+  if (providerA.kycRequired !== providerB.kycRequired) {
+    return providerA.kycRequired ? -1 : 1;
+  }
 
-    if (rangeDistanceA !== rangeDistanceB) {
-      return rangeDistanceA - rangeDistanceB;
-    }
+  const { outputAmount: providerAOutputAmount = 0 } = providerA;
+  const { outputAmount: providerBOutputAmount = 0 } = providerB;
 
-    if (providerA.kycRequired !== providerB.kycRequired) {
-      return providerA.kycRequired ? -1 : 1;
-    }
-
-    const { outputAmount: providerAOutputAmount = 0 } = providerA;
-    const { outputAmount: providerBOutputAmount = 0 } = providerB;
-
-    return providerBOutputAmount - providerAOutputAmount;
-  };
+  return providerBOutputAmount - providerAOutputAmount;
+};

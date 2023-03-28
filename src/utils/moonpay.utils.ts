@@ -84,7 +84,6 @@ export async function getMoonPayBuyQuote(
       regionalPricing: true
     }
   });
-  console.log('x1', result.data);
 
   return result.data;
 }

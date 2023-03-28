@@ -11,7 +11,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BuySelectors } from './buy.selectors';
 import { useBuyStyles } from './buy.styles';
-import { TopUpOptionNew } from './components/top-up-option-new/top-up-option-new';
+import { TopUpOption } from './components/top-up-option/top-up-option';
 
 export const Buy = () => {
   const { metadata } = useNetworkInfo();
@@ -23,13 +23,13 @@ export const Buy = () => {
   return (
     <ScreenContainer isFullScreenMode={true}>
       <View style={styles.optionsContainer}>
-        <TopUpOptionNew
+        <TopUpOption
           title="Buy with Crypto"
           iconName={IconNameEnum.BuyWithCrypto}
           testID={BuySelectors.buyWithCrypto}
           onPress={() => navigate(ScreensEnum.Exolix)}
         />
-        <TopUpOptionNew
+        <TopUpOption
           title="Buy with Debit/Credit Card"
           iconName={IconNameEnum.CreditCard}
           testID={BuySelectors.buyWithCreditCard}
