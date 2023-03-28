@@ -7,7 +7,7 @@ import { AssetDefinition, createEngine, Storage, StorageKey, StorageKeyReturnTyp
 import { UnifiedStaking } from 'youves-sdk/src/staking/unified-staking';
 
 import { getFastRpcClient } from '../../utils/rpc/fast-rpc';
-import { MAINNET_SMARTPY_RPC, YOUVES_INDEXER_URL } from './constants';
+import { INITIAL_ARP_VALUE, MAINNET_SMARTPY_RPC, YOUVES_INDEXER_URL } from './constants';
 
 const toolkit = new TezosToolkit(getFastRpcClient(MAINNET_SMARTPY_RPC));
 const indexerConfig = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
@@ -42,11 +42,7 @@ export const getYOUTokenApr$ = (
 
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
     map(value => Number(value.multipliedBy(MULTIPLIER))),
-    catchError(error => {
-      console.log('Youves error: get YOU token APR', error);
-
-      return of(0);
-    })
+    catchError(() => of(INITIAL_ARP_VALUE))
   );
 };
 
@@ -63,10 +59,6 @@ export const getYouvesTokenApr$ = (token: AssetDefinition): Observable<number> =
 
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
     map(value => Number(value.multipliedBy(MULTIPLIER))),
-    catchError(error => {
-      console.log(`Youves error: get ${token.id} token APR`, error);
-
-      return of(0);
-    })
+    catchError(() => of(INITIAL_ARP_VALUE))
   );
 };

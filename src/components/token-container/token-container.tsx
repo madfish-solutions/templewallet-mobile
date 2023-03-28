@@ -7,6 +7,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getTruncatedProps } from 'src/utils/style.util';
 
+import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
@@ -14,14 +15,16 @@ import { useApyStyles } from '../token-screen-content-container/apy.styles';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }) => {
+const DECIMAL_VALUE = 2;
+
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_ARP_VALUE, children }) => {
   const styles = useTokenContainerStyles();
   const apyStyles = useApyStyles();
   const tokenSlug = getTokenSlug(token);
 
   const label = getDelegateText(token);
 
-  const apyRateValue = useMemo(() => new BigNumber(apy ?? 0).decimalPlaces(2).toFixed(2), [apy]);
+  const apyRateValue = useMemo(() => new BigNumber(apy).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE), [apy]);
 
   return (
     <View style={styles.container}>
