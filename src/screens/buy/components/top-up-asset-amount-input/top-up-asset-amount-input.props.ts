@@ -1,8 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { TextInputProps } from 'react-native';
 
-import { EmptyFn, EventFn } from '../../../../config/general';
-import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
+import { EmptyFn, EventFn } from 'src/config/general';
+import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
   asset: TopUpInputInterface;
@@ -21,6 +21,9 @@ export interface TopUpFormAssetAmountInputProps {
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
   precision?: number;
+  amountInputTestID?: string;
+  assetInputTestID?: string;
+  assetOptionTestIDPrefix?: string;
   newValueFn?: (
     prevValue: TopUpAssetAmountInterface,
     newAsset: TopUpInputInterface,

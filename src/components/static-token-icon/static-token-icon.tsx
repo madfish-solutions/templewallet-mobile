@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
@@ -20,14 +20,37 @@ const flagHeight = 15;
 
 export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(32) }) => {
   const [isFailed, setIsFailed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const styles = useStaticTokenIconStyles();
 
   const imageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ width: size, height: size, display: isFailed ? 'none' : 'flex' }),
-    [size, isFailed]
+    () => ({ width: size, height: size, display: isFailed || isLoading ? 'none' : 'flex' }),
+    [size, isFailed, isLoading]
+  );
+  const svgImageStyle = useMemo<StyleProp<ImageStyle>>(
+    () => ({ display: isFailed || isLoading ? 'none' : 'flex' }),
+    [isFailed, isLoading]
   );
   const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);
   const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    setIsFailed(false);
+  };
+  const handleError = () => {
+    setIsLoading(false);
+    setIsFailed(true);
+  };
+
+  useEffect(() => {
+    setIsFailed(false);
+    setIsLoading(true);
+  }, [uri]);
+
+  if (isFailed) {
+    return <Icon name={IconNameEnum.NoNameToken} size={size} />;
+  }
 
   return (
     <>
@@ -37,19 +60,16 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
             width={isMoonpayIcon ? size : flagWidth * flagScaleFactor}
             height={isMoonpayIcon ? size : flagHeight * flagScaleFactor}
             uri={uri}
+            style={svgImageStyle}
+            onLoad={handleLoad}
+            onError={handleError}
           />
         </View>
       ) : (
         <View style={[styles.container, { borderRadius: size / 2 }]}>
-          <FastImage
-            style={imageStyle}
-            source={{ uri }}
-            onLoad={() => setIsFailed(false)}
-            onError={() => setIsFailed(true)}
-          />
+          <FastImage style={imageStyle} source={{ uri }} onLoad={handleLoad} onError={handleError} />
         </View>
       )}
-      {isFailed && <Icon name={IconNameEnum.NoNameToken} size={size} />}
     </>
   );
 };

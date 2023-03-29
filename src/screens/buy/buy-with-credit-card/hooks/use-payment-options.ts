@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { useFiatCurrenciesSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getTezUahPairEstimation } from 'src/utils/alice-bob.utils';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
@@ -33,8 +34,7 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
           .minus(feeAmount)
           .minus(networkFeeAmount)
           .div(1 + extraFeePercentage / 100)
-          .decimalPlaces(inputAsset.precision ?? 0, BigNumber.ROUND_DOWN)
-          .toNumber(),
+          .decimalPlaces(inputAsset.precision ?? 0, BigNumber.ROUND_DOWN),
         0
       );
 
@@ -82,6 +82,7 @@ const usePaymentOption = (
   const [outputAmount, setOutputAmount] = useState<number>();
   const [isError, setIsError] = useState(false);
   const [outputAmountLoading, setOutputAmountLoading] = useState<boolean>(false);
+  const fiatCurrencies = useFiatCurrenciesSelector(providerId);
   const { minAmount, maxAmount } = useInputLimits(providerId, inputAsset.code);
   const initialData = initialPaymentOptionsData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
@@ -89,7 +90,12 @@ const usePaymentOption = (
   const updateOutputAmount = useCallback(
     async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
       setIsError(false);
-      if (!isDefined(newInputAmount) || !isDefined(minAmount) || !isDefined(maxAmount)) {
+      const newFiatCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
+      if (
+        !isDefined(newInputAmount) ||
+        !isDefined(newFiatCurrency?.minAmount) ||
+        !isDefined(newFiatCurrency?.maxAmount)
+      ) {
         setOutputAmount(undefined);
 
         return undefined;
@@ -110,7 +116,7 @@ const usePaymentOption = (
 
       return newOutputAmount;
     },
-    [inputAsset, outputAsset, getOutputAmount, minAmount, maxAmount]
+    [inputAsset, outputAsset, getOutputAmount, providerId, fiatCurrencies]
   );
 
   const option = useMemo<PaymentProviderInterface>(

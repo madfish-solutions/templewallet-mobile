@@ -55,6 +55,9 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     setSearchValue,
     meta,
     precision = 18,
+    amountInputTestID,
+    assetInputTestID,
+    assetOptionTestIDPrefix,
     newValueFn = defaultNewValueFn,
     onBlur,
     onFocus,
@@ -131,6 +134,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
             selection={selectionOptions}
             autoCapitalize="words"
             keyboardType="numeric"
+            testID={amountInputTestID}
             onBlur={handleBlur}
             onFocus={handleFocus}
             onChangeText={handleChange}
@@ -151,6 +155,8 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
                 keyExtractor={(token: TopUpInputInterface, index) => `${index}_${token.code}_${token.network}`}
+                testID={assetInputTestID}
+                itemTestIDPrefix={assetOptionTestIDPrefix}
                 onValueChange={handleTokenChange}
               />
             )}

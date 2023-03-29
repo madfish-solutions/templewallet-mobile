@@ -15,6 +15,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import {
@@ -44,6 +45,7 @@ import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-inp
 import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
 import { outputTokensList as exolixOutputTokensList } from '../crypto/exolix/config';
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from './buy-with-credit-card.form';
+import { BuyWithCreditCardSelectors } from './buy-with-credit-card.selector';
 import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
@@ -205,29 +207,48 @@ export const BuyWithCreditCard: FC = () => {
   }, [inputAmount, outputAmount]);
 
   const inputAmountRef = useRef<BigNumber>();
-  const handleInputValueChange = debounce(async (newInput: TopUpAssetAmountInterface) => {
-    setIsLoading(true);
-    inputAmountRef.current = newInput.amount;
-    const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
+  const handleInputValueChange = useMemo(
+    () =>
+      debounce(async (newInput: TopUpAssetAmountInterface) => {
+        setIsLoading(true);
+        inputAmountRef.current = newInput.amount;
+        const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
 
-    if (inputAmountRef.current !== newInput.amount) {
-      return;
-    }
+        if (inputAmountRef.current !== newInput.amount) {
+          return;
+        }
 
-    const patchedPaymentProviders = getPaymentProvidersToDisplay(
-      allPaymentOptions.map(({ id, ...rest }) => ({
-        ...rest,
-        id,
-        outputAmount: amounts[id]
-      })),
-      {},
-      {},
-      newInput.amount
-    );
+        const patchedPaymentProviders = getPaymentProvidersToDisplay(
+          allPaymentOptions.map(({ id, ...rest }) => ({
+            ...rest,
+            id,
+            outputAmount: amounts[id]
+          })),
+          {},
+          {},
+          newInput.amount
+        );
 
-    await handlePaymentProviderChange(patchedPaymentProviders[0]);
-    setIsLoading(false);
-  });
+        await handlePaymentProviderChange(patchedPaymentProviders[0]);
+        setIsLoading(false);
+      }),
+    [updateOutputAmounts, handlePaymentProviderChange, allPaymentOptions]
+  );
+
+  useTimerEffect(
+    () => {
+      dispatch(loadMoonPayFiatCurrenciesActions.submit());
+      dispatch(loadMoonPayCryptoCurrenciesActions.submit());
+      dispatch(loadUtorgCurrenciesActions.submit());
+      dispatch(loadAliceBobCurrenciesActions.submit());
+      if (!isLoading) {
+        void handleInputValueChange(values.sendInput);
+      }
+    },
+    10000,
+    [handleInputValueChange, dispatch, values.sendInput, isLoading],
+    false
+  );
 
   return (
     <>
@@ -242,6 +263,9 @@ export const BuyWithCreditCard: FC = () => {
               assetsList={filteredFiatCurrencies}
               newValueFn={newValueFn}
               precision={inputAsset.precision}
+              amountInputTestID={BuyWithCreditCardSelectors.fiatAmountInput}
+              assetInputTestID={BuyWithCreditCardSelectors.fiatAssetSelector}
+              assetOptionTestIDPrefix={BuyWithCreditCardSelectors.fiatAssetOption}
               onValueChange={handleInputValueChange}
               onBlur={() => setFieldTouched('sendInput')}
               setSearchValue={setInputSearchValue}
@@ -257,6 +281,9 @@ export const BuyWithCreditCard: FC = () => {
               editable={false}
               isSearchable
               assetsList={filteredCryptoCurrencies}
+              amountInputTestID={BuyWithCreditCardSelectors.cryptoAmountInput}
+              assetInputTestID={BuyWithCreditCardSelectors.cryptoAssetSelector}
+              assetOptionTestIDPrefix={BuyWithCreditCardSelectors.cryptoAssetOption}
               onBlur={() => setFieldTouched('getOutput')}
               setSearchValue={setOutputSearchValue}
             />
@@ -272,6 +299,8 @@ export const BuyWithCreditCard: FC = () => {
             renderValue={SelectedPaymentProvider}
             renderListItem={renderPaymentProviderOption}
             keyExtractor={x => x.name}
+            testID={BuyWithCreditCardSelectors.providerSelector}
+            itemTestIDPrefix={BuyWithCreditCardSelectors.providerOption}
             onValueChange={handlePaymentProviderChange}
           />
           {isPaymentProviderError && <Text style={styles.errorText}>Please select payment provider</Text>}
@@ -279,7 +308,7 @@ export const BuyWithCreditCard: FC = () => {
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
-              {isDefined(exchangeRate) && isDefined(inputAsset.code)
+              {isDefined(exchangeRate) && isDefined(inputAsset.code) && !isLoading
                 ? `1 ${inputAsset.code} ≈ ${exchangeRate} ${outputAsset.code}`
                 : '---'}
             </Text>
@@ -295,6 +324,7 @@ export const BuyWithCreditCard: FC = () => {
         <ButtonLargePrimary
           title={isLoading ? 'Loading...' : 'Top Up'}
           disabled={(submitCount !== 0 && !isValid) || isLoading}
+          testID={BuyWithCreditCardSelectors.submitButton}
           onPress={submitForm}
         />
       </ButtonsFloatingContainer>

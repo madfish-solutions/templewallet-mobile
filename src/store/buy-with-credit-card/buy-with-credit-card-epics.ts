@@ -23,8 +23,7 @@ import {
 
 const knownUtorgFiatCurrenciesNames: Record<string, string> = {
   PHP: 'Philippine Peso',
-  INR: 'Indian Rupee',
-  MYR: 'Malaysian Ringgit'
+  INR: 'Indian Rupee'
 };
 
 const loadMoonPayFiatCurrenciesEpic = (action$: Observable<Action>) =>
@@ -163,11 +162,8 @@ const loadAliceBobCurrenciesEpic = (action$: Observable<Action>) =>
             ]
           })
         ),
-        catchError(err => {
-          showErrorToast({ description: `Failed to get Alice&Bob exchange pair: ${err.message}` });
-
-          return of(loadMoonPayFiatCurrenciesActions.fail(err.message));
-        })
+        // TODO: add error alert as soon as Alice&Bob service is ready
+        catchError(err => of(loadMoonPayFiatCurrenciesActions.fail(err.message)))
       )
     )
   );
