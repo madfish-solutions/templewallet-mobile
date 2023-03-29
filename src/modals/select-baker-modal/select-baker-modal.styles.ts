@@ -20,6 +20,11 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
     paddingVertical: formatSize(16),
     paddingHorizontal: formatSize(4)
   },
+  errorText: {
+    ...typography.caption11Regular,
+    color: colors.destructive,
+    paddingHorizontal: formatSize(16)
+  },
   flatList: {
     backgroundColor: colors.navigation,
     paddingHorizontal: formatSize(16)

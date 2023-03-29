@@ -4,10 +4,9 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { BakerInterface } from 'src/apis/baking-bad';
+import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
@@ -26,12 +25,16 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
+import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
+const DISCLAIMER_MESSAGE =
+  'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
+const UNKNOWN_BAKER_NAME = 'Unknown baker';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -73,7 +76,10 @@ export const SelectBakerModal: FC = () => {
     [allBakers]
   );
 
-  const debouncedSetSearchValue = debounce(setSearchValue);
+  const debouncedSetSearchValue = debounce((value: string) => {
+    setSearchValue(value);
+    setSelectedBaker(undefined);
+  });
 
   usePageAnalytic(ModalsEnum.SelectBaker);
 
@@ -96,7 +102,8 @@ export const SelectBakerModal: FC = () => {
           opParams: [
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
-          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' })
+          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
+          ...(Boolean(selectedBaker.isUnknownBaker) && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
     }
@@ -130,9 +137,9 @@ export const SelectBakerModal: FC = () => {
       case BakersSortFieldEnum.Fee:
         return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
       case BakersSortFieldEnum.Staking:
-        return [...filteredBakersList].sort((a, b) => b.stakingBalance - a.stakingBalance);
+        return [...filteredBakersList].sort((a, b) => (b.stakingBalance ?? 0) - (a.stakingBalance ?? 0));
       default:
-        return [...filteredBakersList].sort((a, b) => b.freeSpace - a.freeSpace);
+        return [...filteredBakersList].sort((a, b) => (b.freeSpace ?? 0) - (a.freeSpace ?? 0));
     }
   }, [filteredBakersList, sortValue]);
 
@@ -140,6 +147,8 @@ export const SelectBakerModal: FC = () => {
     () => recommendedBakers.concat(sortedBakersList),
     [recommendedBakers, sortedBakersList]
   );
+
+  const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
 
   return (
     <>
@@ -158,6 +167,7 @@ export const SelectBakerModal: FC = () => {
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
+          {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
         </View>
         <View style={styles.upperContainer}>
           <Text style={styles.infoText}>The higher the better</Text>
@@ -187,7 +197,11 @@ export const SelectBakerModal: FC = () => {
         style={styles.flatList}
         windowSize={10}
         ListEmptyComponent={
-          <DataPlaceholder text={'Bakers do not match filter criteria.\n Please type something else.'} />
+          <BakerListItem
+            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+            onPress={setSelectedBaker}
+            selected={searchValue === selectedBaker?.address}
+          />
         }
       />
 
@@ -196,7 +210,7 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title="Next"
-          disabled={!isDefined(selectedBaker)}
+          disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
           onPress={handleNextPress}
           testID={SelectBakerModalSelectors.nextButton}
         />
