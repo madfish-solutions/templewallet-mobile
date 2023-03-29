@@ -33,6 +33,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
+import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { ROUTING_FEE_RATIO } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
@@ -139,7 +140,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   const { routingFeeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
     if (isDefined(swapParamsLocal.output)) {
-      const swapOutputAtomic = swapParamsLocal.output.multipliedBy(10 ** outputAssets.asset.decimals);
+      const swapOutputAtomic = tzToMutez(swapParamsLocal.output, outputAssets.asset.decimals);
       const routingFeeAtomic = swapOutputAtomic
         .minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO))
         .integerValue(BigNumber.ROUND_DOWN);
@@ -179,23 +180,27 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   } = useFilteredSwapTokensList(TokensInputsEnum.To);
 
   useEffect(() => {
-    fetchRoute3SwapParams({
-      fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
-      toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-      amount: inputAssets?.amount?.dividedBy(10 ** inputAssets.asset.decimals).toFixed() ?? '0'
-    })
-      .then(setSwapParamsLocal)
-      .catch(() => setSwapParamsLocal(swapParamsDefault));
+    if (isDefined(inputAssets.amount)) {
+      fetchRoute3SwapParams({
+        fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+        toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+        amount: mutezToTz(inputAssets.amount, inputAssets.asset.decimals).toFixed() ?? '0'
+      })
+        .then(setSwapParamsLocal)
+        .catch(() => setSwapParamsLocal(swapParamsDefault));
+    }
   }, [blockLevel]);
 
   useEffect(() => {
-    fetchRoute3SwapParams({
-      fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
-      toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-      amount: inputAssets?.amount?.dividedBy(10 ** inputAssets.asset.decimals).toFixed() ?? '0'
-    })
-      .then(setSwapParamsLocal)
-      .catch(() => setSwapParamsLocal(swapParamsDefault));
+    if (isDefined(inputAssets.amount)) {
+      fetchRoute3SwapParams({
+        fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+        toSymbol: getRoute3TokenSymbol(outputAssets.asset),
+        amount: mutezToTz(inputAssets.amount, inputAssets.asset.decimals).toFixed() ?? '0'
+      })
+        .then(setSwapParamsLocal)
+        .catch(() => setSwapParamsLocal(swapParamsDefault));
+    }
   }, [inputAssets.asset, inputAssets.amount, outputAssets.asset]);
 
   useEffect(() => {
@@ -204,7 +209,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       amount:
         swapParamsLocal.output === undefined
           ? undefined
-          : swapParamsLocal.output.multipliedBy(10 ** outputAssets.asset.decimals)
+          : tzToMutez(swapParamsLocal.output, outputAssets.asset.decimals)
     });
   }, [swapParamsLocal.output]);
 

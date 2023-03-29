@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
 
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
@@ -23,7 +24,7 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
-    if (inputAmount !== undefined && outputAmount !== undefined) {
+    if (isDefined(inputAmount) && isDefined(outputAmount)) {
       const rate = inputAmount.dividedBy(inputAmount);
 
       if (rate.isFinite()) {
@@ -35,7 +36,7 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
   }, [inputAmount, outputAmount]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (outputAmount !== undefined && outputAmount.isGreaterThan(0)) {
+    if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
       return `${outputAmount.multipliedBy(slippageRatio).toFixed(8)} ${outputAsset.symbol}`;
     }
 
