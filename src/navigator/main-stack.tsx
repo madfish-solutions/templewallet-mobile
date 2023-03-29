@@ -3,8 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { loadSwapDexesAction, loadSwapTokensAction } from 'src/store/swap/swap-actions';
-
 import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from '../components/header/exolix-screen-options';
 import { generateScreenOptions } from '../components/header/generate-screen-options.util';
@@ -96,8 +94,6 @@ export const MainStackScreen = () => {
   const initLongRefreshLoading = () => {
     dispatch(loadExchangeRates.submit());
     dispatch(loadNotificationsAction.submit());
-    dispatch(loadSwapTokensAction.submit());
-    dispatch(loadSwapDexesAction.submit());
   };
 
   useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [

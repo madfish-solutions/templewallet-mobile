@@ -68,6 +68,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isError = false,
   toUsdToggle = true,
   editable = true,
+  isLoading = false,
   isSearchable = false,
   searchValue,
   selectionOptions = undefined,
@@ -253,6 +254,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}
+            isLoading={isLoading}
             searchValue={searchValue}
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}

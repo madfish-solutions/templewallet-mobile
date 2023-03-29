@@ -23,7 +23,7 @@ import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { useSwapTokenBySlugSelector } from 'src/store/swap/swap-selectors';
+import { useSwapTokenBySlugSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -61,6 +61,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const blockLevel = useBlockLevel();
+  const { isLoading } = useSwapTokensMetadataSelector();
 
   const [swapParamsLocal, setSwapParamsLocal] = useState<Route3SwapParamsResponse>(swapParamsDefault);
 
@@ -237,6 +238,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           isSearchable
           maxButton
           assetsList={fromTokensList}
+          isLoading={isLoading}
           searchValue={fromSeactValue}
           setSearchValue={setSearchValueFromTokens}
           onValueChange={handleInputAssetsValueChange}
@@ -252,6 +254,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           editable={false}
           isSearchable
           assetsList={toTokensList}
+          isLoading={isLoading}
           searchValue={toSeactValue}
           setSearchValue={setSearchValueToTokens}
           onValueChange={handleOutputAssetsValueChange}

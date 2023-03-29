@@ -14,6 +14,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   isError?: boolean;
   editable?: boolean;
   toUsdToggle?: boolean;
+  isLoading?: boolean;
   isSearchable?: boolean;
   searchValue?: string;
   selectionOptions?: TextInputProps['selection'];
