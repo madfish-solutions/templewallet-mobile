@@ -10,6 +10,7 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
@@ -68,8 +69,10 @@ export const getRoute3TokenSymbol = (token: TokenInterface) => {
   return token.symbol;
 };
 
-export const getRoute3Token = (token: TokenInterface, route3Tokens: Array<Route3Token>) => {
-  const fromTokenSlug = toTokenSlug(token.address, token.id);
+export const getRoute3TokenBySlug = (route3Tokens: Array<Route3Token>, slug: string | undefined) => {
+  if (slug === TEZ_TOKEN_SLUG) {
+    return route3Tokens.find(({ contract }) => contract === null);
+  }
 
-  return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === fromTokenSlug);
+  return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === slug);
 };

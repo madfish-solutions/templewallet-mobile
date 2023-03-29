@@ -19,6 +19,10 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   inputContainerError: {
     borderColor: colors.destructive
   },
+  disabledInputContainer: {
+    backgroundColor: colors.lines,
+    borderColor: colors.input
+  },
   inputPadding: {
     width: formatSize(12)
   },
@@ -42,22 +46,23 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     color: colors.orange
   },
   disabledInput: {
-    ...typography.numbersMedium22,
-    color: colors.gray2,
-    backgroundColor: colors.lines,
-    borderColor: colors.lines
+    color: colors.gray2
   },
   dropdownContainer: {
-    width: formatSize(126),
+    flexDirection: 'row',
+    borderTopRightRadius: formatSize(8),
+    borderBottomRightRadius: formatSize(8),
+    width: formatSize(134),
     paddingRight: formatSize(12),
-    paddingVertical: formatSize(12)
+    paddingVertical: formatSize(12),
+    backgroundColor: colors.input
   },
   quoteContainer: {
     width: formatSize(126),
     paddingRight: formatSize(12)
   },
   lpDropdownContainer: {
-    width: formatSize(162)
+    width: formatSize(170)
   },
   footerContainer: {
     flexDirection: 'row',

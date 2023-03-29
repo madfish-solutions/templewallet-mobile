@@ -3,5 +3,6 @@ import { SwapState } from './swap-state';
 
 export const mockSwapState: SwapState = {
   dexes: createEntity([]),
-  tokens: createEntity([])
+  tokens: createEntity([]),
+  tokensMetadata: createEntity([])
 };

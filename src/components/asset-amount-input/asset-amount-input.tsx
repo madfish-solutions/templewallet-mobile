@@ -218,8 +218,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       </View>
       <Divider size={formatSize(8)} />
 
-      <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+      <View
+        style={[
+          styles.inputContainer,
+          conditionalStyle(!editable, styles.disabledInputContainer),
+          conditionalStyle(isError, styles.inputContainerError)
+        ]}
+      >
         <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
+
         <TextInput
           ref={amountInputRef}
           value={stringValue}
@@ -236,11 +243,11 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onChangeText={handleChange}
           testID={testID}
         />
-        <Divider size={formatSize(8)} />
 
         <View
           style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
         >
+          <Divider size={formatSize(8)} />
           <Dropdown
             description="Assets"
             value={value.asset}
