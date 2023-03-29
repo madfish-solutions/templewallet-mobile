@@ -1,18 +1,18 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { useDispatch } from 'react-redux';
-import { catchError, filter, from, map, switchMap, tap } from 'rxjs';
+import { filter, from, map, switchMap, tap } from 'rxjs';
 import { object, boolean, SchemaOf } from 'yup';
 
 import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { buildErrorToaster$, catchThrowToastError } from 'src/toast/toast.utils';
+import { buildPipeErrorToaster, catchThrowToastError } from 'src/toast/toast.utils';
 import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isDefined } from 'src/utils/is-defined';
 import { useSubjectSubscription$ } from 'src/utils/rxjs.utils';
 
-export type RestoreFromCloudFormValues = {
+type RestoreFromCloudFormValues = {
   password: string;
   reusePassword: boolean;
 };
@@ -41,7 +41,7 @@ export const useHandleSubmit = () => {
           switchMap(({ password, fileId, reusePassword }) =>
             from(fetchCloudBackup(password, fileId).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
               map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined)),
-              catchError(buildErrorToaster$())
+              buildPipeErrorToaster()
             )
           ),
           tap(() => dispatch(hideLoaderAction())),
@@ -51,8 +51,5 @@ export const useHandleSubmit = () => {
     [fileId, dispatch, navigate]
   );
 
-  const handleSubmit = ({ password, reusePassword }: RestoreFromCloudFormValues) =>
-    submit$.next({ password, fileId, reusePassword });
-
-  return handleSubmit;
+  return (values: RestoreFromCloudFormValues) => submit$.next({ fileId, ...values });
 };
