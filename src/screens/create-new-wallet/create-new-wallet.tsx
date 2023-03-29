@@ -2,7 +2,6 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
@@ -18,31 +17,19 @@ import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biome
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useShelter } from 'src/shelter/use-shelter.hook';
-import {
-  hideLoaderAction,
-  madeCloudBackupAction,
-  requestSeedPhraseBackupAction,
-  setIsAnalyticsEnabled,
-  showLoaderAction
-} from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { callWithShowErrorToastOnError, ToastError, showSuccessToast } from 'src/toast/toast.utils';
-import { saveCloudBackup, getRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { getRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
-import { generateSeed } from 'src/utils/keys.util';
 
 import {
-  CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
-  createNewPasswordValidationSchema
+  createNewPasswordValidationSchema,
+  useHandleSubmit
 } from './create-new-wallet.form';
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
-  const dispatch = useDispatch();
-
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = getRestoredCloudBackup(cloudBackupId);
@@ -59,7 +46,6 @@ export const CreateNewWallet = () => {
   );
 
   const styles = useSetPasswordScreensCommonStyles();
-  const { importWallet } = useShelter();
 
   const initialValues = useMemo(
     () =>
@@ -73,39 +59,7 @@ export const CreateNewWallet = () => {
     [cloudBackupPassword]
   );
 
-  const doBackupToCloud = async (seedPhrase: string, password: string) => {
-    try {
-      await saveCloudBackup(seedPhrase, password);
-    } catch (error) {
-      dispatch(requestSeedPhraseBackupAction());
-
-      throw new ToastError('Failed to back up to cloud', (error as Error)?.message);
-    }
-
-    dispatch(madeCloudBackupAction());
-    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-  };
-
-  const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) =>
-    callWithShowErrorToastOnError(
-      async () => {
-        dispatch(showLoaderAction());
-        dispatch(setIsAnalyticsEnabled(analytics));
-
-        const seedPhrase = isRestoreFromCloudFlow ? cloudBackupMnemonic : await generateSeed();
-
-        importWallet({ seedPhrase, password, useBiometry });
-
-        if (Boolean(backupToCloud)) {
-          return void (await doBackupToCloud(seedPhrase, password));
-        }
-
-        if (!isRestoreFromCloudFlow) {
-          dispatch(requestSeedPhraseBackupAction());
-        }
-      },
-      () => void dispatch(hideLoaderAction())
-    );
+  const handleSubmit = useHandleSubmit(backupToCloud, cloudBackupMnemonic);
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>

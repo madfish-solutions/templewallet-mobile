@@ -1,8 +1,6 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
@@ -11,47 +9,20 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { callWithShowErrorToastOnError, callWithToastErrorThrown } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 
-import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
+import { useHandleSubmit, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';
 
 export const RestoreFromCloud = () => {
   usePageAnalytic(ScreensEnum.RestoreFromCloud);
 
-  const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.RestoreFromCloud>>().params;
-
-  const { navigate } = useNavigation();
-  const dispatch = useDispatch();
+  const handleSubmit = useHandleSubmit();
 
   const styles = useSetPasswordScreensCommonStyles();
-
-  const handleSubmit = ({ password, reusePassword }: RestoreFromCloudFormValues) =>
-    callWithShowErrorToastOnError(
-      async () => {
-        dispatch(showLoaderAction());
-
-        const backup = await callWithToastErrorThrown(
-          () => fetchCloudBackup(password, fileId),
-          "Couldn't restore wallet",
-          true
-        );
-
-        const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
-
-        dispatch(hideLoaderAction());
-
-        return void navigate(ScreensEnum.CreateAccount, { cloudBackupId });
-      },
-      () => void dispatch(hideLoaderAction())
-    );
 
   return (
     <Formik
