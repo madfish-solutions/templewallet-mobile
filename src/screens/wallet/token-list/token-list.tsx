@@ -29,18 +29,11 @@ import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
-type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG;
-const keyExtractor = (item: FlatListItem) => {
-  if (item === TEZ_TOKEN_SLUG) {
-    return TEZ_TOKEN_SLUG;
-  }
-
-  return getTokenSlug(item);
-};
+const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
 
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
-const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
+const getItemLayout = createGetItemLayout<TokenInterface>(ITEM_HEIGHT);
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
@@ -76,9 +69,11 @@ export const TokensList: FC = () => {
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
-  const renderFlatListItem: ListRenderItem<FlatListItem> = useCallback(
+  const renderItem: ListRenderItem<TokenInterface> = useCallback(
     ({ item }) => {
-      if (item === TEZ_TOKEN_SLUG) {
+      const slug = getTokenSlug(item);
+
+      if (slug === TEZ_TOKEN_SLUG) {
         return <TezosToken />;
       }
 
@@ -86,7 +81,7 @@ export const TokensList: FC = () => {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      return <TokenListItem token={item} apy={apyRates[getTokenSlug(item)]} />;
+      return <TokenListItem token={item} apy={apyRates[slug]} />;
     },
     [apyRates]
   );
@@ -128,7 +123,7 @@ export const TokensList: FC = () => {
         <FlatList
           scrollEnabled
           data={renderData}
-          renderItem={renderFlatListItem}
+          renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemLayout={getItemLayout}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
@@ -141,7 +136,7 @@ export const TokensList: FC = () => {
   );
 };
 
-const addPlaceholdersForAndroid = (flatListData: FlatListItem[], screenFillingItemsCount: number) =>
+const addPlaceholdersForAndroid = (flatListData: TokenInterface[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > flatListData.length
     ? flatListData.concat(
         Array(Math.ceil(screenFillingItemsCount - flatListData.length))
