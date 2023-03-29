@@ -128,15 +128,3 @@ export const swapStackScreens = [
   ScreensEnum.SwapQuestionsScreen
 ];
 export const marketStackScreens = [ScreensEnum.Market];
-export const settingsStackScreens = [
-  ScreensEnum.Settings,
-  ScreensEnum.ManageAccounts,
-  ScreensEnum.Contacts,
-  ScreensEnum.About,
-  ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings,
-  ScreensEnum.Backup,
-  ScreensEnum.ManualBackup,
-  ScreensEnum.NotificationsSettings,
-  ScreensEnum.NodeSettings
-];
