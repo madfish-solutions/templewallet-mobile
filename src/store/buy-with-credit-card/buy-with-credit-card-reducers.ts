@@ -10,7 +10,6 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { createEntity } from '../create-entity';
 import {
   loadAliceBobCurrenciesActions,
-  loadLocationActions,
   loadMoonPayCryptoCurrenciesActions,
   loadMoonPayFiatCurrenciesActions,
   loadUtorgCurrenciesActions
@@ -96,18 +95,5 @@ export const buyWithCreditCardReducers = createReducer<BuyWithCreditCardState>(
 
     addOneActionAllCurrenciesTypesCases(builder, TopUpProviderEnum.Utorg, loadUtorgCurrenciesActions);
     addOneActionAllCurrenciesTypesCases(builder, TopUpProviderEnum.AliceBob, loadAliceBobCurrenciesActions);
-
-    builder.addCase(loadLocationActions.submit, state => ({
-      ...state,
-      location: createEntity(state.location.data, true)
-    }));
-    builder.addCase(loadLocationActions.success, (state, { payload: location }) => ({
-      ...state,
-      location: createEntity(location)
-    }));
-    builder.addCase(loadLocationActions.fail, (state, { payload: error }) => ({
-      ...state,
-      location: createEntity(state.location.data, false, error)
-    }));
   }
 );

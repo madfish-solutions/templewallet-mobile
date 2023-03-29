@@ -41,5 +41,11 @@ export const useBuyWithCreditCardStyles = createUseStyles(({ colors, typography 
   },
   paymentProviderItemContainer: {
     borderRadius: formatSize(10)
+  },
+  errorText: {
+    ...typography.caption11Regular,
+    marginTop: formatSize(8),
+    color: colors.destructive,
+    letterSpacing: formatSize(0.07)
   }
 }));

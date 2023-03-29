@@ -8,13 +8,5 @@ export const mockBuyWithCreditCardState: BuyWithCreditCardState = {
     [TopUpProviderEnum.MoonPay]: createEntity({ fiat: [], crypto: [] }),
     [TopUpProviderEnum.Utorg]: createEntity({ fiat: [], crypto: [] }),
     [TopUpProviderEnum.AliceBob]: createEntity({ fiat: [], crypto: [] })
-  },
-  location: createEntity({
-    alpha2: '',
-    alpha3: '',
-    country: '',
-    ipAddress: '',
-    isAllowed: true,
-    isBuyAllowed: true
-  })
+  }
 };

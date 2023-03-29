@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { debounce } from 'lodash-es';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -30,7 +31,7 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { createOrder as createAliceBobOrder } from 'src/utils/alice-bob.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { fiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
+import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
@@ -54,12 +55,13 @@ const DEFAULT_CURRENCY = {
   name: 'US Dollar',
   network: '',
   networkFullName: '',
+  precision: 2,
   type: TopUpInputTypeEnum.Fiat
 };
 
-const newValueInputAssetChangedFn = (newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
+const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
   asset: newAsset,
-  amount,
+  amount: isDefined(newAsset.precision) ? amount?.decimalPlaces(newAsset.precision) : amount,
   min: newAsset.minAmount,
   max: newAsset.maxAmount
 });
@@ -150,15 +152,20 @@ export const BuyWithCreditCard: FC = () => {
     onSubmit: handleSubmit
   });
 
-  const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
-  const { asset: inputAsset } = values.sendInput;
-  const { asset: outputAsset } = values.getOutput;
+  const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount, getFieldMeta } = formik;
+  const { asset: inputAsset, amount: inputAmount } = values.sendInput;
+  const { asset: outputAsset, amount: outputAmount } = values.getOutput;
+  const paymentProviderMeta = getFieldMeta('paymentProvider');
 
   const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
-    values.sendInput.amount,
+    inputAmount,
     inputAsset,
     outputAsset
   );
+  const isPaymentProviderError =
+    isDefined(paymentProviderMeta.error) &&
+    (paymentProviderMeta.touched || submitCount > 0) &&
+    paymentOptionsToDisplay.length > 0;
 
   const handlePaymentProviderChange = useCallback(
     async (newProvider?: PaymentProviderInterface) => {
@@ -172,11 +179,12 @@ export const BuyWithCreditCard: FC = () => {
   );
 
   useEffect(() => {
-    const { asset: currentInputAsset, amount: currentInputAmount } = formik.values.sendInput;
+    const prevInputValue = formik.values.sendInput;
+    const { asset: currentInputAsset, amount: currentInputAmount } = prevInputValue;
     const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
 
     if (isDefined(newInputAsset) && newInputAsset !== currentInputAsset) {
-      setFieldValue('sendInput', newValueInputAssetChangedFn(newInputAsset, currentInputAmount));
+      setFieldValue('sendInput', newValueFn(prevInputValue, newInputAsset, currentInputAmount));
     }
   }, [formik, allFiatCurrencies]);
 
@@ -189,30 +197,37 @@ export const BuyWithCreditCard: FC = () => {
   }, [formik, allPaymentOptions, handlePaymentProviderChange]);
 
   const exchangeRate = useMemo(() => {
-    const inputAmount = values.sendInput.amount;
-    const outputAmount = values.getOutput.amount;
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
       return outputAmount.div(inputAmount).decimalPlaces(6);
     }
 
     return undefined;
-  }, [values.sendInput.amount, values.getOutput.amount]);
+  }, [inputAmount, outputAmount]);
 
-  const handleInputValueChange = async (newInput: TopUpAssetAmountInterface) => {
+  const inputAmountRef = useRef<BigNumber>();
+  const handleInputValueChange = debounce(async (newInput: TopUpAssetAmountInterface) => {
     setIsLoading(true);
+    inputAmountRef.current = newInput.amount;
     const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
-    const patchedPaymentOptions: PaymentProviderInterface[] = paymentOptionsToDisplay
-      .map(({ id, ...rest }) => ({
+
+    if (inputAmountRef.current !== newInput.amount) {
+      return;
+    }
+
+    const patchedPaymentProviders = getPaymentProvidersToDisplay(
+      allPaymentOptions.map(({ id, ...rest }) => ({
         ...rest,
         id,
         outputAmount: amounts[id]
-      }))
-      .sort(fiatPurchaseProvidersSortPredicate);
-    const bestPaymentOption = patchedPaymentOptions[0];
+      })),
+      {},
+      {},
+      newInput.amount
+    );
 
-    await handlePaymentProviderChange(bestPaymentOption);
+    await handlePaymentProviderChange(patchedPaymentProviders[0]);
     setIsLoading(false);
-  };
+  });
 
   return (
     <>
@@ -225,7 +240,8 @@ export const BuyWithCreditCard: FC = () => {
               label="Send"
               isSearchable
               assetsList={filteredFiatCurrencies}
-              newValueAssetChangedFn={newValueInputAssetChangedFn}
+              newValueFn={newValueFn}
+              precision={inputAsset.precision}
               onValueChange={handleInputValueChange}
               onBlur={() => setFieldTouched('sendInput')}
               setSearchValue={setInputSearchValue}
@@ -238,6 +254,7 @@ export const BuyWithCreditCard: FC = () => {
             <TopUpFormAssetAmountInput
               name="getOutput"
               label="Get"
+              editable={false}
               isSearchable
               assetsList={filteredCryptoCurrencies}
               onBlur={() => setFieldTouched('getOutput')}
@@ -257,6 +274,7 @@ export const BuyWithCreditCard: FC = () => {
             keyExtractor={x => x.name}
             onValueChange={handlePaymentProviderChange}
           />
+          {isPaymentProviderError && <Text style={styles.errorText}>Please select payment provider</Text>}
           <Divider size={formatSize(16)} />
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>

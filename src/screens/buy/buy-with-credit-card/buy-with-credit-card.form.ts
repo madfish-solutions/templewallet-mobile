@@ -28,7 +28,7 @@ const assetSchema = object()
   })
   .required();
 
-export const BuyWithCreditCardValidationSchema: SchemaOf<BuyWithCreditCardFormValues> = object().shape({
+export const BuyWithCreditCardValidationSchema = object().shape({
   sendInput: object().shape({
     asset: assetSchema.clone(),
     amount: withMinMaxTestsBignumberSchema.clone().required(makeRequiredErrorMessage('Amount')),
@@ -37,7 +37,7 @@ export const BuyWithCreditCardValidationSchema: SchemaOf<BuyWithCreditCardFormVa
   }),
   getOutput: object().shape({
     asset: assetSchema.clone(),
-    amount: bigNumberValidation.clone().required(makeRequiredErrorMessage('Amount'))
+    amount: bigNumberValidation.clone()
   }),
   paymentProvider: object()
     .shape({
@@ -46,4 +46,4 @@ export const BuyWithCreditCardValidationSchema: SchemaOf<BuyWithCreditCardFormVa
       iconName: string().required()
     })
     .required('Please select payment provider')
-});
+}) as unknown as SchemaOf<BuyWithCreditCardFormValues>;

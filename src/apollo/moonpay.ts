@@ -17,6 +17,7 @@ interface CryptoCurrenciesResponse {
     minBuyAmount: number | null;
     maxBuyAmount: number | null;
     networkCode: string;
+    precision: number;
     supportsLiveMode: boolean;
     isSuspended: boolean;
   }>;
@@ -45,6 +46,7 @@ const CRYPTO_CURRENCIES_QUERY = gql`
       minBuyAmount
       maxBuyAmount
       networkCode
+      precision
       supportsLiveMode
       isSuspended
       __typename

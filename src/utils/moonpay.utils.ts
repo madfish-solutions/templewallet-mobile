@@ -12,15 +12,6 @@ interface QuoteResponse {
   totalAmount: number;
 }
 
-export interface LocationResponse {
-  alpha2: string;
-  alpha3: string;
-  country: string;
-  ipAddress: string;
-  isAllowed: boolean;
-  isBuyAllowed: boolean;
-}
-
 const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
 export const MOONPAY_ASSETS_BASIC_URL = 'https://static.moonpay.com';
 export const MOONPAY_API_KEY = 'pk_live_PrSDks3YtrreqFifd0BsIji7xPXjSGx';
@@ -44,16 +35,6 @@ export const getSignedMoonPayUrl = async (
   const result = await templeWalletApi.get<{ signedUrl: string }>('/moonpay-sign', { params: { url } });
 
   return result.data.signedUrl;
-};
-
-export const getLocation = async () => {
-  const result = await moonPayApi.get<LocationResponse>('/v3/ip_address', {
-    params: {
-      apiKey: MOONPAY_API_KEY
-    }
-  });
-
-  return result.data;
 };
 
 export async function getMoonPayBuyQuote(

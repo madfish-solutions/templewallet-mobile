@@ -4,8 +4,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { getTezUahPairEstimation } from 'src/utils/alice-bob.utils';
-import { fiatPurchaseProvidersSortPredicate } from 'src/utils/fiat-purchase-providers.utils';
+import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { getMoonPayBuyQuote } from 'src/utils/moonpay.utils';
 import { convertFiatAmountToCrypto } from 'src/utils/utorg.utils';
@@ -14,15 +16,65 @@ import { useInputLimits } from './use-input-limits.hook';
 
 type getOutputAmountFunction = (
   inputAmount: BigNumber,
-  inputAssetCode: string,
-  outputAssetCode: string
+  inputAsset: TopUpInputInterface,
+  outputAsset: TopUpInputInterface
 ) => Promise<number>;
 
 type PaymentProviderInitialData = Pick<PaymentProviderInterface, 'name' | 'iconName' | 'id' | 'kycRequired'>;
 
+const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunction> = {
+  [TopUpProviderEnum.MoonPay]: async (inputAmount, inputAsset, outputAsset) => {
+    const { baseCurrencyAmount, quoteCurrencyAmount, extraFeePercentage, feeAmount, networkFeeAmount, totalAmount } =
+      await getMoonPayBuyQuote(outputAsset.code.toLowerCase(), inputAsset.code.toLowerCase(), inputAmount.toNumber());
+
+    if (inputAmount.lt(totalAmount)) {
+      const expectedBaseCurrencyAmount = BigNumber.max(
+        inputAmount
+          .minus(feeAmount)
+          .minus(networkFeeAmount)
+          .div(1 + extraFeePercentage / 100)
+          .decimalPlaces(inputAsset.precision ?? 0, BigNumber.ROUND_DOWN)
+          .toNumber(),
+        0
+      );
+
+      return expectedBaseCurrencyAmount
+        .times(quoteCurrencyAmount)
+        .div(baseCurrencyAmount)
+        .decimalPlaces(outputAsset.precision ?? 0, BigNumber.ROUND_DOWN)
+        .toNumber();
+    }
+
+    return quoteCurrencyAmount;
+  },
+  [TopUpProviderEnum.Utorg]: async (inputAmount, inputAsset, outputAsset) =>
+    convertFiatAmountToCrypto(inputAmount.toNumber(), inputAsset.code, outputAsset.code),
+  [TopUpProviderEnum.AliceBob]: async inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
+};
+
+const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
+  [TopUpProviderEnum.MoonPay]: {
+    name: 'MoonPay',
+    id: TopUpProviderEnum.MoonPay,
+    iconName: IconNameEnum.MoonPay,
+    kycRequired: true
+  },
+  [TopUpProviderEnum.Utorg]: {
+    name: 'Utorg',
+    id: TopUpProviderEnum.Utorg,
+    iconName: IconNameEnum.Utorg,
+    kycRequired: true
+  },
+  [TopUpProviderEnum.AliceBob]: {
+    name: 'Alice&Bob',
+    id: TopUpProviderEnum.AliceBob,
+    iconName: IconNameEnum.AliceBob,
+    kycRequired: false
+  }
+};
+
 const usePaymentOption = (
-  getOutputAmount: getOutputAmountFunction,
-  initialData: PaymentProviderInitialData,
+  providerId: TopUpProviderEnum,
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
   outputAsset: TopUpInputInterface
@@ -30,12 +82,14 @@ const usePaymentOption = (
   const [outputAmount, setOutputAmount] = useState<number>();
   const [isError, setIsError] = useState(false);
   const [outputAmountLoading, setOutputAmountLoading] = useState<boolean>(false);
-  const { minAmount, maxAmount } = useInputLimits(initialData.id, inputAsset.code);
+  const { minAmount, maxAmount } = useInputLimits(providerId, inputAsset.code);
+  const initialData = initialPaymentOptionsData[providerId];
+  const getOutputAmount = getOutputAmountFunctions[providerId];
 
   const updateOutputAmount = useCallback(
     async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
       setIsError(false);
-      if (!isDefined(newInputAmount)) {
+      if (!isDefined(newInputAmount) || !isDefined(minAmount) || !isDefined(maxAmount)) {
         setOutputAmount(undefined);
 
         return undefined;
@@ -44,9 +98,9 @@ const usePaymentOption = (
       let newOutputAmount: number | undefined;
       try {
         setOutputAmountLoading(true);
-        newOutputAmount = await getOutputAmount(newInputAmount, newInputAsset.code, newOutputAsset.code);
+        newOutputAmount = await getOutputAmount(newInputAmount, newInputAsset, newOutputAsset);
       } catch (error) {
-        console.error(initialData.id, error);
+        showErrorToast({ description: getAxiosQueryErrorMessage(error) });
         setIsError(true);
         newOutputAmount = undefined;
       } finally {
@@ -56,7 +110,7 @@ const usePaymentOption = (
 
       return newOutputAmount;
     },
-    [inputAsset, outputAsset, getOutputAmount]
+    [inputAsset, outputAsset, getOutputAmount, minAmount, maxAmount]
   );
 
   const option = useMemo<PaymentProviderInterface>(
@@ -81,53 +135,6 @@ const usePaymentOption = (
   };
 };
 
-const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunction> = {
-  [TopUpProviderEnum.MoonPay]: async (inputAmount, inputAssetCode, outputAssetCode) => {
-    const { baseCurrencyAmount, quoteCurrencyAmount, extraFeePercentage, feeAmount, networkFeeAmount, totalAmount } =
-      await getMoonPayBuyQuote(outputAssetCode.toLowerCase(), inputAssetCode.toLowerCase(), inputAmount.toNumber());
-
-    if (inputAmount.lt(totalAmount)) {
-      const expectedBaseCurrencyAmount = BigNumber.max(
-        inputAmount
-          .minus(feeAmount)
-          .minus(networkFeeAmount)
-          .div(1 + extraFeePercentage / 100)
-          .decimalPlaces(2)
-          .toNumber(),
-        0
-      );
-
-      return expectedBaseCurrencyAmount.times(quoteCurrencyAmount).div(baseCurrencyAmount).decimalPlaces(6).toNumber();
-    }
-
-    return quoteCurrencyAmount;
-  },
-  [TopUpProviderEnum.Utorg]: async (inputAmount, inputAssetCode, outputAssetCode) =>
-    convertFiatAmountToCrypto(inputAmount.toNumber(), inputAssetCode, outputAssetCode),
-  [TopUpProviderEnum.AliceBob]: async inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
-};
-
-const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
-  [TopUpProviderEnum.MoonPay]: {
-    name: 'MoonPay',
-    id: TopUpProviderEnum.MoonPay,
-    iconName: IconNameEnum.MoonPay,
-    kycRequired: true
-  },
-  [TopUpProviderEnum.Utorg]: {
-    name: 'Utorg',
-    id: TopUpProviderEnum.Utorg,
-    iconName: IconNameEnum.Utorg,
-    kycRequired: true
-  },
-  [TopUpProviderEnum.AliceBob]: {
-    name: 'Alice-Bob',
-    id: TopUpProviderEnum.AliceBob,
-    iconName: IconNameEnum.AliceBob,
-    kycRequired: false
-  }
-};
-
 export const usePaymentOptions = (
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
@@ -138,71 +145,43 @@ export const usePaymentOptions = (
     option: moonPayOption,
     updateOutputAmount: updateMoonPayOutputAmount,
     loading: moonPayLoading
-  } = usePaymentOption(
-    getOutputAmountFunctions[TopUpProviderEnum.MoonPay],
-    initialPaymentOptionsData[TopUpProviderEnum.MoonPay],
-    inputAmount,
-    inputAsset,
-    outputAsset
-  );
+  } = usePaymentOption(TopUpProviderEnum.MoonPay, inputAmount, inputAsset, outputAsset);
   const {
     isError: utorgIsError,
     option: utorgOption,
     updateOutputAmount: updateUtorgOutputAmount,
     loading: utorgLoading
-  } = usePaymentOption(
-    getOutputAmountFunctions[TopUpProviderEnum.Utorg],
-    initialPaymentOptionsData[TopUpProviderEnum.Utorg],
-    inputAmount,
-    inputAsset,
-    outputAsset
-  );
+  } = usePaymentOption(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
   const {
     isError: aliceBobIsError,
     option: aliceBobOption,
     updateOutputAmount: updateAliceBobOutputAmount,
     loading: aliceBobLoading
-  } = usePaymentOption(
-    getOutputAmountFunctions[TopUpProviderEnum.AliceBob],
-    initialPaymentOptionsData[TopUpProviderEnum.AliceBob],
-    inputAmount,
-    inputAsset,
-    outputAsset
-  );
+  } = usePaymentOption(TopUpProviderEnum.AliceBob, inputAmount, inputAsset, outputAsset);
 
   const allPaymentOptions = useMemo(
     () => [moonPayOption, utorgOption, aliceBobOption],
     [moonPayOption, utorgOption, aliceBobOption]
   );
 
-  const paymentOptionsToDisplay = useMemo(() => {
-    const errorsFlags = [moonPayIsError, utorgIsError, aliceBobIsError];
-
-    const result = allPaymentOptions
-      .filter(
-        ({ minInputAmount, maxInputAmount }, index) =>
-          !errorsFlags[index] && isDefined(minInputAmount) && isDefined(maxInputAmount)
-      )
-      .sort(fiatPurchaseProvidersSortPredicate);
-
-    if (result.length < 2) {
-      return result;
-    }
-
-    let bestPriceOptionIndex = 0;
-    for (let i = 1; i < result.length; i++) {
-      const currentBestOutput = result[bestPriceOptionIndex].outputAmount ?? 0;
-      const currentOutput = result[i].outputAmount ?? 0;
-      if (currentOutput > currentBestOutput) {
-        bestPriceOptionIndex = i;
-      }
-    }
-    for (let i = 0; i < result.length; i++) {
-      result[i].isBestPrice = i === bestPriceOptionIndex;
-    }
-
-    return result;
-  }, [allPaymentOptions, moonPayIsError, utorgIsError, aliceBobIsError]);
+  const paymentOptionsToDisplay = useMemo(
+    () =>
+      getPaymentProvidersToDisplay(
+        allPaymentOptions,
+        {
+          [TopUpProviderEnum.MoonPay]: moonPayIsError,
+          [TopUpProviderEnum.Utorg]: utorgIsError,
+          [TopUpProviderEnum.AliceBob]: aliceBobIsError
+        },
+        {
+          [TopUpProviderEnum.MoonPay]: moonPayLoading,
+          [TopUpProviderEnum.Utorg]: utorgLoading,
+          [TopUpProviderEnum.AliceBob]: aliceBobLoading
+        },
+        inputAmount
+      ),
+    [allPaymentOptions, moonPayIsError, utorgIsError, aliceBobIsError, moonPayLoading, utorgLoading, aliceBobLoading]
+  );
   const updateOutputAmounts = useCallback(
     async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
       const [moonPayOutputAmount, utorgOutputAmount, aliceBobOutputAmount] = await Promise.all([

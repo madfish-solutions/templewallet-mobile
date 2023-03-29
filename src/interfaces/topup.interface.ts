@@ -13,6 +13,7 @@ export interface TopUpInputInterface {
   networkShortName?: string | null;
   minAmount?: number;
   maxAmount?: number;
+  precision?: number;
 }
 
 export interface TopUpOutputInterface extends TopUpInputInterface {
