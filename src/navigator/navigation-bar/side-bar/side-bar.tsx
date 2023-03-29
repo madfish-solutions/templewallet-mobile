@@ -1,21 +1,19 @@
 import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
   marketStackScreens,
+  nftStackScreens,
   ScreensEnum,
-  settingsStackScreens,
   swapStackScreens,
   walletStackScreens
 } from '../../enums/screens.enum';
@@ -30,7 +28,6 @@ export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
-  const isManualBackupMade = useIsManualBackupMadeSelector();
 
   const { isDcpNode } = useNetworkInfo();
 
@@ -50,6 +47,13 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.TezWallet}
             routeName={ScreensEnum.Wallet}
             focused={isStackFocused(walletStackScreens)}
+          />
+          <SideBarButton
+            label="NFT"
+            iconName={IconNameEnum.NFT}
+            routeName={ScreensEnum.CollectiblesHome}
+            focused={isStackFocused(nftStackScreens)}
+            disabledOnPress={disabledOnPress}
           />
           <SideBarButton
             label="DApps"
@@ -73,15 +77,6 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             routeName={ScreensEnum.Market}
             focused={isStackFocused(marketStackScreens)}
           />
-          <DebugTapListener>
-            <SideBarButton
-              label="Settings"
-              iconName={IconNameEnum.Settings}
-              routeName={ScreensEnum.Settings}
-              focused={isStackFocused(settingsStackScreens)}
-              showNotificationDot={!isManualBackupMade}
-            />
-          </DebugTapListener>
         </View>
 
         <View>
