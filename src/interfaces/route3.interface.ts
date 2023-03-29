@@ -21,14 +21,14 @@ export interface Route3Hop {
 }
 
 export interface Route3Chain {
-  input: number;
-  output: number;
+  input: BigNumber;
+  output: BigNumber;
   hops: Array<Route3Hop>;
 }
 
 export interface Route3SwapParamsResponse {
-  input: number | undefined;
-  output: number | undefined;
+  input: BigNumber | undefined;
+  output: BigNumber | undefined;
   chains: Array<Route3Chain>;
 }
 
@@ -42,7 +42,7 @@ export interface Route3Token {
 }
 
 export interface Route3Dex {
-  id: 97;
+  id: number;
   type: Route3DexTypeEnum;
   contract: string;
   token1: Route3Token;

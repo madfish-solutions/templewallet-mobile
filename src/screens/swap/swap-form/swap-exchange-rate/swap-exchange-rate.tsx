@@ -15,8 +15,8 @@ interface Props {
   slippageRatio: number;
   inputAsset: TokenInterface;
   outputAsset: TokenInterface;
-  inputAmount: number | undefined;
-  outputAmount: number | undefined;
+  inputAmount: BigNumber | undefined;
+  outputAmount: BigNumber | undefined;
 }
 
 export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, inputAmount, outputAmount }) => {
@@ -24,9 +24,7 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
 
   const exchangeRate = useMemo(() => {
     if (inputAmount !== undefined && outputAmount !== undefined) {
-      const tradeInput = new BigNumber(inputAmount);
-      const tradeOutput = new BigNumber(outputAmount);
-      const rate = tradeInput.dividedBy(tradeOutput);
+      const rate = inputAmount.dividedBy(inputAmount);
 
       if (rate.isFinite()) {
         return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
@@ -37,8 +35,8 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
   }, [inputAmount, outputAmount]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (outputAmount !== undefined && outputAmount > 0) {
-      return `${(outputAmount * slippageRatio).toFixed(6)} ${outputAsset.symbol}`;
+    if (outputAmount !== undefined && outputAmount.isGreaterThan(0)) {
+      return `${outputAmount.multipliedBy(slippageRatio).toFixed(8)} ${outputAsset.symbol}`;
     }
 
     return '---';

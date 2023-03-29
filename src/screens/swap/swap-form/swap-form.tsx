@@ -23,6 +23,7 @@ import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { useSwapTokenBySlugSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -53,6 +54,7 @@ interface SwapFormProps {
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const getSwapParams = useSwap();
+
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -75,26 +77,24 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
 
-    if (!inputAssets.amount) {
+    if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token) {
       return;
     }
 
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      outputAssets.asset,
-      routingFreeAtomic,
+      toRoute3Token,
+      routingFeeAtomic,
       selectedAccount.publicKeyHash,
       tezos
     );
 
     const swapOpParams = await getSwapParams(
-      inputAssets.asset,
-      outputAssets.asset,
+      fromRoute3Token,
+      toRoute3Token,
       inputAssets.amount,
       minimumReceivedAmountAtomic,
       swapParamsLocal.chains
     );
-
-    console.log('swapOpParams: ', swapOpParams);
 
     if (swapOpParams === undefined) {
       return;
@@ -136,23 +136,23 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
   const { inputAssets, outputAssets } = values;
 
-  const { routingFreeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
+  const { routingFeeAtomic, minimumReceivedAmountAtomic } = useMemo(() => {
     if (isDefined(swapParamsLocal.output)) {
-      const swapOutputAtomic = new BigNumber(swapParamsLocal.output).multipliedBy(10 ** outputAssets.asset.decimals);
-      const routingFreeAtomic = swapOutputAtomic
+      const swapOutputAtomic = swapParamsLocal.output.multipliedBy(10 ** outputAssets.asset.decimals);
+      const routingFeeAtomic = swapOutputAtomic
         .minus(swapOutputAtomic.multipliedBy(ROUTING_FEE_RATIO))
         .integerValue(BigNumber.ROUND_DOWN);
       const minimumReceivedAmountAtomic = swapOutputAtomic
-        .minus(routingFreeAtomic)
+        .minus(routingFeeAtomic)
         .multipliedBy(slippageRatio)
         .integerValue(BigNumber.ROUND_DOWN);
 
-      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+      return { routingFeeAtomic, minimumReceivedAmountAtomic };
     } else {
-      const routingFreeAtomic = new BigNumber(0);
+      const routingFeeAtomic = new BigNumber(0);
       const minimumReceivedAmountAtomic = new BigNumber(0);
 
-      return { routingFreeAtomic, minimumReceivedAmountAtomic };
+      return { routingFeeAtomic, minimumReceivedAmountAtomic };
     }
   }, [swapParamsLocal.output, slippageRatio]);
 
@@ -162,6 +162,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const outputAssetSlug = tokenEqualityFn(outputAssets.asset, emptyTezosLikeToken)
     ? undefined
     : getTokenSlug(outputAssets.asset);
+
+  const fromRoute3Token = useSwapTokenBySlugSelector(inputAssetSlug ?? '');
+  const toRoute3Token = useSwapTokenBySlugSelector(outputAssetSlug ?? '');
 
   const {
     filteredTokensList: fromTokensList,
@@ -192,7 +195,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     })
       .then(setSwapParamsLocal)
       .catch(() => setSwapParamsLocal(swapParamsDefault));
-  }, [inputAssets, outputAssets]);
+  }, [inputAssets.asset, inputAssets.amount, outputAssets.asset]);
 
   useEffect(() => {
     setFieldValue('outputAssets', {
@@ -200,7 +203,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       amount:
         swapParamsLocal.output === undefined
           ? undefined
-          : new BigNumber(swapParamsLocal.output).multipliedBy(10 ** outputAssets.asset.decimals)
+          : swapParamsLocal.output.multipliedBy(10 ** outputAssets.asset.decimals)
     });
   }, [swapParamsLocal.output]);
 

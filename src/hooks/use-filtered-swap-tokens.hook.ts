@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 
-import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
+import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountTezosTokenSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { applySortByDollarValueDecrease } from 'src/utils/token-metadata.utils';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
+import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export enum TokensInputsEnum {
   From = 'From',
@@ -14,27 +16,34 @@ export enum TokensInputsEnum {
 }
 
 export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = TokensInputsEnum.From) => {
-  const { data: swapTokens } = useSwapTokensSelector();
+  const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
   const userTokens = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const getTokenExchangeRate = useTokenExchangeRateGetter();
 
-  const balances = useMemo<Record<string, string>>(
-    () =>
-      [tezosToken, ...userTokens].reduce(
-        (accumulator, token) => ({ ...accumulator, [toTokenSlug(token.address, token.id)]: token.balance }),
-        {}
-      ),
-    [userTokens]
-  );
+  const balances = useMemo<Record<string, string>>(() => {
+    const balancesRecord: Record<string, string> = {};
+
+    userTokens.forEach(token => (balancesRecord[toTokenSlug(token.address, token.id)] = token.balance));
+
+    balancesRecord[toTokenSlug(tezosToken.address, tezosToken.id)] = tezosToken.balance;
+
+    return balancesRecord;
+  }, [userTokens]);
 
   const swapTokensWithBalances = useMemo<Array<TokenInterface>>(() => {
-    const result = swapTokens.map(token => ({
-      ...token,
-      balance: balances[toTokenSlug(token.address, token.id)] ?? '0'
-    }));
+    const result = swapTokensMetadata.map(token => {
+      const slug = toTokenSlug(token.address, token.id);
 
-    return result;
-  }, [swapTokens, tezosToken, balances]);
+      return {
+        ...token,
+        exchangeRate: getTokenExchangeRate(slug),
+        balance: balances[slug] ?? '0'
+      };
+    });
+
+    return applySortByDollarValueDecrease(result);
+  }, [swapTokensMetadata, tezosToken, balances]);
 
   const fromTokens = useMemo(() => swapTokensWithBalances.filter(isNonZeroBalance), [swapTokensWithBalances]);
 

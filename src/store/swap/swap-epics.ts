@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -10,31 +10,34 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 import { fetchRoute3Tokens, fetchRoute3Dexes$ } from 'src/utils/route3.util';
 import { loadTokensMetadata$ } from 'src/utils/token-metadata.utils';
 
-import { loadSwapDexesAction, loadSwapTokensAction } from './swap-actions';
+import { loadSwapDexesAction, loadSwapTokensAction, loadSwapTokensMetadataAction } from './swap-actions';
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadSwapTokensAction.submit),
     switchMap(() =>
       fetchRoute3Tokens().pipe(
-        switchMap(tokens => {
+        mergeMap(tokens => {
           const filteredTokensList = tokens.filter(token => token.contract !== null);
           const filteredTokensSlugs = filteredTokensList.map(token =>
             toTokenSlug(token.contract ?? '', token.tokenId ?? 0)
           );
 
-          return loadTokensMetadata$(filteredTokensSlugs).pipe(
-            map(tokens => {
-              const tokensMapped: Array<TokenInterface> = tokens.map(tokenMetadata => ({
-                ...tokenMetadata,
-                balance: '0',
-                visibility: VisibilityEnum.Visible
-              }));
+          return merge(
+            of(loadSwapTokensAction.success(tokens)),
+            loadTokensMetadata$(filteredTokensSlugs).pipe(
+              map(tokens => {
+                const tokensMapped: Array<TokenInterface> = tokens.map(tokenMetadata => ({
+                  ...tokenMetadata,
+                  balance: '0',
+                  visibility: VisibilityEnum.Visible
+                }));
 
-              tokensMapped.unshift({ ...TEZ_TOKEN_METADATA, balance: '0', visibility: VisibilityEnum.Visible });
+                tokensMapped.unshift({ ...TEZ_TOKEN_METADATA, balance: '0', visibility: VisibilityEnum.Visible });
 
-              return loadSwapTokensAction.success(tokensMapped);
-            })
+                return loadSwapTokensMetadataAction.success(tokensMapped);
+              })
+            )
           );
         }),
         catchError(err => of(loadSwapTokensAction.fail(err.message)))

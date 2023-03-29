@@ -1,40 +1,38 @@
 import { TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
+import { Route3Token } from 'src/interfaces/route3.interface';
 
 export const getTransferPermissions = async (
   tezos: TezosToolkit,
   spender: string,
   owner: string,
-  tokenToSpend: TokenInterface,
-  amount: BigNumber
+  tokenToSpend: Route3Token,
+  amountToSpendAtomic: BigNumber
 ) => {
   const permissions: { approve: Array<TransferParams>; revoke: Array<TransferParams> } = {
     approve: [],
     revoke: []
   };
 
-  if (tokenToSpend.symbol === 'TEZ') {
+  if (tokenToSpend.contract === null) {
     return permissions;
   }
 
-  const assetContract = await tezos.wallet.at(tokenToSpend.address);
-  if (tokenToSpend.standard === TokenStandardsEnum.Fa12) {
+  const assetContract = await tezos.wallet.at(tokenToSpend.contract);
+  if (tokenToSpend.standard === Route3TokenStandardEnum.fa12) {
     const reset = assetContract.methods.approve(spender, 0).toTransferParams({ mutez: true });
-    const spend = assetContract.methods
-      .approve(spender, amount.multipliedBy(10 ** tokenToSpend.decimals))
-      .toTransferParams({ mutez: true });
+    const spend = assetContract.methods.approve(spender, amountToSpendAtomic).toTransferParams({ mutez: true });
     permissions.approve.push(reset, spend);
-  } else if (tokenToSpend.standard === TokenStandardsEnum.Fa2) {
+  } else if (tokenToSpend.standard === Route3TokenStandardEnum.fa2) {
     const spend = assetContract.methods
       .update_operators([
         {
           add_operator: {
             owner,
             operator: spender,
-            token_id: tokenToSpend.id
+            token_id: tokenToSpend.tokenId
           }
         }
       ])
@@ -45,7 +43,7 @@ export const getTransferPermissions = async (
           remove_operator: {
             owner,
             operator: spender,
-            token_id: tokenToSpend.id
+            token_id: tokenToSpend.tokenId
           }
         }
       ])

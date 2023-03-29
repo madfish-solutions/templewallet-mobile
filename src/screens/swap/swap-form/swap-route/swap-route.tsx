@@ -23,6 +23,7 @@ export const SwapRoute: FC<Route3SwapParamsResponse> = ({ chains, input, output 
   const totalChains = chains.length;
   const totalHops = chains.reduce((accum, chain) => accum + chain.hops.length, 0);
   const shouldShowRoute = isRouteVisible && chains.length > 0;
+
   const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
   const toggleRoutePress = () => setIsVisible(prevState => !prevState);

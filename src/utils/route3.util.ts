@@ -13,11 +13,32 @@ import {
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
+import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
+
 export const fetchRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
-export const fetchRoute3SwapParams = ({ fromSymbol, toSymbol, amount }: Route3SwapParamsRequest) =>
-  route3Api.get<Route3SwapParamsResponse>(`/swap/${fromSymbol}/${toSymbol}/${amount}`).then(response => response.data);
+const parser = (origJSON: string): ReturnType<typeof JSON['parse']> =>
+  JSON.parse(origJSON, (key, value) => {
+    if (key === 'input' || key === 'output') {
+      return new BigNumber(value);
+    }
+
+    return value;
+  });
+
+export const fetchRoute3SwapParams = ({
+  fromSymbol,
+  toSymbol,
+  amount
+}: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
+  fetch(`https://temple.3route.io/swap/${fromSymbol}/${toSymbol}/${amount}`, {
+    headers: {
+      Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
+    }
+  })
+    .then(res => res.text())
+    .then(res => parser(res));
 
 export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));
@@ -31,7 +52,7 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
       hops.push({
         code: (j === 0 ? 1 : 0) + (hop.forward ? 2 : 0),
         dex_id: hop.dex,
-        amount_opt: j === 0 ? new BigNumber(chain.input).multipliedBy(10 ** decimals) : null
+        amount_opt: j === 0 ? chain.input.multipliedBy(10 ** decimals) : null
       });
     }
   }
