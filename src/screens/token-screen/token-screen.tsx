@@ -15,8 +15,13 @@ import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum'
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import {
+  useSelectedAccountSelector,
+  useSelectedAccountTezosTokenSelector,
+  useTokensListSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
@@ -29,13 +34,19 @@ export const TokenScreen = () => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
+
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const token = useMemo(
-    () =>
-      tokensList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(initialToken)) ?? initialToken,
-    [tokensList, initialToken]
-  );
+
+  const token = useMemo(() => {
+    const slug = getTokenSlug(initialToken);
+    if (slug === TEZ_TOKEN_SLUG) {
+      return tezosToken;
+    }
+
+    return tokensList.find(candidateToken => getTokenSlug(candidateToken) === slug) ?? initialToken;
+  }, [tokensList, initialToken, tezosToken]);
 
   useEffect(() => {
     dispatch(

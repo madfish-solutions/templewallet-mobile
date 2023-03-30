@@ -35,19 +35,14 @@ import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
-type FlatListItem = TokenInterface | typeof TEZ_TOKEN_SLUG | typeof AD_PLACEHOLDER;
-const keyExtractor = (item: FlatListItem) => {
-  if (item === TEZ_TOKEN_SLUG || item === AD_PLACEHOLDER) {
-    return item;
-  }
 
-  return getTokenSlug(item);
-};
+type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
+const ITEMS_BEFORE_AD = 4;
 // padding size + icon size
 const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
+const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
-const ITEMS_BEFORE_AD = 4;
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
@@ -113,12 +108,8 @@ export const TokensList: FC = () => {
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
-  const renderFlatListItem: ListRenderItem<FlatListItem> = useCallback(
+  const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {
-      if (item === TEZ_TOKEN_SLUG) {
-        return <TezosToken />;
-      }
-
       if (item === AD_PLACEHOLDER) {
         return (
           <View>
@@ -135,11 +126,17 @@ export const TokensList: FC = () => {
         );
       }
 
+      const slug = getTokenSlug(item);
+
+      if (slug === TEZ_TOKEN_SLUG) {
+        return <TezosToken />;
+      }
+
       if (item.address.startsWith('filler') === true) {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      return <TokenListItem token={item} apy={apyRates[getTokenSlug(item)]} />;
+      return <TokenListItem token={item} apy={apyRates[slug]} />;
     },
     [apyRates, styles]
   );
@@ -181,7 +178,7 @@ export const TokensList: FC = () => {
         <FlatList
           scrollEnabled
           data={renderData}
-          renderItem={renderFlatListItem}
+          renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemLayout={getItemLayout}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}

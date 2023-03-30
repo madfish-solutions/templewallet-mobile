@@ -8,6 +8,7 @@ import { TokenContainerProps } from 'src/components/token-container/token-contai
 import { EmptyFn } from 'src/config/general';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { useTokenListItemStyles } from './token-list-item.styles';
 
@@ -44,5 +45,5 @@ export const TokenListItem: FC<Props> = memo(
       </TouchableOpacity>
     );
   },
-  (prevProps, nextProps) => JSON.stringify(prevProps) === JSON.stringify(nextProps)
+  (prevProps, nextProps) => jsonEqualityFn(prevProps, nextProps)
 );
