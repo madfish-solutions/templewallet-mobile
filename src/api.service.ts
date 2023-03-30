@@ -47,3 +47,5 @@ export const everstakeApi = axios.create({
     'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
   }
 });
+
+export const optimalApi = axios.create({ baseURL: 'https://i.useoptimal.xyz' });

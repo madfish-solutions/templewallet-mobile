@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { madfishLink, quipuLink, supportUkraine, yupanaLink } from '../../../config/socials';
+import { madfishLink, quipuLink, supportUkraine, yupanaLink } from 'src/config/socials';
+
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
 
