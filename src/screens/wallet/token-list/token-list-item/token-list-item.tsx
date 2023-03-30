@@ -31,7 +31,7 @@ export const TokenListItem: FC<Props> = memo(
     }, [onPress]);
 
     return (
-      <TouchableOpacity onPress={handleOnPress}>
+      <TouchableOpacity onPress={handleOnPress} style={styles.container}>
         <TokenContainer token={token} apy={apy}>
           <View style={styles.rightContainer}>
             <HideBalance style={styles.balanceText}>
