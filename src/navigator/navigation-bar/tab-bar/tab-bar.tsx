@@ -61,15 +61,6 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           disabledOnPress={disabledOnPress}
         />
         <TabBarButton
-          label="DApps"
-          iconName={IconNameEnum.DApps}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.DApps}
-          focused={isStackFocused(dAppsStackScreens)}
-          disabled={isDcpNode}
-          disabledOnPress={disabledOnPress}
-        />
-        <TabBarButton
           label="Swap"
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
@@ -80,6 +71,15 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
               : undefined
           }
           focused={isStackFocused(swapStackScreens)}
+          disabled={isDcpNode}
+          disabledOnPress={disabledOnPress}
+        />
+        <TabBarButton
+          label="DApps"
+          iconName={IconNameEnum.DApps}
+          iconWidth={formatSize(32)}
+          routeName={ScreensEnum.DApps}
+          focused={isStackFocused(dAppsStackScreens)}
           disabled={isDcpNode}
           disabledOnPress={disabledOnPress}
         />

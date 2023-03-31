@@ -56,18 +56,18 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             disabledOnPress={disabledOnPress}
           />
           <SideBarButton
-            label="DApps"
-            iconName={IconNameEnum.DApps}
-            routeName={ScreensEnum.DApps}
-            focused={isStackFocused(dAppsStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
-          />
-          <SideBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={disabledOnPress}
+          />
+          <SideBarButton
+            label="DApps"
+            iconName={IconNameEnum.DApps}
+            routeName={ScreensEnum.DApps}
+            focused={isStackFocused(dAppsStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
           />
