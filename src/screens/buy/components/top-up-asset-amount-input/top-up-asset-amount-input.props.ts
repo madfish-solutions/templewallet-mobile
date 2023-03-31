@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { TextInputProps } from 'react-native';
 
 import { EmptyFn, EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
@@ -11,9 +12,11 @@ export interface TopUpAssetAmountInterface {
   max?: number;
 }
 
-export interface TopUpFormAssetAmountInputProps {
+export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   name: string;
   label: string;
+  description?: string;
+  emptyListText?: string;
   assetsList?: TopUpInputInterface[];
   singleAsset?: boolean;
   isError?: boolean;
@@ -21,9 +24,6 @@ export interface TopUpFormAssetAmountInputProps {
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
   precision?: number;
-  amountInputTestID?: string;
-  assetInputTestID?: string;
-  assetOptionTestIDPrefix?: string;
   newValueFn?: (
     prevValue: TopUpAssetAmountInterface,
     newAsset: TopUpInputInterface,

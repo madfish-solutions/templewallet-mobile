@@ -41,7 +41,7 @@ const loadMoonPayFiatCurrenciesEpic = (action$: Observable<Action>) =>
               icon,
               minAmount: minBuyAmount,
               maxAmount: maxBuyAmount,
-              precision,
+              precision: Math.min(precision, 2), // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
               type: TopUpInputTypeEnum.Fiat
             }))
           )

@@ -1,18 +1,14 @@
-import { black } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useSelectedPaymentProviderStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(10),
+    padding: formatSize(8),
     borderRadius: formatSize(10),
-    backgroundColor: colors.white,
-    ...generateShadow(1, black)
+    backgroundColor: colors.white
   },
   logoContainer: {
     borderWidth: formatSize(0.5),
@@ -39,6 +35,6 @@ export const useSelectedPaymentProviderStyles = createUseStyles(({ colors, typog
   dropdownIcon: {
     position: 'absolute',
     top: formatSize(6),
-    right: formatSize(8)
+    right: formatSize(13)
   }
 }));

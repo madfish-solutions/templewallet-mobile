@@ -15,15 +15,16 @@ import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-contr
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
+import { DropdownSelectors } from './dropdown.selector';
 import { useDropdownStyles } from './dropdown.styles';
 
 export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
+  emptyListText?: string;
   isSearchable?: boolean;
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
-  itemTestIDPrefix?: string;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
@@ -61,15 +62,13 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
+  emptyListText = 'No assets found.',
   description,
   itemHeight = formatSize(64),
   itemContainerStyle,
-  itemTestIDPrefix,
   disabled = false,
   isSearchable = false,
   setSearchValue = emptyFn,
@@ -98,18 +97,14 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity
-          key={index}
-          onPress={handlePress}
-          testID={isDefined(itemTestIDPrefix) ? `${itemTestIDPrefix}/${index}` : undefined}
-        >
+        <TouchableOpacity key={index} onPress={handlePress} testID={`${DropdownSelectors.option}/${index}`}>
           <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem, itemTestIDPrefix]
+    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
   );
 
   const scroll = useCallback(() => {
@@ -150,7 +145,7 @@ const DropdownComponent = <T extends unknown>({
             keyExtractor={keyExtractor}
             getItemLayout={getItemLayout}
             contentContainerStyle={styles.flatListContentContainer}
-            ListEmptyComponent={ListEmptyComponent}
+            ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
             windowSize={10}
             updateCellsBatchingPeriod={150}
           />

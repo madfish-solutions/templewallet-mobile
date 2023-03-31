@@ -20,8 +20,9 @@ const flagHeight = 15;
 
 export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(32) }) => {
   const [isFailed, setIsFailed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedIconUri, setLoadedIconUri] = useState('');
   const styles = useStaticTokenIconStyles();
+  const isLoading = loadedIconUri !== uri;
 
   const imageStyle = useMemo<StyleProp<ImageStyle>>(
     () => ({ width: size, height: size, display: isFailed || isLoading ? 'none' : 'flex' }),
@@ -35,17 +36,16 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
   const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
 
   const handleLoad = () => {
-    setIsLoading(false);
+    setLoadedIconUri(uri);
     setIsFailed(false);
   };
   const handleError = () => {
-    setIsLoading(false);
+    setLoadedIconUri(uri);
     setIsFailed(true);
   };
 
   useEffect(() => {
     setIsFailed(false);
-    setIsLoading(true);
   }, [uri]);
 
   if (isFailed) {

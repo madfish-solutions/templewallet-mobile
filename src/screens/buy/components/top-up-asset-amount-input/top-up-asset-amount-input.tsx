@@ -20,6 +20,7 @@ import {
   TopUpTokenDropdownItem
 } from '../top-up-token-dropdown-item/top-up-token-dropdown-item';
 import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './top-up-asset-amount-input.props';
+import { TopUpAssetAmountInputSelectors } from './top-up-asset-amount-input.selector';
 import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styles';
 import { TopUpAssetValueText } from './top-up-asset-value-text';
 
@@ -46,6 +47,8 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
   ({
     value = initialData.coinFrom,
     label,
+    description = 'Assets',
+    emptyListText,
     assetsList = [],
     singleAsset = false,
     isSearchable = false,
@@ -55,9 +58,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     setSearchValue,
     meta,
     precision = 18,
-    amountInputTestID,
-    assetInputTestID,
-    assetOptionTestIDPrefix,
+    testID,
     newValueFn = defaultNewValueFn,
     onBlur,
     onFocus,
@@ -121,7 +122,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
         </View>
         <Divider size={formatSize(8)} />
 
-        <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+        <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]} testID={testID}>
           <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
           <TextInput
             ref={amountInputRef}
@@ -134,7 +135,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
             selection={selectionOptions}
             autoCapitalize="words"
             keyboardType="numeric"
-            testID={amountInputTestID}
+            testID={TopUpAssetAmountInputSelectors.amountInput}
             onBlur={handleBlur}
             onFocus={handleFocus}
             onChangeText={handleChange}
@@ -146,7 +147,8 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
               <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
             ) : (
               <Dropdown
-                description="Assets"
+                description={description}
+                emptyListText={emptyListText}
                 value={value.asset}
                 list={assetsList}
                 isSearchable={isSearchable}
@@ -155,8 +157,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
                 keyExtractor={(token: TopUpInputInterface, index) => `${index}_${token.code}_${token.network}`}
-                testID={assetInputTestID}
-                itemTestIDPrefix={assetOptionTestIDPrefix}
+                testID={TopUpAssetAmountInputSelectors.assetInput}
                 onValueChange={handleTokenChange}
               />
             )}

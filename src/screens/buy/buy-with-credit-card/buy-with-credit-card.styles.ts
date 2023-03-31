@@ -1,5 +1,7 @@
+import { black } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useBuyWithCreditCardStyles = createUseStyles(({ colors, typography }) => ({
   arrowContainer: {
@@ -40,12 +42,18 @@ export const useBuyWithCreditCardStyles = createUseStyles(({ colors, typography 
     letterSpacing: formatSize(0.07)
   },
   paymentProviderItemContainer: {
-    borderRadius: formatSize(10)
+    borderRadius: formatSize(10),
+    borderWidth: formatSize(1),
+    borderColor: colors.gray4
   },
   errorText: {
     ...typography.caption11Regular,
     marginTop: formatSize(8),
     color: colors.destructive,
     letterSpacing: formatSize(0.07)
+  },
+  paymentProviderDropdownContainer: {
+    ...generateShadow(1, black),
+    borderRadius: formatSize(10)
   }
 }));

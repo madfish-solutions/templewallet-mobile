@@ -37,13 +37,13 @@ import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-messa
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
+import { jsonEqualityFn } from 'src/utils/store.utils';
 import { createOrder as createUtorgOrder } from 'src/utils/utorg.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider/payment-provider';
 import { SelectedPaymentProvider } from '../components/selected-payment-provider/selected-payment-provider';
 import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
 import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
-import { outputTokensList as exolixOutputTokensList } from '../crypto/exolix/config';
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from './buy-with-credit-card.form';
 import { BuyWithCreditCardSelectors } from './buy-with-credit-card.selector';
 import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
@@ -51,7 +51,7 @@ import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currenc
 import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
 import { usePaymentOptions } from './hooks/use-payment-options';
 
-const DEFAULT_CURRENCY = {
+const DEFAULT_INPUT_CURRENCY = {
   code: 'USD',
   icon: 'https://static.moonpay.com/widget/currencies/usd.svg',
   name: 'US Dollar',
@@ -61,6 +61,16 @@ const DEFAULT_CURRENCY = {
   type: TopUpInputTypeEnum.Fiat
 };
 
+const DEFAULT_OUTPUT_TOKEN = {
+  code: 'XTZ',
+  name: 'Tezos',
+  icon: 'https://exolix.com/icons/coins/XTZ.png',
+  network: 'tezos',
+  networkFullName: 'Tezos',
+  slug: 'tez',
+  type: TopUpInputTypeEnum.Crypto
+};
+
 const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
   asset: newAsset,
   amount: isDefined(newAsset.precision) ? amount?.decimalPlaces(newAsset.precision) : amount,
@@ -68,7 +78,6 @@ const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface,
   max: newAsset.maxAmount
 });
 
-// TODO: add selectors and analytics
 export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
   const colors = useColors();
@@ -98,7 +107,7 @@ export const BuyWithCreditCard: FC = () => {
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
       try {
-        trackEvent('BUY_WITH_CREDIT_CARD_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        trackEvent('BUY_WITH_CREDIT_CARD_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
           inputAmount: values.sendInput.amount?.toString(),
           inputAsset: values.sendInput.asset.code,
           outputAmount: values.getOutput.amount?.toString(),
@@ -142,11 +151,11 @@ export const BuyWithCreditCard: FC = () => {
   const formik = useFormik<BuyWithCreditCardFormValues>({
     initialValues: {
       sendInput: {
-        asset: DEFAULT_CURRENCY,
+        asset: DEFAULT_INPUT_CURRENCY,
         amount: undefined
       },
       getOutput: {
-        asset: exolixOutputTokensList[0],
+        asset: DEFAULT_OUTPUT_TOKEN,
         amount: undefined
       }
     },
@@ -158,6 +167,7 @@ export const BuyWithCreditCard: FC = () => {
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
   const paymentProviderMeta = getFieldMeta('paymentProvider');
+  const manuallySelectedProviderId = useRef<TopUpProviderEnum>();
 
   const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
     inputAmount,
@@ -169,7 +179,7 @@ export const BuyWithCreditCard: FC = () => {
     (paymentProviderMeta.touched || submitCount > 0) &&
     paymentOptionsToDisplay.length > 0;
 
-  const handlePaymentProviderChange = useCallback(
+  const switchPaymentProvider = useCallback(
     async (newProvider?: PaymentProviderInterface) => {
       const newOutputAmount = newProvider?.outputAmount;
       await Promise.all([
@@ -185,18 +195,19 @@ export const BuyWithCreditCard: FC = () => {
     const { asset: currentInputAsset, amount: currentInputAmount } = prevInputValue;
     const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
 
-    if (isDefined(newInputAsset) && newInputAsset !== currentInputAsset) {
+    if (isDefined(newInputAsset) && !jsonEqualityFn(newInputAsset, currentInputAsset)) {
       setFieldValue('sendInput', newValueFn(prevInputValue, newInputAsset, currentInputAmount));
     }
   }, [formik, allFiatCurrencies]);
 
   useEffect(() => {
-    const newPaymentOption = allPaymentOptions.find(({ id }) => id === values.paymentProvider?.id);
+    const prevPaymentProvider = formik.values.paymentProvider;
+    const newPaymentOption = paymentOptionsToDisplay.find(({ id }) => id === prevPaymentProvider?.id);
 
-    if (isDefined(newPaymentOption) && newPaymentOption !== values.paymentProvider) {
-      handlePaymentProviderChange(newPaymentOption);
+    if (isDefined(newPaymentOption) && !jsonEqualityFn(newPaymentOption, prevPaymentProvider)) {
+      switchPaymentProvider(newPaymentOption);
     }
-  }, [formik, allPaymentOptions, handlePaymentProviderChange]);
+  }, [formik, paymentOptionsToDisplay, switchPaymentProvider]);
 
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
@@ -206,15 +217,14 @@ export const BuyWithCreditCard: FC = () => {
     return undefined;
   }, [inputAmount, outputAmount]);
 
-  const inputAmountRef = useRef<BigNumber>();
-  const handleInputValueChange = useMemo(
+  const inputValueRef = useRef(values.sendInput);
+  const updateOutput = useMemo(
     () =>
-      debounce(async (newInput: TopUpAssetAmountInterface) => {
-        setIsLoading(true);
-        inputAmountRef.current = newInput.amount;
+      debounce(async (newInput: TopUpAssetAmountInterface, shouldSwitchBetweenProviders: boolean) => {
+        inputValueRef.current = newInput;
         const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
 
-        if (inputAmountRef.current !== newInput.amount) {
+        if (inputValueRef.current !== newInput) {
           return;
         }
 
@@ -228,11 +238,37 @@ export const BuyWithCreditCard: FC = () => {
           {},
           newInput.amount
         );
+        const autoselectedPaymentProvider = patchedPaymentProviders[0];
 
-        await handlePaymentProviderChange(patchedPaymentProviders[0]);
+        if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderId.current)) {
+          void switchPaymentProvider(autoselectedPaymentProvider);
+        } else if (isDefined(newInput.amount)) {
+          const patchedSameProvider = patchedPaymentProviders.find(
+            ({ id }) => id === formik.values.paymentProvider?.id
+          );
+          const newPaymentProvider = patchedSameProvider ?? autoselectedPaymentProvider;
+          void switchPaymentProvider(newPaymentProvider);
+        }
         setIsLoading(false);
-      }),
-    [updateOutputAmounts, handlePaymentProviderChange, allPaymentOptions]
+      }, 200),
+    [formik, updateOutputAmounts, allPaymentOptions, switchPaymentProvider]
+  );
+
+  const handleInputValueChange = useCallback(
+    (newInput: TopUpAssetAmountInterface) => {
+      inputValueRef.current = newInput;
+      setIsLoading(true);
+      void updateOutput(newInput, true);
+    },
+    [updateOutput]
+  );
+
+  const handlePaymentProviderChange = useCallback(
+    (newProvider?: PaymentProviderInterface) => {
+      manuallySelectedProviderId.current = newProvider?.id;
+      void switchPaymentProvider(newProvider);
+    },
+    [switchPaymentProvider]
   );
 
   useTimerEffect(
@@ -242,11 +278,12 @@ export const BuyWithCreditCard: FC = () => {
       dispatch(loadUtorgCurrenciesActions.submit());
       dispatch(loadAliceBobCurrenciesActions.submit());
       if (!isLoading) {
-        void handleInputValueChange(values.sendInput);
+        setIsLoading(true);
+        void updateOutput(values.sendInput, false);
       }
     },
     10000,
-    [handleInputValueChange, dispatch, values.sendInput, isLoading],
+    [updateOutput, dispatch, values.sendInput, isLoading],
     false
   );
 
@@ -259,13 +296,13 @@ export const BuyWithCreditCard: FC = () => {
             <TopUpFormAssetAmountInput
               name="sendInput"
               label="Send"
+              description="Select a fiat currency"
+              emptyListText="Not found fiat currency"
               isSearchable
               assetsList={filteredFiatCurrencies}
               newValueFn={newValueFn}
               precision={inputAsset.precision}
-              amountInputTestID={BuyWithCreditCardSelectors.fiatAmountInput}
-              assetInputTestID={BuyWithCreditCardSelectors.fiatAssetSelector}
-              assetOptionTestIDPrefix={BuyWithCreditCardSelectors.fiatAssetOption}
+              testID={BuyWithCreditCardSelectors.sendInput}
               onValueChange={handleInputValueChange}
               onBlur={() => setFieldTouched('sendInput')}
               setSearchValue={setInputSearchValue}
@@ -278,47 +315,49 @@ export const BuyWithCreditCard: FC = () => {
             <TopUpFormAssetAmountInput
               name="getOutput"
               label="Get"
+              description="Select a crypto currency"
+              emptyListText="Not found crypto currency"
               editable={false}
               isSearchable
               assetsList={filteredCryptoCurrencies}
-              amountInputTestID={BuyWithCreditCardSelectors.cryptoAmountInput}
-              assetInputTestID={BuyWithCreditCardSelectors.cryptoAssetSelector}
-              assetOptionTestIDPrefix={BuyWithCreditCardSelectors.cryptoAssetOption}
+              testID={BuyWithCreditCardSelectors.getOutput}
               onBlur={() => setFieldTouched('getOutput')}
               setSearchValue={setOutputSearchValue}
             />
           </FormikProvider>
-          <Divider />
-          <Dropdown
-            value={values.paymentProvider}
-            list={paymentOptionsToDisplay}
-            description="Select payment provider"
-            itemHeight={formatSize(81)}
-            equalityFn={(a, b) => a.name === b?.name}
-            itemContainerStyle={styles.paymentProviderItemContainer}
-            renderValue={SelectedPaymentProvider}
-            renderListItem={renderPaymentProviderOption}
-            keyExtractor={x => x.name}
-            testID={BuyWithCreditCardSelectors.providerSelector}
-            itemTestIDPrefix={BuyWithCreditCardSelectors.providerOption}
-            onValueChange={handlePaymentProviderChange}
-          />
+          <Divider size={formatSize(16)} />
+          <View style={styles.paymentProviderDropdownContainer}>
+            <Dropdown
+              value={values.paymentProvider}
+              list={paymentOptionsToDisplay}
+              description="Select payment provider"
+              emptyListText="No providers found"
+              itemHeight={formatSize(81)}
+              equalityFn={(a, b) => a.id === b?.id}
+              itemContainerStyle={styles.paymentProviderItemContainer}
+              renderValue={SelectedPaymentProvider}
+              renderListItem={renderPaymentProviderOption}
+              keyExtractor={x => x.id}
+              testID={BuyWithCreditCardSelectors.provider}
+              onValueChange={handlePaymentProviderChange}
+            />
+          </View>
           {isPaymentProviderError && <Text style={styles.errorText}>Please select payment provider</Text>}
           <Divider size={formatSize(16)} />
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
               {isDefined(exchangeRate) && isDefined(inputAsset.code) && !isLoading
-                ? `1 ${inputAsset.code} ≈ ${exchangeRate} ${outputAsset.code}`
+                ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.code}`
                 : '---'}
             </Text>
           </View>
+          <Divider size={formatSize(18)} />
+          <Disclaimer
+            title="Disclaimer"
+            texts={['Temple integrated third-party solutions to buy TEZ or USDT with crypto or a Debit/Credit card.']}
+          />
         </View>
-        <Divider size={formatSize(16)} />
-        <Disclaimer
-          title="Disclaimer"
-          texts={['Temple integrated third-party solutions to buy TEZ or USDT with crypto or a Debit/Credit card.']}
-        />
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonLargePrimary

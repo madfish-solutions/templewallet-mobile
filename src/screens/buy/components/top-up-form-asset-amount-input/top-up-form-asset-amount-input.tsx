@@ -12,14 +12,14 @@ import {
 export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   name,
   label,
+  description,
+  emptyListText,
   assetsList = [],
   singleAsset = false,
   editable,
   isSearchable = false,
   precision,
-  amountInputTestID,
-  assetInputTestID,
-  assetOptionTestIDPrefix,
+  testID,
   newValueFn,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
@@ -47,6 +47,8 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       name={name}
       value={field.value}
       label={label}
+      description={description}
+      emptyListText={emptyListText}
       assetsList={assetsList}
       singleAsset={singleAsset}
       isError={isError}
@@ -55,9 +57,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       editable={editable}
       precision={precision}
       setSearchValue={setSearchValue}
-      amountInputTestID={amountInputTestID}
-      assetInputTestID={assetInputTestID}
-      assetOptionTestIDPrefix={assetOptionTestIDPrefix}
+      testID={testID}
       newValueFn={newValueFn}
       onBlur={handleBlur}
       onValueChange={handleValueChange}

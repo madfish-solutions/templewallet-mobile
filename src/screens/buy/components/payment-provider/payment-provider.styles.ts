@@ -60,8 +60,8 @@ export const usePaymentProviderStyles = createUseStyles(({ colors, typography })
   },
   checkmark: {
     position: 'absolute',
-    top: formatSize(-5),
-    right: formatSize(-3)
+    top: formatSize(-4.5),
+    right: formatSize(-2.5)
   },
   noTagsCheckmark: {
     top: formatSize(-2),

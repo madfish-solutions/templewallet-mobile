@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { ImageRequireSource, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -35,73 +35,70 @@ interface Props {
   isDropdownClosed?: boolean;
 }
 
-export const TopUpTokenDropdownItem: FC<Props> = ({
-  token,
-  actionIconName,
-  iconSize = formatSize(40),
-  isDropdownClosed = false
-}) => {
-  const styles = useTopUpTokenDropdownItemStyles();
+export const TopUpTokenDropdownItem: FC<Props> = memo(
+  ({ token, actionIconName, iconSize = formatSize(40), isDropdownClosed = false }) => {
+    const styles = useTopUpTokenDropdownItemStyles();
 
-  const tokenIcon = useMemo(() => {
-    if (token?.code === 'UAH' && token?.type === TopUpInputTypeEnum.Fiat) {
-      return <Icon name={IconNameEnum.Uah} size={iconSize} />;
-    }
+    const tokenIcon = useMemo(() => {
+      if (token?.code === 'UAH' && token?.type === TopUpInputTypeEnum.Fiat) {
+        return <Icon name={IconNameEnum.Uah} size={iconSize} />;
+      }
 
-    if (token?.code === 'XTZ') {
-      return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
-    }
+      if (token?.code === 'XTZ') {
+        return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
+      }
 
-    if (isDefined(token) && token?.code in preloadedTokensIcons) {
-      return (
-        <FastImage
-          source={preloadedTokensIcons[token.code]}
-          style={{ width: iconSize, height: iconSize, borderRadius: iconSize / 2 }}
-        />
-      );
-    }
+      if (isDefined(token) && token?.code in preloadedTokensIcons) {
+        return (
+          <FastImage
+            source={preloadedTokensIcons[token.code]}
+            style={{ width: iconSize, height: iconSize, borderRadius: iconSize / 2 }}
+          />
+        );
+      }
 
-    return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
-  }, [token]);
-  const tokenCodeToDisplay = token?.code === 'XTZ' ? 'TEZ' : token?.code;
+      return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
+    }, [token]);
+    const tokenCodeToDisplay = token?.code === 'XTZ' ? 'TEZ' : token?.code;
 
-  return (
-    <View style={[styles.row, styles.height40]}>
-      {tokenIcon}
+    return (
+      <View style={[styles.row, styles.height40]}>
+        {tokenIcon}
 
-      <Divider size={formatSize(8)} />
+        <Divider size={formatSize(8)} />
 
-      <View style={styles.infoContainer}>
-        <View style={[styles.row, styles.justifySpaceBetween]}>
-          <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
-            {tokenCodeToDisplay}
-          </Text>
-          <Divider size={formatSize(8)} />
-          {!isDropdownClosed && token?.type !== TopUpInputTypeEnum.Fiat && (
-            <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
-              {token?.name}
+        <View style={styles.infoContainer}>
+          <View style={[styles.row, styles.justifySpaceBetween]}>
+            <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
+              {tokenCodeToDisplay}
             </Text>
-          )}
-          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
-        </View>
-
-        {token?.name !== '' && (
-          <View style={styles.row}>
-            <Text {...getTruncatedProps(styles.textRegular13)}>
-              {isDropdownClosed &&
-                token?.type === TopUpInputTypeEnum.Crypto &&
-                (token?.networkShortName ?? token?.networkFullName)}
-              {!isDropdownClosed && token?.type === TopUpInputTypeEnum.Crypto && getProperNetworkFullName(token)}
-              {token?.type === TopUpInputTypeEnum.Fiat && token?.name}
-            </Text>
-
-            <Divider size={formatSize(4)} />
+            <Divider size={formatSize(8)} />
+            {!isDropdownClosed && token?.type !== TopUpInputTypeEnum.Fiat && (
+              <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
+                {token?.name}
+              </Text>
+            )}
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>
-        )}
+
+          {token?.name !== '' && (
+            <View style={styles.row}>
+              <Text {...getTruncatedProps(styles.textRegular13)}>
+                {isDropdownClosed &&
+                  token?.type === TopUpInputTypeEnum.Crypto &&
+                  (token?.networkShortName ?? token?.networkFullName)}
+                {!isDropdownClosed && token?.type === TopUpInputTypeEnum.Crypto && getProperNetworkFullName(token)}
+                {token?.type === TopUpInputTypeEnum.Fiat && token?.name}
+              </Text>
+
+              <Divider size={formatSize(4)} />
+            </View>
+          )}
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+);
 
 export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInputInterface> = ({ item, isSelected }) => (
   <TopUpTokenDropdownItem token={item} actionIconName={isSelected ? IconNameEnum.Check : undefined} />

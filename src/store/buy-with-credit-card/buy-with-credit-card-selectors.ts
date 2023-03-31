@@ -7,8 +7,3 @@ export const useFiatCurrenciesSelector = (topUpProvider: TopUpProviderEnum) =>
 
 export const useCryptoCurrenciesSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].data.crypto);
-
-export const useCurrenciesLoadingSelector = () =>
-  useSelector(({ buyWithCreditCard }) =>
-    Object.values(buyWithCreditCard.currencies).some(({ isLoading }) => isLoading)
-  );
