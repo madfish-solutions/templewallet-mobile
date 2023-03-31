@@ -88,7 +88,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
           <Divider size={formatSize(16)} />
           <View>
             <Text style={styles.cellTitle}>Staking:</Text>
-            <Text style={styles.cellValueText}>{kFormatter(baker.stakingBalance)}</Text>
+            <Text style={styles.cellValueText}>
+              {isDefined(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
+            </Text>
           </View>
         </View>
       </View>

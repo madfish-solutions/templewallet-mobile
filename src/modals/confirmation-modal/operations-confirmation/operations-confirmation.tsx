@@ -1,6 +1,6 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -33,10 +33,19 @@ interface Props extends TestIdProps {
   sender: AccountInterface;
   opParams: ParamsWithKind[];
   isLoading: boolean;
+  disclaimer?: ReactNode;
   onSubmit: EventFn<ParamsWithKind[]>;
 }
 
-export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading, onSubmit, children, testID }) => {
+export const OperationsConfirmation: FC<Props> = ({
+  sender,
+  opParams,
+  isLoading,
+  onSubmit,
+  children,
+  disclaimer,
+  testID
+}) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
@@ -116,6 +125,7 @@ export const OperationsConfirmation: FC<Props> = ({ sender, opParams, isLoading,
                 <Divider size={formatSize(8)} />
 
                 <OperationsPreview opParams={opParamsWithEstimations} />
+                {disclaimer}
                 <Divider />
 
                 <FeeFormInput
