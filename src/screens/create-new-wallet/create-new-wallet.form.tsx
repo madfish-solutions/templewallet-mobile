@@ -1,6 +1,6 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import { filter, from, map, of, switchMap, tap } from 'rxjs';
+import { from, map, of, switchMap, tap } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
 import { acceptTermsValidation } from 'src/form/validation/accept-terms';
@@ -15,9 +15,8 @@ import {
   setIsAnalyticsEnabled,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
-import { showSuccessToast, buildPipeErrorToaster, showErrorToastByError } from 'src/toast/toast.utils';
+import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { saveCloudBackup } from 'src/utils/cloud-backup';
-import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { generateSeed } from 'src/utils/keys.util';
 import { useSubjectSubscription$ } from 'src/utils/rxjs.utils';
@@ -60,27 +59,25 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
           tap(({ analytics }) => dispatch(setIsAnalyticsEnabled(analytics))),
           switchMap(({ password, useBiometry }) =>
             (isRestoreFromCloudFlow ? of(cloudBackupMnemonic) : from(generateSeed())).pipe(
-              map(seedPhrase => {
-                importWallet({ seedPhrase, password, useBiometry });
-
-                return { seedPhrase, password };
-              }),
-              buildPipeErrorToaster()
+              // importWallet dispatches `hideLoaderAction` when done
+              tap(seedPhrase => importWallet({ seedPhrase, password, useBiometry })),
+              map(seedPhrase => ({ seedPhrase, password }))
             )
-          ),
-          tap(value => {
-            // importWallet hides loader too
-            !isDefined(value) && dispatch(hideLoaderAction());
-          }),
-          filter(isDefined)
+          )
         )
-        .subscribe(({ seedPhrase, password }) => {
-          if (Boolean(backupToCloud)) {
-            return void doBackupToCloud(seedPhrase, password, dispatch);
-          }
+        .subscribe({
+          next: ({ seedPhrase, password }) => {
+            if (Boolean(backupToCloud)) {
+              return void doBackupToCloud(seedPhrase, password, dispatch);
+            }
 
-          if (!isRestoreFromCloudFlow) {
-            dispatch(requestSeedPhraseBackupAction());
+            if (!isRestoreFromCloudFlow) {
+              dispatch(requestSeedPhraseBackupAction());
+            }
+          },
+          error: err => {
+            dispatch(hideLoaderAction());
+            showErrorToastByError(err);
           }
         }),
     [isRestoreFromCloudFlow, backupToCloud, cloudBackupMnemonic, dispatch, importWallet, generateSeed, doBackupToCloud]

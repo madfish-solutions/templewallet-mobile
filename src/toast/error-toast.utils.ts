@@ -1,5 +1,4 @@
 import Toast from 'react-native-toast-message';
-import { catchError, of, OperatorFunction } from 'rxjs';
 
 import { EmptyFn } from 'src/config/general';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
@@ -103,10 +102,3 @@ export const showErrorToastByError = (error: unknown, fallbackTitle?: string, ta
     showErrorToast({ description: title });
   }
 };
-
-export const buildPipeErrorToaster = <T>(fallbackTitle?: string, takeDescriptionFromErrorMsg = false) =>
-  catchError((error: unknown) => {
-    showErrorToastByError(error, fallbackTitle, takeDescriptionFromErrorMsg);
-
-    return of(void 0);
-  }) as OperatorFunction<T, T | undefined>;

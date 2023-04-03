@@ -3,13 +3,7 @@ import Toast from 'react-native-toast-message';
 import { EmptyFn } from 'src/config/general';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
 
-export {
-  ToastError,
-  showErrorToast,
-  showErrorToastByError,
-  catchThrowToastError,
-  buildPipeErrorToaster
-} from './error-toast.utils';
+export { ToastError, showErrorToast, showErrorToastByError, catchThrowToastError } from './error-toast.utils';
 
 interface ToastProps {
   description: string;
