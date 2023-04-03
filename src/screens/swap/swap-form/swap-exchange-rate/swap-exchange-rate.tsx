@@ -25,7 +25,7 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
 
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && isDefined(outputAmount)) {
-      const rate = inputAmount.dividedBy(inputAmount);
+      const rate = inputAmount.dividedBy(outputAmount);
 
       if (rate.isFinite()) {
         return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;

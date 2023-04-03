@@ -19,14 +19,19 @@ import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
 export const fetchRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
-const parser = (origJSON: string): ReturnType<typeof JSON['parse']> =>
-  JSON.parse(origJSON, (key, value) => {
+const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
+  const stringedJSON = origJSON
+    .replace(/input":\s*([-+Ee0-9.]+)/g, 'input":"$1"')
+    .replace(/output":\s*([-+Ee0-9.]+)/g, 'output":"$1"');
+
+  return JSON.parse(stringedJSON, (key, value) => {
     if (key === 'input' || key === 'output') {
       return new BigNumber(value);
     }
 
     return value;
   });
+};
 
 export const fetchRoute3SwapParams = ({
   fromSymbol,

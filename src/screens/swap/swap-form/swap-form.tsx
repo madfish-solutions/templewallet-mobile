@@ -168,16 +168,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const fromRoute3Token = useSwapTokenBySlugSelector(inputAssetSlug ?? '');
   const toRoute3Token = useSwapTokenBySlugSelector(outputAssetSlug ?? '');
 
-  const {
-    filteredTokensList: fromTokensList,
-    searchValue: fromSeactValue,
-    setSearchValue: setSearchValueFromTokens
-  } = useFilteredSwapTokensList(TokensInputsEnum.From);
-  const {
-    filteredTokensList: toTokensList,
-    searchValue: toSeactValue,
-    setSearchValue: setSearchValueToTokens
-  } = useFilteredSwapTokensList(TokensInputsEnum.To);
+  const { filteredTokensList: fromTokensList, setSearchValue: setSearchValueFromTokens } = useFilteredSwapTokensList(
+    TokensInputsEnum.From
+  );
+  const { filteredTokensList: toTokensList, setSearchValue: setSearchValueToTokens } = useFilteredSwapTokensList(
+    TokensInputsEnum.To
+  );
 
   useEffect(() => {
     if (isDefined(inputAssets.amount)) {
@@ -200,6 +196,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       })
         .then(setSwapParamsLocal)
         .catch(() => setSwapParamsLocal(swapParamsDefault));
+    } else {
+      setSwapParamsLocal(swapParamsDefault);
     }
   }, [inputAssets.asset, inputAssets.amount, outputAssets.asset]);
 
@@ -244,7 +242,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           maxButton
           assetsList={fromTokensList}
           isLoading={isLoading}
-          searchValue={fromSeactValue}
           setSearchValue={setSearchValueFromTokens}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
@@ -260,7 +257,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           isSearchable
           assetsList={toTokensList}
           isLoading={isLoading}
-          searchValue={toSeactValue}
           setSearchValue={setSearchValueToTokens}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
