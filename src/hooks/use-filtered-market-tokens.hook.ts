@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { isSearchValueIncluded } from 'src/utils/is-search-value-included.util';
+import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { selectSortValue } from '../store/market/market-actions';
@@ -33,11 +33,11 @@ export const useFilteredMarketTokens = () => {
       const lowerCaseSearchValue = searchValue.toLowerCase();
       const result: Array<MarketToken> = [];
 
-      for (const token of sortedMarketTokens) {
-        const { name, symbol } = token;
+      for (const asset of sortedMarketTokens) {
+        const { name, symbol } = asset;
 
-        if (isSearchValueIncluded(lowerCaseSearchValue, name.toLowerCase(), symbol.toLowerCase())) {
-          result.push(token);
+        if (isAssetSearched({ name, symbol }, lowerCaseSearchValue)) {
+          result.push(asset);
         }
       }
 

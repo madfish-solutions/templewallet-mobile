@@ -19,7 +19,7 @@ export const useSwap = () => {
 
   useEffect(() => {
     tezos.contract.at<Route3ContractInterface>(ROUTE3_CONTRACT).then(setSwapContract);
-  }, []);
+  }, [tezos]);
 
   return useCallback(
     async (

@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountTezosTokenSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { applySortByDollarValueDecrease } from 'src/utils/token-metadata.utils';
+import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
@@ -56,13 +56,7 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
       const result: TokenInterface[] = [];
 
       for (const asset of source) {
-        const { name, symbol, address } = asset;
-
-        if (
-          name.toLowerCase().includes(lowerCaseSearchValue) ||
-          symbol.toLowerCase().includes(lowerCaseSearchValue) ||
-          address.toLowerCase().includes(lowerCaseSearchValue)
-        ) {
+        if (isAssetSearched(asset, lowerCaseSearchValue)) {
           result.push(asset);
         }
       }

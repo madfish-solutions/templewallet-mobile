@@ -184,10 +184,10 @@ export const loadTokensMetadata$ = memoize(
     )
 );
 
-export const isAssetSearched = ({ name, symbol, address }: TokenInterface, lowerCaseSearchValue: string) =>
-  name.toLowerCase().includes(lowerCaseSearchValue) ||
-  symbol.toLowerCase().includes(lowerCaseSearchValue) ||
-  address.toLowerCase().includes(lowerCaseSearchValue);
+export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterface>, lowerCaseSearchValue: string) =>
+  Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
 
 export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
   assets.sort((a, b) => {
