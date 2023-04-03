@@ -47,7 +47,7 @@ export const useFilteredAssetsList = (
     }
 
     return [leadingAsset, ...searchedAssetsList];
-  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsFilterable]);
+  }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAsset, leadingAssetIsFilterable]);
 
   return {
     filteredAssetsList,

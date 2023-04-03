@@ -7,6 +7,7 @@ import { mockDAppsState } from './d-apps/d-apps-state.mock';
 import { mockExolixState } from './exolix/exolix-state.mock';
 import { mockMarketState } from './market/market-state.mock';
 import { mockNotificationsState } from './notifications/notifications-state.mock';
+import { mockPartnersPromotionState } from './partners-promotion/partners-promotion-state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
 import { mockSwapState } from './swap/swap-state.mock';
@@ -26,5 +27,6 @@ export const mockRootState: RootState = {
   market: mockMarketState,
   notifications: mockNotificationsState,
   swap: mockSwapState,
-  contactBook: mockContactBookState
+  contactBook: mockContactBookState,
+  partnersPromotion: mockPartnersPromotionState
 };

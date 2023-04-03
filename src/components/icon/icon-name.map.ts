@@ -122,6 +122,7 @@ import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
+import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
@@ -164,6 +165,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
+  [IconNameEnum.XBold]: XBoldIcon,
   [IconNameEnum.XCircle]: XCircleIcon,
   [IconNameEnum.MoreHorizontal]: MoreHorizontalIcon,
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
