@@ -48,7 +48,7 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
         return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
       }
 
-      if (isDefined(token) && token?.code in preloadedTokensIcons) {
+      if (isDefined(token) && token.code in preloadedTokensIcons) {
         return (
           <FastImage
             source={preloadedTokensIcons[token.code]}

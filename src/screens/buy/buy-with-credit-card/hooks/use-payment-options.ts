@@ -90,11 +90,11 @@ const usePaymentOption = (
   const updateOutputAmount = useCallback(
     async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
       setIsError(false);
-      const newFiatCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
+      const currentProviderCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
       if (
         !isDefined(newInputAmount) ||
-        !isDefined(newFiatCurrency?.minAmount) ||
-        !isDefined(newFiatCurrency?.maxAmount)
+        !isDefined(currentProviderCurrency?.minAmount) ||
+        !isDefined(currentProviderCurrency?.maxAmount)
       ) {
         setOutputAmount(undefined);
 

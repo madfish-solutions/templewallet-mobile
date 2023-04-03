@@ -41,25 +41,12 @@ export async function getMoonPayBuyQuote(
   cryptoSymbol: string,
   baseCurrencyCode: string,
   baseCurrencyAmount: string | number
-): Promise<QuoteResponse>;
-export async function getMoonPayBuyQuote(
-  cryptoSymbol: string,
-  baseCurrencyCode: string,
-  baseCurrencyAmount: undefined,
-  quoteCurrencyAmount: string | number
-): Promise<QuoteResponse>;
-export async function getMoonPayBuyQuote(
-  cryptoSymbol: string,
-  baseCurrencyCode: string,
-  baseCurrencyAmount?: string | number,
-  quoteCurrencyAmount?: string | number
 ) {
   const result = await moonPayApi.get<QuoteResponse>(`/v3/currencies/${cryptoSymbol}/buy_quote`, {
     params: {
       apiKey: MOONPAY_API_KEY,
       baseCurrencyAmount,
       baseCurrencyCode,
-      quoteCurrencyAmount,
       fixed: true,
       areFeesIncluded: true,
       regionalPricing: true

@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider, useFormik } from 'formik';
+import { FormikProvider } from 'formik';
 import { debounce } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -13,7 +13,6 @@ import { Dropdown } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
@@ -24,53 +23,24 @@ import {
   loadMoonPayFiatCurrenciesActions,
   loadUtorgCurrenciesActions
 } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
-import { useUserIdSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { showErrorToast } from 'src/toast/toast.utils';
-import { createOrder as createAliceBobOrder } from 'src/utils/alice-bob.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
-import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { openUrl } from 'src/utils/linking.util';
-import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
-import { createOrder as createUtorgOrder } from 'src/utils/utorg.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider/payment-provider';
-import { SelectedPaymentProvider } from '../components/selected-payment-provider/selected-payment-provider';
+import { renderSelectedPaymentProvider } from '../components/selected-payment-provider/selected-payment-provider';
 import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
 import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
-import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from './buy-with-credit-card.form';
 import { BuyWithCreditCardSelectors } from './buy-with-credit-card.selector';
 import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
+import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
 import { usePaymentOptions } from './hooks/use-payment-options';
-
-const DEFAULT_INPUT_CURRENCY = {
-  code: 'USD',
-  icon: 'https://static.moonpay.com/widget/currencies/usd.svg',
-  name: 'US Dollar',
-  network: '',
-  networkFullName: '',
-  precision: 2,
-  type: TopUpInputTypeEnum.Fiat
-};
-
-const DEFAULT_OUTPUT_TOKEN = {
-  code: 'XTZ',
-  name: 'Tezos',
-  icon: 'https://exolix.com/icons/coins/XTZ.png',
-  network: 'tezos',
-  networkFullName: 'Tezos',
-  slug: 'tez',
-  type: TopUpInputTypeEnum.Crypto
-};
 
 const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
   asset: newAsset,
@@ -85,11 +55,8 @@ export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
   const colors = useColors();
   const styles = useBuyWithCreditCardStyles();
-  const { publicKeyHash } = useSelectedAccountSelector();
-  const userId = useUserIdSelector();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { trackEvent } = useAnalytics();
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
   useEffect(() => {
@@ -107,64 +74,7 @@ export const BuyWithCreditCard: FC = () => {
   const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
     useFilteredCryptoCurrencies();
 
-  const handleSubmit = useCallback(
-    async (values: BuyWithCreditCardFormValues) => {
-      try {
-        trackEvent('BUY_WITH_CREDIT_CARD_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-          inputAmount: values.sendInput.amount?.toString(),
-          inputAsset: values.sendInput.asset.code,
-          outputAmount: values.getOutput.amount?.toString(),
-          outputAsset: values.getOutput.asset.code,
-          provider: values.paymentProvider?.name
-        });
-
-        const inputAmount = values.sendInput.amount;
-        const outputAmount = values.getOutput.amount;
-
-        if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
-          return;
-        }
-
-        let urlToOpen: string;
-        switch (values.paymentProvider?.id) {
-          case TopUpProviderEnum.MoonPay:
-            urlToOpen = await getSignedMoonPayUrl(
-              values.getOutput.asset.code,
-              '#ed8936',
-              publicKeyHash,
-              inputAmount.toNumber(),
-              values.sendInput.asset.code
-            );
-            break;
-          case TopUpProviderEnum.Utorg:
-            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), values.sendInput.asset.code, publicKeyHash);
-            break;
-          default:
-            const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
-            urlToOpen = payUrl;
-        }
-        openUrl(urlToOpen);
-      } catch (error) {
-        showErrorToast({ description: getAxiosQueryErrorMessage(error) });
-      }
-    },
-    [trackEvent]
-  );
-
-  const formik = useFormik<BuyWithCreditCardFormValues>({
-    initialValues: {
-      sendInput: {
-        asset: DEFAULT_INPUT_CURRENCY,
-        amount: undefined
-      },
-      getOutput: {
-        asset: DEFAULT_OUTPUT_TOKEN,
-        amount: undefined
-      }
-    },
-    validationSchema: BuyWithCreditCardValidationSchema,
-    onSubmit: handleSubmit
-  });
+  const formik = useBuyWithCreditCardFormik();
 
   const { errors, touched, values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
@@ -338,7 +248,7 @@ export const BuyWithCreditCard: FC = () => {
               itemHeight={formatSize(81)}
               equalityFn={paymentProvidersAreSame}
               itemContainerStyle={styles.paymentProviderItemContainer}
-              renderValue={SelectedPaymentProvider}
+              renderValue={renderSelectedPaymentProvider}
               renderListItem={renderPaymentProviderOption}
               keyExtractor={paymentProviderKeyFn}
               testID={BuyWithCreditCardSelectors.provider}

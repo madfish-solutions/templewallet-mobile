@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import React, { Text, View } from 'react-native';
 
 import { DropdownValueComponent } from 'src/components/dropdown/dropdown';
@@ -10,7 +11,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { useSelectedPaymentProviderStyles } from './selected-payment-provider.styles';
 
-export const SelectedPaymentProvider: DropdownValueComponent<PaymentProviderInterface> = ({ value }) => {
+const SelectedPaymentProvider: DropdownValueComponent<PaymentProviderInterface> = memo(({ value }) => {
   const styles = useSelectedPaymentProviderStyles();
   const colors = useColors();
 
@@ -34,4 +35,8 @@ export const SelectedPaymentProvider: DropdownValueComponent<PaymentProviderInte
       <Icon name={IconNameEnum.TriangleDown} size={formatSize(24)} style={styles.dropdownIcon} color={colors.peach} />
     </View>
   );
-};
+});
+
+export const renderSelectedPaymentProvider: DropdownValueComponent<PaymentProviderInterface> = props => (
+  <SelectedPaymentProvider {...props} />
+);
