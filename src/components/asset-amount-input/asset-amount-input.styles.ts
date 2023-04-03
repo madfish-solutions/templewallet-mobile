@@ -49,10 +49,10 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     color: colors.gray2
   },
   dropdownContainer: {
-    flexDirection: 'row',
     borderTopRightRadius: formatSize(8),
     borderBottomRightRadius: formatSize(8),
     width: formatSize(134),
+    paddingLeft: formatSize(8),
     paddingRight: formatSize(12),
     paddingVertical: formatSize(12),
     backgroundColor: colors.input
