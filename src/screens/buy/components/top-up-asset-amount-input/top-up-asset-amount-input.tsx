@@ -3,17 +3,18 @@ import { FieldMetaProps } from 'formik';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Dropdown, DropdownValueComponent } from '../../../../components/dropdown/dropdown';
-import { HideBalance } from '../../../../components/hide-balance/hide-balance';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { Label } from '../../../../components/label/label';
-import { useNumericInput } from '../../../../hooks/use-numeric-input.hook';
-import { TopUpInputInterface } from '../../../../interfaces/topup.interface';
-import { formatSize } from '../../../../styles/format-size';
-import { useColors } from '../../../../styles/use-colors';
-import { conditionalStyle } from '../../../../utils/conditional-style';
-import { isDefined } from '../../../../utils/is-defined';
+import { Divider } from 'src/components/divider/divider';
+import { Dropdown, DropdownValueComponent } from 'src/components/dropdown/dropdown';
+import { HideBalance } from 'src/components/hide-balance/hide-balance';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { Label } from 'src/components/label/label';
+import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
+import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
+
 import { initialData } from '../../crypto/exolix/steps/initial-step/initial-step.data';
 import {
   renderTopUpTokenListItem,
@@ -42,6 +43,9 @@ const defaultNewValueFn: TopUpAssetAmountInputProps['newValueFn'] = (
   asset: newAsset,
   amount
 });
+const topUpInputEqualityFn = (a: TopUpInputInterface, b?: TopUpInputInterface) =>
+  a.code === b?.code && a.network === b.network;
+const topUpInputKeyExtractor = (token: TopUpInputInterface, index: number) => `${index}_${token.code}_${token.network}`;
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
@@ -152,11 +156,11 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
                 value={value.asset}
                 list={assetsList}
                 isSearchable={isSearchable}
-                equalityFn={(item, value) => item.code === value?.code && item.network === value.network}
+                equalityFn={topUpInputEqualityFn}
                 setSearchValue={setSearchValue}
                 renderValue={renderTokenValue}
                 renderListItem={renderTopUpTokenListItem}
-                keyExtractor={(token: TopUpInputInterface, index) => `${index}_${token.code}_${token.network}`}
+                keyExtractor={topUpInputKeyExtractor}
                 testID={TopUpAssetAmountInputSelectors.assetInput}
                 onValueChange={handleTokenChange}
               />

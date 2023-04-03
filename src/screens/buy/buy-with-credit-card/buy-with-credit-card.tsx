@@ -35,6 +35,7 @@ import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 import { openUrl } from 'src/utils/linking.util';
 import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
@@ -77,6 +78,8 @@ const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface,
   min: newAsset.minAmount,
   max: newAsset.maxAmount
 });
+const paymentProviderKeyFn = (value: PaymentProviderInterface) => value.id;
+const paymentProvidersAreSame = (a: PaymentProviderInterface, b?: PaymentProviderInterface) => a.id === b?.id;
 
 export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
@@ -163,11 +166,10 @@ export const BuyWithCreditCard: FC = () => {
     onSubmit: handleSubmit
   });
 
-  const { values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount, getFieldMeta } = formik;
+  const { errors, touched, values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
-  const paymentProviderMeta = getFieldMeta('paymentProvider');
-  const manuallySelectedProviderId = useRef<TopUpProviderEnum>();
+  const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>();
 
   const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
     inputAmount,
@@ -175,8 +177,8 @@ export const BuyWithCreditCard: FC = () => {
     outputAsset
   );
   const isPaymentProviderError =
-    isDefined(paymentProviderMeta.error) &&
-    (paymentProviderMeta.touched || submitCount > 0) &&
+    isDefined(errors.paymentProvider) &&
+    (isTruthy(touched.paymentProvider) || submitCount > 0) &&
     paymentOptionsToDisplay.length > 0;
 
   const switchPaymentProvider = useCallback(
@@ -191,23 +193,23 @@ export const BuyWithCreditCard: FC = () => {
   );
 
   useEffect(() => {
-    const prevInputValue = formik.values.sendInput;
+    const prevInputValue = values.sendInput;
     const { asset: currentInputAsset, amount: currentInputAmount } = prevInputValue;
     const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
 
     if (isDefined(newInputAsset) && !jsonEqualityFn(newInputAsset, currentInputAsset)) {
       setFieldValue('sendInput', newValueFn(prevInputValue, newInputAsset, currentInputAmount));
     }
-  }, [formik, allFiatCurrencies]);
+  }, [values.sendInput, allFiatCurrencies, setFieldValue]);
 
   useEffect(() => {
-    const prevPaymentProvider = formik.values.paymentProvider;
+    const prevPaymentProvider = values.paymentProvider;
     const newPaymentOption = paymentOptionsToDisplay.find(({ id }) => id === prevPaymentProvider?.id);
 
     if (isDefined(newPaymentOption) && !jsonEqualityFn(newPaymentOption, prevPaymentProvider)) {
       switchPaymentProvider(newPaymentOption);
     }
-  }, [formik, paymentOptionsToDisplay, switchPaymentProvider]);
+  }, [values.paymentProvider, paymentOptionsToDisplay, switchPaymentProvider]);
 
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
@@ -240,18 +242,16 @@ export const BuyWithCreditCard: FC = () => {
         );
         const autoselectedPaymentProvider = patchedPaymentProviders[0];
 
-        if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderId.current)) {
+        if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderIdRef.current)) {
           void switchPaymentProvider(autoselectedPaymentProvider);
         } else if (isDefined(newInput.amount)) {
-          const patchedSameProvider = patchedPaymentProviders.find(
-            ({ id }) => id === formik.values.paymentProvider?.id
-          );
+          const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === values.paymentProvider?.id);
           const newPaymentProvider = patchedSameProvider ?? autoselectedPaymentProvider;
           void switchPaymentProvider(newPaymentProvider);
         }
         setIsLoading(false);
       }, 200),
-    [formik, updateOutputAmounts, allPaymentOptions, switchPaymentProvider]
+    [values.paymentProvider, updateOutputAmounts, allPaymentOptions, switchPaymentProvider]
   );
 
   const handleInputValueChange = useCallback(
@@ -265,11 +265,14 @@ export const BuyWithCreditCard: FC = () => {
 
   const handlePaymentProviderChange = useCallback(
     (newProvider?: PaymentProviderInterface) => {
-      manuallySelectedProviderId.current = newProvider?.id;
+      manuallySelectedProviderIdRef.current = newProvider?.id;
       void switchPaymentProvider(newProvider);
     },
     [switchPaymentProvider]
   );
+
+  const handleSendInputBlur = useCallback(() => void setFieldTouched('sendInput'), [setFieldTouched]);
+  const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);
 
   useTimerEffect(
     () => {
@@ -304,7 +307,7 @@ export const BuyWithCreditCard: FC = () => {
               precision={inputAsset.precision}
               testID={BuyWithCreditCardSelectors.sendInput}
               onValueChange={handleInputValueChange}
-              onBlur={() => setFieldTouched('sendInput')}
+              onBlur={handleSendInputBlur}
               setSearchValue={setInputSearchValue}
             />
             <Divider size={formatSize(8)} />
@@ -321,7 +324,7 @@ export const BuyWithCreditCard: FC = () => {
               isSearchable
               assetsList={filteredCryptoCurrencies}
               testID={BuyWithCreditCardSelectors.getOutput}
-              onBlur={() => setFieldTouched('getOutput')}
+              onBlur={handleGetOutputBlur}
               setSearchValue={setOutputSearchValue}
             />
           </FormikProvider>
@@ -333,11 +336,11 @@ export const BuyWithCreditCard: FC = () => {
               description="Select payment provider"
               emptyListText="No providers found"
               itemHeight={formatSize(81)}
-              equalityFn={(a, b) => a.id === b?.id}
+              equalityFn={paymentProvidersAreSame}
               itemContainerStyle={styles.paymentProviderItemContainer}
               renderValue={SelectedPaymentProvider}
               renderListItem={renderPaymentProviderOption}
-              keyExtractor={x => x.id}
+              keyExtractor={paymentProviderKeyFn}
               testID={BuyWithCreditCardSelectors.provider}
               onValueChange={handlePaymentProviderChange}
             />

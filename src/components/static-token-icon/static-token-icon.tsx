@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
@@ -35,14 +35,14 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
   const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);
   const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
 
-  const handleLoad = () => {
+  const handleLoad = useCallback(() => {
     setLoadedIconUri(uri);
     setIsFailed(false);
-  };
-  const handleError = () => {
+  }, [uri]);
+  const handleError = useCallback(() => {
     setLoadedIconUri(uri);
     setIsFailed(true);
-  };
+  }, [uri]);
 
   useEffect(() => {
     setIsFailed(false);

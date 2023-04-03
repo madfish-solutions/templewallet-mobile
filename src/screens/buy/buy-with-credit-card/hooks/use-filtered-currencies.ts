@@ -5,7 +5,7 @@ import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 
 export const useFilteredCurrencies = <T extends TopUpInputInterface>(allCurrencies: T[]) => {
   const [searchValue, setSearchValue] = useState('');
-  const debouncedSetSearchValue = debounce(setSearchValue, 300);
+  const debouncedSetSearchValue = useMemo(() => debounce(setSearchValue, 300), []);
 
   const filteredCurrencies = useMemo<TopUpInputInterface[]>(() => {
     if (searchValue) {

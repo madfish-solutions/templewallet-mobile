@@ -1,8 +1,9 @@
 import { useField, useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 
-import { emptyFn, EventFn } from '../../../../config/general';
-import { hasError } from '../../../../utils/has-error';
+import { emptyFn, EventFn } from 'src/config/general';
+import { hasError } from 'src/utils/has-error';
+
 import { TopUpAssetAmountInput } from '../top-up-asset-amount-input/top-up-asset-amount-input';
 import {
   TopUpAssetAmountInterface,

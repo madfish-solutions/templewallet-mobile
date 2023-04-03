@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
@@ -12,39 +12,45 @@ export const useAnalytics = () => {
   const userId = useUserIdSelector();
   const analyticsEnabled = useAnalyticsEnabledSelector();
 
-  const trackEvent = async (
-    event?: string,
-    category: AnalyticsEventCategory = AnalyticsEventCategory.General,
-    additionalProperties: AnalyticsEventProperties = {}
-  ) =>
-    event !== undefined &&
-    analyticsEnabled &&
-    jitsu.track(category, {
-      userId,
-      event,
-      timestamp: new Date().getTime(),
-      properties: {
+  const trackEvent = useCallback(
+    async (
+      event?: string,
+      category: AnalyticsEventCategory = AnalyticsEventCategory.General,
+      additionalProperties: AnalyticsEventProperties = {}
+    ) =>
+      event !== undefined &&
+      analyticsEnabled &&
+      jitsu.track(category, {
+        userId,
         event,
-        category,
-        ...additionalProperties
-      }
-    });
+        timestamp: new Date().getTime(),
+        properties: {
+          event,
+          category,
+          ...additionalProperties
+        }
+      }),
+    [analyticsEnabled, userId]
+  );
 
-  const pageEvent = async (path: string, search: string, additionalProperties: AnalyticsEventProperties = {}) =>
-    analyticsEnabled &&
-    jitsu.track(AnalyticsEventCategory.PageOpened, {
-      userId,
-      name: path,
-      timestamp: new Date().getTime(),
-      category: AnalyticsEventCategory.PageOpened,
-      properties: {
-        url: `${path}${search}`,
-        path: search,
-        referrer: path,
+  const pageEvent = useCallback(
+    async (path: string, search: string, additionalProperties: AnalyticsEventProperties = {}) =>
+      analyticsEnabled &&
+      jitsu.track(AnalyticsEventCategory.PageOpened, {
+        userId,
+        name: path,
+        timestamp: new Date().getTime(),
         category: AnalyticsEventCategory.PageOpened,
-        ...additionalProperties
-      }
-    });
+        properties: {
+          url: `${path}${search}`,
+          path: search,
+          referrer: path,
+          category: AnalyticsEventCategory.PageOpened,
+          ...additionalProperties
+        }
+      }),
+    [analyticsEnabled, userId]
+  );
 
   return {
     trackEvent,

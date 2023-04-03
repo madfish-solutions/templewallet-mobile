@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View } from 'react-native';
 
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -20,6 +20,9 @@ export const Buy = () => {
 
   usePageAnalytic(ScreensEnum.Buy);
 
+  const handleBuyWithCryptoPress = useCallback(() => navigate(ScreensEnum.Exolix), [navigate]);
+  const handleBuyWithFiatPress = useCallback(() => navigate(ScreensEnum.BuyWithCreditCard), [navigate]);
+
   return (
     <ScreenContainer isFullScreenMode={true}>
       <View style={styles.optionsContainer}>
@@ -27,13 +30,13 @@ export const Buy = () => {
           title="Buy with Crypto"
           iconName={IconNameEnum.BuyWithCrypto}
           testID={BuySelectors.buyWithCrypto}
-          onPress={() => navigate(ScreensEnum.Exolix)}
+          onPress={handleBuyWithCryptoPress}
         />
         <TopUpOption
           title="Buy with Debit/Credit Card"
           iconName={IconNameEnum.CreditCard}
           testID={BuySelectors.buyWithCreditCard}
-          onPress={() => navigate(ScreensEnum.BuyWithCreditCard)}
+          onPress={handleBuyWithFiatPress}
         />
       </View>
       <Disclaimer
