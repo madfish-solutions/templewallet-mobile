@@ -8,25 +8,28 @@ import { CurrentRouteNameContext } from 'src/navigator/current-route-name.contex
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
-import { cloudTitle, isCloudAvailable } from 'src/utils/cloud-backup';
+import { cloudTitle } from 'src/utils/cloud-backup';
+import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
 import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
-  const { navigate } = useNavigation();
-
-  const styles = useBackupYourWalletOverlayStyles();
-  const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
-
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 
   const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isAnyBackupMade;
 
-  if (!isShowOverlay) {
-    return null;
-  }
+  return isShowOverlay ? <OverlayComponent /> : null;
+};
+
+const OverlayComponent = () => {
+  const { navigate } = useNavigation();
+
+  const styles = useBackupYourWalletOverlayStyles();
+  const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
+
+  const cloudIsAvailable = useIsCloudAvailable();
 
   return (
     <Portal>
@@ -39,12 +42,11 @@ export const BackupYourWalletOverlay = () => {
             </Text>
           </View>
 
-          {isCloudAvailable() && (
-            <BottomSheetActionButton
-              title={`Backup to ${cloudTitle}`}
-              onPress={() => navigate(ScreensEnum.CloudBackup)}
-            />
-          )}
+          <BottomSheetActionButton
+            title={`Backup to ${cloudTitle}`}
+            disabled={!cloudIsAvailable}
+            onPress={() => navigate(ScreensEnum.CloudBackup)}
+          />
 
           <BottomSheetActionButton
             title="Backup manually"

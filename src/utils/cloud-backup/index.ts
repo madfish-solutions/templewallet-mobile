@@ -11,10 +11,10 @@ import { rejectOnTimeout } from '../timeouts.util';
 
 export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
-export const cloudTitle = isAndroid ? 'Google Drive' : 'iCloud';
+export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
 
 const CLOUD_WALLET_FOLDER = 'temple-wallet-mobile';
-const filename = 'wallet-backup.json';
+const filename = 'temple-wallet-backup.json';
 const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 
 const CLOUD_REQUEST_TIMEOUT = 15000;
@@ -25,7 +25,27 @@ export interface BackupFileInterface {
   platformOS: 'ios' | 'android';
 }
 
-export const isCloudAvailable = () => (isAndroid ? true : isIOS ? Boolean(RNCloudFs?.isAvailable()) : false);
+export const isCloudAvailable = async () => {
+  if (Boolean(RNCloudFs) === false) {
+    return false;
+  }
+
+  if (isAndroid) {
+    return true;
+  }
+
+  if (isIOS) {
+    try {
+      return await RNCloudFs.isAvailable();
+    } catch (error) {
+      console.error('RNCloudFs.isAvailable error:', error);
+
+      return false;
+    }
+  }
+
+  return false;
+};
 
 export const requestSignInToCloud = async () => {
   if (isIOS) {

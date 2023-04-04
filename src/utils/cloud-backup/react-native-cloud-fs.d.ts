@@ -20,7 +20,7 @@ interface ICloudFileDetails extends CloudFileDetailsBase {
 declare module 'react-native-cloud-fs' {
   const defaultExport: {
     /** iOS only */
-    isAvailable: () => boolean;
+    isAvailable: () => Promise<boolean>;
 
     /** Android only */
     loginIfNeeded: () => Promise<boolean>;

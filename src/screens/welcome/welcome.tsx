@@ -9,27 +9,20 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { isAndroid } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { cloudTitle, isCloudAvailable } from 'src/utils/cloud-backup';
 
-import { useOnContinueWithCloudButtonPress } from './utils';
+import { ContinueWithCloudButton } from './ContinueWithCloudButton';
 import { WelcomeSelectors } from './welcome.selectors';
-import { useWelcomeStyles, useCloudButtonActiveColorStyleConfig } from './welcome.styles';
+import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
-  const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   usePageAnalytic(ScreensEnum.Welcome);
-
-  const onContinueWithCloudButtonPress = useOnContinueWithCloudButtonPress();
-
-  const cloudIsAvailable = isCloudAvailable();
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -61,20 +54,9 @@ export const Welcome = () => {
           <View style={styles.orDividerLine} />
         </View>
 
-        {cloudIsAvailable ? (
-          <>
-            <ButtonLargeSecondary
-              title={`Continue with ${cloudTitle}`}
-              iconName={isAndroid ? IconNameEnum.GoogleDrive : IconNameEnum.Apple}
-              activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
-              onPress={onContinueWithCloudButtonPress}
-              testID={WelcomeSelectors.continueWithCloudButton}
-              testIDProperties={{ cloud: cloudTitle }}
-            />
+        <ContinueWithCloudButton />
 
-            <Divider size={formatSize(16)} />
-          </>
-        ) : null}
+        <Divider size={formatSize(16)} />
 
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonBox}>

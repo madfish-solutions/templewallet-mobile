@@ -7,6 +7,7 @@ import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
+import AppleOnDarkIcon from './assets/apple-on-dark.svg';
 import AppleIcon from './assets/apple.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
@@ -187,6 +188,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.Apple]: AppleIcon,
+  [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
