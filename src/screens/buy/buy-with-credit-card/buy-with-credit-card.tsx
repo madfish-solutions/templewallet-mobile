@@ -18,10 +18,11 @@ import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import {
-  loadAliceBobCurrenciesActions,
+  loadAllCurrenciesActions
+  /* loadAliceBobCurrenciesActions,
   loadMoonPayCryptoCurrenciesActions,
   loadMoonPayFiatCurrenciesActions,
-  loadUtorgCurrenciesActions
+  loadUtorgCurrenciesActions */
 } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -60,10 +61,11 @@ export const BuyWithCreditCard: FC = () => {
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
   useEffect(() => {
-    dispatch(loadMoonPayFiatCurrenciesActions.submit());
+    /* dispatch(loadMoonPayFiatCurrenciesActions.submit());
     dispatch(loadMoonPayCryptoCurrenciesActions.submit());
     dispatch(loadUtorgCurrenciesActions.submit());
-    dispatch(loadAliceBobCurrenciesActions.submit());
+    dispatch(loadAliceBobCurrenciesActions.submit()); */
+    dispatch(loadAllCurrenciesActions.submit());
   }, []);
 
   const {
@@ -186,10 +188,11 @@ export const BuyWithCreditCard: FC = () => {
 
   useTimerEffect(
     () => {
-      dispatch(loadMoonPayFiatCurrenciesActions.submit());
+      /* dispatch(loadMoonPayFiatCurrenciesActions.submit());
       dispatch(loadMoonPayCryptoCurrenciesActions.submit());
       dispatch(loadUtorgCurrenciesActions.submit());
-      dispatch(loadAliceBobCurrenciesActions.submit());
+      dispatch(loadAliceBobCurrenciesActions.submit()); */
+      dispatch(loadAllCurrenciesActions.submit());
       if (!isLoading) {
         setIsLoading(true);
         void updateOutput(values.sendInput, false);

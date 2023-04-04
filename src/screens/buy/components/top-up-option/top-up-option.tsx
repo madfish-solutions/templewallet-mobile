@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -17,7 +17,7 @@ interface Props extends TestIdProps {
   onPress?: () => void;
 }
 
-export const TopUpOption: FC<Props> = ({ title, iconName, testID, onPress }) => {
+export const TopUpOption: FC<Props> = memo(({ title, iconName, testID, onPress }) => {
   const styles = useTopUpOptionStyles();
   const colors = useColors();
 
@@ -33,4 +33,4 @@ export const TopUpOption: FC<Props> = ({ title, iconName, testID, onPress }) => 
       <Divider size={formatSize(16)} />
     </>
   );
-};
+});

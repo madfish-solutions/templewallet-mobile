@@ -11,6 +11,7 @@ import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { jsonEqualityFn } from 'src/utils/store.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
 
 import { getProperNetworkFullName } from '../../crypto/exolix/steps/initial-step/initial-step.utils';
@@ -97,7 +98,8 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
         </View>
       </View>
     );
-  }
+  },
+  jsonEqualityFn
 );
 
 export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInputInterface> = ({ item, isSelected }) => (

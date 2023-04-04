@@ -1,99 +1,35 @@
-import {
-  ActionCreatorWithoutPayload,
-  ActionCreatorWithPayload,
-  ActionReducerMapBuilder,
-  createReducer
-} from '@reduxjs/toolkit';
+import { createReducer } from '@reduxjs/toolkit';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 
 import { createEntity } from '../create-entity';
-import {
-  loadAliceBobCurrenciesActions,
-  loadMoonPayCryptoCurrenciesActions,
-  loadMoonPayFiatCurrenciesActions,
-  loadUtorgCurrenciesActions
-} from './buy-with-credit-card-actions';
-import {
-  buyWithCreditCardInitialState,
-  BuyWithCreditCardState,
-  TopUpProviderCurrencies
-} from './buy-with-credit-card-state';
-
-const addMoonPayCases = <T extends keyof TopUpProviderCurrencies>(
-  builder: ActionReducerMapBuilder<BuyWithCreditCardState>,
-  currenciesType: T,
-  actions: {
-    submit: ActionCreatorWithoutPayload<string>;
-    success: ActionCreatorWithPayload<TopUpProviderCurrencies[T], string>;
-    fail: ActionCreatorWithPayload<string>;
-  }
-) => {
-  builder.addCase(actions.submit, state => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, true)
-    }
-  }));
-  builder.addCase(actions.success, (state, { payload: currencies }) => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [TopUpProviderEnum.MoonPay]: createEntity({
-        ...state.currencies[TopUpProviderEnum.MoonPay].data,
-        [currenciesType]: currencies
-      })
-    }
-  }));
-  builder.addCase(actions.fail, (state, { payload: error }) => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, false, error)
-    }
-  }));
-};
-
-const addOneActionAllCurrenciesTypesCases = (
-  builder: ActionReducerMapBuilder<BuyWithCreditCardState>,
-  provider: TopUpProviderEnum,
-  actions: {
-    submit: ActionCreatorWithoutPayload<string>;
-    success: ActionCreatorWithPayload<TopUpProviderCurrencies, string>;
-    fail: ActionCreatorWithPayload<string>;
-  }
-) => {
-  builder.addCase(actions.submit, state => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [provider]: createEntity(state.currencies[provider].data, true)
-    }
-  }));
-  builder.addCase(actions.success, (state, { payload: currencies }) => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [provider]: createEntity(currencies)
-    }
-  }));
-  builder.addCase(actions.fail, (state, { payload: error }) => ({
-    ...state,
-    currencies: {
-      ...state.currencies,
-      [provider]: createEntity(state.currencies[provider].data, false, error)
-    }
-  }));
-};
+import { loadAllCurrenciesActions } from './buy-with-credit-card-actions';
+import { buyWithCreditCardInitialState, BuyWithCreditCardState } from './buy-with-credit-card-state';
 
 export const buyWithCreditCardReducers = createReducer<BuyWithCreditCardState>(
   buyWithCreditCardInitialState,
   builder => {
-    addMoonPayCases(builder, 'fiat', loadMoonPayFiatCurrenciesActions);
-    addMoonPayCases(builder, 'crypto', loadMoonPayCryptoCurrenciesActions);
+    builder.addCase(loadAllCurrenciesActions.submit, state => ({
+      ...state,
+      currencies: {
+        [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, true),
+        [TopUpProviderEnum.Utorg]: createEntity(state.currencies[TopUpProviderEnum.Utorg].data, true),
+        [TopUpProviderEnum.AliceBob]: createEntity(state.currencies[TopUpProviderEnum.AliceBob].data, true)
+      }
+    }));
 
-    addOneActionAllCurrenciesTypesCases(builder, TopUpProviderEnum.Utorg, loadUtorgCurrenciesActions);
-    addOneActionAllCurrenciesTypesCases(builder, TopUpProviderEnum.AliceBob, loadAliceBobCurrenciesActions);
+    builder.addCase(loadAllCurrenciesActions.success, (state, { payload: currencies }) => ({
+      ...state,
+      currencies
+    }));
+
+    builder.addCase(loadAllCurrenciesActions.fail, (state, { payload: error }) => ({
+      ...state,
+      currencies: {
+        [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, false, error),
+        [TopUpProviderEnum.Utorg]: createEntity(state.currencies[TopUpProviderEnum.Utorg].data, false, error),
+        [TopUpProviderEnum.AliceBob]: createEntity(state.currencies[TopUpProviderEnum.AliceBob].data, false, error)
+      }
+    }));
   }
 );

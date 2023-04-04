@@ -1,39 +1,54 @@
 import { combineEpics } from 'redux-observable';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { fetchMoonpayCryptoCurrencies$, fetchMoonpayFiatCurrencies$ } from 'src/apollo/moonpay';
 import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
-import { TopUpInputInterface, TopUpOutputInterface } from 'src/interfaces/topup.interface';
+import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getTezUahPairInfo } from 'src/utils/alice-bob.utils';
+import { isDefined } from 'src/utils/is-defined';
 import {
   getCurrenciesInfo as getUtorgCurrenciesInfo,
   UTORG_CRYPTO_ICONS_BASE_URL,
   UTORG_FIAT_ICONS_BASE_URL
 } from 'src/utils/utorg.utils';
 
-import {
-  loadAliceBobCurrenciesActions,
-  loadMoonPayCryptoCurrenciesActions,
-  loadMoonPayFiatCurrenciesActions,
-  loadUtorgCurrenciesActions
-} from './buy-with-credit-card-actions';
+import { createEntity } from '../create-entity';
+import { loadAllCurrenciesActions } from './buy-with-credit-card-actions';
+import { TopUpProviderCurrencies } from './buy-with-credit-card-state';
 
 const knownUtorgFiatCurrenciesNames: Record<string, string> = {
   PHP: 'Philippine Peso',
   INR: 'Indian Rupee'
 };
 
-const loadMoonPayFiatCurrenciesEpic = (action$: Observable<Action>) =>
+const getCurrencies$ = <T>(
+  fetchFn: () => Observable<T>,
+  transformFn: (data: T) => TopUpProviderCurrencies,
+  errorMessageFn?: (err: Error) => string
+) =>
+  fetchFn().pipe(
+    map(data => createEntity(transformFn(data))),
+    catchError(err => {
+      if (isDefined(errorMessageFn)) {
+        showErrorToast({ description: errorMessageFn(err) });
+      }
+
+      return of(createEntity<TopUpProviderCurrencies>({ fiat: [], crypto: [] }, err.message));
+    })
+  );
+
+const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
   action$.pipe(
-    ofType(loadMoonPayFiatCurrenciesActions.submit),
+    ofType(loadAllCurrenciesActions.submit),
     switchMap(() =>
-      fetchMoonpayFiatCurrencies$().pipe(
-        map(fiatCurrencies =>
-          loadMoonPayFiatCurrenciesActions.success(
-            fiatCurrencies.map(({ name, code, icon, minBuyAmount, maxBuyAmount, precision }) => ({
+      forkJoin([
+        getCurrencies$(
+          () => forkJoin([fetchMoonpayFiatCurrencies$(), fetchMoonpayCryptoCurrencies$()]),
+          ([fiatCurrencies, cryptoCurrencies]) => ({
+            fiat: fiatCurrencies.map(({ name, code, icon, minBuyAmount, maxBuyAmount, precision }) => ({
               name,
               code: code.toUpperCase(),
               network: '',
@@ -43,26 +58,8 @@ const loadMoonPayFiatCurrenciesEpic = (action$: Observable<Action>) =>
               maxAmount: maxBuyAmount,
               precision: Math.min(precision, 2), // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
               type: TopUpInputTypeEnum.Fiat
-            }))
-          )
-        ),
-        catchError(err => {
-          showErrorToast({ description: `Failed to get MoonPay fiat currencies: ${err.message}` });
-
-          return of(loadMoonPayFiatCurrenciesActions.fail(err.message));
-        })
-      )
-    )
-  );
-
-const loadMoonPayCryptoCurrenciesEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadMoonPayCryptoCurrenciesActions.submit),
-    switchMap(() =>
-      fetchMoonpayCryptoCurrencies$().pipe(
-        map(cryptoCurrencies =>
-          loadMoonPayCryptoCurrenciesActions.success(
-            cryptoCurrencies
+            })),
+            crypto: cryptoCurrencies
               .filter(({ networkCode }) => networkCode.toLowerCase() === 'tezos')
               .map(({ name, code, icon, precision }) => ({
                 name,
@@ -74,24 +71,12 @@ const loadMoonPayCryptoCurrenciesEpic = (action$: Observable<Action>) =>
                 type: TopUpInputTypeEnum.Crypto,
                 slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Moonpay
               }))
-          )
+          }),
+          err => `Failed to load Moonpay currencies: ${err.message}`
         ),
-        catchError(err => {
-          showErrorToast({ description: `Failed to get MoonPay crypto currencies: ${err.message}` });
-
-          return of(loadMoonPayFiatCurrenciesActions.fail(err.message));
-        })
-      )
-    )
-  );
-
-const loadUtorgCurrenciesEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadUtorgCurrenciesActions.submit),
-    switchMap(() =>
-      from(getUtorgCurrenciesInfo()).pipe(
-        map(currencies =>
-          loadUtorgCurrenciesActions.success({
+        getCurrencies$(
+          () => from(getUtorgCurrenciesInfo()),
+          currencies => ({
             fiat: currencies
               .filter(({ type, depositMax }) => type === 'FIAT' && depositMax > 0)
               .map(({ symbol, depositMin, depositMax, precision }) => ({
@@ -117,24 +102,12 @@ const loadUtorgCurrenciesEpic = (action$: Observable<Action>) =>
                 type: TopUpInputTypeEnum.Crypto,
                 slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Utorg
               }))
-          })
+          }),
+          err => `Failed to load Utorg currencies: ${err.message}`
         ),
-        catchError(err => {
-          showErrorToast({ description: `Failed to get Utorg currencies: ${err.message}` });
-
-          return of(loadMoonPayFiatCurrenciesActions.fail(err.message));
-        })
-      )
-    )
-  );
-
-const loadAliceBobCurrenciesEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadAliceBobCurrenciesActions.submit),
-    switchMap(() =>
-      from(getTezUahPairInfo()).pipe(
-        map(({ minAmount, maxAmount }) =>
-          loadAliceBobCurrenciesActions.success({
+        getCurrencies$(
+          () => from(getTezUahPairInfo()),
+          ({ minAmount, maxAmount }) => ({
             fiat: [
               {
                 name: 'Ukrainian Hryvnia',
@@ -161,22 +134,17 @@ const loadAliceBobCurrenciesEpic = (action$: Observable<Action>) =>
               }
             ]
           })
-        ),
-        // TODO: add error alert as soon as Alice&Bob service is ready
-        catchError(err => of(loadMoonPayFiatCurrenciesActions.fail(err.message)))
+        )
+      ]).pipe(
+        map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo]) =>
+          loadAllCurrenciesActions.success({
+            [TopUpProviderEnum.MoonPay]: moonpayCurrencies,
+            [TopUpProviderEnum.Utorg]: utorgCurrencies,
+            [TopUpProviderEnum.AliceBob]: tezUahPairInfo
+          })
+        )
       )
     )
   );
 
-export const buyWithCreditCardEpics = combineEpics<
-  Action<string>,
-  {
-    payload:
-      | undefined
-      | string
-      | { fiat: TopUpInputInterface[]; crypto: TopUpOutputInterface[] }
-      | TopUpInputInterface[]
-      | TopUpOutputInterface[];
-    type: string;
-  }
->(loadMoonPayFiatCurrenciesEpic, loadMoonPayCryptoCurrenciesEpic, loadUtorgCurrenciesEpic, loadAliceBobCurrenciesEpic);
+export const buyWithCreditCardEpics = combineEpics(loadAllCurrenciesEpic);
