@@ -9,18 +9,20 @@ import { AccountDropdownBase } from './account-dropdown-base';
 import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
-const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value, isCollectibleScreen }) => (
   <AccountDropdownItem
     account={value}
     showFullData={false}
     actionIconName={IconNameEnum.TriangleDown}
     isPublicKeyHashTextDisabled={isAndroid}
+    isCollectibleScreen={isCollectibleScreen}
   />
 );
 
 export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>> = ({
   value,
   list,
+  isCollectibleScreen,
   onValueChange
 }) => (
   <View style={CurrentAccountDropdownStyles.root}>
@@ -30,6 +32,7 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>
       renderValue={renderAccountValue}
       renderAccountListItem={renderAccountListItem}
       onValueChange={onValueChange}
+      isCollectibleScreen={isCollectibleScreen}
     />
   </View>
 );

@@ -1,70 +1,133 @@
-import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { useDispatch } from 'react-redux';
 
-import { Divider } from 'src/components/divider/divider';
+import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { HeaderCard } from 'src/components/header-card/header-card';
-import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { SearchInput } from 'src/components/search-input/search-input';
-import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { discordUrl, twitterUrl } from 'src/config/socials';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useVisibleCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
+import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
+import { useCollectionsSelector } from 'src/store/collectons/collections-selectors';
+import { Collection } from 'src/store/collectons/collections-state';
+import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import {
+  useSelectedAccountSelector,
+  useVisibleAccountsListSelector,
+  useVisibleCollectiblesListSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { formatImgUri } from 'src/utils/image.utils';
+import { openUrl } from 'src/utils/linking.util';
 
+import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
-import { CollectiblesList } from './collectibles-list/collectibles-list';
-import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
+
+const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
+const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
-  const { navigate } = useNavigation();
+  const dispatch = useDispatch();
+  const collections = useCollectionsSelector();
+
+  const selectedAccount = useSelectedAccountSelector();
+  const visibleAccounts = useVisibleAccountsListSelector();
+  const colors = useColors();
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
   const visibleCollectiblesList = useVisibleCollectiblesListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(visibleCollectiblesList);
 
-  const [isSearchMode] = useState(false);
+  const collectiblesFromCollections = useMemo(
+    () => [
+      ...new Set(
+        visibleCollectiblesList.filter(collectible => collectible.id !== 0).map(collection => collection.address)
+      )
+    ],
+    [visibleCollectiblesList]
+  );
 
-  const collectiblesList: typeof visibleCollectiblesList = isSearchMode ? filteredAssetsList : visibleCollectiblesList;
+  useEffect(() => void dispatch(loadCollectionsActions.submit(collectiblesFromCollections)), [selectedAccount]);
+
+  const renderItem: ListRenderItem<Collection> = ({ item }) => (
+    <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
+      <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
+
+      <Text numberOfLines={1} style={styles.collectionName}>
+        {item.name}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <>
       <HeaderCard hasInsetTop={true} style={styles.headerCard}>
-        <View style={[styles.headerContainer, styles.widthPaddingHorizontal]}>
-          <View style={styles.actionsContainer}>
-            {/*<TouchableIcon*/}
-            {/*  name={isSearchMode ? IconNameEnum.XSearch : IconNameEnum.Search}*/}
-            {/*  onPress={() => setIsSearchMode(!isSearchMode)}*/}
-            {/*/>*/}
-            {/*<Divider size={formatSize(16)} />*/}
-            {/*<TouchableIcon name={IconNameEnum.Hummer} disabled={true} color={colors.disabled} onPress={emptyFn} />*/}
+        <View style={styles.accountContainer}>
+          <CurrentAccountDropdown
+            value={selectedAccount}
+            list={visibleAccounts}
+            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+            isCollectibleScreen
+          />
+        </View>
+        <View style={styles.profileContainer}>
+          <View style={styles.createProfile}>
+            <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
+            <Text style={styles.createProfileText}>CREATE PROFILE</Text>
           </View>
 
-          <TouchableOpacity style={styles.walletNavigationButton} onPress={() => navigate(ScreensEnum.Wallet)}>
-            <Text style={styles.walletNavigationButtonText}>To wallet</Text>
-            <Icon name={IconNameEnum.ArrowRight} size={formatSize(16)} />
-          </TouchableOpacity>
+          <SocialButton
+            iconName={IconNameEnum.Twitter}
+            url={twitterUrl}
+            style={styles.socialsIcon}
+            color={colors.disabled}
+            size={SMALL_SOCIAL_ICON_SIZE}
+          />
+          <SocialButton
+            iconName={IconNameEnum.Website}
+            url={''}
+            style={styles.socialsIcon}
+            color={colors.disabled}
+            size={SMALL_SOCIAL_ICON_SIZE}
+          />
+          <SocialButton
+            iconName={IconNameEnum.Github}
+            url={''}
+            style={styles.socialsIcon}
+            color={colors.disabled}
+            size={SMALL_SOCIAL_ICON_SIZE}
+          />
+          <SocialButton
+            iconName={IconNameEnum.Discord}
+            url={discordUrl}
+            style={styles.socialsIcon}
+            color={colors.disabled}
+            size={SMALL_SOCIAL_ICON_SIZE}
+          />
         </View>
 
-        <Divider />
-
-        {isSearchMode ? (
-          <>
-            <SearchInput placeholder="Type here..." onChangeText={setSearchValue} />
-
-            <Text style={[styles.descriptionText, styles.widthPaddingHorizontal]}>
-              Search collectibles by name, sybmol or address.
-            </Text>
-          </>
-        ) : (
-          <PromotionCarousel />
-        )}
+        <View style={styles.collectionsHeader}>
+          <Text style={styles.collectionsLabel}>Created Collections</Text>
+          <TouchableOpacity>
+            <Text style={styles.disabled}>See All</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.collectionsContainer}>
+          <FlatList
+            data={collections}
+            renderItem={renderItem}
+            keyExtractor={collection => `${collection.logo}_${collection.name}`}
+            horizontal
+            extraData={collections}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
       </HeaderCard>
-
-      <CollectiblesList collectiblesList={collectiblesList} />
     </>
   );
 };

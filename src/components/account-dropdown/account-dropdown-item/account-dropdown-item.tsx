@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
+import { useCollectiblesListSelector, useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -18,29 +20,59 @@ import { WalletAddress } from '../../wallet-address/wallet-address';
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
+const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
+
 export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   account = emptyAccountBase,
   showFullData = true,
   actionIconName,
-  isPublicKeyHashTextDisabled
+  isPublicKeyHashTextDisabled,
+  isCollectibleScreen = false
 }) => {
   const styles = useAccountDropdownItemStyles();
   const tezos = useTezosTokenSelector(account.publicKeyHash);
+  const collectibles = useCollectiblesListSelector();
+  const contacts = useContactsSelector();
 
   return (
     <View style={styles.root}>
-      <RobotIcon seed={account.publicKeyHash} />
+      <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
       <View style={styles.infoContainer}>
-        <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
+        <View
+          style={[
+            styles.upperContainer,
+            conditionalStyle(showFullData, styles.upperContainerFullData),
+            conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
+          ]}
+        >
           <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
-          <WalletAddress
-            publicKeyHash={account.publicKeyHash}
-            isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
-          />
-          {showFullData && (
+          {isCollectibleScreen ? (
+            <>
+              <View style={styles.collectiblesData}>
+                <View style={styles.headerInfoColumn}>
+                  <Text style={styles.headerText}>Items</Text>
+                  <Text style={styles.headerBoldText}>{collectibles.length}</Text>
+                </View>
+                <View style={styles.headerInfoColumn}>
+                  <Text style={styles.headerText}>Total Floor Price</Text>
+                  <Text style={styles.headerBoldText}>-</Text>
+                </View>
+                <View style={styles.headerInfoColumn}>
+                  <Text style={styles.headerText}>Contacts</Text>
+                  <Text style={styles.headerBoldText}>{contacts.length}</Text>
+                </View>
+              </View>
+            </>
+          ) : (
+            <WalletAddress
+              publicKeyHash={account.publicKeyHash}
+              isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
+            />
+          )}
+          {showFullData && !isCollectibleScreen && (
             <HideBalance style={styles.balanceText}>
               <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezos.balance} />
             </HideBalance>

@@ -124,6 +124,10 @@ export const typography = {
     fontFamily: FontsEnum.interRegular,
     fontSize: formatSize(11)
   },
+  caption10Regular: {
+    fontFamily: FontsEnum.interRegular,
+    fontSize: formatSize(10)
+  },
   caption11Semibold: {
     fontFamily: FontsEnum.interSemiBold,
     fontSize: formatSize(11)

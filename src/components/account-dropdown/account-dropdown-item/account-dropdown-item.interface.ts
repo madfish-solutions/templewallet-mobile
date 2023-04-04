@@ -6,4 +6,5 @@ export interface AccountDropdownItemProps {
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;
+  isCollectibleScreen?: boolean;
 }

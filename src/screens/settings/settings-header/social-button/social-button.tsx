@@ -1,5 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
+import { ViewStyle } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -11,14 +12,17 @@ import { useSocialButtonStyles } from './social-button.styles';
 interface Props extends TestIdProps {
   iconName: IconNameEnum;
   url: string;
+  style?: ViewStyle;
+  color?: string;
+  size?: number;
 }
 
-export const SocialButton: FC<Props> = ({ iconName, url }) => {
+export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = formatSize(24) }) => {
   const styles = useSocialButtonStyles();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => openUrl(url)}>
-      <Icon name={iconName} size={formatSize(24)} />
+    <TouchableOpacity style={[styles.container, style]} onPress={() => openUrl(url)}>
+      <Icon name={iconName} size={size} color={color} />
     </TouchableOpacity>
   );
 };

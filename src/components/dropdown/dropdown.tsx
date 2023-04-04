@@ -33,6 +33,7 @@ export interface DropdownValueProps<T> {
   itemHeight?: number;
   list: T[];
   disabled?: boolean;
+  isCollectibleScreen?: boolean;
   onValueChange: EventFn<T | undefined>;
 }
 
@@ -46,6 +47,7 @@ export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 export type DropdownValueComponent<T> = FC<{
   value?: T;
   disabled?: boolean;
+  isCollectibleScreen?: boolean;
 }>;
 
 export type DropdownListItemComponent<T> = FC<{
@@ -66,6 +68,7 @@ const DropdownComponent = <T extends unknown>({
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
+  isCollectibleScreen = false,
   setSearchValue = emptyFn,
   equalityFn,
   renderValue,
@@ -125,7 +128,7 @@ const DropdownComponent = <T extends unknown>({
         }}
         onLongPress={onLongPress}
       >
-        {renderValue({ value, disabled })}
+        {renderValue({ value, disabled, isCollectibleScreen })}
       </TouchableOpacity>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>

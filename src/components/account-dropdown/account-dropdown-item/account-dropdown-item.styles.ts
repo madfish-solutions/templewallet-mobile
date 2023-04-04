@@ -39,5 +39,26 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
   balanceText: {
     ...typography.numbersRegular13,
     color: colors.black
+  },
+  headerText: {
+    ...typography.caption11Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(2)
+  },
+  headerBoldText: {
+    ...typography.numbersMedium15,
+    color: colors.black
+  },
+  collectiblesData: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: formatSize(5)
+  },
+  headerInfoColumn: {
+    marginHorizontal: formatSize(8)
+  },
+  accountNameMargin: {
+    marginLeft: formatSize(10)
   }
 }));
