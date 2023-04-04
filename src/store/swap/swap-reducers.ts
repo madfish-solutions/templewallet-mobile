@@ -1,8 +1,15 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadSwapDexesAction, loadSwapTokensAction, loadSwapTokensMetadataAction } from './swap-actions';
+import {
+  loadSwapDexesAction,
+  loadSwapParamsAction,
+  loadSwapTokensAction,
+  loadSwapTokensMetadataAction,
+  resetSwapParamsAction
+} from './swap-actions';
 import { route3InitialState } from './swap-state';
+import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
 export const swapReducer = createReducer(route3InitialState, builder => {
   builder.addCase(loadSwapTokensAction.submit, state => {
@@ -29,5 +36,17 @@ export const swapReducer = createReducer(route3InitialState, builder => {
   });
   builder.addCase(loadSwapDexesAction.fail, (state, { payload }) => {
     state.dexes = createEntity([], false, payload);
+  });
+  builder.addCase(resetSwapParamsAction, state => {
+    state.swapParams = createEntity(DEFAULT_SWAP_PARAMS);
+  });
+  builder.addCase(loadSwapParamsAction.submit, state => {
+    state.swapParams = createEntity(DEFAULT_SWAP_PARAMS, true);
+  });
+  builder.addCase(loadSwapParamsAction.success, (state, { payload }) => {
+    state.swapParams = createEntity(payload, false);
+  });
+  builder.addCase(loadSwapParamsAction.fail, (state, { payload }) => {
+    state.swapParams = createEntity(DEFAULT_SWAP_PARAMS, false, payload);
   });
 });

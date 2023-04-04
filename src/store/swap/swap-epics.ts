@@ -1,16 +1,47 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
-import { ofType } from 'ts-action-operators';
+import { ofType, toPayload } from 'ts-action-operators';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { fetchRoute3Tokens, fetchRoute3Dexes$ } from 'src/utils/route3.util';
+import { isDefined } from 'src/utils/is-defined';
+import { fetchRoute3Tokens, fetchRoute3Dexes$, fetchRoute3SwapParams } from 'src/utils/route3.util';
 import { loadTokensMetadata$ } from 'src/utils/token-metadata.utils';
 
-import { loadSwapDexesAction, loadSwapTokensAction, loadSwapTokensMetadataAction } from './swap-actions';
+import {
+  loadSwapDexesAction,
+  loadSwapParamsAction,
+  loadSwapTokensAction,
+  loadSwapTokensMetadataAction,
+  resetSwapParamsAction
+} from './swap-actions';
+
+const isAmountDefined = (
+  requestParams: Route3SwapParamsRequest | Route3SwapParamsRequestRaw
+): requestParams is Route3SwapParamsRequest => {
+  if (isDefined(requestParams.amount)) {
+    return true;
+  }
+
+  return false;
+};
+
+const loadSwapParamsEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadSwapParamsAction.submit),
+    toPayload(),
+    switchMap(payload => {
+      if (isAmountDefined(payload)) {
+        return from(fetchRoute3SwapParams(payload)).pipe(map(params => loadSwapParamsAction.success(params)));
+      }
+
+      return of(resetSwapParamsAction());
+    }),
+    catchError(() => of(loadSwapParamsAction.fail('qwe')))
+  );
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -33,8 +64,6 @@ const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
                   visibility: VisibilityEnum.Visible
                 }));
 
-                tokensMapped.unshift({ ...TEZ_TOKEN_METADATA, balance: '0', visibility: VisibilityEnum.Visible });
-
                 return loadSwapTokensMetadataAction.success(tokensMapped);
               })
             )
@@ -56,4 +85,4 @@ const loadSwapDexesEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-export const swapEpics = combineEpics(loadSwapTokensEpic, loadSwapDexesEpic);
+export const swapEpics = combineEpics(loadSwapParamsEpic, loadSwapTokensEpic, loadSwapDexesEpic);

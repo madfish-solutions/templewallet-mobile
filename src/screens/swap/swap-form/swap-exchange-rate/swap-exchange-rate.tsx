@@ -9,7 +9,7 @@ import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
 import { formatAssetAmount } from '../../../../utils/number.util';
-import { ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
@@ -37,7 +37,9 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
 
   const minimumReceivedAmount = useMemo(() => {
     if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
-      return `${outputAmount.multipliedBy(slippageRatio).toFixed(8)} ${outputAsset.symbol}`;
+      return `${outputAmount.multipliedBy(slippageRatio).multipliedBy(ROUTING_FEE_RATIO).toFixed(8)} ${
+        outputAsset.symbol
+      }`;
     }
 
     return '---';

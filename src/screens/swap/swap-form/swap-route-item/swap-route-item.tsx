@@ -14,23 +14,23 @@ import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {
   chain: Route3Chain;
-  baseInput: BigNumber | undefined;
-  baseOutput: BigNumber | undefined;
+  baseInput: string | undefined;
+  baseOutput: string | undefined;
 }
 
-const BASE = 100;
+const BASE = new BigNumber(100);
 const PERCENTAGE_DECIMALS = 1;
 const AMOUNT_DECIMALS = 2;
 
-const calculatePercentage = (base: BigNumber | undefined, part: BigNumber) => {
+const calculatePercentage = (base: string | undefined, part: string) => {
   if (base === undefined) {
     return;
   }
 
-  const amountToFormat = part.multipliedBy(BASE).dividedBy(base);
+  const amountToFormat = BASE.multipliedBy(part).dividedBy(base);
 
   if (amountToFormat.isGreaterThanOrEqualTo(BASE)) {
-    return BASE;
+    return BASE.toFixed();
   }
 
   return amountToFormat.toFixed(PERCENTAGE_DECIMALS);
@@ -45,7 +45,7 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
     <View style={[styles.flex, styles.container]}>
       <View style={styles.amountsContainer}>
         <Text style={[styles.amount, styles.alignStart]}>
-          {kFormatter(Number(chain.input.toFixed(AMOUNT_DECIMALS)))}
+          {kFormatter(Number(new BigNumber(chain.input).toFixed(AMOUNT_DECIMALS)))}
         </Text>
         <Text style={[styles.percantage, styles.alignStart]}>{calculatePercentage(baseInput, chain.input)}%</Text>
       </View>
@@ -68,7 +68,7 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
       </View>
       <View style={styles.amountsContainer}>
         <Text style={[styles.amount, styles.alignEnd]}>
-          {kFormatter(Number(chain.output.toFixed(AMOUNT_DECIMALS)))}
+          {kFormatter(Number(new BigNumber(chain.output).toFixed(AMOUNT_DECIMALS)))}
         </Text>
         <Text style={[styles.percantage, styles.alignEnd]}>{calculatePercentage(baseOutput, chain.output)}%</Text>
       </View>

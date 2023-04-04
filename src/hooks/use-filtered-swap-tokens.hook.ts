@@ -26,8 +26,6 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
 
     userTokens.forEach(token => (balancesRecord[toTokenSlug(token.address, token.id)] = token.balance));
 
-    balancesRecord[toTokenSlug(tezosToken.address, tezosToken.id)] = tezosToken.balance;
-
     return balancesRecord;
   }, [userTokens]);
 
@@ -42,7 +40,11 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
       };
     });
 
-    return applySortByDollarValueDecrease(result);
+    applySortByDollarValueDecrease(result);
+
+    result.unshift(tezosToken);
+
+    return result;
   }, [swapTokensMetadata, tezosToken, balances]);
 
   const fromTokens = useMemo(() => swapTokensWithBalances.filter(isNonZeroBalance), [swapTokensWithBalances]);

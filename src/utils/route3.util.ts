@@ -10,11 +10,12 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
 import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
+import { tzToMutez } from './tezos.util';
 
 export const fetchRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
@@ -24,13 +25,7 @@ const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
     .replace(/input":\s*([-+Ee0-9.]+)/g, 'input":"$1"')
     .replace(/output":\s*([-+Ee0-9.]+)/g, 'output":"$1"');
 
-  return JSON.parse(stringedJSON, (key, value) => {
-    if (key === 'input' || key === 'output') {
-      return new BigNumber(value);
-    }
-
-    return value;
-  });
+  return JSON.parse(stringedJSON);
 };
 
 export const fetchRoute3SwapParams = ({
@@ -58,7 +53,7 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
       hops.push({
         code: (j === 0 ? 1 : 0) + (hop.forward ? 2 : 0),
         dex_id: hop.dex,
-        amount_opt: j === 0 ? chain.input.multipliedBy(10 ** decimals) : null
+        amount_opt: j === 0 ? tzToMutez(new BigNumber(chain.input), decimals) : null
       });
     }
   }
@@ -67,7 +62,7 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
 };
 
 export const getRoute3TokenSymbol = (token: TokenInterface) => {
-  if (token.symbol === 'TEZ') {
+  if (token.symbol === TEZ_TOKEN_METADATA.symbol) {
     return 'xtz';
   }
 
