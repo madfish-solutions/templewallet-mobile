@@ -17,13 +17,7 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import {
-  loadAllCurrenciesActions
-  /* loadAliceBobCurrenciesActions,
-  loadMoonPayCryptoCurrenciesActions,
-  loadMoonPayFiatCurrenciesActions,
-  loadUtorgCurrenciesActions */
-} from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
+import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -41,9 +35,13 @@ import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
-import { usePaymentOptions } from './hooks/use-payment-options';
+import { usePaymentProviders } from './hooks/use-payment-providers.hook';
 
-const newValueFn = (_: TopUpAssetAmountInterface, newAsset: TopUpInputInterface, amount: BigNumber | undefined) => ({
+const newTopUpAssetAmountFn = (
+  _: TopUpAssetAmountInterface,
+  newAsset: TopUpInputInterface,
+  amount: BigNumber | undefined
+) => ({
   asset: newAsset,
   amount: isDefined(newAsset.precision) ? amount?.decimalPlaces(newAsset.precision) : amount,
   min: newAsset.minAmount,
@@ -60,13 +58,7 @@ export const BuyWithCreditCard: FC = () => {
 
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
-  useEffect(() => {
-    /* dispatch(loadMoonPayFiatCurrenciesActions.submit());
-    dispatch(loadMoonPayCryptoCurrenciesActions.submit());
-    dispatch(loadUtorgCurrenciesActions.submit());
-    dispatch(loadAliceBobCurrenciesActions.submit()); */
-    dispatch(loadAllCurrenciesActions.submit());
-  }, []);
+  useEffect(() => void dispatch(loadAllCurrenciesActions.submit()), []);
 
   const {
     allCurrencies: allFiatCurrencies,
@@ -83,7 +75,7 @@ export const BuyWithCreditCard: FC = () => {
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
   const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>();
 
-  const { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts } = usePaymentOptions(
+  const { allPaymentProviders, paymentProvidersToDisplay, updateOutputAmounts } = usePaymentProviders(
     inputAmount,
     inputAsset,
     outputAsset
@@ -91,7 +83,7 @@ export const BuyWithCreditCard: FC = () => {
   const isPaymentProviderError =
     isDefined(errors.paymentProvider) &&
     (isTruthy(touched.paymentProvider) || submitCount > 0) &&
-    paymentOptionsToDisplay.length > 0;
+    paymentProvidersToDisplay.length > 0;
 
   const switchPaymentProvider = useCallback(
     async (newProvider?: PaymentProviderInterface) => {
@@ -105,23 +97,22 @@ export const BuyWithCreditCard: FC = () => {
   );
 
   useEffect(() => {
-    const prevInputValue = values.sendInput;
-    const { asset: currentInputAsset, amount: currentInputAmount } = prevInputValue;
+    const { asset: currentInputAsset, amount: currentInputAmount } = values.sendInput;
     const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
 
     if (isDefined(newInputAsset) && !jsonEqualityFn(newInputAsset, currentInputAsset)) {
-      setFieldValue('sendInput', newValueFn(prevInputValue, newInputAsset, currentInputAmount));
+      setFieldValue('sendInput', newTopUpAssetAmountFn(values.sendInput, newInputAsset, currentInputAmount));
     }
   }, [values.sendInput, allFiatCurrencies, setFieldValue]);
 
   useEffect(() => {
-    const prevPaymentProvider = values.paymentProvider;
-    const newPaymentOption = paymentOptionsToDisplay.find(({ id }) => id === prevPaymentProvider?.id);
+    const currentPaymentProvider = values.paymentProvider;
+    const newPaymentProvider = paymentProvidersToDisplay.find(({ id }) => id === currentPaymentProvider?.id);
 
-    if (isDefined(newPaymentOption) && !jsonEqualityFn(newPaymentOption, prevPaymentProvider)) {
-      switchPaymentProvider(newPaymentOption);
+    if (isDefined(newPaymentProvider) && !jsonEqualityFn(newPaymentProvider, currentPaymentProvider)) {
+      switchPaymentProvider(newPaymentProvider);
     }
-  }, [values.paymentProvider, paymentOptionsToDisplay, switchPaymentProvider]);
+  }, [values.paymentProvider, paymentProvidersToDisplay, switchPaymentProvider]);
 
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
@@ -143,7 +134,7 @@ export const BuyWithCreditCard: FC = () => {
         }
 
         const patchedPaymentProviders = getPaymentProvidersToDisplay(
-          allPaymentOptions.map(({ id, ...rest }) => ({
+          allPaymentProviders.map(({ id, ...rest }) => ({
             ...rest,
             id,
             outputAmount: amounts[id]
@@ -163,7 +154,7 @@ export const BuyWithCreditCard: FC = () => {
         }
         setIsLoading(false);
       }, 200),
-    [values.paymentProvider, updateOutputAmounts, allPaymentOptions, switchPaymentProvider]
+    [values.paymentProvider, updateOutputAmounts, allPaymentProviders, switchPaymentProvider]
   );
 
   const handleInputValueChange = useCallback(
@@ -188,10 +179,6 @@ export const BuyWithCreditCard: FC = () => {
 
   useTimerEffect(
     () => {
-      /* dispatch(loadMoonPayFiatCurrenciesActions.submit());
-      dispatch(loadMoonPayCryptoCurrenciesActions.submit());
-      dispatch(loadUtorgCurrenciesActions.submit());
-      dispatch(loadAliceBobCurrenciesActions.submit()); */
       dispatch(loadAllCurrenciesActions.submit());
       if (!isLoading) {
         setIsLoading(true);
@@ -216,7 +203,7 @@ export const BuyWithCreditCard: FC = () => {
               emptyListText="Not found fiat currency"
               isSearchable
               assetsList={filteredFiatCurrencies}
-              newValueFn={newValueFn}
+              newValueFn={newTopUpAssetAmountFn}
               precision={inputAsset.precision}
               testID={BuyWithCreditCardSelectors.sendInput}
               onValueChange={handleInputValueChange}
@@ -245,7 +232,7 @@ export const BuyWithCreditCard: FC = () => {
           <View style={styles.paymentProviderDropdownContainer}>
             <Dropdown
               value={values.paymentProvider}
-              list={paymentOptionsToDisplay}
+              list={paymentProvidersToDisplay}
               description="Select payment provider"
               emptyListText="No providers found"
               itemHeight={formatSize(81)}

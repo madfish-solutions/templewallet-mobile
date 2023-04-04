@@ -52,7 +52,7 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
   [TopUpProviderEnum.AliceBob]: async inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
 };
 
-const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
+const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
   [TopUpProviderEnum.MoonPay]: {
     name: 'MoonPay',
     id: TopUpProviderEnum.MoonPay,
@@ -73,7 +73,7 @@ const initialPaymentOptionsData: Record<TopUpProviderEnum, PaymentProviderInitia
   }
 };
 
-const usePaymentOption = (
+const usePaymentProvider = (
   providerId: TopUpProviderEnum,
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
@@ -84,7 +84,7 @@ const usePaymentOption = (
   const [outputAmountLoading, setOutputAmountLoading] = useState<boolean>(false);
   const fiatCurrencies = useFiatCurrenciesSelector(providerId);
   const { minAmount, maxAmount } = useInputLimits(providerId, inputAsset.code);
-  const initialData = initialPaymentOptionsData[providerId];
+  const initialData = initialPaymentProvidersData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
 
   const updateOutputAmount = useCallback(
@@ -119,7 +119,7 @@ const usePaymentOption = (
     [inputAsset, outputAsset, getOutputAmount, providerId, fiatCurrencies]
   );
 
-  const option = useMemo<PaymentProviderInterface>(
+  const provider = useMemo<PaymentProviderInterface>(
     () => ({
       ...initialData,
       isBestPrice: false,
@@ -134,46 +134,46 @@ const usePaymentOption = (
   );
 
   return {
-    option,
+    provider,
     isError,
     updateOutputAmount,
     loading: outputAmountLoading
   };
 };
 
-export const usePaymentOptions = (
+export const usePaymentProviders = (
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
   outputAsset: TopUpInputInterface
 ) => {
   const {
     isError: moonPayIsError,
-    option: moonPayOption,
+    provider: moonPayProvider,
     updateOutputAmount: updateMoonPayOutputAmount,
     loading: moonPayLoading
-  } = usePaymentOption(TopUpProviderEnum.MoonPay, inputAmount, inputAsset, outputAsset);
+  } = usePaymentProvider(TopUpProviderEnum.MoonPay, inputAmount, inputAsset, outputAsset);
   const {
     isError: utorgIsError,
-    option: utorgOption,
+    provider: utorgProvider,
     updateOutputAmount: updateUtorgOutputAmount,
     loading: utorgLoading
-  } = usePaymentOption(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
+  } = usePaymentProvider(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
   const {
     isError: aliceBobIsError,
-    option: aliceBobOption,
+    provider: aliceBobProvider,
     updateOutputAmount: updateAliceBobOutputAmount,
     loading: aliceBobLoading
-  } = usePaymentOption(TopUpProviderEnum.AliceBob, inputAmount, inputAsset, outputAsset);
+  } = usePaymentProvider(TopUpProviderEnum.AliceBob, inputAmount, inputAsset, outputAsset);
 
-  const allPaymentOptions = useMemo(
-    () => [moonPayOption, utorgOption, aliceBobOption],
-    [moonPayOption, utorgOption, aliceBobOption]
+  const allPaymentProviders = useMemo(
+    () => [moonPayProvider, utorgProvider, aliceBobProvider],
+    [moonPayProvider, utorgProvider, aliceBobProvider]
   );
 
-  const paymentOptionsToDisplay = useMemo(
+  const paymentProvidersToDisplay = useMemo(
     () =>
       getPaymentProvidersToDisplay(
-        allPaymentOptions,
+        allPaymentProviders,
         {
           [TopUpProviderEnum.MoonPay]: moonPayIsError,
           [TopUpProviderEnum.Utorg]: utorgIsError,
@@ -186,7 +186,7 @@ export const usePaymentOptions = (
         },
         inputAmount
       ),
-    [allPaymentOptions, moonPayIsError, utorgIsError, aliceBobIsError, moonPayLoading, utorgLoading, aliceBobLoading]
+    [allPaymentProviders, moonPayIsError, utorgIsError, aliceBobIsError, moonPayLoading, utorgLoading, aliceBobLoading]
   );
   const updateOutputAmounts = useCallback(
     async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
@@ -206,5 +206,5 @@ export const usePaymentOptions = (
   );
   const loading = moonPayLoading || utorgLoading || aliceBobLoading;
 
-  return { allPaymentOptions, paymentOptionsToDisplay, updateOutputAmounts, loading };
+  return { allPaymentProviders, paymentProvidersToDisplay, updateOutputAmounts, loading };
 };

@@ -97,7 +97,7 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress} testID={`${DropdownSelectors.option}/${index}`}>
+        <TouchableOpacity key={index} onPress={handlePress} testID={DropdownSelectors.option}>
           <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
