@@ -9,7 +9,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
-import { useSubjectSubscription$ } from 'src/utils/rxjs.utils';
+import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 type RestoreFromCloudFormValues = {
   password: string;
@@ -32,27 +32,24 @@ export const useHandleSubmit = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
 
-  const submit$ = useSubjectSubscription$<{ password: string; fileId: string; reusePassword: boolean }>(
+  const submit$ = useSubjectWithReSubscription$<{ password: string; fileId: string; reusePassword: boolean }>(
     subject$ =>
-      subject$
-        .pipe(
-          tap(() => dispatch(showLoaderAction())),
-          switchMap(({ password, fileId, reusePassword }) =>
-            from(fetchCloudBackup(password, fileId).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
-              map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined))
-            )
+      subject$.pipe(
+        tap(() => dispatch(showLoaderAction())),
+        switchMap(({ password, fileId, reusePassword }) =>
+          from(fetchCloudBackup(password, fileId).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
+            map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined))
           )
-        )
-        .subscribe({
-          next: cloudBackupId => {
-            dispatch(hideLoaderAction());
-            navigate(ScreensEnum.CreateAccount, { cloudBackupId });
-          },
-          error: err => {
-            dispatch(hideLoaderAction());
-            showErrorToastByError(err);
-          }
-        }),
+        ),
+        tap(cloudBackupId => {
+          dispatch(hideLoaderAction());
+          navigate(ScreensEnum.CreateAccount, { cloudBackupId });
+        })
+      ),
+    err => {
+      dispatch(hideLoaderAction());
+      showErrorToastByError(err);
+    },
     [fileId, dispatch, navigate]
   );
 

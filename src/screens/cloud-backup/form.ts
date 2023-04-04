@@ -9,7 +9,7 @@ import { Shelter } from 'src/shelter/shelter';
 import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { fetchCloudBackupFileDetails, requestSignInToCloud, saveCloudBackup } from 'src/utils/cloud-backup';
-import { useSubjectSubscription$ } from 'src/utils/rxjs.utils';
+import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
 
@@ -29,77 +29,69 @@ export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
 
-  const proceedWithSaving$ = useSubjectSubscription$<string>(
+  const proceedWithSaving$ = useSubjectWithReSubscription$<string>(
     subject$ =>
-      subject$
-        .pipe(
-          tap(() => dispatch(showLoaderAction())),
-          switchMap(password =>
-            Shelter.revealSeedPhrase$().pipe(
-              switchMap(mnemonic =>
-                from(
-                  saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true))
-                )
-              )
+      subject$.pipe(
+        tap(() => dispatch(showLoaderAction())),
+        switchMap(password =>
+          Shelter.revealSeedPhrase$().pipe(
+            switchMap(mnemonic =>
+              from(saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true)))
             )
           )
-        )
-        .subscribe({
-          next: () => {
-            dispatch(hideLoaderAction());
-            dispatch(madeCloudBackupAction());
-            showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-            goBack();
-          },
-          error: err => {
-            dispatch(hideLoaderAction());
-            showErrorToastByError(err);
-          }
-        }),
+        ),
+        tap(() => {
+          dispatch(hideLoaderAction());
+          dispatch(madeCloudBackupAction());
+          showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+          goBack();
+        })
+      ),
+    err => {
+      dispatch(hideLoaderAction());
+      showErrorToastByError(err);
+    },
     [dispatch, goBack]
   );
 
-  const submit$ = useSubjectSubscription$<string>(
+  const submit$ = useSubjectWithReSubscription$<string>(
     subject$ =>
-      subject$
-        .pipe(
-          tap(() => dispatch(showLoaderAction())),
-          switchMap(password =>
-            assurePasswordIsCorrect$(password).pipe(
-              switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true)))),
-              filter(isLoggedIn => {
-                if (!isLoggedIn) {
-                  dispatch(hideLoaderAction());
-                }
+      subject$.pipe(
+        tap(() => dispatch(showLoaderAction())),
+        switchMap(password =>
+          assurePasswordIsCorrect$(password).pipe(
+            switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true)))),
+            filter(isLoggedIn => {
+              if (!isLoggedIn) {
+                dispatch(hideLoaderAction());
+              }
 
-                return isLoggedIn;
-              }),
-              switchMap(() =>
-                from(fetchCloudBackupFileDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
-              ),
-              map(backupFile => ({ backupFile, password }))
-            )
+              return isLoggedIn;
+            }),
+            switchMap(() =>
+              from(fetchCloudBackupFileDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
+            ),
+            map(backupFile => ({ backupFile, password }))
           )
-        )
-        .subscribe({
-          next: ({ backupFile, password }) => {
-            if (backupFile) {
-              dispatch(hideLoaderAction());
-
-              return void alertOnExistingBackup(
-                () => void subject$.next(password),
-                () => void proceedWithSaving$.next(password),
-                () => void navigate(ScreensEnum.ManualBackup)
-              );
-            }
-
-            return void proceedWithSaving$.next(password);
-          },
-          error: err => {
+        ),
+        tap(({ backupFile, password }) => {
+          if (backupFile) {
             dispatch(hideLoaderAction());
-            showErrorToastByError(err);
+
+            return void alertOnExistingBackup(
+              () => void subject$.next(password),
+              () => void proceedWithSaving$.next(password),
+              () => void navigate(ScreensEnum.ManualBackup)
+            );
           }
-        }),
+
+          return void proceedWithSaving$.next(password);
+        })
+      ),
+    err => {
+      dispatch(hideLoaderAction());
+      showErrorToastByError(err);
+    },
     [dispatch, navigate]
   );
 
