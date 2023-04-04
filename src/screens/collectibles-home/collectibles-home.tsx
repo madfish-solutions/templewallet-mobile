@@ -8,6 +8,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { discordUrl, twitterUrl } from 'src/config/socials';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCollectionsSelector } from 'src/store/collectons/collections-selectors';
@@ -21,6 +22,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { filterUnique } from 'src/utils/array.utils';
 import { formatImgUri } from 'src/utils/image.utils';
 import { openUrl } from 'src/utils/linking.util';
 
@@ -44,15 +46,18 @@ export const CollectiblesHome = () => {
   const visibleCollectiblesList = useVisibleCollectiblesListSelector();
 
   const collectiblesFromCollections = useMemo(
-    () => [
-      ...new Set(
+    () =>
+      filterUnique(
         visibleCollectiblesList.filter(collectible => collectible.id !== 0).map(collection => collection.address)
-      )
-    ],
+      ),
+
     [visibleCollectiblesList]
   );
 
   useEffect(() => void dispatch(loadCollectionsActions.submit(collectiblesFromCollections)), [selectedAccount]);
+
+  const onValueChange = (value: AccountBaseInterface | undefined) =>
+    dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
@@ -71,7 +76,7 @@ export const CollectiblesHome = () => {
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
-            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+            onValueChange={onValueChange}
             isCollectibleScreen
           />
         </View>

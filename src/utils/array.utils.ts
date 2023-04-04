@@ -8,3 +8,5 @@ export const sliceIntoChunks = <T>(array: T[], chunkSize: number) => {
 
   return result;
 };
+
+export const filterUnique = <T>(array: T[]) => Array.from(new Set(array));

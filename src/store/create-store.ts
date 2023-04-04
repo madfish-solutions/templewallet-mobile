@@ -14,7 +14,7 @@ import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
-import { collectionsReducers } from './collectons/collections-reducers';
+import { collectionsReducer } from './collectons/collections-reducers';
 import { CollectionsRootState } from './collectons/collections-state';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { ContactsBookRootState } from './contact-book/contact-book-state';
@@ -83,7 +83,7 @@ const rootReducer = rootStateReducer<RootState>({
   market: marketReducers,
   notifications: notificationsReducers,
   contactBook: contactBookReducers,
-  collections: collectionsReducers,
+  collections: collectionsReducer,
   partnersPromotion: partnersPromotionReducers
 });
 

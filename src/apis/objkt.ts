@@ -3,7 +3,7 @@ import { catchError, map, Observable, of } from 'rxjs';
 
 import { Collection } from 'src/store/collectons/collections-state';
 
-import { getApolloConfigurableClient } from './utils/get-apollo-configurable-client.util';
+import { getApolloConfigurableClient } from '../apollo/get-apollo-configurable-client.util';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 

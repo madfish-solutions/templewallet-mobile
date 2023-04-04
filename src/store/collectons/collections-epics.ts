@@ -3,7 +3,7 @@ import { forkJoin, map, Observable, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { fetchCollectionsLogo$ } from 'src/apollo/objkt';
+import { fetchCollectionsLogo$ } from 'src/apis/objkt';
 
 import { loadCollectionsActions } from './collections-actions';
 
