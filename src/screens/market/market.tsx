@@ -1,18 +1,17 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { METADATA_SYNC_INTERVAL } from 'src/config/fixed-times';
+import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from 'src/store/market/market-actions';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { HeaderCard } from '../../components/header-card/header-card';
-import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from '../../store/market/market-actions';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { TezosInfo } from './tezos-info/tezos-info';
 import { TopTokensTable } from './top-coins-table/top-tokens-table';
-
-const DATA_REFRESH_INTERVAL = 60 * 1000;
 
 export const Market = () => {
   const dispatch = useDispatch();
@@ -23,7 +22,7 @@ export const Market = () => {
     dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
   };
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL);
+  useAuthorisedInterval(initDataLoading, METADATA_SYNC_INTERVAL);
 
   usePageAnalytic(ScreensEnum.Market);
 
