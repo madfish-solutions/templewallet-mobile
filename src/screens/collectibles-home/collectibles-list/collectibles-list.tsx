@@ -22,7 +22,7 @@ const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getToke
 
 const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
-
+// ts-prune-ignore-next
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
