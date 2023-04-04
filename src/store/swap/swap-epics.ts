@@ -40,7 +40,7 @@ const loadSwapParamsEpic = (action$: Observable<Action>) =>
 
       return of(resetSwapParamsAction());
     }),
-    catchError(() => of(loadSwapParamsAction.fail('qwe')))
+    catchError(error => of(loadSwapParamsAction.fail(error.message)))
   );
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
