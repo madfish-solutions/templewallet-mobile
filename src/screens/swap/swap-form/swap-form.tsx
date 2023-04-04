@@ -274,7 +274,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             inputAmount={swapParams.data.input !== undefined ? new BigNumber(swapParams.data.input) : undefined}
             outputAmount={swapParams.data.output !== undefined ? new BigNumber(swapParams.data.output) : undefined}
           />
-          <SwapRoute {...swapParams.data} />
+          <SwapRoute />
         </View>
 
         <SwapDisclaimer />

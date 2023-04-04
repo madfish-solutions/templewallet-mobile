@@ -5,13 +5,12 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { Route3SwapParamsResponse } from 'src/interfaces/route3.interface';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
 import { useSwapRouteStyles } from './swap-route.styles';
 
-export const SwapRoute: FC<Route3SwapParamsResponse> = () => {
+export const SwapRoute: FC = () => {
   const styles = useSwapRouteStyles();
   const [isRouteVisible, setIsVisible] = useState(false);
   const {

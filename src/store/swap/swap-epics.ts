@@ -22,7 +22,7 @@ import {
 const isAmountDefined = (
   requestParams: Route3SwapParamsRequest | Route3SwapParamsRequestRaw
 ): requestParams is Route3SwapParamsRequest => {
-  if (isDefined(requestParams.amount)) {
+  if (isDefined(requestParams.amount) && requestParams.fromSymbol.length > 0 && requestParams.toSymbol.length > 0) {
     return true;
   }
 
