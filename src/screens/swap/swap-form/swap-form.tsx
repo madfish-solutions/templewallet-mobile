@@ -209,9 +209,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       dispatch(
         loadSwapParamsAction.submit({
-          fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+          fromSymbol: getRoute3TokenSymbol(newInputValue.asset),
           toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-          amount: newInputValue.amount && mutezToTz(newInputValue.amount, inputAssets.asset.decimals).toFixed()
+          amount: newInputValue.amount && mutezToTz(newInputValue.amount, newInputValue.asset.decimals).toFixed()
         })
       );
     },
@@ -223,6 +223,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       if (getTokenSlug(newOutputValue.asset) === inputAssetSlug) {
         setFieldValue('inputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
+
+      dispatch(
+        loadSwapParamsAction.submit({
+          fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
+          toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
+          amount: inputAssets.amount && mutezToTz(inputAssets.amount, inputAssets.asset.decimals).toFixed()
+        })
+      );
     },
     [inputAssetSlug, setFieldValue, inputAssets.amount]
   );
