@@ -11,10 +11,11 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import {
+  TOKENS_SYNC_INTERVAL,
   BALANCES_SYNC_INTERVAL,
-  METADATA_SYNC_INTERVAL,
+  RATES_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL,
-  RATES_SYNC_INTERVAL
+  SELECTED_BAKER_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
@@ -64,7 +65,11 @@ import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { loadTezosBalanceActions, loadTokensActions } from 'src/store/wallet/wallet-actions';
+import {
+  loadTezosBalanceActions,
+  loadTokensActions,
+  loadTokensBalancesArrayActions
+} from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 
@@ -93,16 +98,17 @@ export const MainStackScreen = () => {
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 
-  useAuthorisedInterval(() => dispatch(loadTezosBalanceActions.submit()), BALANCES_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(
     () => {
-      dispatch(loadTokensActions.submit());
-      dispatch(loadSelectedBakerActions.submit());
+      dispatch(loadTezosBalanceActions.submit());
+      dispatch(loadTokensBalancesArrayActions.submit());
     },
-    METADATA_SYNC_INTERVAL,
+    BALANCES_SYNC_INTERVAL,
     refreshDeps
   );
-  useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL, [selectedAccountPkh]);
+  useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL);
   useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
     selectedAccountPkh
   ]);

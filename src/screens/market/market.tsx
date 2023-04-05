@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { HeaderCard } from 'src/components/header-card/header-card';
-import { METADATA_SYNC_INTERVAL } from 'src/config/fixed-times';
+import { MARKET_SYNC_INTERVAL, PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from 'src/store/market/market-actions';
@@ -16,13 +16,15 @@ import { TopTokensTable } from './top-coins-table/top-tokens-table';
 export const Market = () => {
   const dispatch = useDispatch();
 
-  const initDataLoading = () => {
+  useAuthorisedInterval(() => {
     dispatch(loadMarketTopTokenActions.submit());
     dispatch(loadMarketTokensSlugsActions.submit());
-    dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-  };
+  }, MARKET_SYNC_INTERVAL);
 
-  useAuthorisedInterval(initDataLoading, METADATA_SYNC_INTERVAL);
+  useAuthorisedInterval(
+    () => dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile)),
+    PROMO_SYNC_INTERVAL
+  );
 
   usePageAnalytic(ScreensEnum.Market);
 
