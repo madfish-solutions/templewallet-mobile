@@ -11,7 +11,7 @@ const loadExchangeRatesEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadExchangeRates.submit),
     switchMap(() =>
-      forkJoin([loadUsdToTokenRates$, loadFiatToTezosRates$]).pipe(
+      forkJoin([loadUsdToTokenRates$(), loadFiatToTezosRates$()]).pipe(
         map(([usdToTokenRates, fiatToTezosRates]) => loadExchangeRates.success({ usdToTokenRates, fiatToTezosRates })),
         catchError(error => of(loadExchangeRates.fail(error.message)))
       )
