@@ -127,7 +127,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Rewards & Luck:</Text>
               <Text style={styles.textBlack}>
-                {normalizedRewards.toString() + ` ${metadata.symbol} `}
+                {`${normalizedRewards.toString()} ${metadata.symbol} `}
                 <Text style={luckTextStyle}>
                   ({luckPercentage.gt(0) ? '+' : ''}
                   {luckPercentage.decimalPlaces(0).toString()}%)
@@ -149,7 +149,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
               <Text style={styles.textBlack}>
                 {cycleStatus === CycleStatus.FUTURE
                   ? '‒'
-                  : normalizedRewards.minus(normalizedBakerFee).toString() + ` ${metadata.symbol} `}
+                  : `${normalizedRewards.minus(normalizedBakerFee).toString()} ${metadata.symbol}`}
               </Text>
             </View>
             <View style={styles.cellContainer}>
