@@ -178,7 +178,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Notifications}
                 component={Notifications}
-                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsItem}
@@ -300,7 +300,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.NotificationsSettings}
                 component={NotificationsSettings}
-                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}
