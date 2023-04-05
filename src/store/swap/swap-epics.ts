@@ -1,7 +1,7 @@
 import { combineEpics, Epic } from 'redux-observable';
 import { catchError, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
-import { ofType } from 'ts-action-operators';
+import { ofType, toPayload } from 'ts-action-operators';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfaces/route3.interface';

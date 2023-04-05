@@ -12,13 +12,14 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
-import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { Route3Token } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
@@ -37,7 +38,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
-import { getRoute3TokenSymbol } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { ROUTING_FEE_RATIO } from '../config';
@@ -50,16 +51,13 @@ import { SwapFormSelectors } from './swap-form.selectors';
 import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
-const TEMPLE_TOKEN: TokenInterface = {
-  address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
-  decimals: 6,
-  exchangeRate: 0.38158038815461065,
-  id: 0,
-  name: 'Quipuswap Governance Token',
-  symbol: 'QUIPU',
-  thumbnailUri: 'ipfs://Qmb2GiHN9EjcrN29J6y9PsXu3ZDosXTv6uLUWGZfRRSzS2/quipu.png',
-  balance: '0',
-  visibility: VisibilityEnum.Visible
+const TEMPLE_TOKEN: Route3Token = {
+  id: 30,
+  symbol: 'WBUSD',
+  standard: Route3TokenStandardEnum.fa2,
+  contract: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
+  tokenId: '1',
+  decimals: 18
 };
 
 interface SwapFormProps {
@@ -69,7 +67,7 @@ interface SwapFormProps {
 
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
-  const getSwapParams = useSwap();
+  const swapOperationParams = useSwap();
 
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -96,24 +94,15 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token) {
       return;
     }
-    const inputAmountAtomic = new BigNumber(swapParams.data.input ?? 0).multipliedBy(10 ** inputAssets.asset.decimals);
-
-    const swapOpParams = await getSwapParams(
-      inputAssets.asset,
-      outputAssets.asset,
-      inputAmountAtomic,
-      minimumReceivedAmountAtomic,
-      swapParams.data.chains
-    );
 
     const swapToTempleParams = await fetchRoute3SwapParams({
       fromSymbol: getRoute3TokenSymbol(outputAssets.asset),
-      toSymbol: getRoute3TokenSymbol(TEMPLE_TOKEN),
-      amount: routingFeeAtomic.dividedBy(10 ** outputAssets.asset.decimals).toFixed()
+      toSymbol: TEMPLE_TOKEN.symbol,
+      amount: mutezToTz(routingFeeAtomic, outputAssets.asset.decimals).toFixed()
     });
 
-    const swapToTempleTokenOpParams = await getSwapParams(
-      outputAssets.asset,
+    const swapToTempleTokenOpParams = await swapOperationParams(
+      toRoute3Token,
       TEMPLE_TOKEN,
       routingFeeAtomic,
       routingFeeAtomic,
@@ -121,13 +110,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     );
 
     const routingFeeOpParams = await getRoutingFeeTransferParams(
-      toRoute3Token,
-      routingFeeAtomic,
+      TEMPLE_TOKEN,
+      routingFeeAtomic.dividedBy(2),
       selectedAccount.publicKeyHash,
       tezos
     );
 
-    const swapOpParams = await getSwapParams(
+    const swapOpParams = await swapOperationParams(
       fromRoute3Token,
       toRoute3Token,
       inputAssets.amount,
@@ -135,7 +124,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       swapParams.data.chains
     );
 
-    if (swapOpParams === undefined) {
+    if (!isDefined(swapOpParams) || !isDefined(swapToTempleTokenOpParams)) {
       return;
     }
 
@@ -305,7 +294,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         />
         <View>
           <SwapExchangeRate
-            swapParams={swapParams.data}
             inputAsset={inputAssets.asset}
             slippageRatio={slippageRatio}
             outputAsset={outputAssets.asset}

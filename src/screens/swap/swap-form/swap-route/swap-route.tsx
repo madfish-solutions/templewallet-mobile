@@ -5,6 +5,7 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
 import { useSwapRouteStyles } from './swap-route.styles';
