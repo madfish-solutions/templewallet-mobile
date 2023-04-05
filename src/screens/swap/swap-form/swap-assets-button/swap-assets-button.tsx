@@ -1,6 +1,9 @@
 import { useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
+
+import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 
 import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
@@ -11,6 +14,7 @@ import { SwapFormSelectors } from '../swap-form.selectors';
 import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {
+  const dispatch = useDispatch();
   const { values, setValues } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
 
@@ -20,6 +24,8 @@ export const SwapAssetsButton: FC = () => {
         inputAssets: { asset: outputAsset.asset, amount: undefined },
         outputAssets: { asset: inputAsset.asset, amount: undefined }
       });
+
+      dispatch(resetSwapParamsAction());
     },
     [inputAssets, outputAssets]
   );
