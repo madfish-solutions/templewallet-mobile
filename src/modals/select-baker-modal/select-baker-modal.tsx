@@ -37,6 +37,12 @@ const DISCLAIMER_MESSAGE =
   'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
 const UNKNOWN_BAKER_NAME = 'Unknown baker';
 
+const TEZ_LABEL = 'Delegate to Recommended Bakers';
+const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by Baking Bad.';
+const DCP_LABEL = 'Delegate to producer';
+const DCP_DESCRIPTION =
+  'Enter the address or domain name of a registered producer to whom you want to delegate your funds.';
+
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
   [BakersSortFieldEnum.Rank]: 'Rank',
@@ -55,6 +61,8 @@ export const SelectBakerModal: FC = () => {
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
+
+  const searchPlaceholder = isDcpNode ? 'Search Producer' : 'Search Baker';
 
   const { trackEvent } = useAnalytics();
 
@@ -96,7 +104,7 @@ export const SelectBakerModal: FC = () => {
       if (currentBaker.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
-          description: 'Already delegated funds to this baker.'
+          description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
         });
       } else {
         navigate(ModalsEnum.Confirmation, {
@@ -159,13 +167,13 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <View style={styles.upperContainer}>
           <Label
-            label="Delegate to Recommended Bakers"
-            description="Click on the Baker you want to delegate funds to. This list is powered by Baking Bad."
+            label={isDcpNode ? DCP_LABEL : TEZ_LABEL}
+            description={isDcpNode ? DCP_DESCRIPTION : TEZ_DESCRIPTION}
           />
         </View>
         <View style={styles.searchContainer}>
           <SearchInput
-            placeholder="Search baker"
+            placeholder={searchPlaceholder}
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
