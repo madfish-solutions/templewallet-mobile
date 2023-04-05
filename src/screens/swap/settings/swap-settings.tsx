@@ -82,6 +82,7 @@ export const SwapSettingsScreen: FC = () => {
       {inputTypeIndex === 3 && (
         <StyledNumericInput
           value={new BigNumber(slippageTolerance)}
+          maxValue={30}
           decimals={2}
           editable={true}
           isShowCleanButton
@@ -90,7 +91,7 @@ export const SwapSettingsScreen: FC = () => {
         />
       )}
       <Text style={styles.desctiption}>
-        Slippage tolerance is a setting for the limit of price slippage you are willing to accept.
+        Slippage tolerance is a setting for the limit of price slippage you are willing to accept (max 30%).
       </Text>
     </ScrollView>
   );

@@ -89,16 +89,6 @@ export const useTokenSelector = (tokenSlug: string) => {
   );
 };
 
-export const useTokensWithTezosListSelector = () => {
-  const assetsList = useAssetsListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
-
-  return useMemo(
-    () => [tezosToken, ...assetsList].filter(({ artifactUri }) => !isDefined(artifactUri)),
-    [assetsList, tezosToken]
-  );
-};
-
 export const useVisibleTokensListSelector = () => {
   const tokensList = useTokensListSelector();
 

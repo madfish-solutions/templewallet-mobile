@@ -1,6 +1,7 @@
-import { ContractType } from '../../interfaces/contract.type';
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
-import { isString } from '../../utils/is-string';
+import { ContractType } from 'src/interfaces/contract.type';
+import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
+import { isString } from 'src/utils/is-string';
+
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 

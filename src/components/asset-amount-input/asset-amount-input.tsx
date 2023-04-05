@@ -147,6 +147,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     numericInputValue,
     value.asset.decimals,
+    undefined,
+    undefined,
     onChange,
     onBlur,
     onFocus

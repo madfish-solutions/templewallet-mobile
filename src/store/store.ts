@@ -8,6 +8,7 @@ import { exolixEpics } from './exolix/exolix-epics';
 import { marketEpics } from './market/market-epics';
 import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
+import { partnersPromotionEpics } from './partners-promotion/partners-promotion-epics';
 import { rootStateEpics } from './root-state.epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
@@ -28,5 +29,6 @@ export const { store, persistor } = createStore(
   advertisingEpics,
   marketEpics,
   notificationsEpics,
-  contactsEpics
+  contactsEpics,
+  partnersPromotionEpics
 );
