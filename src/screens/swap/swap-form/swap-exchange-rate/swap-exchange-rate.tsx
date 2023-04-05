@@ -2,45 +2,48 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 
-import { Route3SwapParamsResponse } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
 
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
 import { formatAssetAmount } from '../../../../utils/number.util';
-import { ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
   slippageRatio: number;
   inputAsset: TokenInterface;
   outputAsset: TokenInterface;
-  swapParams: Route3SwapParamsResponse;
+  inputAmount: BigNumber | undefined;
+  outputAmount: BigNumber | undefined;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, swapParams }) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, inputAmount, outputAmount }) => {
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
-    if (swapParams.input !== undefined && swapParams.output !== undefined) {
-      const tradeInput = new BigNumber(swapParams.input);
-      const tradeOutput = new BigNumber(swapParams.output);
-      const rate = tradeInput.dividedBy(tradeOutput);
+    if (isDefined(inputAmount) && isDefined(outputAmount)) {
+      const rate = inputAmount.dividedBy(outputAmount);
 
-      return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
+      if (rate.isFinite()) {
+        return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
+      }
     }
 
     return '---';
-  }, [swapParams]);
+  }, [inputAmount, outputAmount]);
 
   const minimumReceivedAmount = useMemo(() => {
-    if (swapParams.output !== undefined) {
-      return `${(swapParams.output * slippageRatio).toFixed(outputAsset.decimals)} ${outputAsset.symbol}`;
+    if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
+      return `${outputAmount.multipliedBy(slippageRatio).multipliedBy(ROUTING_FEE_RATIO).toFixed(8)} ${
+        outputAsset.symbol
+      }`;
     }
 
     return '---';
-  }, [slippageRatio, swapParams.output, outputAsset.decimals]);
+  }, [slippageRatio, outputAmount, outputAsset.decimals]);
 
   const routingFeeAlert = () =>
     Alert.alert(

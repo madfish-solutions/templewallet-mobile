@@ -1,7 +1,9 @@
+import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { tezosMetadataApi, whitelistApi } from '../api.service';
@@ -14,7 +16,9 @@ import {
   TokenMetadataInterface,
   TokenStandardsEnum
 } from '../token/interfaces/token-metadata.interface';
+import { getDollarValue } from './balance.utils';
 import { isDefined } from './is-defined';
+import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
 export interface TokenMetadataResponse {
@@ -179,3 +183,16 @@ export const loadTokensMetadata$ = memoize(
       )
     )
 );
+
+export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterface>, lowerCaseSearchValue: string) =>
+  Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
+
+export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
+  assets.sort((a, b) => {
+    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
+    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
+
+    return bDollarValue.minus(aDollarValue).toNumber();
+  });

@@ -1,18 +1,74 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { fetchRoute3Tokens, fetchRoute3Dexes$ } from 'src/utils/route3.util';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfaces/route3.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { fetchRoute3Tokens, fetchRoute3Dexes$, fetchRoute3SwapParams } from 'src/utils/route3.util';
+import { loadTokensMetadata$ } from 'src/utils/token-metadata.utils';
 
-import { loadSwapDexesAction, loadSwapTokensAction } from './swap-actions';
+import {
+  loadSwapDexesAction,
+  loadSwapParamsAction,
+  loadSwapTokensAction,
+  loadSwapTokensMetadataAction,
+  resetSwapParamsAction
+} from './swap-actions';
+
+const isSwapParamsDefined = (
+  requestParams: Route3SwapParamsRequest | Route3SwapParamsRequestRaw
+): requestParams is Route3SwapParamsRequest => {
+  if (isDefined(requestParams.amount) && requestParams.fromSymbol.length > 0 && requestParams.toSymbol.length > 0) {
+    return true;
+  }
+
+  return false;
+};
+
+const loadSwapParamsEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadSwapParamsAction.submit),
+    toPayload(),
+    switchMap(payload => {
+      if (isSwapParamsDefined(payload)) {
+        return from(fetchRoute3SwapParams(payload)).pipe(map(params => loadSwapParamsAction.success(params)));
+      }
+
+      return of(resetSwapParamsAction());
+    }),
+    catchError(error => of(loadSwapParamsAction.fail(error.message)))
+  );
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadSwapTokensAction.submit),
     switchMap(() =>
       fetchRoute3Tokens().pipe(
-        map(tokens => loadSwapTokensAction.success(tokens)),
+        mergeMap(tokens => {
+          const filteredTokensList = tokens.filter(token => token.contract !== null);
+          const filteredTokensSlugs = filteredTokensList.map(token =>
+            toTokenSlug(token.contract ?? '', token.tokenId ?? 0)
+          );
+
+          return merge(
+            of(loadSwapTokensAction.success(tokens)),
+            loadTokensMetadata$(filteredTokensSlugs).pipe(
+              map(tokens => {
+                const tokensMapped: Array<TokenInterface> = tokens.map(tokenMetadata => ({
+                  ...tokenMetadata,
+                  balance: '0',
+                  visibility: VisibilityEnum.Visible
+                }));
+
+                return loadSwapTokensMetadataAction.success(tokensMapped);
+              })
+            )
+          );
+        }),
         catchError(err => of(loadSwapTokensAction.fail(err.message)))
       )
     )
@@ -29,4 +85,4 @@ const loadSwapDexesEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-export const swapEpics = combineEpics(loadSwapTokensEpic, loadSwapDexesEpic);
+export const swapEpics = combineEpics(loadSwapParamsEpic, loadSwapTokensEpic, loadSwapDexesEpic);

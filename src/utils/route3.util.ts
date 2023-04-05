@@ -10,14 +10,36 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+
+import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
+import { tzToMutez } from './tezos.util';
 
 export const fetchRoute3Tokens = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
-export const fetchRoute3SwapParams = ({ fromSymbol, toSymbol, amount }: Route3SwapParamsRequest) =>
-  route3Api.get<Route3SwapParamsResponse>(`/swap/${fromSymbol}/${toSymbol}/${amount}`).then(({ data }) => data);
+const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
+  const stringedJSON = origJSON
+    .replace(/input":\s*([-+Ee0-9.]+)/g, 'input":"$1"')
+    .replace(/output":\s*([-+Ee0-9.]+)/g, 'output":"$1"');
+
+  return JSON.parse(stringedJSON);
+};
+
+export const fetchRoute3SwapParams = ({
+  fromSymbol,
+  toSymbol,
+  amount
+}: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
+  fetch(`https://temple.3route.io/swap/${fromSymbol}/${toSymbol}/${amount}`, {
+    headers: {
+      Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
+    }
+  })
+    .then(res => res.text())
+    .then(res => parser(res));
 
 export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));
@@ -31,7 +53,7 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
       hops.push({
         code: (j === 0 ? 1 : 0) + (hop.forward ? 2 : 0),
         dex_id: hop.dex,
-        amount_opt: j === 0 ? new BigNumber(chain.input).multipliedBy(10 ** decimals) : null
+        amount_opt: j === 0 ? tzToMutez(new BigNumber(chain.input), decimals) : null
       });
     }
   }
@@ -40,15 +62,17 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
 };
 
 export const getRoute3TokenSymbol = (token: TokenInterface) => {
-  if (token.symbol === 'TEZ') {
+  if (token.symbol === TEZ_TOKEN_METADATA.symbol) {
     return 'xtz';
   }
 
   return token.symbol;
 };
 
-export const getRoute3Token = (token: TokenInterface, route3Tokens: Array<Route3Token>) => {
-  const fromTokenSlug = toTokenSlug(token.address, token.id);
+export const getRoute3TokenBySlug = (route3Tokens: Array<Route3Token>, slug: string | undefined) => {
+  if (slug === TEZ_TOKEN_SLUG) {
+    return route3Tokens.find(({ contract }) => contract === null);
+  }
 
-  return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === fromTokenSlug);
+  return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === slug);
 };

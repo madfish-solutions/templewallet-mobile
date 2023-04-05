@@ -10,14 +10,16 @@ import { isDefined } from '../../utils/is-defined';
 import { SwapForm } from './swap-form/swap-form';
 
 export const SwapScreen: FC = () => {
-  usePageAnalytic(ScreensEnum.SwapScreen);
   const dispatch = useDispatch();
+
+  usePageAnalytic(ScreensEnum.SwapScreen);
+
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.SwapScreen>>();
 
   useEffect(() => {
     dispatch(loadSwapTokensAction.submit());
     dispatch(loadSwapDexesAction.submit());
-  }, []);
+  });
 
   return (
     <SwapForm

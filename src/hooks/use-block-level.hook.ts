@@ -16,7 +16,7 @@ export const useBlockLevel = () => {
     });
 
     return () => subscription.close();
-  }, []);
+  }, [tezos]);
 
   return blockLevel;
 };

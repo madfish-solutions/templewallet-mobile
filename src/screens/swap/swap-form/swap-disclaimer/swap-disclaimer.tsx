@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { formatSize } from 'src/styles/format-size';
 import { openUrl } from 'src/utils/linking.util';
 
 import { useSwapDisclaimerStyles } from './swap-desclaimer.styles';
@@ -10,15 +12,15 @@ export const SwapDisclaimer = () => {
   const styles = useSwapDisclaimerStyles();
 
   return (
-    <Disclaimer title="Disclaimer" texts={[]}>
+    <Disclaimer title="Disclaimer">
       <View>
-        <Text>Temple wallet provides an interface to interact</Text>
-        <View style={styles.container}>
-          <Text>with the </Text>
-          <TouchableOpacity onPress={() => openUrl('https://3route.io/')}>
-            <Text style={styles.link}>3route DEX aggregator.</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.description}>
+          Temple wallet provides an interface to interact with the
+          <Divider size={formatSize(4)} />
+          <Text style={styles.link} onPress={() => openUrl('https://3route.io/')}>
+            3route DEX aggregator
+          </Text>
+        </Text>
       </View>
     </Disclaimer>
   );

@@ -2,37 +2,30 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
-import { Route3Hop } from 'src/interfaces/route3.interface';
-import { useSwapDexesSelector } from 'src/store/swap/swap-selectors';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { Route3DexTypeEnum } from 'src/enums/route3.enum';
 import { formatSize } from 'src/styles/format-size';
-import { toTokenSlug } from 'src/token/utils/token.utils';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { DexIcon } from '../dex-icon/dex-icon';
-import { SwapRouteItemIcon } from '../swap-route-item/swap-route-item-icon/swap-route-item-icon';
 import { useHopItemStyles } from './hop-item.styles';
 
 interface Props {
-  hop: Route3Hop;
+  dexType: Route3DexTypeEnum | undefined;
+  aToken: TokenInterface | undefined;
+  bToken: TokenInterface | undefined;
 }
 
-export const HopItem: FC<Props> = ({ hop }) => {
+export const HopItem: FC<Props> = ({ dexType, aToken, bToken }) => {
   const styles = useHopItemStyles();
-  const { data: route3Dexes } = useSwapDexesSelector();
-  const dex = route3Dexes.find(dex => dex.id === hop.dex);
-
-  const aToken = hop.forward ? dex?.token1 : dex?.token2;
-  const bToken = hop.forward ? dex?.token2 : dex?.token1;
-
-  const aTokenSlug = toTokenSlug(aToken?.contract ?? '', aToken?.tokenId ?? 0);
-  const bTokenSlug = toTokenSlug(bToken?.contract ?? '', bToken?.tokenId ?? 0);
 
   return (
     <View style={styles.container}>
-      <DexIcon dexType={dex?.type} />
+      <DexIcon dexType={dexType} />
       <Divider size={formatSize(4)} />
-      <SwapRouteItemIcon tokenSlug={aTokenSlug} />
+      <TokenIcon iconName={aToken?.iconName} thumbnailUri={aToken?.thumbnailUri} size={formatSize(20)} />
       <View style={styles.lastTokenContainer}>
-        <SwapRouteItemIcon tokenSlug={bTokenSlug} />
+        <TokenIcon iconName={bToken?.iconName} thumbnailUri={bToken?.thumbnailUri} size={formatSize(20)} />
       </View>
     </View>
   );

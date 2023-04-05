@@ -9,26 +9,31 @@ export interface Hop {
   code: number;
 }
 
+export interface Route3SwapParamsRequestRaw {
+  fromSymbol: string;
+  toSymbol: string;
+  amount: string | undefined;
+}
 export interface Route3SwapParamsRequest {
   fromSymbol: string;
   toSymbol: string;
   amount: string;
 }
 
-export interface Route3Hop {
+interface Route3Hop {
   dex: number;
   forward: boolean;
 }
 
 export interface Route3Chain {
-  input: number;
-  output: number;
+  input: string;
+  output: string;
   hops: Array<Route3Hop>;
 }
 
 export interface Route3SwapParamsResponse {
-  input: number | undefined;
-  output: number | undefined;
+  input: string | undefined;
+  output: string | undefined;
   chains: Array<Route3Chain>;
 }
 
@@ -42,7 +47,7 @@ export interface Route3Token {
 }
 
 export interface Route3Dex {
-  id: 97;
+  id: number;
   type: Route3DexTypeEnum;
   contract: string;
   token1: Route3Token;
