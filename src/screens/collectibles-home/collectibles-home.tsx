@@ -7,7 +7,6 @@ import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { discordUrl, twitterUrl } from 'src/config/socials';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
@@ -88,7 +87,7 @@ export const CollectiblesHome = () => {
 
           <SocialButton
             iconName={IconNameEnum.Twitter}
-            url={twitterUrl}
+            url={''}
             style={styles.socialsIcon}
             color={colors.disabled}
             size={SMALL_SOCIAL_ICON_SIZE}
@@ -109,7 +108,7 @@ export const CollectiblesHome = () => {
           />
           <SocialButton
             iconName={IconNameEnum.Discord}
-            url={discordUrl}
+            url={''}
             style={styles.socialsIcon}
             color={colors.disabled}
             size={SMALL_SOCIAL_ICON_SIZE}

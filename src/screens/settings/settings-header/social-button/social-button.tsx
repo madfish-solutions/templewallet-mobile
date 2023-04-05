@@ -21,7 +21,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = fo
   const styles = useSocialButtonStyles();
 
   return (
-    <TouchableOpacity style={[styles.container, style]} onPress={() => openUrl(url)}>
+    <TouchableOpacity style={[styles.container, style]} onPress={url ? () => openUrl(url) : undefined}>
       <Icon name={iconName} size={size} color={color} />
     </TouchableOpacity>
   );

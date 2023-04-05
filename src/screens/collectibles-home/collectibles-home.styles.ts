@@ -82,7 +82,8 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flex: 1
   },
   collectionsLabel: {
-    ...typography.body15Semibold
+    ...typography.body15Semibold,
+    color: colors.black
   },
   disabled: {
     ...typography.caption13Semibold,
