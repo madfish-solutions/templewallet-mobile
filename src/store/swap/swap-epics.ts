@@ -19,7 +19,7 @@ import {
   resetSwapParamsAction
 } from './swap-actions';
 
-const isAmountDefined = (
+const isSwapParamsDefined = (
   requestParams: Route3SwapParamsRequest | Route3SwapParamsRequestRaw
 ): requestParams is Route3SwapParamsRequest => {
   if (isDefined(requestParams.amount) && requestParams.fromSymbol.length > 0 && requestParams.toSymbol.length > 0) {
@@ -34,7 +34,7 @@ const loadSwapParamsEpic = (action$: Observable<Action>) =>
     ofType(loadSwapParamsAction.submit),
     toPayload(),
     switchMap(payload => {
-      if (isAmountDefined(payload)) {
+      if (isSwapParamsDefined(payload)) {
         return from(fetchRoute3SwapParams(payload)).pipe(map(params => loadSwapParamsAction.success(params)));
       }
 
