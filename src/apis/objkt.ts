@@ -10,7 +10,7 @@ const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
 
 interface QueryResponse {
-  fa: { name: string; logo: string; creator_address: string; contract: string }[];
+  fa: { name: string; logo: string; creator_address: string; contract: string; tokens: { display_uri: string }[] }[];
 }
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
@@ -19,7 +19,9 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
   return apolloObjktClient.query<QueryResponse>(request).pipe(
     map(result =>
       result.fa.map(item => {
-        return { name: item.name, logo: item.logo, contract: item.contract, creator: item.creator_address };
+        const logo = item.logo !== null ? item.logo : item.tokens[0].display_uri;
+
+        return { name: item.name, logo, contract: item.contract, creator: item.creator_address };
       })
     ),
     catchError(() => of([]))
@@ -33,6 +35,9 @@ const buildGetCollectiblesLogoQuery = (address: string) => gql`
       logo
       name
       contract
+      tokens {
+        display_uri
+      }
     }
   }
 `;
