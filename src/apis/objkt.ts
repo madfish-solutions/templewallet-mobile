@@ -14,7 +14,7 @@ interface QueryResponse {
 }
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
-  const request = buildGetCollectiblesLogoQuery(address);
+  const request = buildGetCollectiblesInfoQuery(address);
 
   return apolloObjktClient.query<QueryResponse>(request).pipe(
     map(result =>
@@ -28,7 +28,7 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
   );
 };
 
-const buildGetCollectiblesLogoQuery = (address: string) => gql`
+const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
     fa(where: { creator_address: { _eq: "${address}" } }) {
       creator_address
