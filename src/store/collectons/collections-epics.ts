@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { forkJoin, map, Observable, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -11,10 +11,8 @@ const getCollectionsInfoEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadCollectionsActions.submit),
     toPayload(),
-    switchMap(collectionAddresses =>
-      forkJoin(collectionAddresses.map(address => fetchCollectionsLogo$(address))).pipe(
-        map(result => loadCollectionsActions.success(result))
-      )
+    switchMap(collectionAddress =>
+      fetchCollectionsLogo$(collectionAddress).pipe(map(result => loadCollectionsActions.success(result)))
     )
   );
 

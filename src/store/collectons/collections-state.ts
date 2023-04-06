@@ -1,6 +1,7 @@
 export interface Collection {
   name: string;
   logo: string;
+  creator: string;
   contract: string;
 }
 
@@ -9,7 +10,7 @@ export interface CollectionsRootState {
 }
 
 export interface CollectionState {
-  collectionInfo: Collection[];
+  created: Record<string, Collection[]>;
 }
 
-export const collectionsInitialState: CollectionState = { collectionInfo: [] };
+export const collectionsInitialState: CollectionState = { created: {} };

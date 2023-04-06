@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
@@ -10,18 +10,13 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
-import { useCollectionsSelector } from 'src/store/collectons/collections-selectors';
+import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import {
-  useSelectedAccountSelector,
-  useVisibleAccountsListSelector,
-  useVisibleCollectiblesListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { filterUnique } from 'src/utils/array.utils';
 import { formatImgUri } from 'src/utils/image.utils';
 import { openUrl } from 'src/utils/linking.util';
 
@@ -34,7 +29,7 @@ const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
   const dispatch = useDispatch();
-  const collections = useCollectionsSelector();
+  const collections = useCreatedCollectionsSelector();
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -42,25 +37,14 @@ export const CollectiblesHome = () => {
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  const visibleCollectiblesList = useVisibleCollectiblesListSelector();
-
-  const collectiblesFromCollections = useMemo(
-    () =>
-      filterUnique(
-        visibleCollectiblesList.filter(collectible => collectible.id !== 0).map(collection => collection.address)
-      ),
-
-    [visibleCollectiblesList]
-  );
-
-  useEffect(() => void dispatch(loadCollectionsActions.submit(collectiblesFromCollections)), [selectedAccount]);
+  useEffect(() => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)), [selectedAccount]);
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
-      <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
+      <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo ?? '') }} />
 
       <Text numberOfLines={1} style={styles.collectionName}>
         {item.name}
@@ -115,12 +99,14 @@ export const CollectiblesHome = () => {
           />
         </View>
 
-        <View style={styles.collectionsHeader}>
-          <Text style={styles.collectionsLabel}>Created Collections</Text>
-          <TouchableOpacity>
-            <Text style={styles.disabled}>See All</Text>
-          </TouchableOpacity>
-        </View>
+        {collections.length > 0 && (
+          <View style={styles.collectionsHeader}>
+            <Text style={styles.collectionsLabel}>Created Collections</Text>
+            <TouchableOpacity>
+              <Text style={styles.disabled}>See All</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.collectionsContainer}>
           <FlatList
             data={collections}

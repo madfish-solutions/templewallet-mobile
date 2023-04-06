@@ -9,26 +9,27 @@ const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 
 const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
 
-interface ObjktQueryResult {
-  fa_by_pk: Collection;
+interface QueryResponse {
+  fa: { name: string; logo: string; creator_address: string; contract: string }[];
 }
 
-export const fetchCollectionsLogo$ = (contract: string): Observable<Collection> => {
-  const request = buildGetCollectiblesLogoQuery(contract);
+export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
+  const request = buildGetCollectiblesLogoQuery(address);
 
-  return apolloObjktClient.query<ObjktQueryResult>(request).pipe(
-    map(data => {
-      const { logo, name, contract } = data.fa_by_pk;
-
-      return { logo, name, contract };
-    }),
-    catchError(() => of({ logo: '', name: 'Unknown collection', contract: '' }))
+  return apolloObjktClient.query<QueryResponse>(request).pipe(
+    map(result =>
+      result.fa.map(item => {
+        return { name: item.name, logo: item.logo, contract: item.contract, creator: item.creator_address };
+      })
+    ),
+    catchError(() => of([]))
   );
 };
 
-const buildGetCollectiblesLogoQuery = (contract: string) => gql`
+const buildGetCollectiblesLogoQuery = (address: string) => gql`
   query MyQuery {
-    fa_by_pk(contract: "${contract}") {
+    fa(where: { creator_address: { _eq: "${address}" } }) {
+      creator_address
       logo
       name
       contract
