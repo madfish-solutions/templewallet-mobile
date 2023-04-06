@@ -1,7 +1,6 @@
 import { templeWalletApi } from 'src/api.service';
-import { AliceBobOrderInfoInterface } from 'src/interfaces/alice-bob-order-info.interface';
 
-import { OutputEstimationResponse, PairInfoResponse } from './types';
+import { AliceBobOrderInfoInterface, OutputEstimationResponse, PairInfoResponse } from './types';
 
 export const getTezUahPairInfo = async () => {
   const { data } = await templeWalletApi.get<PairInfoResponse>('/alice-bob/get-pair-info');
