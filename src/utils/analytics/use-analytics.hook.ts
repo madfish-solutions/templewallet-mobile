@@ -23,7 +23,7 @@ export const useAnalytics = () => {
       jitsu.track(category, {
         userId,
         event,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
         properties: {
           event,
           category,
@@ -39,7 +39,7 @@ export const useAnalytics = () => {
       jitsu.track(AnalyticsEventCategory.PageOpened, {
         userId,
         name: path,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
         category: AnalyticsEventCategory.PageOpened,
         properties: {
           url: `${path}${search}`,
