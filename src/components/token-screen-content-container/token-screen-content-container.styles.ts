@@ -1,3 +1,4 @@
+import { basicLightColors } from '../../styles/colors';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -20,16 +21,12 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: formatSize(4),
-    paddingHorizontal: formatSize(8),
+    paddingHorizontal: formatSize(6),
     borderRadius: formatSize(14),
     backgroundColor: colors.blue
   },
   delegateText: {
     ...typography.caption13Semibold,
-    color: colors.white
-  },
-  apyText: {
-    ...typography.caption13Semibold,
-    color: colors.white
+    color: basicLightColors.white
   }
 }));
