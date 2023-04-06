@@ -14,7 +14,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
+import { useInterval } from 'src/hooks/use-interval.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/actions';
@@ -177,7 +177,7 @@ export const BuyWithCreditCard: FC = () => {
   const handleSendInputBlur = useCallback(() => void setFieldTouched('sendInput'), [setFieldTouched]);
   const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);
 
-  useTimerEffect(
+  useInterval(
     () => {
       dispatch(loadAllCurrenciesActions.submit());
       if (!isLoading) {

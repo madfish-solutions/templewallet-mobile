@@ -2,35 +2,36 @@ import { BigNumber } from 'bignumber.js';
 import React, { useMemo } from 'react';
 import { View, Text } from 'react-native';
 
-import { ActivityGroupsList } from '../../components/activity-groups-list/activity-groups-list';
-import { AssetValueText } from '../../components/asset-value-text/asset-value-text';
-import { ButtonLargeWhite } from '../../components/button/button-large/button-large-white/button-large-white';
-import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../components/divider/divider';
-import { FormattedAmount } from '../../components/formatted-amount';
-import { HeaderCard } from '../../components/header-card/header-card';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { LpTokenIcon } from '../../components/icon/lp-token-icon/lp-token-icon';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { useBlockSubscription } from '../../hooks/block-subscription/use-block-subscription.hook';
-import { useContractActivity } from '../../hooks/use-contract-activity';
-import { useSirsInfo } from '../../hooks/use-sirs-info.hook';
-import { useAuthorisedTimerEffect } from '../../hooks/use-timer-effect.hook';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useContract } from '../../op-params/liquidity-baking/contracts';
-import { liquidityBakingStorageInitialValue } from '../../op-params/liquidity-baking/liquidity-baking-storage.interface';
-import { useUsdToTokenRates } from '../../store/currency/currency-selectors';
-import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { LIQUIDITY_BAKING_DEX_ADDRESS, KNOWN_TOKENS_SLUGS } from '../../token/data/token-slugs';
-import { emptyToken } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
-import { estimateLiquidityBakingAPY } from '../../utils/liquidity-baking.util';
-import { mutezToTz } from '../../utils/tezos.util';
+import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { ButtonLargeWhite } from 'src/components/button/button-large/button-large-white/button-large-white';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { FormattedAmount } from 'src/components/formatted-amount';
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LpTokenIcon } from 'src/components/icon/lp-token-icon/lp-token-icon';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
+import { useContractActivity } from 'src/hooks/use-contract-activity';
+import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
+import { useSirsInfo } from 'src/hooks/use-sirs-info.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useContract } from 'src/op-params/liquidity-baking/contracts';
+import { liquidityBakingStorageInitialValue } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { useAssetsListSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { LIQUIDITY_BAKING_DEX_ADDRESS, KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
+import { emptyToken } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { estimateLiquidityBakingAPY } from 'src/utils/liquidity-baking.util';
+import { mutezToTz } from 'src/utils/tezos.util';
+
 import { LiquidityBakingDappSelectors } from './liquidity-baking-dapp.selectors';
 import { useLiquidityBakingDappStyles } from './liquidity-baking-dapp.styles';
 
@@ -55,7 +56,7 @@ export const LiquidityBakingDapp = () => {
 
   const { activities, handleUpdate, handleRefresh } = useContractActivity(LIQUIDITY_BAKING_DEX_ADDRESS);
 
-  useAuthorisedTimerEffect(handleRefresh, DATA_REFRESH_INTERVAL, [blockSubscription.block.header]);
+  useAuthorisedInterval(handleRefresh, DATA_REFRESH_INTERVAL, [blockSubscription.block.header]);
 
   usePageAnalytic(ScreensEnum.LiquidityBakingDapp, `${aToken.address}_${aToken.id} ${bToken.address}_${bToken.id}`);
 

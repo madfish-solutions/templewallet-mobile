@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 
-import { useAppLock } from '../shelter/app-lock/app-lock';
-import { useAppStateStatus } from './use-app-state-status.hook';
+import { WALLET_AUTOLOCK_TIME } from 'src/config/security';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
 
-const SHOW_ENTER_PASSWORD_SCREEN_DELAY = 3 * 60 * 1000;
+import { useAppStateStatus } from './use-app-state-status.hook';
 
 export const useAppLockTimer = () => {
   const changedToBackgroundStateMoment = useRef<Date>(new Date());
@@ -11,7 +11,7 @@ export const useAppLockTimer = () => {
 
   useAppStateStatus({
     onAppActiveState: () => {
-      if (new Date().getTime() - changedToBackgroundStateMoment.current.getTime() > SHOW_ENTER_PASSWORD_SCREEN_DELAY) {
+      if (new Date().getTime() - changedToBackgroundStateMoment.current.getTime() > WALLET_AUTOLOCK_TIME) {
         lock();
       }
       changedToBackgroundStateMoment.current = new Date();

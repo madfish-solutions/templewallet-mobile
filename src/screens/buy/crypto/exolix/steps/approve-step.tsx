@@ -4,24 +4,26 @@ import { View, Text } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
 
-import { ButtonMedium } from '../../../../../components/button/button-medium/button-medium';
-import { ButtonsFloatingContainer } from '../../../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from '../../../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../../../components/divider/divider';
-import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../../../../components/screen-container/screen-container';
-import { BlackTextLink } from '../../../../../components/text-link/black-text-link';
-import { ExchangeDataStatusEnum } from '../../../../../interfaces/exolix.interface';
-import { restartExolixTopupAction, setExolixStepAction } from '../../../../../store/exolix/exolix-actions';
-import { useExolixExchangeData, useExolixStep } from '../../../../../store/exolix/exolix-selectors';
-import { formatSize } from '../../../../../styles/format-size';
-import { useColors } from '../../../../../styles/use-colors';
-import { AnalyticsEventCategory } from '../../../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../../../utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from '../../../../../utils/clipboard.utils';
-import { truncateLongAddress } from '../../../../../utils/exolix.util';
-import { isDefined } from '../../../../../utils/is-defined';
-import { openUrl } from '../../../../../utils/linking.util';
+import { ButtonMedium } from 'src/components/button/button-medium/button-medium';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { BlackTextLink } from 'src/components/text-link/black-text-link';
+import { ONE_MINUTE } from 'src/config/fixed-times';
+import { ExchangeDataStatusEnum } from 'src/interfaces/exolix.interface';
+import { restartExolixTopupAction, setExolixStepAction } from 'src/store/exolix/exolix-actions';
+import { useExolixExchangeData, useExolixStep } from 'src/store/exolix/exolix-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { truncateLongAddress } from 'src/utils/exolix.util';
+import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking.util';
+
 import { Countdown } from '../../../components/countdown/countdown';
 import { ErrorComponent } from '../components/error-component';
 import { EXOLIX_CONTACT_LINK } from '../config';
@@ -34,7 +36,7 @@ interface ApproveStepProps {
   setIsError: (b: boolean) => void;
 }
 
-const FORTY_FIVE_MINUTES_IN_MS = 45 * 60 * 1000;
+const FORTY_FIVE_MINUTES_IN_MS = 45 * ONE_MINUTE;
 
 export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
   const styles = useExolixStyles();
