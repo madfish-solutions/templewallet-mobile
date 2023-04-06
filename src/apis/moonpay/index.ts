@@ -8,7 +8,7 @@ import { QuoteResponse } from './types';
 
 const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
 
-export const moonPayApi = axios.create({ baseURL: 'https://api.moonpay.com' });
+const moonPayApi = axios.create({ baseURL: 'https://api.moonpay.com' });
 
 export const getSignedMoonPayUrl = async (
   currencyCode?: string,

@@ -1,4 +1,4 @@
-export enum AliceBobOrderStatusEnum {
+enum AliceBobOrderStatusEnum {
   WAITING = 'WAITING',
   EXCHANGING = 'EXCHANGING',
   SENDING = 'SENDING',
@@ -11,7 +11,7 @@ export enum AliceBobOrderStatusEnum {
   PREPARED = 'PREPARED'
 }
 
-export enum AliceBobOrderSideEnum {
+enum AliceBobOrderSideEnum {
   SELL = 'SELL',
   BUY = 'BUY'
 }

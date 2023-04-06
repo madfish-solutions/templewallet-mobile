@@ -4,7 +4,7 @@ import { TEMPLE_WALLET_UTORG_SID } from 'src/utils/env.utils';
 
 import { UtorgCurrencyInfo } from './types';
 
-export const utorgApi = axios.create({
+const utorgApi = axios.create({
   baseURL: 'https://app.utorg.pro/api/merchant/v1',
   headers: {
     'Content-Type': 'application/json',
