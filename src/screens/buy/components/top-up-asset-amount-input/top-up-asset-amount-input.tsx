@@ -86,6 +86,8 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
       numericInputValue,
       18,
+      undefined,
+      undefined,
       onChange,
       onBlur,
       onFocus

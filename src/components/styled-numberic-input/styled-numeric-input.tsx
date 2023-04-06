@@ -8,6 +8,8 @@ import { StyledNumericInputProps } from './styled-numeric-input.props';
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   value,
+  minValue,
+  maxValue,
   decimals,
   editable,
   placeholder,
@@ -23,6 +25,8 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     value,
     decimals ?? metadata.decimals,
+    minValue,
+    maxValue,
     onChange,
     onBlur,
     onFocus

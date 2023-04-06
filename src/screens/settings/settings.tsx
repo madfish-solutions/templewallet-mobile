@@ -147,6 +147,20 @@ export const Settings = () => {
                 testID={SettingsSelectors.appearanceToggle}
               />
             </WhiteContainerAction>
+          </WhiteContainer>
+
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction
+              onPress={() => navigate(ScreensEnum.NotificationsSettings)}
+              testID={SettingsSelectors.notificationsButton}
+            >
+              <View style={styles.actionsContainer}>
+                <WhiteContainerText text="Notifications and Ads" />
+              </View>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </WhiteContainerAction>
 
             <WhiteContainerDivider />
 
@@ -163,31 +177,15 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.NotificationsSettings)}
-              testID={SettingsSelectors.notificationsButton}
-            >
-              <View style={styles.actionsContainer}>
-                <WhiteContainerText text="Notifications" />
-              </View>
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
-            </WhiteContainerAction>
-          </WhiteContainer>
-
-          <Divider size={formatSize(16)} />
-
-          <WhiteContainer>
-            <WhiteContainerAction
               onPress={() => navigate(ScreensEnum.DAppsSettings)}
               testID={SettingsSelectors.authorizedDAppsButton}
             >
               <WhiteContainerText text="Authorized DApps" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
-          </WhiteContainer>
 
-          <Divider size={formatSize(16)} />
+            <WhiteContainerDivider />
 
-          <WhiteContainer>
             <WhiteContainerAction
               onPress={() => navigate(ScreensEnum.NodeSettings)}
               testID={SettingsSelectors.defaultNodeRPCButton}

@@ -3,24 +3,28 @@ import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
-import { Disclaimer } from '../../components/disclaimer/disclaimer';
-import { Divider } from '../../components/divider/divider';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { SearchInput } from '../../components/search-input/search-input';
-import { CustomDAppInfo } from '../../interfaces/custom-dapps-info.interface';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { loadDAppsListActions } from '../../store/d-apps/d-apps-actions';
-import { useDAppsListSelector } from '../../store/d-apps/d-apps-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { createGetItemLayout } from '../../utils/flat-list.utils';
-import { isDefined } from '../../utils/is-defined';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
+import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
+
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
+import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
 const renderItem: ListRenderItem<CustomDAppInfo> = item => <OthersDApp item={item} />;
 const keyExtractor = (item: CustomDAppInfo) => item.name;
@@ -29,7 +33,10 @@ const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
   const dispatch = useDispatch();
-  useEffect(() => void dispatch(loadDAppsListActions.submit()), []);
+  useEffect(() => {
+    dispatch(loadDAppsListActions.submit());
+    dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+  }, []);
 
   const styles = useDAppsStyles();
 
@@ -60,6 +67,7 @@ export const DApps = () => {
   return (
     <>
       <InsetSubstitute type="top" />
+      <PromotionCarousel />
       <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Integrated</Text>

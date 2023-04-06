@@ -10,13 +10,20 @@ import { HeaderAction } from 'src/components/header/header-action/header-actions
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
+import {
+  TOKENS_SYNC_INTERVAL,
+  BALANCES_SYNC_INTERVAL,
+  RATES_SYNC_INTERVAL,
+  SELECTED_BAKER_SYNC_INTERVAL,
+  NOTIFICATIONS_SYNC_INTERVAL
+} from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
+import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { useLoadTokensApy } from 'src/hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useAuthorisedTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -60,7 +67,11 @@ import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { loadTezosBalanceActions, loadTokensActions } from 'src/store/wallet/wallet-actions';
+import {
+  loadTezosBalanceActions,
+  loadTokensActions,
+  loadTokensBalancesArrayActions
+} from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
@@ -71,13 +82,10 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
-const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
-
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
-  const selectedAccount = useSelectedAccountSelector();
+  const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
@@ -91,22 +99,22 @@ export const MainStackScreen = () => {
   useAdvertising();
   useLoadTokensApy();
 
-  const initDataLoading = () => {
-    dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokensActions.submit());
-    dispatch(loadSelectedBakerActions.submit());
-  };
-  const initLongRefreshLoading = () => {
-    dispatch(loadExchangeRates.submit());
-    dispatch(loadNotificationsAction.submit());
-  };
+  const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
-    blockSubscription.block.header,
-    selectedAccount.publicKeyHash,
-    selectedRpcUrl
+  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(
+    () => {
+      dispatch(loadTezosBalanceActions.submit());
+      dispatch(loadTokensBalancesArrayActions.submit());
+    },
+    BALANCES_SYNC_INTERVAL,
+    refreshDeps
+  );
+  useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
+    selectedAccountPkh
   ]);
-  useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>
@@ -187,7 +195,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Notifications}
                 component={Notifications}
-                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsItem}
@@ -314,7 +322,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.NotificationsSettings}
                 component={NotificationsSettings}
-                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}

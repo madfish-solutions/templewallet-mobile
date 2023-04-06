@@ -8,6 +8,8 @@ export interface StyledNumericInputProps
   extends TestIdProps,
     Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isError' | 'isShowCleanButton' | 'onBlur' | 'onFocus'> {
   value?: BigNumber;
+  minValue?: BigNumber.Value;
+  maxValue?: BigNumber.Value;
   decimals?: number;
   onChange?: EventFn<BigNumber | undefined>;
 }
