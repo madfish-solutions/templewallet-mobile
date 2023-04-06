@@ -68,8 +68,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { isLoading } = useSwapTokensMetadataSelector();
   const swapParams = useSwapParamsSelector();
 
-  useEffect(() => console.log('swapParams: ', swapParams), [swapParams]);
-
   const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
 
   const handleSubmit = async () => {
