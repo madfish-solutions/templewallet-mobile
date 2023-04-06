@@ -2,10 +2,12 @@ import { firebase } from '@react-native-firebase/app-check';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useTimerEffect } from '../hooks/use-timer-effect.hook';
-import { checkApp } from '../store/security/security-actions';
+import { ONE_MINUTE } from 'src/config/fixed-times';
+import { checkApp } from 'src/store/security/security-actions';
 
-const APP_CHECK_INTERVAL = 60 * 60 * 1000;
+import { useInterval } from './use-interval.hook';
+
+const APP_CHECK_INTERVAL = 60 * ONE_MINUTE;
 
 export const useFirebaseApp = () => {
   const dispatch = useDispatch();
@@ -20,5 +22,5 @@ export const useFirebaseApp = () => {
     })();
   }, []);
 
-  useTimerEffect(() => dispatch(checkApp.submit()), APP_CHECK_INTERVAL);
+  useInterval(() => dispatch(checkApp.submit()), APP_CHECK_INTERVAL);
 };

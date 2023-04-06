@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { EMPTY_PUBLIC_KEY_HASH } from '../config/system';
-import { setIsDomainAddressShown } from '../store/settings/settings-actions';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { tezosDomainsResolver } from '../utils/dns.utils';
-import { isDefined } from '../utils/is-defined';
+import { ONE_MINUTE } from 'src/config/fixed-times';
+import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
+import { setIsDomainAddressShown } from 'src/store/settings/settings-actions';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { tezosDomainsResolver } from 'src/utils/dns.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 // minimal memoization implementation
 
 type memType = { publicKeyHash: string; timestamp: string };
 
-const MEM_TIMEOUT = 1000 * 60 * 5;
+const MEM_TIMEOUT = 5 * ONE_MINUTE;
 
 const domainMem: Record<string, memType> = {};
 
