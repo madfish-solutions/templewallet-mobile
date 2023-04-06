@@ -14,16 +14,16 @@ const ANIMATED_TIME = 1600;
 const DURATION = ANIMATED_TIME / 2;
 
 export const AnimatedAlertIcon: FC<Props> = ({ style }) => {
-  const opcaityAnimatedValue = useRef(new Animated.Value(1)).current;
+  const opacityAnimatedValue = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      Animated.timing(opcaityAnimatedValue, {
+      Animated.timing(opacityAnimatedValue, {
         toValue: 0,
         duration: DURATION,
         useNativeDriver: true
       }).start(() => {
-        Animated.timing(opcaityAnimatedValue, {
+        Animated.timing(opacityAnimatedValue, {
           toValue: 1,
           duration: DURATION,
           useNativeDriver: true
@@ -35,7 +35,7 @@ export const AnimatedAlertIcon: FC<Props> = ({ style }) => {
   }, []);
 
   return (
-    <Animated.View style={[style, { opacity: opcaityAnimatedValue }]}>
+    <Animated.View style={[style, { opacity: opacityAnimatedValue }]}>
       <Icon name={IconNameEnum.AlertCircle} size={formatSize(12)} color={basicLightColors.white} />
     </Animated.View>
   );
