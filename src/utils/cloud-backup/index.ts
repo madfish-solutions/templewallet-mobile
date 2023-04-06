@@ -50,7 +50,6 @@ export const isCloudAvailable = async () => {
 export const requestSignInToCloud = async () => {
   if (isIOS) {
     await syncCloud();
-    await syncCloud();
 
     return true;
   }
@@ -99,8 +98,12 @@ const syncCloud = async () => {
   }
 
   await rejectOnTimeout(
-    RNCloudFs.syncCloud().catch(error => {
-      console.error('RNCloudFs.syncCloud error:', error);
+    /* We gave up on `RNCloudFs.syncCloud` due to its flaws.
+     * Now we just pre-fetch the one document we need,
+     * since it will also 'sync' this one file.
+     */
+    RNCloudFs.getIcloudDocument(filename).catch(error => {
+      console.error('syncCloud error:', error);
 
       throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),

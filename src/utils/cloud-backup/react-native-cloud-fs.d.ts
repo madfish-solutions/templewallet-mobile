@@ -28,22 +28,29 @@ declare module 'react-native-cloud-fs' {
     requestSignIn: () => void;
 
     /** iOS only
-     * (!) Hangs for too long in emulator
+     *
+     * (!) Flawed - doesn't help in one call.
+     * `listFiles` won't be always ready to return valid info
+     *
+     * (!) Won't return if `isAvailable` returns false
+     *
+     * (i) Attempts to load all the iCloud Drive files
      */
     syncCloud: () => Promise<void>;
 
     logout: () => Promise<boolean>;
 
     /**
-     * (!) Don't await - won't return.
      * (!) Broken - does nothing
+     *
+     * (!) Don't await - won't return.
      */
     reset: () => Promise<boolean>;
 
     // getConstants:
 
     /**
-     * (!) Won't return, if not signed-in via `loginIfNeeded`
+     * (!) Won't return for Android, if not signed-in via `loginIfNeeded`
      */
     listFiles: (options: { scope: Scope; targetPath: string }) => Promise<
       | {
@@ -85,6 +92,7 @@ declare module 'react-native-cloud-fs' {
 
     /**
      * (!) Absent on Android
+     *
      * (!) Throws, when file is not found
      *
      * @argument fileName // (!) Yes, filename, not full path!
