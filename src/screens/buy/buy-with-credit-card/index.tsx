@@ -17,7 +17,7 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useTimerEffect } from 'src/hooks/use-timer-effect.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/buy-with-credit-card-actions';
+import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/actions';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -26,16 +26,16 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
-import { renderPaymentProviderOption } from '../components/payment-provider/payment-provider';
-import { renderSelectedPaymentProvider } from '../components/selected-payment-provider/selected-payment-provider';
-import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
-import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
-import { BuyWithCreditCardSelectors } from './buy-with-credit-card.selector';
-import { useBuyWithCreditCardStyles } from './buy-with-credit-card.styles';
+import { renderPaymentProviderOption } from '../components/payment-provider';
+import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
+import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/types';
+import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
 import { usePaymentProviders } from './hooks/use-payment-providers.hook';
+import { BuyWithCreditCardSelectors } from './selectors';
+import { useBuyWithCreditCardStyles } from './styles';
 
 const newTopUpAssetAmountFn = (
   _: TopUpAssetAmountInterface,

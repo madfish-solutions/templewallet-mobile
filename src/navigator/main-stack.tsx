@@ -21,7 +21,7 @@ import { About } from '../screens/about/about';
 import { Activity } from '../screens/activity/activity';
 import { Backup } from '../screens/backup/backup';
 import { Buy } from '../screens/buy/buy';
-import { BuyWithCreditCard } from '../screens/buy/buy-with-credit-card/buy-with-credit-card';
+import { BuyWithCreditCard } from '../screens/buy/buy-with-credit-card';
 import { Exolix } from '../screens/buy/crypto/exolix/exolix';
 import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
 import { Contacts } from '../screens/contacts/contacts';

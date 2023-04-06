@@ -22,6 +22,8 @@ interface Props {
   token: TokenInterface;
 }
 
+const CHAINBITS_URL = 'https://buy.chainbits.com';
+
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
   const { metadata, isTezosNode } = useNetworkInfo();
@@ -49,7 +51,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         <ButtonMedium
           title="Buy"
           iconName={IconNameEnum.ShoppingCard}
-          onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl('https://buy.chainbits.com'))}
+          onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
         />
       </View>
       <Divider size={formatSize(8)} />

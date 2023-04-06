@@ -9,7 +9,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { isDefined } from 'src/utils/is-defined';
 
-import { useSelectedPaymentProviderStyles } from './selected-payment-provider.styles';
+import { useSelectedPaymentProviderStyles } from './styles';
 
 const SelectedPaymentProvider: DropdownValueComponent<PaymentProviderInterface> = memo(({ value }) => {
   const styles = useSelectedPaymentProviderStyles();

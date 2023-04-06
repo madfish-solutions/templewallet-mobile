@@ -1,21 +1,21 @@
 import { useFormik } from 'formik';
 import { useCallback } from 'react';
 
+import { createOrder as createAliceBobOrder } from 'src/apis/alice-bob';
+import { getSignedMoonPayUrl } from 'src/apis/moonpay';
+import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { createOrder as createAliceBobOrder } from 'src/utils/alice-bob.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
-import { getSignedMoonPayUrl } from 'src/utils/moonpay.utils';
-import { createOrder as createUtorgOrder } from 'src/utils/utorg.utils';
 
-import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../buy-with-credit-card.form';
+import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 
 const DEFAULT_INPUT_CURRENCY = {
   code: 'USD',

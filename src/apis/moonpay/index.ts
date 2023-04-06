@@ -1,20 +1,14 @@
+import axios from 'axios';
 import { encode } from 'querystring';
 
-import { moonPayApi, templeWalletApi } from '../api.service';
+import { templeWalletApi } from 'src/api.service';
 
-interface QuoteResponse {
-  baseCurrencyAmount: number;
-  quoteCurrencyAmount: number;
-  extraFeeAmount: number;
-  extraFeePercentage: number;
-  feeAmount: number;
-  networkFeeAmount: number;
-  totalAmount: number;
-}
+import { MOONPAY_API_KEY } from './consts';
+import { QuoteResponse } from './types';
 
 const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
-export const MOONPAY_ASSETS_BASIC_URL = 'https://static.moonpay.com';
-export const MOONPAY_API_KEY = 'pk_live_PrSDks3YtrreqFifd0BsIji7xPXjSGx';
+
+export const moonPayApi = axios.create({ baseURL: 'https://api.moonpay.com' });
 
 export const getSignedMoonPayUrl = async (
   currencyCode?: string,

@@ -3,9 +3,9 @@ import { StyleProp, View } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
-import { MOONPAY_ASSETS_BASIC_URL } from 'src/utils/moonpay.utils';
+import { MOONPAY_ASSETS_BASIC_URL } from 'src/apis/moonpay/consts';
+import { formatSizeScaled } from 'src/styles/format-size';
 
-import { formatSizeScaled } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useStaticTokenIconStyles } from './static-token-icon.styles';

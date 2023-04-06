@@ -6,13 +6,13 @@ import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
-import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
+import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
-import { usePaymentProviderStyles } from './payment-provider.styles';
+import { usePaymentProviderStyles } from './styles';
 
 const PaymentProvider: DropdownListItemComponent<PaymentProviderInterface> = ({ item, isSelected }) => {
   const styles = usePaymentProviderStyles();

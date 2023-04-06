@@ -3,10 +3,10 @@ import { createReducer } from '@reduxjs/toolkit';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 
 import { createEntity } from '../create-entity';
-import { loadAllCurrenciesActions } from './buy-with-credit-card-actions';
-import { buyWithCreditCardInitialState, BuyWithCreditCardState } from './buy-with-credit-card-state';
+import { loadAllCurrenciesActions } from './actions';
+import { buyWithCreditCardInitialState, BuyWithCreditCardState } from './state';
 
-export const buyWithCreditCardReducers = createReducer<BuyWithCreditCardState>(
+export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
   buyWithCreditCardInitialState,
   builder => {
     builder.addCase(loadAllCurrenciesActions.submit, state => ({

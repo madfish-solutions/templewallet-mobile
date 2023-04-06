@@ -20,10 +20,10 @@ import {
   renderTopUpTokenListItem,
   TopUpTokenDropdownItem
 } from '../top-up-token-dropdown-item/top-up-token-dropdown-item';
-import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './top-up-asset-amount-input.props';
-import { TopUpAssetAmountInputSelectors } from './top-up-asset-amount-input.selector';
-import { useTopUpAssetAmountInputStyles } from './top-up-asset-amount-input.styles';
+import { TopUpAssetAmountInputSelectors } from './selectors';
+import { useTopUpAssetAmountInputStyles } from './styles';
 import { TopUpAssetValueText } from './top-up-asset-value-text';
+import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './types';
 
 const renderTokenValue: DropdownValueComponent<TopUpInputInterface> = ({ value }) => (
   <TopUpTokenDropdownItem

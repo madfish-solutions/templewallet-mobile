@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { TopUpInputInterface } from 'src/interfaces/topup.interface';
-import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/buy-with-credit-card-selectors';
+import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';

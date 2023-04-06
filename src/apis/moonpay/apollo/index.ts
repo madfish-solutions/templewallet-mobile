@@ -1,40 +1,13 @@
 import { gql } from '@apollo/client';
 import { map } from 'rxjs';
 
-import { MOONPAY_API_KEY } from 'src/utils/moonpay.utils';
+import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
 
-import { getApolloConfigurableClient } from './utils/get-apollo-configurable-client.util';
+import { MOONPAY_API_KEY } from '../consts';
+import { CryptoCurrenciesResponse, FiatCurrenciesResponse } from './types';
 
 const MOONPAY_API = 'https://api.moonpay.com/graphql';
 const apolloMoonPayClient = getApolloConfigurableClient(MOONPAY_API);
-
-interface CryptoCurrenciesResponse {
-  cryptoCurrencies: Array<{
-    id: string;
-    name: string;
-    code: string;
-    icon: string;
-    minBuyAmount: number | null;
-    maxBuyAmount: number | null;
-    networkCode: string;
-    precision: number;
-    supportsLiveMode: boolean;
-    isSuspended: boolean;
-  }>;
-}
-
-interface FiatCurrenciesResponse {
-  fiatCurrencies: Array<{
-    id: string;
-    name: string;
-    code: string;
-    icon: string;
-    precision: number;
-    maxBuyAmount: number;
-    minBuyAmount: number;
-    lowLimitAmount: number;
-  }>;
-}
 
 const CRYPTO_CURRENCIES_QUERY = gql`
   query cryptoCurrencies($apiKey: String!) {

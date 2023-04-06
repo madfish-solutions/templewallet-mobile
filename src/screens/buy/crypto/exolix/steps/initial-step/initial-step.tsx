@@ -17,8 +17,8 @@ import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
-import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
-import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
+import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/types';
+import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input';
 import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
@@ -165,7 +165,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
               </View>
               <Divider size={formatSize(16)} />
               <Text style={styles.thirdParty}>
-                The token exchange feature is provided by Exolix as third party provider. Temple wallet is not
+                The token exchange feature is provided by Exolix as a third party provider. Temple wallet is not
                 responsible for the work of third-party services.
               </Text>
             </View>
