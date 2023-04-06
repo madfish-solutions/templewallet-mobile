@@ -2,10 +2,11 @@ import axios from 'axios';
 
 import { TEMPLE_WALLET_UTORG_SID } from 'src/utils/env.utils';
 
+import { UTORG_API_URL } from './consts';
 import { UtorgCurrencyInfo } from './types';
 
 const utorgApi = axios.create({
-  baseURL: 'https://app.utorg.pro/api/merchant/v1',
+  baseURL: UTORG_API_URL,
   headers: {
     'Content-Type': 'application/json',
     'X-AUTH-SID': TEMPLE_WALLET_UTORG_SID,

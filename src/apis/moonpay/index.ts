@@ -3,12 +3,10 @@ import { encode } from 'querystring';
 
 import { templeWalletApi } from 'src/api.service';
 
-import { MOONPAY_API_KEY } from './consts';
+import { MOONPAY_API_KEY, MOONPAY_API_URL, MOONPAY_DOMAIN } from './consts';
 import { QuoteResponse } from './types';
 
-const MOONPAY_DOMAIN = 'https://buy.moonpay.com';
-
-const moonPayApi = axios.create({ baseURL: 'https://api.moonpay.com' });
+const moonPayApi = axios.create({ baseURL: MOONPAY_API_URL });
 
 export const getSignedMoonPayUrl = async (
   currencyCode?: string,

@@ -4,10 +4,10 @@ import { map } from 'rxjs';
 import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
 
 import { MOONPAY_API_KEY } from '../consts';
+import { MOONPAY_GRAPHQL_API_URL } from './consts';
 import { CryptoCurrenciesResponse, FiatCurrenciesResponse } from './types';
 
-const MOONPAY_API = 'https://api.moonpay.com/graphql';
-const apolloMoonPayClient = getApolloConfigurableClient(MOONPAY_API);
+const apolloMoonPayClient = getApolloConfigurableClient(MOONPAY_GRAPHQL_API_URL);
 
 const CRYPTO_CURRENCIES_QUERY = gql`
   query cryptoCurrencies($apiKey: String!) {
