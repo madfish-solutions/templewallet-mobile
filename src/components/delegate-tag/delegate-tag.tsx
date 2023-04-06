@@ -6,7 +6,7 @@ import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isDefined } from '../../utils/is-defined';
-import ABContainer from '../ab-container/ab-container';
+import { ABContainer } from '../ab-container/ab-container';
 import { DelegateTagA } from './components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
 import { DelegateTagB } from './components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { DelegateTagContainer } from './components/delegate-tag-container/delegate-tag-container';
@@ -21,9 +21,9 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
   const styles = useDelegateTagStyles();
   const [, isBakerSelected] = useSelectedBakerSelector();
 
-  const tokenSlug = useMemo(() => getTokenSlug(token), [token]);
+  const tokenSlug = getTokenSlug(token);
 
-  const isTezosToken = useMemo(() => tokenSlug === TEZ_TOKEN_SLUG, [tokenSlug]);
+  const isTezosToken = tokenSlug === TEZ_TOKEN_SLUG;
 
   const apyValue = useMemo(() => <Text style={styles.text}>APY: {apy}%</Text>, [apy]);
 

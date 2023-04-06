@@ -8,10 +8,8 @@ interface ABContainerProps {
   groupBComponent: ReactNode;
 }
 
-const ABContainer: FC<ABContainerProps> = ({ groupAComponent, groupBComponent }) => {
+export const ABContainer: FC<ABContainerProps> = ({ groupAComponent, groupBComponent }) => {
   const abGroup = useUserTestingGroupNameSelector();
 
   return abGroup === ABTestGroup.B ? <>{groupBComponent}</> : <>{groupAComponent}</>;
 };
-
-export default ABContainer;

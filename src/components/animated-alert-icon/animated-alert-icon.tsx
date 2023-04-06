@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { Animated, StyleProp, ViewStyle } from 'react-native';
 
-import { basicLightColors } from '../../styles/colors';
 import { formatSize } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -36,7 +35,7 @@ export const AnimatedAlertIcon: FC<Props> = ({ style }) => {
 
   return (
     <Animated.View style={[style, { opacity: opacityAnimatedValue }]}>
-      <Icon name={IconNameEnum.AlertCircle} size={formatSize(12)} color={basicLightColors.white} />
+      <Icon name={IconNameEnum.AlertCircle} size={formatSize(12)} color="white" />
     </Animated.View>
   );
 };

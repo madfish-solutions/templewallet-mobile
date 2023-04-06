@@ -14,7 +14,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
-import ABContainer from '../ab-container/ab-container';
+import { ABContainer } from '../ab-container/ab-container';
 import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
 import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { Divider } from '../divider/divider';

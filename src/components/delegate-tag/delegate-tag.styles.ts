@@ -1,4 +1,3 @@
-import { basicLightColors } from '../../styles/colors';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -12,6 +11,6 @@ export const useDelegateTagStyles = createUseStyles(({ typography }) => ({
   },
   text: {
     ...typography.tagline11TagUppercase,
-    color: basicLightColors.white
+    color: 'white'
   }
 }));
