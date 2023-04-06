@@ -50,6 +50,7 @@ export const isCloudAvailable = async () => {
 export const requestSignInToCloud = async () => {
   if (isIOS) {
     await syncCloud();
+    await syncCloud();
 
     return true;
   }
@@ -92,10 +93,8 @@ export const requestSignInToCloud = async () => {
   }
 };
 
-let iCloudWasSynced = false;
-
 const syncCloud = async () => {
-  if (!isIOS || iCloudWasSynced) {
+  if (!isIOS) {
     return;
   }
 
@@ -108,8 +107,6 @@ const syncCloud = async () => {
     CLOUD_REQUEST_TIMEOUT,
     new Error('Cloud syncing took too long. See if iCloud is enabled')
   );
-
-  iCloudWasSynced = true;
 };
 
 export const fetchCloudBackupFileDetails = async () => {
