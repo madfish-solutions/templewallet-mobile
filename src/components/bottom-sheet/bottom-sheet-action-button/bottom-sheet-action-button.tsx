@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Text, TouchableWithoutFeedbackProps } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { conditionalStyle } from 'src/utils/conditional-style';
 import { setTestID } from 'src/utils/test-id.utils';
 
 import { useBottomSheetActionButtonStyles } from './bottom-sheet-action-button.styles';
@@ -17,11 +18,11 @@ export const BottomSheetActionButton: FC<Props> = ({ title, disabled, style, onP
   return (
     <TouchableOpacity
       disabled={disabled}
-      style={[styles.container, Boolean(disabled) ? styles.disabled : undefined, style]}
+      style={[styles.container, conditionalStyle(Boolean(disabled), styles.disabled), style]}
       onPress={onPress}
       {...setTestID(testID)}
     >
-      <Text style={[styles.title, Boolean(disabled) ? styles.disabledTitle : undefined]}>{title}</Text>
+      <Text style={[styles.title, conditionalStyle(Boolean(disabled), styles.disabledTitle)]}>{title}</Text>
     </TouchableOpacity>
   );
 };

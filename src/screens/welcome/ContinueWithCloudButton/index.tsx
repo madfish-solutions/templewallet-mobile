@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle } from 'src/utils/cloud-backup';
@@ -21,11 +21,7 @@ export const ContinueWithCloudButton = () => {
 
   const cloudIsAvailable = useIsCloudAvailable();
 
-  const iconName = isAndroid
-    ? IconNameEnum.GoogleDrive
-    : theme === ThemesEnum.light || !cloudIsAvailable
-    ? IconNameEnum.Apple
-    : IconNameEnum.AppleOnDark;
+  const iconName = getCloudIconEnum(theme, cloudIsAvailable);
 
   return (
     <ButtonLargeSecondary
@@ -38,4 +34,16 @@ export const ContinueWithCloudButton = () => {
       testIDProperties={{ cloud: cloudTitle }}
     />
   );
+};
+
+const getCloudIconEnum = (theme: ThemesEnum, cloudIsAvailable: boolean) => {
+  if (isIOS) {
+    if (theme === ThemesEnum.light) {
+      return cloudIsAvailable ? IconNameEnum.Apple : IconNameEnum.AppleOnDark;
+    }
+
+    return cloudIsAvailable ? IconNameEnum.AppleOnDark : IconNameEnum.Apple;
+  }
+
+  return IconNameEnum.GoogleDrive;
 };
