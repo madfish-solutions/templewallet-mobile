@@ -1,10 +1,12 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
 import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
+import { FILM_TOKEN_METADATA, TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { getTruncatedProps } from '../../../utils/style.util';
@@ -26,6 +28,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
 }) => {
   const styles = useAccountDropdownItemStyles();
   const tezos = useTezosTokenSelector(account.publicKeyHash);
+  const { isDcpNode } = useNetworkInfo();
 
   return (
     <View style={styles.root}>
@@ -42,7 +45,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           />
           {showFullData && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezos.balance} />
+              <AssetValueText asset={isDcpNode ? FILM_TOKEN_METADATA : TEZ_TOKEN_METADATA} amount={tezos.balance} />
             </HideBalance>
           )}
         </View>

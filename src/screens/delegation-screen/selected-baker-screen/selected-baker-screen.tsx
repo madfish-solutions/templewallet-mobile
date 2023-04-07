@@ -34,6 +34,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
 
   const { metadata, isDcpNode } = useNetworkInfo();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const bakerName = isDcpNode ? 'Current Producer' : baker.name;
 
   const feeStr = formatToPercentStr(baker.fee);
 
@@ -49,7 +50,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             )}
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
-              <Text style={styles.nameText}>{baker.name}</Text>
+              <Text style={styles.nameText}>{bakerName}</Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />

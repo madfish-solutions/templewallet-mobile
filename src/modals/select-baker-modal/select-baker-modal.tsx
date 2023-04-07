@@ -35,7 +35,6 @@ import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 const DISCLAIMER_MESSAGE =
   'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
-const UNKNOWN_BAKER_NAME = 'Unknown baker';
 
 const TEZ_LABEL = 'Delegate to Recommended Bakers';
 const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by Baking Bad.';
@@ -61,8 +60,10 @@ export const SelectBakerModal: FC = () => {
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
+  const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
-  const searchPlaceholder = isDcpNode ? 'Search Producer' : 'Search Baker';
+  const searchPlaceholder = `Search ${bakerNameByNode}`;
+  const UNKNOWN_BAKER_NAME = `Unknown ${bakerNameByNode}`;
 
   const { trackEvent } = useAnalytics();
 
@@ -113,7 +114,7 @@ export const SelectBakerModal: FC = () => {
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
-          ...(Boolean(selectedBaker.isUnknownBaker) && { disclaimerMessage: DISCLAIMER_MESSAGE })
+          ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
     }

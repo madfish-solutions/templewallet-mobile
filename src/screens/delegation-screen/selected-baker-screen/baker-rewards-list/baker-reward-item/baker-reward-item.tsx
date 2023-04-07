@@ -41,7 +41,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
 
   const bakersList = useBakersListSelector();
 
-  const { metadata } = useNetworkInfo();
+  const { metadata, isDcpNode } = useNetworkInfo();
 
   const bakerAddress = reward.baker.address;
 
@@ -135,7 +135,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
               </Text>
             </View>
             <View style={styles.cellContainer}>
-              <Text style={styles.cellTitle}>Baker fee:</Text>
+              <Text style={styles.cellTitle}>{isDcpNode ? 'Producer' : 'Baker'} fee:</Text>
               <Text style={styles.textBlack}>
                 {isTruthy(feeStr) ? feeStr : '--'}%
                 <Text style={styles.textGray}>
