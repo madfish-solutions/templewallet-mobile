@@ -1,5 +1,5 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import RNCloudFs from 'react-native-cloud-fs';
+import RNCloudFs, { TargetPathAndScope } from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 import { secureCellSealWithPassphraseEncrypt64, secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
@@ -13,9 +13,11 @@ export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
 
-const CLOUD_WALLET_FOLDER = 'temple-wallet-mobile';
-const filename = 'temple-wallet-backup.json';
+const scope = 'hidden';
+const CLOUD_WALLET_FOLDER = 'tw-mobile';
+const filename = 'wallet-backup.json';
 const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
+const targetPathAndScope: TargetPathAndScope = { scope, targetPath };
 
 const CLOUD_REQUEST_TIMEOUT = 15000;
 
@@ -102,7 +104,7 @@ const syncCloud = async () => {
      * Now we just pre-fetch the one document we need,
      * since it will also 'sync' this one file.
      */
-    RNCloudFs.getIcloudDocument(filename).catch(error => {
+    RNCloudFs.getIcloudDocument(targetPathAndScope).catch(error => {
       console.error('syncCloud error:', error);
 
       throw new Error('Failed to sync cloud. See if iCloud is enabled');
@@ -114,7 +116,7 @@ const syncCloud = async () => {
 
 export const fetchCloudBackupFileDetails = async () => {
   const backups = await RNCloudFs.listFiles({
-    scope: 'hidden',
+    scope,
     targetPath: CLOUD_WALLET_FOLDER
   });
 
@@ -137,10 +139,9 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
   let fileId: string | undefined;
   try {
     fileId = await RNCloudFs.copyToCloud({
+      ...targetPathAndScope,
       mimeType: 'application/json',
-      scope: 'hidden',
-      sourcePath: { path: localPath },
-      targetPath
+      sourcePath: { path: localPath }
     });
   } catch (error) {
     console.error(error);
@@ -166,7 +167,7 @@ const checkIfBackupExists = async (fileId?: string) => {
 
   let fileExists = false;
   try {
-    fileExists = await RNCloudFs.fileExists(isAndroid ? { scope: 'hidden', fileId } : { scope: 'hidden', targetPath });
+    fileExists = await RNCloudFs.fileExists(isAndroid ? { scope, fileId } : targetPathAndScope);
   } catch (error) {
     console.error(error);
   }
@@ -177,7 +178,7 @@ const checkIfBackupExists = async (fileId?: string) => {
 export const fetchCloudBackup = async (password: string, fileId: string): Promise<BackupFileInterface> => {
   const encryptedBackupPromise = isAndroid
     ? RNCloudFs.getGoogleDriveDocument(fileId)
-    : RNCloudFs.getIcloudDocument(filename);
+    : RNCloudFs.getIcloudDocument(targetPathAndScope);
 
   const encryptedBackup = await rejectOnTimeout(
     encryptedBackupPromise.catch(error => {

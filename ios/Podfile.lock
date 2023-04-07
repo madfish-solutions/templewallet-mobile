@@ -351,7 +351,7 @@ PODS:
     - React-Core
   - react-native-camera/RN (4.2.1):
     - React-Core
-  - react-native-cloud-fs (2.5.0):
+  - react-native-cloud-fs (2.6.0):
     - React
   - react-native-config (1.4.11):
     - react-native-config/App (= 1.4.11)
@@ -856,7 +856,7 @@ SPEC CHECKSUMS:
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
-  react-native-cloud-fs: a43ab9d1f2b57fd400035f10bbbbe1f2bdf13bc3
+  react-native-cloud-fs: cd21282c5cecaf285225e447dd7f3cf2f9015496
   react-native-config: bcafda5b4c51491ee1b0e1d0c4e3905bc7b56c1b
   react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
   react-native-flipper: c33a4995958ef12a2b2f8290d63bed7adeed7634

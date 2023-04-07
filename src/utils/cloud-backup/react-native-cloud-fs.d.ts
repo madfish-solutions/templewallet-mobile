@@ -1,23 +1,28 @@
-type Scope = 'visible' | 'hidden';
-
-interface CloudFileDetailsBase {
-  id: string;
-  name: string;
-  /** ISO */
-  lastModified: string;
-}
-
-type GoogleDriveFileDetails = CloudFileDetailsBase;
-
-interface ICloudFileDetails extends CloudFileDetailsBase {
-  isFile: boolean;
-  isDirectory: boolean;
-  path: string;
-  size?: number;
-  uri?: string;
-}
-
 declare module 'react-native-cloud-fs' {
+  type Scope = 'visible' | 'hidden';
+
+  interface CloudFileDetailsBase {
+    id: string;
+    name: string;
+    /** ISO */
+    lastModified: string;
+  }
+
+  type GoogleDriveFileDetails = CloudFileDetailsBase;
+
+  interface ICloudFileDetails extends CloudFileDetailsBase {
+    isFile: boolean;
+    isDirectory: boolean;
+    path: string;
+    size?: number;
+    uri?: string;
+  }
+
+  export interface TargetPathAndScope {
+    scope: Scope;
+    targetPath: string;
+  }
+
   const defaultExport: {
     /** iOS only */
     isAvailable: () => Promise<boolean>;
@@ -52,7 +57,7 @@ declare module 'react-native-cloud-fs' {
     /**
      * (!) Won't return for Android, if not signed-in via `loginIfNeeded`
      */
-    listFiles: (options: { scope: Scope; targetPath: string }) => Promise<
+    listFiles: (options: TargetPathAndScope) => Promise<
       | {
           files?: GoogleDriveFileDetails[];
         }
@@ -65,20 +70,16 @@ declare module 'react-native-cloud-fs' {
     /**
      * @returns fileId: string
      */
-    copyToCloud: (options: {
-      mimeType: string;
-      scope: Scope;
-      sourcePath: { path: string } | { uri: string };
-      targetPath: string;
-    }) => Promise<string>;
+    copyToCloud: (
+      options: TargetPathAndScope & {
+        mimeType: string;
+        sourcePath: { path: string } | { uri: string };
+      }
+    ) => Promise<string>;
 
     fileExists: (
       options:
-        | {
-            // iOS
-            scope: Scope;
-            targetPath: string;
-          }
+        | TargetPathAndScope // iOS
         | {
             // Android
             scope: Scope;
@@ -86,18 +87,12 @@ declare module 'react-native-cloud-fs' {
           }
     ) => Promise<boolean>;
 
-    deleteFromCloud: (fileId: string) => Promise<void>;
+    deleteFromCloud: (fileId: string) => Promise<unknown>;
 
     getGoogleDriveDocument: (fileId: string) => Promise<string>;
 
-    /**
-     * (!) Absent on Android
-     *
-     * (!) Throws, when file is not found
-     *
-     * @argument fileName // (!) Yes, filename, not full path!
-     */
-    getIcloudDocument: (fileName: string) => Promise<string>;
+    /** iOS only */
+    getIcloudDocument: (options: TargetPathAndScope) => Promise<string | undefined>;
   };
 
   export default defaultExport;
