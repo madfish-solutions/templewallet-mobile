@@ -49,7 +49,7 @@ export const TextPromotionItem: FC<Props> = memo(
         testID={testID}
         style={[styles.container, style]}
         onPress={() => {
-          trackEvent(testID, AnalyticsEventCategory.General);
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress);
           openUrl(link);
         }}
       >

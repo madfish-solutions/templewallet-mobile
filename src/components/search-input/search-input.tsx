@@ -1,12 +1,15 @@
 import { debounce } from 'lodash-es';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { TextInput, TextInputProps, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { setTestID } from '../../utils/test-id.utils';
+import { emptyFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSearchInputStyles } from './search-input.styles';
@@ -17,7 +20,16 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
   const colors = useColors();
   const styles = useSearchInputStyles();
 
-  const debouncedOnChangeText = debounce(onChangeText);
+  const { trackEvent } = useAnalytics();
+
+  const handleSearchQueryChange = useMemo(
+    () =>
+      debounce((newValue: string) => {
+        trackEvent(testID, AnalyticsEventCategory.FormChange, { value: newValue });
+        onChangeText(newValue);
+      }),
+    [trackEvent, onChangeText]
+  );
 
   return (
     <View style={styles.container}>
@@ -29,7 +41,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor={colors.gray2}
-        onChangeText={debouncedOnChangeText}
+        onChangeText={handleSearchQueryChange}
         onBlur={onBlur}
         {...setTestID(testID)}
       />

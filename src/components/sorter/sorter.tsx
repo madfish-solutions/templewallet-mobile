@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { EventFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { formatSize } from '../../styles/format-size';
+import { EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
@@ -27,17 +30,23 @@ export const Sorter = <T extends string>({
   description,
   sortFieldsLabels,
   sortFieldsOptions,
+  testID,
   onSetSortValue,
   bottomSheetContentHeight = 260
 }: Props<T>) => {
   const styles = useSorterStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
+  const { trackEvent } = useAnalytics();
+
+  const handlePress = () => {
+    revealSelectBottomSheetController.open();
+  };
 
   return (
     <View style={style}>
       <View style={styles.sortSelector}>
         <Text style={styles.sortByLabel}>Sort by</Text>
-        <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={revealSelectBottomSheetController.open}>
+        <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={handlePress} testID={testID}>
           <Text style={styles.selectedBakerSortField}>{sortFieldsLabels[sortValue]}</Text>
           <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
         </TouchableOpacity>
@@ -52,6 +61,8 @@ export const Sorter = <T extends string>({
             key={value}
             title={sortFieldsLabels[value]}
             onPress={() => {
+              console.log('x1', testID);
+              trackEvent(testID, AnalyticsEventCategory.FormChange, { value });
               onSetSortValue(value);
               revealSelectBottomSheetController.close();
             }}

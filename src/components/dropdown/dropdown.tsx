@@ -3,11 +3,13 @@ import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
-import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
-import { formatSize } from '../../styles/format-size';
-import { createGetItemLayout } from '../../utils/flat-list.utils';
-import { isDefined } from '../../utils/is-defined';
+import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
+import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -15,7 +17,7 @@ import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
-export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
   isSearchable?: boolean;
@@ -72,6 +74,7 @@ const DropdownComponent = <T extends unknown>({
   renderListItem,
   renderActionButtons = emptyComponent,
   keyExtractor,
+  testID,
   onValueChange,
   onLongPress
 }: DropdownProps<T> & DropdownValueProps<T>) => {
@@ -118,6 +121,7 @@ const DropdownComponent = <T extends unknown>({
       <TouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
+        testID={testID}
         onPress={() => {
           scroll();
 

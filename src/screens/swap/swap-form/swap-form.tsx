@@ -105,15 +105,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
+      trackEvent('SWAP_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+    } else {
+      trackEvent('SWAP_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
+      dispatch(
+        navigateAction(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams,
+          testID: 'SWAP_TRANSACTION_SENT'
+        })
+      );
     }
-
-    dispatch(
-      navigateAction(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams,
-        testID: 'SWAP_TRANSACTION_SENT'
-      })
-    );
   };
 
   const formik = useFormik<SwapFormValues>({
@@ -210,7 +212,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         setFieldValue('outputAssets', { asset: emptyTezosLikeToken, amount: undefined });
       }
     },
-    [outputAssetSlug, setFieldValue]
+    [outputAssetSlug, setFieldValue, trackEvent]
   );
 
   const handleOutputAssetsValueChange = useCallback(
@@ -222,11 +224,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     [inputAssetSlug, setFieldValue]
   );
 
+  const refreshRoutePairs = useCallback(() => {
+    trackEvent('SWAP_FORM_REFRESH_ROUTE_PAIRS');
+    allRoutePairs.onRefresh();
+  }, [allRoutePairs.onRefresh, trackEvent]);
+
   return (
     <FormikProvider value={formik}>
       <ScreenContainer
         scrollViewRefreshControl={
-          <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={allRoutePairs.onRefresh} />
+          <RefreshControl refreshing={allRoutePairs.isRefreshing} onRefresh={refreshRoutePairs} />
         }
       >
         <Divider size={formatSize(8)} />

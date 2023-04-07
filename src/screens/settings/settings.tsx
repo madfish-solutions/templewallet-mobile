@@ -42,7 +42,7 @@ export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const handleLogoutButtonPress = useResetDataHandler();
+  const resetData = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
   const isManualBackupMade = useIsManualBackupMadeSelector();
 
@@ -70,6 +70,11 @@ export const Settings = () => {
         trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress);
       });
   }, [trackEvent]);
+
+  const handleLogoutButtonPress = useCallback(() => {
+    trackEvent(SettingsSelectors.resetWalletButton, AnalyticsEventCategory.ButtonPress);
+    resetData();
+  }, [trackEvent, resetData]);
 
   return (
     <>

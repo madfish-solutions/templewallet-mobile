@@ -1,13 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Text, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { MarginProps } from '../../interfaces/margin.props';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { getTruncatedProps } from '../../utils/style.util';
+import { MarginProps } from 'src/interfaces/margin.props';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getTruncatedProps } from 'src/utils/style.util';
+
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
-interface Props extends MarginProps {
+interface Props extends MarginProps, TestIdProps {
   publicKeyHash: string;
   disabled?: boolean;
   longPress?: boolean;
@@ -22,12 +26,19 @@ export const PublicKeyHashText: FC<Props> = ({
   marginLeft,
   style,
   disabled = false,
-  longPress = false
+  longPress = false,
+  testID
 }) => {
   const styles = usePublicKeyHashTextStyles();
+  const { trackEvent } = useAnalytics();
 
-  const handlePress = () => !longPress && copyStringToClipboard(publicKeyHash);
-  const handleLongPress = () => longPress && copyStringToClipboard(publicKeyHash);
+  const acceptPress = useCallback(() => {
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress);
+    copyStringToClipboard(publicKeyHash);
+  }, [trackEvent, testID]);
+
+  const handlePress = useCallback(() => !longPress && acceptPress(), [longPress, acceptPress]);
+  const handleLongPress = useCallback(() => longPress && acceptPress(), [longPress, acceptPress]);
 
   return (
     <TouchableOpacity

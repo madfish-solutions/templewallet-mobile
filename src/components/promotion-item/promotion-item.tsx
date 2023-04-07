@@ -48,7 +48,7 @@ export const PromotionItem: FC<Props> = memo(
         testID={testID}
         style={[styles.container, style]}
         onPress={() => {
-          trackEvent(testID, AnalyticsEventCategory.General);
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress);
           openUrl(link);
         }}
       >
@@ -67,7 +67,7 @@ export const PromotionItem: FC<Props> = memo(
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => {
-                  trackEvent(PromotionItemSelectors.closeButton, AnalyticsEventCategory.General);
+                  trackEvent(PromotionItemSelectors.closeButton, AnalyticsEventCategory.ButtonPress);
                   onCloseButtonClick?.();
                 }}
               >
