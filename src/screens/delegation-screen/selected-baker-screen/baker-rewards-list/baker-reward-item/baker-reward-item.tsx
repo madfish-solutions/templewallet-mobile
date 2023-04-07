@@ -98,6 +98,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
   );
 
   const feeStr = formatToPercentStr(bakerFeePart);
+  const expectedPayout = normalizedRewards.minus(normalizedBakerFee).toString();
 
   return (
     <View style={styles.rewardContainer}>
@@ -147,9 +148,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Expected payout:</Text>
               <Text style={styles.textBlack}>
-                {cycleStatus === CycleStatus.FUTURE
-                  ? '‒'
-                  : `${normalizedRewards.minus(normalizedBakerFee).toString()} ${metadata.symbol}`}
+                {cycleStatus === CycleStatus.FUTURE ? '‒' : `${expectedPayout} ${metadata.symbol}`}
               </Text>
             </View>
             <View style={styles.cellContainer}>

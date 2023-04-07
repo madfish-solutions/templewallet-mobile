@@ -2,14 +2,14 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { formatSize } from 'src/styles/format-size';
+import { mutezToTz } from 'src/utils/tezos.util';
 
-import { Divider } from '../../../../../../../components/divider/divider';
-import { Icon } from '../../../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
-import { BakerRewardInterface } from '../../../../../../../interfaces/baker-reward.interface';
-import { formatSize } from '../../../../../../../styles/format-size';
-import { mutezToTz } from '../../../../../../../utils/tezos.util';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
 export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endorsementRewards'>> = ({
