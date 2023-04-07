@@ -4,6 +4,7 @@ import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
 import { MOONPAY_ASSETS_BASIC_URL } from 'src/apis/moonpay/consts';
+import { isIOS } from 'src/config/system';
 import { formatSizeScaled } from 'src/styles/format-size';
 
 import { Icon } from '../icon/icon';
@@ -25,11 +26,11 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
   const isLoading = loadedIconUri !== uri;
 
   const imageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ width: size, height: size, display: isFailed || isLoading ? 'none' : 'flex' }),
+    () => ({ width: size, height: size, display: 'flex' }),
     [size, isFailed, isLoading]
   );
   const svgImageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ display: isFailed || isLoading ? 'none' : 'flex' }),
+    () => ({ display: (isFailed || isLoading) && isIOS ? 'none' : 'flex' }),
     [isFailed, isLoading]
   );
   const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);

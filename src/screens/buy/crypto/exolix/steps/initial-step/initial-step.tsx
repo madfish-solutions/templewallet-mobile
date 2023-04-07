@@ -106,9 +106,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const disclaimerMessage = useMemo(
     () => [
-      `Please, deposit only ${inputCurrency.name} transfer network ${getProperNetworkFullName(inputCurrency)}.`,
-      'Otherwise, you may lose your assets',
-      'permanently.'
+      `Please, deposit only ${inputCurrency.name} transfer network ${getProperNetworkFullName(inputCurrency)}. \
+Otherwise, you may lose your assets permanently.`
     ],
     [inputCurrency]
   );
