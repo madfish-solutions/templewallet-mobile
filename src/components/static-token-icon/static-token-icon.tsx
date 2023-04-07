@@ -26,11 +26,11 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
   const isLoading = loadedIconUri !== uri;
 
   const imageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ width: size, height: size, display: 'flex' }),
+    () => ({ width: size, height: size, display: (isFailed || isLoading) && isIOS ? 'none' : 'flex' }),
     [size, isFailed, isLoading]
   );
   const svgImageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ display: (isFailed || isLoading) && isIOS ? 'none' : 'flex' }),
+    () => ({ display: isFailed || isLoading ? 'none' : 'flex' }),
     [isFailed, isLoading]
   );
   const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);
