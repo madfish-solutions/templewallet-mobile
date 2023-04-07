@@ -105,7 +105,7 @@ const syncCloud = async () => {
      * since it will also 'sync' this one file.
      */
     RNCloudFs.getIcloudDocument(targetPathAndScope).catch(error => {
-      console.error('syncCloud error:', error);
+      console.error('syncCloud. RNCloudFs.getIcloudDocument error:', error);
 
       throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),
