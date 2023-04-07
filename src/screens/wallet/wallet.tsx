@@ -13,6 +13,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -29,7 +30,8 @@ import {
   useVisibleAccountsListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
@@ -41,6 +43,7 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const { trackEvent } = useAnalytics();
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -51,6 +54,10 @@ export const Wallet = () => {
   const bottomSheetController = useBottomSheetController();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
+  const handleDropdownValueChange = (value: AccountBaseInterface | undefined) => {
+    dispatch(setSelectedAccountAction(value?.publicKeyHash));
+    trackEvent(WalletSelectors.accountDropdownButton, AnalyticsEventCategory.ButtonPress);
+  };
 
   useEffect(() => {
     if (!ignoredAddresses.includes(contactCandidateAddress) && !contactsAddresses.includes(contactCandidateAddress)) {
@@ -68,7 +75,7 @@ export const Wallet = () => {
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
-            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+            onValueChange={handleDropdownValueChange}
           />
 
           <Divider />
