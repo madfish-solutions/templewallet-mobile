@@ -20,7 +20,7 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: formatSize(4),
-    paddingHorizontal: formatSize(6),
+    paddingHorizontal: formatSize(8),
     borderRadius: formatSize(14),
     backgroundColor: colors.blue
   },

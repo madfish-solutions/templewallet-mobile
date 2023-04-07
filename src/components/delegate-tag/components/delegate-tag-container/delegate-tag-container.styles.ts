@@ -5,7 +5,7 @@ export const useDelegateTagContainerStyles = createUseStyles(({ colors }) => ({
   apyContainer: {
     backgroundColor: colors.blue,
     borderRadius: formatSize(8),
-    paddingHorizontal: formatSize(4),
+    paddingHorizontal: formatSize(6),
     paddingVertical: formatSize(2),
     marginLeft: formatSize(4)
   }
