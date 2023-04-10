@@ -58,7 +58,7 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
       const result: TokenInterface[] = [];
 
       for (const asset of source) {
-        if (isAssetSearched(asset, lowerCaseSearchValue)) {
+        if (Boolean(isAssetSearched(asset, lowerCaseSearchValue))) {
           result.push(asset);
         }
       }

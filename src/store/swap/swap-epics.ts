@@ -6,7 +6,6 @@ import { ofType, toPayload } from 'ts-action-operators';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfaces/route3.interface';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -65,8 +64,6 @@ const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
                   balance: '0',
                   visibility: VisibilityEnum.Visible
                 }));
-
-                tokensMapped.unshift({ ...TEZ_TOKEN_METADATA, balance: '0', visibility: VisibilityEnum.Visible });
 
                 return loadSwapTokensMetadataAction.success(tokensMapped);
               })

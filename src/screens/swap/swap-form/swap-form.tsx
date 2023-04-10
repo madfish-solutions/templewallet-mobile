@@ -287,7 +287,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             (submitCount !== 0 && isEmptyArray(swapParams.data.chains)) ||
             swapParams.isLoading
           }
-          title={swapParams.isLoading ? 'Searching the best route' : 'Swap'}
+          title={Boolean(swapParams.isLoading) ? 'Searching the best route' : 'Swap'}
           onPress={submitForm}
           testID={SwapFormSelectors.swapButton}
         />
