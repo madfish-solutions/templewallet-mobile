@@ -154,10 +154,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.CollectiblesHome}
                 component={CollectiblesHome}
-                options={{
-                  headerShown: false,
-                  gestureDirection: 'horizontal-inverted'
-                }}
+                options={{ animationEnabled: false, headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
