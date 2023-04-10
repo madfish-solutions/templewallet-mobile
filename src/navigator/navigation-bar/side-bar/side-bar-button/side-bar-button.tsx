@@ -20,7 +20,7 @@ interface Props {
     | ScreensEnum.DApps
     | ScreensEnum.SwapScreen
     | ScreensEnum.Market
-    | ScreensEnum.Settings;
+    | ScreensEnum.CollectiblesHome;
   focused: boolean;
   disabled?: boolean;
   showNotificationDot?: boolean;

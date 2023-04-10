@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { FIAT_CURRENCIES } from '../../utils/exchange-rate.util';
-import { getFiatToUsdRate } from '../../utils/token-metadata.utils';
+import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
+import { getFiatToUsdRate } from 'src/utils/token-metadata.utils';
+
 import { useSelector } from '../selector';
 
 export const useThemeSelector = () => useSelector(({ settings }) => settings.theme);

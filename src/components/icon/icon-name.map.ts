@@ -71,6 +71,7 @@ import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NewsIcon from './assets/news.svg';
+import NFT from './assets/nft.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
@@ -258,5 +259,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
-  [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon
+  [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
+  [IconNameEnum.NFT]: NFT
 };

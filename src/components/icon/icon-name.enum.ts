@@ -124,5 +124,6 @@ export enum IconNameEnum {
   Market = 'Market',
   Buy = 'Buy',
   Favourite = 'Favourite',
-  SwapRouteItemBackground = 'SwapRouteItemBackground'
+  SwapRouteItemBackground = 'SwapRouteItemBackground',
+  NFT = 'NFT'
 }
