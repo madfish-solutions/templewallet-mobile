@@ -12,14 +12,12 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
-import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { Route3Token } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
@@ -41,7 +39,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
-import { ROUTING_FEE_RATIO } from '../config';
+import { ROUTING_FEE_RATIO, TEMPLE_TOKEN } from '../config';
 import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
@@ -51,14 +49,6 @@ import { SwapFormSelectors } from './swap-form.selectors';
 import { SwapRoute } from './swap-route/swap-route';
 
 const selectionOptions = { start: 0, end: 0 };
-const TEMPLE_TOKEN: Route3Token = {
-  id: 30,
-  symbol: 'WBUSD',
-  standard: Route3TokenStandardEnum.fa2,
-  contract: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
-  tokenId: '1',
-  decimals: 18
-};
 
 interface SwapFormProps {
   inputToken?: TokenInterface;
@@ -111,7 +101,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     const routingFeeOpParams = await getRoutingFeeTransferParams(
       TEMPLE_TOKEN,
-      routingFeeAtomic.dividedBy(2),
+      routingFeeAtomic.dividedToIntegerBy(2),
       selectedAccount.publicKeyHash,
       tezos
     );
