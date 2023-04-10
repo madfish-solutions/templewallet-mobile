@@ -124,6 +124,7 @@ export enum IconNameEnum {
   Market = 'Market',
   Buy = 'Buy',
   Favourite = 'Favourite',
+  NFT = 'NFT',
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive'
