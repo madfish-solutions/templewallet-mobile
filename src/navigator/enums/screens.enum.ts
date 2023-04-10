@@ -106,7 +106,6 @@ export type ScreensParamList = {
 
 export const walletStackScreens = [
   ScreensEnum.Wallet,
-  ScreensEnum.CollectiblesHome,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
   ScreensEnum.Delegation,
@@ -119,18 +118,7 @@ export const walletStackScreens = [
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem
 ];
+export const nftStackScreens = [ScreensEnum.CollectiblesHome];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
-export const settingsStackScreens = [
-  ScreensEnum.Settings,
-  ScreensEnum.ManageAccounts,
-  ScreensEnum.Contacts,
-  ScreensEnum.About,
-  ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings,
-  ScreensEnum.Backup,
-  ScreensEnum.ManualBackup,
-  ScreensEnum.NotificationsSettings,
-  ScreensEnum.NodeSettings
-];

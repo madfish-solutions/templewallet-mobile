@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { combineEpics, Epic } from 'redux-observable';
 import { catchError, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
@@ -21,13 +22,11 @@ import {
 
 const isSwapParamsDefined = (
   requestParams: Route3SwapParamsRequest | Route3SwapParamsRequestRaw
-): requestParams is Route3SwapParamsRequest => {
-  if (isDefined(requestParams.amount) && requestParams.fromSymbol.length > 0 && requestParams.toSymbol.length > 0) {
-    return true;
-  }
-
-  return false;
-};
+): requestParams is Route3SwapParamsRequest =>
+  isDefined(requestParams.amount) &&
+  new BigNumber(requestParams.amount).isGreaterThan(0) &&
+  isDefined(requestParams.fromSymbol) &&
+  isDefined(requestParams.toSymbol);
 
 const loadSwapParamsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -35,12 +34,14 @@ const loadSwapParamsEpic = (action$: Observable<Action>) =>
     toPayload(),
     switchMap(payload => {
       if (isSwapParamsDefined(payload)) {
-        return from(fetchRoute3SwapParams(payload)).pipe(map(params => loadSwapParamsAction.success(params)));
+        return from(fetchRoute3SwapParams(payload)).pipe(
+          map(params => loadSwapParamsAction.success(params)),
+          catchError(error => of(loadSwapParamsAction.fail(error.message)))
+        );
       }
 
       return of(resetSwapParamsAction());
-    }),
-    catchError(error => of(loadSwapParamsAction.fail(error.message)))
+    })
   );
 
 const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
