@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { HeaderCard } from 'src/components/header-card/header-card';
+import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
@@ -30,6 +31,7 @@ export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
   const dispatch = useDispatch();
   const collections = useCreatedCollectionsSelector();
+  const [isImageBroken, setIsImageBroken] = useState(false);
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -44,7 +46,17 @@ export const CollectiblesHome = () => {
 
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
-      <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo ?? '') }} />
+      {isImageBroken ? (
+        <View style={styles.collection}>
+          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+        </View>
+      ) : (
+        <FastImage
+          style={styles.collection}
+          source={{ uri: formatImgUri(item.logo ?? '') }}
+          onError={() => setIsImageBroken(true)}
+        />
+      )}
 
       <Text numberOfLines={1} style={styles.collectionName}>
         {item.name}
