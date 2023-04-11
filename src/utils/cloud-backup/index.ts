@@ -12,6 +12,7 @@ import { rejectOnTimeout } from '../timeouts.util';
 export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
+export const FAILED_TO_LOGIN_ERR_TITLE = `Failed to log-in${isIOS ? '. See if iCloud is enabled' : ''}`;
 
 const scope = 'hidden';
 const CLOUD_WALLET_FOLDER = 'tw-mobile';
@@ -105,12 +106,12 @@ const syncCloud = async () => {
      * since it will also 'sync' this one file.
      */
     RNCloudFs.getIcloudDocument(targetPathAndScope).catch(error => {
-      console.error('syncCloud. RNCloudFs.getIcloudDocument error:', error);
+      console.error('syncCloud > RNCloudFs.getIcloudDocument error:', error);
 
-      throw new Error('Failed to sync cloud. See if iCloud is enabled');
+      throw new Error('Failed to sync cloud');
     }),
     CLOUD_REQUEST_TIMEOUT,
-    new Error('Cloud syncing took too long. See if iCloud is enabled')
+    new Error('Cloud syncing took too long')
   );
 };
 
@@ -136,22 +137,17 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
 
   await RNFS.writeFile(localPath, encryptedData, 'utf8');
 
-  let fileId: string | undefined;
-  try {
-    fileId = await RNCloudFs.copyToCloud({
-      ...targetPathAndScope,
-      mimeType: 'application/json',
-      sourcePath: { path: localPath }
-    });
-  } catch (error) {
-    console.error(error);
+  const fileId = await RNCloudFs.copyToCloud({
+    ...targetPathAndScope,
+    mimeType: 'application/json',
+    sourcePath: { path: localPath }
+  })
+    .catch(error => {
+      console.error('RNCloudFs.copyToCloud() error:', error);
 
-    await RNFS.unlink(localPath).catch(console.error);
-
-    throw new Error('Failed to upload to cloud');
-  }
-
-  await RNFS.unlink(localPath).catch(console.error);
+      throw new Error('Failed to upload to cloud');
+    })
+    .finally(() => RNFS.unlink(localPath).catch(console.error));
 
   const fileExists = await checkIfBackupExists(fileId);
 
@@ -165,12 +161,11 @@ const checkIfBackupExists = async (fileId?: string) => {
     return false;
   }
 
-  let fileExists = false;
-  try {
-    fileExists = await RNCloudFs.fileExists(isAndroid ? { scope, fileId } : targetPathAndScope);
-  } catch (error) {
-    console.error(error);
-  }
+  const fileExists = await RNCloudFs.fileExists(isAndroid ? { scope, fileId } : targetPathAndScope).catch(error => {
+    console.error('RNCloudFs.fileExists() error:', error);
+
+    return false;
+  });
 
   return fileExists;
 };
@@ -208,12 +203,11 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
 };
 
 const assureGooglePlayServicesAvailable = async () => {
-  let hasPlayServices = false;
-  try {
-    hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  } catch (error) {
-    console.error('GoogleSignin.hasPlayServices error:', { error });
-  }
+  const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true }).catch(error => {
+    console.error('GoogleSignin.hasPlayServices error:', error);
+
+    return false;
+  });
 
   if (!hasPlayServices) {
     throw new Error("Google Play services aren't available");

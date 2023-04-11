@@ -79,7 +79,7 @@
     "react-native-biometrics": "^3.0.1",
     "react-native-bootsplash": "^4.3.2",
     "react-native-camera": "^4.2.1",
-    "react-native-cloud-fs": "madfish-solutions/react-native-cloud-fs#deaa52e2f6aa8e8e5cc71e56189537d3316864d2",
+    "react-native-cloud-fs": "madfish-solutions/react-native-cloud-fs#e97326956d2925dda19d955ee478769cbb34e4f2",
     "react-native-config": "^1.4.11",
     "react-native-device-info": "^10.2.1",
     "react-native-document-picker": "^8.1.1",

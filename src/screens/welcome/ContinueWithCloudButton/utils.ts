@@ -5,7 +5,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { fetchCloudBackupFileDetails, requestSignInToCloud } from 'src/utils/cloud-backup';
+import { FAILED_TO_LOGIN_ERR_TITLE, fetchCloudBackupFileDetails, requestSignInToCloud } from 'src/utils/cloud-backup';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 export const useOnContinueWithCloudButtonPress = () => {
@@ -16,7 +16,7 @@ export const useOnContinueWithCloudButtonPress = () => {
     $subject =>
       $subject.pipe(
         tap(() => dispatch(showLoaderAction())),
-        switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true)))),
+        switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true)))),
         filter(isLoggedIn => {
           if (!isLoggedIn) {
             dispatch(hideLoaderAction());

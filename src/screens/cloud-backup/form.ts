@@ -8,7 +8,12 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { fetchCloudBackupFileDetails, requestSignInToCloud, saveCloudBackup } from 'src/utils/cloud-backup';
+import {
+  FAILED_TO_LOGIN_ERR_TITLE,
+  fetchCloudBackupFileDetails,
+  requestSignInToCloud,
+  saveCloudBackup
+} from 'src/utils/cloud-backup';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
@@ -60,7 +65,7 @@ export const useHandleSubmit = () => {
         tap(() => dispatch(showLoaderAction())),
         switchMap(password =>
           assurePasswordIsCorrect$(password).pipe(
-            switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true)))),
+            switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true)))),
             filter(isLoggedIn => {
               if (!isLoggedIn) {
                 dispatch(hideLoaderAction());
