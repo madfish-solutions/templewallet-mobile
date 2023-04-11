@@ -96,5 +96,9 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   collectionsContainer: {
     marginLeft: formatSize(16)
+  },
+  brokenImage: {
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 }));

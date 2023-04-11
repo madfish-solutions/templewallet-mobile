@@ -47,7 +47,7 @@ export const CollectiblesHome = () => {
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
       {isImageBroken ? (
-        <View style={styles.collection}>
+        <View style={[styles.collection, styles.brokenImage]}>
           <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
         </View>
       ) : (
