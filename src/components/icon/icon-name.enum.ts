@@ -126,5 +126,6 @@ export enum IconNameEnum {
   Favourite = 'Favourite',
   Github = 'Github',
   Website = 'Website',
-  NFTCollection = 'NFTCollection'
+  NFTCollection = 'NFTCollection',
+  NFT = 'NFT'
 }
