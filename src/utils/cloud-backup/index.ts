@@ -9,7 +9,7 @@ import { isString } from 'src/utils/is-string';
 import PackageJSON from '../../../package.json';
 import { rejectOnTimeout } from '../timeouts.util';
 
-export { keepRestoredCloudBackup, getRestoredCloudBackup } from './keeper';
+export { keepRestoredCloudBackup, useRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
 export const FAILED_TO_LOGIN_ERR_TITLE = `Failed to log-in${isIOS ? '. See if iCloud is enabled' : ''}`;
@@ -57,7 +57,7 @@ export const requestSignInToCloud = async () => {
     return true;
   }
 
-  await assureGooglePlayServicesAvailable();
+  await ensureGooglePlayServicesAvailable();
 
   GoogleSignin.configure({
     scopes: ['https://www.googleapis.com/auth/drive.file']
@@ -202,7 +202,7 @@ export const fetchCloudBackup = async (password: string, fileId: string): Promis
   }
 };
 
-const assureGooglePlayServicesAvailable = async () => {
+const ensureGooglePlayServicesAvailable = async () => {
   const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true }).catch(error => {
     console.error('GoogleSignin.hasPlayServices error:', error);
 

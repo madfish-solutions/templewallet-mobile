@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+
+import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 
 import type { BackupFileInterface } from './index';
@@ -17,5 +20,17 @@ export const keepRestoredCloudBackup = ({ mnemonic }: BackupFileInterface, passw
   return id;
 };
 
-export const getRestoredCloudBackup = (id?: number): Partial<KeptRestoredBackup> =>
-  isTruthy(keptBackup) && keptBackup.id === id ? keptBackup : {};
+/** Once read (returned) - will be erased */
+const retrieveRestoredCloudBackup = (id: number) => {
+  const backup = isTruthy(keptBackup) && keptBackup.id === id ? keptBackup : null;
+
+  if (isTruthy(backup)) {
+    keptBackup = undefined;
+  }
+
+  return backup;
+};
+
+/** (!) Only available in single component mount. Once used - will be erased */
+export const useRestoredCloudBackup = (id?: number): Partial<KeptRestoredBackup> =>
+  useMemo(() => (isDefined(id) && retrieveRestoredCloudBackup(id)) || {}, [id]);

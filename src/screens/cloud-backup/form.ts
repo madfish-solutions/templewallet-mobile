@@ -64,7 +64,7 @@ export const useHandleSubmit = () => {
       subject$.pipe(
         tap(() => dispatch(showLoaderAction())),
         switchMap(password =>
-          assurePasswordIsCorrect$(password).pipe(
+          ensurePasswordIsCorrect$(password).pipe(
             switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true)))),
             filter(isLoggedIn => {
               if (!isLoggedIn) {
@@ -103,7 +103,7 @@ export const useHandleSubmit = () => {
   return ({ password }: EnterCloudPasswordFormValues) => void submit$.next(password);
 };
 
-const assurePasswordIsCorrect$ = (password: string) =>
+const ensurePasswordIsCorrect$ = (password: string) =>
   Shelter.isPasswordCorrect$(password).pipe(
     map(isPasswordCorrect => {
       if (!isPasswordCorrect) {

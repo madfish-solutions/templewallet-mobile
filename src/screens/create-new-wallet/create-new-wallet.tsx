@@ -19,7 +19,7 @@ import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { getRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
 
 import {
@@ -32,7 +32,7 @@ import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 export const CreateNewWallet = () => {
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
-  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = getRestoredCloudBackup(cloudBackupId);
+  const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
 
   const isRestoreFromCloudFlow = isString(cloudBackupMnemonic);
 
