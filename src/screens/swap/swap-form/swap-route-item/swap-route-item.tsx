@@ -1,11 +1,12 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapDexesSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
+import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { kFormatter } from 'src/utils/number.util';
 
@@ -38,8 +39,10 @@ const calculatePercentage = (base: string | undefined, part: string) => {
 
 export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
   const styles = useSwapRouteItem();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
   const { data: swapDexes } = useSwapDexesSelector();
-  const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
+  const { data } = useSwapTokensMetadataSelector();
+  const swapTokensMetadata = useMemo(() => [tezosToken, ...data], [tezosToken, data]);
 
   return (
     <View style={[styles.flex, styles.container]}>
@@ -62,6 +65,8 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
 
           const aToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === aDexTokenSlug);
           const bToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === bDexTokenSlug);
+          console.log('aDexTokenSlug: ', aDexTokenSlug);
+          console.log('aToken: ', aToken);
 
           return <HopItem key={index} dexType={dex?.type} aToken={aToken} bToken={bToken} />;
         })}
