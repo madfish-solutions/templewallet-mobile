@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { abTestingReducer } from './ab-testing/ab-testing-reducers';
+import { ABTestingRootState } from './ab-testing/ab-testing-state';
 import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
@@ -53,7 +55,8 @@ export type RootState = WalletRootState &
   NotificationsRootState &
   ContactsBookRootState &
   Route3RootState &
-  PartnersPromotionRootState;
+  PartnersPromotionRootState &
+  ABTestingRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -84,7 +87,8 @@ const rootReducer = rootStateReducer<RootState>({
   notifications: notificationsReducers,
   swap: swapReducer,
   contactBook: contactBookReducers,
-  partnersPromotion: partnersPromotionReducers
+  partnersPromotion: partnersPromotionReducers,
+  abTesting: abTestingReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
