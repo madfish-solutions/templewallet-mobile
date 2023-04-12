@@ -4,7 +4,7 @@ import { useSelector } from '../selector';
 import { useSelectedAccountSelector } from '../wallet/wallet-selectors';
 import { Collection } from './collections-state';
 
-export const useCollectionsSelector = () => useSelector(state => state.collections.created, jsonEqualityFn);
+const useCollectionsSelector = () => useSelector(state => state.collections.created, jsonEqualityFn);
 
 export const useCreatedCollectionsSelector = (): Collection[] => {
   const selectedAccount = useSelectedAccountSelector();

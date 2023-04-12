@@ -107,6 +107,7 @@ export const useCollectiblesListSelector = () => {
   return useMemo(() => assetsList.filter(asset => isCollectible(asset) && isNonZeroBalance(asset)), [assetsList]);
 };
 
+// ts-prune-ignore-next-line
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();
 
