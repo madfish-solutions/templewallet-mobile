@@ -7,6 +7,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapDexesSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { kFormatter } from 'src/utils/number.util';
 
@@ -42,7 +43,7 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const { data: swapDexes } = useSwapDexesSelector();
   const { data } = useSwapTokensMetadataSelector();
-  const swapTokensMetadata = useMemo(() => [tezosToken, ...data], [tezosToken, data]);
+  const swapTokensMetadata = useMemo<Array<TokenInterface>>(() => [tezosToken, ...data], [tezosToken, data]);
 
   return (
     <View style={[styles.flex, styles.container]}>
@@ -65,8 +66,6 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
 
           const aToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === aDexTokenSlug);
           const bToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === bDexTokenSlug);
-          console.log('aDexTokenSlug: ', aDexTokenSlug);
-          console.log('aToken: ', aToken);
 
           return <HopItem key={index} dexType={dex?.type} aToken={aToken} bToken={bToken} />;
         })}
