@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
@@ -31,7 +31,6 @@ export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
   const dispatch = useDispatch();
   const collections = useCreatedCollectionsSelector();
-  const [isImageBroken, setIsImageBroken] = useState(false);
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -46,16 +45,12 @@ export const CollectiblesHome = () => {
 
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
-      {isImageBroken ? (
+      {item.logo ? (
+        <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo ?? '') }} />
+      ) : (
         <View style={[styles.collection, styles.brokenImage]}>
           <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
         </View>
-      ) : (
-        <FastImage
-          style={styles.collection}
-          source={{ uri: formatImgUri(item.logo ?? '') }}
-          onError={() => setIsImageBroken(true)}
-        />
       )}
 
       <Text numberOfLines={1} style={styles.collectionName}>
