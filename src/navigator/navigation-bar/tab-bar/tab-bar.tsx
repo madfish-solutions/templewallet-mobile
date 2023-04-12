@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { DebugTapListener } from '../../../components/debug-tap-listener/debug-tap-listener';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
 import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
@@ -13,8 +11,8 @@ import { isDefined } from '../../../utils/is-defined';
 import {
   dAppsStackScreens,
   marketStackScreens,
+  nftStackScreens,
   ScreensEnum,
-  settingsStackScreens,
   swapStackScreens,
   walletStackScreens
 } from '../../enums/screens.enum';
@@ -32,7 +30,6 @@ interface Props {
 
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
-  const isManualBackupMade = useIsManualBackupMadeSelector();
 
   const { isDcpNode } = useNetworkInfo();
 
@@ -56,12 +53,11 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocused(walletStackScreens)}
         />
         <TabBarButton
-          label="DApps"
-          iconName={IconNameEnum.DApps}
+          label="NFT"
+          iconName={IconNameEnum.NFT}
           iconWidth={formatSize(32)}
-          routeName={ScreensEnum.DApps}
-          focused={isStackFocused(dAppsStackScreens)}
-          disabled={isDcpNode}
+          routeName={ScreensEnum.CollectiblesHome}
+          focused={isStackFocused(nftStackScreens)}
           disabledOnPress={disabledOnPress}
         />
         <TabBarButton
@@ -79,6 +75,15 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           disabledOnPress={disabledOnPress}
         />
         <TabBarButton
+          label="DApps"
+          iconName={IconNameEnum.DApps}
+          iconWidth={formatSize(32)}
+          routeName={ScreensEnum.DApps}
+          focused={isStackFocused(dAppsStackScreens)}
+          disabled={isDcpNode}
+          disabledOnPress={disabledOnPress}
+        />
+        <TabBarButton
           label="Market"
           iconName={IconNameEnum.Market}
           iconWidth={formatSize(32)}
@@ -86,16 +91,6 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocused(marketStackScreens)}
           disabledOnPress={disabledOnPress}
         />
-        <DebugTapListener>
-          <TabBarButton
-            label="Settings"
-            iconName={IconNameEnum.Settings}
-            iconWidth={formatSize(32)}
-            routeName={ScreensEnum.Settings}
-            focused={isStackFocused(settingsStackScreens)}
-            showNotificationDot={!isManualBackupMade}
-          />
-        </DebugTapListener>
       </View>
       <InsetSubstitute type="bottom" />
     </View>
