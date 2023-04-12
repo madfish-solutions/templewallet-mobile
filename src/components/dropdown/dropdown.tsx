@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -80,11 +80,6 @@ const DropdownComponent = <T extends unknown>({
   const dropdownBottomSheetController = useBottomSheetController();
   const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
   const contentHeight = useDropdownHeight();
-
-  useEffect(() => {
-    console.log('RENDER dropdown');
-    setSearchValue('');
-  }, []);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
