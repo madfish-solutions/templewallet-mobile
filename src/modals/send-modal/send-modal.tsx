@@ -52,7 +52,7 @@ export const SendModal: FC = () => {
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true, true, tezosToken);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, tezosToken);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
@@ -125,6 +125,8 @@ export const SendModal: FC = () => {
               name="assetAmount"
               label="Asset"
               assetsList={filteredAssetsList}
+              isSearchable
+              setSearchValue={setSearchValue}
               testID={SendModalSelectors.assetInput}
             />
             <Divider />
