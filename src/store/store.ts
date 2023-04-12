@@ -1,3 +1,4 @@
+import { abTestingEpics } from './ab-testing/ab-testing-epics';
 import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { contactsEpics } from './contact-book/contact-book-epics';
@@ -30,5 +31,6 @@ export const { store, persistor } = createStore(
   marketEpics,
   notificationsEpics,
   contactsEpics,
-  partnersPromotionEpics
+  partnersPromotionEpics,
+  abTestingEpics
 );

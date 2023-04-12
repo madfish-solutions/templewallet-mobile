@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { delegationApy } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -16,6 +15,9 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
+import { ABContainer } from '../ab-container/ab-container';
+import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
+import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
@@ -33,7 +35,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
   const tokenSlug = getTokenSlug(token);
-  const { isTezosNode, isDcpNode } = useNetworkInfo();
+  const { isDcpNode } = useNetworkInfo();
 
   const navigationFlow = () => {
     isDcpNode && !isBakerSelected ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
@@ -47,9 +49,10 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
         {isBakerSelected ? (
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
         ) : (
-          <Text style={styles.delegateText}>
-            Delegate<Text style={styles.apyText}>{isTezosNode && `: ${delegationApy}% APY`}</Text>
-          </Text>
+          <ABContainer
+            groupAComponent={<DelegateTagA style={styles.delegateText} />}
+            groupBComponent={<DelegateTagB style={styles.delegateText} />}
+          />
         )}
       </TouchableOpacity>
     );
