@@ -12,7 +12,7 @@ import { rejectOnTimeout } from '../timeouts.util';
 export { keepRestoredCloudBackup, useRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
-export const FAILED_TO_LOGIN_ERR_TITLE = `Failed to log-in${isIOS ? '. See if iCloud is enabled' : ''}`;
+export const FAILED_TO_LOGIN_ERR_TITLE = isIOS ? 'Failed to sync cloud' : 'Failed to log-in';
 
 const scope = 'hidden';
 const CLOUD_WALLET_FOLDER = 'tw-mobile';
@@ -108,10 +108,10 @@ const syncCloud = async () => {
     RNCloudFs.getIcloudDocument(targetPathAndScope).catch(error => {
       console.error('syncCloud > RNCloudFs.getIcloudDocument error:', error);
 
-      throw new Error('Failed to sync cloud');
+      throw new Error('See if iCloud is enabled');
     }),
     CLOUD_REQUEST_TIMEOUT,
-    new Error('Cloud syncing took too long')
+    new Error("Syncing took too long. Try switching 'iCloud Drive' sync off & on again")
   );
 };
 

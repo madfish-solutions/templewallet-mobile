@@ -1,4 +1,4 @@
-import Toast from 'react-native-toast-message';
+import Toast, { ToastShowParams } from 'react-native-toast-message';
 
 import { EmptyFn } from 'src/config/general';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
@@ -32,29 +32,29 @@ export const showErrorToast = ({ description, title, onPress, isCopyButtonVisibl
     return;
   }
 
+  const commonParams: ToastShowParams = {
+    type: ToastTypeEnum.Error,
+    text1: title,
+    onPress
+  };
+
   if (description.startsWith(JSON_PARSE_ERROR)) {
     return Toast.show({
-      type: ToastTypeEnum.Error,
-      text1: title,
-      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
-      onPress
+      ...commonParams,
+      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE)
     });
   }
 
   if (TAQUITO_500_ERROR_MESSAGE === slicedErrorMessage) {
     return Toast.show({
-      type: ToastTypeEnum.Error,
-      text1: title,
-      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
-      onPress
+      ...commonParams,
+      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE)
     });
   }
 
   return Toast.show({
-    type: ToastTypeEnum.Error,
-    text1: title,
+    ...commonParams,
     text2: errorMessageFilter(description),
-    onPress,
     props: {
       isCopyButtonVisible
     }
