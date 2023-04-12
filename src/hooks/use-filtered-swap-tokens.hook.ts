@@ -30,7 +30,7 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
   }, [userTokens]);
 
   const swapTokensWithBalances = useMemo<Array<TokenInterface>>(() => {
-    const result = swapTokensMetadata.map(token => {
+    const result = swapTokensMetadata.map<TokenInterface>(token => {
       const slug = toTokenSlug(token.address, token.id);
 
       return {
