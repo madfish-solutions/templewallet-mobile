@@ -1,3 +1,4 @@
+import { mockABTestingState } from './ab-testing/ab-testing-state.mock';
 import { mockAdvertisingState } from './advertising/advertising-state.mock';
 import { mockBakingState } from './baking/baking-state.mock';
 import { mockContactBookState } from './contact-book/contact-book-state.mock';
@@ -26,5 +27,6 @@ export const mockRootState: RootState = {
   market: mockMarketState,
   notifications: mockNotificationsState,
   contactBook: mockContactBookState,
-  partnersPromotion: mockPartnersPromotionState
+  partnersPromotion: mockPartnersPromotionState,
+  abTesting: mockABTestingState
 };

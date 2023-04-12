@@ -2,20 +2,16 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { formatSize } from 'src/styles/format-size';
-import { getTokenSlug } from 'src/token/utils/token.utils';
-import { isDefined } from 'src/utils/is-defined';
 import { getTruncatedProps } from 'src/utils/style.util';
 
+import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
-import { useApyStyles } from '../token-screen-content-container/apy.styles';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
 export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }) => {
   const styles = useTokenContainerStyles();
-  const apyStyles = useApyStyles();
-  const tokenSlug = getTokenSlug(token);
 
   return (
     <View style={styles.container}>
@@ -25,11 +21,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy, children }
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
-            {isDefined(apy) && apy > 0 && (
-              <View style={[styles.apyContainer, apyStyles[tokenSlug]]}>
-                <Text style={styles.apyText}>APY: {apy}%</Text>
-              </View>
-            )}
+            <DelegateTag token={token} apy={apy} />
           </View>
           <Text {...getTruncatedProps(styles.nameText)}>{token.name}</Text>
         </View>
