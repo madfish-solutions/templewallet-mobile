@@ -8,6 +8,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { emptyFn } from 'src/config/general';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
@@ -38,26 +39,33 @@ export const CollectiblesHome = () => {
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  useEffect(() => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)), [selectedAccount]);
+  useEffect(
+    () => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)),
+    [selectedAccount.publicKeyHash]
+  );
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
-  const renderItem: ListRenderItem<Collection> = ({ item }) => (
-    <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
-      {item.logo ? (
-        <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo ?? '') }} />
-      ) : (
-        <View style={[styles.collection, styles.brokenImage]}>
-          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-        </View>
-      )}
+  const renderItem: ListRenderItem<Collection> = ({ item }) => {
+    const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
 
-      <Text numberOfLines={1} style={styles.collectionName}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
+    return (
+      <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
+        {item.logo ? (
+          <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
+        ) : (
+          <View style={[styles.collection, styles.brokenImage]}>
+            <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+          </View>
+        )}
+
+        <Text numberOfLines={1} style={styles.collectionName}>
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
@@ -72,7 +80,7 @@ export const CollectiblesHome = () => {
         </View>
         <View style={styles.profileContainer}>
           <View style={styles.createProfile}>
-            <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
+            <TouchableIcon name={IconNameEnum.PlusCircle} onPress={emptyFn} size={formatSize(16)} />
             <Text style={styles.createProfileText}>CREATE PROFILE</Text>
           </View>
 
