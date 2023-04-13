@@ -9,6 +9,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
@@ -23,6 +24,7 @@ export const Welcome = () => {
   const styles = useWelcomeStyles();
 
   usePageAnalytic(ScreensEnum.Welcome);
+  useABTestingLoading();
 
   return (
     <ScreenContainer isFullScreenMode={true}>

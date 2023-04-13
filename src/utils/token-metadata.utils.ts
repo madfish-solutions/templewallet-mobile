@@ -9,6 +9,7 @@ import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadat
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
+import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
@@ -91,6 +92,11 @@ export const getFiatToUsdRate = (state: RootState) => {
   const fiatExchangeRates = state.currency.fiatToTezosRates.data;
   const fiatCurrency = state.settings.fiatCurrency;
   const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
+
+  // Coingecko and Temple Wallet APIs return slightly different TEZ/USD exchange rates
+  if (fiatCurrency === FiatCurrenciesEnum.USD) {
+    return 1;
+  }
 
   const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
   const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
