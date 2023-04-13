@@ -38,13 +38,11 @@ export const isCloudAvailable = async () => {
   }
 
   if (isIOS) {
-    try {
-      return await RNCloudFs.isAvailable();
-    } catch (error) {
+    return await RNCloudFs.isAvailable().catch(error => {
       console.error('RNCloudFs.isAvailable error:', error);
 
       return false;
-    }
+    });
   }
 
   return false;
@@ -116,12 +114,20 @@ const syncCloud = async () => {
 };
 
 export const fetchCloudBackupFileDetails = async () => {
-  const backups = await RNCloudFs.listFiles({
+  if (isIOS) {
+    return (await RNCloudFs.getIcloudDocumentDetails(targetPathAndScope)) ?? null;
+  }
+
+  return await fetchGoogleDriveBackupFileDetails();
+};
+
+const fetchGoogleDriveBackupFileDetails = async () => {
+  const data = await RNCloudFs.listFiles<'Android'>({
     scope,
     targetPath: CLOUD_WALLET_FOLDER
   });
 
-  return backups.files?.find(file => file.name.endsWith(filename)) || null;
+  return data.files?.find(file => file.name.endsWith(filename)) ?? null;
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
@@ -161,19 +167,17 @@ const checkIfBackupExists = async (fileId?: string) => {
     return false;
   }
 
-  const fileExists = await RNCloudFs.fileExists(isAndroid ? { scope, fileId } : targetPathAndScope).catch(error => {
+  return await RNCloudFs.fileExists(isAndroid ? { scope, fileId } : targetPathAndScope).catch(error => {
     console.error('RNCloudFs.fileExists() error:', error);
 
     return false;
   });
-
-  return fileExists;
 };
 
-export const fetchCloudBackup = async (password: string, fileId: string): Promise<BackupFileInterface> => {
-  const encryptedBackupPromise = isAndroid
-    ? RNCloudFs.getGoogleDriveDocument(fileId)
-    : RNCloudFs.getIcloudDocument(targetPathAndScope);
+export const fetchCloudBackup = async (password: string): Promise<BackupFileInterface> => {
+  const encryptedBackupPromise = isIOS
+    ? RNCloudFs.getIcloudDocument(targetPathAndScope)
+    : fetchGoogleDriveBackupFileDetails().then(details => details && RNCloudFs.getGoogleDriveDocument(details.id));
 
   const encryptedBackup = await rejectOnTimeout(
     encryptedBackupPromise.catch(error => {

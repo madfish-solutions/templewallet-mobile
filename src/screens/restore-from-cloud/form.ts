@@ -1,10 +1,9 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import { useDispatch } from 'react-redux';
 import { from, map, switchMap, tap } from 'rxjs';
 import { object, boolean, SchemaOf } from 'yup';
 
 import { passwordValidation } from 'src/form/validation/password';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
@@ -27,17 +26,15 @@ export const RestoreFromCloudInitialValues: RestoreFromCloudFormValues = {
 };
 
 export const useHandleSubmit = () => {
-  const { fileId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.RestoreFromCloud>>().params;
-
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
 
-  const submit$ = useSubjectWithReSubscription$<{ password: string; fileId: string; reusePassword: boolean }>(
+  const submit$ = useSubjectWithReSubscription$<{ password: string; reusePassword: boolean }>(
     subject$ =>
       subject$.pipe(
         tap(() => dispatch(showLoaderAction())),
-        switchMap(({ password, fileId, reusePassword }) =>
-          from(fetchCloudBackup(password, fileId).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
+        switchMap(({ password, reusePassword }) =>
+          from(fetchCloudBackup(password).catch(catchThrowToastError("Couldn't restore wallet", true))).pipe(
             map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined))
           )
         ),
@@ -50,8 +47,8 @@ export const useHandleSubmit = () => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
     },
-    [fileId, dispatch, navigate]
+    [dispatch, navigate]
   );
 
-  return (values: RestoreFromCloudFormValues) => submit$.next({ fileId, ...values });
+  return (values: RestoreFromCloudFormValues) => submit$.next(values);
 };

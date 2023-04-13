@@ -14,6 +14,7 @@ import {
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
+import { isTruthy } from 'src/utils/is-truthy';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
@@ -80,7 +81,7 @@ export const useHandleSubmit = () => {
           )
         ),
         tap(({ backupFile, password }) => {
-          if (backupFile) {
+          if (isTruthy(backupFile)) {
             dispatch(hideLoaderAction());
 
             return void alertOnExistingBackup(

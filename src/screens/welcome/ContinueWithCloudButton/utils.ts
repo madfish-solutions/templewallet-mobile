@@ -6,6 +6,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { FAILED_TO_LOGIN_ERR_TITLE, fetchCloudBackupFileDetails, requestSignInToCloud } from 'src/utils/cloud-backup';
+import { isTruthy } from 'src/utils/is-truthy';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 export const useOnContinueWithCloudButtonPress = () => {
@@ -30,8 +31,8 @@ export const useOnContinueWithCloudButtonPress = () => {
         tap(backupFile => {
           dispatch(hideLoaderAction());
 
-          if (backupFile) {
-            navigate(ScreensEnum.RestoreFromCloud, { fileId: backupFile.id });
+          if (isTruthy(backupFile)) {
+            navigate(ScreensEnum.RestoreFromCloud);
           } else {
             navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
           }
