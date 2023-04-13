@@ -1,9 +1,11 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
+
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
@@ -19,7 +21,7 @@ import { useIsShownDomainNameSelector } from '../../store/settings/settings-sele
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { isString } from '../../utils/is-string';
 import { ReceiveModalSelectors } from './receive-modal.selectors';
@@ -32,12 +34,23 @@ export const ReceiveModal: FC = () => {
   const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
 
   const { name, symbol } = token;
+  const testID = useMemo(
+    () =>
+      isShownDomainName && isString(domainName)
+        ? ReceiveModalSelectors.domainCopyButton
+        : ReceiveModalSelectors.publicAddressCopyButton,
+    []
+  );
 
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
   const isShownDomainName = useIsShownDomainNameSelector();
   const domainName = useDomainName(publicKeyHash);
 
-  const handleCopyButtonPress = () => copyStringToClipboard(publicKeyHash);
+  const handleCopyButtonPress = () => {
+    copyStringToClipboard(publicKeyHash);
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress);
+  };
 
   usePageAnalytic(ModalsEnum.Receive);
 
@@ -77,15 +90,7 @@ export const ReceiveModal: FC = () => {
       </View>
       <Divider size={formatSize(8)} />
 
-      <TouchableOpacity
-        style={styles.publicKeyHashContainer}
-        onPress={handleCopyButtonPress}
-        testID={
-          isShownDomainName && isString(domainName)
-            ? ReceiveModalSelectors.domainSwitchButton
-            : ReceiveModalSelectors.publicAddressSwitchButton
-        }
-      >
+      <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress} testID={testID}>
         {isShownDomainName && isString(domainName) ? (
           <Text style={styles.publicKeyHash}>{domainName}</Text>
         ) : (

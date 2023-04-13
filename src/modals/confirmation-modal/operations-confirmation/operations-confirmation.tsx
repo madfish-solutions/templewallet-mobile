@@ -22,6 +22,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzToMutez } from 'src/utils/tezos.util';
 
+import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -142,12 +143,18 @@ export const OperationsConfirmation: FC<Props> = ({
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" disabled={isLoading} onPress={goBack} />
+            <ButtonLargeSecondary
+              title="Back"
+              disabled={isLoading}
+              onPress={goBack}
+              testID={ConfirmationModalSelectors.backButton}
+            />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary
               title="Confirm"
               disabled={estimations.isLoading || isLoading || !isValid}
               onPress={submitForm}
+              testID={ConfirmationModalSelectors.confirmButton}
             />
           </ModalButtonsContainer>
         </>

@@ -3,6 +3,10 @@ import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
 import { formatSize } from '../../styles/format-size';
@@ -15,7 +19,7 @@ import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
-export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface DropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: T[];
   isSearchable?: boolean;
@@ -46,7 +50,8 @@ export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 export type DropdownValueComponent<T> = FC<{
   value?: T;
   disabled?: boolean;
-}>;
+}> &
+  TestIdProps;
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
@@ -73,9 +78,12 @@ const DropdownComponent = <T extends unknown>({
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const ref = useRef<FlatList<T>>(null);
+  const { trackEvent } = useAnalytics();
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
@@ -120,6 +128,10 @@ const DropdownComponent = <T extends unknown>({
         disabled={disabled}
         onPress={() => {
           scroll();
+
+          if (Boolean(testID)) {
+            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+          }
 
           return dropdownBottomSheetController.open();
         }}
