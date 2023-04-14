@@ -10,7 +10,7 @@ import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/s
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
-  fetchCloudBackupFileDetails,
+  fetchCloudBackupDetails,
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
@@ -75,7 +75,7 @@ export const useHandleSubmit = () => {
               return isLoggedIn;
             }),
             switchMap(() =>
-              from(fetchCloudBackupFileDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
+              from(fetchCloudBackupDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
             ),
             map(backupFile => ({ backupFile, password }))
           )

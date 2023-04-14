@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 
-import type { BackupFileInterface } from './index';
+import type { BackupFileInterface } from './common';
 
 interface KeptRestoredBackup {
   id: number;
