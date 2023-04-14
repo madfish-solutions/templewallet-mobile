@@ -11,13 +11,7 @@ import {
   decryptFetchedCloudBackup
 } from './common';
 
-export const isCloudAvailable = async () => {
-  if (Boolean(RNCloudFs) === false) {
-    return false;
-  }
-
-  return true;
-};
+export const isCloudAvailable = async () => Boolean(RNCloudFs);
 
 export const requestSignInToCloud = async () => {
   await ensureGooglePlayServicesAvailable();
@@ -35,7 +29,7 @@ export const requestSignInToCloud = async () => {
       return false;
     }
   } catch (error) {
-    console.error('GoogleSignin.signIn error:', { error });
+    console.error('GoogleSignin.signIn() error:', { error });
 
     if (
       [statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(
@@ -52,7 +46,7 @@ export const requestSignInToCloud = async () => {
     /* Syncing signed-in state to RNCloudFS */
     return await RNCloudFs.loginIfNeeded();
   } catch (error) {
-    console.error('RNCloudFs.loginIfNeeded error:', { error });
+    console.error('RNCloudFs.loginIfNeeded() error:', { error });
 
     throw new Error('Failed to sync sign-in status');
   }
@@ -64,7 +58,7 @@ export const fetchCloudBackupDetails = async () => {
     targetPath: CLOUD_WALLET_FOLDER
   });
 
-  return data.files?.find(file => file.name.endsWith(filename)) ?? null;
+  return data.files?.find(file => file.name.endsWith(filename));
 };
 
 export const fetchCloudBackup = async (password: string): Promise<BackupFileInterface> => {
@@ -72,7 +66,7 @@ export const fetchCloudBackup = async (password: string): Promise<BackupFileInte
     fetchCloudBackupDetails()
       .then(details => details && RNCloudFs.getGoogleDriveDocument(details.id))
       .catch(error => {
-        console.error('RNCloudFs.get${cloud}Document error:', error);
+        console.error('RNCloudFs.getGoogleDriveDocument() error:', error);
       }),
     CLOUD_REQUEST_TIMEOUT,
     new Error('Reading cloud took too long')
@@ -83,7 +77,7 @@ export const fetchCloudBackup = async (password: string): Promise<BackupFileInte
 
 const ensureGooglePlayServicesAvailable = async () => {
   const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true }).catch(error => {
-    console.error('GoogleSignin.hasPlayServices error:', error);
+    console.error('GoogleSignin.hasPlayServices() error:', error);
 
     return false;
   });
