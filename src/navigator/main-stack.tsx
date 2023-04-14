@@ -54,7 +54,6 @@ import { RestoreFromCloud } from 'src/screens/restore-from-cloud';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
-import { SwapQuestionsScreen } from 'src/screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
 import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -68,8 +67,8 @@ import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
-  loadTezosBalanceActions,
   loadTokensActions,
+  loadTezosBalanceActions,
   loadTokensBalancesArrayActions
 } from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
@@ -245,12 +244,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.SwapQuestionsScreen}
-                component={SwapQuestionsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Market stack **/}

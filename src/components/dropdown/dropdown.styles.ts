@@ -21,5 +21,9 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
     backgroundColor: colors.pageBG,
     paddingVertical: formatSize(4),
     letterSpacing: formatSize(-0.1)
+  },
+  activityIndicatorContainer: {
+    height: '90%',
+    justifyContent: 'center'
   }
 }));

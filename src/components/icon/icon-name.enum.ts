@@ -125,6 +125,7 @@ export enum IconNameEnum {
   Buy = 'Buy',
   Favourite = 'Favourite',
   NFT = 'NFT',
+  SwapRouteItemBackground = 'SwapRouteItemBackground',
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive'
