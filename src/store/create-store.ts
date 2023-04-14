@@ -35,6 +35,8 @@ import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
+import { swapReducer } from './swap/swap-reducers';
+import { Route3RootState } from './swap/swap-state';
 import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
@@ -52,6 +54,7 @@ export type RootState = WalletRootState &
   MarketRootState &
   NotificationsRootState &
   ContactsBookRootState &
+  Route3RootState &
   PartnersPromotionRootState &
   ABTestingRootState;
 
@@ -82,6 +85,7 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
+  swap: swapReducer,
   contactBook: contactBookReducers,
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer
