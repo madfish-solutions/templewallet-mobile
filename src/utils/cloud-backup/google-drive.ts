@@ -1,15 +1,18 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import RNCloudFs from 'react-native-cloud-fs';
+import RNCloudFs, { TargetPathAndScope } from 'react-native-cloud-fs';
+import * as RNFS from 'react-native-fs';
+import { secureCellSealWithPassphraseEncrypt64 } from 'react-native-themis';
 
-import { rejectOnTimeout } from '../timeouts.util';
-import {
-  BackupFileInterface,
-  CLOUD_WALLET_FOLDER,
-  CLOUD_REQUEST_TIMEOUT,
-  scope,
-  filename,
-  decryptFetchedCloudBackup
-} from './common';
+import { isString } from 'src/utils/is-string';
+import { rejectOnTimeout } from 'src/utils/timeouts.util';
+
+import { BackupObject, CLOUD_REQUEST_TIMEOUT, decryptFetchedCloudBackup, buildBackupObject } from './common';
+
+const scope = 'hidden';
+const CLOUD_WALLET_FOLDER = 'tw-mobile';
+const filename = 'wallet-backup.json';
+const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
+const targetPathAndScope: TargetPathAndScope = { scope, targetPath };
 
 export const isCloudAvailable = async () => Boolean(RNCloudFs);
 
@@ -61,7 +64,7 @@ export const fetchCloudBackupDetails = async () => {
   return data.files?.find(file => file.name.endsWith(filename));
 };
 
-export const fetchCloudBackup = async (password: string): Promise<BackupFileInterface> => {
+export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
   const encryptedBackup = await rejectOnTimeout(
     fetchCloudBackupDetails()
       .then(details => details && RNCloudFs.getGoogleDriveDocument(details.id))
@@ -73,6 +76,46 @@ export const fetchCloudBackup = async (password: string): Promise<BackupFileInte
   );
 
   return await decryptFetchedCloudBackup(encryptedBackup, password);
+};
+
+export const saveCloudBackup = async (mnemonic: string, password: string) => {
+  const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
+
+  const fileContent = buildBackupObject(mnemonic);
+
+  const encryptedData = await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(fileContent));
+
+  await RNFS.writeFile(localPath, encryptedData, 'utf8');
+
+  const fileId = await RNCloudFs.copyToCloud({
+    ...targetPathAndScope,
+    mimeType: 'application/json',
+    sourcePath: { path: localPath }
+  })
+    .catch(error => {
+      console.error('RNCloudFs.copyToCloud() error:', error);
+
+      throw new Error('Failed to upload to cloud');
+    })
+    .finally(() => RNFS.unlink(localPath).catch(console.error));
+
+  const fileExists = await checkIfBackupExists(fileId);
+
+  if (fileExists === false) {
+    throw new Error('File not found after saving');
+  }
+};
+
+const checkIfBackupExists = async (fileId?: string) => {
+  if (!isString(fileId)) {
+    return false;
+  }
+
+  return await RNCloudFs.fileExists({ scope, fileId }).catch(error => {
+    console.error('RNCloudFs.fileExists() error:', error);
+
+    return false;
+  });
 };
 
 const ensureGooglePlayServicesAvailable = async () => {

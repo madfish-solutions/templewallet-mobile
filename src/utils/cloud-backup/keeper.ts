@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 
-import type { BackupFileInterface } from './common';
+import type { BackupObject } from './common';
 
 interface KeptRestoredBackup {
   id: number;
@@ -13,7 +13,7 @@ interface KeptRestoredBackup {
 
 let keptBackup: KeptRestoredBackup | undefined;
 
-export const keepRestoredCloudBackup = ({ mnemonic }: BackupFileInterface, password?: string) => {
+export const keepRestoredCloudBackup = ({ mnemonic }: BackupObject, password?: string) => {
   const id = Date.now();
   keptBackup = { id, mnemonic, password };
 
