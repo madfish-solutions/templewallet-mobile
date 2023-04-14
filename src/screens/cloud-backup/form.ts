@@ -8,8 +8,11 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
+  cloudTitle,
   fetchCloudBackupDetails,
   requestSignInToCloud,
   saveCloudBackup
@@ -34,6 +37,7 @@ export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
 export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
 
   const proceedWithSaving$ = useSubjectWithReSubscription$<string>(
     subject$ =>
@@ -56,8 +60,11 @@ export const useHandleSubmit = () => {
     err => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
+
+      const errorTitle = err instanceof ToastError ? err.title : undefined;
+      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
     },
-    [dispatch, goBack]
+    [dispatch, goBack, trackEvent]
   );
 
   const submit$ = useSubjectWithReSubscription$<string>(
@@ -97,8 +104,11 @@ export const useHandleSubmit = () => {
     err => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
+
+      const errorTitle = err instanceof ToastError ? err.title : undefined;
+      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
     },
-    [dispatch, navigate]
+    [dispatch, navigate, trackEvent]
   );
 
   return ({ password }: EnterCloudPasswordFormValues) => void submit$.next(password);

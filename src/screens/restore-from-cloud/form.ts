@@ -6,8 +6,10 @@ import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { ToastError, catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { cloudTitle, fetchCloudBackup, keepRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 type RestoreFromCloudFormValues = {
@@ -28,6 +30,7 @@ export const RestoreFromCloudInitialValues: RestoreFromCloudFormValues = {
 export const useHandleSubmit = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
 
   const submit$ = useSubjectWithReSubscription$<{ password: string; reusePassword: boolean }>(
     subject$ =>
@@ -46,8 +49,11 @@ export const useHandleSubmit = () => {
     err => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
+
+      const errorTitle = err instanceof ToastError ? err.title : undefined;
+      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
     },
-    [dispatch, navigate]
+    [dispatch, navigate, trackEvent]
   );
 
   return (values: RestoreFromCloudFormValues) => submit$.next(values);

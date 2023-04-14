@@ -4,14 +4,22 @@ import { filter, from, switchMap, tap } from 'rxjs';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { FAILED_TO_LOGIN_ERR_TITLE, fetchCloudBackupDetails, requestSignInToCloud } from 'src/utils/cloud-backup';
+import { ToastError, catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import {
+  FAILED_TO_LOGIN_ERR_TITLE,
+  cloudTitle,
+  fetchCloudBackupDetails,
+  requestSignInToCloud
+} from 'src/utils/cloud-backup';
 import { isTruthy } from 'src/utils/is-truthy';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 export const useOnContinueWithCloudButtonPress = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
 
   const continueWithCloud$ = useSubjectWithReSubscription$<void>(
     $subject =>
@@ -39,8 +47,11 @@ export const useOnContinueWithCloudButtonPress = () => {
     err => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
+
+      const errorTitle = err instanceof ToastError ? err.title : undefined;
+      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
     },
-    [dispatch, navigate]
+    [dispatch, navigate, trackEvent]
   );
 
   return () => void continueWithCloud$.next();
