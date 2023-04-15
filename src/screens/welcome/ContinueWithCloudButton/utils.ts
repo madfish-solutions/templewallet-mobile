@@ -4,7 +4,7 @@ import { filter, from, switchMap, tap } from 'rxjs';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { ToastError, catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { ToastError, catchThrowToastError, showErrorToastByError, showWarningToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import {
@@ -40,6 +40,7 @@ export const useOnContinueWithCloudButtonPress = () => {
           if (isTruthy(backupFile)) {
             navigate(ScreensEnum.RestoreFromCloud);
           } else {
+            showWarningToast({ description: 'No existing backup found. It will be made after wallet creation' });
             navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
           }
         })

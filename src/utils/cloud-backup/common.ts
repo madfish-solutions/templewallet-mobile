@@ -1,12 +1,9 @@
-import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
+import { secureCellSealWithPassphraseEncrypt64, secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 import { isIOS } from 'src/config/system';
 import { isString } from 'src/utils/is-string';
 
 import PackageJSON from '../../../package.json';
-
-export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
-export const FAILED_TO_LOGIN_ERR_TITLE = isIOS ? 'Failed to sync cloud' : 'Failed to log-in';
 
 export const CLOUD_REQUEST_TIMEOUT = 15000;
 
@@ -16,13 +13,17 @@ export interface BackupObject {
   platformOS: 'ios' | 'android';
 }
 
-export const buildBackupObject = (mnemonic: string): BackupObject => ({
-  version: PackageJSON.version,
-  mnemonic,
-  platformOS: isIOS ? 'ios' : 'android'
-});
+export const buildAndEncryptBackup = async (mnemonic: string, password: string): Promise<string> => {
+  const backup: BackupObject = {
+    version: PackageJSON.version,
+    mnemonic,
+    platformOS: isIOS ? 'ios' : 'android'
+  };
 
-export const decryptFetchedCloudBackup = async (
+  return await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(backup));
+};
+
+export const decryptFetchedBackup = async (
   encryptedBackup: string | nullish,
   password: string
 ): Promise<BackupObject> => {

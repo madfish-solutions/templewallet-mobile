@@ -1,12 +1,11 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import RNCloudFs, { TargetPathAndScope } from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
-import { secureCellSealWithPassphraseEncrypt64 } from 'react-native-themis';
 
 import { isString } from 'src/utils/is-string';
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
-import { BackupObject, CLOUD_REQUEST_TIMEOUT, decryptFetchedCloudBackup, buildBackupObject } from './common';
+import { BackupObject, CLOUD_REQUEST_TIMEOUT, buildAndEncryptBackup, decryptFetchedBackup } from './common';
 
 const scope = 'hidden';
 const CLOUD_WALLET_FOLDER = 'tw-mobile';
@@ -75,15 +74,13 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
     new Error('Reading cloud took too long')
   );
 
-  return await decryptFetchedCloudBackup(encryptedBackup, password);
+  return await decryptFetchedBackup(encryptedBackup, password);
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
+  const encryptedData = await buildAndEncryptBackup(mnemonic, password);
+
   const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
-
-  const fileContent = buildBackupObject(mnemonic);
-
-  const encryptedData = await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(fileContent));
 
   await RNFS.writeFile(localPath, encryptedData, 'utf8');
 

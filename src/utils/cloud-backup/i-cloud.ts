@@ -1,9 +1,8 @@
 import RNCloudFs from 'react-native-cloud-fs';
-import { secureCellSealWithPassphraseEncrypt64 } from 'react-native-themis';
 
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
-import { BackupObject, CLOUD_REQUEST_TIMEOUT, buildBackupObject, decryptFetchedCloudBackup } from './common';
+import { BackupObject, CLOUD_REQUEST_TIMEOUT, buildAndEncryptBackup, decryptFetchedBackup } from './common';
 
 const BACKUP_STORE_KEY = 'WALLET_BACKUP_JSON';
 
@@ -45,13 +44,11 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
     new Error("Reading cloud took too long. Try switching 'iCloud Drive' sync off & on again")
   );
 
-  return await decryptFetchedCloudBackup(encryptedBackup, password);
+  return await decryptFetchedBackup(encryptedBackup, password);
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
-  const backup = buildBackupObject(mnemonic);
-
-  const encryptedData = await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(backup));
+  const encryptedData = await buildAndEncryptBackup(mnemonic, password);
 
   await RNCloudFs.putKeyValueStoreObject({ key: BACKUP_STORE_KEY, value: encryptedData }).catch(error => {
     console.error('RNCloudFs.putKeyValueStoreData() error:', error);
