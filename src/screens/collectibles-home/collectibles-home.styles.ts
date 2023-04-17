@@ -1,3 +1,5 @@
+import { generateShadow } from 'src/styles/generate-shadow';
+
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -100,5 +102,33 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   brokenImage: {
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  nftTypeContainer: {
+    flexDirection: 'row',
+    marginHorizontal: formatSize(16),
+    marginVertical: formatSize(8),
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: colors.lines,
+    borderRadius: formatSize(8)
+  },
+  NFTType: {
+    //backgroundColor: colors.white
+    alignItems: 'center',
+    marginVertical: formatSize(2),
+    borderRadius: formatSize(7),
+    flex: 1
+  },
+  NFTtypeActive: {
+    backgroundColor: colors.white,
+    ...generateShadow(5, 'black')
+  },
+  NFTtypeText: {
+    color: colors.orange,
+    marginVertical: formatSize(3),
+    ...typography.caption13Semibold
+  },
+  NFTtypeTextDisabled: {
+    color: colors.gray3
   }
 }));

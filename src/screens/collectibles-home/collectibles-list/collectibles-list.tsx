@@ -1,5 +1,12 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
+import {
+  FlatList,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  useWindowDimensions,
+  View
+} from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -14,6 +21,8 @@ import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable
 
 interface Props {
   collectiblesList: TokenInterface[];
+  expanded: boolean;
+  setScrollPosition: (newPosition: number) => void;
 }
 
 const ITEMS_PER_ROW = 3;
@@ -23,7 +32,7 @@ const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getToke
 const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
 // ts-prune-ignore-next
-export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
+export const CollectiblesList: FC<Props> = ({ collectiblesList, expanded, setScrollPosition }) => {
   const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
   const itemSize =
@@ -44,6 +53,11 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
     [itemSize]
   );
 
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    console.log('handle scroll works');
+    setScrollPosition(e.nativeEvent.contentOffset.y);
+  };
+
   return (
     <FlatList
       data={data}
@@ -53,6 +67,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
       style={styles.scrollView}
       contentContainerStyle={styles.scrollViewContentContainer}
       ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
+      scrollEnabled={expanded}
+      onMomentumScrollEnd={handleScroll}
     />
   );
 };
