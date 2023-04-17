@@ -62,3 +62,13 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
     throw new Error('Failed to sync after saving');
   }
 };
+
+export const eraseCloudBackup = async () => {
+  await RNCloudFs.removeKeyValueStoreObject(BACKUP_STORE_KEY);
+
+  const synced = await RNCloudFs.syncKeyValueStoreData();
+
+  if (!Boolean(synced)) {
+    throw new Error('Failed to sync after erasing attempt');
+  }
+};

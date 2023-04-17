@@ -103,6 +103,10 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
   }
 };
 
+export const eraseCloudBackup = () => {
+  throw new Error('Use Google Drive to remove app files');
+};
+
 const checkIfBackupExists = async (fileId?: string) => {
   if (!isString(fileId)) {
     return false;

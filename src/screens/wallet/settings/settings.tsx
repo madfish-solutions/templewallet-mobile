@@ -25,6 +25,7 @@ export const Settings = () => {
     <TouchableOpacity
       onPress={navigateToSettings}
       onLongPress={navigateToDebugMode}
+      delayLongPress={4000}
       style={SettingsStyles.iconContainer}
       testID={SettingsSelectors.settingsButton}
     >
