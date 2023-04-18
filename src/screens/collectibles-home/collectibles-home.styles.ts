@@ -1,3 +1,5 @@
+import { generateShadow } from 'src/styles/generate-shadow';
+
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -100,5 +102,57 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   brokenImage: {
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  nftTypeContainer: {
+    flexDirection: 'row',
+    marginHorizontal: formatSize(16),
+    marginVertical: formatSize(8),
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: colors.lines,
+    borderRadius: formatSize(8)
+  },
+  NFTType: {
+    alignItems: 'center',
+    marginVertical: formatSize(2),
+    borderRadius: formatSize(7),
+    flex: 1
+  },
+  NFTtypeActive: {
+    backgroundColor: colors.white,
+    ...generateShadow(3, 'black')
+  },
+  NFTtypeText: {
+    color: colors.orange,
+    paddingVertical: formatSize(3),
+    ...typography.caption13Semibold
+  },
+  NFTtypeTextDisabled: {
+    color: colors.gray3
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: formatSize(20),
+    paddingVertical: formatSize(13)
+  },
+  checkboxText: {
+    ...typography.caption11Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(2)
+  },
+  icons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  centerIcon: {
+    marginHorizontal: formatSize(20)
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  handleStyle: {
+    display: 'none'
   }
 }));

@@ -1,5 +1,6 @@
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -22,7 +23,7 @@ const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getToke
 
 const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
-// ts-prune-ignore-next
+
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
@@ -45,7 +46,7 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   );
 
   return (
-    <FlatList
+    <BottomSheetFlatList
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
