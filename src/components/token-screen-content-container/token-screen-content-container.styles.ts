@@ -26,10 +26,6 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
   },
   delegateText: {
     ...typography.caption13Semibold,
-    color: colors.white
-  },
-  apyText: {
-    ...typography.caption13Semibold,
-    color: colors.white
+    color: 'white'
   }
 }));

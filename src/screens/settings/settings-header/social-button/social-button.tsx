@@ -20,8 +20,10 @@ interface Props extends TestIdProps {
 export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = formatSize(24) }) => {
   const styles = useSocialButtonStyles();
 
+  const handleOnPress = () => (url ? openUrl(url) : undefined);
+
   return (
-    <TouchableOpacity style={[styles.container, style]} onPress={url ? () => openUrl(url) : undefined}>
+    <TouchableOpacity style={[styles.container, style]} onPress={handleOnPress}>
       <Icon name={iconName} size={size} color={color} />
     </TouchableOpacity>
   );

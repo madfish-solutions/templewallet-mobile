@@ -60,7 +60,10 @@ export const CollectiblesHome = () => {
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  useEffect(() => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)), [selectedAccount]);
+  useEffect(
+    () => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)),
+    [selectedAccount.publicKeyHash]
+  );
 
   const sheetRef = useRef<BottomSheet>(null);
 
@@ -75,21 +78,26 @@ export const CollectiblesHome = () => {
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
-  const renderItem: ListRenderItem<Collection> = ({ item }) => (
-    <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
-      {item.logo ? (
-        <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
-      ) : (
-        <View style={[styles.collection, styles.brokenImage]}>
-          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-        </View>
-      )}
+  
+  const renderItem: ListRenderItem<Collection> = ({ item }) => {
+    const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
 
-      <Text numberOfLines={1} style={styles.collectionName}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
+    return (
+      <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
+        {item.logo ? (
+          <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
+        ) : (
+          <View style={[styles.collection, styles.brokenImage]}>
+            <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+          </View>
+        )}
+
+        <Text numberOfLines={1} style={styles.collectionName}>
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
