@@ -1,4 +1,3 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { from, map, of, switchMap, tap } from 'rxjs';
 import { object, SchemaOf } from 'yup';
@@ -18,7 +17,7 @@ import {
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { cloudTitle, saveCloudBackup } from 'src/utils/cloud-backup';
+import { cloudTitle, fetchCloudBackupDetails, saveCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
 import { generateSeed } from 'src/utils/keys.util';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
@@ -54,6 +53,33 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
 
   const { importWallet } = useShelter();
 
+  const doBackupToCloud$ = useSubjectWithReSubscription$<{ seedPhrase: string; password: string }>(
+    $subject =>
+      $subject.pipe(
+        switchMap(({ seedPhrase, password }) =>
+          from(fetchCloudBackupDetails()).pipe(
+            tap(details => {
+              if (Boolean(details)) {
+                throw new Error('Some backup already exists');
+              }
+            }),
+            switchMap(() => from(saveCloudBackup(seedPhrase, password)))
+          )
+        ),
+        tap(() => {
+          dispatch(madeCloudBackupAction());
+          showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+        })
+      ),
+    error => {
+      const errorTitle = 'Failed to back up to cloud';
+      showErrorToastByError(error, errorTitle, true);
+
+      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+    },
+    [dispatch, trackEvent]
+  );
+
   const submit$ = useSubjectWithReSubscription$<CreateNewPasswordFormValues>(
     $subject =>
       $subject.pipe(
@@ -68,12 +94,7 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
         ),
         tap(({ seedPhrase, password }) => {
           if (Boolean(backupToCloud)) {
-            return void doBackupToCloud(seedPhrase, password, dispatch).catch(error => {
-              const errorTitle = 'Failed to back up to cloud';
-              showErrorToastByError(error, errorTitle, true);
-
-              trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
-            });
+            return void doBackupToCloud$.next({ seedPhrase, password });
           }
 
           if (!isRestoreFromCloudFlow) {
@@ -85,23 +106,8 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
     },
-    [
-      isRestoreFromCloudFlow,
-      backupToCloud,
-      cloudBackupMnemonic,
-      dispatch,
-      importWallet,
-      generateSeed,
-      doBackupToCloud,
-      trackEvent
-    ]
+    [isRestoreFromCloudFlow, backupToCloud, cloudBackupMnemonic, doBackupToCloud$, dispatch, importWallet, generateSeed]
   );
 
   return async (values: CreateNewPasswordFormValues) => submit$.next(values);
 };
-
-const doBackupToCloud = (seedPhrase: string, password: string, dispatch: Dispatch) =>
-  saveCloudBackup(seedPhrase, password).then(() => {
-    dispatch(madeCloudBackupAction());
-    showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-  });
