@@ -127,5 +127,6 @@ export enum IconNameEnum {
   Github = 'Github',
   Website = 'Website',
   NFTCollection = 'NFTCollection',
+  SwapRouteItemBackground = 'SwapRouteItemBackground',
   NFT = 'NFT'
 }

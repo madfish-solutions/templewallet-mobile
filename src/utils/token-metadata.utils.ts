@@ -1,16 +1,25 @@
+import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
 import { from, Observable } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
+
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { tezosMetadataApi, whitelistApi } from '../api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+import {
+  emptyTokenMetadata,
+  TokenMetadataInterface,
+  TokenStandardsEnum
+} from '../token/interfaces/token-metadata.interface';
+import { getDollarValue } from './balance.utils';
 import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
+import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
 export interface TokenMetadataResponse {
@@ -66,7 +75,8 @@ const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string
   decimals: token.metadata.decimals,
   symbol: token.metadata.symbol ?? token.metadata.name?.substring(0, 8) ?? '???',
   name: token.metadata.name ?? token.metadata.symbol ?? 'Unknown Token',
-  thumbnailUri: token.metadata.thumbnailUri
+  thumbnailUri: token.metadata.thumbnailUri,
+  standard: token.type === 'FA12' ? TokenStandardsEnum.Fa12 : TokenStandardsEnum.Fa2
 });
 
 export const normalizeTokenMetadata = (
@@ -179,3 +189,16 @@ export const loadTokensMetadata$ = memoize(
       )
     )
 );
+
+export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterface>, lowerCaseSearchValue: string) =>
+  Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
+  Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
+
+export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
+  assets.sort((a, b) => {
+    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
+    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
+
+    return bDollarValue.minus(aDollarValue).toNumber();
+  });

@@ -12,6 +12,7 @@ import { mockNotificationsState } from './notifications/notifications-state.mock
 import { mockPartnersPromotionState } from './partners-promotion/partners-promotion-state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
+import { mockSwapState } from './swap/swap-state.mock';
 import { mockTokensMetadataState } from './tokens-metadata/tokens-metadata-state.mock';
 import { mockWalletState } from './wallet/wallet-state.mock';
 
@@ -27,6 +28,7 @@ export const mockRootState: RootState = {
   advertising: mockAdvertisingState,
   market: mockMarketState,
   notifications: mockNotificationsState,
+  swap: mockSwapState,
   contactBook: mockContactBookState,
   collections: collectionsMockState,
   partnersPromotion: mockPartnersPromotionState,

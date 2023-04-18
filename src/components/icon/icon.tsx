@@ -1,16 +1,15 @@
 import React, { FC, useMemo } from 'react';
 import { ViewStyle } from 'react-native';
+import { SvgProps } from 'react-native-svg';
 
 import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
 import { IconNameEnum } from './icon-name.enum';
 import { iconNameMap } from './icon-name.map';
 
-export interface IconProps extends TestIdProps {
+export interface IconProps extends TestIdProps, SvgProps {
   name: IconNameEnum;
   size?: number;
-  width?: number;
-  height?: number;
   color?: string;
   style?: ViewStyle;
 }

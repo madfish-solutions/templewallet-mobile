@@ -68,6 +68,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isError = false,
   toUsdToggle = true,
   editable = true,
+  isLoading = false,
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
@@ -217,8 +218,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       </View>
       <Divider size={formatSize(8)} />
 
-      <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+      <View
+        style={[
+          styles.inputContainer,
+          conditionalStyle(!editable, styles.disabledInputContainer),
+          conditionalStyle(isError, styles.inputContainerError)
+        ]}
+      >
         <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
+
         <TextInput
           ref={amountInputRef}
           value={stringValue}
@@ -235,7 +243,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onChangeText={handleChange}
           testID={testID}
         />
-        <Divider size={formatSize(8)} />
 
         <View
           style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
@@ -245,6 +252,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}
+            isLoading={isLoading}
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}

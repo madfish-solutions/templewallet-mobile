@@ -138,7 +138,7 @@ export const useTezosTokenSelector = (publicKeyHash: string) => {
   return useTezosToken(tezosBalance);
 };
 
-export const useSelectedAccountTezosTokenSelector = () => {
+export const useSelectedAccountTezosTokenSelector = (): TokenInterface => {
   const selectedAccountPublicKeyHash = useSelector(({ wallet }) => wallet.selectedAccountPublicKeyHash);
 
   return useTezosTokenSelector(selectedAccountPublicKeyHash);
