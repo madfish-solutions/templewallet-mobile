@@ -23,7 +23,7 @@ export const ExternalLinkButton: FC<Props> = ({ url, testID }) => {
   const handlePress = useCallback(() => {
     openUrl(url);
     trackEvent(testID, AnalyticsEventCategory.ButtonPress);
-  }, [trackEvent, testID]);
+  }, [trackEvent, testID, url]);
 
   return (
     <TouchableOpacity style={styles.container} testID={testID} onPress={handlePress}>

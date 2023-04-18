@@ -28,7 +28,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
         trackEvent(testID, AnalyticsEventCategory.FormChange, { value: newValue });
         onChangeText(newValue);
       }),
-    [trackEvent, onChangeText]
+    [testID, trackEvent, onChangeText]
   );
 
   return (

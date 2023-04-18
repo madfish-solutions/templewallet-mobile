@@ -38,15 +38,15 @@ export const Sorter = <T extends string>({
   const revealSelectBottomSheetController = useBottomSheetController();
   const { trackEvent } = useAnalytics();
 
-  const handlePress = () => {
-    revealSelectBottomSheetController.open();
-  };
-
   return (
     <View style={style}>
       <View style={styles.sortSelector}>
         <Text style={styles.sortByLabel}>Sort by</Text>
-        <TouchableOpacity style={styles.selectedBakerFieldWrapper} onPress={handlePress} testID={testID}>
+        <TouchableOpacity
+          style={styles.selectedBakerFieldWrapper}
+          onPress={revealSelectBottomSheetController.open}
+          testID={testID}
+        >
           <Text style={styles.selectedBakerSortField}>{sortFieldsLabels[sortValue]}</Text>
           <Icon size={formatSize(24)} name={IconNameEnum.TriangleDown} />
         </TouchableOpacity>
@@ -61,7 +61,6 @@ export const Sorter = <T extends string>({
             key={value}
             title={sortFieldsLabels[value]}
             onPress={() => {
-              console.log('x1', testID);
               trackEvent(testID, AnalyticsEventCategory.FormChange, { value });
               onSetSortValue(value);
               revealSelectBottomSheetController.close();

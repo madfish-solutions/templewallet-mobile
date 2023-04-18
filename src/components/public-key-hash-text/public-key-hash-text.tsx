@@ -36,7 +36,7 @@ export const PublicKeyHashText: FC<Props> = ({
   const acceptPress = useCallback(() => {
     trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
     copyStringToClipboard(publicKeyHash);
-  }, [trackEvent, testID]);
+  }, [trackEvent, testID, testIDProperties, publicKeyHash]);
 
   const handlePress = useCallback(() => !longPress && acceptPress(), [longPress, acceptPress]);
   const handleLongPress = useCallback(() => longPress && acceptPress(), [longPress, acceptPress]);
