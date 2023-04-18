@@ -1,5 +1,5 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../interfaces/token-metadata.interface';
+import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
 
@@ -26,7 +26,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Tether USD',
     symbol: 'USDt',
     decimals: 6,
-    thumbnailUri: 'ipfs://QmRymVGWEudMfLrbjaEiXxngCRTDgWCsscjQMwizy4ZJjX'
+    thumbnailUri: 'ipfs://QmRymVGWEudMfLrbjaEiXxngCRTDgWCsscjQMwizy4ZJjX',
+    standard: TokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -34,7 +35,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'youves uUSD',
     symbol: 'uUSD',
     decimals: 12,
-    thumbnailUri: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd'
+    thumbnailUri: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd',
+    standard: TokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -42,7 +44,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Kolibri',
     symbol: 'kUSD',
     decimals: 18,
-    thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png'
+    thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png',
+    standard: TokenStandardsEnum.Fa12
   },
   {
     id: 0,
@@ -50,7 +53,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Tezos BTC',
     symbol: 'tzBTC',
     decimals: 8,
-    iconName: IconNameEnum.TzBtcToken
+    iconName: IconNameEnum.TzBtcToken,
+    standard: TokenStandardsEnum.Fa12
   },
   {
     id: 2,
@@ -58,7 +62,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'youves uBTC',
     symbol: 'uBTC',
     decimals: 12,
-    thumbnailUri: 'ipfs://Qmbev41h4axBqVzxsXP2NSaAF996bJjJBPb8FFZVqTvJTY'
+    thumbnailUri: 'ipfs://Qmbev41h4axBqVzxsXP2NSaAF996bJjJBPb8FFZVqTvJTY',
+    standard: TokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -66,7 +71,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'Quipuswap governance token',
     symbol: 'QUIPU',
     decimals: 6,
-    thumbnailUri: 'ipfs://Qmb2GiHN9EjcrN29J6y9PsXu3ZDosXTv6uLUWGZfRRSzS2/quipu.png'
+    thumbnailUri: 'ipfs://Qmb2GiHN9EjcrN29J6y9PsXu3ZDosXTv6uLUWGZfRRSzS2/quipu.png',
+    standard: TokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -74,7 +80,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     name: 'youves YOU Governance',
     symbol: 'YOU',
     decimals: 12,
-    thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc'
+    thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc',
+    standard: TokenStandardsEnum.Fa2
   }
 ];
 
@@ -85,6 +92,7 @@ export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
     decimals: 0,
     symbol: 'APX',
     name: 'APXCOIN',
-    thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png'
+    thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png',
+    standard: TokenStandardsEnum.Fa2
   }
 ];

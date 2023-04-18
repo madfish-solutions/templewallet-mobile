@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { abTestingReducer } from './ab-testing/ab-testing-reducers';
+import { ABTestingRootState } from './ab-testing/ab-testing-state';
 import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
@@ -35,6 +37,8 @@ import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
+import { swapReducer } from './swap/swap-reducers';
+import { Route3RootState } from './swap/swap-state';
 import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
@@ -53,7 +57,9 @@ export type RootState = WalletRootState &
   NotificationsRootState &
   ContactsBookRootState &
   BuyWithCreditCardRootState &
-  PartnersPromotionRootState;
+  PartnersPromotionRootState &
+  Route3RootState &
+  ABTestingRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -82,9 +88,11 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
+  swap: swapReducer,
   contactBook: contactBookReducers,
   buyWithCreditCard: buyWithCreditCardReducer,
-  partnersPromotion: partnersPromotionReducers
+  partnersPromotion: partnersPromotionReducers,
+  abTesting: abTestingReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

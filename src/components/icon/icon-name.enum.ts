@@ -125,5 +125,7 @@ export enum IconNameEnum {
   Buy = 'Buy',
   BuyWithCrypto = 'BuyWithCrypto',
   CreditCard = 'CreditCard',
-  Favourite = 'Favourite'
+  Favourite = 'Favourite',
+  SwapRouteItemBackground = 'SwapRouteItemBackground',
+  NFT = 'NFT'
 }

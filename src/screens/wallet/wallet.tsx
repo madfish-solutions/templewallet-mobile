@@ -32,8 +32,8 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
-import { CollectiblesHomeSwipeButton } from './collectibles-home-swipe-button/collectibles-home-swipe-button';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
+import { Settings } from './settings/settings';
 import { TokensList } from './token-list/token-list';
 import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
@@ -80,15 +80,13 @@ export const Wallet = () => {
           />
           <Divider size={formatSize(24)} />
           <NotificationsBell />
+          <Divider size={formatSize(24)} />
+          <Settings />
         </View>
 
         <TokenEquityValue token={tezosToken} showTokenValue={false} />
 
         <HeaderCardActionButtons token={tezosToken} />
-
-        <Divider size={formatSize(16)} />
-
-        <CollectiblesHomeSwipeButton />
       </HeaderCard>
 
       <TokensList />

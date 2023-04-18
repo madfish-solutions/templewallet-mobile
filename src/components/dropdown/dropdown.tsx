@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
@@ -25,6 +25,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   isSearchable?: boolean;
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
+  isLoading?: boolean;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
@@ -70,6 +71,7 @@ const DropdownComponent = <T extends unknown>({
   itemHeight = formatSize(64),
   itemContainerStyle,
   disabled = false,
+  isLoading = false,
   isSearchable = false,
   setSearchValue = emptyFn,
   equalityFn,
@@ -138,17 +140,23 @@ const DropdownComponent = <T extends unknown>({
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
-          <FlatList
-            ref={ref}
-            data={list}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            contentContainerStyle={styles.flatListContentContainer}
-            ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
-            windowSize={10}
-            updateCellsBatchingPeriod={150}
-          />
+          {isLoading ? (
+            <View style={styles.activityIndicatorContainer}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <FlatList
+              ref={ref}
+              data={list}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              getItemLayout={getItemLayout}
+              contentContainerStyle={styles.flatListContentContainer}
+              ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
+              windowSize={10}
+              updateCellsBatchingPeriod={150}
+            />
+          )}
         </View>
 
         {renderActionButtons({
