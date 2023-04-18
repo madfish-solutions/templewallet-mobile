@@ -1,12 +1,6 @@
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback, useMemo } from 'react';
-import {
-  FlatList,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  useWindowDimensions,
-  View
-} from 'react-native';
+import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
@@ -21,8 +15,6 @@ import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable
 
 interface Props {
   collectiblesList: TokenInterface[];
-  expanded: boolean;
-  setScrollPosition: (newPosition: number) => void;
 }
 
 const ITEMS_PER_ROW = 3;
@@ -31,8 +23,8 @@ const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getToke
 
 const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
-// ts-prune-ignore-next
-export const CollectiblesList: FC<Props> = ({ collectiblesList, expanded, setScrollPosition }) => {
+
+export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
   const itemSize =
@@ -53,24 +45,15 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList, expanded, setScr
     [itemSize]
   );
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    console.log('handle scroll works');
-    setScrollPosition(e.nativeEvent.contentOffset.y);
-  };
-
   return (
-    <View style={CollectiblesListStyles.collectiblesContainer}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContentContainer}
-        ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
-        scrollEnabled={expanded}
-        onMomentumScrollEnd={handleScroll}
-      />
-    </View>
+    <BottomSheetFlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollViewContentContainer}
+      ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
+    />
   );
 };

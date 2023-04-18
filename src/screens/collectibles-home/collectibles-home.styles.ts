@@ -113,7 +113,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     borderRadius: formatSize(8)
   },
   NFTType: {
-    //backgroundColor: colors.white
     alignItems: 'center',
     marginVertical: formatSize(2),
     borderRadius: formatSize(7),
@@ -121,11 +120,11 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   NFTtypeActive: {
     backgroundColor: colors.white,
-    ...generateShadow(5, 'black')
+    ...generateShadow(3, 'black')
   },
   NFTtypeText: {
     color: colors.orange,
-    marginVertical: formatSize(3),
+    paddingVertical: formatSize(3),
     ...typography.caption13Semibold
   },
   NFTtypeTextDisabled: {
@@ -152,5 +151,8 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  handleStyle: {
+    display: 'none'
   }
 }));

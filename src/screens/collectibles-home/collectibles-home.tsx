@@ -1,5 +1,6 @@
+import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, FlatList, ListRenderItem, PanResponder, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, ListRenderItem, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
@@ -39,6 +40,8 @@ enum CollectiblesTypeEnum {
   Offers = 'Offers'
 }
 
+
+const TAB_BAR_HEIGHT = formatSize(85);
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
 const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
@@ -51,42 +54,23 @@ export const CollectiblesHome = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const colors = useColors();
-  const [expanded, setExpanded] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const windowHeight = useWindowDimensions().height;
+  const [headerHeight, setHeaderHeight] = useState(1);
+  const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
   useEffect(() => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)), [selectedAccount]);
 
-  const pan = useRef(new Animated.ValueXY()).current;
+  const sheetRef = useRef<BottomSheet>(null);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) => {
-          // Allow pan responder if not expanded or if touch starts from top of the FlatList
-          const allowScrollDown = expanded && scrollPosition === 0 && gestureState.dy > 0;
-          const allowScrollUp = !expanded;
-
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-          return allowScrollDown || allowScrollUp;
-        },
-
-        onPanResponderRelease: (_, gestureState) => {
-          if (!expanded && gestureState.dy < -20) {
-            setExpanded(true);
-            Animated.spring(pan, { toValue: { x: 0, y: -190 }, useNativeDriver: false }).start();
-          } else if (expanded && gestureState.dy > 20) {
-            Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
-            setExpanded(false);
-          }
-        },
-        onPanResponderTerminationRequest: () => true
-      }),
-    [expanded, scrollPosition]
+  const snapPoints = useMemo(
+    () => [
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT),
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT)
+    ],
+    [headerHeight, visibleBlockHeight]
   );
-
-  const updateScrollPosition = (newPosition: number) => setScrollPosition(newPosition);
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
@@ -109,7 +93,14 @@ export const CollectiblesHome = () => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true} style={styles.headerCard}>
+      <HeaderCard
+        hasInsetTop={true}
+        style={styles.headerCard}
+        onLayout={event => {
+          const { height } = event.nativeEvent.layout;
+          setHeaderHeight(height);
+        }}
+      >
         <View style={styles.accountContainer}>
           <CurrentAccountDropdown
             value={selectedAccount}
@@ -118,68 +109,69 @@ export const CollectiblesHome = () => {
             isCollectibleScreen
           />
         </View>
-        <View style={styles.profileContainer}>
-          <View style={styles.createProfile}>
-            <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
-            <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+        <View
+          onLayout={event => {
+            const { height } = event.nativeEvent.layout;
+            setVisibleBlockHeight(height);
+          }}
+        >
+          <View style={styles.profileContainer}>
+            <View style={styles.createProfile}>
+              <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
+              <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+            </View>
+
+            <SocialButton
+              iconName={IconNameEnum.Twitter}
+              url={''}
+              style={styles.socialsIcon}
+              color={colors.disabled}
+              size={SMALL_SOCIAL_ICON_SIZE}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Website}
+              url={''}
+              style={styles.socialsIcon}
+              color={colors.disabled}
+              size={SMALL_SOCIAL_ICON_SIZE}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Github}
+              url={''}
+              style={styles.socialsIcon}
+              color={colors.disabled}
+              size={SMALL_SOCIAL_ICON_SIZE}
+            />
+            <SocialButton
+              iconName={IconNameEnum.Discord}
+              url={''}
+              style={styles.socialsIcon}
+              color={colors.disabled}
+              size={SMALL_SOCIAL_ICON_SIZE}
+            />
           </View>
 
-          <SocialButton
-            iconName={IconNameEnum.Twitter}
-            url={''}
-            style={styles.socialsIcon}
-            color={colors.disabled}
-            size={SMALL_SOCIAL_ICON_SIZE}
-          />
-          <SocialButton
-            iconName={IconNameEnum.Website}
-            url={''}
-            style={styles.socialsIcon}
-            color={colors.disabled}
-            size={SMALL_SOCIAL_ICON_SIZE}
-          />
-          <SocialButton
-            iconName={IconNameEnum.Github}
-            url={''}
-            style={styles.socialsIcon}
-            color={colors.disabled}
-            size={SMALL_SOCIAL_ICON_SIZE}
-          />
-          <SocialButton
-            iconName={IconNameEnum.Discord}
-            url={''}
-            style={styles.socialsIcon}
-            color={colors.disabled}
-            size={SMALL_SOCIAL_ICON_SIZE}
-          />
-        </View>
-
-        {collections.length > 0 && (
-          <View style={styles.collectionsHeader}>
-            <Text style={styles.collectionsLabel}>Created collections</Text>
-            <TouchableOpacity>
-              <Text style={styles.disabled}>See All</Text>
-            </TouchableOpacity>
+          {collections.length > 0 && (
+            <View style={styles.collectionsHeader}>
+              <Text style={styles.collectionsLabel}>Created collections</Text>
+              <TouchableOpacity>
+                <Text style={styles.disabled}>See All</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <View style={styles.collectionsContainer}>
+            <FlatList
+              data={collections}
+              renderItem={renderItem}
+              keyExtractor={collection => `${collection.logo}_${collection.name}`}
+              horizontal
+              extraData={collections}
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
-        )}
-        <View style={styles.collectionsContainer}>
-          <FlatList
-            data={collections}
-            renderItem={renderItem}
-            keyExtractor={collection => `${collection.logo}_${collection.name}`}
-            horizontal
-            extraData={collections}
-            showsHorizontalScrollIndicator={false}
-          />
         </View>
       </HeaderCard>
-      <Animated.View
-        style={{
-          transform: [{ translateY: pan.y }],
-          backgroundColor: colors.pageBG
-        }}
-        {...panResponder.panHandlers}
-      >
+      <BottomSheet ref={sheetRef} snapPoints={snapPoints} handleStyle={styles.handleStyle}>
         <View style={styles.nftTypeContainer}>
           <TouchableOpacity style={[styles.NFTType, styles.NFTtypeActive]}>
             <Text style={styles.NFTtypeText}>{CollectiblesTypeEnum.Owned}</Text>
@@ -213,12 +205,8 @@ export const CollectiblesHome = () => {
             <TouchableIcon name={IconNameEnum.Search} onPress={emptyFn} size={formatSize(16)} />
           </View>
         </View>
-        <CollectiblesList
-          collectiblesList={collectibles}
-          expanded={expanded}
-          setScrollPosition={updateScrollPosition}
-        />
-      </Animated.View>
+        <CollectiblesList collectiblesList={collectibles} />
+      </BottomSheet>
     </>
   );
 };
