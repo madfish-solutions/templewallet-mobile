@@ -1,4 +1,4 @@
-type nullish = null | undefined | void;
+type nullish = null | undefined;
 
 declare module '*.svg' {
   import React from 'react';

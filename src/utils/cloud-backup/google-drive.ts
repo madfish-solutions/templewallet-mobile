@@ -5,7 +5,13 @@ import * as RNFS from 'react-native-fs';
 import { isString } from 'src/utils/is-string';
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
-import { BackupObject, CLOUD_REQUEST_TIMEOUT, buildAndEncryptBackup, decryptFetchedBackup } from './common';
+import {
+  BackupObject,
+  CLOUD_REQUEST_TIMEOUT,
+  assertEncryptedBackupPresent,
+  buildAndEncryptBackup,
+  decryptFetchedBackup
+} from './common';
 
 const scope = 'hidden';
 const CLOUD_WALLET_FOLDER = 'tw-mobile';
@@ -58,9 +64,11 @@ export const fetchCloudBackupDetails = async () => {
   const data = await RNCloudFs.listFiles<'Android'>({
     scope,
     targetPath: CLOUD_WALLET_FOLDER
+  }).catch(error => {
+    console.error("NCloudFs.listFiles<'Android'> error:", error);
   });
 
-  return data.files?.find(file => file.name.endsWith(filename));
+  return data?.files?.find(file => file.name.endsWith(filename));
 };
 
 export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
@@ -69,10 +77,14 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
       .then(details => details && RNCloudFs.getGoogleDriveDocument(details.id))
       .catch(error => {
         console.error('RNCloudFs.getGoogleDriveDocument() error:', error);
+
+        throw new Error("Failed to read cloud. See if it's enabled");
       }),
     CLOUD_REQUEST_TIMEOUT,
     new Error('Reading cloud took too long')
   );
+
+  assertEncryptedBackupPresent(encryptedBackup);
 
   return await decryptFetchedBackup(encryptedBackup, password);
 };
