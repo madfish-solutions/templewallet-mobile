@@ -2,6 +2,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, ListRenderItem, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -40,8 +41,6 @@ enum CollectiblesTypeEnum {
   Offers = 'Offers'
 }
 
-
-const TAB_BAR_HEIGHT = formatSize(85);
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
 const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
@@ -57,6 +56,9 @@ export const CollectiblesHome = () => {
   const windowHeight = useWindowDimensions().height;
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
+
+  const insets = useSafeAreaInsets();
+  const TAB_BAR_HEIGHT = 53 + insets.bottom;
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
@@ -78,7 +80,6 @@ export const CollectiblesHome = () => {
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
-  
   const renderItem: ListRenderItem<Collection> = ({ item }) => {
     const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
 
