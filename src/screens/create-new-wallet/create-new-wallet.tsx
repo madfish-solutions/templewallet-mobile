@@ -23,6 +23,7 @@ import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
 
 import {
+  BackupFlow,
   createNewPasswordInitialValues,
   createNewPasswordValidationSchema,
   useHandleSubmit
@@ -34,15 +35,23 @@ export const CreateNewWallet = () => {
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
 
-  const isRestoreFromCloudFlow = isString(cloudBackupMnemonic);
+  let backupFlow: BackupFlow | undefined;
+  if (isString(cloudBackupMnemonic)) {
+    backupFlow = {
+      type: 'RESTORE',
+      mnemonic: cloudBackupMnemonic
+    };
+  } else if (backupToCloud === true) {
+    backupFlow = { type: 'AUTO_BACKUP' };
+  }
 
   useNavigationSetOptions(
     {
       headerTitle: () => (
-        <HeaderTitle title={isRestoreFromCloudFlow ? 'Create a new password' : 'Create a new Wallet'} />
+        <HeaderTitle title={backupFlow?.type === 'RESTORE' ? 'Create a new password' : 'Create a new Wallet'} />
       )
     },
-    [isRestoreFromCloudFlow]
+    [backupFlow?.type]
   );
 
   const styles = useSetPasswordScreensCommonStyles();
@@ -59,7 +68,7 @@ export const CreateNewWallet = () => {
     [cloudBackupPassword]
   );
 
-  const handleSubmit = useHandleSubmit(backupToCloud, cloudBackupMnemonic);
+  const handleSubmit = useHandleSubmit(backupFlow);
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
@@ -71,7 +80,7 @@ export const CreateNewWallet = () => {
               <Label
                 label="Password"
                 description={
-                  Boolean(backupToCloud)
+                  backupFlow?.type === 'AUTO_BACKUP'
                     ? [
                         { text: 'A password is used to' },
                         { text: ' protect', bold: true },

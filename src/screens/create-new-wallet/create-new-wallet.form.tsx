@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from, map, of, switchMap, tap } from 'rxjs';
 import { object, SchemaOf } from 'yup';
@@ -18,7 +19,6 @@ import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { cloudTitle, fetchCloudBackupDetails, saveCloudBackup } from 'src/utils/cloud-backup';
-import { isString } from 'src/utils/is-string';
 import { generateSeed } from 'src/utils/keys.util';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
@@ -45,15 +45,27 @@ export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
   analytics: true
 };
 
-export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: string) => {
-  const isRestoreFromCloudFlow = isString(cloudBackupMnemonic);
+export type BackupFlow =
+  | { type: 'AUTO_BACKUP' }
+  | {
+      type: 'RESTORE';
+      mnemonic: string;
+    };
 
+interface DoBackupValues {
+  seedPhrase: string;
+  password: string;
+}
+
+export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
   const { importWallet } = useShelter();
 
-  const doBackupToCloud$ = useSubjectWithReSubscription$<{ seedPhrase: string; password: string }>(
+  const backupFlowMemo = useMemo(() => backupFlow, backupFlow ? Object.values(backupFlow) : []);
+
+  const doBackupToCloud$ = useSubjectWithReSubscription$<DoBackupValues>(
     $subject =>
       $subject.pipe(
         switchMap(({ seedPhrase, password }) =>
@@ -86,19 +98,19 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
         tap(() => dispatch(showLoaderAction())),
         tap(({ analytics }) => dispatch(setIsAnalyticsEnabled(analytics))),
         switchMap(({ password, useBiometry }) =>
-          (isRestoreFromCloudFlow ? of(cloudBackupMnemonic) : from(generateSeed())).pipe(
+          (backupFlowMemo?.type === 'RESTORE' ? of(backupFlowMemo.mnemonic) : from(generateSeed())).pipe(
             // importWallet dispatches `hideLoaderAction` when done
             tap(seedPhrase => importWallet({ seedPhrase, password, useBiometry })),
             map(seedPhrase => ({ seedPhrase, password }))
           )
         ),
-        tap(({ seedPhrase, password }) => {
-          if (Boolean(backupToCloud)) {
-            return void doBackupToCloud$.next({ seedPhrase, password });
+        tap(doBackupValues => {
+          if (!backupFlowMemo) {
+            return void dispatch(requestSeedPhraseBackupAction());
           }
 
-          if (!isRestoreFromCloudFlow) {
-            dispatch(requestSeedPhraseBackupAction());
+          if (backupFlowMemo.type === 'AUTO_BACKUP') {
+            doBackupToCloud$.next(doBackupValues);
           }
         })
       ),
@@ -106,7 +118,7 @@ export const useHandleSubmit = (backupToCloud?: boolean, cloudBackupMnemonic?: s
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
     },
-    [isRestoreFromCloudFlow, backupToCloud, cloudBackupMnemonic, doBackupToCloud$, dispatch, importWallet, generateSeed]
+    [backupFlowMemo, doBackupToCloud$, dispatch, importWallet, generateSeed]
   );
 
   return async (values: CreateNewPasswordFormValues) => submit$.next(values);

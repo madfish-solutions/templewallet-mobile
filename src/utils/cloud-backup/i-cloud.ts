@@ -15,21 +15,9 @@ const BACKUP_STORE_KEY = 'WALLET_BACKUP_JSON';
 export const isCloudAvailable = async () => Boolean(RNCloudFs);
 
 export const requestSignInToCloud = async () => {
-  const synced = await rejectOnTimeout(
-    RNCloudFs.syncKeyValueStoreData().catch(error => {
-      console.error('RNCloudFs.syncKeyValueStoreData error:', error);
+  await syncCloud();
 
-      return false;
-    }),
-    CLOUD_REQUEST_TIMEOUT,
-    new Error("Syncing took too long. Try switching 'iCloud Drive' sync off & on again")
-  );
-
-  if (!Boolean(synced)) {
-    throw new Error('See if iCloud sync is enabled');
-  }
-
-  return synced;
+  return true;
 };
 
 export const fetchCloudBackupDetails = () =>
@@ -64,19 +52,27 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
     throw new Error('Failed to upload to cloud');
   });
 
-  const synced = await RNCloudFs.syncKeyValueStoreData();
-
-  if (!Boolean(synced)) {
-    throw new Error('Failed to sync after saving');
-  }
+  await syncCloud();
 };
 
 export const eraseCloudBackup = async () => {
   await RNCloudFs.removeKeyValueStoreObject(BACKUP_STORE_KEY);
 
-  const synced = await RNCloudFs.syncKeyValueStoreData();
+  await syncCloud();
+};
+
+const syncCloud = async () => {
+  const synced = await rejectOnTimeout(
+    RNCloudFs.syncKeyValueStoreData().catch(error => {
+      console.error('RNCloudFs.syncKeyValueStoreData error:', error);
+
+      return false;
+    }),
+    CLOUD_REQUEST_TIMEOUT,
+    new Error('Syncing took too long. See if iCloud is enabled')
+  );
 
   if (!Boolean(synced)) {
-    throw new Error('Failed to sync after erasing attempt');
+    throw new Error('Failed to sync. See if iCloud is enabled');
   }
 };
