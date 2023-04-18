@@ -14,7 +14,7 @@ export const alertOnExistingBackup = (
     'If you create a new backup, your previous one will be irretrievably deleted.',
     ` Instead, you can reveal and manually save your seed phrase or change your ${cloudTitle} account to keep a new backup.`,
     `\n\nRemember, one ${cloudTitle} account can only have one wallet backup.`
-  ].join();
+  ].join('');
 
   const buttons: AlertButton[] = [
     {
