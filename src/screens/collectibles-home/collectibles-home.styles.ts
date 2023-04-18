@@ -130,5 +130,27 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   NFTtypeTextDisabled: {
     color: colors.gray3
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: formatSize(20),
+    paddingVertical: formatSize(13)
+  },
+  checkboxText: {
+    ...typography.caption11Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(2)
+  },
+  icons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  centerIcon: {
+    marginHorizontal: formatSize(20)
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 }));

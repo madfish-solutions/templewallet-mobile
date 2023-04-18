@@ -59,16 +59,18 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList, expanded, setScr
   };
 
   return (
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      getItemLayout={getItemLayout}
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollViewContentContainer}
-      ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
-      scrollEnabled={expanded}
-      onMomentumScrollEnd={handleScroll}
-    />
+    <View style={CollectiblesListStyles.collectiblesContainer}>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContentContainer}
+        ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
+        scrollEnabled={expanded}
+        onMomentumScrollEnd={handleScroll}
+      />
+    </View>
   );
 };

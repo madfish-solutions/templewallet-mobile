@@ -1,22 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-  PanResponder,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Animated, FlatList, ListRenderItem, PanResponder, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
+import { Checkbox } from 'src/components/checkbox/checkbox';
+import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { emptyFn } from 'src/config/general';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
@@ -57,11 +51,8 @@ export const CollectiblesHome = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const colors = useColors();
-  //const [YValue, setYValue] = useState(340);
   const [expanded, setExpanded] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
-
-  //const windowHeight = Dimensions.get('window').height;
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
@@ -74,53 +65,26 @@ export const CollectiblesHome = () => {
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, gestureState) => {
           // Allow pan responder if not expanded or if touch starts from top of the FlatList
-          console.log(!expanded, 'is pan responder');
-          console.log(gestureState.dy);
-
           const allowScrollDown = expanded && scrollPosition === 0 && gestureState.dy > 0;
           const allowScrollUp = !expanded;
 
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           return allowScrollDown || allowScrollUp;
         },
-        onPanResponderGrant: () => {
-          pan.extractOffset();
-        },
-        onPanResponderMove: (e, gestureState) => {
-          console.log(gestureState.dy, 'dy1');
-          Animated.event([null, { dx: pan.x, dy: pan.y }])(e, gestureState);
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          console.log(gestureState.dy, 'dy');
-          if (!expanded && gestureState.dy < -20) {
-            console.log('FIRST!!!!!!!!!', expanded);
 
+        onPanResponderRelease: (_, gestureState) => {
+          if (!expanded && gestureState.dy < -20) {
             setExpanded(true);
-            Animated.spring(
-              pan, // Auto-multiplexed
-              { toValue: { x: 0, y: -190 }, useNativeDriver: true }
-            ).start();
+            Animated.spring(pan, { toValue: { x: 0, y: -190 }, useNativeDriver: false }).start();
           } else if (expanded && gestureState.dy > 20) {
-            console.log('SECOND!!!!!!!!!');
-            Animated.spring(
-              pan, // Auto-multiplexed
-              { toValue: { x: 0, y: 190 }, useNativeDriver: true }
-            ).start();
+            Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
             setExpanded(false);
-          } else {
-            console.log('THIRD!!!!!!!!!');
-            Animated.spring(
-              pan, // Auto-multiplexed
-              { toValue: { x: 0, y: 0 }, useNativeDriver: true }
-            ).start();
           }
-        }
+        },
+        onPanResponderTerminationRequest: () => true
       }),
     [expanded, scrollPosition]
   );
-
-  console.log(expanded, 'EXPANDED');
-  console.log(scrollPosition, 'scroll position');
 
   const updateScrollPosition = (newPosition: number) => setScrollPosition(newPosition);
 
@@ -130,7 +94,7 @@ export const CollectiblesHome = () => {
   const renderItem: ListRenderItem<Collection> = ({ item }) => (
     <TouchableOpacity style={styles.collectionBlock} onPress={() => openUrl(OBJKT_COLLECTION_URL(item.contract))}>
       {item.logo ? (
-        <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo ?? '') }} />
+        <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
       ) : (
         <View style={[styles.collection, styles.brokenImage]}>
           <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
@@ -229,6 +193,25 @@ export const CollectiblesHome = () => {
           <TouchableOpacity style={styles.NFTType} disabled>
             <Text style={[styles.NFTtypeText, styles.NFTtypeTextDisabled]}>{CollectiblesTypeEnum.Offers}</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.infoContainer}>
+          <View style={styles.checkboxContainer}>
+            <Checkbox value={false} size={formatSize(16)} strokeWidth={formatSize(2)} onChange={emptyFn}>
+              <Divider size={formatSize(5)} />
+              <Text style={styles.checkboxText}>Show Info</Text>
+            </Checkbox>
+          </View>
+          <View style={styles.icons}>
+            <TouchableIcon
+              name={IconNameEnum.SwapSettings}
+              onPress={emptyFn}
+              size={formatSize(16)}
+              disabled
+              color={colors.disabled}
+            />
+            <TouchableIcon name={IconNameEnum.Edit} onPress={emptyFn} size={formatSize(16)} style={styles.centerIcon} />
+            <TouchableIcon name={IconNameEnum.Search} onPress={emptyFn} size={formatSize(16)} />
+          </View>
         </View>
         <CollectiblesList
           collectiblesList={collectibles}
