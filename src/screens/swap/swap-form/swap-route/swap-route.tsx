@@ -1,64 +1,58 @@
-import React, { FC, useContext } from 'react';
-import { View } from 'react-native';
-import { Trade } from 'swap-router-sdk';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import React, { FC, useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
 
-import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
-import { tokenEqualityFn } from '../../../../components/token-dropdown/token-equality-fn';
-import { CurrentRouteNameContext } from '../../../../navigator/current-route-name.context';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { useIsAuthorisedSelector } from '../../../../store/wallet/wallet-selectors';
-import { showErrorToast } from '../../../../toast/toast.utils';
-import { emptyTezosLikeToken } from '../../../../token/interfaces/token.interface';
-import { isDefined } from '../../../../utils/is-defined';
-import { SwapRouteInfo } from '../swap-route-info/swap-route-info';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
+
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
-import { SwapRouteStyles } from './swap-route.styles';
+import { useSwapRouteStyles } from './swap-route.styles';
 
-interface Props {
-  inputAssets: AssetAmountInterface;
-  outputAssets: AssetAmountInterface;
-  trade: Trade;
-  loadingHasFailed: boolean;
-}
+export const SwapRoute: FC = () => {
+  const styles = useSwapRouteStyles();
+  const [isRouteVisible, setIsVisible] = useState(false);
+  const {
+    data: { chains, input, output }
+  } = useSwapParamsSelector();
 
-const errorMessage = 'Pull to refresh or try again later';
+  useEffect(() => {
+    if (chains.length === 0) {
+      setIsVisible(false);
+    }
+  }, [chains]);
 
-export const SwapRoute: FC<Props> = ({ inputAssets, outputAssets, trade, loadingHasFailed }) => {
-  const currentRouteName = useContext(CurrentRouteNameContext);
-  const isAuthorised = useIsAuthorisedSelector();
+  const totalChains = chains.length;
+  const totalHops = chains.reduce((accum, chain) => accum + chain.hops.length, 0);
+  const shouldShowRoute = isRouteVisible && chains.length > 0;
 
-  if (loadingHasFailed && currentRouteName === ScreensEnum.SwapScreen && isAuthorised) {
-    showErrorToast({ description: errorMessage });
+  const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
-    return <SwapRouteInfo text={`Exchange rate data loading has failed. \n${errorMessage}`} />;
-  }
-
-  if (
-    tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken) ||
-    tokenEqualityFn(outputAssets.asset, emptyTezosLikeToken)
-  ) {
-    return <SwapRouteInfo text="Please, select tokens to swap" />;
-  }
-
-  if (!isDefined(inputAssets.amount) && !isDefined(outputAssets.amount)) {
-    return <SwapRouteInfo text="Please, enter swap amount" />;
-  }
-
-  if (trade.length === 0) {
-    return <SwapRouteInfo text="No quotes available" />;
-  }
+  const toggleRoutePress = () => setIsVisible(prevState => !prevState);
 
   return (
-    <View style={SwapRouteStyles.container}>
-      {trade.map((item, index) => {
-        return (
-          <SwapRouteItem
-            key={`${index}_${item.dexType}_${item.aTokenSlug}_${item.bTokenSlug}`}
-            tradeOperation={item}
-            isShowNextArrow={index !== trade.length - 1}
-          />
-        );
-      })}
+    <View>
+      <TouchableOpacity
+        style={[styles.flex, styles.row, styles.mb12]}
+        onPress={toggleRoutePress}
+        disabled={!Boolean(output)}
+      >
+        <Text style={styles.infoText}>Swap route</Text>
+        <View style={styles.row}>
+          <Text style={styles.infoValue}>
+            {totalChains} chains / {totalHops} dexes
+          </Text>
+          <Divider size={12} />
+          <Icon name={iconName} color={!Boolean(output) ? '#DDDDDD' : '#FF6B00'} />
+        </View>
+      </TouchableOpacity>
+      {shouldShowRoute &&
+        chains.map((chain, index) => (
+          <View key={index} style={styles.mb8}>
+            <SwapRouteItem chain={chain} baseInput={input} baseOutput={output} />
+          </View>
+        ))}
     </View>
   );
 };

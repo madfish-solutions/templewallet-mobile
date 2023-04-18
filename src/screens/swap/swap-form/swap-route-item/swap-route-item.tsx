@@ -1,60 +1,81 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
-import { DexTypeEnum, TradeOperation } from 'swap-router-sdk';
+import { View, Text } from 'react-native';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../../styles/format-size';
-import { SwapRouteItemIcon } from './swap-route-item-icon/swap-route-item-icon';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { Route3Chain } from 'src/interfaces/route3.interface';
+import { useSwapDexesSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
+import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+import { kFormatter } from 'src/utils/number.util';
+
+import { HopItem } from '../hop-item/hop-item';
 import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {
-  tradeOperation?: TradeOperation;
-  isShowNextArrow?: boolean;
+  chain: Route3Chain;
+  baseInput: string | undefined;
+  baseOutput: string | undefined;
 }
 
-export const SwapRouteItem: FC<Props> = ({ tradeOperation, isShowNextArrow = false }) => {
-  const styles = useSwapRouteItem();
+const BASE = new BigNumber(100);
+const PERCENTAGE_DECIMALS = 1;
+const AMOUNT_DECIMALS = 2;
 
-  const dexIcon: IconNameEnum = useMemo(() => {
-    switch (tradeOperation?.dexType) {
-      case DexTypeEnum.LiquidityBaking:
-        return IconNameEnum.LiquidityBaking;
-      case DexTypeEnum.Plenty:
-      case DexTypeEnum.PlentyStableSwap:
-      case DexTypeEnum.PlentyBridge:
-      case DexTypeEnum.PlentyVolatileSwap:
-      case DexTypeEnum.PlentyCtez:
-        return IconNameEnum.Plenty;
-      case DexTypeEnum.QuipuSwap:
-      case DexTypeEnum.QuipuSwap20:
-      case DexTypeEnum.QuipuSwapCurveLike:
-      case DexTypeEnum.QuipuSwapTokenToTokenDex:
-        return IconNameEnum.QuipuSwapDark;
-      case DexTypeEnum.Youves:
-        return IconNameEnum.Youves;
-      case DexTypeEnum.Vortex:
-        return IconNameEnum.Vortex;
-      case DexTypeEnum.Spicy:
-      case DexTypeEnum.SpicyWrap:
-        return IconNameEnum.Spicy;
-      default:
-        return IconNameEnum.SwapTokenPlaceholderIcon;
-    }
-  }, [tradeOperation?.dexType]);
+const calculatePercentage = (base: string | undefined, part: string) => {
+  if (base === undefined) {
+    return;
+  }
+
+  const amountToFormat = BASE.multipliedBy(part).dividedBy(base);
+
+  if (amountToFormat.isGreaterThanOrEqualTo(BASE)) {
+    return BASE.toFixed();
+  }
+
+  return amountToFormat.toFixed(PERCENTAGE_DECIMALS);
+};
+
+export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
+  const styles = useSwapRouteItem();
+  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { data: swapDexes } = useSwapDexesSelector();
+  const { data } = useSwapTokensMetadataSelector();
+  const swapTokensMetadata = useMemo<Array<TokenInterface>>(() => [tezosToken, ...data], [tezosToken, data]);
 
   return (
-    <>
-      <View style={styles.container}>
-        <Icon name={dexIcon} size={formatSize(24)} />
-        <Divider size={formatSize(18)} />
-        <SwapRouteItemIcon tokenSlug={tradeOperation?.aTokenSlug} />
-        <View style={styles.lastTokenContainer}>
-          <SwapRouteItemIcon tokenSlug={tradeOperation?.bTokenSlug} />
-        </View>
+    <View style={[styles.flex, styles.container]}>
+      <View style={styles.amountsContainer}>
+        <Text style={[styles.amount, styles.alignStart]}>
+          {kFormatter(Number(new BigNumber(chain.input).toFixed(AMOUNT_DECIMALS)))}
+        </Text>
+        <Text style={[styles.percantage, styles.alignStart]}>{calculatePercentage(baseInput, chain.input)}%</Text>
       </View>
-      {isShowNextArrow && <Icon name={IconNameEnum.ArrowRight} size={formatSize(12)} />}
-    </>
+      <View style={[styles.flex, styles.hopsContainer]}>
+        <Icon width="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
+        {chain.hops.map((hop, index) => {
+          const dex = swapDexes.find(dex => hop.dex === dex.id);
+
+          const aDexToken = hop.forward ? dex?.token1 : dex?.token2;
+          const bDexToken = hop.forward ? dex?.token2 : dex?.token1;
+
+          const aDexTokenSlug = toTokenSlug(aDexToken?.contract ?? '', aDexToken?.tokenId ?? 0);
+          const bDexTokenSlug = toTokenSlug(bDexToken?.contract ?? '', bDexToken?.tokenId ?? 0);
+
+          const aToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === aDexTokenSlug);
+          const bToken = swapTokensMetadata.find(({ address, id }) => toTokenSlug(address, id) === bDexTokenSlug);
+
+          return <HopItem key={index} dexType={dex?.type} aToken={aToken} bToken={bToken} />;
+        })}
+      </View>
+      <View style={styles.amountsContainer}>
+        <Text style={[styles.amount, styles.alignEnd]}>
+          {kFormatter(Number(new BigNumber(chain.output).toFixed(AMOUNT_DECIMALS)))}
+        </Text>
+        <Text style={[styles.percantage, styles.alignEnd]}>{calculatePercentage(baseOutput, chain.output)}%</Text>
+      </View>
+    </View>
   );
 };

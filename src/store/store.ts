@@ -1,3 +1,4 @@
+import { abTestingEpics } from './ab-testing/ab-testing-epics';
 import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { contactsEpics } from './contact-book/contact-book-epics';
@@ -12,6 +13,7 @@ import { partnersPromotionEpics } from './partners-promotion/partners-promotion-
 import { rootStateEpics } from './root-state.epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
+import { swapEpics } from './swap/swap-epics';
 import { tokensMetadataEpics } from './tokens-metadata/tokens-metadata-epics';
 import { walletEpics } from './wallet/wallet-epics';
 
@@ -29,6 +31,8 @@ export const { store, persistor } = createStore(
   advertisingEpics,
   marketEpics,
   notificationsEpics,
+  swapEpics,
   contactsEpics,
-  partnersPromotionEpics
+  partnersPromotionEpics,
+  abTestingEpics
 );

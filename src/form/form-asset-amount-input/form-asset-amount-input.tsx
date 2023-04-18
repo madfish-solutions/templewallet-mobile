@@ -24,6 +24,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   frozenBalance,
   editable,
   toUsdToggle = true,
+  isLoading = false,
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
@@ -53,6 +54,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         assetsList={assetsList}
         frozenBalance={frozenBalance}
         isError={isError}
+        isLoading={isLoading}
         isSearchable={isSearchable}
         editable={editable}
         toUsdToggle={toUsdToggle}

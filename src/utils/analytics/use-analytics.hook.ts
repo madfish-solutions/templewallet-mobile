@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { OverlayEnum } from 'src/navigator/enums/overlay.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
 import { useAnalyticsEnabledSelector, useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
@@ -15,6 +16,7 @@ export const useAnalytics = () => {
   const analyticsEnabled = useAnalyticsEnabledSelector();
   const isAuthorized = useIsAuthorisedSelector();
   const shouldSendAnalytics = analyticsEnabled && isAuthorized;
+  const testGroupName = useUserTestingGroupNameSelector();
 
   const trackEvent = async (
     event?: string,
@@ -30,6 +32,7 @@ export const useAnalytics = () => {
       properties: {
         event,
         category,
+        ABTestingCategory: testGroupName,
         ...additionalProperties
       }
     });
@@ -46,6 +49,7 @@ export const useAnalytics = () => {
         path: search,
         referrer: path,
         category: AnalyticsEventCategory.PageOpened,
+        ABTestingCategory: testGroupName,
         ...additionalProperties
       }
     });

@@ -173,32 +173,34 @@ export const FIAT_CURRENCIES = [
   }
 ];
 
-export const loadUsdToTokenRates$ = from(templeWalletApi.get<Array<ExchangeRateInterface>>('/exchange-rates')).pipe(
-  map(payload => {
-    const data = payload.data;
-    const mappedRates: ExchangeRateRecord = {};
+export const loadUsdToTokenRates$ = () =>
+  from(templeWalletApi.get<Array<ExchangeRateInterface>>('/exchange-rates')).pipe(
+    map(payload => {
+      const data = payload.data;
+      const mappedRates: ExchangeRateRecord = {};
 
-    for (const { tokenAddress, tokenId, exchangeRate } of data) {
-      mappedRates[getTokenSlug({ address: tokenAddress, id: tokenId })] = +exchangeRate;
-    }
+      for (const { tokenAddress, tokenId, exchangeRate } of data) {
+        mappedRates[getTokenSlug({ address: tokenAddress, id: tokenId })] = +exchangeRate;
+      }
 
-    return mappedRates;
-  })
-);
+      return mappedRates;
+    })
+  );
 
-export const loadFiatToTezosRates$ = from(
-  coingeckoApi.get<CoingeckoQuoteInterface>(
-    `/simple/price?ids=tezos&vs_currencies=${FIAT_CURRENCIES.map(({ apiLabel }) => apiLabel).join(',')}`
-  )
-).pipe(
-  map(({ data }) => {
-    const mappedRates: ExchangeRateRecord = {};
-    const tezosData = Object.keys(data.tezos);
+export const loadFiatToTezosRates$ = () =>
+  from(
+    coingeckoApi.get<CoingeckoQuoteInterface>(
+      `/simple/price?ids=tezos&vs_currencies=${FIAT_CURRENCIES.map(({ apiLabel }) => apiLabel).join(',')}`
+    )
+  ).pipe(
+    map(({ data }) => {
+      const mappedRates: ExchangeRateRecord = {};
+      const tezosData = Object.keys(data.tezos);
 
-    for (const quote of tezosData) {
-      mappedRates[quote] = +data.tezos[quote];
-    }
+      for (const quote of tezosData) {
+        mappedRates[quote] = +data.tezos[quote];
+      }
 
-    return mappedRates;
-  })
-);
+      return mappedRates;
+    })
+  );

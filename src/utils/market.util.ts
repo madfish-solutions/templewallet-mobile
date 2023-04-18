@@ -4,6 +4,9 @@ import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
 import { Colors } from '../styles/colors';
 import { kFormatter } from './number.util';
 
+const MINIMUM_AMOUNT = 0.01;
+const MINIMUM_AMOUNT_DISPLAY = '<0.01';
+
 export const fetchMarketTopTokens = () =>
   coingeckoApi
     .get<Array<MarketTokenRaw>>('coins/markets', {
@@ -44,11 +47,11 @@ export const formatRegularValue = (value: number | null | undefined, tezosExchan
     return res;
   }
 
-  res.value = value < 0.01 ? '>0.01' : kFormatter(value);
+  res.value = getValue(value, kFormatter(value));
 
   if (tezosExchangeRate !== undefined) {
     const valueInTezos = value / tezosExchangeRate;
-    res.valueEstimatedInTezos = valueInTezos < 0.01 ? '>0.01' : kFormatter(valueInTezos);
+    res.valueEstimatedInTezos = getValue(valueInTezos, kFormatter(valueInTezos));
   }
 
   return res;
@@ -63,12 +66,14 @@ export const formatPrice = (value: number | null | undefined, tezosExchangeRate?
     return res;
   }
 
-  res.value = value < 0.01 ? '>0.01' : value.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  res.value = getValue(value, value.toLocaleString('en-US', { maximumFractionDigits: 2 }));
 
   if (tezosExchangeRate !== undefined) {
     const valueInTezos = value / tezosExchangeRate;
-    res.valueEstimatedInTezos =
-      valueInTezos < 0.01 ? '>0.01' : valueInTezos.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    res.valueEstimatedInTezos = getValue(
+      valueInTezos,
+      valueInTezos.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    );
   }
 
   return res;
@@ -129,3 +134,6 @@ export const sortMarketTokens = (marketTokens: Array<MarketToken>, sortField: Ma
       return result;
   }
 };
+
+const getValue = (comparableValue: number, value: string) =>
+  comparableValue < MINIMUM_AMOUNT ? MINIMUM_AMOUNT_DISPLAY : value;
