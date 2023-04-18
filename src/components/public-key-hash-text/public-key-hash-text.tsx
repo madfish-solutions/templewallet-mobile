@@ -27,13 +27,14 @@ export const PublicKeyHashText: FC<Props> = ({
   style,
   disabled = false,
   longPress = false,
-  testID
+  testID,
+  testIDProperties
 }) => {
   const styles = usePublicKeyHashTextStyles();
   const { trackEvent } = useAnalytics();
 
   const acceptPress = useCallback(() => {
-    trackEvent(testID, AnalyticsEventCategory.ButtonPress);
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
     copyStringToClipboard(publicKeyHash);
   }, [trackEvent, testID]);
 

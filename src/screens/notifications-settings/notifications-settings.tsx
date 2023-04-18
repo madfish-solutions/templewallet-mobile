@@ -48,11 +48,17 @@ export const NotificationsSettings = () => {
             value={isNewsEnabled}
             onChange={value => dispatch(setIsNewsEnabledAction(value))}
             testID={NotificationsSettingsSelectors.newsToggle}
+            testIDProperties={{ newValue: !isNewsEnabled }}
           />
         </WhiteContainerAction>
         <WhiteContainerAction onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}>
           <WhiteContainerText text="Ads" />
-          <Switch value={isAdsEnabled} onChange={handleAdsToggle} testID={NotificationsSettingsSelectors.adsToggle} />
+          <Switch
+            value={isAdsEnabled}
+            onChange={handleAdsToggle}
+            testID={NotificationsSettingsSelectors.adsToggle}
+            testIDProperties={{ newValue: !isAdsEnabled }}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
