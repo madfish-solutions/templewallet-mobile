@@ -64,6 +64,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
             [
               ...accountsState[publicHash].tokensList,
               ...tokensMetadata.map(token => ({
+                ...token,
                 slug: getTokenSlug(token),
                 balance: '0',
                 visibility: VisibilityEnum.InitiallyHidden

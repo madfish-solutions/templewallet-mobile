@@ -6,7 +6,7 @@ import { AttentionMessage } from '../attention-message/attention-message';
 import { useDisclaimerStyles } from './disclaimer.styles';
 
 interface Props {
-  texts: Array<string>;
+  texts?: Array<string>;
   children?: ReactNode;
   title?: string;
 }
@@ -18,7 +18,7 @@ export const Disclaimer: FC<Props> = ({ title, texts, children }) => {
     <AttentionMessage title={title}>
       {isDefined(children)
         ? children
-        : texts.map(text => (
+        : texts?.map(text => (
             <Text key={text} style={styles.description}>
               {text}
             </Text>

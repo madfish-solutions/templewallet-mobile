@@ -12,10 +12,10 @@ import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import {
   TOKENS_SYNC_INTERVAL,
+  SELECTED_BAKER_SYNC_INTERVAL,
   BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
-  NOTIFICATIONS_SYNC_INTERVAL,
-  SELECTED_BAKER_SYNC_INTERVAL
+  NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
@@ -52,7 +52,6 @@ import { Notifications } from 'src/screens/notifications/notifications';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
-import { SwapQuestionsScreen } from 'src/screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
 import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -66,8 +65,8 @@ import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
-  loadTezosBalanceActions,
   loadTokensActions,
+  loadTezosBalanceActions,
   loadTokensBalancesArrayActions
 } from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
@@ -154,10 +153,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.CollectiblesHome}
                 component={CollectiblesHome}
-                options={{
-                  headerShown: false,
-                  gestureDirection: 'horizontal-inverted'
-                }}
+                options={{ animationEnabled: false, headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
@@ -240,12 +236,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.SwapQuestionsScreen}
-                component={SwapQuestionsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Market stack **/}

@@ -14,7 +14,7 @@ export const analyticsCollecting = 'https://templewallet.com/analytics-collectin
 export const termsOfUse = 'https://templewallet.com/terms';
 export const contact = 'https://templewallet.com/contact';
 
-export const supportUkraine = 'https://donate.tezos.org.ua';
+export const supportUkraine = 'https://donate.mad.fish/';
 export const yupanaLink = 'https://app.yupana.finance/';
 export const quipuLink = 'https://quipuswap.com/farming';
 export const madfishLink = 'https://story.madfish.solutions/';

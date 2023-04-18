@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
+import { useUserTestingGroupNameSelector } from '../../store/ab-testing/ab-testing-selectors';
 import { useAnalyticsEnabledSelector, useUserIdSelector } from '../../store/settings/settings-selectors';
 import { AnalyticsEventProperties } from '../../types/analytics-event-properties.type';
 import { AnalyticsEventCategory } from './analytics-event.enum';
@@ -11,6 +12,7 @@ import { jitsu } from './analytics.util';
 export const useAnalytics = () => {
   const userId = useUserIdSelector();
   const analyticsEnabled = useAnalyticsEnabledSelector();
+  const testGroupName = useUserTestingGroupNameSelector();
 
   const trackEvent = useCallback(
     async (
@@ -27,10 +29,11 @@ export const useAnalytics = () => {
         properties: {
           event,
           category,
+          ABTestingCategory: testGroupName,
           ...additionalProperties
         }
       }),
-    [userId, analyticsEnabled]
+    [userId, analyticsEnabled, testGroupName]
   );
 
   const pageEvent = useCallback(
@@ -45,11 +48,12 @@ export const useAnalytics = () => {
           url: `${path}${search}`,
           path: search,
           referrer: path,
+          ABTestingCategory: testGroupName,
           category: AnalyticsEventCategory.PageOpened,
           ...additionalProperties
         }
       }),
-    [userId, analyticsEnabled]
+    [userId, analyticsEnabled, testGroupName]
   );
 
   return {
