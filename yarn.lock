@@ -13781,6 +13781,13 @@ react-native-cloud-fs@madfish-solutions/react-native-cloud-fs#ee38534accf2a2c091
   version "2.6.0"
   resolved "https://codeload.github.com/madfish-solutions/react-native-cloud-fs/tar.gz/ee38534accf2a2c091cf43ef5061fec255e95687"
 
+react-native-cloud-storage@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-cloud-storage/-/react-native-cloud-storage-0.6.0.tgz#eb7c8a1798042d0791b08f3a3306682a9ba6ccdc"
+  integrity sha512-TbSohG1l7uSstB6f+vWdCsrF+tqrDP9wZH22WbSYhk6rChPoLaHN74r52CvznWLFPxt4pdZdm53HEX6LHDOvpg==
+  dependencies:
+    react-native-google-drive-api-wrapper-js "^1.2.3"
+
 react-native-codegen@^0.70.6:
   version "0.70.6"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.70.6.tgz#2ce17d1faad02ad4562345f8ee7cbe6397eda5cb"
@@ -13862,6 +13869,15 @@ react-native-gesture-handler@^2.7.1:
     invariant "^2.2.4"
     lodash "^4.17.21"
     prop-types "^15.7.2"
+
+react-native-google-drive-api-wrapper-js@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-google-drive-api-wrapper-js/-/react-native-google-drive-api-wrapper-js-1.2.3.tgz#672cb1f3ed99f5275e25c3398350077e60eccdfc"
+  integrity sha512-Ptnd91y1WvVj5JAyuFS2dsTZDgNtUboRPRKlfJ5Juxtm258pMNCe4PD6/Hil0BXcsFaga4dj7Xvu0K2xDOAALw==
+  dependencies:
+    base64-js "^1.5.1"
+    simple-common-utils "^2.3.0"
+    utf8 "^3.0.0"
 
 react-native-gradle-plugin@^0.70.3:
   version "0.70.3"
@@ -14989,6 +15005,11 @@ signal-exit@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
+
+simple-common-utils@^2.3.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/simple-common-utils/-/simple-common-utils-2.6.0.tgz#457f126c20c82ba10212427886f4c8ebe86cc6d7"
+  integrity sha512-K0gtyfMQ1+iDQvZKgdY2L+pbaG0MHp1ke6ho7IL6UKR8f59st+QJgw27FADF+3Hut19C3WUb7IhgENdY/OJG8w==
 
 simple-plist@^1.1.0, simple-plist@^1.3.1:
   version "1.3.1"

@@ -7,6 +7,9 @@ import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
 import {
   BackupObject,
+  CLOUD_WALLET_FOLDER,
+  filename,
+  targetPath,
   CLOUD_REQUEST_TIMEOUT,
   assertEncryptedBackupPresent,
   buildAndEncryptBackup,
@@ -14,9 +17,6 @@ import {
 } from './common';
 
 const scope = 'hidden';
-const CLOUD_WALLET_FOLDER = 'tw-mobile';
-const filename = 'wallet-backup.json';
-const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 const targetPathAndScope: TargetPathAndScope = { scope, targetPath };
 
 export const isCloudAvailable = async () => Boolean(RNCloudFs);

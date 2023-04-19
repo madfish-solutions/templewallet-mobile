@@ -1,4 +1,4 @@
-import RNCloudFs from 'react-native-cloud-fs';
+import RNCloudStorage, { CloudStorageScope } from 'react-native-cloud-storage';
 
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
@@ -7,12 +7,14 @@ import {
   CLOUD_REQUEST_TIMEOUT,
   assertEncryptedBackupPresent,
   buildAndEncryptBackup,
-  decryptFetchedBackup
+  decryptFetchedBackup,
+  CLOUD_WALLET_FOLDER,
+  targetPath
 } from './common';
 
-const BACKUP_STORE_KEY = 'WALLET_BACKUP_JSON';
+const scope = CloudStorageScope.AppData;
 
-export const isCloudAvailable = async () => Boolean(RNCloudFs);
+export const isCloudAvailable = () => RNCloudStorage.isCloudAvailable();
 
 export const requestSignInToCloud = async () => {
   await syncCloud();
@@ -21,16 +23,24 @@ export const requestSignInToCloud = async () => {
 };
 
 export const fetchCloudBackupDetails = () =>
-  RNCloudFs.getKeyValueStoreObjectDetails(BACKUP_STORE_KEY).catch(error => {
-    console.error('RNCloudFs.getKeyValueStoreData() error:', error);
+  RNCloudStorage.stat(targetPath, scope).catch(error => {
+    if (isNotFoundError(error)) {
+      return undefined;
+    }
+
+    console.error(error);
 
     return undefined;
   });
 
 export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
   const encryptedBackup = await rejectOnTimeout(
-    RNCloudFs.getKeyValueStoreObject(BACKUP_STORE_KEY).catch(error => {
-      console.error('RNCloudFs.getKeyValueStoreData() error:', error);
+    RNCloudStorage.readFile(targetPath, scope).catch(error => {
+      if (isNotFoundError(error)) {
+        return undefined;
+      }
+
+      console.error(error);
 
       throw new Error('Failed to read cloud. See if iCloud is enabled');
     }),
@@ -46,8 +56,10 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
   const encryptedData = await buildAndEncryptBackup(mnemonic, password);
 
-  await RNCloudFs.putKeyValueStoreObject({ key: BACKUP_STORE_KEY, value: encryptedData }).catch(error => {
-    console.error('RNCloudFs.putKeyValueStoreData() error:', error);
+  await RNCloudStorage.mkdir(CLOUD_WALLET_FOLDER, scope).catch(console.error);
+
+  await RNCloudStorage.writeFile(targetPath, encryptedData, scope).catch(error => {
+    console.error(error);
 
     throw new Error('Failed to upload to cloud');
   });
@@ -56,23 +68,34 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
 };
 
 export const eraseCloudBackup = async () => {
-  await RNCloudFs.removeKeyValueStoreObject(BACKUP_STORE_KEY);
+  await RNCloudStorage.unlink(targetPath, scope).catch(error => {
+    if (isNotFoundError(error)) {
+      return undefined;
+    }
+  });
 
   await syncCloud();
 };
 
-const syncCloud = async () => {
-  const synced = await rejectOnTimeout(
-    RNCloudFs.syncKeyValueStoreData().catch(error => {
-      console.error('RNCloudFs.syncKeyValueStoreData error:', error);
+const syncCloud = () =>
+  rejectOnTimeout(
+    RNCloudStorage.readFile(targetPath, scope).catch(error => {
+      if (isNotFoundError(error)) {
+        return undefined;
+      }
 
-      return false;
+      console.error(error);
+
+      throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),
     CLOUD_REQUEST_TIMEOUT,
-    new Error('Syncing took too long. See if iCloud is enabled')
+    new Error("Syncing cloud took too long. Try switching 'iCloud Drive' sync off & on again")
   );
 
-  if (!Boolean(synced)) {
-    throw new Error('Failed to sync. See if iCloud is enabled');
+const isNotFoundError = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return false;
   }
+
+  return error.message.startsWith('No directory found for scope') || error.message.endsWith('not found');
 };
