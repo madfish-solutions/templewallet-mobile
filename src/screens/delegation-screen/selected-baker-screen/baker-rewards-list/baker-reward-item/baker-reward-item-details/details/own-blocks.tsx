@@ -2,6 +2,8 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+
 import { Divider } from '../../../../../../../components/divider/divider';
 import { Icon } from '../../../../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
@@ -16,6 +18,7 @@ export const OwnBlocks: FC<Pick<BakerRewardInterface, 'ownBlocks' | 'ownBlockRew
   ownBlockFees
 }) => {
   const styles = useBakerRewardItemStyles();
+  const { metadata } = useNetworkInfo();
 
   return (
     <>
@@ -36,7 +39,7 @@ export const OwnBlocks: FC<Pick<BakerRewardInterface, 'ownBlocks' | 'ownBlockRew
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
                 +{mutezToTz(new BigNumber(ownBlockRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
-                TEZ
+                {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
                   for <Text style={styles.textBlack}>{ownBlocks.toString()} blocks</Text>
@@ -45,7 +48,7 @@ export const OwnBlocks: FC<Pick<BakerRewardInterface, 'ownBlocks' | 'ownBlockRew
               <Divider size={formatSize(2)} />
               <Text style={styles.textBlack}>
                 +{mutezToTz(new BigNumber(ownBlockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
-                TEZ
+                {metadata.symbol}
                 <Text style={styles.textGray}> fees</Text>
               </Text>
             </View>

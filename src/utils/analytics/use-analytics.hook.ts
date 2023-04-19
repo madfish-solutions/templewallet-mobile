@@ -1,17 +1,21 @@
 import { useCallback, useEffect } from 'react';
 
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { OverlayEnum } from '../../navigator/enums/overlay.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useUserTestingGroupNameSelector } from '../../store/ab-testing/ab-testing-selectors';
-import { useAnalyticsEnabledSelector, useUserIdSelector } from '../../store/settings/settings-selectors';
-import { AnalyticsEventProperties } from '../../types/analytics-event-properties.type';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { OverlayEnum } from 'src/navigator/enums/overlay.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
+import { useAnalyticsEnabledSelector, useUserIdSelector } from 'src/store/settings/settings-selectors';
+import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
+
 import { AnalyticsEventCategory } from './analytics-event.enum';
 import { jitsu } from './analytics.util';
 
 export const useAnalytics = () => {
   const userId = useUserIdSelector();
   const analyticsEnabled = useAnalyticsEnabledSelector();
+  const isAuthorized = useIsAuthorisedSelector();
+  const shouldSendAnalytics = analyticsEnabled && isAuthorized;
   const testGroupName = useUserTestingGroupNameSelector();
 
   const trackEvent = useCallback(
@@ -21,11 +25,11 @@ export const useAnalytics = () => {
       additionalProperties: AnalyticsEventProperties = {}
     ) =>
       event !== undefined &&
-      analyticsEnabled &&
+      shouldSendAnalytics &&
       jitsu.track(category, {
         userId,
         event,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
         properties: {
           event,
           category,
@@ -33,27 +37,27 @@ export const useAnalytics = () => {
           ...additionalProperties
         }
       }),
-    [userId, analyticsEnabled, testGroupName]
+    [analyticsEnabled, userId, testGroupName]
   );
 
   const pageEvent = useCallback(
     async (path: string, search: string, additionalProperties: AnalyticsEventProperties = {}) =>
-      analyticsEnabled &&
+      shouldSendAnalytics &&
       jitsu.track(AnalyticsEventCategory.PageOpened, {
         userId,
         name: path,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
         category: AnalyticsEventCategory.PageOpened,
         properties: {
           url: `${path}${search}`,
           path: search,
           referrer: path,
-          ABTestingCategory: testGroupName,
           category: AnalyticsEventCategory.PageOpened,
+          ABTestingCategory: testGroupName,
           ...additionalProperties
         }
       }),
-    [userId, analyticsEnabled, testGroupName]
+    [analyticsEnabled, userId, testGroupName]
   );
 
   return {

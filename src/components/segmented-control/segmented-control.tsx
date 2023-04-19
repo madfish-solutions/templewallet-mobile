@@ -39,6 +39,7 @@ export const SegmentedControl = <T extends unknown>({
   const { trackEvent } = useAnalytics();
   const styles = useSegmentedControlStyles();
   const { layoutWidth, handleLayout } = useLayoutSizes();
+  const { trackEvent } = useAnalytics();
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 

@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, View, ActivityIndicator } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
@@ -15,13 +15,16 @@ import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-contr
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
-import { useDropdownStyles } from './dropdown.styles';
+import { DropdownSelectors } from './selectors';
+import { useDropdownStyles } from './styles';
 
 export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
+  emptyListText?: string;
   isSearchable?: boolean;
   itemHeight?: number;
+  itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
@@ -60,13 +63,13 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
+  emptyListText = 'No assets found.',
   description,
   itemHeight = formatSize(64),
+  itemContainerStyle,
   disabled = false,
   isLoading = false,
   isSearchable = false,
@@ -96,8 +99,8 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+        <TouchableOpacity key={index} onPress={handlePress} testID={DropdownSelectors.option}>
+          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>
@@ -130,6 +133,7 @@ const DropdownComponent = <T extends unknown>({
           return dropdownBottomSheetController.open();
         }}
         onLongPress={onLongPress}
+        testID={testID}
       >
         {renderValue({ value, disabled })}
       </TouchableOpacity>
@@ -149,7 +153,7 @@ const DropdownComponent = <T extends unknown>({
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
               contentContainerStyle={styles.flatListContentContainer}
-              ListEmptyComponent={ListEmptyComponent}
+              ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}
             />

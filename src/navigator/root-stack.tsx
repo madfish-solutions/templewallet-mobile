@@ -9,6 +9,7 @@ import { isIOS } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
@@ -58,6 +59,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
+  const { isDcpNode } = useNetworkInfo();
 
   useStorageMigration();
 
@@ -111,7 +113,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={{ ...useModalOptions('Select Baker'), gestureEnabled: isIOS }}
+              options={{ ...useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`), gestureEnabled: isIOS }}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}

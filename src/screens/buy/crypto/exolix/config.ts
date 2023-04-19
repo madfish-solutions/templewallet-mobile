@@ -1,4 +1,5 @@
-import { TopUpOutputInterface } from '../../../../interfaces/topup.interface';
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+import { TopUpOutputInterface } from 'src/interfaces/topup.interface';
 
 export const EXOLIX_CONTACT_LINK =
   'https://docs.google.com/forms/d/e/1FAIpQLSdec4jK16R8uQ-05MRk7QgNi7y3PE5l7ojI5dvMYlfrX2LKDQ/viewform';
@@ -13,7 +14,8 @@ export const outputTokensList: TopUpOutputInterface[] = [
     icon: 'https://exolix.com/icons/coins/XTZ.png',
     network: 'XTZ',
     networkFullName: 'Tezos',
-    slug: 'tez'
+    slug: 'tez',
+    type: TopUpInputTypeEnum.Crypto
   },
   {
     code: 'USDT',
@@ -22,6 +24,7 @@ export const outputTokensList: TopUpOutputInterface[] = [
     network: 'XTZ',
     networkFullName: 'Tezos Mainnet',
     networkShortName: 'Tezos',
-    slug: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o_0'
+    slug: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o_0',
+    type: TopUpInputTypeEnum.Crypto
   }
 ];

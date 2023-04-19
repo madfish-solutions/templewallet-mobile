@@ -13,7 +13,7 @@ import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-contr
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
-import { useDropdownStyles } from './dropdown.styles';
+import { useDropdownStyles } from './styles';
 
 export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
