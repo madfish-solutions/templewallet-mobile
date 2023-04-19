@@ -10,11 +10,11 @@ import { WhiteContainerActionStyles } from './white-container-action.styles';
 
 type Props = Pick<TouchableOpacityProps, 'disabled' | 'onPress'> & TestIdProps;
 
-export const WhiteContainerAction: FC<Props> = ({ disabled, onPress, children, testID }) => {
+export const WhiteContainerAction: FC<Props> = ({ disabled, onPress, children, testID, testIDProperties }) => {
   const { trackEvent } = useAnalytics();
 
   const handlePress = (event: GestureResponderEvent) => {
-    trackEvent(testID, AnalyticsEventCategory.ButtonPress);
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
     onPress?.(event);
   };
 

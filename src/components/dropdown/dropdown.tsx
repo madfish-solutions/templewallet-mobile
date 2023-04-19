@@ -126,7 +126,6 @@ const DropdownComponent = <T extends unknown>({
       <TouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
-        testID={testID}
         onPress={() => {
           scroll();
 

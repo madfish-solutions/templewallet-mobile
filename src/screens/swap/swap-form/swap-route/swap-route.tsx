@@ -6,8 +6,11 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
+import { SwapRouteSelectors } from './selectors';
 import { useSwapRouteStyles } from './swap-route.styles';
 
 export const SwapRoute: FC = () => {
@@ -16,6 +19,7 @@ export const SwapRoute: FC = () => {
   const {
     data: { chains, input, output }
   } = useSwapParamsSelector();
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     if (chains.length === 0) {
@@ -29,7 +33,10 @@ export const SwapRoute: FC = () => {
 
   const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
-  const toggleRoutePress = () => setIsVisible(prevState => !prevState);
+  const toggleRoutePress = () => {
+    trackEvent(SwapRouteSelectors.showRouteSwitcher, AnalyticsEventCategory.ButtonPress);
+    setIsVisible(prevState => !prevState);
+  };
 
   return (
     <View>
@@ -37,6 +44,7 @@ export const SwapRoute: FC = () => {
         style={[styles.flex, styles.row, styles.mb12]}
         onPress={toggleRoutePress}
         disabled={!Boolean(output)}
+        testID={SwapRouteSelectors.showRouteSwitcher}
       >
         <Text style={styles.infoText}>Swap route</Text>
         <View style={styles.row}>
