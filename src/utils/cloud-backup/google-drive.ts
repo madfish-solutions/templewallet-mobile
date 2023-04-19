@@ -1,5 +1,5 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import RNCloudFs, { TargetPathAndScope } from 'react-native-cloud-fs';
+import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 
 import { isString } from 'src/utils/is-string';
@@ -7,9 +7,7 @@ import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
 import {
   BackupObject,
-  CLOUD_WALLET_FOLDER,
   filename,
-  targetPath,
   CLOUD_REQUEST_TIMEOUT,
   assertEncryptedBackupPresent,
   buildAndEncryptBackup,
@@ -17,7 +15,6 @@ import {
 } from './common';
 
 const scope = 'hidden';
-const targetPathAndScope: TargetPathAndScope = { scope, targetPath };
 
 export const isCloudAvailable = async () => Boolean(RNCloudFs);
 
@@ -63,7 +60,7 @@ export const requestSignInToCloud = async () => {
 export const fetchCloudBackupDetails = async () => {
   const data = await RNCloudFs.listFiles<'Android'>({
     scope,
-    targetPath: CLOUD_WALLET_FOLDER
+    targetPath: ''
   }).catch(error => {
     console.error("NCloudFs.listFiles<'Android'> error:", error);
   });
@@ -97,7 +94,8 @@ export const saveCloudBackup = async (mnemonic: string, password: string) => {
   await RNFS.writeFile(localPath, encryptedData, 'utf8');
 
   const fileId = await RNCloudFs.copyToCloud({
-    ...targetPathAndScope,
+    scope,
+    targetPath: filename,
     mimeType: 'application/json',
     sourcePath: { path: localPath }
   })

@@ -5,9 +5,7 @@ import { isString } from 'src/utils/is-string';
 
 import PackageJSON from '../../../package.json';
 
-export const CLOUD_WALLET_FOLDER = 'tw-mobile';
 export const filename = 'wallet-backup.json';
-export const targetPath = `${CLOUD_WALLET_FOLDER}/${filename}`;
 export const CLOUD_REQUEST_TIMEOUT = 15000;
 
 export interface BackupObject {

@@ -21,7 +21,7 @@
 		7699B88040F8A987B510C191 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-TempleWallet-TempleWalletTests.a */; };
 		84FA6AD1E871438190450F26 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F43D4FA211DF408C81CD55CB /* Inter-Bold.ttf */; };
 		AC3A7D00563147339795E46A /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3B5E3AF0CF448E69600D4FA /* Rubik-SemiBold.ttf */; };
-		FA845FB629EF4D2100D19F3B /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA845FB529EF4D2100D19F3B /* File.swift */; };
+		FA845FB629EF4D2100D19F3B /* TempleWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA845FB529EF4D2100D19F3B /* TempleWallet.swift */; };
 		FFCBD1E9F5EE47449AF293B5 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1B6B3CA8A9C04D8C83B192A1 /* Rubik-Regular.ttf */; };
 /* End PBXBuildFile section */
 
@@ -62,7 +62,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F43D4FA211DF408C81CD55CB /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		FA845FB429EF4D2000D19F3B /* TempleWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TempleWallet-Bridging-Header.h"; sourceTree = "<group>"; };
-		FA845FB529EF4D2100D19F3B /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		FA845FB529EF4D2100D19F3B /* TempleWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempleWallet.swift; sourceTree = "<group>"; };
 		FAC40C0929C7E4D800F7851D /* TempleWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TempleWallet.entitlements; path = TempleWallet/TempleWallet.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,7 +137,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				FA845FB529EF4D2100D19F3B /* File.swift */,
+				FA845FB529EF4D2100D19F3B /* TempleWallet.swift */,
 				14D5356528D878090023E53D /* security.txt */,
 				1491AFCD28D4B46E008017E9 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* TempleWallet */,
@@ -474,7 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				FA845FB629EF4D2100D19F3B /* File.swift in Sources */,
+				FA845FB629EF4D2100D19F3B /* TempleWallet.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

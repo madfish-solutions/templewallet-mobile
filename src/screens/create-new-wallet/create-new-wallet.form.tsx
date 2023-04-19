@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from, map, of, switchMap, tap } from 'rxjs';
 import { object, SchemaOf } from 'yup';
@@ -65,29 +65,24 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
 
   const backupFlowMemo = useMemo(() => backupFlow, backupFlow ? Object.values(backupFlow) : []);
 
-  const doBackupToCloud$ = useSubjectWithReSubscription$<DoBackupValues>(
-    $subject =>
-      $subject.pipe(
-        switchMap(({ seedPhrase, password }) =>
-          from(fetchCloudBackupDetails()).pipe(
-            tap(details => {
-              if (Boolean(details)) {
-                throw new Error('Some backup already exists');
-              }
-            }),
-            switchMap(() => from(saveCloudBackup(seedPhrase, password)))
-          )
-        ),
-        tap(() => {
-          dispatch(madeCloudBackupAction());
-          showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-        })
-      ),
-    error => {
-      const errorTitle = 'Failed to back up to cloud';
-      showErrorToastByError(error, errorTitle, true);
+  const doBackupToCloud = useCallback(
+    async ({ seedPhrase, password }: DoBackupValues) => {
+      try {
+        const details = await fetchCloudBackupDetails();
+        if (Boolean(details)) {
+          throw new Error('Some backup already exists');
+        }
 
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+        await saveCloudBackup(seedPhrase, password);
+
+        dispatch(madeCloudBackupAction());
+        showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+      } catch (error) {
+        const errorTitle = 'Failed to back up to cloud';
+        showErrorToastByError(error, errorTitle, true);
+
+        trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      }
     },
     [dispatch, trackEvent]
   );
@@ -105,12 +100,13 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
           )
         ),
         tap(doBackupValues => {
+          console.log('backupFlowMemo: ', backupFlowMemo);
           if (!backupFlowMemo) {
             return void dispatch(requestSeedPhraseBackupAction());
           }
 
           if (backupFlowMemo.type === 'AUTO_BACKUP') {
-            doBackupToCloud$.next(doBackupValues);
+            doBackupToCloud(doBackupValues);
           }
         })
       ),
@@ -118,7 +114,7 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
       dispatch(hideLoaderAction());
       showErrorToastByError(err);
     },
-    [backupFlowMemo, doBackupToCloud$, dispatch, importWallet, generateSeed]
+    [backupFlowMemo, doBackupToCloud, dispatch, importWallet, generateSeed]
   );
 
   return async (values: CreateNewPasswordFormValues) => submit$.next(values);

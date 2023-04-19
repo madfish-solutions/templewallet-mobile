@@ -1,5 +1,7 @@
-import RNCloudStorage, { CloudStorageScope } from 'react-native-cloud-storage';
+import * as RNCloudStore from 'react-native-cloud-store';
+import * as RNFS from 'react-native-fs';
 
+import { isString } from 'src/utils/is-string';
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
 import {
@@ -8,13 +10,10 @@ import {
   assertEncryptedBackupPresent,
   buildAndEncryptBackup,
   decryptFetchedBackup,
-  CLOUD_WALLET_FOLDER,
-  targetPath
+  filename
 } from './common';
 
-const scope = CloudStorageScope.AppData;
-
-export const isCloudAvailable = () => RNCloudStorage.isCloudAvailable();
+export const isCloudAvailable = () => RNCloudStore.isICloudAvailable();
 
 export const requestSignInToCloud = async () => {
   await syncCloud();
@@ -22,25 +21,30 @@ export const requestSignInToCloud = async () => {
   return true;
 };
 
-export const fetchCloudBackupDetails = () =>
-  RNCloudStorage.stat(targetPath, scope).catch(error => {
+export const fetchCloudBackupDetails = async () => {
+  const path = await getTargetAbsolutePath();
+
+  return await RNCloudStore.stat(path).catch(error => {
     if (isNotFoundError(error)) {
       return undefined;
     }
 
-    console.error(error);
+    console.error('RNCloudStore.stat() error:', error);
 
     return undefined;
   });
+};
 
 export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
+  const path = await getTargetAbsolutePath();
+
   const encryptedBackup = await rejectOnTimeout(
-    RNCloudStorage.readFile(targetPath, scope).catch(error => {
+    RNCloudStore.readFile(path).catch(error => {
       if (isNotFoundError(error)) {
         return undefined;
       }
 
-      console.error(error);
+      console.error('RNCloudStore.readFile() error:', error);
 
       throw new Error('Failed to read cloud. See if iCloud is enabled');
     }),
@@ -53,49 +57,79 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
   return await decryptFetchedBackup(encryptedBackup, password);
 };
 
-export const saveCloudBackup = async (mnemonic: string, password: string) => {
+export const saveCloudBackup = async (mnemonic: string, password: string, override = false) => {
   const encryptedData = await buildAndEncryptBackup(mnemonic, password);
 
-  await RNCloudStorage.mkdir(CLOUD_WALLET_FOLDER, scope).catch(console.error);
+  const path = await getTargetAbsolutePath();
+  const exists = await RNCloudStore.exist(path);
 
-  await RNCloudStorage.writeFile(targetPath, encryptedData, scope).catch(error => {
-    console.error(error);
+  if (exists === true) {
+    if (!override) {
+      throw new Error('Backup already exists');
+    }
 
-    throw new Error('Failed to upload to cloud');
-  });
+    await RNCloudStore.writeFile(path, encryptedData, { override: true }).catch(error => {
+      console.error('RNCloudStore.writeFile() error:', error);
 
-  await syncCloud();
+      throw new Error('Failed to upload to cloud');
+    });
+
+    return;
+  }
+
+  const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
+
+  await RNFS.writeFile(localPath, encryptedData, 'utf8');
+
+  await RNCloudStore.upload(localPath, path)
+    .catch(error => {
+      console.error('RNCloudStore.upload() error:', error);
+
+      throw new Error('Failed to upload to cloud');
+    })
+    .finally(() => RNFS.unlink(localPath).catch(console.error));
 };
 
 export const eraseCloudBackup = async () => {
-  await RNCloudStorage.unlink(targetPath, scope).catch(error => {
-    if (isNotFoundError(error)) {
-      return undefined;
-    }
-  });
-
-  await syncCloud();
+  const path = await getTargetAbsolutePath();
+  await RNCloudStore.unlink(path);
 };
 
-const syncCloud = () =>
-  rejectOnTimeout(
-    RNCloudStorage.readFile(targetPath, scope).catch(error => {
+const getTargetAbsolutePath = async () => {
+  const hiddenScopePath = await RNCloudStore.getDefaultICloudContainerPath();
+
+  if (!isString(hiddenScopePath)) {
+    throw new Error("iCloud is unavailable. See if it's enabled");
+  }
+
+  return `${hiddenScopePath}/${filename}`;
+};
+
+const syncCloud = async () => {
+  RNCloudStore.registerGlobalDownloadEvent();
+  RNCloudStore.registerGlobalUploadEvent();
+
+  const path = await getTargetAbsolutePath();
+
+  await rejectOnTimeout(
+    RNCloudStore.download(path).catch(error => {
       if (isNotFoundError(error)) {
-        return undefined;
+        return;
       }
 
-      console.error(error);
+      console.error('RNCloudStore.download() error:', error);
 
       throw new Error('Failed to sync cloud. See if iCloud is enabled');
     }),
     CLOUD_REQUEST_TIMEOUT,
     new Error("Syncing cloud took too long. Try switching 'iCloud Drive' sync off & on again")
   );
+};
 
 const isNotFoundError = (error: unknown) => {
   if (!(error instanceof Error)) {
     return false;
   }
 
-  return error.message.startsWith('No directory found for scope') || error.message.endsWith('not found');
+  return error.message.endsWith('not exists');
 };

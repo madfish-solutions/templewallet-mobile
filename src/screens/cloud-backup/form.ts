@@ -39,14 +39,18 @@ export const useHandleSubmit = () => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
-  const proceedWithSaving$ = useSubjectWithReSubscription$<string>(
+  const proceedWithSaving$ = useSubjectWithReSubscription$<{ password: string; override?: boolean }>(
     subject$ =>
       subject$.pipe(
         tap(() => dispatch(showLoaderAction())),
-        switchMap(password =>
+        switchMap(({ password, override }) =>
           Shelter.revealSeedPhrase$().pipe(
             switchMap(mnemonic =>
-              from(saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true)))
+              from(
+                saveCloudBackup(mnemonic, password, override).catch(
+                  catchThrowToastError('Failed to back up to cloud', true)
+                )
+              )
             )
           )
         ),
@@ -93,12 +97,12 @@ export const useHandleSubmit = () => {
 
             return void alertOnExistingBackup(
               () => void subject$.next(password),
-              () => void proceedWithSaving$.next(password),
+              () => void proceedWithSaving$.next({ password, override: true }),
               () => void navigate(ScreensEnum.ManualBackup)
             );
           }
 
-          return void proceedWithSaving$.next(password);
+          return void proceedWithSaving$.next({ password });
         })
       ),
     err => {

@@ -21,7 +21,7 @@ export const fetchCloudBackupDetails = () =>
 export const fetchCloudBackup = (password: string): Promise<BackupObject> =>
   isIOS ? ICloudAPI.fetchCloudBackup(password) : GoogleDriveAPI.fetchCloudBackup(password);
 
-export const saveCloudBackup = (mnemonic: string, password: string) =>
-  isIOS ? ICloudAPI.saveCloudBackup(mnemonic, password) : GoogleDriveAPI.saveCloudBackup(mnemonic, password);
+export const saveCloudBackup = (mnemonic: string, password: string, override = false) =>
+  isIOS ? ICloudAPI.saveCloudBackup(mnemonic, password, override) : GoogleDriveAPI.saveCloudBackup(mnemonic, password);
 
 export const eraseCloudBackup = () => (isIOS ? ICloudAPI.eraseCloudBackup() : GoogleDriveAPI.eraseCloudBackup());
