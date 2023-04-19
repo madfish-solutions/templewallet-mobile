@@ -106,7 +106,12 @@ export const EnterPassword = () => {
                     <Divider size={formatSize(16)} />
                     <View>
                       <Divider size={formatSize(4)} />
-                      <TouchableIcon name={biometryIconName} size={formatSize(40)} onPress={unlockWithBiometry} />
+                      <TouchableIcon
+                        name={biometryIconName}
+                        size={formatSize(40)}
+                        onPress={unlockWithBiometry}
+                        testID={EnterPasswordSelectors.unlockWithBiometry}
+                      />
                     </View>
                   </View>
                 )}
