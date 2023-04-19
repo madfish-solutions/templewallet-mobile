@@ -1,12 +1,15 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+<<<<<<< HEAD
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+=======
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+>>>>>>> origin/development
 
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
 import { useCollectiblesListSelector, useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { TEZ_TOKEN_METADATA } from '../../../token/data/tokens-metadata';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
 import { getTruncatedProps } from '../../../utils/style.util';
@@ -31,8 +34,12 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
 }) => {
   const styles = useAccountDropdownItemStyles();
   const tezos = useTezosTokenSelector(account.publicKeyHash);
+<<<<<<< HEAD
   const collectibles = useCollectiblesListSelector();
   const contacts = useContactsSelector();
+=======
+  const { metadata } = useNetworkInfo();
+>>>>>>> origin/development
 
   return (
     <View style={styles.root}>
@@ -74,7 +81,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
           )}
           {showFullData && !isCollectibleScreen && (
             <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={TEZ_TOKEN_METADATA} amount={tezos.balance} />
+              <AssetValueText asset={metadata} amount={tezos.balance} />
             </HideBalance>
           )}
         </View>
