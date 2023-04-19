@@ -53,7 +53,7 @@ export const CollectiblesHome = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const colors = useColors();
-  const windowHeight = useWindowDimensions().height;
+  const { height: windowHeight } = useWindowDimensions();
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
