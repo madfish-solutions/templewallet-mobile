@@ -28,9 +28,8 @@ import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
 import { Buy } from 'src/screens/buy/buy';
+import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
 import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
-import { AliceBob } from 'src/screens/buy/debit/alice-bob/alice-bob';
-import { Utorg } from 'src/screens/buy/debit/utorg/utorg';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
 import { Contacts } from 'src/screens/contacts/contacts';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
@@ -193,22 +192,16 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.AliceBob}
-                component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.Utorg}
-                component={Utorg}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              <MainStack.Screen
+                name={ScreensEnum.BuyWithCreditCard}
+                component={BuyWithCreditCard}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
 
               {/** DApps stack **/}
               <MainStack.Screen

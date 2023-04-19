@@ -16,6 +16,8 @@ import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
+import { buyWithCreditCardReducer } from './buy-with-credit-card/reducers';
+import { BuyWithCreditCardRootState } from './buy-with-credit-card/state';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { ContactsBookRootState } from './contact-book/contact-book-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -54,8 +56,9 @@ export type RootState = WalletRootState &
   MarketRootState &
   NotificationsRootState &
   ContactsBookRootState &
-  Route3RootState &
+  BuyWithCreditCardRootState &
   PartnersPromotionRootState &
+  Route3RootState &
   ABTestingRootState;
 
 const epicMiddleware = createEpicMiddleware();
@@ -87,6 +90,7 @@ const rootReducer = rootStateReducer<RootState>({
   notifications: notificationsReducers,
   swap: swapReducer,
   contactBook: contactBookReducers,
+  buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer
 });
