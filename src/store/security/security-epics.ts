@@ -12,7 +12,11 @@ import { isIOS } from '../../config/system';
 import { VersionsInterface } from '../../interfaces/versions.interface';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { jitsu } from '../../utils/analytics/analytics.util';
-import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
+import {
+  withSelectedIsAnalyticsEnabled,
+  withSelectedIsAuthorized,
+  withSelectedUserId
+} from '../../utils/security.utils';
 import { RootState } from '../create-store';
 import { checkApp } from './security-actions';
 
@@ -27,12 +31,14 @@ const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootS
     ofType(checkApp.submit),
     withSelectedUserId(state$),
     withSelectedIsAnalyticsEnabled(state$),
-    switchMap(([[, userId], isAnalyticsEnabled]) =>
+    withSelectedIsAuthorized(state$),
+    switchMap(([[[, userId], isAnalyticsEnabled], isAuthorized]) =>
       from(appCheck.activate('ignored', false)).pipe(
         switchMap(() => appCheck.getToken()),
         map(appCheck => appCheck.token),
         catchError(err => {
           isAnalyticsEnabled &&
+            isAuthorized &&
             jitsu.track(AnalyticsEventCategory.General, {
               userId,
               event: 'AppCheckError',

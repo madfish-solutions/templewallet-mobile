@@ -1,14 +1,16 @@
 import React, { FC, useState } from 'react';
 
-import { Divider } from '../../../components/divider/divider';
-import { HeaderBackButton } from '../../../components/header/header-back-button/header-back-button';
-import { HeaderTitle } from '../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
-import { formatSize } from '../../../styles/format-size';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderBackButton } from 'src/components/header/header-back-button/header-back-button';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { formatSize } from 'src/styles/format-size';
+
 import { ImportWalletFromKeystoreFile } from './import-wallet-from-keystore-file/import-wallet-from-keystore-file';
 import { ImportWalletFromSeedPhrase } from './import-wallet-from-seed-phrase/import-wallet-from-seed-phrase';
+import { ImportWalletSelectors } from './selectors';
 
 export interface ImportWalletCredentials {
   seedPhrase: string;
@@ -38,6 +40,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
       <TextSegmentControl
         selectedIndex={segmentedControlIndex}
         values={['Seed phrase', 'Keystore file']}
+        testID={ImportWalletSelectors.FormSwitcher}
         onChange={setSegmentedControlIndex}
       />
       <Divider size={formatSize(32)} />

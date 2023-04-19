@@ -2,10 +2,13 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, PropsWithChildren, useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 
-import { EventFn } from '../../config/general';
-import { useLayoutSizes } from '../../hooks/use-layout-sizes.hook';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { formatSize } from '../../styles/format-size';
+import { EventFn } from 'src/config/general';
+import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> extends TestIdProps {
@@ -29,10 +32,13 @@ export const SegmentedControl = <T extends unknown>({
   values,
   renderValue,
   width,
+  testID,
+  testIDProperties,
   onChange
 }: PropsWithChildren<Props<T>>) => {
   const styles = useSegmentedControlStyles();
   const { layoutWidth, handleLayout } = useLayoutSizes();
+  const { trackEvent } = useAnalytics();
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
@@ -63,7 +69,10 @@ export const SegmentedControl = <T extends unknown>({
               ...(index === values.length - 1 && { right: formatSize(12) }),
               bottom: formatSize(8)
             }}
-            onPress={() => onChange(index)}
+            onPress={() => {
+              trackEvent(testID, AnalyticsEventCategory.FormChange, { ...testIDProperties, index });
+              onChange(index);
+            }}
           >
             {renderValue({ item, isSelected: index === selectedIndex })}
           </TouchableOpacity>
