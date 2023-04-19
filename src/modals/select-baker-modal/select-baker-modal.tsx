@@ -14,6 +14,7 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -34,7 +35,12 @@ import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
 const DISCLAIMER_MESSAGE =
   'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
-const UNKNOWN_BAKER_NAME = 'Unknown baker';
+
+const TEZ_LABEL = 'Delegate to Recommended Bakers';
+const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by Baking Bad.';
+const DCP_LABEL = 'Delegate to producer';
+const DCP_DESCRIPTION =
+  'Enter the address or domain name of a registered producer to whom you want to delegate your funds.';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',
@@ -53,6 +59,11 @@ export const SelectBakerModal: FC = () => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
+  const { isTezosNode, isDcpNode } = useNetworkInfo();
+  const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
+
+  const searchPlaceholder = `Search ${bakerNameByNode}`;
+  const UNKNOWN_BAKER_NAME = `Unknown ${bakerNameByNode}`;
 
   const { trackEvent } = useAnalytics();
 
@@ -94,7 +105,7 @@ export const SelectBakerModal: FC = () => {
       if (currentBaker.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
-          description: 'Already delegated funds to this baker.'
+          description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
         });
       } else {
         navigate(ModalsEnum.Confirmation, {
@@ -103,7 +114,7 @@ export const SelectBakerModal: FC = () => {
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
-          ...(Boolean(selectedBaker.isUnknownBaker) && { disclaimerMessage: DISCLAIMER_MESSAGE })
+          ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
     }
@@ -157,64 +168,88 @@ export const SelectBakerModal: FC = () => {
         <Divider size={formatSize(16)} />
         <View style={styles.upperContainer}>
           <Label
-            label="Delegate to Recommended Bakers"
-            description="Click on the Baker you want to delegate funds to. This list is powered by Baking Bad."
+            label={isDcpNode ? DCP_LABEL : TEZ_LABEL}
+            description={isDcpNode ? DCP_DESCRIPTION : TEZ_DESCRIPTION}
           />
         </View>
         <View style={styles.searchContainer}>
           <SearchInput
-            placeholder="Search baker"
+            placeholder={searchPlaceholder}
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
+          {searchValue === selectedAccount.publicKeyHash && (
+            <Text style={styles.errorText}>You can not delegate to yourself</Text>
+          )}
         </View>
-        <View style={styles.upperContainer}>
-          <Text style={styles.infoText}>The higher the better</Text>
+        {isTezosNode && (
+          <View style={styles.upperContainer}>
+            <Text style={styles.infoText}>The higher the better</Text>
 
-          <Sorter
-            sortValue={sortValue}
-            description="Sort bakers by:"
-            sortFieldsOptions={bakersSortFieldsOptions}
-            sortFieldsLabels={bakersSortFieldsLabels}
-            onSetSortValue={handleSortValueChange}
-            testID={SelectBakerModalSelectors.sortByDropDownButton}
-          />
-        </View>
+            <Sorter
+              sortValue={sortValue}
+              description="Sort bakers by:"
+              sortFieldsOptions={bakersSortFieldsOptions}
+              sortFieldsLabels={bakersSortFieldsLabels}
+              onSetSortValue={handleSortValueChange}
+              testID={SelectBakerModalSelectors.sortByDropDownButton}
+            />
+          </View>
+        )}
       </View>
 
-      <FlatList
-        data={finalBakersList}
-        renderItem={({ item }) => (
-          <BakerListItem
-            item={item}
-            selected={item.address === selectedBaker?.address}
-            onPress={setSelectedBaker}
-            testID={SelectBakerModalSelectors.bakerItem}
-          />
-        )}
-        keyExtractor={item => item.address}
-        style={styles.flatList}
-        windowSize={10}
-        ListEmptyComponent={
-          <BakerListItem
-            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-            onPress={setSelectedBaker}
-            selected={searchValue === selectedBaker?.address}
-          />
-        }
-      />
-
-      <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
-        <Divider size={formatSize(16)} />
-        <ButtonLargePrimary
-          title="Next"
-          disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
-          onPress={handleNextPress}
-          testID={SelectBakerModalSelectors.nextButton}
+      {isTezosNode && (
+        <FlatList
+          data={finalBakersList}
+          renderItem={({ item }) => (
+            <BakerListItem
+              item={item}
+              selected={item.address === selectedBaker?.address}
+              onPress={setSelectedBaker}
+              testID={SelectBakerModalSelectors.bakerItem}
+            />
+          )}
+          keyExtractor={item => item.address}
+          style={styles.flatList}
+          windowSize={10}
+          ListEmptyComponent={
+            searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
+              <BakerListItem
+                item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+                onPress={setSelectedBaker}
+                selected={searchValue === selectedBaker?.address}
+              />
+            ) : undefined
+          }
         />
-      </ModalButtonsContainer>
+      )}
+
+      {isDcpNode &&
+        isValidAddress(searchValue ?? '') &&
+        searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() && (
+          <View style={styles.dcpBaker}>
+            <Divider size={formatSize(16)} />
+            <BakerListItem
+              item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+              onPress={setSelectedBaker}
+              selected={searchValue === selectedBaker?.address}
+            />
+          </View>
+        )}
+
+      <View style={isDcpNode && styles.buttons}>
+        <ModalButtonsContainer>
+          <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
+          <Divider size={formatSize(16)} />
+          <ButtonLargePrimary
+            title="Next"
+            disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
+            onPress={handleNextPress}
+            testID={SelectBakerModalSelectors.nextButton}
+          />
+        </ModalButtonsContainer>
+      </View>
     </>
   );
 };
