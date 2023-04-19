@@ -1,11 +1,8 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-<<<<<<< HEAD
-import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-=======
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
->>>>>>> origin/development
+import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
 import { useCollectiblesListSelector, useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
@@ -34,12 +31,9 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
 }) => {
   const styles = useAccountDropdownItemStyles();
   const tezos = useTezosTokenSelector(account.publicKeyHash);
-<<<<<<< HEAD
   const collectibles = useCollectiblesListSelector();
   const contacts = useContactsSelector();
-=======
   const { metadata } = useNetworkInfo();
->>>>>>> origin/development
 
   return (
     <View style={styles.root}>
