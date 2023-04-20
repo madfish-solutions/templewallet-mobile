@@ -1,13 +1,11 @@
 import React, { FC, memo } from 'react';
-import { ActivityIndicator, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking.util';
 
 import { Icon } from '../icon/icon';
@@ -41,19 +39,11 @@ export const TextPromotionItem: FC<Props> = memo(
     onClose = emptyFn,
     onImageError
   }) => {
-    const { trackEvent } = useAnalytics();
     const colors = useColors();
     const styles = useTextPromotionItemStyles();
 
     return (
-      <TouchableOpacity
-        testID={testID}
-        style={[styles.container, style]}
-        onPress={() => {
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress);
-          openUrl(link);
-        }}
-      >
+      <TouchableWithAnalytics testID={testID} style={[styles.container, style]} onPress={() => openUrl(link)}>
         {loading ? (
           <View style={[styles.loaderContainer, style]}>
             <ActivityIndicator />
@@ -83,7 +73,7 @@ export const TextPromotionItem: FC<Props> = memo(
             )}
           </>
         )}
-      </TouchableOpacity>
+      </TouchableWithAnalytics>
     );
   }
 );
