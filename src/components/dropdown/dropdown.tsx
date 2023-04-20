@@ -134,9 +134,7 @@ const DropdownComponent = <T extends unknown>({
         onPress={() => {
           scroll();
 
-          if (Boolean(testID)) {
-            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-          }
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}
