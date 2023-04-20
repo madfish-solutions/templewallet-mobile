@@ -1,37 +1,23 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useTopUpOptionStyles = createUseStyles(({ colors, typography }) => ({
-  textContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: formatSize(48),
-    padding: formatSize(8)
+  content: {
+    padding: formatSize(16),
+    alignItems: 'center'
   },
   divider: {
-    marginLeft: formatSize(16),
-    marginRight: formatSize(16),
+    width: '100%',
     borderBottomWidth: formatSize(0.5),
-    borderColor: colors.lines
+    borderColor: colors.lines,
+    marginVertical: formatSize(12.5)
   },
-  actionsContainer: {
-    ...typography.caption13Semibold,
-    alignItems: 'center',
-    color: colors.orange,
-    justifyContent: 'center'
+  actionText: {
+    ...typography.body15Semibold,
+    letterSpacing: formatSize(-0.24),
+    color: colors.black
   },
   disabled: {
-    color: colors.gray1
-  },
-  providerLogo: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: formatSize(72)
-  },
-  pngImage: {
-    width: formatSize(200),
-    height: formatSize(40)
+    color: colors.disabled
   }
 }));

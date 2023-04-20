@@ -17,6 +17,7 @@ export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
     marginVertical: formatSize(4)
   },
   rootSelected: {
-    borderColor: colors.orange
+    borderColor: colors.orange,
+    borderWidth: formatSize(2)
   }
 }));
