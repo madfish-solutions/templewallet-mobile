@@ -7,8 +7,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
 import { SwapRouteSelectors } from './selectors';
@@ -20,7 +18,6 @@ export const SwapRoute: FC = () => {
   const {
     data: { chains, input, output }
   } = useSwapParamsSelector();
-  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     if (chains.length === 0) {
@@ -34,10 +31,7 @@ export const SwapRoute: FC = () => {
 
   const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
-  const toggleRoutePress = () => {
-    trackEvent(SwapRouteSelectors.showRouteSwitcher, AnalyticsEventCategory.ButtonPress);
-    setIsVisible(prevState => !prevState);
-  };
+  const toggleRoutePress = () => setIsVisible(prevState => !prevState);
 
   return (
     <View>

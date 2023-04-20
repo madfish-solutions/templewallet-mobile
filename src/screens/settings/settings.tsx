@@ -4,33 +4,35 @@ import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { NotificationCounter } from '../../components/notification-counter/notification-counter';
-import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
-import { Quote } from '../../components/quote/quote';
-import { RobotIcon } from '../../components/robot-icon/robot-icon';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { WhiteContainer } from '../../components/white-container/white-container';
-import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
-import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
-import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { changeTheme } from '../../store/settings/settings-actions';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { NotificationCounter } from 'src/components/notification-counter/notification-counter';
+import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
+import { Quote } from 'src/components/quote/quote';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { WhiteContainer } from 'src/components/white-container/white-container';
+import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
+import { WhiteContainerDivider } from 'src/components/white-container/white-container-divider/white-container-divider';
+import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
+import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { changeTheme } from 'src/store/settings/settings-actions';
 import {
   useFiatCurrencySelector,
   useIsManualBackupMadeSelector,
   useThemeSelector
-} from '../../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
+} from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
@@ -42,7 +44,7 @@ export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const resetData = useResetDataHandler();
+  const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
   const isManualBackupMade = useIsManualBackupMadeSelector();
 
@@ -70,11 +72,6 @@ export const Settings = () => {
         trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress);
       });
   }, [trackEvent]);
-
-  const handleLogoutButtonPress = useCallback(() => {
-    trackEvent(SettingsSelectors.resetWalletButton, AnalyticsEventCategory.ButtonPress);
-    resetData();
-  }, [trackEvent, resetData]);
 
   return (
     <>
@@ -215,14 +212,15 @@ export const Settings = () => {
 
           <Divider />
 
-          <TouchableOpacity
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
             style={styles.logoutButton}
             onPress={handleLogoutButtonPress}
             testID={SettingsSelectors.resetWalletButton}
           >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
-          </TouchableOpacity>
+          </TouchableWithAnalytics>
 
           <Divider />
         </View>

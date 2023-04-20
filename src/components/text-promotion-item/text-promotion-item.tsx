@@ -12,6 +12,7 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { TextPromotionItemSelectors } from './text-promotion-item.selectors';
 import { useTextPromotionItemStyles } from './text-promotion-item.styles';
 
@@ -72,15 +73,13 @@ export const TextPromotionItem: FC<Props> = memo(
               <Text style={styles.content}>{content}</Text>
             </View>
             {shouldShowCloseButton && (
-              <TouchableOpacity
+              <TouchableWithAnalytics
                 style={styles.closeButton}
-                onPress={() => {
-                  trackEvent(TextPromotionItemSelectors.closeButton, AnalyticsEventCategory.General);
-                  onClose();
-                }}
+                onPress={onClose}
+                testID={TextPromotionItemSelectors.closeButton}
               >
                 <Icon name={IconNameEnum.X} size={formatSize(16)} color={colors.peach} />
-              </TouchableOpacity>
+              </TouchableWithAnalytics>
             )}
           </>
         )}
