@@ -14,6 +14,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { DAppsSettingsSelectors } from '../d-apps.settings.selectors';
+import { PermissionItemAnalyticsEvents } from './analytics-events';
 import { usePermissionItemStyles } from './permission-item.styles';
 import { PermissionItemSelectors } from './selectors';
 
@@ -30,14 +31,15 @@ export const PermissionItem: FC<Props> = ({ permission }) => {
       {
         text: 'Cancel',
         style: 'cancel',
-        onPress: () => trackEvent('DELETE_CONNECTION_CANCEL', AnalyticsEventCategory.General)
+        onPress: () =>
+          trackEvent(PermissionItemAnalyticsEvents.DELETE_CONNECTION_CANCEL, AnalyticsEventCategory.General)
       },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
           dispatch(removePermissionAction(permission));
-          trackEvent('DELETE_CONNECTION_SUCCESS', AnalyticsEventCategory.General);
+          trackEvent(PermissionItemAnalyticsEvents.DELETE_CONNECTION_SUCCESS, AnalyticsEventCategory.General);
         }
       }
     ]);

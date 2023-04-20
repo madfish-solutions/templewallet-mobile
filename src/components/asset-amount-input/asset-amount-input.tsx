@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -11,7 +11,6 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
@@ -27,6 +26,7 @@ import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
@@ -193,7 +193,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const handleMaxButtonPress = useCallback(() => {
     if (isDefined(token)) {
-      trackEvent(AssetAmountInputSelectors.maxButton, AnalyticsEventCategory.ButtonPress, { token: token.symbol });
       const { symbol, balance } = token;
       const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
@@ -309,13 +308,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             {maxButton && (
               <>
                 <Divider size={formatSize(8)} />
-                <TouchableOpacity
+                <TouchableWithAnalytics
                   hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
                   onPress={handleMaxButtonPress}
                   testID={AssetAmountInputSelectors.maxButton}
+                  testIDProperties={{ token: token?.symbol }}
                 >
                   <Text style={styles.maxButtonText}>MAX</Text>
-                </TouchableOpacity>
+                </TouchableWithAnalytics>
               </>
             )}
           </View>

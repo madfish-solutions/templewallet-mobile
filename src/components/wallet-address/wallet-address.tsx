@@ -8,14 +8,13 @@ import { useDomainName } from 'src/hooks/use-domain-name.hook';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isString } from 'src/utils/is-string';
 
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
+import { OriginalTouchableOpacityComponent, TouchableWithAnalytics } from '../touchable-with-analytics';
 import { WalletAddressSelectors } from './selectors';
 import { useWalletAddressStyles } from './wallet-address.styles';
 
@@ -30,7 +29,6 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled, isPublicKeyH
   const dispatch = useDispatch();
   const isShownDomainName = useIsShownDomainNameSelector();
   const domainName = useDomainName(publicKeyHash);
-  const { trackEvent } = useAnalytics();
 
   if (publicKeyHash === EMPTY_PUBLIC_KEY_HASH) {
     return null;
@@ -39,18 +37,19 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled, isPublicKeyH
   return (
     <View style={styles.pkhWrapper}>
       {isShownDomainName && isString(domainName) ? (
-        <TouchableOpacity
+        <TouchableWithAnalytics
+          Component={TouchableOpacity as OriginalTouchableOpacityComponent}
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
           disabled={disabled}
           testID={WalletAddressSelectors.addressOrDomain}
-          onLongPress={() => {
-            trackEvent(WalletAddressSelectors.addressOrDomain, AnalyticsEventCategory.ButtonPress, { isDomain: true });
-            copyStringToClipboard(domainName);
-          }}
+          testIDProperties={{ isDomain: true }}
+          shouldTrackLongPress={true}
+          shouldTrackShortPress={false}
+          onLongPress={() => copyStringToClipboard(domainName)}
         >
           <Text style={styles.domainNameText}>{domainName}</Text>
-        </TouchableOpacity>
+        </TouchableWithAnalytics>
       ) : (
         <PublicKeyHashText
           longPress

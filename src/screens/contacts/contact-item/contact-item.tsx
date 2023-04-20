@@ -16,6 +16,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getTruncatedProps } from 'src/utils/style.util';
 
+import { ContactItemAnalyticsEvents } from './analytics-events';
 import { useContactItemStyles } from './contact-item.styles';
 import { ContactItemSelector } from './selectors';
 
@@ -35,14 +36,14 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
       {
         text: 'Cancel',
         style: 'cancel',
-        onPress: () => trackEvent('DELETE_CONTACT_CANCEL', AnalyticsEventCategory.General)
+        onPress: () => trackEvent(ContactItemAnalyticsEvents.DELETE_CONTACT_CANCEL, AnalyticsEventCategory.General)
       },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
           dispatch(deleteContactAction(contact));
-          trackEvent('DELETE_CONTACT_SUCCESS', AnalyticsEventCategory.General);
+          trackEvent(ContactItemAnalyticsEvents.DELETE_CONTACT_SUCCESS, AnalyticsEventCategory.General);
         }
       }
     ]);

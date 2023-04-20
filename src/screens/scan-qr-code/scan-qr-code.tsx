@@ -17,6 +17,7 @@ import { isBeaconPayload } from 'src/utils/beacon.utils';
 import { isSyncPayload } from 'src/utils/sync.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 
+import { ScanQrCodeAnalyticsEvents } from './analytics-events';
 import CustomMarker from './custom-marker.svg';
 import { EmptyQrCode } from './empty-qr-code';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
@@ -39,7 +40,7 @@ export const ScanQrCode = () => {
         if (Number(tezosToken.balance) > 0) {
           navigate(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
         } else {
-          trackEvent('SCAN_QR_CODE_ZERO_BALANCE', AnalyticsEventCategory.General);
+          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
           showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
         }
       } else if (isBeaconPayload(data)) {
@@ -57,22 +58,24 @@ export const ScanQrCode = () => {
           errorMessage => {
             dataWasIgnored = false;
             goBack();
-            trackEvent('SCAN_QR_CODE_HANDLE_ERROR', AnalyticsEventCategory.General, { errorMessage });
+            trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
+              errorMessage
+            });
             showErrorToast({ description: errorMessage });
           }
         );
         if (dataWasIgnored) {
-          trackEvent('SCAN_QR_CODE_DATA_IGNORED', AnalyticsEventCategory.General, { data });
+          trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
         }
       } else {
-        trackEvent('SCAN_QR_CODE_INVALID_QR_CODE', AnalyticsEventCategory.General);
+        trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
         showErrorToast({ description: 'Invalid QR code' });
       }
     } else {
       if (isSyncPayload(data)) {
         navigate(ScreensEnum.ConfirmSync, { payload: data });
       } else {
-        trackEvent('SCAN_QR_CODE_INVALID_QR_CODE', AnalyticsEventCategory.General);
+        trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
         showErrorToast({ description: 'Invalid QR code' });
       }
     }

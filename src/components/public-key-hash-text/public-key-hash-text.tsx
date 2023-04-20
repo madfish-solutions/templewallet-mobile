@@ -1,14 +1,13 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import { Text, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { MarginProps } from 'src/interfaces/margin.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
 
+import { OriginalTouchableOpacityComponent, TouchableWithAnalytics } from '../touchable-with-analytics';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps, TestIdProps {
@@ -31,26 +30,25 @@ export const PublicKeyHashText: FC<Props> = ({
   testIDProperties
 }) => {
   const styles = usePublicKeyHashTextStyles();
-  const { trackEvent } = useAnalytics();
 
-  const acceptPress = useCallback(() => {
-    trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-    copyStringToClipboard(publicKeyHash);
-  }, [trackEvent, testID, testIDProperties, publicKeyHash]);
-
-  const handlePress = useCallback(() => !longPress && acceptPress(), [longPress, acceptPress]);
-  const handleLongPress = useCallback(() => longPress && acceptPress(), [longPress, acceptPress]);
+  const handlePress = () => !longPress && copyStringToClipboard(publicKeyHash);
+  const handleLongPress = () => longPress && copyStringToClipboard(publicKeyHash);
 
   return (
-    <TouchableOpacity
+    <TouchableWithAnalytics
+      Component={TouchableOpacity as OriginalTouchableOpacityComponent}
       style={[styles.container, style, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
+      shouldTrackLongPress={longPress}
+      shouldTrackShortPress={!longPress}
       onPress={handlePress}
       onLongPress={handleLongPress}
+      testID={testID}
+      testIDProperties={testIDProperties}
     >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}
       </Text>
-    </TouchableOpacity>
+    </TouchableWithAnalytics>
   );
 };
