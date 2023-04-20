@@ -16,27 +16,30 @@ export interface BackupObject {
 export const buildAndEncryptBackup = async (mnemonic: string, password: string): Promise<string> => {
   const backup: BackupObject = {
     version: PackageJSON.version,
-    mnemonic,
+    mnemonic: await secureCellSealWithPassphraseEncrypt64(password, mnemonic),
     platformOS: isIOS ? 'ios' : 'android'
   };
 
-  return await secureCellSealWithPassphraseEncrypt64(password, JSON.stringify(backup));
+  return JSON.stringify(backup);
 };
 
 export const decryptFetchedBackup = async (encryptedBackup: string, password: string): Promise<BackupObject> => {
-  const backupFileStr = await secureCellSealWithPassphraseDecrypt64(password, encryptedBackup).catch(error => {
-    console.error(error);
-
-    throw new Error('Password is incorrect');
-  });
-
+  let backup: BackupObject;
   try {
-    return JSON.parse(backupFileStr);
+    backup = JSON.parse(encryptedBackup);
   } catch (error) {
     console.error(error);
 
     throw new Error('Backup is broken');
   }
+
+  backup.mnemonic = await secureCellSealWithPassphraseDecrypt64(password, backup.mnemonic).catch(error => {
+    console.error(error);
+
+    throw new Error('Password is incorrect');
+  });
+
+  return backup;
 };
 
 export function assertEncryptedBackupPresent(encryptedBackup?: string): asserts encryptedBackup is string {
