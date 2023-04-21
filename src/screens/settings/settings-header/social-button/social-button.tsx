@@ -12,7 +12,7 @@ import { useSocialButtonStyles } from './social-button.styles';
 interface Props extends TestIdProps {
   iconName: IconNameEnum;
   url: string;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   color?: string;
   size?: number;
 }

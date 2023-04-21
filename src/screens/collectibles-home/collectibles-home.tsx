@@ -18,7 +18,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { loadTzProfileIfoAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useCollectiblesListSelector,
   useSelectedAccountSelector,
@@ -27,7 +27,9 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
@@ -39,6 +41,11 @@ enum CollectiblesTypeEnum {
   Created = 'Created',
   OnSale = 'On sale',
   Offers = 'Offers'
+}
+
+interface SocialLinksInterface {
+  url: string | undefined;
+  icon: IconNameEnum;
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
@@ -60,14 +67,35 @@ export const CollectiblesHome = () => {
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 53 + insets.bottom;
 
+  const openTzProfiles = () => openUrl(`https://tzprofiles.com/view/mainnet/${selectedAccount.publicKeyHash}`);
+
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  useEffect(
-    () => void dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash)),
-    [selectedAccount.publicKeyHash]
-  );
+  useEffect(() => {
+    dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadTzProfileIfoAction.submit());
+  }, [selectedAccount.publicKeyHash]);
 
   const sheetRef = useRef<BottomSheet>(null);
+
+  const { alias, twitter, discord, website, github } = selectedAccount.tzProfile || {};
+
+  const socialLinks: SocialLinksInterface[] = [
+    { url: twitter, icon: IconNameEnum.Twitter },
+    { url: isDefined(discord) ? `https://discordapp.com/users/${discord}` : discord, icon: IconNameEnum.Discord },
+    { url: website, icon: IconNameEnum.Website },
+    { url: github, icon: IconNameEnum.Github }
+  ].sort((a, b) => {
+    if (typeof a.url === 'undefined' && typeof b.url === 'undefined') {
+      return 0;
+    } else if (typeof a.url === 'undefined') {
+      return 1;
+    } else if (typeof b.url === 'undefined') {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
 
   const snapPoints = useMemo(
     () => [
@@ -80,7 +108,17 @@ export const CollectiblesHome = () => {
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
-  const renderItem: ListRenderItem<Collection> = ({ item }) => {
+  const renderItemSocialLinks: ListRenderItem<SocialLinksInterface> = ({ item }) => (
+    <SocialButton
+      iconName={item.icon}
+      url={item.url ?? ''}
+      style={[styles.socialsIcon, conditionalStyle(!isDefined(item.url), styles.socialIconsBgColor)]}
+      color={isDefined(item.url) ? colors.orange : colors.disabled}
+      size={SMALL_SOCIAL_ICON_SIZE}
+    />
+  );
+
+  const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
     const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
 
     return (
@@ -127,37 +165,15 @@ export const CollectiblesHome = () => {
           <View style={styles.profileContainer}>
             <View style={styles.createProfile}>
               <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
-              <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+              {isDefined(alias) ? (
+                <TouchableOpacity onPress={openTzProfiles}>
+                  <Text style={styles.createProfileText}>EDIT PROFILE</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+              )}
             </View>
-
-            <SocialButton
-              iconName={IconNameEnum.Twitter}
-              url={''}
-              style={styles.socialsIcon}
-              color={colors.disabled}
-              size={SMALL_SOCIAL_ICON_SIZE}
-            />
-            <SocialButton
-              iconName={IconNameEnum.Website}
-              url={''}
-              style={styles.socialsIcon}
-              color={colors.disabled}
-              size={SMALL_SOCIAL_ICON_SIZE}
-            />
-            <SocialButton
-              iconName={IconNameEnum.Github}
-              url={''}
-              style={styles.socialsIcon}
-              color={colors.disabled}
-              size={SMALL_SOCIAL_ICON_SIZE}
-            />
-            <SocialButton
-              iconName={IconNameEnum.Discord}
-              url={''}
-              style={styles.socialsIcon}
-              color={colors.disabled}
-              size={SMALL_SOCIAL_ICON_SIZE}
-            />
+            <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
           </View>
 
           {collections.length > 0 && (
@@ -171,7 +187,7 @@ export const CollectiblesHome = () => {
           <View style={styles.collectionsContainer}>
             <FlatList
               data={collections}
-              renderItem={renderItem}
+              renderItem={renderItemCollections}
               keyExtractor={collection => `${collection.logo}_${collection.name}`}
               horizontal
               extraData={collections}

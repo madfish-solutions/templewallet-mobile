@@ -1,11 +1,17 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { formatImgUri } from 'src/utils/image.utils';
 
 import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useCollectiblesListSelector, useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
+import {
+  useCollectiblesListSelector,
+  useSelectedAccountSelector,
+  useTezosTokenSelector
+} from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { isDefined } from '../../../utils/is-defined';
@@ -34,10 +40,16 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   const collectibles = useCollectiblesListSelector();
   const contacts = useContactsSelector();
   const { metadata } = useNetworkInfo();
+  const selectedAccount = useSelectedAccountSelector();
+  const { logo, alias } = selectedAccount.tzProfile ?? {};
 
   return (
     <View style={styles.root}>
-      <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+      {isDefined(logo) && isCollectibleScreen ? (
+        <FastImage style={styles.image} source={{ uri: formatImgUri(selectedAccount.tzProfile?.logo) }} />
+      ) : (
+        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+      )}
       <View style={styles.infoContainer}>
         <View
           style={[
@@ -46,7 +58,9 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
             conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
           ]}
         >
-          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>
+            {isDefined(alias) && isCollectibleScreen ? alias : account.name}
+          </Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>

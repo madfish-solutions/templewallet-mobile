@@ -1,5 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { TzProfile } from 'src/interfaces/tzProfile.interface';
+
 import { AccountInterface } from '../../interfaces/account.interface';
 import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
 import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
@@ -39,3 +41,5 @@ export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');
+
+export const loadTzProfileIfoAction = createActions<void, TzProfile, string>('wallet/LOAD_TZPROFILE');

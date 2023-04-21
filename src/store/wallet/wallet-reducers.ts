@@ -1,6 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash-es';
 
+import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
 import { AccountInterface } from '../../interfaces/account.interface';
@@ -25,7 +27,8 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions
+  loadTokensBalancesArrayActions,
+  loadTzProfileIfoAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -143,6 +146,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
             dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
           }
     );
+  });
+
+  builder.addCase(loadTzProfileIfoAction.success, (state, { payload }) => {
+    const selectedAccount = getSelectedAccount(state);
+
+    return {
+      ...state,
+      accounts: state.accounts.map(item =>
+        item.publicKeyHash === selectedAccount.publicKeyHash ? { ...item, tzProfile: { ...payload } } : item
+      )
+    };
   });
 
   // MIGRATIONS
