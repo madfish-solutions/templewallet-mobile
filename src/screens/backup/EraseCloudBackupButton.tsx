@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, Alert } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -30,15 +30,32 @@ export const EraseCloudBackupButton: FC = () => {
     return null;
   }
 
-  const handlePress = async () => {
-    try {
-      await eraseCloudBackup().catch(catchThrowToastError("Couldn't erase backup", true));
+  const handlePress = () => {
+    const erase = async () => {
+      try {
+        await eraseCloudBackup().catch(catchThrowToastError("Couldn't erase backup", true));
 
-      setBackupExists(false);
-      showSuccessToast({ description: 'Backup erased' });
-    } catch (error) {
-      showErrorToastByError(error);
-    }
+        setBackupExists(false);
+        showSuccessToast({ description: 'Backup erased' });
+      } catch (error) {
+        showErrorToastByError(error);
+      }
+    };
+
+    Alert.alert(
+      'Erasing cloud backup',
+      'Are you sure? This operation cannot be reverted.',
+      [
+        {
+          text: 'Erase',
+          onPress: erase
+        },
+        { text: 'Cancel', style: 'cancel' }
+      ],
+      {
+        cancelable: true
+      }
+    );
   };
 
   return (
