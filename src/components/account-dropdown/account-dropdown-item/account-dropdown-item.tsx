@@ -46,7 +46,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   return (
     <View style={styles.root}>
       {isDefined(logo) && isCollectibleScreen ? (
-        <FastImage style={styles.image} source={{ uri: formatImgUri(selectedAccount.tzProfile?.logo) }} />
+        <FastImage style={styles.image} source={{ uri: formatImgUri(logo) }} />
       ) : (
         <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
       )}

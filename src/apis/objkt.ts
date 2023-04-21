@@ -35,7 +35,7 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
 };
 
 export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => {
-  const request = buildTzProfilesQuery(address);
+  const request = buildGetHoldersInfoQuery(address);
 
   return apolloObjktClient.query<TzProfilesQueryResponse>(request).pipe(
     map(result => {
@@ -69,7 +69,7 @@ const buildGetCollectiblesInfoQuery = (address: string) => gql`
   }
 `;
 
-const buildTzProfilesQuery = (address: string) => gql`
+const buildGetHoldersInfoQuery = (address: string) => gql`
   query MyQuery {
     holder_by_pk(address: "${address}") {
       alias
