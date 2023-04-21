@@ -1,10 +1,9 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking.util';
 
 import { Icon } from '../icon';
@@ -18,12 +17,14 @@ interface Props extends TestIdProps {
 export const ExternalLinkButton: FC<Props> = ({ url, testID }) => {
   const colors = useColors();
   const styles = useExternalLinkButtonStyles();
-  const { trackEvent } = useAnalytics();
-
-  const handlePress = useCallback(() => openUrl(url), [trackEvent, testID, url]);
 
   return (
-    <TouchableWithAnalytics Component={TouchableOpacity} style={styles.container} testID={testID} onPress={handlePress}>
+    <TouchableWithAnalytics
+      Component={TouchableOpacity}
+      style={styles.container}
+      testID={testID}
+      onPress={() => openUrl(url)}
+    >
       <Icon name={IconNameEnum.ExternalLink} color={colors.blue} />
     </TouchableWithAnalytics>
   );

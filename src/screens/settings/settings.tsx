@@ -61,7 +61,6 @@ export const Settings = () => {
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   const handleShare = useCallback(() => {
-    trackEvent(SettingsSelectors.shareTempleWalletButton, AnalyticsEventCategory.ButtonPress);
     Share.share({
       message: SHARE_CONTENT
     })

@@ -7,7 +7,7 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
 
-import { OriginalTouchableOpacityComponent, TouchableWithAnalytics } from '../touchable-with-analytics';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps, TestIdProps {
@@ -36,7 +36,7 @@ export const PublicKeyHashText: FC<Props> = ({
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity as OriginalTouchableOpacityComponent}
+      Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
       style={[styles.container, style, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
       shouldTrackLongPress={longPress}

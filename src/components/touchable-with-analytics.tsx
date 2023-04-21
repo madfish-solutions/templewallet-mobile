@@ -5,10 +5,10 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
-export type OriginalTouchableOpacityComponent = ComponentType<TouchableOpacityProps>;
+export type OriginalTouchableOpacityComponentType = ComponentType<TouchableOpacityProps>;
 
 interface Props extends TouchableOpacityProps, TestIdProps {
-  Component?: OriginalTouchableOpacityComponent;
+  Component?: OriginalTouchableOpacityComponentType;
   shouldTrackShortPress?: boolean;
   shouldTrackLongPress?: boolean;
 }
