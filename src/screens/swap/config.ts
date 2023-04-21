@@ -9,6 +9,7 @@ export const BURN_ADDREESS = 'tz1burnburnburnburnburnburnburjAYjjX';
 export const ROUTE3_CONTRACT = 'KT1Tuta6vbpHhZ15ixsYD3qJdhnpEAuogLQ9';
 
 export const ROUTING_FEE_PERCENT = 0.35;
+export const CASHBACK_PERCENT = 0.175;
 export const ROUTING_FEE_RATIO = (100 - ROUTING_FEE_PERCENT) / 100;
 export const ROUTING_FEE_SLIPPAGE_RATIO = 0.99;
 export const ZERO = new BigNumber(0);
