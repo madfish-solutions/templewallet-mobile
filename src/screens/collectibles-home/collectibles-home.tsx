@@ -88,9 +88,11 @@ export const CollectiblesHome = () => {
   ].sort((a, b) => {
     if (isDefined(a.url) && isDefined(b.url)) {
       return 0;
-    } else if (!isDefined(a.url)) {
+    }
+    if (!isDefined(a.url)) {
       return 1;
-    } else if (!isDefined(b.url)) {
+    }
+    if (!isDefined(b.url)) {
       return -1;
     }
 
