@@ -6,7 +6,7 @@ export enum ScreensEnum {
   SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
-  RestoreFromCloud = 'RestoreFromCloud',
+  ContinueWithCloud = 'ContinueWithCloud',
 
   /** Wallet stack **/
   Wallet = 'Wallet',
@@ -59,7 +59,7 @@ export type ScreensParamList = {
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; cloudBackupId?: number };
-  [ScreensEnum.RestoreFromCloud]: undefined;
+  [ScreensEnum.ContinueWithCloud]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;

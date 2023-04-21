@@ -13,11 +13,10 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
   cloudTitle,
-  fetchCloudBackupDetails,
+  doesCloudBackupExist,
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
-import { isTruthy } from 'src/utils/is-truthy';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
@@ -82,13 +81,13 @@ export const useHandleSubmit = () => {
               return isLoggedIn;
             }),
             switchMap(() =>
-              from(fetchCloudBackupDetails().catch(catchThrowToastError('Failed to read from cloud', true)))
+              from(doesCloudBackupExist().catch(catchThrowToastError('Failed to read from cloud', true)))
             ),
-            map(backupFile => ({ backupFile, password }))
+            map(backupExists => ({ backupExists, password }))
           )
         ),
-        tap(({ backupFile, password }) => {
-          if (isTruthy(backupFile)) {
+        tap(({ backupExists, password }) => {
+          if (backupExists) {
             dispatch(hideLoaderAction());
 
             return void alertOnExistingBackup(

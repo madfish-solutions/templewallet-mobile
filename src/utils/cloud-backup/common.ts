@@ -13,37 +13,45 @@ export interface BackupObject {
   platformOS: 'ios' | 'android';
 }
 
+export interface EncryptedBackupObject extends Omit<BackupObject, 'mnemonic'> {
+  encryptedMnemonic: string;
+}
+
 export const buildAndEncryptBackup = async (mnemonic: string, password: string): Promise<string> => {
-  const backup: BackupObject = {
+  const backup: EncryptedBackupObject = {
     version: PackageJSON.version,
-    mnemonic: await secureCellSealWithPassphraseEncrypt64(password, mnemonic),
+    encryptedMnemonic: await secureCellSealWithPassphraseEncrypt64(password, mnemonic),
     platformOS: isIOS ? 'ios' : 'android'
   };
 
   return JSON.stringify(backup);
 };
 
-export const decryptFetchedBackup = async (encryptedBackup: string, password: string): Promise<BackupObject> => {
-  let backup: BackupObject;
+export const parseBackup = (encryptedBackup: string | undefined): EncryptedBackupObject | undefined => {
+  if (!isString(encryptedBackup)) {
+    return;
+  }
+
   try {
-    backup = JSON.parse(encryptedBackup);
+    return JSON.parse(encryptedBackup);
   } catch (error) {
     console.error(error);
 
-    throw new Error('Backup is broken');
+    throw new Error('Backup content is broken');
   }
+};
 
-  backup.mnemonic = await secureCellSealWithPassphraseDecrypt64(password, backup.mnemonic).catch(error => {
+export const decryptCloudBackup = async (
+  encryptedBackup: EncryptedBackupObject,
+  password: string
+): Promise<BackupObject> => {
+  const { encryptedMnemonic, ...backupBase } = encryptedBackup;
+
+  const mnemonic = await secureCellSealWithPassphraseDecrypt64(password, encryptedMnemonic).catch(error => {
     console.error(error);
 
     throw new Error('Password is incorrect');
   });
 
-  return backup;
+  return { ...backupBase, mnemonic };
 };
-
-export function assertEncryptedBackupPresent(encryptedBackup?: string): asserts encryptedBackup is string {
-  if (!isString(encryptedBackup)) {
-    throw new Error('Cloud backup not found');
-  }
-}

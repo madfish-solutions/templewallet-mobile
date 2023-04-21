@@ -4,20 +4,21 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { isAndroid, isIOS } from 'src/config/system';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
-import { WelcomeSelectors } from '../welcome.selectors';
-import { useCloudButtonActiveColorStyleConfig } from '../welcome.styles';
-import { useOnContinueWithCloudButtonPress } from './utils';
+import { WelcomeSelectors } from './welcome.selectors';
+import { useCloudButtonActiveColorStyleConfig } from './welcome.styles';
 
 export const ContinueWithCloudButton = () => {
   const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   const theme = useThemeSelector();
 
-  const onPress = useOnContinueWithCloudButtonPress();
+  const { navigate } = useNavigation();
 
   const cloudIsAvailable = useIsCloudAvailable();
 
@@ -29,7 +30,7 @@ export const ContinueWithCloudButton = () => {
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
       disabled={!cloudIsAvailable}
-      onPress={onPress}
+      onPress={() => navigate(ScreensEnum.ContinueWithCloud)}
       testID={WelcomeSelectors.continueWithCloudButton}
       testIDProperties={{ cloud: cloudTitle }}
     />

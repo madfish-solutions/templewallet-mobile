@@ -18,7 +18,7 @@ import {
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { cloudTitle, fetchCloudBackupDetails, saveCloudBackup } from 'src/utils/cloud-backup';
+import { cloudTitle, doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
 import { generateSeed } from 'src/utils/keys.util';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
@@ -68,8 +68,8 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   const doBackupToCloud = useCallback(
     async ({ seedPhrase, password }: DoBackupValues) => {
       try {
-        const details = await fetchCloudBackupDetails();
-        if (Boolean(details)) {
+        const exists = await doesCloudBackupExist();
+        if (exists) {
           throw new Error('Some backup already exists');
         }
 

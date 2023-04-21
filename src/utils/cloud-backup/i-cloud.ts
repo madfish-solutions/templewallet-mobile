@@ -1,14 +1,9 @@
 import RNCloudFs from 'react-native-cloud-fs';
 
+import { isTruthy } from 'src/utils/is-truthy';
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
-import {
-  BackupObject,
-  CLOUD_REQUEST_TIMEOUT,
-  assertEncryptedBackupPresent,
-  buildAndEncryptBackup,
-  decryptFetchedBackup
-} from './common';
+import { CLOUD_REQUEST_TIMEOUT, EncryptedBackupObject, buildAndEncryptBackup, parseBackup } from './common';
 
 const BACKUP_STORE_KEY = 'WALLET_BACKUP_JSON';
 
@@ -20,14 +15,10 @@ export const requestSignInToCloud = async () => {
   return true;
 };
 
-export const fetchCloudBackupDetails = () =>
-  RNCloudFs.getKeyValueStoreObjectDetails(BACKUP_STORE_KEY).catch(error => {
-    console.error('RNCloudFs.getKeyValueStoreData() error:', error);
+export const doesCloudBackupExist = () =>
+  fetchCloudBackupDetails().then(details => isTruthy(details) && details.valueLength > 0);
 
-    return undefined;
-  });
-
-export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
+export const fetchCloudBackup = async (): Promise<EncryptedBackupObject | undefined> => {
   const encryptedBackup = await rejectOnTimeout(
     RNCloudFs.getKeyValueStoreObject(BACKUP_STORE_KEY).catch(error => {
       console.error('RNCloudFs.getKeyValueStoreData() error:', error);
@@ -38,9 +29,7 @@ export const fetchCloudBackup = async (password: string): Promise<BackupObject> 
     new Error("Reading cloud took too long. Try switching 'iCloud Drive' sync off & on again")
   );
 
-  assertEncryptedBackupPresent(encryptedBackup);
-
-  return await decryptFetchedBackup(encryptedBackup, password);
+  return parseBackup(encryptedBackup);
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
@@ -76,3 +65,10 @@ const syncCloud = async () => {
     throw new Error('Failed to sync. See if iCloud is enabled');
   }
 };
+
+const fetchCloudBackupDetails = () =>
+  RNCloudFs.getKeyValueStoreObjectDetails(BACKUP_STORE_KEY).catch(error => {
+    console.error('RNCloudFs.getKeyValueStoreData() error:', error);
+
+    throw error;
+  });

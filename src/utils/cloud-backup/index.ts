@@ -1,9 +1,11 @@
 import { isIOS } from 'src/config/system';
 
-import { BackupObject } from './common';
+import { EncryptedBackupObject } from './common';
 import * as GoogleDriveAPI from './google-drive';
 import * as ICloudAPI from './i-cloud';
 
+export type { EncryptedBackupObject } from './common';
+export { decryptCloudBackup } from './common';
 export { keepRestoredCloudBackup, useRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
@@ -15,11 +17,11 @@ export const isCloudAvailable = (): Promise<boolean> =>
 export const requestSignInToCloud = (): Promise<boolean> =>
   isIOS ? ICloudAPI.requestSignInToCloud() : GoogleDriveAPI.requestSignInToCloud();
 
-export const fetchCloudBackupDetails = () =>
-  isIOS ? ICloudAPI.fetchCloudBackupDetails() : GoogleDriveAPI.fetchCloudBackupDetails();
+export const doesCloudBackupExist = (): Promise<boolean> =>
+  isIOS ? ICloudAPI.doesCloudBackupExist() : GoogleDriveAPI.doesCloudBackupExist();
 
-export const fetchCloudBackup = (password: string): Promise<BackupObject> =>
-  isIOS ? ICloudAPI.fetchCloudBackup(password) : GoogleDriveAPI.fetchCloudBackup(password);
+export const fetchCloudBackup = (): Promise<EncryptedBackupObject | undefined> =>
+  isIOS ? ICloudAPI.fetchCloudBackup() : GoogleDriveAPI.fetchCloudBackup();
 
 export const saveCloudBackup = (mnemonic: string, password: string) =>
   isIOS ? ICloudAPI.saveCloudBackup(mnemonic, password) : GoogleDriveAPI.saveCloudBackup(mnemonic, password);

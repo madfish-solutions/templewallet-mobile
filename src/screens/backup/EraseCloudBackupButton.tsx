@@ -5,7 +5,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { requestSignInToCloud, fetchCloudBackupDetails, eraseCloudBackup } from 'src/utils/cloud-backup';
+import { requestSignInToCloud, eraseCloudBackup, doesCloudBackupExist } from 'src/utils/cloud-backup';
 
 import { useEraseCloudBackupButtonStyles } from './backup.styles';
 
@@ -17,9 +17,9 @@ export const EraseCloudBackupButton: FC = () => {
     (async () => {
       try {
         await requestSignInToCloud().catch(catchThrowToastError('Failed to log-in', true));
-        const backup = await fetchCloudBackupDetails().catch(catchThrowToastError('Failed to check backup', true));
+        const exists = await doesCloudBackupExist().catch(catchThrowToastError('Failed to check backup', true));
 
-        setBackupExists(Boolean(backup));
+        setBackupExists(exists);
       } catch (error) {
         showErrorToastByError(error);
       }

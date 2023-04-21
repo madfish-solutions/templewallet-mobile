@@ -5,13 +5,7 @@ import * as RNFS from 'react-native-fs';
 import { isString } from 'src/utils/is-string';
 import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
-import {
-  BackupObject,
-  CLOUD_REQUEST_TIMEOUT,
-  assertEncryptedBackupPresent,
-  buildAndEncryptBackup,
-  decryptFetchedBackup
-} from './common';
+import { CLOUD_REQUEST_TIMEOUT, EncryptedBackupObject, buildAndEncryptBackup, parseBackup } from './common';
 
 const scope = 'hidden';
 const filename = 'wallet-backup.json';
@@ -57,33 +51,26 @@ export const requestSignInToCloud = async () => {
   }
 };
 
-export const fetchCloudBackupDetails = async () => {
-  const data = await RNCloudFs.listFiles<'Android'>({
-    scope,
-    targetPath: ''
-  }).catch(error => {
-    console.error("NCloudFs.listFiles<'Android'> error:", error);
-  });
+export const doesCloudBackupExist = () => fetchCloudBackupDetails().then(details => Boolean(details));
 
-  return data?.files?.find(file => file.name.endsWith(filename));
-};
+export const fetchCloudBackup = async (): Promise<EncryptedBackupObject | undefined> => {
+  const details = await fetchCloudBackupDetails();
 
-export const fetchCloudBackup = async (password: string): Promise<BackupObject> => {
+  if (!details) {
+    return;
+  }
+
   const encryptedBackup = await rejectOnTimeout(
-    fetchCloudBackupDetails()
-      .then(details => details && RNCloudFs.getGoogleDriveDocument(details.id))
-      .catch(error => {
-        console.error('RNCloudFs.getGoogleDriveDocument() error:', error);
+    RNCloudFs.getGoogleDriveDocument(details.id).catch(error => {
+      console.error('RNCloudFs.getGoogleDriveDocument() error:', error);
 
-        throw new Error("Failed to read cloud. See if it's enabled");
-      }),
+      throw new Error("Failed to read cloud. See if it's enabled");
+    }),
     CLOUD_REQUEST_TIMEOUT,
     new Error('Reading cloud took too long')
   );
 
-  assertEncryptedBackupPresent(encryptedBackup);
-
-  return await decryptFetchedBackup(encryptedBackup, password);
+  return parseBackup(encryptedBackup);
 };
 
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
@@ -151,4 +138,17 @@ const preLogOut = async () => {
 
     throw new Error('Failed to pre-log-out');
   }
+};
+
+const fetchCloudBackupDetails = async () => {
+  const data = await RNCloudFs.listFiles<'Android'>({
+    scope,
+    targetPath: ''
+  }).catch(error => {
+    console.error("NCloudFs.listFiles<'Android'> error:", error);
+
+    throw error;
+  });
+
+  return data.files?.find(file => file.name.endsWith(filename));
 };

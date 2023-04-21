@@ -110,6 +110,7 @@ export enum IconNameEnum {
   LbDappIcon = 'LbDappIcon',
   LbTokenIcon = 'LbTokenIcon',
   RefreshIcon = 'RefreshIcon',
+  RetryIcon = 'RetryIcon',
   ChartIcon = 'ChartIcon',
   MinusIcon = 'MinusIcon',
   PlusIcon = 'PlusIcon',
