@@ -9,7 +9,9 @@ const accentColors = {
   peach: '#FF5B00',
   liteGreen: '#3EBD93',
   darkGreen: '#143A3A',
-  dollarGreen: '#009393'
+  accentDarkGray: '#434343',
+  dollarGreen: '#009393',
+  kolibriGreen: '#46BC94'
 };
 
 const accentAlphaColors = {

@@ -1,3 +1,5 @@
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+
 import { outputTokensList } from '../../config';
 
 export const initialData = {
@@ -7,7 +9,8 @@ export const initialData = {
       name: 'Bitcoin',
       icon: 'https://exolix.com/icons/coins/BTC.png',
       network: 'BTC',
-      networkFullName: 'Bitcoin'
+      networkFullName: 'Bitcoin',
+      type: TopUpInputTypeEnum.Crypto
     },
     amount: undefined,
     min: 0,

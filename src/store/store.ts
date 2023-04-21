@@ -1,6 +1,7 @@
 import { abTestingEpics } from './ab-testing/ab-testing-epics';
 import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
+import { buyWithCreditCardEpics } from './buy-with-credit-card/epics';
 import { collectionsEpics } from './collectons/collections-epics';
 import { contactsEpics } from './contact-book/contact-book-epics';
 import { createStore } from './create-store';
@@ -35,6 +36,7 @@ export const { store, persistor } = createStore(
   swapEpics,
   contactsEpics,
   collectionsEpics,
+  buyWithCreditCardEpics,
   partnersPromotionEpics,
   abTestingEpics
 );

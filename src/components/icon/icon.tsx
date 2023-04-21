@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
 import { TestIdProps } from '../../interfaces/test-id.props';
@@ -11,7 +11,7 @@ export interface IconProps extends TestIdProps, SvgProps {
   name: IconNameEnum;
   size?: number;
   color?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Icon: FC<IconProps> = ({
