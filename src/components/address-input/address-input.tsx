@@ -14,14 +14,14 @@ import { StyledTextInputProps } from '../styled-text-input/styled-text-input.pro
 import { StyledTextInputStyles } from '../styled-text-input/styled-text-input.styles';
 import { AddressInputStyles } from './address-input.styles';
 
-export interface AddressInputProps
+interface Props
   extends Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'>,
     TestIdProps {
   pasteButtonTestID?: string;
   pasteButtonTestIDProperties?: object;
 }
 
-export const AddressInput: FC<AddressInputProps> = ({
+export const AddressInput: FC<Props> = ({
   value,
   placeholder,
   isError,
