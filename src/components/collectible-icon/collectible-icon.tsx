@@ -103,7 +103,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
       style={{
         width: size,
         height: size,
-        padding: formatSize(4)
+        padding: formatSize(2)
       }}
     >
       {isDefined(collectible.thumbnailUri) &&

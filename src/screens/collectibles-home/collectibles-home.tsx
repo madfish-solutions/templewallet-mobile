@@ -66,6 +66,7 @@ export const CollectiblesHome = () => {
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 53 + insets.bottom;
+  const ICON_COVER_GAP = 2;
 
   const openTzProfiles = () => openUrl(`https://tzprofiles.com/view/mainnet/${selectedAccount.publicKeyHash}`);
 
@@ -102,7 +103,7 @@ export const CollectiblesHome = () => {
   const snapPoints = useMemo(
     () => [
       windowHeight - (headerHeight + TAB_BAR_HEIGHT),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT)
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
     ],
     [headerHeight, visibleBlockHeight]
   );
@@ -198,7 +199,13 @@ export const CollectiblesHome = () => {
           </View>
         </View>
       </HeaderCard>
-      <BottomSheet ref={sheetRef} snapPoints={snapPoints} handleStyle={styles.handleStyle}>
+      <BottomSheet
+        ref={sheetRef}
+        snapPoints={snapPoints}
+        handleStyle={styles.handleStyle}
+        style={styles.bottomSheet}
+        backgroundStyle={styles.bottomSheet}
+      >
         <View style={styles.nftTypeContainer}>
           <TouchableOpacity style={[styles.NFTType, styles.NFTtypeActive]}>
             <Text style={styles.NFTtypeText}>{CollectiblesTypeEnum.Owned}</Text>

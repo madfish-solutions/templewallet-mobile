@@ -5,10 +5,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
   headerCard: {
-    paddingHorizontal: 0
-  },
-  widthPaddingHorizontal: {
-    paddingHorizontal: formatSize(16)
+    paddingHorizontal: 0,
+    paddingBottom: 0
   },
   headerContainer: {
     flexDirection: 'row',
@@ -19,31 +17,18 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     alignItems: 'center'
   },
-  walletNavigationButton: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  walletNavigationButtonText: {
-    ...typography.tagline13Tag,
-    color: colors.peach,
-    textTransform: 'uppercase'
-  },
-  descriptionText: {
-    ...typography.caption13Regular,
-    color: colors.gray1,
-    paddingVertical: formatSize(8)
-  },
   accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: formatSize(16)
+    marginLeft: formatSize(16),
+    marginBottom: formatSize(12)
   },
   profileContainer: {
     flexDirection: 'row',
     marginHorizontal: formatSize(24),
-    marginTop: formatSize(16),
-    marginBottom: formatSize(20)
+    marginBottom: formatSize(20),
+    marginTop: formatSize(4)
   },
   socialsIcon: {
     width: formatSize(24),
@@ -136,7 +121,10 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: formatSize(20),
-    paddingVertical: formatSize(13)
+    paddingVertical: formatSize(13),
+    borderBottomColor: colors.lines,
+    borderBottomWidth: formatSize(0.5),
+    backgroundColor: colors.pageBG
   },
   checkboxText: {
     ...typography.caption11Regular,
@@ -159,5 +147,8 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   socialLinks: {
     flexDirection: 'row'
+  },
+  bottomSheet: {
+    backgroundColor: colors.pageBG
   }
 }));
