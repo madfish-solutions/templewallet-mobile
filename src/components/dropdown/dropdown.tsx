@@ -51,11 +51,7 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<{
-  value?: T;
-  disabled?: boolean;
-}> &
-  TestIdProps;
+export type DropdownValueComponent<T> = FC<{ value?: T; disabled?: boolean } & TestIdProps>;
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
