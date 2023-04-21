@@ -3,6 +3,10 @@ import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
 import { formatSize } from '../../styles/format-size';
@@ -15,7 +19,7 @@ import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './dropdown.styles';
 
-export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface DropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: T[];
   isSearchable?: boolean;
@@ -28,7 +32,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
   itemHeight?: number;
   list: T[];
@@ -39,7 +43,7 @@ export interface DropdownValueProps<T> {
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderValue: DropdownValueComponent<T>;
   renderAccountListItem: DropdownListItemComponent<T>;
-};
+} & TestIdProps;
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
@@ -73,8 +77,11 @@ const DropdownComponent = <T extends unknown>({
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -120,6 +127,8 @@ const DropdownComponent = <T extends unknown>({
         disabled={disabled}
         onPress={() => {
           scroll();
+
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}

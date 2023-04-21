@@ -49,7 +49,9 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface
   list,
   onValueChange,
   renderValue,
-  renderAccountListItem
+  renderAccountListItem,
+  testID,
+  testIDProperties
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
@@ -64,6 +66,8 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface
       renderActionButtons={ActionButtons}
       onValueChange={onValueChange}
       onLongPress={onLongPressHandler}
+      testID={testID}
+      testIDProperties={testIDProperties}
     />
   );
 };

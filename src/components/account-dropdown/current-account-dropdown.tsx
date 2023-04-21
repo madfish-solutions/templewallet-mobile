@@ -21,7 +21,9 @@ const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ valu
 export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>> = ({
   value,
   list,
-  onValueChange
+  onValueChange,
+  testID,
+  testIDProperties
 }) => (
   <View style={CurrentAccountDropdownStyles.root}>
     <AccountDropdownBase
@@ -30,6 +32,8 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>
       renderValue={renderAccountValue}
       renderAccountListItem={renderAccountListItem}
       onValueChange={onValueChange}
+      testID={testID}
+      testIDProperties={testIDProperties}
     />
   </View>
 );
