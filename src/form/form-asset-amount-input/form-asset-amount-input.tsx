@@ -30,7 +30,9 @@ export const FormAssetAmountInput: FC<Props> = ({
   maxButton = false,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
-  testID
+  testID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<AssetAmountInterface>(name);
@@ -64,6 +66,8 @@ export const FormAssetAmountInput: FC<Props> = ({
         onBlur={handleBlur}
         onValueChange={handleValueChange}
         testID={testID}
+        switcherTestID={switcherTestID}
+        maxButtonTestID={maxButtonTestID}
       />
       <ErrorMessage meta={meta} />
     </>

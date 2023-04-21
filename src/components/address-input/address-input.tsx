@@ -2,6 +2,9 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC, useRef } from 'react';
 import { TextInput, View } from 'react-native';
 
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { emptyFn } from '../../config/general';
 import { TestIdProps } from '../../interfaces/test-id.props';
 import { isString } from '../../utils/is-string';
@@ -11,13 +14,30 @@ import { StyledTextInputProps } from '../styled-text-input/styled-text-input.pro
 import { StyledTextInputStyles } from '../styled-text-input/styled-text-input.styles';
 import { AddressInputStyles } from './address-input.styles';
 
-type Props = Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'> & TestIdProps;
+export interface AddressInputProps
+  extends Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'>,
+    TestIdProps {
+  pasteButtonTestID?: string;
+  pasteButtonTestIDProperties?: object;
+}
 
-export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, onChangeText = emptyFn, testID }) => {
+export const AddressInput: FC<AddressInputProps> = ({
+  value,
+  placeholder,
+  isError,
+  onBlur,
+  onChangeText = emptyFn,
+  testID,
+  testIDProperties,
+  pasteButtonTestID,
+  pasteButtonTestIDProperties
+}) => {
   const inputRef = useRef<TextInput>(null);
+  const { trackEvent } = useAnalytics();
 
   const handlePasteButtonPress = async () => {
     inputRef.current?.focus();
+    trackEvent(pasteButtonTestID, AnalyticsEventCategory.ButtonPress, pasteButtonTestIDProperties);
     onChangeText(await Clipboard.getString());
   };
 
@@ -35,6 +55,7 @@ export const AddressInput: FC<Props> = ({ value, placeholder, isError, onBlur, o
         onBlur={onBlur}
         onChangeText={onChangeText}
         testID={testID}
+        testIDProperties={testIDProperties}
       />
       {!isString(value) && (
         <View style={AddressInputStyles.buttonsContainer}>

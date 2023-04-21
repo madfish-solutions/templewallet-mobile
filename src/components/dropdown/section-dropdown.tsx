@@ -2,6 +2,10 @@ import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback } from 'react';
 import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
 import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
 import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
@@ -15,7 +19,7 @@ import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './styles';
 
-export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: Array<SectionDropdownDataInterface<T>>;
   isSearchable?: boolean;
@@ -66,11 +70,14 @@ const SectionDropdownComponent = <T extends unknown>({
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = useDropdownHeight();
+  const { trackEvent } = useAnalytics();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -121,6 +128,8 @@ const SectionDropdownComponent = <T extends unknown>({
         disabled={disabled}
         onPress={() => {
           scroll();
+
+          trackEvent(testID, AnalyticsEventCategory.General, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}

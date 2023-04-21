@@ -3,5 +3,9 @@ export enum SendModalSelectors {
   toInput = 'Send (Modal)/To Input',
   transferBetweenMyAccountsCheckBox = 'Send (Modal)/Transef Between My Accounts Check Box',
   closeButton = 'Send (Modal)/Close Button',
-  sendButton = 'Send (Modal)/Send Button'
+  sendButton = 'Send (Modal)/Send Button',
+  maxButton = 'Send (Modal)/Max Button',
+  switcherButton = 'Send (Modal)/Switcher Click',
+  sectionDropdown = 'Send (Modal)/Section Dropdown Click',
+  pasteAddressButton = 'Send (Modal)/Paste Address Button Click'
 }

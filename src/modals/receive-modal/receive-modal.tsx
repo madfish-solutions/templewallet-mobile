@@ -34,6 +34,12 @@ export const ReceiveModal: FC = () => {
   const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
 
   const { name, symbol } = token;
+
+  const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
+  const isShownDomainName = useIsShownDomainNameSelector();
+  const domainName = useDomainName(publicKeyHash);
+
   const testID = useMemo(
     () =>
       isShownDomainName && isString(domainName)
@@ -41,11 +47,6 @@ export const ReceiveModal: FC = () => {
         : ReceiveModalSelectors.publicAddressCopyButton,
     []
   );
-
-  const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
-  const isShownDomainName = useIsShownDomainNameSelector();
-  const domainName = useDomainName(publicKeyHash);
 
   const handleCopyButtonPress = () => {
     copyStringToClipboard(publicKeyHash);

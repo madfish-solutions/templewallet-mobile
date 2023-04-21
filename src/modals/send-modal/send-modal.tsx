@@ -128,6 +128,8 @@ export const SendModal: FC = () => {
               isSearchable
               setSearchValue={setSearchValue}
               testID={SendModalSelectors.assetInput}
+              switcherTestID={SendModalSelectors.switcherButton}
+              maxButtonTestID={SendModalSelectors.maxButton}
             />
             <Divider />
 
@@ -141,6 +143,7 @@ export const SendModal: FC = () => {
                   name="recipient"
                   list={filteredReceiversList}
                   setSearchValue={handleSearchValueChange}
+                  testID={SendModalSelectors.sectionDropdown}
                 />
                 <Divider size={formatSize(10)} />
               </>
@@ -149,6 +152,7 @@ export const SendModal: FC = () => {
                 name="receiverPublicKeyHash"
                 placeholder="e.g. address"
                 testID={SendModalSelectors.toInput}
+                pasteButtonTestID={SendModalSelectors.pasteAddressButton}
               />
             )}
 

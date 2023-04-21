@@ -2,6 +2,9 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { emptyFn } from '../../config/general';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
@@ -76,10 +79,13 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   onBlur,
   onFocus,
   onValueChange,
-  testID
+  testID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
+  const { trackEvent } = useAnalytics();
 
   const token = useMemo(
     () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
@@ -160,6 +166,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
+    trackEvent(switcherTestID, AnalyticsEventCategory.General, { tokenTypeIndex });
 
     onValueChange({
       ...value,
@@ -193,6 +200,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
+      trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
       onValueChange({
         amount,
@@ -241,7 +249,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
-          testID={testID}
         />
 
         <View
@@ -259,6 +266,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             renderListItem={renderTokenListItem}
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
+            testID={testID}
           />
         </View>
       </View>
