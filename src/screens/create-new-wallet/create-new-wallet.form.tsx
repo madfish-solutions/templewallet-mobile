@@ -16,9 +16,8 @@ import {
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { cloudTitle, doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
+import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
+import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { generateSeed } from 'src/utils/keys.util';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
@@ -59,7 +58,7 @@ interface DoBackupValues {
 
 export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const trackCloudError = useTrackCloudError();
 
   const { importWallet } = useShelter();
 
@@ -81,10 +80,10 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
         const errorTitle = 'Failed to back up to cloud';
         showErrorToastByError(error, errorTitle, true);
 
-        trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+        trackCloudError(error, errorTitle);
       }
     },
-    [dispatch, trackEvent]
+    [dispatch, trackCloudError]
   );
 
   const submit$ = useSubjectWithReSubscription$<CreateNewPasswordFormValues>(

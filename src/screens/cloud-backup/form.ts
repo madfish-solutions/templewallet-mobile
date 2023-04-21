@@ -8,15 +8,13 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
-  cloudTitle,
   doesCloudBackupExist,
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
+import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
@@ -36,7 +34,7 @@ export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
 export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const trackCloudError = useTrackCloudError();
 
   const proceedWithSaving$ = useSubjectWithReSubscription$<string>(
     subject$ =>
@@ -56,14 +54,13 @@ export const useHandleSubmit = () => {
           goBack();
         })
       ),
-    err => {
+    error => {
       dispatch(hideLoaderAction());
-      showErrorToastByError(err);
+      showErrorToastByError(error);
 
-      const errorTitle = err instanceof ToastError ? err.title : undefined;
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      trackCloudError(error);
     },
-    [dispatch, goBack, trackEvent]
+    [dispatch, goBack, trackCloudError]
   );
 
   const submit$ = useSubjectWithReSubscription$<string>(
@@ -100,14 +97,13 @@ export const useHandleSubmit = () => {
           return void proceedWithSaving$.next(password);
         })
       ),
-    err => {
+    error => {
       dispatch(hideLoaderAction());
-      showErrorToastByError(err);
+      showErrorToastByError(error);
 
-      const errorTitle = err instanceof ToastError ? err.title : undefined;
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      trackCloudError(error);
     },
-    [dispatch, navigate, trackEvent]
+    [dispatch, navigate, trackCloudError]
   );
 
   return ({ password }: EnterCloudPasswordFormValues) => void submit$.next(password);

@@ -16,10 +16,9 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-import { ToastError, catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { cloudTitle, keepRestoredCloudBackup, EncryptedBackupObject, decryptCloudBackup } from 'src/utils/cloud-backup';
+import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { keepRestoredCloudBackup, EncryptedBackupObject, decryptCloudBackup } from 'src/utils/cloud-backup';
+import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
@@ -32,7 +31,7 @@ interface Props {
 export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const trackCloudError = useTrackCloudError();
 
   const styles = useSetPasswordScreensCommonStyles();
 
@@ -54,10 +53,9 @@ export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
-      const errorTitle = error instanceof ToastError ? error.title : undefined;
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      trackCloudError(error);
     },
-    [encryptedBackup, dispatch, navigate, trackEvent]
+    [encryptedBackup, dispatch, navigate, trackCloudError]
   );
 
   const handleSubmit = (values: RestoreFromCloudFormValues) => submit$.next(values);

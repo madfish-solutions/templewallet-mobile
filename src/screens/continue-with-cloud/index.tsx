@@ -5,16 +5,15 @@ import { filter, from, switchMap, tap } from 'rxjs';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { ToastError, catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
   EncryptedBackupObject,
   FAILED_TO_LOGIN_ERR_TITLE,
-  cloudTitle,
   fetchCloudBackup,
   requestSignInToCloud
 } from 'src/utils/cloud-backup';
+import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { isTruthy } from 'src/utils/is-truthy';
 import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
@@ -26,11 +25,11 @@ export const ContinueWithCloud = () => {
 
   const { navigate, goBack } = useNavigation();
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const trackCloudError = useTrackCloudError();
 
   const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject>();
 
-  const continueWithCloud$ = useSubjectWithReSubscription$<void>(
+  const initialLoad$ = useSubjectWithReSubscription$<void>(
     $subject =>
       $subject.pipe(
         tap(() => dispatch(showLoaderAction())),
@@ -57,13 +56,12 @@ export const ContinueWithCloud = () => {
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
-      const errorTitle = error instanceof ToastError ? error.title : undefined;
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      trackCloudError(error);
     },
-    [dispatch, navigate, goBack, trackEvent]
+    [dispatch, navigate, goBack, trackCloudError]
   );
 
-  const retry$ = useSubjectWithReSubscription$<void>(
+  const retryBackupLoad$ = useSubjectWithReSubscription$<void>(
     $subject =>
       $subject.pipe(
         tap(() => dispatch(showLoaderAction())),
@@ -80,17 +78,16 @@ export const ContinueWithCloud = () => {
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
-      const errorTitle = error instanceof ToastError ? error.title : undefined;
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, errorTitle });
+      trackCloudError(error);
     },
-    [dispatch, navigate, trackEvent]
+    [dispatch, navigate, trackCloudError]
   );
 
-  useEffect(() => void continueWithCloud$.next(), []);
+  useEffect(() => void initialLoad$.next(), []);
 
   if (encryptedBackup) {
     return <RestoreFromCloud encryptedBackup={encryptedBackup} />;
   }
 
-  return <BackupNotFound retry={() => retry$.next()} />;
+  return <BackupNotFound retry={() => retryBackupLoad$.next()} />;
 };

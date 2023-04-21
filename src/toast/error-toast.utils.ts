@@ -62,8 +62,8 @@ export const showErrorToast = ({ description, title, onPress, isCopyButtonVisibl
 };
 
 export class ToastError extends Error {
-  constructor(public title: string, public description?: string) {
-    super();
+  constructor(public title: string, public description?: string, error?: unknown) {
+    super(error instanceof Error ? error.message : description);
   }
 }
 
@@ -79,7 +79,7 @@ export const catchThrowToastError =
   (error: unknown) => {
     throw error instanceof ToastError
       ? error
-      : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined);
+      : new ToastError(title, takeDescriptionFromErrorMsg ? (error as Error)?.message : undefined, error);
   };
 
 export const showErrorToastByError = (error: unknown, fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {
