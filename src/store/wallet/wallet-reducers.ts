@@ -1,14 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash-es';
 
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isDcpNode } from 'src/utils/network.utils';
 import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';
 
-import { VisibilityEnum } from '../../enums/visibility.enum';
-import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
-import { AccountInterface } from '../../interfaces/account.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isDcpNode } from '../../utils/network.utils';
 import {
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,

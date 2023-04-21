@@ -86,15 +86,15 @@ export const CollectiblesHome = () => {
     { url: website, icon: IconNameEnum.Website },
     { url: github, icon: IconNameEnum.Github }
   ].sort((a, b) => {
-    if (typeof a.url === 'undefined' && typeof b.url === 'undefined') {
+    if (isDefined(a.url) && isDefined(b.url)) {
       return 0;
-    } else if (typeof a.url === 'undefined') {
+    } else if (!isDefined(a.url)) {
       return 1;
-    } else if (typeof b.url === 'undefined') {
+    } else if (!isDefined(b.url)) {
       return -1;
-    } else {
-      return 1;
     }
+
+    return 1;
   });
 
   const snapPoints = useMemo(
