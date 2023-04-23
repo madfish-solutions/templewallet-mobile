@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { map, of, catchError } from 'rxjs';
 
-import { getApolloConfigurableClient } from '../apollo/get-apollo-configurable-client.util';
+import { getApolloConfigurableClient } from '../apollo/utils/get-apollo-configurable-client.util';
 
 const YUPANA_API = 'https://mainnet-api.yupana.finance/v1/graphql/';
 
