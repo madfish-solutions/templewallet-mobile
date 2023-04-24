@@ -1,12 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash-es';
 
-import { VisibilityEnum } from '../../enums/visibility.enum';
-import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
-import { AccountInterface } from '../../interfaces/account.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isDcpNode } from '../../utils/network.utils';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isDcpNode } from 'src/utils/network.utils';
+import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+
 import {
   deleteOldIsShownDomainName,
   deleteOldQuipuApy,
@@ -25,7 +27,8 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions
+  loadTokensBalancesArrayActions,
+  loadTzProfileIfoAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -143,6 +146,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
             dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
           }
     );
+  });
+
+  builder.addCase(loadTzProfileIfoAction.success, (state, { payload }) => {
+    const selectedAccount = getSelectedAccount(state);
+
+    return {
+      ...state,
+      accounts: state.accounts.map(item =>
+        item.publicKeyHash === selectedAccount.publicKeyHash ? { ...item, tzProfile: { ...payload } } : item
+      )
+    };
   });
 
   // MIGRATIONS

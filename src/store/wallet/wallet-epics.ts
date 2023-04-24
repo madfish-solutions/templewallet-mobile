@@ -7,6 +7,7 @@ import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { fetchTzProfilesInfo$ } from 'src/apis/objkt';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -36,7 +37,8 @@ import {
   loadTokensBalancesArrayActions,
   loadTokensActions,
   sendAssetActions,
-  waitForOperationCompletionAction
+  waitForOperationCompletionAction,
+  loadTzProfileIfoAction
 } from './wallet-actions';
 
 const updateDataActions = () => [
@@ -183,6 +185,18 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
 const addTokenMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
+const loadTzProfileInfoEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadTzProfileIfoAction.submit),
+    withSelectedAccount(state$),
+    switchMap(([_, address]) =>
+      fetchTzProfilesInfo$(address.publicKeyHash).pipe(
+        map(tzProfile => loadTzProfileIfoAction.success(tzProfile)),
+        catchError(err => of(loadTzProfileIfoAction.fail(err.message)))
+      )
+    )
+  );
+
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,
   loadTokensBalancesEpic,
@@ -190,5 +204,6 @@ export const walletEpics = combineEpics(
   loadTokensWithBalancesEpic,
   sendAssetEpic,
   waitForOperationCompletionEpic,
-  addTokenMetadataEpic
+  addTokenMetadataEpic,
+  loadTzProfileInfoEpic
 );

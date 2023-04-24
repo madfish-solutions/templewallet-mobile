@@ -31,9 +31,11 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     marginTop: formatSize(4)
   },
   socialsIcon: {
-    backgroundColor: colors.gray4,
     width: formatSize(24),
     height: formatSize(24)
+  },
+  socialIconsBgColor: {
+    backgroundColor: colors.gray4
   },
   createProfile: {
     flexDirection: 'row',
@@ -142,6 +144,9 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   handleStyle: {
     display: 'none'
+  },
+  socialLinks: {
+    flexDirection: 'row'
   },
   bottomSheet: {
     backgroundColor: colors.pageBG

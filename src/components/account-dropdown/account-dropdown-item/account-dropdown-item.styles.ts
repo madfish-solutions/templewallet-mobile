@@ -60,5 +60,13 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
   },
   accountNameMargin: {
     marginLeft: formatSize(10)
+  },
+  image: {
+    borderColor: colors.lines,
+    borderRadius: formatSize(8),
+    borderWidth: formatSize(1),
+    overflow: 'hidden',
+    height: formatSize(76),
+    width: formatSize(76)
   }
 }));

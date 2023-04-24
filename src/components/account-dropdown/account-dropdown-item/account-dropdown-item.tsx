@@ -1,22 +1,28 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
+import { HideBalance } from 'src/components/hide-balance/hide-balance';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import {
+  useCollectiblesListSelector,
+  useSelectedAccountSelector,
+  useTezosTokenSelector
+} from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { formatImgUri } from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { getTruncatedProps } from 'src/utils/style.util';
 
-import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useCollectiblesListSelector, useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { conditionalStyle } from '../../../utils/conditional-style';
-import { isDefined } from '../../../utils/is-defined';
-import { getTruncatedProps } from '../../../utils/style.util';
-import { AssetValueText } from '../../asset-value-text/asset-value-text';
-import { DropdownListItemComponent } from '../../dropdown/dropdown';
-import { HideBalance } from '../../hide-balance/hide-balance';
-import { Icon } from '../../icon/icon';
-import { IconNameEnum } from '../../icon/icon-name.enum';
-import { RobotIcon } from '../../robot-icon/robot-icon';
-import { WalletAddress } from '../../wallet-address/wallet-address';
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
 
@@ -34,10 +40,16 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   const collectibles = useCollectiblesListSelector();
   const contacts = useContactsSelector();
   const { metadata } = useNetworkInfo();
+  const selectedAccount = useSelectedAccountSelector();
+  const { logo, alias } = selectedAccount.tzProfile ?? {};
 
   return (
     <View style={styles.root}>
-      <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+      {isDefined(logo) && isCollectibleScreen ? (
+        <FastImage style={styles.image} source={{ uri: formatImgUri(logo) }} />
+      ) : (
+        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+      )}
       <View style={styles.infoContainer}>
         <View
           style={[
@@ -46,7 +58,9 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
             conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
           ]}
         >
-          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
+          <Text {...getTruncatedProps(styles.name)}>
+            {isDefined(alias) && isCollectibleScreen ? alias : account.name}
+          </Text>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
