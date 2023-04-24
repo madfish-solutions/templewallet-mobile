@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { from, map, of, switchMap, tap } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
 import { acceptTermsValidation } from 'src/form/validation/accept-terms';
@@ -19,7 +18,6 @@ import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
 import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { generateSeed } from 'src/utils/keys.util';
-import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 type CreateNewPasswordFormValues = {
   password: string;
@@ -86,34 +84,29 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
     [dispatch, trackCloudError]
   );
 
-  const submit$ = useSubjectWithReSubscription$<CreateNewPasswordFormValues>(
-    $subject =>
-      $subject.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        tap(({ analytics }) => dispatch(setIsAnalyticsEnabled(analytics))),
-        switchMap(({ password, useBiometry }) =>
-          (backupFlowMemo?.type === 'RESTORE' ? of(backupFlowMemo.mnemonic) : from(generateSeed())).pipe(
-            // importWallet dispatches `hideLoaderAction` when done
-            tap(seedPhrase => importWallet({ seedPhrase, password, useBiometry })),
-            map(seedPhrase => ({ seedPhrase, password }))
-          )
-        ),
-        tap(doBackupValues => {
-          if (!backupFlowMemo) {
-            return void dispatch(requestSeedPhraseBackupAction());
-          }
+  return useCallback(
+    async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+      try {
+        dispatch(showLoaderAction());
+        dispatch(setIsAnalyticsEnabled(analytics));
 
-          if (backupFlowMemo.type === 'AUTO_BACKUP') {
-            doBackupToCloud(doBackupValues);
-          }
-        })
-      ),
-    err => {
-      dispatch(hideLoaderAction());
-      showErrorToastByError(err);
+        const seedPhrase = backupFlowMemo?.type === 'RESTORE' ? backupFlowMemo.mnemonic : await generateSeed();
+
+        // importWallet dispatches `hideLoaderAction` when done
+        importWallet({ seedPhrase, password, useBiometry });
+
+        if (!backupFlowMemo) {
+          return void dispatch(requestSeedPhraseBackupAction());
+        }
+
+        if (backupFlowMemo.type === 'AUTO_BACKUP') {
+          doBackupToCloud({ seedPhrase, password });
+        }
+      } catch (error) {
+        dispatch(hideLoaderAction());
+        showErrorToastByError(error);
+      }
     },
     [backupFlowMemo, doBackupToCloud, dispatch, importWallet, generateSeed]
   );
-
-  return async (values: CreateNewPasswordFormValues) => submit$.next(values);
 };

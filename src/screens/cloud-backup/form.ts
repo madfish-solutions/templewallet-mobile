@@ -1,5 +1,6 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { filter, from, map, switchMap, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
 import { passwordValidation } from 'src/form/validation/password';
@@ -15,7 +16,6 @@ import {
   saveCloudBackup
 } from 'src/utils/cloud-backup';
 import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
-import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { alertOnExistingBackup } from './utils';
 
@@ -36,84 +36,73 @@ export const useHandleSubmit = () => {
   const dispatch = useDispatch();
   const trackCloudError = useTrackCloudError();
 
-  const proceedWithSaving$ = useSubjectWithReSubscription$<string>(
-    subject$ =>
-      subject$.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(password =>
-          Shelter.revealSeedPhrase$().pipe(
-            switchMap(mnemonic =>
-              from(saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true)))
-            )
-          )
-        ),
-        tap(() => {
-          dispatch(hideLoaderAction());
-          dispatch(madeCloudBackupAction());
-          showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
-          goBack();
-        })
-      ),
-    error => {
-      dispatch(hideLoaderAction());
-      showErrorToastByError(error);
+  const proceedWithSaving = useCallback(
+    async (password: string) => {
+      try {
+        dispatch(showLoaderAction());
 
-      trackCloudError(error);
+        const mnemonic = await firstValueFrom(Shelter.revealSeedPhrase$());
+
+        await saveCloudBackup(mnemonic, password).catch(catchThrowToastError('Failed to back up to cloud', true));
+
+        dispatch(hideLoaderAction());
+        dispatch(madeCloudBackupAction());
+        showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+        goBack();
+      } catch (error) {
+        dispatch(hideLoaderAction());
+        showErrorToastByError(error);
+
+        trackCloudError(error);
+      }
     },
     [dispatch, goBack, trackCloudError]
   );
 
-  const submit$ = useSubjectWithReSubscription$<string>(
-    subject$ =>
-      subject$.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(password =>
-          ensurePasswordIsCorrect$(password).pipe(
-            switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true)))),
-            filter(isLoggedIn => {
-              if (!isLoggedIn) {
-                dispatch(hideLoaderAction());
-              }
+  const submit: (password: string) => Promise<void> = useCallback(
+    async (password: string) => {
+      try {
+        dispatch(showLoaderAction());
 
-              return isLoggedIn;
-            }),
-            switchMap(() =>
-              from(doesCloudBackupExist().catch(catchThrowToastError('Failed to read from cloud', true)))
-            ),
-            map(backupExists => ({ backupExists, password }))
-          )
-        ),
-        tap(({ backupExists, password }) => {
-          if (backupExists) {
-            dispatch(hideLoaderAction());
+        await ensurePasswordIsCorrect(password);
 
-            return void alertOnExistingBackup(
-              () => void subject$.next(password),
-              () => void proceedWithSaving$.next(password),
-              () => void navigate(ScreensEnum.ManualBackup)
-            );
-          }
+        const isLoggedIn = await requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true));
 
-          return void proceedWithSaving$.next(password);
-        })
-      ),
-    error => {
-      dispatch(hideLoaderAction());
-      showErrorToastByError(error);
+        if (!isLoggedIn) {
+          return void dispatch(hideLoaderAction());
+        }
 
-      trackCloudError(error);
+        const backupExists = await doesCloudBackupExist().catch(
+          catchThrowToastError('Failed to read from cloud', true)
+        );
+
+        if (backupExists) {
+          dispatch(hideLoaderAction());
+
+          return void alertOnExistingBackup(
+            () => void submit(password),
+            () => void proceedWithSaving(password),
+            () => void navigate(ScreensEnum.ManualBackup)
+          );
+        }
+
+        return void proceedWithSaving(password);
+      } catch (error) {
+        dispatch(hideLoaderAction());
+        showErrorToastByError(error);
+
+        trackCloudError(error);
+      }
     },
-    [dispatch, navigate, trackCloudError]
+    [dispatch, navigate, trackCloudError, proceedWithSaving]
   );
 
-  return ({ password }: EnterCloudPasswordFormValues) => void submit$.next(password);
+  return ({ password }: EnterCloudPasswordFormValues) => void submit(password);
 };
 
-const ensurePasswordIsCorrect$ = (password: string) =>
-  Shelter.isPasswordCorrect$(password).pipe(
-    map(isPasswordCorrect => {
-      if (!isPasswordCorrect) {
-        throw new ToastError('Wrong password');
-      }
-    })
-  );
+const ensurePasswordIsCorrect = (password: string) =>
+  firstValueFrom(Shelter.isPasswordCorrect$(password)).then(isPasswordCorrect => {
+    if (!isPasswordCorrect) {
+      throw new ToastError('Wrong password');
+    }
+  });

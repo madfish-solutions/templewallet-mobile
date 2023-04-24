@@ -1,8 +1,7 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { from, map, switchMap, tap } from 'rxjs';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
@@ -19,7 +18,6 @@ import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-scree
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { keepRestoredCloudBackup, EncryptedBackupObject, decryptCloudBackup } from 'src/utils/cloud-backup';
 import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
-import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';
@@ -35,30 +33,28 @@ export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
 
   const styles = useSetPasswordScreensCommonStyles();
 
-  const submit$ = useSubjectWithReSubscription$<{ password: string; reusePassword: boolean }>(
-    subject$ =>
-      subject$.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(({ password, reusePassword }) =>
-          from(
-            decryptCloudBackup(encryptedBackup, password).catch(catchThrowToastError("Couldn't restore wallet", true))
-          ).pipe(map(backup => keepRestoredCloudBackup(backup, reusePassword ? password : undefined)))
-        ),
-        tap(cloudBackupId => {
-          dispatch(hideLoaderAction());
-          navigate(ScreensEnum.CreateAccount, { cloudBackupId });
-        })
-      ),
-    error => {
-      dispatch(hideLoaderAction());
-      showErrorToastByError(error);
+  const handleSubmit = useCallback(
+    async ({ password, reusePassword }: RestoreFromCloudFormValues) => {
+      try {
+        dispatch(showLoaderAction());
 
-      trackCloudError(error);
+        const backup = await decryptCloudBackup(encryptedBackup, password).catch(
+          catchThrowToastError("Couldn't restore wallet", true)
+        );
+
+        const cloudBackupId = keepRestoredCloudBackup(backup, reusePassword ? password : undefined);
+
+        dispatch(hideLoaderAction());
+        navigate(ScreensEnum.CreateAccount, { cloudBackupId });
+      } catch (error) {
+        dispatch(hideLoaderAction());
+        showErrorToastByError(error);
+
+        trackCloudError(error);
+      }
     },
     [encryptedBackup, dispatch, navigate, trackCloudError]
   );
-
-  const handleSubmit = (values: RestoreFromCloudFormValues) => submit$.next(values);
 
   return (
     <Formik

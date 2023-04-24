@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { filter, from, switchMap, tap } from 'rxjs';
 
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -15,7 +14,6 @@ import {
 } from 'src/utils/cloud-backup';
 import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { isTruthy } from 'src/utils/is-truthy';
-import { useSubjectWithReSubscription$ } from 'src/utils/rxjs.utils';
 
 import { BackupNotFound } from './backup-not-found';
 import { RestoreFromCloud } from './restore-from-backup';
@@ -29,65 +27,59 @@ export const ContinueWithCloud = () => {
 
   const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject>();
 
-  const initialLoad$ = useSubjectWithReSubscription$<void>(
-    $subject =>
-      $subject.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(() => from(requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true)))),
-        filter(isLoggedIn => {
-          if (!isLoggedIn) {
-            dispatch(hideLoaderAction());
-            goBack();
-          }
+  const initialLoad = useCallback(async () => {
+    try {
+      dispatch(showLoaderAction());
 
-          return isLoggedIn;
-        }),
-        switchMap(() => from(fetchCloudBackup().catch(catchThrowToastError('Failed to read from cloud', true)))),
-        tap(backup => {
-          dispatch(hideLoaderAction());
+      const isLoggedIn = await requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true));
 
-          if (isTruthy(backup)) {
-            setEncryptedBackup(backup);
-          }
-        })
-      ),
-    error => {
+      if (!isLoggedIn) {
+        dispatch(hideLoaderAction());
+        goBack();
+
+        return;
+      }
+
+      const backup = await fetchCloudBackup().catch(catchThrowToastError('Failed to read from cloud', true));
+
+      dispatch(hideLoaderAction());
+
+      if (isTruthy(backup)) {
+        setEncryptedBackup(backup);
+      }
+    } catch (error) {
       goBack();
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
       trackCloudError(error);
-    },
-    [dispatch, navigate, goBack, trackCloudError]
-  );
+    }
+  }, []);
 
-  const retryBackupLoad$ = useSubjectWithReSubscription$<void>(
-    $subject =>
-      $subject.pipe(
-        tap(() => dispatch(showLoaderAction())),
-        switchMap(() => from(fetchCloudBackup().catch(catchThrowToastError('Failed to read from cloud', true)))),
-        tap(backup => {
-          dispatch(hideLoaderAction());
+  const retryBackupLoad = useCallback(async () => {
+    try {
+      dispatch(showLoaderAction());
 
-          if (isTruthy(backup)) {
-            setEncryptedBackup(backup);
-          }
-        })
-      ),
-    error => {
+      const backup = await fetchCloudBackup().catch(catchThrowToastError('Failed to read from cloud', true));
+
+      dispatch(hideLoaderAction());
+
+      if (isTruthy(backup)) {
+        setEncryptedBackup(backup);
+      }
+    } catch (error) {
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
       trackCloudError(error);
-    },
-    [dispatch, navigate, trackCloudError]
-  );
+    }
+  }, [dispatch, navigate, trackCloudError]);
 
-  useEffect(() => void initialLoad$.next(), []);
+  useEffect(() => void initialLoad(), []);
 
   if (encryptedBackup) {
     return <RestoreFromCloud encryptedBackup={encryptedBackup} />;
   }
 
-  return <BackupNotFound retry={() => retryBackupLoad$.next()} />;
+  return <BackupNotFound retry={retryBackupLoad} />;
 };
