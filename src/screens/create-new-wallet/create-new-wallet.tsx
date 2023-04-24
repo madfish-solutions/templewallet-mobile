@@ -12,7 +12,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextLink } from 'src/components/text-link/text-link';
-import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socials';
+import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
@@ -22,6 +22,7 @@ import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-scree
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { isString } from 'src/utils/is-string';
 
+import { AnalyticsField } from './AnalyticsField';
 import {
   BackupFlow,
   createNewPasswordInitialValues,
@@ -72,7 +73,7 @@ export const CreateNewWallet = () => {
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
-      {({ submitForm, isValid }) => (
+      {({ submitForm, isValid, values }) => (
         <>
           <ScreenContainer isFullScreenMode={true}>
             <View>
@@ -104,16 +105,9 @@ export const CreateNewWallet = () => {
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
-              <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox}>
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Analytics</Text>
-                </FormCheckbox>
-              </View>
-              <CheckboxLabel>
-                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-              </CheckboxLabel>
+              <AnalyticsField enabled={values.analytics} />
             </View>
+
             <Divider />
 
             <View>
