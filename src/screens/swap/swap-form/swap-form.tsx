@@ -165,7 +165,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        routingFeeAtomic.dividedToIntegerBy(2),
+        templeOutputAtomic.dividedToIntegerBy(2),
         publicKeyHash,
         BURN_ADDREESS,
         tezos
@@ -222,7 +222,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   const minimumReceivedAmountAtomic = useMemo(() => {
     if (isDefined(swapParams.data.output)) {
-      return tzToMutez(new BigNumber(swapParams.data.output), inputAssets.asset.decimals)
+      return tzToMutez(new BigNumber(swapParams.data.output), outputAssets.asset.decimals)
         .multipliedBy(slippageRatio)
         .integerValue(BigNumber.ROUND_DOWN);
     } else {
@@ -248,12 +248,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   );
 
   useEffect(() => {
-    if (isDefined(inputAssets.amount)) {
+    if (isDefined(swapInputAtomicWithoutFee) && swapInputAtomicWithoutFee.gte(ZERO)) {
       dispatch(
         loadSwapParamsAction.submit({
           fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
           toSymbol: getRoute3TokenSymbol(outputAssets.asset),
-          amount: mutezToTz(inputAssets.amount, inputAssets.asset.decimals).toFixed()
+          amount: mutezToTz(swapInputAtomicWithoutFee, inputAssets.asset.decimals).toFixed()
         })
       );
     }
@@ -306,7 +306,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         loadSwapParamsAction.submit({
           fromSymbol: getRoute3TokenSymbol(inputAssets.asset),
           toSymbol: getRoute3TokenSymbol(newOutputValue.asset),
-          amount: inputAssets.amount && mutezToTz(inputAssets.amount, inputAssets.asset.decimals).toFixed()
+          amount:
+            swapInputAtomicWithoutFee && mutezToTz(swapInputAtomicWithoutFee, inputAssets.asset.decimals).toFixed()
         })
       );
     },
