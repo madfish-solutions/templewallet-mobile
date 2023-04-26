@@ -1,28 +1,42 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { View, TextInput } from 'react-native';
 
-import { EventFn } from '../../config/general';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
+import { EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useSearchStyles } from './search.styles';
 
-interface Props {
+interface Props extends TestIdProps {
   dividerSize?: number;
   onChange: EventFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({ dividerSize = 24, onChange, children }) => {
+export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children }) => {
   const colors = useColors();
   const styles = useSearchStyles();
-  const debouncedOnChange = debounce(onChange);
+  const { trackEvent } = useAnalytics();
+
+  const debouncedOnChange = useMemo(
+    () =>
+      debounce((newValue: string) => {
+        trackEvent(testID, AnalyticsEventCategory.FormChange, { value: newValue });
+        onChange(newValue);
+      }),
+    [onChange, testID, trackEvent]
+  );
 
   const [isSearchMode, setIsSearchMode] = useState(false);
 
   const handleSCirclePress = () => {
+    trackEvent(testID, AnalyticsEventCategory.FormChange, { value: null });
     setIsSearchMode(false);
     onChange(undefined);
   };

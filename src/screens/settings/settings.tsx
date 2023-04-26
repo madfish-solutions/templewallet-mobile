@@ -13,6 +13,7 @@ import { Quote } from 'src/components/quote/quote';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { WhiteContainer } from 'src/components/white-container/white-container';
 import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
 import { WhiteContainerDivider } from 'src/components/white-container/white-container-divider/white-container-divider';
@@ -61,7 +62,6 @@ export const Settings = () => {
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   const handleShare = useCallback(() => {
-    trackEvent(SettingsSelectors.shareTempleWalletButton, AnalyticsEventCategory.ButtonPress);
     Share.share({
       message: SHARE_CONTENT
     })
@@ -216,14 +216,15 @@ export const Settings = () => {
 
           <Divider />
 
-          <TouchableOpacity
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
             style={styles.logoutButton}
             onPress={handleLogoutButtonPress}
             testID={SettingsSelectors.resetWalletButton}
           >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
             <Icon name={IconNameEnum.LogOut} />
-          </TouchableOpacity>
+          </TouchableWithAnalytics>
 
           <Divider />
         </View>

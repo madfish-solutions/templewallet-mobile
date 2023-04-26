@@ -5,9 +5,11 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
+import { SwapRouteSelectors } from './selectors';
 import { useSwapRouteStyles } from './swap-route.styles';
 
 export const SwapRoute: FC = () => {
@@ -33,10 +35,12 @@ export const SwapRoute: FC = () => {
 
   return (
     <View>
-      <TouchableOpacity
+      <TouchableWithAnalytics
+        Component={TouchableOpacity}
         style={[styles.flex, styles.row, styles.mb12]}
         onPress={toggleRoutePress}
         disabled={!Boolean(output)}
+        testID={SwapRouteSelectors.showRouteSwitcher}
       >
         <Text style={styles.infoText}>Swap route</Text>
         <View style={styles.row}>
@@ -46,7 +50,7 @@ export const SwapRoute: FC = () => {
           <Divider size={12} />
           <Icon name={iconName} color={!Boolean(output) ? '#DDDDDD' : '#FF6B00'} />
         </View>
-      </TouchableOpacity>
+      </TouchableWithAnalytics>
       {shouldShowRoute &&
         chains.map((chain, index) => (
           <View key={index} style={styles.mb8}>

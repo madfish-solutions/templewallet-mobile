@@ -16,6 +16,7 @@ import { useActivityGroupItemStyles } from './activity-group-item.styles';
 import { ActivityGroupType } from './activity-group-type/activity-group-type';
 import { ActivityStatusBadge } from './activity-status-badge/activity-status-badge';
 import { ActivityTime } from './activity-time/activity-time';
+import { ActivityGroupItemSelectors } from './selectors';
 
 interface Props {
   group: ActivityGroup;
@@ -38,9 +39,16 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
         <ActivityGroupType group={group} />
 
         <View style={styles.exploreContainer}>
-          <PublicKeyHashText style={styles.accountPkh} publicKeyHash={firstActivity.hash} />
+          <PublicKeyHashText
+            style={styles.accountPkh}
+            publicKeyHash={firstActivity.hash}
+            testID={ActivityGroupItemSelectors.operationHash}
+          />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, firstActivity.hash)} />
+          <ExternalLinkButton
+            url={tzktUrl(selectedRpcUrl, firstActivity.hash)}
+            testID={ActivityGroupItemSelectors.externalLink}
+          />
         </View>
       </View>
       <Divider size={formatSize(8)} />
