@@ -26,7 +26,9 @@ import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
-const renderItem: ListRenderItem<CustomDAppInfo> = item => <OthersDApp item={item} />;
+const renderItem: ListRenderItem<CustomDAppInfo> = item => (
+  <OthersDApp item={item} testID={DAppsSelectors.othersDAppsItem} />
+);
 const keyExtractor = (item: CustomDAppInfo) => item.name;
 const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
@@ -96,7 +98,6 @@ export const DApps = () => {
         numColumns={2}
         contentContainerStyle={styles.container}
         ListEmptyComponent={ListEmptyComponent}
-        testID={DAppsSelectors.othersDAppsItem}
       />
     </>
   );
