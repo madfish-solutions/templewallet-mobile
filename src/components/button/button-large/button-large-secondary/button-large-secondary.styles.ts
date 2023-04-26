@@ -1,4 +1,5 @@
-import { createUseStylesConfig } from '../../../../styles/create-use-styles';
+import { createUseStylesConfig } from 'src/styles/create-use-styles';
+
 import { useButtonLargeSharedStyleConfig } from '../button-large.styles';
 
 export const useButtonLargeSecondaryStyleConfig = createUseStylesConfig(({ colors }) => ({

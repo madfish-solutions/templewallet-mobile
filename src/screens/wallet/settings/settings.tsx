@@ -1,13 +1,14 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+
 import { SettingsSelectors } from './settings.selectors';
 import { SettingsStyles } from './settings.styles';
 
@@ -15,7 +16,7 @@ export const Settings = () => {
   const { navigate } = useNavigation();
   const colors = useColors();
 
-  const isManualBackupMade = useIsManualBackupMadeSelector();
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
 
   const navigateToSettings = () => navigate(ScreensEnum.Settings);
   const navigateToDebugMode = () => navigate(ScreensEnum.Debug);
@@ -24,10 +25,11 @@ export const Settings = () => {
     <TouchableOpacity
       onPress={navigateToSettings}
       onLongPress={navigateToDebugMode}
+      delayLongPress={4000}
       style={SettingsStyles.iconContainer}
       testID={SettingsSelectors.settingsButton}
     >
-      {!isManualBackupMade && (
+      {!isAnyBackupMade && (
         <Icon
           name={IconNameEnum.NotificationDot}
           width={formatSize(9)}

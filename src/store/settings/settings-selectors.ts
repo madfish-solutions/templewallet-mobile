@@ -39,4 +39,12 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
-export const useIsManualBackupMadeSelector = () => useSelector(({ settings }) => settings.isManualBackupMade);
+export const useIsBackupMadeSelector = () => {
+  const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
+  const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);
+
+  return useMemo(() => ({ isManualBackupMade, isCloudBackupMade }), [isManualBackupMade, isCloudBackupMade]);
+};
+
+export const useIsAnyBackupMadeSelector = () =>
+  useSelector(({ settings }) => settings.isManualBackupMade || settings.isCloudBackupMade);
