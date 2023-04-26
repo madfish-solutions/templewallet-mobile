@@ -32,6 +32,7 @@ import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
+import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
@@ -49,7 +50,6 @@ interface SocialLinksInterface {
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
-const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
@@ -122,7 +122,7 @@ export const CollectiblesHome = () => {
   );
 
   const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
-    const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
+    const handleCollectionPress = () => openUrl(objktCollectionUrl(item.contract));
 
     return (
       <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>

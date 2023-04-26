@@ -88,6 +88,7 @@ export enum IconNameEnum {
   YouTube = 'YouTube',
   Reddit = 'Reddit',
   ExternalLink = 'ExternalLink',
+  ExternalLinkTag = 'ExternalLinkTag',
   IosSearch = 'IosSearch',
   Search = 'Search',
   XSearch = 'XSearch',

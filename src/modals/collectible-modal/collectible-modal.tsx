@@ -21,10 +21,9 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatImgUri } from '../../utils/image.utils';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
+import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
-
-const navigateToCollection = (address: string) => openUrl(`https://objkt.com/collection/${address}`);
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -38,7 +37,7 @@ export const CollectibleModal = () => {
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
-  const handleCollectionNamePress = () => navigateToCollection(collectible.address);
+  const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   return (
     <ScreenContainer isFullScreenMode={true}>

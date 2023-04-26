@@ -19,7 +19,7 @@ interface Props {
 
 const objktProfileLink = (userAddress: string) => `https://objkt.com/profile/${userAddress}/created`;
 
-export const LinkWithIcon: FC<Props> = ({ text, iconName = IconNameEnum.ExternalLink, userAddress, style }) => {
+export const LinkWithIcon: FC<Props> = ({ text, iconName = IconNameEnum.ExternalLinkTag, userAddress, style }) => {
   const styles = useLinkWithIconStyles();
 
   const isAddress = isValidAddress(text);
@@ -31,7 +31,7 @@ export const LinkWithIcon: FC<Props> = ({ text, iconName = IconNameEnum.External
   return (
     <TouchableOpacity onPress={handleLinkPress} style={[styles.root, style]}>
       <Text {...textProps}>{text}</Text>
-      <Icon name={iconName} size={formatSize(24)} color="blue" style={styles.container} />
+      <Icon name={iconName} size={formatSize(24)} style={styles.container} />
     </TouchableOpacity>
   );
 };
