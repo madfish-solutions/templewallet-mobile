@@ -72,7 +72,7 @@ interface CollectibleInfoQueryResponse {
 }
 
 export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
-  const request = getCollectibleInfo(address, tokenId);
+  const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
@@ -118,7 +118,7 @@ const buildGetHoldersInfoQuery = (address: string) => gql`
   }
 `;
 
-const getCollectibleInfo = (address: string, tokenId: string) => gql`
+const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
   query MyQuery {
     token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${tokenId}" } }) {
       description
