@@ -7,6 +7,8 @@ import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
+import AppleOnDarkIcon from './assets/apple-on-dark.svg';
+import AppleIcon from './assets/apple.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
@@ -54,6 +56,7 @@ import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
+import GoogleDriveIcon from './assets/google-drive.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
@@ -88,6 +91,7 @@ import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
+import RetryIcon from './assets/retry.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -190,6 +194,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
+  [IconNameEnum.Apple]: AppleIcon,
+  [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
+  [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
@@ -250,6 +257,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LbDappIcon]: LbDappIcon,
   [IconNameEnum.LbTokenIcon]: LbTokenIcon,
   [IconNameEnum.RefreshIcon]: RefreshIcon,
+  [IconNameEnum.RetryIcon]: RetryIcon,
   [IconNameEnum.ChartIcon]: ChartIcon,
   [IconNameEnum.MinusIcon]: MinusIcon,
   [IconNameEnum.PlusIcon]: PlusIcon,

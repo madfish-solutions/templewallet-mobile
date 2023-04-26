@@ -1,14 +1,16 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
+
 import { Divider } from '../divider/divider';
-import { useLabelStyles } from './label.styles';
+import { DescriptionType, Description } from './description';
+import { useLabelStyles } from './styles';
 
 interface Props {
   label?: string;
-  description?: string;
+  description?: DescriptionType;
   isOptional?: boolean;
 }
 
@@ -26,7 +28,8 @@ export const Label: FC<Props> = ({ label, description, isOptional = false }) => 
           </>
         )}
       </View>
-      {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+
+      {isDefined(description) && <Description description={description} />}
     </View>
   );
 };

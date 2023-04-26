@@ -67,5 +67,6 @@ If you want to contribute your code, before making a pull request - ensure, that
 ```
 yarn ts
 yarn lint
+yarn find-deadcode
 yarn test
 ```

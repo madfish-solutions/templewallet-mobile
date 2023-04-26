@@ -1,4 +1,4 @@
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
@@ -6,6 +6,7 @@ export enum ScreensEnum {
   SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
+  ContinueWithCloud = 'ContinueWithCloud',
 
   /** Wallet stack **/
   Wallet = 'Wallet',
@@ -46,6 +47,7 @@ export enum ScreensEnum {
   NodeSettings = 'NodeSettings',
   Backup = 'Backup',
   ManualBackup = 'ManualBackup',
+  CloudBackup = 'CloudBackup',
   NotificationsSettings = 'NotificationsSettings',
   Debug = 'Debug'
 }
@@ -55,7 +57,8 @@ export type ScreensParamList = {
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
-  [ScreensEnum.CreateAccount]: undefined;
+  [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; cloudBackupId?: number };
+  [ScreensEnum.ContinueWithCloud]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -98,6 +101,7 @@ export type ScreensParamList = {
   [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
+  [ScreensEnum.CloudBackup]: undefined;
   [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };

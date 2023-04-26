@@ -1,5 +1,7 @@
 name: TestApp build
 
+run-name: TestApp build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -76,6 +78,13 @@ jobs:
         if: ${{ github.event.inputs.android == 'true' }}
         run: yarn android:release:apk
 
+      - name: Retain Android artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Upload Android artifact to TestApp.io
         if: ${{ github.event.inputs.android == 'true' }}
         uses: testappio/github-action@v5
@@ -113,6 +122,7 @@ jobs:
           workspace-path: ios/TempleWallet.xcworkspace
           scheme: TempleWallet
           export-method: ad-hoc
+          export-options: ios/TempleWallet/TestAppExportOptions.plist
           configuration: Release
           output-path: ios/build/TempleWallet.ipa
           p12-base64: ${{ secrets.P12_BASE64 }}
@@ -120,6 +130,13 @@ jobs:
           mobileprovision-base64: ${{ secrets.ADHOC_MOBILEPROVISION_BASE64 }}
           code-signing-identity: ${{ secrets.CODE_SIGNING_IDENTITY }}
           team-id: ${{ secrets.TEAM_ID }}
+
+      - name: Retain iOS artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ios/build/TempleWallet.ipa
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Upload iOS artifact to TestApp.io
         if: ${{ github.event.inputs.ios == 'true' }}
