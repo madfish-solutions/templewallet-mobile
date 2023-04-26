@@ -168,19 +168,15 @@ export const CollectiblesHome = () => {
           <View style={styles.profileContainer}>
             <View style={styles.createProfile}>
               {isDefined(alias) ? (
-                <>
-                  <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
-                    <Icon name={IconNameEnum.Edit} onPress={() => null} size={formatSize(16)} />
-                    <Text style={styles.createProfileText}>EDIT PROFILE</Text>
-                  </TouchableOpacity>
-                </>
+                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
+                  <Icon name={IconNameEnum.Edit} onPress={() => null} size={formatSize(16)} />
+                  <Text style={styles.createProfileText}>EDIT PROFILE</Text>
+                </TouchableOpacity>
               ) : (
-                <>
-                  <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
-                    <Icon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
-                    <Text style={styles.createProfileText}>CREATE PROFILE</Text>
-                  </TouchableOpacity>
-                </>
+                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
+                  <Icon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
+                  <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+                </TouchableOpacity>
               )}
             </View>
             <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
