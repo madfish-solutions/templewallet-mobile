@@ -19,8 +19,6 @@ export const Collection = () => {
 
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const collectibles = useCollectibleByCollectionInfo(params.collectionContract);
-  const tokens = useMemo(() => collectibles.length, [collectibles]);
-  console.log(tokens, 'TOKENS');
 
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
