@@ -6,6 +6,7 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
 import { getApolloConfigurableClient } from '../apollo/utils/get-apollo-configurable-client.util';
+import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 
@@ -56,19 +57,7 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
 };
 
 interface CollectibleInfoQueryResponse {
-  token: {
-    description: string;
-    creators: {
-      holder: {
-        address: string;
-        tzdomain: string;
-      };
-    }[];
-    fa: {
-      name: string;
-      logo: string;
-    };
-  }[];
+  token: CollectibleInfo[];
 }
 
 export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
@@ -76,15 +65,22 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa } = result.token[0];
+      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply } =
+        result.token[0];
 
       return {
         description,
         creators,
-        collection: {
+        fa: {
           name: fa.name,
           logo: fa.logo
-        }
+        },
+        metadata,
+        artifact_uri,
+        attributes,
+        timestamp,
+        royalties,
+        supply
       };
     })
   );
@@ -132,6 +128,22 @@ const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string
         name
         logo
       }
+      metadata
+      artifact_uri
+      name
+      attributes {
+        attribute {
+          name
+          value
+          id
+        }
+      }
+      timestamp
+      royalties {
+        decimals
+        amount
+      }
+      supply
     }
   }
 `;

@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -13,6 +13,7 @@ import { InsetSubstitute } from '../../components/inset-substitute/inset-substit
 import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { useCollectibleInfo } from '../../hooks/use-collectible-info.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -24,16 +25,29 @@ import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
+import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
+import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
+
+enum SegmentControlNamesEnum {
+  Attributes = 'Attributes',
+  Properties = 'Properties',
+  Offers = 'Offers'
+}
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
+
   const { width } = Dimensions.get('window');
   const itemWidth = width - 32;
+
   const { navigate } = useNavigation();
+
   const styles = useCollectibleModalStyles();
 
-  const { collectibleInfo } = useCollectibleInfo(collectible.address, collectible.id.toString());
-  const { collection, creators, description } = collectibleInfo;
+  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+
+  const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
+  const { fa, creators, description, metadata, timestamp, royalties, supply } = collectibleInfo;
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
@@ -49,14 +63,14 @@ export const CollectibleModal = () => {
         <Divider size={formatSize(12)} />
 
         <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-          {collection.logo ? (
-            <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(collection.logo) }} />
+          {fa.logo ? (
+            <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
           ) : (
             <View style={[styles.collectionLogo, styles.logoFallBack]} />
           )}
 
           <Text numberOfLines={1} style={styles.collectionName}>
-            {collection.name}
+            {fa.name}
           </Text>
         </TouchableOpacity>
 
@@ -76,8 +90,9 @@ export const CollectibleModal = () => {
 
             {creators.map(({ holder }, index) => (
               <LinkWithIcon
+                key={holder.address}
                 text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                userAddress={holder.address}
+                link={getObjktProfileLink(holder.address)}
                 style={[
                   styles.linkWithIcon,
                   {
@@ -87,6 +102,31 @@ export const CollectibleModal = () => {
               />
             ))}
           </View>
+        )}
+
+        <TextSegmentControl
+          selectedIndex={segmentControlIndex}
+          values={[
+            SegmentControlNamesEnum.Attributes,
+            SegmentControlNamesEnum.Properties,
+            SegmentControlNamesEnum.Offers
+          ]}
+          onChange={setSegmentControlIndex}
+          disabledIndexes={[2]}
+          style={styles.segmentControl}
+        />
+
+        {!isLoading && (
+          <CollectibleProperties
+            contract={collectible.address}
+            tokenId={collectible.id}
+            editions={supply}
+            metadata={metadata}
+            minted={timestamp}
+            owned={collectible.balance}
+            royalties={royalties}
+            style={styles.properties}
+          />
         )}
       </View>
 

@@ -13,18 +13,16 @@ import { useLinkWithIconStyles } from './link-with-icon.styles';
 interface Props {
   text: string;
   iconName?: IconNameEnum;
-  userAddress: string;
+  link: string;
   style?: StyleProp<ViewStyle>;
 }
 
-const objktProfileLink = (userAddress: string) => `https://objkt.com/profile/${userAddress}/created`;
-
-export const LinkWithIcon: FC<Props> = ({ text, iconName = IconNameEnum.ExternalLinkTag, userAddress, style }) => {
+export const LinkWithIcon: FC<Props> = ({ text, iconName = IconNameEnum.ExternalLinkTag, link, style }) => {
   const styles = useLinkWithIconStyles();
 
   const isAddress = isValidAddress(text);
 
-  const handleLinkPress = () => openUrl(objktProfileLink(userAddress));
+  const handleLinkPress = () => openUrl(link);
 
   const textProps = getTruncatedProps([styles.container, styles.text], isAddress ? 'middle' : 'tail');
 

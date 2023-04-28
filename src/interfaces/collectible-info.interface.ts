@@ -2,12 +2,26 @@ export interface CollectibleInfo {
   description: string;
   creators: {
     holder: {
-      tzdomain: string;
       address: string;
+      tzdomain: string;
     };
   }[];
-  collection: {
+  fa: {
     name: string;
     logo: string;
   };
+  metadata: string;
+  artifact_uri: string;
+  attributes: {
+    attribute: {
+      name: string;
+      value: string;
+    };
+  }[];
+  timestamp: string;
+  royalties: {
+    decimals: number;
+    amount: number;
+  }[];
+  supply: number;
 }

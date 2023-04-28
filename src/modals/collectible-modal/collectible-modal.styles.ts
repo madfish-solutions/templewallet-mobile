@@ -48,5 +48,11 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
   },
   linkWithIcon: {
     marginVertical: formatSize(4)
+  },
+  segmentControl: {
+    marginBottom: formatSize(18)
+  },
+  properties: {
+    marginBottom: formatSize(16)
   }
 }));

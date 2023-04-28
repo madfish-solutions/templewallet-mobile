@@ -6,13 +6,19 @@ import { fetchCollectibleInfo$ } from '../apis/objkt';
 import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 import { showErrorToast } from '../toast/toast.utils';
 
-const initialState = {
+const initialState: CollectibleInfo = {
   description: '',
   creators: [],
-  collection: {
+  fa: {
     name: '',
     logo: ''
-  }
+  },
+  metadata: '',
+  artifact_uri: '',
+  attributes: [],
+  timestamp: '',
+  royalties: [],
+  supply: 0
 };
 
 export const useCollectibleInfo = (address: string, id: string) => {
