@@ -92,7 +92,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
 
-    if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token || !routingFeeAtomic || !swapInputMinusFeeAtomic) {
+    if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token || swapInputMinusFeeAtomic.isEqualTo(ZERO)) {
       return;
     }
 
@@ -295,7 +295,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       loadSwapParamsAction.submit({
         fromSymbol: getRoute3TokenSymbol(input.asset),
         toSymbol: getRoute3TokenSymbol(output.asset),
-        amount: amount && mutezToTz(amount, input.asset.decimals).toFixed()
+        amount: mutezToTz(amount, input.asset.decimals).toFixed()
       })
     );
   }, []);
