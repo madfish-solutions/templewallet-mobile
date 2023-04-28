@@ -4,7 +4,7 @@ import { View, Text, ListRenderItem, ViewToken } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
-import { useCollectiblebyCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
+import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -18,7 +18,7 @@ export const Collection = () => {
   const styles = useCollectionStyles();
 
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
-  const collectibles = useCollectiblebyCollectionInfo(params.collectionContract);
+  const collectibles = useCollectibleByCollectionInfo(params.collectionContract);
   const tokens = useMemo(() => collectibles.length, [collectibles]);
   console.log(tokens, 'TOKENS');
 
