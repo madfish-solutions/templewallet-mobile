@@ -10,6 +10,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 
 import { CASHBACK_PERCENT, ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
+import { SwapExchangeRateSelectors } from './selectors';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
@@ -74,7 +75,12 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Text style={styles.infoText}>Routing Fee</Text>
-          <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+          <TouchableIcon
+            name={IconNameEnum.InfoFilled}
+            size={formatSize(24)}
+            testID={SwapExchangeRateSelectors.routingFeeAlert}
+            onPress={routingFeeAlert}
+          />
         </View>
         <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
       </View>

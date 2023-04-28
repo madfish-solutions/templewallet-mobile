@@ -48,7 +48,7 @@ export const Filters: FC<Props> = ({
         onChange={onSelectorChange}
         testID={MarketSelectors.marketToggle}
       />
-      <Search onChange={onSearchValueChange} dividerSize={12}>
+      <Search onChange={onSearchValueChange} dividerSize={12} testID={MarketSelectors.search}>
         <Sorter
           bottomSheetContentHeight={224}
           sortValue={sortFiled}
@@ -56,6 +56,7 @@ export const Filters: FC<Props> = ({
           sortFieldsOptions={marketTokensSortFieldsOptions}
           sortFieldsLabels={marketTokensSortFieldsLabels}
           onSetSortValue={onSetSortValue}
+          testID={MarketSelectors.sorter}
         />
       </Search>
     </View>

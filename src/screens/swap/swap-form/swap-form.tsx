@@ -188,15 +188,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
+      trackEvent('SWAP_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+    } else {
+      trackEvent('SWAP_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
+      dispatch(
+        navigateAction(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams,
+          testID: 'SWAP_TRANSACTION_SENT'
+        })
+      );
     }
-
-    dispatch(
-      navigateAction(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams,
-        testID: 'SWAP_TRANSACTION_SENT'
-      })
-    );
   };
 
   const formik = useFormik<SwapFormValues>({
@@ -272,7 +274,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       dispatchLoadSwapParams(newInputValue, outputAssets);
     },
-    [outputAssetSlug, setFieldValue]
+    [outputAssetSlug, setFieldValue, trackEvent]
   );
 
   const handleOutputAssetsValueChange = useCallback(

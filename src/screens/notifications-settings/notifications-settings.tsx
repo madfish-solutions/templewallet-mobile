@@ -42,17 +42,31 @@ export const NotificationsSettings = () => {
       <Label description="Configure the notifications and ads. (Platform updates and emergency notifications can’t be disabled)" />
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}>
+        <WhiteContainerAction
+          onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}
+          testID={NotificationsSettingsSelectors.newsAction}
+          testIDProperties={{ newValue: !isNewsEnabled }}
+        >
           <WhiteContainerText text="News" />
           <Switch
             value={isNewsEnabled}
             onChange={value => dispatch(setIsNewsEnabledAction(value))}
             testID={NotificationsSettingsSelectors.newsToggle}
+            testIDProperties={{ newValue: !isNewsEnabled }}
           />
         </WhiteContainerAction>
-        <WhiteContainerAction onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}>
+        <WhiteContainerAction
+          onPress={() => handleAdsToggle(!isAdsEnabled)}
+          testID={NotificationsSettingsSelectors.adsAction}
+          testIDProperties={{ newValue: !isAdsEnabled }}
+        >
           <WhiteContainerText text="Ads" />
-          <Switch value={isAdsEnabled} onChange={handleAdsToggle} testID={NotificationsSettingsSelectors.adsToggle} />
+          <Switch
+            value={isAdsEnabled}
+            onChange={handleAdsToggle}
+            testID={NotificationsSettingsSelectors.adsToggle}
+            testIDProperties={{ newValue: !isAdsEnabled }}
+          />
         </WhiteContainerAction>
       </WhiteContainer>
     </ScreenContainer>
