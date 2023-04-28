@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -41,12 +41,19 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   const contacts = useContactsSelector();
   const { metadata } = useNetworkInfo();
   const selectedAccount = useSelectedAccountSelector();
-  const { logo, alias } = selectedAccount.tzProfile ?? {};
+  const { alias } = selectedAccount.tzProfile ?? {};
+  const [userLogo, setUserLogo] = useState(selectedAccount.tzProfile?.logo);
+
+  useEffect(() => setUserLogo(selectedAccount.tzProfile?.logo), [selectedAccount.tzProfile]);
 
   return (
     <View style={styles.root}>
-      {isDefined(logo) && isCollectibleScreen ? (
-        <FastImage style={styles.image} source={{ uri: formatImgUri(logo) }} />
+      {isDefined(userLogo) && isCollectibleScreen ? (
+        <FastImage
+          style={styles.image}
+          source={{ uri: formatImgUri(userLogo) }}
+          onError={() => setUserLogo(undefined)}
+        />
       ) : (
         <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
       )}

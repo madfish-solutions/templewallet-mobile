@@ -81,6 +81,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   collectionName: {
     width: formatSize(56),
     textAlign: 'center',
+    color: colors.black,
     ...typography.caption10Regular
   },
   collectionsContainer: {
@@ -107,6 +108,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   NFTtypeActive: {
     backgroundColor: colors.white,
+    marginLeft: formatSize(2),
     ...generateShadow(3, 'black')
   },
   NFTtypeText: {

@@ -68,7 +68,7 @@ export const CollectiblesHome = () => {
   const TAB_BAR_HEIGHT = 53 + insets.bottom;
   const ICON_COVER_GAP = 2;
 
-  const openTzProfiles = () => openUrl(`https://tzprofiles.com/view/mainnet/${selectedAccount.publicKeyHash}`);
+  const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
@@ -83,7 +83,7 @@ export const CollectiblesHome = () => {
 
   const socialLinks: SocialLinksInterface[] = [
     { url: twitter, icon: IconNameEnum.Twitter },
-    { url: isDefined(discord) ? `https://discordapp.com/users/${discord}` : discord, icon: IconNameEnum.Discord },
+    { url: isDefined(discord) ? `https://discord.com/invite/${discord}` : discord, icon: IconNameEnum.Discord },
     { url: website, icon: IconNameEnum.Website },
     { url: github, icon: IconNameEnum.Github }
   ].sort((a, b) => {
@@ -167,13 +167,16 @@ export const CollectiblesHome = () => {
         >
           <View style={styles.profileContainer}>
             <View style={styles.createProfile}>
-              <TouchableIcon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
               {isDefined(alias) ? (
-                <TouchableOpacity onPress={openTzProfiles}>
+                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
+                  <Icon name={IconNameEnum.Edit} onPress={() => null} size={formatSize(16)} />
                   <Text style={styles.createProfileText}>EDIT PROFILE</Text>
                 </TouchableOpacity>
               ) : (
-                <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
+                  <Icon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
+                  <Text style={styles.createProfileText}>CREATE PROFILE</Text>
+                </TouchableOpacity>
               )}
             </View>
             <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
@@ -191,9 +194,8 @@ export const CollectiblesHome = () => {
             <FlatList
               data={collections}
               renderItem={renderItemCollections}
-              keyExtractor={collection => `${collection.logo}_${collection.name}`}
+              keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
               horizontal
-              extraData={collections}
               showsHorizontalScrollIndicator={false}
             />
           </View>

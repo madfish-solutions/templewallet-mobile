@@ -19,17 +19,19 @@ interface Props extends TestIdProps {
   size?: number;
 }
 
-export const SocialButton: FC<Props> = ({ iconName, url, testID }) => {
+export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = formatSize(24), testID }) => {
   const styles = useSocialButtonStyles();
+
+  const handleOnPress = () => (url ? openUrl(url) : undefined);
 
   return (
     <TouchableWithAnalytics
       Component={TouchableOpacity}
-      style={styles.container}
-      onPress={() => openUrl(url)}
+      style={[styles.container, style]}
+      onPress={handleOnPress}
       testID={testID}
     >
-      <Icon name={iconName} size={formatSize(24)} />
+      <Icon name={iconName} size={size} color={color} />
     </TouchableWithAnalytics>
   );
 };

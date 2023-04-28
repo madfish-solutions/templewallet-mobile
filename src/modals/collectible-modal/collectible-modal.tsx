@@ -20,6 +20,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatImgUri } from '../../utils/image.utils';
+import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
@@ -42,9 +43,9 @@ export const CollectibleModal = () => {
 
   const { navigate } = useNavigation();
 
-  const styles = useCollectibleModalStyles();
-
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+
+  const styles = useCollectibleModalStyles();
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
   const { fa, creators, description, metadata, timestamp, royalties, supply } = collectibleInfo;
@@ -63,7 +64,7 @@ export const CollectibleModal = () => {
         <Divider size={formatSize(12)} />
 
         <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-          {fa.logo ? (
+          {isDefined(fa.logo) ? (
             <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
           ) : (
             <View style={[styles.collectionLogo, styles.logoFallBack]} />
