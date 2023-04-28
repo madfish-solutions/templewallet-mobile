@@ -72,7 +72,7 @@ export const CustomToast: FC<Props> = ({
             )}
             <View style={styles.row}>
               <Text
-                numberOfLines={!isString(title) ? 2 : 1}
+                numberOfLines={2}
                 style={[
                   styles.description,
                   { color: toastType === ToastTypeEnum.Warning ? colors.black : colors.white }

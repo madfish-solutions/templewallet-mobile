@@ -11,11 +11,6 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.black,
     marginBottom: formatSize(4)
   },
-  description: {
-    ...typography.caption13Regular,
-    color: colors.gray1,
-    marginBottom: formatSize(4)
-  },
   labelContainer: {
     flexDirection: 'row',
     alignItems: 'baseline'
@@ -23,5 +18,16 @@ export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
   isOptionalLabel: {
     ...typography.caption11Regular,
     color: colors.gray1
+  }
+}));
+
+export const useDescriptionStyles = createUseStyles(({ colors, typography }) => ({
+  description: {
+    ...typography.caption13Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(4)
+  },
+  boldDescriptionPiece: {
+    ...typography.caption13Semibold
   }
 }));

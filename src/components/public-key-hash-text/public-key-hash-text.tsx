@@ -2,12 +2,15 @@ import React, { FC } from 'react';
 import { Text, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { MarginProps } from '../../interfaces/margin.props';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { getTruncatedProps } from '../../utils/style.util';
+import { MarginProps } from 'src/interfaces/margin.props';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getTruncatedProps } from 'src/utils/style.util';
+
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
-interface Props extends MarginProps {
+interface Props extends MarginProps, TestIdProps {
   publicKeyHash: string;
   disabled?: boolean;
   longPress?: boolean;
@@ -22,7 +25,9 @@ export const PublicKeyHashText: FC<Props> = ({
   marginLeft,
   style,
   disabled = false,
-  longPress = false
+  longPress = false,
+  testID,
+  testIDProperties
 }) => {
   const styles = usePublicKeyHashTextStyles();
 
@@ -30,15 +35,20 @@ export const PublicKeyHashText: FC<Props> = ({
   const handleLongPress = () => longPress && copyStringToClipboard(publicKeyHash);
 
   return (
-    <TouchableOpacity
+    <TouchableWithAnalytics
+      Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
       style={[styles.container, style, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
+      shouldTrackLongPress={longPress}
+      shouldTrackShortPress={!longPress}
       onPress={handlePress}
       onLongPress={handleLongPress}
+      testID={testID}
+      testIDProperties={testIDProperties}
     >
       <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
         {publicKeyHash}
       </Text>
-    </TouchableOpacity>
+    </TouchableWithAnalytics>
   );
 };
