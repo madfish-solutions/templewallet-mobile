@@ -15,6 +15,11 @@ export interface TokenMetadataInterface {
   displayUri?: string;
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
+  description?: string;
+  highestOffer?: number | null;
+  lowestAsk?: number | null;
+  metadata?: string;
+  editions?: number;
 
   // Stored as separate Record
   exchangeRate?: number;

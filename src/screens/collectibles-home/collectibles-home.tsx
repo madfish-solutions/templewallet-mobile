@@ -15,6 +15,7 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { emptyFn } from 'src/config/general';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
@@ -49,7 +50,7 @@ interface SocialLinksInterface {
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
-const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
+//const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();
@@ -63,6 +64,7 @@ export const CollectiblesHome = () => {
   const { height: windowHeight } = useWindowDimensions();
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
+  const { navigate } = useNavigation();
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 53 + insets.bottom;
@@ -122,7 +124,8 @@ export const CollectiblesHome = () => {
   );
 
   const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
-    const handleCollectionPress = () => openUrl(OBJKT_COLLECTION_URL(item.contract));
+    const handleCollectionPress = () =>
+      navigate(ScreensEnum.Collection, { collectionContract: item.contract, collectionName: item.name });
 
     return (
       <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>

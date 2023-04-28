@@ -19,6 +19,7 @@ export enum ScreensEnum {
   ScanQrCode = 'ScanQrCode',
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
+  Collection = 'Collection',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -75,6 +76,7 @@ export type ScreensParamList = {
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.Collection]: { collectionContract: string; collectionName: string };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
