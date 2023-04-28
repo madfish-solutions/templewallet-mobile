@@ -50,7 +50,6 @@ interface SocialLinksInterface {
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
-//const OBJKT_COLLECTION_URL = (collectionContract: string) => `https://objkt.com/collection/${collectionContract}`;
 
 export const CollectiblesHome = () => {
   const styles = useCollectiblesHomeStyles();

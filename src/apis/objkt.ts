@@ -43,6 +43,22 @@ interface CollectiblesByCollectionResponse {
   token: CollectibleResponse[];
 }
 
+interface CollectibleInfoQueryResponse {
+  token: {
+    description: string;
+    creators: {
+      holder: {
+        address: string;
+        tzdomain: string;
+      };
+    }[];
+    fa: {
+      name: string;
+      logo: string;
+    };
+  }[];
+}
+
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
 
@@ -80,7 +96,7 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
 };
 
 export const fetchCollectiblesByCollection$ = (contract: string): Observable<TokenInterface[]> => {
-  const request = buildGetCollectioblesByCollectionQuery(contract);
+  const request = buildGetCollectiblesByCollectionQuery(contract);
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
     map(result => {
@@ -105,6 +121,25 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
       });
 
       return collectiblesArray;
+    })
+  );
+};
+
+export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
+  const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
+
+  return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
+    map(result => {
+      const { description, creators, fa } = result.token[0];
+
+      return {
+        description,
+        creators,
+        collection: {
+          name: fa.name,
+          logo: fa.logo
+        }
+      };
     })
   );
 };
@@ -137,7 +172,7 @@ const buildGetHoldersInfoQuery = (address: string) => gql`
   }
 `;
 
-const buildGetCollectioblesByCollectionQuery = (contract: string) => gql`query MyQuery {
+const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`query MyQuery {
   token(where: {fa_contract: {_eq: "${contract}"}}) {
     artifact_uri
     description
@@ -157,3 +192,20 @@ const buildGetCollectioblesByCollectionQuery = (contract: string) => gql`query M
     symbol
   }
 }`;
+const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
+  query MyQuery {
+    token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${tokenId}" } }) {
+      description
+      creators {
+        holder {
+          address
+          tzdomain
+        }
+      }
+      fa {
+        name
+        logo
+      }
+    }
+  }
+`;

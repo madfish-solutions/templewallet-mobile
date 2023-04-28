@@ -143,7 +143,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
-              options={useModalOptions('NFT Name')}
+              options={useModalOptions()}
             />
             <RootStack.Screen
               name={ModalsEnum.RemoveLiquidity}

@@ -4,10 +4,11 @@ import React from 'react';
 import { isIOS } from '../../config/system';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
+import { isDefined } from '../../utils/is-defined';
 import { HeaderCloseButton } from './header-close-button/header-close-button';
 import { HeaderTitle } from './header-title/header-title';
 
-export const useModalOptions = (title: string): StackNavigationOptions => {
+export const useModalOptions = (title?: string): StackNavigationOptions => {
   const colors = useColors();
 
   return {
@@ -22,7 +23,7 @@ export const useModalOptions = (title: string): StackNavigationOptions => {
     },
     gestureResponseDistance: isIOS ? undefined : 30,
     headerLeft: () => null,
-    headerTitle: () => <HeaderTitle title={title} />,
+    headerTitle: () => (isDefined(title) ? <HeaderTitle title={title} /> : null),
     headerRight: () => <HeaderCloseButton />
   };
 };
