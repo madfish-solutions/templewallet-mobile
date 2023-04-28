@@ -222,6 +222,7 @@ export const BuyWithCreditCard: FC = () => {
               emptyListText="Not found crypto currency"
               editable={false}
               isSearchable
+              singleAsset
               assetsList={filteredCryptoCurrencies}
               testID={BuyWithCreditCardSelectors.getOutput}
               onBlur={handleGetOutputBlur}
