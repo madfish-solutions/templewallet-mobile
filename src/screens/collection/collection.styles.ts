@@ -2,12 +2,12 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useCollectionStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
+  root: {
     flex: 1,
     marginVertical: formatSize(12),
     marginLeft: formatSize(20)
   },
-  NFTcontainer: {
+  collectibleContainer: {
     flex: 1,
     borderWidth: formatSize(1),
     borderRadius: formatSize(10),
@@ -16,7 +16,7 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     width: '100%',
     marginHorizontal: formatSize(4)
   },
-  NFT: {
+  collectible: {
     margin: formatSize(16)
   },
   image: {
@@ -24,13 +24,13 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     width: formatSize(295),
     height: formatSize(283)
   },
-  NFTname: {
+  collectibleName: {
     color: colors.black,
     marginTop: formatSize(12),
     maxWidth: formatSize(200),
     ...typography.body20Bold
   },
-  NFTdescription: {
+  collectibleDescription: {
     color: colors.black,
     marginTop: formatSize(8),
     maxWidth: formatSize(200),

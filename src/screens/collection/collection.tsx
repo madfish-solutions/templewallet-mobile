@@ -30,13 +30,13 @@ export const Collection = () => {
 
   const renderItem: ListRenderItem<TokenInterface> = ({ item }) => {
     return (
-      <View style={styles.NFTcontainer}>
-        <View style={styles.NFT}>
+      <View style={styles.collectibleContainer}>
+        <View style={styles.collectible}>
           <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
-          <Text style={styles.NFTname} numberOfLines={1}>
+          <Text style={styles.collectibleName} numberOfLines={1}>
             {item.name}
           </Text>
-          <Text style={styles.NFTdescription} numberOfLines={3}>
+          <Text style={styles.collectibleDescription} numberOfLines={3}>
             {item.description}
           </Text>
           <View style={styles.infoContainer}>
@@ -59,7 +59,7 @@ export const Collection = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.root}>
       <FlatList
         data={collectibles}
         renderItem={renderItem}
