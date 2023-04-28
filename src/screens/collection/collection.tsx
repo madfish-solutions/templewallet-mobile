@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, ListRenderItem, ViewToken } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
