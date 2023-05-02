@@ -5,7 +5,7 @@ export enum OptimalPromotionAdType {
   TwToken = 'tw-token'
 }
 
-export type EmptyPromotion = Record<string, never>;
+export type EmptyPromotion = Record<string, undefined>;
 export type NormalPromotion = {
   body: string;
   campaign_type: string;
