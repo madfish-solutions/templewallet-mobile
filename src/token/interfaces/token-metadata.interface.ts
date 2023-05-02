@@ -4,6 +4,8 @@ export enum TokenStandardsEnum {
   Fa2 = 'fa2',
   Fa12 = 'fa12'
 }
+
+export type HolderAddress = { holder_address: string };
 export interface TokenMetadataInterface {
   id: number;
   address: string;
@@ -20,6 +22,7 @@ export interface TokenMetadataInterface {
   lowestAsk?: number | null;
   metadata?: string;
   editions?: number;
+  holders?: HolderAddress[];
 
   // Stored as separate Record
   exchangeRate?: number;

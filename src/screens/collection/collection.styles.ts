@@ -66,5 +66,25 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     color: colors.black,
     marginTop: formatSize(8),
     ...typography.numbersMedium17
+  },
+  buttonContainer: {
+    marginTop: formatSize(16)
+  },
+  sellButton: {
+    borderWidth: formatSize(2),
+    borderRadius: formatSize(10),
+    alignItems: 'center'
+  },
+  sellButtonActive: {
+    borderColor: colors.peach,
+    color: colors.peach
+  },
+  sellButtonDisabled: {
+    borderColor: colors.disabled,
+    color: colors.disabled
+  },
+  sellButtonText: {
+    paddingVertical: formatSize(13),
+    ...typography.body17Semibold
   }
 }));
