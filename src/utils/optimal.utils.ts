@@ -5,7 +5,8 @@ export enum OptimalPromotionAdType {
   TwToken = 'tw-token'
 }
 
-export interface OptimalPromotionInterface {
+export type EmptyPromotion = Record<string, never>;
+export type NormalPromotion = {
   body: string;
   campaign_type: string;
   copy: {
@@ -23,11 +24,12 @@ export interface OptimalPromotionInterface {
   text: string;
   view_time_url: string;
   view_url: string;
-}
+};
+export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
 
 export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
   optimalApi
-    .get<OptimalPromotionInterface>('api/v1/decision', {
+    .get<OptimalPromotionType>('api/v1/decision', {
       params: {
         publisher: 'templewallet', // your-publisher-slug
         ad_types: adType,

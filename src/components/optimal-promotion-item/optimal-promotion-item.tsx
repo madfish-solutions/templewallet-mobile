@@ -8,6 +8,7 @@ import {
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { NormalPromotion, OptimalPromotionType } from 'src/utils/optimal.utils';
 
 import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
@@ -18,6 +19,11 @@ interface Props extends TestIdProps {
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
   onImageError?: () => void;
+  onEmptyPromotionReceived?: () => void;
+}
+
+function isNormalPromotion(promotion: OptimalPromotionType): promotion is NormalPromotion {
+  return 'link' in promotion && 'image' in promotion;
 }
 
 export const OptimalPromotionItem: FC<Props> = ({
@@ -25,7 +31,8 @@ export const OptimalPromotionItem: FC<Props> = ({
   style,
   shouldShowCloseButton = true,
   variant = OptimalPromotionVariantEnum.Image,
-  onImageError
+  onImageError,
+  onEmptyPromotionReceived
 }) => {
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
@@ -33,6 +40,12 @@ export const OptimalPromotionItem: FC<Props> = ({
   const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
 
   if (!partnersPromotionEnabled) {
+    return null;
+  }
+
+  if (!isNormalPromotion(partnersPromotion)) {
+    onEmptyPromotionReceived?.();
+
     return null;
   }
 
