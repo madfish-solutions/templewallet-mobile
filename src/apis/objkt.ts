@@ -100,25 +100,27 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
     map(result => {
-      const collectiblesArray = result.token.map(token => {
-        return {
-          artifactUri: token.artifact_uri,
-          balance: '1',
-          decimals: token.decimals,
-          description: token.description,
-          displayUri: token.display_uri,
-          address: token.fa_contract,
-          highestOffer: token.highest_offer,
-          name: token.name,
-          metadata: token.metadata,
-          lowestAsk: token.lowest_ask,
-          symbol: token.symbol,
-          thumbnailUri: token.thumbnail_uri,
-          id: Number(token.token_id),
-          visibility: VisibilityEnum.Visible,
-          editions: token.supply
-        };
-      });
+      const collectiblesArray = result.token
+        .map(token => {
+          return {
+            artifactUri: token.artifact_uri,
+            balance: '1',
+            decimals: token.decimals,
+            description: token.description,
+            displayUri: token.display_uri,
+            address: token.fa_contract,
+            highestOffer: token.highest_offer,
+            name: token.name,
+            metadata: token.metadata,
+            lowestAsk: token.lowest_ask,
+            symbol: token.symbol,
+            thumbnailUri: token.thumbnail_uri,
+            id: Number(token.token_id),
+            visibility: VisibilityEnum.Visible,
+            editions: token.supply
+          };
+        })
+        .filter(collectible => collectible.editions !== 0);
 
       return collectiblesArray;
     })

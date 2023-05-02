@@ -33,7 +33,7 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
   collectibleDescription: {
     color: colors.black,
     marginTop: formatSize(8),
-    maxWidth: formatSize(200),
+    maxWidth: formatSize(285),
     ...typography.caption13Regular
   },
   infoContainer: {
