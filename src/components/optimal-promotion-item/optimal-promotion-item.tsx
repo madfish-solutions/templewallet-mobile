@@ -8,7 +8,7 @@ import {
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { NormalPromotion, OptimalPromotionType } from 'src/utils/optimal.utils';
+import { isEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
@@ -20,10 +20,6 @@ interface Props extends TestIdProps {
   variant?: OptimalPromotionVariantEnum;
   onImageError?: () => void;
   onEmptyPromotionReceived?: () => void;
-}
-
-function isNormalPromotion(promotion: OptimalPromotionType): promotion is NormalPromotion {
-  return 'link' in promotion && 'image' in promotion;
 }
 
 export const OptimalPromotionItem: FC<Props> = ({
@@ -43,7 +39,7 @@ export const OptimalPromotionItem: FC<Props> = ({
     return null;
   }
 
-  if (!isNormalPromotion(partnersPromotion)) {
+  if (isEmptyPromotion(partnersPromotion)) {
     onEmptyPromotionReceived?.();
 
     return null;

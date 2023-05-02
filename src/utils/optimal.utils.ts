@@ -5,8 +5,8 @@ export enum OptimalPromotionAdType {
   TwToken = 'tw-token'
 }
 
-export type EmptyPromotion = Record<string, undefined>;
-export type NormalPromotion = {
+type EmptyPromotion = Record<string, undefined>;
+type NormalPromotion = {
   body: string;
   campaign_type: string;
   copy: {
@@ -25,7 +25,12 @@ export type NormalPromotion = {
   view_time_url: string;
   view_url: string;
 };
+
 export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
+
+export function isEmptyPromotion(promotion: OptimalPromotionType): promotion is EmptyPromotion {
+  return !('link' in promotion && 'image' in promotion);
+}
 
 export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
   optimalApi
