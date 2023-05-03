@@ -26,6 +26,7 @@ import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
+import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
@@ -34,6 +35,8 @@ enum SegmentControlNamesEnum {
   Properties = 'Properties',
   Offers = 'Offers'
 }
+
+const SEGMENT_CONTROL_PROPERTY_SELECTED = 0;
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -44,11 +47,13 @@ export const CollectibleModal = () => {
   const { navigate } = useNavigation();
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+  const isPropertySelected = segmentControlIndex === SEGMENT_CONTROL_PROPERTY_SELECTED;
 
   const styles = useCollectibleModalStyles();
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
-  const { fa, creators, description, metadata, timestamp, royalties, supply } = collectibleInfo;
+  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes } = collectibleInfo;
+  const isAttributesExist = attributes.length > 0;
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
@@ -108,7 +113,7 @@ export const CollectibleModal = () => {
         <TextSegmentControl
           selectedIndex={segmentControlIndex}
           values={[
-            SegmentControlNamesEnum.Attributes,
+            isAttributesExist ? SegmentControlNamesEnum.Attributes : '',
             SegmentControlNamesEnum.Properties,
             SegmentControlNamesEnum.Offers
           ]}
@@ -117,7 +122,7 @@ export const CollectibleModal = () => {
           style={styles.segmentControl}
         />
 
-        {!isLoading && (
+        {!isLoading && isPropertySelected && (
           <CollectibleProperties
             contract={collectible.address}
             tokenId={collectible.id}
@@ -126,8 +131,11 @@ export const CollectibleModal = () => {
             minted={timestamp}
             owned={collectible.balance}
             royalties={royalties}
-            style={styles.properties}
+            style={styles.marginBottom}
           />
+        )}
+        {!isLoading && !isPropertySelected && isAttributesExist && (
+          <CollectibleAttributes attributes={attributes} style={styles.marginBottom} />
         )}
       </View>
 

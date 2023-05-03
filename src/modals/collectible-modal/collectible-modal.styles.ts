@@ -52,7 +52,7 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
   segmentControl: {
     marginBottom: formatSize(18)
   },
-  properties: {
+  marginBottom: {
     marginBottom: formatSize(16)
   }
 }));
