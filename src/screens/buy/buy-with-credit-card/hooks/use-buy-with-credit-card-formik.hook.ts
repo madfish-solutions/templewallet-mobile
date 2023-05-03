@@ -54,16 +54,18 @@ export const useBuyWithCreditCardFormik = () => {
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
       try {
+        const { sendInput, getOutput } = values;
+        const inputAmount = sendInput.amount;
+        const inputSymbol = sendInput.asset.code;
+        const outputAmount = getOutput.amount;
+        const outputSymbol = getOutput.asset.code;
         trackEvent('BUY_WITH_CREDIT_CARD_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-          inputAmount: values.sendInput.amount?.toString(),
-          inputAsset: values.sendInput.asset.code,
-          outputAmount: values.getOutput.amount?.toString(),
-          outputAsset: values.getOutput.asset.code,
+          inputAmount: inputAmount?.toString(),
+          inputAsset: inputSymbol,
+          outputAmount: outputAmount?.toString(),
+          outputAsset: outputSymbol,
           provider: values.paymentProvider?.name
         });
-
-        const inputAmount = values.sendInput.amount;
-        const outputAmount = values.getOutput.amount;
 
         if (!isDefined(inputAmount) || !isDefined(outputAmount)) {
           return;
@@ -73,15 +75,15 @@ export const useBuyWithCreditCardFormik = () => {
         switch (values.paymentProvider?.id) {
           case TopUpProviderEnum.MoonPay:
             urlToOpen = await getSignedMoonPayUrl(
-              values.getOutput.asset.code,
+              outputSymbol,
               '#ed8936',
               publicKeyHash,
               inputAmount.toNumber(),
-              values.sendInput.asset.code
+              inputSymbol
             );
             break;
           case TopUpProviderEnum.Utorg:
-            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), values.sendInput.asset.code, publicKeyHash);
+            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
             break;
           default:
             const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
