@@ -3,13 +3,12 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
 import { Divider } from '../../components/divider/divider';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
 import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -36,7 +35,11 @@ enum SegmentControlNamesEnum {
   Offers = 'Offers'
 }
 
-const SEGMENT_CONTROL_PROPERTY_SELECTED = 0;
+const SEGMENT_VALUES = [
+  SegmentControlNamesEnum.Attributes,
+  SegmentControlNamesEnum.Properties,
+  SegmentControlNamesEnum.Offers
+];
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -47,109 +50,117 @@ export const CollectibleModal = () => {
   const { navigate } = useNavigation();
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
-  const isPropertySelected = segmentControlIndex === SEGMENT_CONTROL_PROPERTY_SELECTED;
 
   const styles = useCollectibleModalStyles();
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
+
   const { fa, creators, description, metadata, timestamp, royalties, supply, attributes } = collectibleInfo;
+
   const isAttributesExist = attributes.length > 0;
+
+  const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
+
+  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
+  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
+
+  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
-      <ModalStatusBar />
-
-      <View>
-        <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
-
-        <Divider size={formatSize(12)} />
-
-        <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-          {isDefined(fa.logo) ? (
-            <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
-          ) : (
-            <View style={[styles.collectionLogo, styles.logoFallBack]} />
-          )}
-
-          <Text numberOfLines={1} style={styles.collectionName}>
-            {fa.name}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{collectible.name}</Text>
-        </View>
-
-        {isString(description) && (
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.description}>{description}</Text>
-          </View>
-        )}
-
-        {isNonEmptyArray(creators) && (
-          <View style={styles.creatorsContainer}>
-            <Text style={styles.creatorsText}>Creators:</Text>
-
-            {creators.map(({ holder }, index) => (
-              <LinkWithIcon
-                key={holder.address}
-                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                link={getObjktProfileLink(holder.address)}
-                style={[
-                  styles.linkWithIcon,
-                  {
-                    ...(creators.length > 0 && creators.length !== index + 1 && { marginRight: formatSize(6) })
-                  }
-                ]}
-              />
-            ))}
-          </View>
-        )}
-
-        <TextSegmentControl
-          selectedIndex={segmentControlIndex}
-          values={[
-            isAttributesExist ? SegmentControlNamesEnum.Attributes : '',
-            SegmentControlNamesEnum.Properties,
-            SegmentControlNamesEnum.Offers
-          ]}
-          onChange={setSegmentControlIndex}
-          disabledIndexes={[2]}
-          style={styles.segmentControl}
-        />
-
-        {!isLoading && isPropertySelected && (
-          <CollectibleProperties
-            contract={collectible.address}
-            tokenId={collectible.id}
-            editions={supply}
-            metadata={metadata}
-            minted={timestamp}
-            owned={collectible.balance}
-            royalties={royalties}
-            style={styles.marginBottom}
-          />
-        )}
-        {!isLoading && !isPropertySelected && isAttributesExist && (
-          <CollectibleAttributes attributes={attributes} style={styles.marginBottom} />
-        )}
-      </View>
-
-      <View>
-        <ButtonsContainer>
+    <ScreenContainer
+      fixedFooterContainer={{
+        submitButton: (
           <ButtonLargePrimary
             title="Send"
             onPress={() => navigate(ModalsEnum.Send, { token: collectible })}
             testID={CollectibleModalSelectors.sendButton}
           />
-        </ButtonsContainer>
+        )
+      }}
+      isFullScreenMode={true}
+    >
+      <ScrollView>
+        <ModalStatusBar />
 
-        <InsetSubstitute type="bottom" />
-      </View>
+        <View>
+          <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
+
+          <Divider size={formatSize(12)} />
+
+          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+            {isDefined(fa.logo) ? (
+              <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
+            ) : (
+              <View style={[styles.collectionLogo, styles.logoFallBack]} />
+            )}
+
+            <Text numberOfLines={1} style={styles.collectionName}>
+              {fa.name}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.nameContainer}>
+            <Text style={styles.name}>{collectible.name}</Text>
+          </View>
+
+          {isString(description) && (
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.description}>{description}</Text>
+            </View>
+          )}
+
+          {isNonEmptyArray(creators) && (
+            <View style={styles.creatorsContainer}>
+              <Text style={styles.creatorsText}>Creators:</Text>
+
+              {creators.map(({ holder }, index) => (
+                <LinkWithIcon
+                  key={holder.address}
+                  text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                  link={getObjktProfileLink(holder.address)}
+                  style={[
+                    styles.linkWithIcon,
+                    {
+                      ...(creators.length > 0 && creators.length !== index + 1 && { marginRight: formatSize(6) })
+                    }
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+
+          {!isLoading && (
+            <TextSegmentControl
+              selectedIndex={segmentControlIndex}
+              values={segmentValues}
+              onChange={setSegmentControlIndex}
+              disabledIndexes={[disabledOffers]}
+              style={styles.segmentControl}
+            />
+          )}
+
+          {!isLoading && isPropertiesSelected && (
+            <CollectibleProperties
+              contract={collectible.address}
+              tokenId={collectible.id}
+              editions={supply}
+              metadata={metadata}
+              minted={timestamp}
+              owned={collectible.balance}
+              royalties={royalties}
+              style={styles.marginBottom}
+            />
+          )}
+
+          {!isLoading && !isPropertiesSelected && isAttributesExist && (
+            <CollectibleAttributes attributes={attributes} style={styles.marginBottom} />
+          )}
+        </View>
+      </ScrollView>
     </ScreenContainer>
   );
 };

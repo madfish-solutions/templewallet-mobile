@@ -11,10 +11,11 @@ export const useCollectibleAttributeStyles = createUseStyles(({ typography, colo
     width: itemWidth,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: formatSize(8),
     paddingVertical: formatSize(8),
     borderRadius: formatSize(10),
     borderWidth: formatSize(1),
-    borderColor: '#E4E4E4'
+    borderColor: colors.lines
   },
   name: {
     marginBottom: formatSize(4),
@@ -23,7 +24,8 @@ export const useCollectibleAttributeStyles = createUseStyles(({ typography, colo
   },
   value: {
     marginBottom: formatSize(4),
-    ...typography.body15Semibold
+    ...typography.body15Semibold,
+    color: colors.black
   },
   rarity: {
     ...typography.caption13Regular,
