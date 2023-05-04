@@ -43,6 +43,7 @@ import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
+import EarnIcon from './assets/earn.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
@@ -265,6 +266,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.UkraineIcon]: UkraineIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
+  [IconNameEnum.Earn]: EarnIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
   [IconNameEnum.CreditCard]: CreditCardIcon,

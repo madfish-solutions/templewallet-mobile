@@ -123,6 +123,7 @@ export enum IconNameEnum {
   MissedEndorsements = 'MissedEndorsements',
   NotificationDot = 'NotificationDot',
   Market = 'Market',
+  Earn = 'Earn',
   Buy = 'Buy',
   BuyWithCrypto = 'BuyWithCrypto',
   CreditCard = 'CreditCard',
