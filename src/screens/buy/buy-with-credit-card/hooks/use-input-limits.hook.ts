@@ -11,7 +11,10 @@ export const useInputLimits = (
   cryptoCurrencyCode: string
 ) => {
   const fiatCurrencies = useFiatCurrenciesSelector(topUpProvider);
-  const fiatCurrency = fiatCurrencies.find(({ code }) => code === fiatCurrencyCode);
+  const fiatCurrency = useMemo(
+    () => fiatCurrencies.find(({ code }) => code === fiatCurrencyCode),
+    [fiatCurrencies, fiatCurrencyCode]
+  );
   const pairLimits = usePairLimitsSelector(fiatCurrencyCode, cryptoCurrencyCode, topUpProvider);
 
   return useMemo(() => {

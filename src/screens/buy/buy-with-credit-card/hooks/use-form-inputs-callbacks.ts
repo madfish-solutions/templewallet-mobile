@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { debounce } from 'lodash-es';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
@@ -25,17 +25,26 @@ export const useFormInputsCallbacks = (
   setIsLoading: (newValue: boolean) => void
 ) => {
   const { setFieldValue, values, setFieldTouched } = formik;
-  const { sendInput: inputValue, getOutput: outputValue, paymentProvider } = values;
+  const { sendInput: inputValue, getOutput: outputValue } = values;
   const { asset: outputToken } = outputValue;
   const { allPaymentProviders, updateOutputAmounts } = paymentProviders;
   const outputCalculationDataRef = useRef({ inputValue, outputToken });
   const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>();
+  const valuesRef = useRef(values);
+  const isLoadingRef = useRef(isLoading);
   const dispatch = useDispatch();
   const allPairsLimits = useAllPairsLimitsSelector();
   const { noPairLimitsCurrencies: noPairLimitsFiatCurrencies } = useFiatCurrenciesList(
     inputValue.asset.code,
     outputToken.code
   );
+
+  useEffect(() => {
+    valuesRef.current = values;
+  }, [values]);
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
 
   const switchPaymentProvider = useCallback(
     async (newProvider?: PaymentProviderInterface) => {
@@ -86,7 +95,8 @@ export const useFormInputsCallbacks = (
           if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderIdRef.current)) {
             void switchPaymentProvider(autoselectedPaymentProvider);
           } else if (isDefined(newInputAmount)) {
-            const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === paymentProvider?.id);
+            const currentProviderId = valuesRef.current.paymentProvider?.id;
+            const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === currentProviderId);
             const newPaymentProvider = patchedSameProvider ?? autoselectedPaymentProvider;
             void switchPaymentProvider(newPaymentProvider);
           }
@@ -94,20 +104,21 @@ export const useFormInputsCallbacks = (
         },
         200
       ),
-    [paymentProvider, updateOutputAmounts, allPaymentProviders, switchPaymentProvider]
+    [updateOutputAmounts, allPaymentProviders, switchPaymentProvider]
   );
 
   const handleInputValueChange = useCallback(
     (newInput: TopUpAssetAmountInterface) => {
-      outputCalculationDataRef.current = { inputValue: newInput, outputToken };
+      const currentOutputToken = valuesRef.current.getOutput.asset;
+      outputCalculationDataRef.current = { inputValue: newInput, outputToken: currentOutputToken };
       setIsLoading(true);
-      void updateOutput(newInput, outputToken, true);
+      void updateOutput(newInput, currentOutputToken, true);
     },
-    [updateOutput, outputToken]
+    [updateOutput]
   );
   const handleOutputValueChange = useCallback(
     (newOutput: TopUpAssetAmountInterface) => {
-      const { amount: inputAmount, asset: inputCurrency } = inputValue;
+      const { amount: inputAmount, asset: inputCurrency } = valuesRef.current.sendInput;
       const noPairLimitsInputCurrency = noPairLimitsFiatCurrencies.find(({ code }) => code === inputCurrency.code);
       const { min: minInputAmount, max: maxInputAmount } = intersectAssetsLimits([
         { min: noPairLimitsInputCurrency?.minAmount, max: noPairLimitsInputCurrency?.maxAmount },
@@ -129,7 +140,7 @@ export const useFormInputsCallbacks = (
       setIsLoading(true);
       void updateOutput(patchedInputValue, newOutput.asset, true);
     },
-    [inputValue, noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
+    [noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
   );
   const handlePaymentProviderChange = useCallback(
     (newProvider?: PaymentProviderInterface) => {
@@ -139,15 +150,17 @@ export const useFormInputsCallbacks = (
     [switchPaymentProvider]
   );
   const refreshForm = useCallback(() => {
-    const { asset: inputCurrency } = inputValue;
+    const currentInputValue = valuesRef.current.sendInput;
+    const { asset: inputCurrency } = currentInputValue;
+    const { asset: currentOutputToken } = valuesRef.current.getOutput;
     dispatch(loadAllCurrenciesActions.submit());
-    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSymbol: outputToken.code }));
-    if (!isLoading) {
-      outputCalculationDataRef.current = { inputValue, outputToken };
+    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSymbol: currentOutputToken.code }));
+    if (!isLoadingRef.current) {
+      outputCalculationDataRef.current = { inputValue: currentInputValue, outputToken: currentOutputToken };
       setIsLoading(true);
-      void updateOutput(inputValue, outputToken, false);
+      void updateOutput(currentInputValue, currentOutputToken, false);
     }
-  }, [dispatch, inputValue, outputToken, updateOutput, isLoading]);
+  }, [dispatch, updateOutput]);
 
   const handleSendInputBlur = useCallback(() => void setFieldTouched('sendInput'), [setFieldTouched]);
   const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);

@@ -3,7 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 
 import { createEntity } from '../create-entity';
-import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
+import { loadAllCurrenciesActions, updatePairLimitsActions, updateTopUpProviderPairLimitsAction } from './actions';
 import { buyWithCreditCardInitialState, BuyWithCreditCardState } from './state';
 
 export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
@@ -104,5 +104,22 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
         }
       };
     });
+
+    builder.addCase(
+      updateTopUpProviderPairLimitsAction,
+      (state, { payload: { fiatSymbol, cryptoSymbol, topUpProvider, value } }) => ({
+        ...state,
+        pairLimits: {
+          ...state.pairLimits,
+          [fiatSymbol]: {
+            ...(state.pairLimits[fiatSymbol] ?? {}),
+            [cryptoSymbol]: {
+              ...(state.pairLimits[fiatSymbol]?.[cryptoSymbol] ?? {}),
+              [topUpProvider]: createEntity(value)
+            }
+          }
+        }
+      })
+    );
   }
 );

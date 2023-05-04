@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { getTezUahPairEstimation } from 'src/apis/alice-bob';
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
@@ -7,6 +8,7 @@ import { convertFiatAmountToCrypto } from 'src/apis/utorg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { updateTopUpProviderPairLimitsAction } from 'src/store/buy-with-credit-card/actions';
 import { useCryptoCurrenciesSelector, useFiatCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
@@ -89,9 +91,14 @@ const usePaymentProvider = (
   const { min: minInputAmount, max: maxInputAmount } = useInputLimits(providerId, inputAsset.code, outputAsset.code);
   const initialData = initialPaymentProvidersData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
+  const dispatch = useDispatch();
 
   const updateOutputAmount = useCallback(
-    async (newInputAmount?: BigNumber, newInputAsset = inputAsset, newOutputAsset = outputAsset) => {
+    async (
+      newInputAmount: BigNumber | undefined,
+      newInputAsset: TopUpInputInterface,
+      newOutputAsset: TopUpInputInterface
+    ) => {
       setIsError(false);
       const currentProviderFiatCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
       const currentProviderCryptoCurrency = cryptoCurrencies.find(({ code }) => code === newOutputAsset.code);
@@ -99,6 +106,17 @@ const usePaymentProvider = (
         isDefined(currentProviderFiatCurrency) && isDefined(currentProviderCryptoCurrency)
           ? (await getUpdatedFiatLimits(currentProviderFiatCurrency, currentProviderCryptoCurrency, providerId)).data
           : undefined;
+
+      if (isDefined(updatedPairLimits)) {
+        dispatch(
+          updateTopUpProviderPairLimitsAction({
+            fiatSymbol: newInputAsset.code,
+            cryptoSymbol: newOutputAsset.code,
+            topUpProvider: providerId,
+            value: updatedPairLimits
+          })
+        );
+      }
 
       if (
         !isTruthy(newInputAmount) ||
@@ -127,7 +145,7 @@ const usePaymentProvider = (
 
       return newOutputAmount;
     },
-    [inputAsset, outputAsset, getOutputAmount, providerId, fiatCurrencies]
+    [getOutputAmount, providerId, fiatCurrencies, cryptoCurrencies, dispatch]
   );
 
   const provider = useMemo<PaymentProviderInterface>(
@@ -201,9 +219,9 @@ export const usePaymentProviders = (
   );
   const updateOutputAmounts = useCallback(
     async (
-      newInputAmount?: BigNumber,
-      newInputAsset: TopUpInputInterface = inputAsset,
-      newOutputAsset: TopUpInputInterface = outputAsset
+      newInputAmount: BigNumber | undefined,
+      newInputAsset: TopUpInputInterface,
+      newOutputAsset: TopUpInputInterface
     ) => {
       const [moonPayOutputAmount, utorgOutputAmount, aliceBobOutputAmount] = await Promise.all([
         updateMoonPayOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
@@ -217,7 +235,7 @@ export const usePaymentProviders = (
         [TopUpProviderEnum.AliceBob]: aliceBobOutputAmount
       };
     },
-    [inputAsset, outputAsset, updateMoonPayOutputAmount, updateUtorgOutputAmount, updateAliceBobOutputAmount]
+    [updateMoonPayOutputAmount, updateUtorgOutputAmount, updateAliceBobOutputAmount]
   );
   const loading = moonPayLoading || utorgLoading || aliceBobLoading;
 
