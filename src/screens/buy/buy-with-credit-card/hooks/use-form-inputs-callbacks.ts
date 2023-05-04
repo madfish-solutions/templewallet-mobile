@@ -10,7 +10,7 @@ import { useAllPairsLimitsSelector } from 'src/store/buy-with-credit-card/select
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { joinAssetsLimits } from 'src/utils/join-assets-limits.utils';
+import { mergeAssetsLimits } from 'src/utils/merge-assets-limits.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { TopUpAssetAmountInterface } from '../../components/top-up-asset-amount-input/types';
@@ -111,7 +111,7 @@ export const useFormInputsCallbacks = (
       const noPairLimitsInputCurrency = noPairLimitsFiatCurrencies.find(({ code }) => code === inputCurrency.code);
       const { min: minInputAmount, max: maxInputAmount } = intersectAssetsLimits([
         { min: noPairLimitsInputCurrency?.minAmount, max: noPairLimitsInputCurrency?.maxAmount },
-        joinAssetsLimits(
+        mergeAssetsLimits(
           Object.values(allPairsLimits[inputCurrency.code]?.[newOutput.asset.code] ?? {}).map(({ data }) => data)
         )
       ]);

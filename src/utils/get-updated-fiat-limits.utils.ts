@@ -6,6 +6,7 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { TopUpInputInterface, TopUpOutputInterface } from 'src/interfaces/topup.interface';
 import { PairLimits } from 'src/store/buy-with-credit-card/state';
 import { createEntity } from 'src/store/create-entity';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 
 import { getAxiosQueryErrorMessage } from './get-axios-query-error-message';
 import { isDefined } from './is-defined';
@@ -48,7 +49,10 @@ export const getUpdatedFiatLimits = async (
             return createEntity(undefined);
           }
 
-          return createEntity(undefined, false, getAxiosQueryErrorMessage(err));
+          const message = getAxiosQueryErrorMessage(err);
+          showErrorToast({ description: message });
+
+          return createEntity(undefined, false, message);
         }
       }
 

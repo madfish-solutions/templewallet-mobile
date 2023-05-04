@@ -5,7 +5,7 @@ import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { useFiatCurrenciesSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
 import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { joinAssetsLimits } from 'src/utils/join-assets-limits.utils';
+import { mergeAssetsLimits } from 'src/utils/merge-assets-limits.utils';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
@@ -19,7 +19,7 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
 
   const pairLimits = useMemo(
     () =>
-      joinAssetsLimits(
+      mergeAssetsLimits(
         [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits]
           .filter(isDefined)
           .map(({ data }) => data)
