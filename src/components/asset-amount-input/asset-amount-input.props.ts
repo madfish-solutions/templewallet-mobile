@@ -21,6 +21,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
   onValueChange: EventFn<AssetAmountInterface>;
+  tokenTestID?: string;
   switcherTestID?: string;
   maxButtonTestID?: string;
 }

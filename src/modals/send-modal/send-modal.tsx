@@ -128,8 +128,9 @@ export const SendModal: FC = () => {
               isSearchable
               setSearchValue={setSearchValue}
               testID={SendModalSelectors.assetInput}
-              switcherTestID={SendModalSelectors.switcherButton}
+              tokenTestID={SendModalSelectors.tokenChange}
               maxButtonTestID={SendModalSelectors.maxButton}
+              switcherTestID={SendModalSelectors.switcherButton}
             />
             <Divider />
 

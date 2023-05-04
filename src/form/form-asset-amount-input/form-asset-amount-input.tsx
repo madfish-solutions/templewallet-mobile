@@ -31,6 +31,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
   testID,
+  tokenTestID,
   switcherTestID,
   maxButtonTestID
 }) => {
@@ -66,6 +67,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         onBlur={handleBlur}
         onValueChange={handleValueChange}
         testID={testID}
+        tokenTestID={tokenTestID}
         switcherTestID={switcherTestID}
         maxButtonTestID={maxButtonTestID}
       />

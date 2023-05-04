@@ -7,5 +7,6 @@ export enum SendModalSelectors {
   maxButton = 'Send (Modal)/Max Button',
   switcherButton = 'Send (Modal)/Switcher',
   sectionDropdown = 'Send (Modal)/Section Dropdown',
-  pasteAddressButton = 'Send (Modal)/Paste Address Button'
+  pasteAddressButton = 'Send (Modal)/Paste Address Button',
+  tokenChange = 'Send (Modal)/Token Change'
 }

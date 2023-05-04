@@ -80,6 +80,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   onFocus,
   onValueChange,
   testID,
+  tokenTestID,
   switcherTestID,
   maxButtonTestID
 }) => {
@@ -184,6 +185,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const decimals = newAsset?.decimals ?? 0;
       const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
+
+      trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, { token: asset.symbol });
 
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),

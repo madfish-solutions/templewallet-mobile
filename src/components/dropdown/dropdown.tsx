@@ -7,8 +7,6 @@ import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -80,11 +78,9 @@ const DropdownComponent = <T extends unknown>({
   keyExtractor,
   onValueChange,
   onLongPress,
-  testID,
-  testIDProperties
+  testID
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const ref = useRef<FlatList<T>>(null);
-  const { trackEvent } = useAnalytics();
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
@@ -129,8 +125,6 @@ const DropdownComponent = <T extends unknown>({
         disabled={disabled}
         onPress={() => {
           scroll();
-
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}

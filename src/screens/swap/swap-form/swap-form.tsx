@@ -250,6 +250,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           setSearchValue={setSearchValueFromTokens}
           onValueChange={handleInputAssetsValueChange}
           testID={SwapFormSelectors.fromAssetAmountInput}
+          tokenTestID={SwapFormSelectors.fromTokenChange}
         />
         <SwapAssetsButton />
 
@@ -265,6 +266,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           setSearchValue={setSearchValueToTokens}
           onValueChange={handleOutputAssetsValueChange}
           testID={SwapFormSelectors.toAssetAmountInput}
+          tokenTestID={SwapFormSelectors.toTokenChange}
         />
         <View>
           <SwapExchangeRate
