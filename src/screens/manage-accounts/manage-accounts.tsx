@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { BottomSheet } from '../../components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../../components/bottom-sheet/use-bottom-sheet-controller';
-import { Divider } from '../../components/divider/divider';
-import { generateScreenOptions } from '../../components/header/generate-screen-options.util';
-import { HeaderButton } from '../../components/header/header-button/header-button';
-import { HeaderTitle } from '../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
+import { Divider } from 'src/components/divider/divider';
+import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
+import { HeaderButton } from 'src/components/header/header-button/header-button';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useShelter } from 'src/shelter/use-shelter.hook';
+import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { ManageAccountsSelectors } from './manage-accounts.selectors';
 import { useManageAccountsStyles } from './manage-accounts.styles';
 import { ManageHdAccounts } from './manage-hd-accounts/manage-hd-accounts';
@@ -27,6 +29,7 @@ const manageHdAccountsIndex = 0;
 export const ManageAccounts = () => {
   const { navigate } = useNavigation();
   const { createHdAccount } = useShelter();
+  const { trackEvent } = useAnalytics();
 
   const styles = useManageAccountsStyles();
 
@@ -54,6 +57,7 @@ export const ManageAccounts = () => {
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
           values={['HD', 'Imported']}
+          testID={ManageAccountsSelectors.accountsTypeSwitcher}
           onChange={setSegmentedControlIndex}
         />
       </View>
@@ -70,6 +74,7 @@ export const ManageAccounts = () => {
           key="create-new-hd-account"
           title="Create new HD account"
           onPress={() => {
+            trackEvent(ManageAccountsSelectors.createNewHDAccountButton, AnalyticsEventCategory.ButtonPress);
             createHdAccount();
             revealSelectBottomSheetController.close();
           }}

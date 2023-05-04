@@ -19,3 +19,5 @@
 -keep class com.templewallet.BuildConfig { *; }
 # react-native-keychain setup
 -keep class com.facebook.crypto.** { *; }
+# react-native-cloud-fs setup
+-keep class com.google.api.services.drive.** { *; }

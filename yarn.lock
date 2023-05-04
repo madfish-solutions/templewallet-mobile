@@ -3140,6 +3140,11 @@
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
+"@react-native-google-signin/google-signin@9.0.2":
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-9.0.2.tgz#fd9d0cbb58591265c2ea9404b2d2ea7e514b9ea9"
+  integrity sha512-oTD0ZT6ZSH7CZjM1i6hR/gFAXv9As7nxhN99XGliNxf6SChZcQRwGeaz1DjoYrWExWDVX00EH1Per3dMjhAWkQ==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
@@ -13771,6 +13776,10 @@ react-native-camera@^4.2.1:
   integrity sha512-+Vkql24PFYQfsPRznJCvPwJQfyzCnjlcww/iZ4Ej80bgivKjL9eU0IMQIXp4yi6XCrKi4voWXxIDPMupQZKeIQ==
   dependencies:
     prop-types "^15.6.2"
+
+react-native-cloud-fs@madfish-solutions/react-native-cloud-fs#ee38534accf2a2c091cf43ef5061fec255e95687:
+  version "2.6.0"
+  resolved "https://codeload.github.com/madfish-solutions/react-native-cloud-fs/tar.gz/ee38534accf2a2c091cf43ef5061fec255e95687"
 
 react-native-codegen@^0.70.6:
   version "0.70.6"

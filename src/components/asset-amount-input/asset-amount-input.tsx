@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -9,7 +9,7 @@ import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-ge
 import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TokenInterface, emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -27,9 +27,11 @@ import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
+import { AssetAmountInputSelectors } from './selectors';
 
 export interface AssetAmountInterface {
   asset: TokenInterface;
@@ -210,7 +212,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange, amountInputRef]);
+  }, [token, gasToken, onValueChange, amountInputRef, trackEvent]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -223,6 +225,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', fiatCurrency]}
+            testID={AssetAmountInputSelectors.inputTypeSwitcher}
             onChange={handleTokenInputTypeChange}
           />
         )}
@@ -312,12 +315,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             {maxButton && (
               <>
                 <Divider size={formatSize(8)} />
-                <TouchableOpacity
+                <TouchableWithAnalytics
                   hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
                   onPress={handleMaxButtonPress}
+                  testID={AssetAmountInputSelectors.maxButton}
+                  testIDProperties={{ token: token?.symbol }}
                 >
                   <Text style={styles.maxButtonText}>MAX</Text>
-                </TouchableOpacity>
+                </TouchableWithAnalytics>
               </>
             )}
           </View>

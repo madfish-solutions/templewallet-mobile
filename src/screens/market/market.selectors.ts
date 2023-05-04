@@ -3,5 +3,7 @@ export enum MarketSelectors {
   volume24HAlertButton = 'Market/Volume (24H) Alert Button',
   circulatingSupplyAlertButton = 'Market/Circulating Supply Alert Button',
   marketToggle = 'Market/Market Toggle',
-  promotion = 'Market/Promotion'
+  promotion = 'Market/Promotion',
+  sorter = 'Market/Sorter',
+  search = 'Market/Search'
 }

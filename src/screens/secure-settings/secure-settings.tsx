@@ -52,7 +52,11 @@ export const SecureSettings = () => {
     <ScreenContainer>
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(setIsAnalyticsEnabled(!analyticsEnabled))}>
+        <WhiteContainerAction
+          onPress={() => dispatch(setIsAnalyticsEnabled(!analyticsEnabled))}
+          testID={SecureSettingsSelectors.analyticsAction}
+          testIDProperties={{ newValue: !analyticsEnabled }}
+        >
           <WhiteContainerText text="Analytics" />
           <Switch
             value={analyticsEnabled}
@@ -65,7 +69,11 @@ export const SecureSettings = () => {
         <>
           <Divider size={formatSize(8)} />
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => handleBiometrySwitch(!isBiometryAvailable)}>
+            <WhiteContainerAction
+              onPress={() => handleBiometrySwitch(!isBiometryAvailable)}
+              testID={SecureSettingsSelectors.biometricsAction}
+              testIDProperties={{ newValue: !isBiometryAvailable }}
+            >
               <WhiteContainerText text={biometryType ?? 'Biometrics'} />
               <Switch
                 value={isBiometryAvailable}
@@ -78,7 +86,11 @@ export const SecureSettings = () => {
       )}
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}>
+        <WhiteContainerAction
+          onPress={() => dispatch(setIsBalanceHidden(!isBalanceHiddenSetting))}
+          testID={SecureSettingsSelectors.hideModeOnLaunchAction}
+          testIDProperties={{ newValue: !isBalanceHiddenSetting }}
+        >
           <WhiteContainerText text="Hide mode on Launch" />
           <Switch
             value={isBalanceHiddenSetting}

@@ -2,27 +2,36 @@ import { Portal } from '@gorhom/portal';
 import React, { useContext } from 'react';
 import { View, Text } from 'react-native';
 
-import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useDropdownBottomSheetStyles } from '../../../components/bottom-sheet/bottom-sheet.styles';
-import { CurrentRouteNameContext } from '../../../navigator/current-route-name.context';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useIsManualBackupMadeSelector } from '../../../store/settings/settings-selectors';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
+import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { cloudTitle } from 'src/utils/cloud-backup';
+import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
+
 import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.styles';
 import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
+  const currentRouteName = useContext(CurrentRouteNameContext);
+
+  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isAnyBackupMade;
+
+  return isShowOverlay ? <OverlayComponent /> : null;
+};
+
+const OverlayComponent = () => {
   const { navigate } = useNavigation();
 
   const styles = useBackupYourWalletOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 
-  const isManualBackupMade = useIsManualBackupMadeSelector();
-  const currentRouteName = useContext(CurrentRouteNameContext);
+  const cloudIsAvailable = useIsCloudAvailable();
 
-  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isManualBackupMade;
-
-  return isShowOverlay ? (
+  return (
     <Portal>
       <View style={styles.backdrop}>
         <View style={[dropdownBottomSheetStyles.root, styles.root]}>
@@ -32,8 +41,15 @@ export const BackupYourWalletOverlay = () => {
               {'Don’t lose your wallet! Save your access \nto accounts.'}
             </Text>
           </View>
+
           <BottomSheetActionButton
-            title="Manual backup"
+            title={`Backup to ${cloudTitle}`}
+            disabled={!cloudIsAvailable}
+            onPress={() => navigate(ScreensEnum.CloudBackup)}
+          />
+
+          <BottomSheetActionButton
+            title="Backup manually"
             style={styles.manualBackupButton}
             onPress={() => navigate(ScreensEnum.ManualBackup)}
             testID={BackupYourWalletSelectors.manualBackupButton}
@@ -41,5 +57,5 @@ export const BackupYourWalletOverlay = () => {
         </View>
       </View>
     </Portal>
-  ) : null;
+  );
 };

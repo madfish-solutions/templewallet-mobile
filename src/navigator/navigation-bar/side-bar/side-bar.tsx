@@ -1,14 +1,15 @@
 import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { OctopusWithLove } from '../../../components/octopus-with-love/octopus-with-love';
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/toast.utils';
-import { isDefined } from '../../../utils/is-defined';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import {
   dAppsStackScreens,
   marketStackScreens,

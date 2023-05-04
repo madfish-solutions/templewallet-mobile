@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { TouchableOpacity, Text, View, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
+import { Text, View, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
@@ -7,11 +7,10 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
 
 import { formatSize } from '../../styles/format-size';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { PromotionItemSelectors } from './promotion-item.selectors';
 import { usePromotionItemStyles } from './promotion-item.styles';
 
@@ -38,20 +37,11 @@ export const PromotionItem: FC<Props> = memo(
     onCloseButtonClick,
     onImageError
   }) => {
-    const { trackEvent } = useAnalytics();
-
     const colors = useColors();
     const styles = usePromotionItemStyles();
 
     return (
-      <TouchableOpacity
-        testID={testID}
-        style={[styles.container, style]}
-        onPress={() => {
-          trackEvent(testID, AnalyticsEventCategory.General);
-          openUrl(link);
-        }}
-      >
+      <TouchableWithAnalytics testID={testID} style={[styles.container, style]} onPress={() => openUrl(link)}>
         {loading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator />
@@ -64,15 +54,13 @@ export const PromotionItem: FC<Props> = memo(
               </View>
             )}
             {shouldShowCloseButton && (
-              <TouchableOpacity
+              <TouchableWithAnalytics
                 style={styles.closeButton}
-                onPress={() => {
-                  trackEvent(PromotionItemSelectors.closeButton, AnalyticsEventCategory.General);
-                  onCloseButtonClick?.();
-                }}
+                onPress={onCloseButtonClick}
+                testID={PromotionItemSelectors.closeButton}
               >
                 <Icon name={IconNameEnum.XBold} size={formatSize(9.43)} color={colors.peach} />
-              </TouchableOpacity>
+              </TouchableWithAnalytics>
             )}
             {typeof source === 'string' ? (
               <SvgUri
@@ -87,7 +75,7 @@ export const PromotionItem: FC<Props> = memo(
             )}
           </View>
         )}
-      </TouchableOpacity>
+      </TouchableWithAnalytics>
     );
   }
 );
