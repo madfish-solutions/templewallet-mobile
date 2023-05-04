@@ -29,7 +29,7 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
     color: colors.black
   },
   descriptionContainer: {
-    marginBottom: formatSize(8)
+    marginBottom: formatSize(12)
   },
   description: {
     ...typography.caption13Regular,
