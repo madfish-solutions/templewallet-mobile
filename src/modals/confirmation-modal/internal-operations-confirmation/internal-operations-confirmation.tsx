@@ -12,6 +12,7 @@ import { useNavigationSetOptions } from '../../../components/header/use-navigati
 import { ApproveInternalOperationRequestActionPayloadInterface } from '../../../hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-request-confirmation.hook';
 import { StacksEnum } from '../../../navigator/enums/stacks.enum';
+import { OnRampOverlay } from '../../../screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
@@ -79,13 +80,16 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, disclaimer
   ) : undefined;
 
   return (
-    <OperationsConfirmation
-      sender={selectedAccount}
-      opParams={opParams}
-      isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
-      testID={testID}
-      disclaimer={disclaimer}
-    />
+    <>
+      <OperationsConfirmation
+        sender={selectedAccount}
+        opParams={opParams}
+        isLoading={isLoading}
+        onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
+        testID={testID}
+        disclaimer={disclaimer}
+      />
+      <OnRampOverlay />
+    </>
   );
 };

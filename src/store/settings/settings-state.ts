@@ -22,7 +22,7 @@ export interface SettingsState {
   isShowLoader: boolean;
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
-  isLowTezBalance: boolean;
+  isOnRampPossibility: boolean;
   applicationOpenCounter: number;
 }
 
@@ -42,7 +42,7 @@ export const settingsInitialState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
-  isLowTezBalance: false,
+  isOnRampPossibility: false,
   applicationOpenCounter: 0
 };
 

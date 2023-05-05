@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native';
 import { OpKind, ParamsWithKind, Estimate } from '@taquito/taquito';
 import { pick } from 'lodash-es';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { from, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -13,10 +14,13 @@ import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 
+import { setIsOnRampPossibilityAction } from '../../../../store/settings/settings-actions';
+
 /** From @taquito/taquito */
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
+  const dispatch = useDispatch();
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const tezos = useReadOnlyTezosToolkit(sender);
@@ -40,6 +44,10 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
             isCopyButtonVisible: true,
             onPress: () => copyStringToClipboard(error.toString())
           });
+
+          if (error.toString().indexOf('empty_implicit_contract') > -1) {
+            dispatch(setIsOnRampPossibilityAction(true));
+          }
 
           return of([]);
         })

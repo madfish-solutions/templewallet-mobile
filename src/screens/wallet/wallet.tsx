@@ -33,6 +33,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
+import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
 import { Settings } from './settings/settings';
 import { TokensList } from './token-list/token-list';
 import { WalletSelectors } from './wallet.selectors';
@@ -92,6 +93,7 @@ export const Wallet = () => {
       <TokensList />
 
       <BackupYourWalletOverlay />
+      <OnRampOverlay />
 
       <BottomSheet
         title="Add this address to Contacts?"
