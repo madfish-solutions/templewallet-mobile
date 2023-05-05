@@ -11,10 +11,12 @@ import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { setIsOnRampPossibilityAction } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
+import { openUrl } from '../../../utils/linking.util';
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
 import { useOnRampOverlayStyles } from './on-ramp-overlay.styles';
 import { OnRampSmileButton } from './on-ramp-smile-button/on-ramp-smile-button';
 import { OnRampTextButton } from './on-ramp-text-button/on-ramp-text-button';
+import { getSimpleSwapLink } from './utils/get-simple-swap-link';
 
 export const OnRampOverlay = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
@@ -40,23 +42,34 @@ const OverlayComponent = () => {
             </Text>
 
             <View style={styles.buttonsContainer}>
-              <OnRampSmileButton smile="🙂" title="50$" testID={OnRampOverlaySelectors.fiftyDollarButton} />
+              <OnRampSmileButton
+                smile="🙂"
+                title="50$"
+                onPress={() => openUrl(getSimpleSwapLink(50))}
+                testID={OnRampOverlaySelectors.fiftyDollarButton}
+              />
               <Divider size={formatSize(8)} />
               <OnRampSmileButton
                 smile="🤩"
                 title="100$"
                 style={styles.backgroundPeach}
                 titleStyle={styles.textWhite}
+                onPress={() => openUrl(getSimpleSwapLink(100))}
                 testID={OnRampOverlaySelectors.oneHundredDollarButton}
               />
               <Divider size={formatSize(8)} />
-              <OnRampSmileButton smile="🤑" title="200$" testID={OnRampOverlaySelectors.twoHundredDollarButton} />
+              <OnRampSmileButton
+                smile="🤑"
+                title="200$"
+                onPress={() => openUrl(getSimpleSwapLink(200))}
+                testID={OnRampOverlaySelectors.twoHundredDollarButton}
+              />
             </View>
 
             <OnRampTextButton
               title="Custom amount"
               iconName={IconNameEnum.DetailsArrowRight}
-              onPress={() => 0}
+              onPress={() => openUrl(getSimpleSwapLink())}
               testID={OnRampOverlaySelectors.customAmountButton}
             />
 
