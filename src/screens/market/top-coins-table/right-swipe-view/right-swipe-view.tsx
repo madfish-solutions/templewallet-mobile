@@ -59,7 +59,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
         disabled={!outputToken}
         onPress={handleBuyPress}
         color={buyIconColor}
-        testID={RightSwipeViewSelectors.favouriteTokenButton}
+        testID={RightSwipeViewSelectors.buyTokenButton}
         testIDProperties={{
           id
         }}
@@ -72,9 +72,10 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
         text="Favorites"
         onPress={handleFavoritePress}
         color={favouriteIconColor}
-        testID={RightSwipeViewSelectors.buyTokenButton}
+        testID={RightSwipeViewSelectors.favouriteTokenButton}
         testIDProperties={{
-          id
+          id,
+          newValue: !isFavourite
         }}
       />
     </View>

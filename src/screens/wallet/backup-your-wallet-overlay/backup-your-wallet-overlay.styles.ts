@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useBackupYourWalletOverlayStyles = createUseStyles(({ colors }) => ({
   backdrop: {
@@ -12,7 +12,7 @@ export const useBackupYourWalletOverlayStyles = createUseStyles(({ colors }) => 
   },
   root: {
     height: 'auto',
-    paddingBottom: formatSize(8)
+    paddingBottom: formatSize(2)
   },
   manualBackupButton: {
     borderBottomWidth: 0

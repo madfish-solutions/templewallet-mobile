@@ -110,6 +110,7 @@ export enum IconNameEnum {
   LbDappIcon = 'LbDappIcon',
   LbTokenIcon = 'LbTokenIcon',
   RefreshIcon = 'RefreshIcon',
+  RetryIcon = 'RetryIcon',
   ChartIcon = 'ChartIcon',
   MinusIcon = 'MinusIcon',
   PlusIcon = 'PlusIcon',
@@ -123,6 +124,12 @@ export enum IconNameEnum {
   NotificationDot = 'NotificationDot',
   Market = 'Market',
   Buy = 'Buy',
+  BuyWithCrypto = 'BuyWithCrypto',
+  CreditCard = 'CreditCard',
   Favourite = 'Favourite',
-  NFT = 'NFT'
+  NFT = 'NFT',
+  SwapRouteItemBackground = 'SwapRouteItemBackground',
+  Apple = 'Apple',
+  AppleOnDark = 'AppleOnDark',
+  GoogleDrive = 'GoogleDrive'
 }

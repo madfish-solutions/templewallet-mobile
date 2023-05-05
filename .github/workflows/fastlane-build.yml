@@ -1,5 +1,7 @@
 name: Fastlane build
 
+run-name: Fastlane build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -30,6 +32,7 @@ jobs:
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           JITSU_ANALYTICS_KEY: ${{ vars.JITSU_ANALYTICS_KEY }}
           JITSU_TRACKING_HOST: ${{ vars.JITSU_TRACKING_HOST }}
+          TEMPLE_WALLET_ROUTE3_AUTH_TOKEN: ${{ vars.TEMPLE_WALLET_ROUTE3_AUTH_TOKEN }}
           TEMPLE_WALLET_EXOLIX_API_KEY: ${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
           TEMPLE_WALLET_EVERSTAKE_API_KEY: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
           TEMPLE_WALLET_EVERSTAKE_LINK_ID: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}

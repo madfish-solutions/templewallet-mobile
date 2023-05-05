@@ -7,12 +7,15 @@ import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
+import AppleOnDarkIcon from './assets/apple-on-dark.svg';
+import AppleIcon from './assets/apple.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
@@ -24,6 +27,7 @@ import CloseIcon from './assets/close.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
+import CreditCardIcon from './assets/credit-card.svg';
 import CycleStatusFutureIcon from './assets/cycle-status-future.svg';
 import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
@@ -52,6 +56,7 @@ import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
+import GoogleDriveIcon from './assets/google-drive.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
@@ -86,6 +91,7 @@ import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
+import RetryIcon from './assets/retry.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -100,6 +106,7 @@ import SpicyIcon from './assets/spicy.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
+import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
@@ -187,6 +194,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
+  [IconNameEnum.Apple]: AppleIcon,
+  [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
+  [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
@@ -247,6 +257,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LbDappIcon]: LbDappIcon,
   [IconNameEnum.LbTokenIcon]: LbTokenIcon,
   [IconNameEnum.RefreshIcon]: RefreshIcon,
+  [IconNameEnum.RetryIcon]: RetryIcon,
   [IconNameEnum.ChartIcon]: ChartIcon,
   [IconNameEnum.MinusIcon]: MinusIcon,
   [IconNameEnum.PlusIcon]: PlusIcon,
@@ -255,8 +266,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.Buy]: BuyIcon,
+  [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
+  [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT
 };

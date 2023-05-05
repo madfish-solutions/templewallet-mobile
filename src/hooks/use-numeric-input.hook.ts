@@ -34,7 +34,7 @@ export const useNumericInput = (
     (newStringValue: string) => {
       let normalizedStringValue = newStringValue.replace(/ /g, '').replace(/,/g, '.');
 
-      const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals);
+      const newValue = new BigNumber(normalizedStringValue || 0).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
 
       const indexOfDot = normalizedStringValue.indexOf('.');
       const decimalsCount = indexOfDot === -1 ? 0 : normalizedStringValue.length - indexOfDot - 1;

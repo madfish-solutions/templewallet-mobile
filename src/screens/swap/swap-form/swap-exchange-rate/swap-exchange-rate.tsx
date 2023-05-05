@@ -1,47 +1,51 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
-import { getTradeInputAmount, getTradeOutputAmount, Trade } from 'swap-router-sdk';
 
-import { AssetAmountInterface } from '../../../../components/asset-amount-input/asset-amount-input';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
+
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
 import { formatSize } from '../../../../styles/format-size';
-import { isDefined } from '../../../../utils/is-defined';
 import { formatAssetAmount } from '../../../../utils/number.util';
-import { mutezToTz } from '../../../../utils/tezos.util';
-import { ROUTING_FEE_PERCENT } from '../../config';
+import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
+import { SwapExchangeRateSelectors } from './selectors';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
 interface Props {
-  inputAssets: AssetAmountInterface;
-  outputAssets: AssetAmountInterface;
-  bestTrade: Trade;
-  minimumReceivedAmount?: BigNumber;
+  slippageRatio: number;
+  inputAsset: TokenInterface;
+  outputAsset: TokenInterface;
+  inputAmount: BigNumber | undefined;
+  outputAmount: BigNumber | undefined;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTrade, minimumReceivedAmount }) => {
+export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, inputAmount, outputAmount }) => {
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
-    const tradeMutezInput = getTradeInputAmount(bestTrade);
-    const tradeMutezOutput = getTradeOutputAmount(bestTrade);
+    if (isDefined(inputAmount) && isDefined(outputAmount)) {
+      const rate = inputAmount.dividedBy(outputAmount);
 
-    if (tradeMutezInput && tradeMutezOutput && !tradeMutezInput.isEqualTo(0) && !tradeMutezOutput.isEqualTo(0)) {
-      const tradeTzInput = mutezToTz(tradeMutezInput, inputAssets.asset.decimals);
-      const tradeTzOutput = mutezToTz(tradeMutezOutput, outputAssets.asset.decimals);
-
-      return tradeTzInput.dividedBy(tradeTzOutput);
+      if (rate.isFinite()) {
+        return `1 ${outputAsset.symbol} = ${formatAssetAmount(rate)} ${inputAsset.symbol}`;
+      }
     }
 
-    return undefined;
-  }, [bestTrade, inputAssets.asset.decimals, outputAssets.asset.decimals]);
+    return '---';
+  }, [inputAmount, outputAmount]);
 
-  const displayedMinimumReceivedAmount = useMemo(
-    () =>
-      isDefined(minimumReceivedAmount) ? mutezToTz(minimumReceivedAmount, outputAssets.asset.decimals) : undefined,
-    [minimumReceivedAmount, outputAssets.asset.decimals]
-  );
+  const minimumReceivedAmount = useMemo(() => {
+    if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
+      return `${outputAmount.multipliedBy(slippageRatio).multipliedBy(ROUTING_FEE_RATIO).toFixed(8)} ${
+        outputAsset.symbol
+      }`;
+    }
+
+    return '---';
+  }, [slippageRatio, outputAmount, outputAsset.decimals]);
+
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',
@@ -59,25 +63,22 @@ export const SwapExchangeRate: FC<Props> = ({ inputAssets, outputAssets, bestTra
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Text style={styles.infoText}>Routing Fee</Text>
-          <TouchableIcon onPress={routingFeeAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+          <TouchableIcon
+            name={IconNameEnum.InfoFilled}
+            size={formatSize(24)}
+            testID={SwapExchangeRateSelectors.routingFeeAlert}
+            onPress={routingFeeAlert}
+          />
         </View>
         <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Exchange rate</Text>
-        <Text style={styles.infoValue}>
-          {exchangeRate
-            ? `1 ${outputAssets.asset.symbol} = ${formatAssetAmount(exchangeRate)} ${inputAssets.asset.symbol}`
-            : '---'}
-        </Text>
+        <Text style={styles.infoValue}>{exchangeRate}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Minimum received</Text>
-        <Text style={styles.infoValue}>
-          {displayedMinimumReceivedAmount
-            ? `${formatAssetAmount(displayedMinimumReceivedAmount)} ${outputAssets.asset.symbol}`
-            : '---'}
-        </Text>
+        <Text style={styles.infoValue}>{minimumReceivedAmount}</Text>
       </View>
     </>
   );

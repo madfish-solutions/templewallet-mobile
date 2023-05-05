@@ -10,6 +10,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -39,6 +40,8 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const bakersList = useBakersListSelector();
+
+  const { metadata, isDcpNode } = useNetworkInfo();
 
   const bakerAddress = reward.baker.address;
 
@@ -95,6 +98,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
   );
 
   const feeStr = formatToPercentStr(bakerFeePart);
+  const expectedPayout = normalizedRewards.minus(normalizedBakerFee).toString();
 
   return (
     <View style={styles.rewardContainer}>
@@ -118,13 +122,13 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
               <Text style={styles.cellTitle}>Delegated:</Text>
               <Text style={styles.textBlack}>
                 {normalizedBalance.lt(1) ? '<1' : normalizedBalance.decimalPlaces(0, BigNumber.ROUND_FLOOR).toString()}
-                {' TEZ'}
+                {` ${metadata.symbol} `}
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Rewards & Luck:</Text>
               <Text style={styles.textBlack}>
-                {normalizedRewards.toString() + ' TEZ '}
+                {`${normalizedRewards.toString()} ${metadata.symbol} `}
                 <Text style={luckTextStyle}>
                   ({luckPercentage.gt(0) ? '+' : ''}
                   {luckPercentage.decimalPlaces(0).toString()}%)
@@ -132,18 +136,19 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
               </Text>
             </View>
             <View style={styles.cellContainer}>
-              <Text style={styles.cellTitle}>Baker fee:</Text>
+              <Text style={styles.cellTitle}>{isDcpNode ? 'Producer' : 'Baker'} fee:</Text>
               <Text style={styles.textBlack}>
                 {isTruthy(feeStr) ? feeStr : '--'}%
-                <Text style={styles.textGray}> ({normalizedBakerFee.toString()} TEZ)</Text>
+                <Text style={styles.textGray}>
+                  {' '}
+                  ({normalizedBakerFee.toString()} {metadata.symbol})
+                </Text>
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Expected payout:</Text>
               <Text style={styles.textBlack}>
-                {cycleStatus === CycleStatus.FUTURE
-                  ? '‒'
-                  : normalizedRewards.minus(normalizedBakerFee).toString() + ' TEZ'}
+                {cycleStatus === CycleStatus.FUTURE ? '‒' : `${expectedPayout} ${metadata.symbol}`}
               </Text>
             </View>
             <View style={styles.cellContainer}>

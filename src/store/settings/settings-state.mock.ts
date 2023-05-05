@@ -18,5 +18,6 @@ export const mockSettingsState: SettingsState = {
   hideZeroBalances: false,
   isShowLoader: false,
   isManualBackupMade: true,
+  isCloudBackupMade: true,
   applicationOpenCounter: 1
 };

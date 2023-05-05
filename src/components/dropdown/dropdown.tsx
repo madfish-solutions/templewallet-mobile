@@ -1,29 +1,33 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, View } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
+import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
-import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
-import { formatSize } from '../../styles/format-size';
 import { createGetItemLayout } from '../../utils/flat-list.utils';
-import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
-import { useDropdownStyles } from './dropdown.styles';
+import { DropdownSelectors } from './selectors';
+import { useDropdownStyles } from './styles';
 
-export interface DropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
+  emptyListText?: string;
   isSearchable?: boolean;
   itemHeight?: number;
+  itemContainerStyle?: StyleProp<ViewStyle>;
+  isLoading?: boolean;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
@@ -61,14 +65,15 @@ export type DropdownActionButtonsComponent = FC<{
   onPress: EmptyFn;
 }>;
 
-const ListEmptyComponent = <DataPlaceholder text="No assets found." />;
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
+  emptyListText = 'No assets found.',
   description,
   itemHeight = formatSize(64),
+  itemContainerStyle,
   disabled = false,
+  isLoading = false,
   isSearchable = false,
   setSearchValue = emptyFn,
   equalityFn,
@@ -98,8 +103,8 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress}>
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected}>
+        <TouchableOpacity key={index} onPress={handlePress} testID={DropdownSelectors.option}>
+          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
         </TouchableOpacity>
@@ -133,6 +138,7 @@ const DropdownComponent = <T extends unknown>({
           return dropdownBottomSheetController.open();
         }}
         onLongPress={onLongPress}
+        testID={testID}
       >
         {renderValue({ value, disabled })}
       </TouchableOpacity>
@@ -140,17 +146,23 @@ const DropdownComponent = <T extends unknown>({
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
           {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
-          <FlatList
-            ref={ref}
-            data={list}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            contentContainerStyle={styles.flatListContentContainer}
-            ListEmptyComponent={ListEmptyComponent}
-            windowSize={10}
-            updateCellsBatchingPeriod={150}
-          />
+          {isLoading ? (
+            <View style={styles.activityIndicatorContainer}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <FlatList
+              ref={ref}
+              data={list}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              getItemLayout={getItemLayout}
+              contentContainerStyle={styles.flatListContentContainer}
+              ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
+              windowSize={10}
+              updateCellsBatchingPeriod={150}
+            />
+          )}
         </View>
 
         {renderActionButtons({

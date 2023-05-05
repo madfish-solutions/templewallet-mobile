@@ -14,8 +14,8 @@ import {
   TOKENS_SYNC_INTERVAL,
   BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
-  NOTIFICATIONS_SYNC_INTERVAL,
-  SELECTED_BAKER_SYNC_INTERVAL
+  SELECTED_BAKER_SYNC_INTERVAL,
+  NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
@@ -28,11 +28,12 @@ import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
 import { Buy } from 'src/screens/buy/buy';
+import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
 import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
-import { AliceBob } from 'src/screens/buy/debit/alice-bob/alice-bob';
-import { Utorg } from 'src/screens/buy/debit/utorg/utorg';
+import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
 import { Contacts } from 'src/screens/contacts/contacts';
+import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
 import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
@@ -52,7 +53,6 @@ import { Notifications } from 'src/screens/notifications/notifications';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
-import { SwapQuestionsScreen } from 'src/screens/swap/quesrtion/swap-questions';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
 import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -66,12 +66,13 @@ import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
-  loadTezosBalanceActions,
   loadTokensActions,
+  loadTezosBalanceActions,
   loadTokensBalancesArrayActions
 } from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -142,6 +143,11 @@ export const MainStackScreen = () => {
                 component={CreateNewWallet}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
               />
+              <MainStack.Screen
+                name={ScreensEnum.ContinueWithCloud}
+                component={ContinueWithCloud}
+                options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
+              />
             </>
           ) : (
             <>
@@ -194,22 +200,16 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.AliceBob}
-                component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.Utorg}
-                component={Utorg}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              <MainStack.Screen
+                name={ScreensEnum.BuyWithCreditCard}
+                component={BuyWithCreditCard}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
 
               {/** DApps stack **/}
               <MainStack.Screen
@@ -237,12 +237,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.SwapQuestionsScreen}
-                component={SwapQuestionsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Market stack **/}
@@ -302,6 +296,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManualBackup}
                 component={ManualBackup}
                 options={generateScreenOptions(<HeaderTitle title="Manual backup" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.CloudBackup}
+                component={CloudBackup}
+                options={generateScreenOptions(<HeaderTitle title={`Backup to ${cloudTitle}`} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsSettings}

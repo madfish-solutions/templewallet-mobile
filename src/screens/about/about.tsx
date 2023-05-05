@@ -25,6 +25,7 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { openUrl } from '../../utils/linking.util';
 import { useAboutStyles } from './about.styles';
+import { AboutPageSelectors } from './selectors';
 
 export const About = () => {
   const styles = useAboutStyles();
@@ -34,12 +35,12 @@ export const About = () => {
     <ScreenContainer isFullScreenMode={true}>
       <View>
         <WhiteContainer>
-          <WhiteContainerAction onPress={() => openUrl(knowledgeBase)}>
+          <WhiteContainerAction testID={AboutPageSelectors.knowledgeBase} onPress={() => openUrl(knowledgeBase)}>
             <WhiteContainerText text="Knowledge Base" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction onPress={() => openUrl(featureRequest)}>
+          <WhiteContainerAction testID={AboutPageSelectors.featureRequest} onPress={() => openUrl(featureRequest)}>
             <WhiteContainerText text="Feature Request" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
@@ -47,27 +48,27 @@ export const About = () => {
         <Divider size={formatSize(16)} />
 
         <WhiteContainer>
-          <WhiteContainerAction onPress={() => openUrl(website)}>
+          <WhiteContainerAction testID={AboutPageSelectors.website} onPress={() => openUrl(website)}>
             <WhiteContainerText text="Website" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction onPress={() => openUrl(repository)}>
+          <WhiteContainerAction testID={AboutPageSelectors.repository} onPress={() => openUrl(repository)}>
             <WhiteContainerText text="Repository" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction onPress={() => openUrl(privacyPolicy)}>
+          <WhiteContainerAction testID={AboutPageSelectors.privacyPolicy} onPress={() => openUrl(privacyPolicy)}>
             <WhiteContainerText text="Privacy Policy" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction onPress={() => openUrl(termsOfUse)}>
+          <WhiteContainerAction testID={AboutPageSelectors.termsOfUse} onPress={() => openUrl(termsOfUse)}>
             <WhiteContainerText text="Terms of Use" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>
           <WhiteContainerDivider />
-          <WhiteContainerAction onPress={() => openUrl(contact)}>
+          <WhiteContainerAction testID={AboutPageSelectors.contact} onPress={() => openUrl(contact)}>
             <WhiteContainerText text="Contact" />
             <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
           </WhiteContainerAction>

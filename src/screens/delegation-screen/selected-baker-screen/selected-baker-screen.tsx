@@ -32,8 +32,9 @@ interface Props {
 export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
 
-  const { metadata } = useNetworkInfo();
+  const { metadata, isDcpNode } = useNetworkInfo();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const bakerName = isDcpNode ? 'Current Producer' : baker.name;
 
   const feeStr = formatToPercentStr(baker.fee);
 
@@ -49,7 +50,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             )}
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
-              <Text style={styles.nameText}>{baker.name}</Text>
+              <Text style={styles.nameText}>{bakerName}</Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
@@ -73,26 +74,28 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
 
         <Divider size={formatSize(8)} />
 
-        <View style={styles.lowerContainer}>
-          <View>
-            <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+        {!isDcpNode && (
+          <View style={styles.lowerContainer}>
+            <View>
+              <Text style={styles.cellTitle}>Baker fee:</Text>
+              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+            </View>
+            <Divider size={formatSize(16)} />
+            <View>
+              <Text style={styles.cellTitle}>Space:</Text>
+              <Text style={styles.cellValueText}>
+                {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
+              </Text>
+            </View>
+            <Divider size={formatSize(16)} />
+            <View>
+              <Text style={styles.cellTitle}>Staking:</Text>
+              <Text style={styles.cellValueText}>
+                {isDefined(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
+              </Text>
+            </View>
           </View>
-          <Divider size={formatSize(16)} />
-          <View>
-            <Text style={styles.cellTitle}>Space:</Text>
-            <Text style={styles.cellValueText}>
-              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
-            </Text>
-          </View>
-          <Divider size={formatSize(16)} />
-          <View>
-            <Text style={styles.cellTitle}>Staking:</Text>
-            <Text style={styles.cellValueText}>
-              {isDefined(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
-            </Text>
-          </View>
-        </View>
+        )}
       </View>
 
       <BakerRewardsList bakerRewards={bakerRewardsList} />

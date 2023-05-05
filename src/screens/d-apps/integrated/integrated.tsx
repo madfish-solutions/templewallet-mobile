@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AssetValueText } from '../../../components/asset-value-text/asset-value-text';
-import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { useSirsInfo } from '../../../hooks/use-sirs-info.hook';
-import { TestIdProps } from '../../../interfaces/test-id.props';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../../styles/format-size';
-import { isDefined } from '../../../utils/is-defined';
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { useSirsInfo } from 'src/hooks/use-sirs-info.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
+
 import { useIntegratedDAppStyles } from './integrated.styles';
 
 interface Props extends TestIdProps {
@@ -27,7 +29,7 @@ export const IntegratedDApp: FC<Props> = ({ screenName, iconName, title, descrip
   const styles = useIntegratedDAppStyles();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => navigate(screenName)} testID={testID}>
+    <TouchableWithAnalytics style={styles.container} onPress={() => navigate(screenName)} testID={testID}>
       <Icon name={iconName} width={formatSize(46)} height={formatSize(46)} />
       <Divider size={formatSize(16)} />
       <View>
@@ -41,6 +43,6 @@ export const IntegratedDApp: FC<Props> = ({ screenName, iconName, title, descrip
           <Text style={styles.descriptionGrey}>{description}</Text>
         )}
       </View>
-    </TouchableOpacity>
+    </TouchableWithAnalytics>
   );
 };
