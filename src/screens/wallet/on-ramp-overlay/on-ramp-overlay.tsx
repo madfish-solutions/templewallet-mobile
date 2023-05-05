@@ -1,5 +1,5 @@
 import { Portal } from '@gorhom/portal';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -10,7 +10,10 @@ import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-sele
 import { Divider } from '../../../components/divider/divider';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { setIsOnRampPossibilityAction } from '../../../store/settings/settings-actions';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { showSuccessToast } from '../../../toast/toast.utils';
+import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { openUrl } from '../../../utils/linking.util';
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
 import { useOnRampOverlayStyles } from './on-ramp-overlay.styles';
@@ -26,8 +29,25 @@ export const OnRampOverlay = () => {
 
 const OverlayComponent = () => {
   const dispatch = useDispatch();
+  const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
+
+  const timerRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handleOnRampButtonPress = (amount = 0) => {
+    copyStringToClipboard(publicKeyHash);
+    showSuccessToast({
+      description: 'Your wallet address was copied to the clipboard. Please paste it on the next screen!'
+    });
+
+    timerRef.current = setTimeout(() => {
+      openUrl(getSimpleSwapLink(amount));
+      dispatch(setIsOnRampPossibilityAction(false));
+    }, 4000);
+  };
 
   return (
     <Portal>
@@ -45,7 +65,7 @@ const OverlayComponent = () => {
               <OnRampSmileButton
                 smile="🙂"
                 title="50$"
-                onPress={() => openUrl(getSimpleSwapLink(50))}
+                onPress={() => handleOnRampButtonPress(50)}
                 testID={OnRampOverlaySelectors.fiftyDollarButton}
               />
               <Divider size={formatSize(8)} />
@@ -54,14 +74,14 @@ const OverlayComponent = () => {
                 title="100$"
                 style={styles.backgroundPeach}
                 titleStyle={styles.textWhite}
-                onPress={() => openUrl(getSimpleSwapLink(100))}
+                onPress={() => handleOnRampButtonPress(100)}
                 testID={OnRampOverlaySelectors.oneHundredDollarButton}
               />
               <Divider size={formatSize(8)} />
               <OnRampSmileButton
                 smile="🤑"
                 title="200$"
-                onPress={() => openUrl(getSimpleSwapLink(200))}
+                onPress={() => handleOnRampButtonPress(200)}
                 testID={OnRampOverlaySelectors.twoHundredDollarButton}
               />
             </View>
@@ -69,7 +89,7 @@ const OverlayComponent = () => {
             <OnRampTextButton
               title="Custom amount"
               iconName={IconNameEnum.DetailsArrowRight}
-              onPress={() => openUrl(getSimpleSwapLink())}
+              onPress={() => handleOnRampButtonPress()}
               testID={OnRampOverlaySelectors.customAmountButton}
             />
 
