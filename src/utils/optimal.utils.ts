@@ -32,6 +32,15 @@ export function isEmptyPromotion(promotion: OptimalPromotionType): promotion is 
   return !('link' in promotion && 'image' in promotion && 'copy' in promotion);
 }
 
+function assertIsObject(likelyAnObject: unknown): void {
+  const isLikelyAnObject =
+    typeof likelyAnObject === 'object' && likelyAnObject !== null && !Array.isArray(likelyAnObject);
+
+  if (!isLikelyAnObject) {
+    throw new Error('Received value is not an object');
+  }
+}
+
 export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
   optimalApi
     .get<OptimalPromotionType>('api/v1/decision', {
@@ -41,4 +50,9 @@ export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
         div_ids: 'ad'
       }
     })
-    .then(response => response.data);
+    .then(response => {
+      const { data } = response;
+      assertIsObject(data);
+
+      return data;
+    });
