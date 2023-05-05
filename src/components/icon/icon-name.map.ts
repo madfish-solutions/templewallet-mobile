@@ -39,6 +39,7 @@ import Delegate2Icon from './assets/delegate-2.svg';
 import Delegate3Icon from './assets/delegate-3.svg';
 import Delegate4Icon from './assets/delegate-4.svg';
 import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
+import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
@@ -144,6 +145,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
+  [IconNameEnum.DetailsArrowRight]: DetailsArrowRightIcon,
   [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
   [IconNameEnum.Endorsements]: EndorsementsIcon,
   [IconNameEnum.MissedEndorsements]: MissedEndorsementsIcon,

@@ -48,3 +48,5 @@ export const useIsBackupMadeSelector = () => {
 
 export const useIsAnyBackupMadeSelector = () =>
   useSelector(({ settings }) => settings.isManualBackupMade || settings.isCloudBackupMade);
+
+export const useIsLowTezBalanceSelector = () => useSelector(({ settings }) => settings.isLowTezBalance);

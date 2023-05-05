@@ -6,6 +6,7 @@ export enum IconNameEnum {
   Bell = 'Bell',
   DetailsArrowUp = 'DetailsArrowUp',
   DetailsArrowDown = 'DetailsArrowDown',
+  DetailsArrowRight = 'DetailsArrowRight',
   CycleStatusInProgress = 'CycleStatusInProgress',
   CycleStatusUnlocked = 'CycleStatusUnlocked',
   CycleStatusLocked = 'CycleStatusLocked',
