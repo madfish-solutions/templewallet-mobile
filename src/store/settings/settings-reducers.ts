@@ -101,10 +101,13 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isCloudBackupMade: true
   }));
 
-  builder.addCase(setIsOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => ({
-    ...state,
-    isOnRampPossibility
-  }));
+  builder.addCase(setIsOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
+    if (state.selectedRpcUrl !== DCP_RPC.url) {
+      return { ...state, isOnRampPossibility };
+    }
+
+    return state;
+  });
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
