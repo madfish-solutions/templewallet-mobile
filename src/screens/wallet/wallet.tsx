@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -30,7 +31,7 @@ import {
   useVisibleAccountsListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
@@ -41,6 +42,7 @@ import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const dispatch = useDispatch();
+  const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
 
   const selectedAccount = useSelectedAccountSelector();
@@ -61,8 +63,13 @@ export const Wallet = () => {
     }
   }, [contactCandidateAddress]);
 
+  const trackPageOpened = useCallback(() => {
+    pageEvent(ScreensEnum.Wallet, '');
+  }, []);
+
+  useFocusEffect(trackPageOpened);
+
   useWalletOpenTacker();
-  usePageAnalytic(ScreensEnum.Wallet);
 
   return (
     <>
