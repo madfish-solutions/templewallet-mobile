@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { EMPTY, Observable, of } from 'rxjs';
 import { map, tap, finalize, catchError, switchMap } from 'rxjs/operators';
 
-import { fetchCollectibleInfo$, fetchFA2AttributeCount$, fetchGalleryAttributeCount$ } from '../apis/objkt';
+import { fetchCollectibleInfo$, fetchFA2AttributeCount$, fetchGalleryAttributeCount$ } from 'src/apis/objkt/index';
+
 import { AttributeInfo } from '../interfaces/attribute.interface';
 import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 import { showErrorToast } from '../toast/toast.utils';
