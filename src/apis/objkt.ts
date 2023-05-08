@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { groupBy, map as lodashMap, maxBy } from 'lodash-es';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
@@ -6,6 +7,11 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
 import { getApolloConfigurableClient } from '../apollo/utils/get-apollo-configurable-client.util';
+import {
+  AttributeInfo,
+  FA2AttributeCountQueryResponse,
+  GalleryAttributeCountQueryResponse
+} from '../interfaces/attribute.interface';
 import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
@@ -60,12 +66,12 @@ interface CollectibleInfoQueryResponse {
   token: CollectibleInfo[];
 }
 
-export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
+export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observable<CollectibleInfo> => {
   const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply } =
+      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply, galleries } =
         result.token[0];
 
       return {
@@ -73,15 +79,41 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
         creators,
         fa: {
           name: fa.name,
-          logo: fa.logo
+          logo: fa.logo,
+          items: fa.items
         },
         metadata,
         artifact_uri,
         attributes,
         timestamp,
         royalties,
-        supply
+        supply,
+        galleries
       };
+    })
+  );
+};
+
+export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+  const request = buildGetFA2AttributeCountQuery(ids);
+
+  return apolloObjktClient.query<FA2AttributeCountQueryResponse>(request).pipe(
+    map(result => {
+      const grouped = groupBy(result.fa2_attribute_count, 'attribute_id');
+
+      return lodashMap(grouped, value => maxBy(value, 'tokens') as AttributeInfo);
+    })
+  );
+};
+
+export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+  const request = buildGetGalleryAttributeCountQuery(ids);
+
+  return apolloObjktClient.query<GalleryAttributeCountQueryResponse>(request).pipe(
+    map(result => {
+      const grouped = groupBy(result.gallery_attribute_count, 'attribute_id');
+
+      return lodashMap(grouped, value => maxBy(value, 'tokens') as AttributeInfo);
     })
   );
 };
@@ -127,15 +159,16 @@ const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string
       fa {
         name
         logo
+        items
       }
       metadata
       artifact_uri
       name
       attributes {
         attribute {
+          id
           name
           value
-          id
         }
       }
       timestamp
@@ -144,6 +177,29 @@ const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string
         amount
       }
       supply
+      galleries {
+        gallery {
+          items
+        }
+      }
+    }
+  }
+`;
+
+const buildGetFA2AttributeCountQuery = (ids: number[]) => gql`
+  query MyQuery {
+    fa2_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
+      attribute_id
+      tokens
+    }
+  }
+`;
+
+const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
+  query MyQuery {
+    gallery_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
+      attribute_id
+      tokens
     }
   }
 `;

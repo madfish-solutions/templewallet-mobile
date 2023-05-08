@@ -7,8 +7,10 @@ import { CollectibleAttribute } from './components/collectible-attribute/collect
 interface Props {
   attributes: {
     attribute: {
+      id: number;
       name: string;
       value: string;
+      rarity?: number;
     };
   }[];
   style?: StyleProp<ViewStyle>;
@@ -22,7 +24,7 @@ export const CollectibleAttributes: FC<Props> = ({ attributes, style }) => {
           key={attribute.name}
           name={attribute.name}
           value={attribute.value}
-          rarity={10}
+          rarity={attribute.rarity ?? 0}
           style={[index % 2 === 0 && styles.even]}
         />
       ))}

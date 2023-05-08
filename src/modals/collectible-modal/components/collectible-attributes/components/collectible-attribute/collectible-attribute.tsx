@@ -17,7 +17,7 @@ export const CollectibleAttribute: FC<Props> = ({ name, value, rarity, style }) 
     <View style={[styles.root, style]}>
       <Text style={styles.name}>{name}</Text>
       <Text style={styles.value}>{value}</Text>
-      <Text style={styles.rarity}>{rarity}</Text>
+      <Text style={styles.rarity}>{`${rarity}%`}</Text>
     </View>
   );
 };
