@@ -34,6 +34,7 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
       galleries {
         gallery {
           items
+          name
         }
       }
     }

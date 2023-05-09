@@ -13,7 +13,7 @@ import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { useCollectibleInfo } from '../../hooks/use-collectible-info.hook';
+import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -55,7 +55,7 @@ export const CollectibleModal = () => {
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
-  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes } = collectibleInfo;
+  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries } = collectibleInfo;
 
   const isAttributesExist = attributes.length > 0;
 
@@ -99,7 +99,7 @@ export const CollectibleModal = () => {
             )}
 
             <Text numberOfLines={1} style={styles.collectionName}>
-              {fa.name}
+              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
             </Text>
           </TouchableOpacity>
 

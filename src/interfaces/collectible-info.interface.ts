@@ -30,6 +30,7 @@ export interface CollectibleInfo {
   galleries: {
     gallery: {
       items: number;
+      name: string;
     };
   }[];
 }
