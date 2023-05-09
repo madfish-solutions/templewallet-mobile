@@ -7,19 +7,25 @@ import { CollectibleIconSize } from 'src/components/collectible-icon/collectible
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
+import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { TouchableCollectibleIcon } from '../collectibles-home/collectibles-list/touchable-collectible-icon/touchable-collectible-icon';
 import { useCollectionStyles } from './collection.styles';
+
+const COLLECTIBLE_MARGIN = 8;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
 
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const collectibles = useCollectibleByCollectionInfo(params.collectionContract);
+  const data = [emptyToken, ...collectibles];
+
+  const { layoutWidth, handleLayout } = useLayoutSizes();
 
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
@@ -30,8 +36,17 @@ export const Collection = () => {
   }, []);
 
   const renderItem: ListRenderItem<TokenInterface> = ({ item }) => {
+    if (item.address === '') {
+      return <View style={styles.emptyBlock} />;
+    }
+
     return (
-      <View style={styles.collectibleContainer}>
+      <View style={styles.collectibleContainer} onLayout={handleLayout}>
+        {isDefined(item.lowestAsk) && (
+          <View style={styles.listed}>
+            <Text style={styles.listedText}>LISTED</Text>
+          </View>
+        )}
         <View style={styles.collectible}>
           <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
           <Text style={styles.collectibleName} numberOfLines={1}>
@@ -62,14 +77,17 @@ export const Collection = () => {
   return (
     <View style={styles.root}>
       <FlatList
-        data={collectibles}
+        data={data}
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={handleChanged}
+        snapToInterval={layoutWidth + COLLECTIBLE_MARGIN}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50
         }}
+        scrollEventThrottle={16}
+        keyExtractor={item => `${item.address}_${item.id}`}
         ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
       />
     </View>

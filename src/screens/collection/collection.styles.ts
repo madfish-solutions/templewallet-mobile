@@ -4,8 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 export const useCollectionStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     flex: 1,
-    marginVertical: formatSize(12),
-    marginLeft: formatSize(20)
+    marginVertical: formatSize(12)
   },
   collectibleContainer: {
     flex: 1,
@@ -14,7 +13,21 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     borderColor: colors.lines,
     backgroundColor: colors.navigation,
     width: '100%',
-    marginHorizontal: formatSize(4)
+    marginHorizontal: formatSize(4),
+    position: 'relative'
+  },
+  listed: {
+    position: 'absolute',
+    borderTopLeftRadius: formatSize(10),
+    borderBottomRightRadius: formatSize(10),
+    backgroundColor: colors.blue,
+    zIndex: 10,
+    paddingVertical: formatSize(3),
+    paddingHorizontal: formatSize(12)
+  },
+  listedText: {
+    color: colors.white,
+    ...typography.tagline13Tag
   },
   collectible: {
     margin: formatSize(16)
@@ -66,5 +79,8 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     color: colors.black,
     marginTop: formatSize(8),
     ...typography.numbersMedium17
+  },
+  emptyBlock: {
+    width: formatSize(20)
   }
 }));
