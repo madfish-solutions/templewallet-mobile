@@ -10,6 +10,7 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { TEMPLE_TOKEN } from 'src/screens/swap/config';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -31,9 +32,10 @@ const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
 export const fetchRoute3SwapParams = ({
   fromSymbol,
   toSymbol,
-  amount
+  amount,
+  chainsLimit = 3
 }: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
-  fetch(`https://temple.3route.io/swap/${fromSymbol}/${toSymbol}/${amount}`, {
+  fetch(`https://temple.3route.io/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
     }
@@ -76,3 +78,8 @@ export const getRoute3TokenBySlug = (route3Tokens: Array<Route3Token>, slug: str
 
   return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === slug);
 };
+
+const TEMPLE_TOKEN_SLUG = `${TEMPLE_TOKEN.contract}_${TEMPLE_TOKEN.tokenId}`;
+
+export const isInputTokenEqualToTempleToken = (inptuTokenSlug: string | undefined): boolean =>
+  inptuTokenSlug === TEMPLE_TOKEN_SLUG;

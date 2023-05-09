@@ -15,7 +15,10 @@ export enum TokensInputsEnum {
   To = 'To'
 }
 
-export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = TokensInputsEnum.From) => {
+export const useFilteredSwapTokensList = (
+  tokensInput: TokensInputsEnum = TokensInputsEnum.From,
+  currentlySelectedTokenSlug?: string
+) => {
   const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
   const userTokens = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -51,7 +54,14 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
 
   const [searchValue, setSearchValue] = useState<string>();
   const filteredTokensList = useMemo<TokenInterface[]>(() => {
+    const tokenSlugEqualToCurrentToken = (token: TokenInterface) =>
+      toTokenSlug(token.address, token.id) === currentlySelectedTokenSlug;
+    const currentlySelectedToken = swapTokensWithBalances.find(tokenSlugEqualToCurrentToken);
     const source = tokensInput === TokensInputsEnum.From ? fromTokens : swapTokensWithBalances;
+    const withCurrentlySelectedToken = (tokens: TokenInterface[]) =>
+      currentlySelectedToken && !tokens.some(tokenSlugEqualToCurrentToken)
+        ? tokens.concat([currentlySelectedToken])
+        : tokens;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -63,11 +73,11 @@ export const useFilteredSwapTokensList = (tokensInput: TokensInputsEnum = Tokens
         }
       }
 
-      return result;
+      return withCurrentlySelectedToken(result);
     } else {
-      return source;
+      return withCurrentlySelectedToken(source);
     }
-  }, [searchValue, fromTokens, swapTokensWithBalances]);
+  }, [searchValue, fromTokens, swapTokensWithBalances, currentlySelectedTokenSlug]);
 
   return {
     filteredTokensList,
