@@ -2,20 +2,19 @@ import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback } from 'react';
 import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
+import { EmptyFn, EventFn, emptyComponent, emptyFn } from 'src/config/general';
+import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
+import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { formatSize } from 'src/styles/format-size';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { isDefined } from 'src/utils/is-defined';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
-import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
-import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
-import { formatSize } from '../../styles/format-size';
-import { createGetItemLayout } from '../../utils/flat-list.utils';
-import { isDefined } from '../../utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './styles';
 
@@ -77,7 +76,6 @@ const SectionDropdownComponent = <T extends unknown>({
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const contentHeight = useDropdownHeight();
-  const { trackEvent } = useAnalytics();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -123,20 +121,20 @@ const SectionDropdownComponent = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity
+      <TouchableWithAnalytics
         style={styles.valueContainer}
         disabled={disabled}
+        testID={testID}
+        testIDProperties={testIDProperties}
         onPress={() => {
           scroll();
-
-          trackEvent(testID, AnalyticsEventCategory.General, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
-      </TouchableOpacity>
+      </TouchableWithAnalytics>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>

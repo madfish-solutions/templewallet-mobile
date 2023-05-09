@@ -2,12 +2,12 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC, useRef } from 'react';
 import { TextInput, View } from 'react-native';
 
+import { emptyFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isString } from 'src/utils/is-string';
 
-import { emptyFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { isString } from '../../utils/is-string';
 import { ButtonSmallSecondary } from '../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 import { StyledTextInputProps } from '../styled-text-input/styled-text-input.props';
