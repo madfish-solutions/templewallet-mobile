@@ -6,6 +6,7 @@ import { IconNameEnum } from '../components/icon/icon-name.enum';
 export interface TopUpInputInterface {
   name: string;
   code: string;
+  codeToDisplay?: string;
   network: string;
   networkFullName: string;
   icon: string;
@@ -32,4 +33,9 @@ export interface PaymentProviderInterface {
   inputSymbol?: string;
   outputAmount?: number;
   outputSymbol?: string;
+}
+
+export interface TopUpProviderPairLimits {
+  min: number;
+  max: number;
 }
