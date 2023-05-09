@@ -15,11 +15,6 @@ export const HeaderAction: FC = () => {
   return (
     <View style={styles.container}>
       <TouchableIcon
-        size={formatSize(30)}
-        name={IconNameEnum.SwapInfo}
-        onPress={() => navigate(ScreensEnum.SwapQuestionsScreen)}
-      />
-      <TouchableIcon
         style={styles.icons}
         size={formatSize(20)}
         name={IconNameEnum.SwapSettings}

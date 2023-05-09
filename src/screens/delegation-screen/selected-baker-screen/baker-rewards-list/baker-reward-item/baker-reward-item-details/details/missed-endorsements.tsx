@@ -2,6 +2,8 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+
 import { Divider } from '../../../../../../../components/divider/divider';
 import { Icon } from '../../../../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
@@ -15,6 +17,7 @@ export const MissedEndorsements: FC<Pick<BakerRewardInterface, 'missedEndorsemen
   missedEndorsementRewards
 }) => {
   const styles = useBakerRewardItemStyles();
+  const { metadata } = useNetworkInfo();
 
   return (
     <>
@@ -38,7 +41,7 @@ export const MissedEndorsements: FC<Pick<BakerRewardInterface, 'missedEndorsemen
                 {mutezToTz(new BigNumber(missedEndorsementRewards), 6)
                   .decimalPlaces(2, BigNumber.ROUND_FLOOR)
                   .toString() + ' '}
-                TEZ
+                {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
                   for <Text style={styles.textBlack}>{missedEndorsements.toString()} slots</Text>

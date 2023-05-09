@@ -3,77 +3,87 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useBeaconHandler } from '../beacon/use-beacon-handler.hook';
-import { exolixScreenOptions } from '../components/header/exolix-screen-options';
-import { generateScreenOptions } from '../components/header/generate-screen-options.util';
-import { HeaderAction } from '../components/header/header-action/header-actions';
-import { HeaderTitle } from '../components/header/header-title/header-title';
-import { HeaderTokenInfo } from '../components/header/header-token-info/header-token-info';
-import { ScreenStatusBar } from '../components/screen-status-bar/screen-status-bar';
-import { useBlockSubscription } from '../hooks/block-subscription/use-block-subscription.hook';
-import { useAdvertising } from '../hooks/use-advertising.hook';
-import { useAppLockTimer } from '../hooks/use-app-lock-timer.hook';
-import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
-import { useLoadTokensApy } from '../hooks/use-load-tokens-apy.hook';
-import { useNetworkInfo } from '../hooks/use-network-info.hook';
-import { useAuthorisedTimerEffect } from '../hooks/use-timer-effect.hook';
-import { About } from '../screens/about/about';
-import { Activity } from '../screens/activity/activity';
-import { Backup } from '../screens/backup/backup';
-import { Buy } from '../screens/buy/buy';
-import { Exolix } from '../screens/buy/crypto/exolix/exolix';
-import { AliceBob } from '../screens/buy/debit/alice-bob/alice-bob';
-import { Utorg } from '../screens/buy/debit/utorg/utorg';
-import { CollectiblesHome } from '../screens/collectibles-home/collectibles-home';
-import { Contacts } from '../screens/contacts/contacts';
-import { CreateNewWallet } from '../screens/create-new-wallet/create-new-wallet';
-import { DAppsSettings } from '../screens/d-apps-settings/d-apps-settings';
-import { DApps } from '../screens/d-apps/d-apps';
-import { Debug } from '../screens/debug/debug';
-import { DelegationScreen } from '../screens/delegation-screen/delegation-screen';
-import { FiatSettings } from '../screens/fiat-settings/fiat-settings';
-import { ImportAccount } from '../screens/import-account/import-account';
-import { LiquidityBakingDapp } from '../screens/liquidity-baking-dapp/liquidity-baking-dapp';
-import { ManageAccounts } from '../screens/manage-accounts/manage-accounts';
-import { ManageAssets } from '../screens/manage-assets/manage-assets';
-import { ManualBackup } from '../screens/manual-backup/manual-backup';
-import { Market } from '../screens/market/market';
-import { NodeSettings } from '../screens/node-settings/node-settings';
-import { NotificationsItem } from '../screens/notifications-item/notifications-item';
-import { NotificationsSettings } from '../screens/notifications-settings/notifications-settings';
-import { Notifications } from '../screens/notifications/notifications';
-import { ScanQrCode } from '../screens/scan-qr-code/scan-qr-code';
-import { SecureSettings } from '../screens/secure-settings/secure-settings';
-import { Settings } from '../screens/settings/settings';
-import { SwapQuestionsScreen } from '../screens/swap/quesrtion/swap-questions';
-import { SwapSettingsScreen } from '../screens/swap/settings/swap-settings';
-import { SwapScreen } from '../screens/swap/swap';
-import { AfterSyncQRScan } from '../screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
-import { SyncInstructions } from '../screens/sync-account/sync-instructions/sync-instructions';
-import { TezosTokenScreen } from '../screens/tezos-token-screen/tezos-token-screen';
-import { TokenScreen } from '../screens/token-screen/token-screen';
-import { Wallet } from '../screens/wallet/wallet';
-import { Welcome } from '../screens/welcome/welcome';
-import { loadSelectedBakerActions } from '../store/baking/baking-actions';
-import { loadExchangeRates } from '../store/currency/currency-actions';
-import { loadNotificationsAction } from '../store/notifications/notifications-actions';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { loadTezosBalanceActions, loadTokensActions } from '../store/wallet/wallet-actions';
-import { useIsAuthorisedSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { emptyTokenMetadata } from '../token/interfaces/token-metadata.interface';
+import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
+import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
+import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
+import { HeaderAction } from 'src/components/header/header-action/header-actions';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
+import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
+import {
+  TOKENS_SYNC_INTERVAL,
+  BALANCES_SYNC_INTERVAL,
+  RATES_SYNC_INTERVAL,
+  SELECTED_BAKER_SYNC_INTERVAL,
+  NOTIFICATIONS_SYNC_INTERVAL
+} from 'src/config/fixed-times';
+import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
+import { useAdvertising } from 'src/hooks/use-advertising.hook';
+import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
+import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
+import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
+import { useLoadTokensApy } from 'src/hooks/use-load-tokens-apy.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { About } from 'src/screens/about/about';
+import { Activity } from 'src/screens/activity/activity';
+import { Backup } from 'src/screens/backup/backup';
+import { Buy } from 'src/screens/buy/buy';
+import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
+import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
+import { CloudBackup } from 'src/screens/cloud-backup';
+import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { Contacts } from 'src/screens/contacts/contacts';
+import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
+import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
+import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
+import { DApps } from 'src/screens/d-apps/d-apps';
+import { Debug } from 'src/screens/debug/debug';
+import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
+import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
+import { ImportAccount } from 'src/screens/import-account/import-account';
+import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
+import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
+import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
+import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
+import { Market } from 'src/screens/market/market';
+import { NodeSettings } from 'src/screens/node-settings/node-settings';
+import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
+import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
+import { Notifications } from 'src/screens/notifications/notifications';
+import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
+import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
+import { Settings } from 'src/screens/settings/settings';
+import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
+import { SwapScreen } from 'src/screens/swap/swap';
+import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
+import { SyncInstructions } from 'src/screens/sync-account/sync-instructions/sync-instructions';
+import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
+import { TokenScreen } from 'src/screens/token-screen/token-screen';
+import { Wallet } from 'src/screens/wallet/wallet';
+import { Welcome } from 'src/screens/welcome/welcome';
+import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
+import { loadExchangeRates } from 'src/store/currency/currency-actions';
+import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import {
+  loadTokensActions,
+  loadTezosBalanceActions,
+  loadTokensBalancesArrayActions
+} from 'src/store/wallet/wallet-actions';
+import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { cloudTitle } from 'src/utils/cloud-backup';
+
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-const DATA_REFRESH_INTERVAL = 60 * 1000;
-const LONG_REFRESH_INTERVAL = 5 * 60 * 1000;
-
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
-  const selectedAccount = useSelectedAccountSelector();
+  const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
@@ -87,22 +97,22 @@ export const MainStackScreen = () => {
   useAdvertising();
   useLoadTokensApy();
 
-  const initDataLoading = () => {
-    dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokensActions.submit());
-    dispatch(loadSelectedBakerActions.submit());
-  };
-  const initLongRefreshLoading = () => {
-    dispatch(loadExchangeRates.submit());
-    dispatch(loadNotificationsAction.submit());
-  };
+  const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 
-  useAuthorisedTimerEffect(initDataLoading, DATA_REFRESH_INTERVAL, [
-    blockSubscription.block.header,
-    selectedAccount.publicKeyHash,
-    selectedRpcUrl
+  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(
+    () => {
+      dispatch(loadTezosBalanceActions.submit());
+      dispatch(loadTokensBalancesArrayActions.submit());
+    },
+    BALANCES_SYNC_INTERVAL,
+    refreshDeps
+  );
+  useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
+    selectedAccountPkh
   ]);
-  useAuthorisedTimerEffect(initLongRefreshLoading, LONG_REFRESH_INTERVAL, [selectedAccount.publicKeyHash]);
 
   return (
     <PortalProvider>
@@ -133,6 +143,11 @@ export const MainStackScreen = () => {
                 component={CreateNewWallet}
                 options={generateScreenOptions(<HeaderTitle title="Create a new Wallet" />)}
               />
+              <MainStack.Screen
+                name={ScreensEnum.ContinueWithCloud}
+                component={ContinueWithCloud}
+                options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
+              />
             </>
           ) : (
             <>
@@ -145,10 +160,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.CollectiblesHome}
                 component={CollectiblesHome}
-                options={{
-                  headerShown: false,
-                  gestureDirection: 'horizontal-inverted'
-                }}
+                options={{ animationEnabled: false, headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
@@ -188,22 +200,16 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Buy}
                 component={Buy}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.AliceBob}
-                component={AliceBob}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.Utorg}
-                component={Utorg}
-                options={generateScreenOptions(<HeaderTitle title={`Top up ${metadata.symbol} balance`} />)}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
+
+              <MainStack.Screen
+                name={ScreensEnum.BuyWithCreditCard}
+                component={BuyWithCreditCard}
+                options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
 
               {/** DApps stack **/}
               <MainStack.Screen
@@ -231,12 +237,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
-
-              <MainStack.Screen
-                name={ScreensEnum.SwapQuestionsScreen}
-                component={SwapQuestionsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Questions" />)}
               />
 
               {/** Market stack **/}
@@ -296,6 +296,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.ManualBackup}
                 component={ManualBackup}
                 options={generateScreenOptions(<HeaderTitle title="Manual backup" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.CloudBackup}
+                component={CloudBackup}
+                options={generateScreenOptions(<HeaderTitle title={`Backup to ${cloudTitle}`} />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsSettings}

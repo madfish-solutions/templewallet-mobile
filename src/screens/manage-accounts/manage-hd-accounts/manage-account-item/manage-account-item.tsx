@@ -82,6 +82,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
                 )
               }
               testID={ManageAccountItemSelectors.hideAccountToggle}
+              testIDProperties={{ newValue: !isVisible }}
             />
           </View>
         </View>

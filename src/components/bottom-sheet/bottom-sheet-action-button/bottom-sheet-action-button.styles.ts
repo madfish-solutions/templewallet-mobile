@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -13,5 +13,11 @@ export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typog
   title: {
     ...typography.body17Regular,
     color: colors.orange
+  },
+  disabled: {
+    backgroundColor: colors.pageBG
+  },
+  disabledTitle: {
+    color: colors.gray4
   }
 }));

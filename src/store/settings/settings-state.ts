@@ -21,6 +21,7 @@ export interface SettingsState {
   hideZeroBalances: boolean;
   isShowLoader: boolean;
   isManualBackupMade: boolean;
+  isCloudBackupMade: boolean;
   applicationOpenCounter: number;
 }
 
@@ -33,12 +34,13 @@ export const settingsInitialState: SettingsState = {
   selectedRpcUrl: RpcList[0].url,
   isFirstAppLaunch: true,
   userId: nanoid(),
-  slippage: 1.5,
+  slippage: 0.25,
   fiatCurrency: FiatCurrenciesEnum.USD,
   isShownDomainName: false,
   hideZeroBalances: false,
   isShowLoader: false,
   isManualBackupMade: true,
+  isCloudBackupMade: true,
   applicationOpenCounter: 0
 };
 

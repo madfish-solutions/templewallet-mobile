@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useSelectedAccountTezosTokenSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { showErrorToast } from '../../toast/toast.utils';
-import { emptyToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { isDefined } from '../../utils/is-defined';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking.util';
+
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Divider } from '../divider/divider';
@@ -20,9 +22,11 @@ interface Props {
   token: TokenInterface;
 }
 
+const CHAINBITS_URL = 'https://buy.chainbits.com';
+
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const { metadata } = useNetworkInfo();
+  const { metadata, isTezosNode } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
@@ -44,7 +48,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       </View>
       <Divider size={formatSize(8)} />
       <View style={styles.buttonContainer}>
-        <ButtonMedium title="Buy" iconName={IconNameEnum.ShoppingCard} onPress={() => navigate(ScreensEnum.Buy)} />
+        <ButtonMedium
+          title="Buy"
+          iconName={IconNameEnum.ShoppingCard}
+          onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
+        />
       </View>
       <Divider size={formatSize(8)} />
       <View

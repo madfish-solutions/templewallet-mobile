@@ -2,12 +2,14 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { Divider } from '../../../../../../../components/divider/divider';
-import { Icon } from '../../../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
-import { BakerRewardInterface } from '../../../../../../../interfaces/baker-reward.interface';
-import { formatSize } from '../../../../../../../styles/format-size';
-import { mutezToTz } from '../../../../../../../utils/tezos.util';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { formatSize } from 'src/styles/format-size';
+import { mutezToTz } from 'src/utils/tezos.util';
+
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
 export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endorsementRewards'>> = ({
@@ -15,6 +17,7 @@ export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endor
   endorsementRewards
 }) => {
   const styles = useBakerRewardItemStyles();
+  const { metadata } = useNetworkInfo();
 
   return (
     <>
@@ -37,7 +40,7 @@ export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endor
                 +
                 {mutezToTz(new BigNumber(endorsementRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
                   ' '}
-                TEZ
+                {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
                   for <Text style={styles.textBlack}>{endorsements.toString()} slots</Text>

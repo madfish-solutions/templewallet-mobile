@@ -1,5 +1,9 @@
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
+export enum TokenStandardsEnum {
+  Fa2 = 'fa2',
+  Fa12 = 'fa12'
+}
 export interface TokenMetadataInterface {
   id: number;
   address: string;
@@ -10,6 +14,7 @@ export interface TokenMetadataInterface {
   thumbnailUri?: string;
   displayUri?: string;
   artifactUri?: string;
+  standard?: TokenStandardsEnum | null;
 
   // Stored as separate Record
   exchangeRate?: number;
@@ -20,5 +25,6 @@ export const emptyTokenMetadata: TokenMetadataInterface = {
   address: '',
   name: '',
   symbol: '',
-  decimals: 0
+  decimals: 0,
+  standard: TokenStandardsEnum.Fa12
 };
