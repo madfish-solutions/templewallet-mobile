@@ -8,10 +8,12 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
+import { valueByDecimals } from 'src/utils/number.util';
 
 import { TouchableCollectibleIcon } from '../collectibles-home/collectibles-list/touchable-collectible-icon/touchable-collectible-icon';
 import { useCollectionStyles } from './collection.styles';
@@ -20,6 +22,7 @@ const COLLECTIBLE_MARGIN = 8;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
+  const { metadata } = useNetworkInfo();
 
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const collectibles = useCollectibleByCollectionInfo(params.collectionContract);
@@ -30,8 +33,12 @@ export const Collection = () => {
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
-    if (isDefined(info.viewableItems) && isDefined(info.viewableItems?.[0].index)) {
-      setInnerScreenIndex(info.viewableItems[0].index);
+    if (
+      isDefined(info.viewableItems) &&
+      isDefined(info.viewableItems?.[0].index) &&
+      info.viewableItems?.[0].index > 1
+    ) {
+      setInnerScreenIndex(info.viewableItems[0].index - 1);
     }
   }, []);
 
@@ -58,8 +65,10 @@ export const Collection = () => {
           <View style={styles.infoContainer}>
             <View style={styles.containerRight}>
               <View style={styles.smallContainer}>
-                <Text style={styles.text}>Floor Price</Text>
-                <Text style={styles.value}>{item.lowestAsk} TEZ</Text>
+                <Text style={styles.text}>Last Price</Text>
+                <Text style={styles.value}>
+                  {isDefined(item.lastPrice) ? `${valueByDecimals(item.lastPrice, metadata.decimals)} TEZ` : '---'}
+                </Text>
               </View>
             </View>
             <View style={styles.containerLeft}>

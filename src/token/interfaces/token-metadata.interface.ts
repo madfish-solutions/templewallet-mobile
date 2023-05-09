@@ -20,6 +20,7 @@ export interface TokenMetadataInterface {
   lowestAsk?: number | null;
   metadata?: string;
   editions?: number;
+  lastPrice?: number | null;
 
   // Stored as separate Record
   exchangeRate?: number;
