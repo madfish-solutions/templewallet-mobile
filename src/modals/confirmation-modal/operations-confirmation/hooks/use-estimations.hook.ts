@@ -38,14 +38,16 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
         ),
         catchError(error => {
           Sentry.captureException(error);
+          const errorStr = error.toString();
+
           showErrorToast({
             title: 'Warning!',
             description: 'The transaction is likely to fail!',
             isCopyButtonVisible: true,
-            onPress: () => copyStringToClipboard(error.toString())
+            onPress: () => copyStringToClipboard(errorStr)
           });
 
-          if (error.toString().indexOf('empty_implicit_contract') > -1) {
+          if (errorStr.indexOf('empty_implicit_contract') > -1 || errorStr.indexOf('tez.subtraction_underflow') > -1) {
             dispatch(setIsOnRampPossibilityAction(true));
           }
 
