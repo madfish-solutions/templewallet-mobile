@@ -19,7 +19,8 @@ import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
 import { TestIdProps } from '../../../interfaces/test-id.props';
-import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
+import { getTruncatedProps } from '../../../utils/style.util';
+import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props extends TestIdProps {
@@ -31,6 +32,7 @@ interface Props extends TestIdProps {
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID }) => {
   const styles = useSelectBakerItemStyles();
   const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
+  const isHelpUkraineBaker = baker.address === HELP_UKRAINE_BAKER_ADDRESS;
   const { metadata, isDcpNode } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -39,17 +41,13 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
 
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        conditionalStyle(selected, styles.containerSelected),
-        conditionalStyle(isRecommendedBaker, styles.containerPaddingWithRecommended)
-      ]}
+      style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
       onPress={onPress}
       testID={testID}
     >
-      {isRecommendedBaker && (
+      {(isRecommendedBaker || isHelpUkraineBaker) && (
         <View style={styles.recommendedContainer}>
-          <Text style={styles.recommendedText}>Recommended</Text>
+          <Text style={styles.recommendedText}>{isRecommendedBaker ? 'Recommended ' : 'Help Ukraine 🇺🇦'}</Text>
         </View>
       )}
 
@@ -61,7 +59,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
             <RobotIcon size={formatSize(32)} seed={baker.address} />
           )}
           <Divider size={formatSize(10)} />
-          <Text style={styles.nameText}>{baker.name}</Text>
+          <Text {...getTruncatedProps(styles.nameText)}>{baker.name}</Text>
         </View>
 
         <View style={styles.actionsContainer}>
