@@ -173,7 +173,6 @@ export const SelectBakerModal: FC = () => {
   );
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
-  console.log(1);
 
   return (
     <>
