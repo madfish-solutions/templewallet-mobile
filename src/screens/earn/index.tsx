@@ -14,7 +14,7 @@ export const Earn: FC = () => {
   return (
     <ButtonLargePrimary
       title="Manage farming pool"
-      onPress={() => navigate(ModalsEnum.ManageFarmingPool, { id: '0', version: FarmVersionEnum.V3 })}
+      onPress={() => navigate(ModalsEnum.ManageFarmingPool, { id: '1', version: FarmVersionEnum.V3 })}
     />
   );
 };

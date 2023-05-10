@@ -13,8 +13,14 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 // import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { loadSingleFarmActions } from 'src/store/farms/actions';
-import { useFarmSelector, useFarmsLoadingSelector } from 'src/store/farms/selectors';
+import { loadSingleFarmActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
+import {
+  useFarmSelector,
+  useFarmsLoadingSelector,
+  useStakeIsInitializedSelector,
+  useStakeLoadingSelector,
+  useStakeSelector
+} from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -31,9 +37,12 @@ export const ManageFarmingPoolModal: FC = () => {
   const farm = useFarmSelector(params.id, params.version);
   const farmIsLoading = useFarmsLoadingSelector();
   const farmLevel = farm?.blockInfo.level;
+  const stake = useStakeSelector(params.id, params.version);
+  const stakeIsInitialized = useStakeIsInitializedSelector(params.id, params.version);
+  const stakeIsLoading = useStakeLoadingSelector(params.id, params.version);
+  const pageIsLoading = farmIsLoading || !stakeIsInitialized || (stakeIsLoading && !isDefined(stake));
 
   useEffect(() => {
-    console.log('x1', prevBlockLevelRef.current, blockLevel, farmLevel);
     if (prevBlockLevelRef.current === blockLevel || (isDefined(farmLevel) && farmLevel === blockLevel)) {
       return;
     }
@@ -41,6 +50,12 @@ export const ManageFarmingPoolModal: FC = () => {
     dispatch(loadSingleFarmActions.submit(params));
     prevBlockLevelRef.current = blockLevel;
   }, [blockLevel, farmLevel, dispatch, params]);
+
+  useEffect(() => {
+    if (isDefined(farm)) {
+      dispatch(loadSingleFarmStakeActions.submit(farm.item));
+    }
+  }, [farm]);
 
   usePageAnalytic(ModalsEnum.ManageFarmingPool);
 
@@ -60,7 +75,7 @@ export const ManageFarmingPoolModal: FC = () => {
             Deposit TEZ or other tokens. If you select other token it will be automatically swapped to TEZ.
           </Text>
           <Divider size={formatSize(24)} />
-          <Text>{farmIsLoading ? 'Loading...' : JSON.stringify(farm, null, 2)}</Text>
+          <Text>{pageIsLoading ? 'Loading...' : JSON.stringify([farm, stake], null, 2)}</Text>
           {/* <FormAssetAmountInput
           name="amountInput"
           label="Amount"

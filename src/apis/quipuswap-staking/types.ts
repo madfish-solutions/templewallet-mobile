@@ -1,10 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 
-export enum NetworkEnum {
-  Mainnet = 'mainnet',
-  Ghostnet = 'ghostnet'
-}
-
 export enum FarmVersionEnum {
   V1 = 'v1',
   V2 = 'v2',
@@ -99,6 +94,8 @@ export interface RawV3FarmStake {
 }
 
 export interface V3FarmStake {
+  contractRewardBalance: string;
+  stakeId?: string;
   stake: string;
   discFactor: string;
   ageTimestamp: string;
