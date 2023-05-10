@@ -9,11 +9,15 @@ import { ButtonLargePrimary } from '../../components/button/button-large/button-
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
 import { Divider } from '../../components/divider/divider';
+import { Icon } from '../../components/icon/icon';
+import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
+import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
 import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
+import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
@@ -48,6 +52,8 @@ export const CollectibleModal = () => {
   const itemWidth = width - 32;
 
   const { navigate } = useNavigation();
+
+  const burnCollectible = useBurnCollectible(collectible);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
@@ -152,13 +158,24 @@ export const CollectibleModal = () => {
               minted={timestamp}
               owned={collectible.balance}
               royalties={royalties}
-              style={styles.marginBottom}
             />
           )}
 
           {!isLoading && !isPropertiesSelected && isAttributesExist && (
-            <CollectibleAttributes attributes={attributes} style={styles.marginBottom} />
+            <CollectibleAttributes attributes={attributes} />
           )}
+
+          <View style={styles.burnContainer}>
+            <TouchableWithAnalytics
+              Component={TouchableOpacity}
+              onPress={burnCollectible}
+              style={styles.burnButton}
+              testID={CollectibleModalSelectors.burnButton}
+            >
+              <Text style={styles.burnButtonText}>Burn Nft</Text>
+              <Icon name={IconNameEnum.Burn} />
+            </TouchableWithAnalytics>
+          </View>
         </View>
       </ScrollView>
     </ScreenContainer>

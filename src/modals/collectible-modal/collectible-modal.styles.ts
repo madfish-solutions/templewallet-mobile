@@ -52,7 +52,21 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
   segmentControl: {
     marginBottom: formatSize(18)
   },
-  marginBottom: {
-    marginBottom: formatSize(16)
+  burnContainer: {
+    alignItems: 'center',
+    marginTop: formatSize(8)
+  },
+  burnButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: formatSize(108),
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(8.5)
+  },
+  burnButtonText: {
+    marginRight: formatSize(2),
+    ...typography.tagline13Tag,
+    color: colors.destructive
   }
 }));

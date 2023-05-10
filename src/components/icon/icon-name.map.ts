@@ -15,6 +15,7 @@ import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
@@ -146,6 +147,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Bell]: BellIcon,
+  [IconNameEnum.Burn]: BurnIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
   [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
