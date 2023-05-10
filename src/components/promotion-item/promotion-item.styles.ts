@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const usePromotionItemStyles = createUseStyles(({ colors, typography }) => ({
+export const usePromotionItemStyles = createUseStyles(({ colors }) => ({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -27,22 +27,11 @@ export const usePromotionItemStyles = createUseStyles(({ colors, typography }) =
     width: formatSize(343),
     borderRadius: formatSize(10)
   },
-  textContainer: {
+  bageContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
-    zIndex: 2,
-    overflow: 'hidden',
-    backgroundColor: colors.blue,
-    borderTopLeftRadius: formatSize(10),
-    borderBottomRightRadius: formatSize(10)
-  },
-  text: {
-    ...typography.caption13Semibold,
-    color: 'white',
-    lineHeight: formatSize(18),
-    letterSpacing: formatSize(-0.08),
-    paddingHorizontal: formatSize(12)
+    zIndex: 2
   },
   closeButton: {
     position: 'absolute',
