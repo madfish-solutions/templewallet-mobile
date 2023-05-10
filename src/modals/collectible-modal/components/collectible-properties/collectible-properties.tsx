@@ -81,7 +81,7 @@ export const CollectibleProperties: FC<Props> = ({
   return (
     <View style={[styles.root, style]}>
       {properties.map(({ name, value }, index) => (
-        <CollectibleProperty key={name} name={name} value={value ?? 0} style={[index % 2 === 0 && styles.even]} />
+        <CollectibleProperty key={name} name={name} value={value} style={[index % 2 === 0 && styles.even]} />
       ))}
     </View>
   );

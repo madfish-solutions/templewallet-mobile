@@ -18,6 +18,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { conditionalStyle } from '../../utils/conditional-style';
 import { formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
@@ -124,9 +125,7 @@ export const CollectibleModal = () => {
                   link={getObjktProfileLink(holder.address)}
                   style={[
                     styles.linkWithIcon,
-                    {
-                      ...(creators.length > 0 && creators.length !== index + 1 && { marginRight: formatSize(6) })
-                    }
+                    conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
                   ]}
                 />
               ))}

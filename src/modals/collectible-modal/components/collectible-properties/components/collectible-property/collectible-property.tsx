@@ -5,7 +5,7 @@ import { useCollectiblePropertyStyles } from './collectible-property.styles';
 
 interface Props {
   name: string;
-  value: JSX.Element | number | string;
+  value: JSX.Element | number | string | null;
   style?: StyleProp<ViewStyle>;
 }
 

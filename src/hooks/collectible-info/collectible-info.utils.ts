@@ -13,15 +13,15 @@ export const getAttributesWithRarity = (attributesInfo: AttributeInfo[], collect
     : collectibleInfo.fa.items;
 
   return collectibleInfo.attributes.map(({ attribute }) => {
-    const attributeTokenCount = attributesInfo.find(el => el.attribute_id === attribute.id)?.tokens ?? 1;
-    const calculateRarity = ((attributeTokenCount / collectibleCalleryCount) * 100).toFixed(2);
+    const attributeTokenCount = attributesInfo.find(el => el.attribute_id === attribute.id)?.tokens ?? 0;
+    const rarity = Number(((attributeTokenCount / collectibleCalleryCount) * 100).toFixed(2));
 
     return {
       attribute: {
         id: attribute.id,
         name: attribute.name,
         value: attribute.value,
-        rarity: Number(calculateRarity)
+        rarity
       }
     };
   });

@@ -1,10 +1,6 @@
-import { Dimensions } from 'react-native';
-
 import { createUseStyles } from '../../../../../../styles/create-use-styles';
 import { formatSize } from '../../../../../../styles/format-size';
-
-const { width } = Dimensions.get('window');
-const itemWidth = (width - 42) / 2;
+import { itemWidth } from '../../../../constants';
 
 export const useCollectiblePropertyStyles = createUseStyles(({ colors, typography }) => ({
   root: {
