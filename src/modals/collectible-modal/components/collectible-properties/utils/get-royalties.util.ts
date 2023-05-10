@@ -10,7 +10,7 @@ export const getRoyalties = (royalties: { amount: number; decimals: number }[]) 
 
   const amountBN = new BigNumber(amount ?? 0);
 
-  const result = `${Number(amountBN.dividedBy(10 ** decimals).multipliedBy(100))}%`;
+  const result = `${Number(amountBN.dividedBy(10 ** decimals))}%`;
 
   return result;
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated } from 'react-native';
 
+import { conditionalStyle } from '../../../../utils/conditional-style';
 import { isDefined } from '../../../../utils/is-defined';
 import { SegmentedControlValueComponent } from '../../segmented-control';
 import { useSegmentedControlColor } from '../../use-segmented-control-color.hook';
@@ -17,7 +18,7 @@ export const TextSegmentControlValue: SegmentedControlValueComponent<string> = (
   const disabled = disabledIndexes?.includes(index);
 
   return (
-    <Animated.Text style={[styles.text, { color }, isDefined(disabled) && disabled && styles.disabled]}>
+    <Animated.Text style={[styles.text, { color }, conditionalStyle(isDefined(disabled) && disabled, styles.disabled)]}>
       {item}
     </Animated.Text>
   );
