@@ -18,7 +18,7 @@ import { valueByDecimals } from 'src/utils/number.util';
 import { TouchableCollectibleIcon } from '../collectibles-home/collectibles-list/touchable-collectible-icon/touchable-collectible-icon';
 import { useCollectionStyles } from './collection.styles';
 
-const COLLECTIBLE_MARGIN = 8;
+const COLLECTIBLE_MARGIN = 4;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
@@ -33,12 +33,10 @@ export const Collection = () => {
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
-    if (
-      isDefined(info.viewableItems) &&
-      isDefined(info.viewableItems?.[0].index) &&
-      info.viewableItems?.[0].index > 1
-    ) {
-      setInnerScreenIndex(info.viewableItems[0].index - 1);
+    if (isDefined(info.viewableItems) && isDefined(info.viewableItems?.[0].index)) {
+      info.viewableItems?.[0].index === 0
+        ? setInnerScreenIndex(0)
+        : setInnerScreenIndex(info.viewableItems[0].index - 1);
     }
   }, []);
 
@@ -91,10 +89,11 @@ export const Collection = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={handleChanged}
-        snapToInterval={layoutWidth + COLLECTIBLE_MARGIN}
+        snapToInterval={formatSize(layoutWidth - COLLECTIBLE_MARGIN)}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50
         }}
+        decelerationRate={0}
         scrollEventThrottle={16}
         keyExtractor={item => `${item.address}_${item.id}`}
         ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}

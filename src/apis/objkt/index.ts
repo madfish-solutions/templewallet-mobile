@@ -75,7 +75,6 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
               marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
               marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept
           );
-          console.log(buyEvents, 'buy events');
           const lastPrice = buyEvents?.[buyEvents.length - 1]?.price_xtz;
 
           return {
