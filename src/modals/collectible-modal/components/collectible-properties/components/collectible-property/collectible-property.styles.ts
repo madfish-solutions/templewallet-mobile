@@ -10,6 +10,7 @@ export const useCollectiblePropertyStyles = createUseStyles(({ colors, typograph
     paddingVertical: formatSize(8),
     borderWidth: formatSize(1),
     borderColor: colors.lines,
+    backgroundColor: colors.cardBG,
     borderRadius: formatSize(10)
   },
   name: {

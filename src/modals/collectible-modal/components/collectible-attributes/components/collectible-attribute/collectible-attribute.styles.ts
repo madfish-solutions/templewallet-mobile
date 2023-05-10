@@ -11,6 +11,7 @@ export const useCollectibleAttributeStyles = createUseStyles(({ typography, colo
     paddingVertical: formatSize(8),
     borderRadius: formatSize(10),
     borderWidth: formatSize(1),
+    backgroundColor: colors.cardBG,
     borderColor: colors.lines
   },
   name: {

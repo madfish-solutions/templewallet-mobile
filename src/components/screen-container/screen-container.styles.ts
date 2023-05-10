@@ -22,6 +22,6 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
     paddingHorizontal: formatSize(16),
-    backgroundColor: colors.pageBG
+    backgroundColor: colors.navigation
   }
 }));
