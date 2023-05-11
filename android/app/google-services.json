@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "14863818751-s7qibv0e8bcmlimmugfrtc144d47sf64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.templewallet",
+            "certificate_hash": "81f5803c668e89dd1b6b16658ba70d827009bca1"
+          }
+        },
+        {
           "client_id": "14863818751-8n5f2tlcd59g6g11nfgojf1l1vtmd2pa.apps.googleusercontent.com",
           "client_type": 3
         }
