@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { TextInputProps } from 'react-native';
 
 import { EmptyFn, EventFn } from '../../config/general';
@@ -6,6 +7,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { AssetAmountInterface } from './asset-amount-input';
 
 export interface AssetAmountInputProps extends TestIdProps {
+  expectedGasExpense?: BigNumber.Value;
   maxButton?: boolean;
   value: AssetAmountInterface;
   label: string;

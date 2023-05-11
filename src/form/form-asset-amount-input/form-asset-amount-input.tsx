@@ -28,6 +28,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
+  expectedGasExpense,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
   testID
@@ -61,6 +62,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         selectionOptions={selectionOptions}
         maxButton={maxButton}
         setSearchValue={setSearchValue}
+        expectedGasExpense={expectedGasExpense}
         onBlur={handleBlur}
         onValueChange={handleValueChange}
         testID={testID}

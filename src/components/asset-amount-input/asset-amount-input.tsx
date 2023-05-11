@@ -10,7 +10,7 @@ import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/se
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
@@ -76,6 +76,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
+  expectedGasExpense = 0.3,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -193,8 +194,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const handleMaxButtonPress = useCallback(() => {
     if (isDefined(token)) {
-      const { symbol, balance } = token;
-      const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
+      const { address, id, balance } = token;
+      const isGasToken = toTokenSlug(address, id) === toTokenSlug(gasToken.address, gasToken.id);
+      const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
@@ -204,7 +206,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange, amountInputRef, trackEvent]);
+  }, [token, gasToken, onValueChange, amountInputRef, trackEvent, expectedGasExpense]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 

@@ -1,0 +1,1 @@
+export const EXPECTED_STAKING_GAS_EXPENSE = 0.5;
