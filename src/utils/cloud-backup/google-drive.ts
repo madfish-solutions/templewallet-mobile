@@ -1,4 +1,4 @@
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes, NativeModuleError } from '@react-native-google-signin/google-signin';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 
@@ -30,15 +30,13 @@ export const requestSignInToCloud = async () => {
   } catch (error) {
     console.error('GoogleSignin.signIn() error:', { error });
 
-    if (
-      [statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(
-        (error as { code: keyof typeof statusCodes })?.code
-      )
-    ) {
+    const errorCode = (error as NativeModuleError)?.code;
+
+    if ([statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(errorCode)) {
       return false;
     }
 
-    throw new Error('Failed to sign-in with Google');
+    throw new Error(`Failed to sign-in to Google with code: ${errorCode}`);
   }
 
   try {
