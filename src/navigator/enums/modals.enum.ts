@@ -1,4 +1,4 @@
-import { Farm } from 'src/apis/quipuswap-staking/types';
+import { Farm } from 'src/apis/quipuswap/types';
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';

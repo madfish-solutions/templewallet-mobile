@@ -1,4 +1,4 @@
-import { Farm, SingleFarmResponse, V3FarmStake } from 'src/apis/quipuswap-staking/types';
+import { Farm, SingleFarmResponse, V3FarmStake } from 'src/apis/quipuswap/types';
 
 import { createActions } from '../create-actions';
 

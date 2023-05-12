@@ -1,4 +1,4 @@
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap/types';
 
 import { createEntity } from '../create-entity';
 import { FarmsState } from './state';

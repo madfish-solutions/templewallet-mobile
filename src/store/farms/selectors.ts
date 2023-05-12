@@ -1,4 +1,4 @@
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap/types';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';

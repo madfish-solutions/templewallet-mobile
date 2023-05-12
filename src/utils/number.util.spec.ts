@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-import { formatAssetAmount, invertSign, kFormatter, roundFiat } from './number.util';
+import { changeByPercentage, formatAssetAmount, invertSign, kFormatter, roundFiat } from './number.util';
 
 const bigNumberMoreThanThousand = new BigNumber(10000.255);
 
@@ -90,5 +90,15 @@ describe('kFormatter', () => {
 
   it('should return NaN passing NaN', () => {
     expect(kFormatter(NaN)).toEqual('');
+  });
+});
+
+describe('changeByPercentage', () => {
+  it('should decrease value if percentage is negative', () => {
+    expect(changeByPercentage(new BigNumber(84), new BigNumber(-50))).toEqual(new BigNumber(42));
+  });
+
+  it('should increase value if percentage is positive', () => {
+    expect(changeByPercentage(new BigNumber(84), new BigNumber(50))).toEqual(new BigNumber(126));
   });
 });

@@ -1,4 +1,4 @@
-import { FarmsListResponse, FarmVersionEnum, V3FarmStake } from 'src/apis/quipuswap-staking/types';
+import { FarmsListResponse, FarmVersionEnum, V3FarmStake } from 'src/apis/quipuswap/types';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';

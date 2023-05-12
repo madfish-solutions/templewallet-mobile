@@ -3,8 +3,8 @@ import { catchError, from, map, Observable, of, switchMap, withLatestFrom } from
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getSingleV3Farm, getV3FarmStake } from 'src/apis/quipuswap-staking';
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
+import { getSingleV3Farm, getV3FarmStake } from 'src/apis/quipuswap';
+import { FarmVersionEnum } from 'src/apis/quipuswap/types';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';

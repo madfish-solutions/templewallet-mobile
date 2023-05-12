@@ -16,12 +16,12 @@ export enum StableswapPoolVersion {
   V2 = 'v2'
 }
 
-export enum FarmTokenStandardsEnum {
+export enum QuipuswapAPITokenStandardsEnum {
   Fa12 = 'FA12',
   Fa2 = 'FA2'
 }
 
-export interface FarmTokenMetadata {
+export interface QuipuswapAPITokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
@@ -29,12 +29,12 @@ export interface FarmTokenMetadata {
   categories?: string[];
 }
 
-export interface FarmToken {
+export interface QuipuswapAPIToken {
   contractAddress: string;
   fa2TokenId?: number;
-  type: FarmTokenStandardsEnum;
+  type: QuipuswapAPITokenStandardsEnum;
   isWhitelisted: boolean | null;
-  metadata: FarmTokenMetadata;
+  metadata: QuipuswapAPITokenMetadata;
 }
 
 interface FarmBase {
@@ -50,9 +50,9 @@ interface FarmBase {
   earnExchangeRate: string | null;
   vestingPeriodSeconds: string;
   stakeUrl: string;
-  stakedToken: FarmToken;
-  tokens: FarmToken[];
-  rewardToken: FarmToken;
+  stakedToken: QuipuswapAPIToken;
+  tokens: QuipuswapAPIToken[];
+  rewardToken: QuipuswapAPIToken;
   staked: string;
   tvlInUsd: string | null;
   tvlInStakedToken: string;
@@ -99,4 +99,37 @@ export interface V3FarmStake {
   stake: string;
   discFactor: string;
   ageTimestamp: string;
+}
+
+interface StableswapFees {
+  liquidityProvidersFee: string;
+  stakersFee: string;
+  interfaceFee: string;
+  devFee: string;
+}
+
+interface StableswapPoolTokenInfo {
+  token: QuipuswapAPIToken;
+  reserves: string;
+  exchangeRate: string;
+}
+
+export interface StableswapPool {
+  tvlInUsd: string;
+  tokensInfo: StableswapPoolTokenInfo[];
+  contractAddress: string;
+  poolContractUrl: string;
+  id: string;
+  poolId: string;
+  totalLpSupply: string;
+  isWhitelisted: boolean;
+  lpToken: QuipuswapAPIToken;
+  fees: StableswapFees;
+  poolLabels: string[];
+  version: StableswapPoolVersion;
+}
+
+export interface StableswapPoolResponse {
+  item: StableswapPool;
+  blockInfo: BlockInfo;
 }
