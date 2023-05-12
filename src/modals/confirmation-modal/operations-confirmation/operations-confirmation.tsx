@@ -22,12 +22,17 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzToMutez } from 'src/utils/tezos.util';
 
+import { DelegateDisclaimer } from '../../../components/delegate-disclaimer/delegate-disclaimer';
+import { HELP_UKRAINE_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
 import { useFeeForm } from './hooks/use-fee-form.hook';
 import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
+
+const disclaimerMessage =
+  'By delegating for this Baker, you agree that all of your rewards will go to support Ukraine. Thank you for your contribution!';
 
 interface Props extends TestIdProps {
   sender: AccountInterface;
@@ -112,6 +117,14 @@ export const OperationsConfirmation: FC<Props> = ({
               <LoadingPlaceholder text="Operation is loading..." />
             ) : (
               <>
+                {opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS && (
+                  <>
+                    <Divider size={formatSize(12)} />
+                    <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={disclaimerMessage} />
+                    <Divider size={formatSize(28)} />
+                  </>
+                )}
+
                 <Text style={styles.sectionTitle}>Account</Text>
                 <Divider />
 
