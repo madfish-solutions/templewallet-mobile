@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "14863818751-s7qibv0e8bcmlimmugfrtc144d47sf64.apps.googleusercontent.com",
+          "client_id": "14863818751-2jgd929v7brjsjc2kp0ce3752jjhghi6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.templewallet",
             "certificate_hash": "81f5803c668e89dd1b6b16658ba70d827009bca1"
+          }
+        },
+        {
+          "client_id": "14863818751-puc0ftssrqdt6cr1pkq81v30gqj88akb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.templewallet",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
