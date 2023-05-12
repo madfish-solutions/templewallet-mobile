@@ -1,3 +1,7 @@
+/**
+ * OAuth is configured through Firebase.
+ * See: https://github.com/react-native-google-signin/google-signin/blob/master/docs/android-guide.md
+ */
 import { GoogleSignin, statusCodes, NativeModuleError } from '@react-native-google-signin/google-signin';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
