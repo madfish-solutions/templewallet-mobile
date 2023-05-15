@@ -24,3 +24,6 @@ export const useFarmSelector = (id: string, version: FarmVersionEnum) =>
 
     return list.find(({ item }) => item.id === id && item.version === version);
   });
+
+export const useAllFarmsSelector = () => useSelector(({ farms }) => farms.allFarms);
+export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes2);

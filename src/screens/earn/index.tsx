@@ -1,26 +1,31 @@
-import React, { FC } from 'react';
-import { View } from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { loadAllFarmsActions } from 'src/store/farms/actions';
+import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { FarmItem } from './farm-item/farm-item';
 
 export const Earn: FC = () => {
-  const { navigate } = useNavigation();
+  const dispatch = useDispatch();
   usePageAnalytic(ScreensEnum.Earn);
+  const farms = useAllFarmsSelector();
+  const stakes = useLastStakesSelector();
+
+  useEffect(() => {
+    dispatch(loadAllFarmsActions.submit());
+  }, []);
 
   return (
-    <View>
-      <ButtonLargePrimary
-        title="Manage farming pool"
-        onPress={() => navigate(ModalsEnum.ManageFarmingPool, { id: '0', version: FarmVersionEnum.V3 })}
+    <ScreenContainer>
+      <FlatList
+        data={farms.data}
+        renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
       />
-      <FarmItem />
-    </View>
+    </ScreenContainer>
   );
 };

@@ -8,13 +8,14 @@ export const useFarmTokensStyles = createUseStyles(({ colors, typography }) => (
   tokensContainer: {
     position: 'relative'
   },
-  tokenB: {
+  nextToken: {
     marginLeft: formatSize(-8)
   },
   rewardToken: { position: 'absolute', bottom: 0, right: formatSize(-8) },
   stakeTokenSymbols: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.black,
+    maxWidth: formatSize(120)
   },
   rewardTokenSymbol: {
     ...typography.caption11Regular,

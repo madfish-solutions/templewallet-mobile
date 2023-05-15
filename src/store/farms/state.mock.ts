@@ -5,6 +5,7 @@ import { FarmsState } from './state';
 
 export const mockFarmsState: FarmsState = {
   farms: createEntity({ list: [] }),
+  allFarms: createEntity([]),
   lastStakes: {
     [FarmVersionEnum.V3]: {},
     [FarmVersionEnum.V2]: {},

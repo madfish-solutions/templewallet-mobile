@@ -3,33 +3,35 @@ import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { FarmToken } from 'src/interfaces/earn.interface';
 import { formatSize } from 'src/styles/format-size';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { getTruncatedProps } from 'src/utils/style.util';
 
 import { useFarmTokensStyles } from './farm-tokens.styles';
 
-type FarmToken = Pick<TokenMetadataInterface, 'symbol' | 'thumbnailUri' | 'iconName'>;
-
 interface Props {
-  tokenA: FarmToken;
-  tokenB: FarmToken;
+  stakeTokens: Array<FarmToken>;
   rewardToken: FarmToken;
 }
 
-export const FarmTokens: FC<Props> = ({ tokenA, tokenB, rewardToken }) => {
+const TOKENS_SYMBOLS_DIVIDER = ' / ';
+
+export const FarmTokens: FC<Props> = ({ stakeTokens, rewardToken }) => {
   const styles = useFarmTokensStyles();
 
   return (
     <View>
       <View style={styles.row}>
         <View style={[styles.row, styles.tokensContainer]}>
-          <TokenIcon iconName={tokenA.iconName} thumbnailUri={tokenA.thumbnailUri} size={formatSize(32)} />
-          <TokenIcon
-            iconName={tokenB.iconName}
-            thumbnailUri={tokenB.thumbnailUri}
-            size={formatSize(32)}
-            style={styles.tokenB}
-          />
+          {stakeTokens.map((token, index) => (
+            <TokenIcon
+              iconName={token.iconName}
+              thumbnailUri={token.thumbnailUri}
+              size={formatSize(32)}
+              style={conditionalStyle(index > 0, styles.nextToken)}
+            />
+          ))}
           <TokenIcon
             iconName={rewardToken.iconName}
             thumbnailUri={rewardToken.thumbnailUri}
@@ -39,8 +41,8 @@ export const FarmTokens: FC<Props> = ({ tokenA, tokenB, rewardToken }) => {
         </View>
         <Divider size={formatSize(14)} />
         <View>
-          <Text style={styles.stakeTokenSymbols}>
-            {tokenA.symbol} / {tokenB.symbol}
+          <Text {...getTruncatedProps(styles.stakeTokenSymbols)}>
+            {stakeTokens.map(token => token.symbol).join(TOKENS_SYMBOLS_DIVIDER)}
           </Text>
           <Text style={styles.rewardTokenSymbol}>Earn {rewardToken.symbol}</Text>
         </View>

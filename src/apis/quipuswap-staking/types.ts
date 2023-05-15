@@ -45,7 +45,7 @@ export interface FarmToken {
 interface FarmBase {
   id: string;
   contractAddress: string;
-  apr: number | null;
+  apr: string | null;
   depositExchangeRate: string | null;
   depositTokenUrl: string;
   lastRewards: string;

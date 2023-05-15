@@ -5,10 +5,11 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     borderRadius: formatSize(10),
     backgroundColor: colors.white,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: formatSize(18),
-    shadowOpacity: 1
+    shadowColor: 'rgba(0, 0, 0, 0.4)',
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: formatSize(4),
+    marginBottom: formatSize(8)
   },
   mainContent: {
     paddingHorizontal: formatSize(12),
@@ -43,6 +44,7 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
   },
   bage: {
     position: 'relative',
+    zIndex: 2,
     marginRight: formatSize(-8)
   },
   mb16: {
