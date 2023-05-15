@@ -1,6 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { FC, useState } from 'react';
+import { FormikProps } from 'formik/dist/types';
+import React, { FC, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -36,6 +37,8 @@ export const AddContactModal: FC = () => {
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
 
+  const formik = useRef<FormikProps<typeof initialValues>>(null);
+
   const onSubmit = async (contact: AccountBaseInterface) => {
     if (isTezosDomainNameValid(contact.publicKeyHash)) {
       setIsLoading(true);
@@ -44,6 +47,7 @@ export const AddContactModal: FC = () => {
       setIsLoading(false);
       if (address !== null) {
         contact.publicKeyHash = address;
+        await formik.current?.validateField('publicKeyHash');
       } else if (!isValidAddress(contact.publicKeyHash)) {
         showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
 
@@ -51,9 +55,11 @@ export const AddContactModal: FC = () => {
       }
     }
 
-    dispatch(addContactAction(contact));
-    dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
-    goBack();
+    if (formik.current && formik.current.isValid) {
+      dispatch(addContactAction(contact));
+      dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
+      goBack();
+    }
   };
 
   const initialValues = {
@@ -63,6 +69,7 @@ export const AddContactModal: FC = () => {
 
   return (
     <Formik
+      innerRef={formik}
       validateOnBlur
       validateOnChange
       initialValues={initialValues}
