@@ -8,7 +8,6 @@ import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$ } from 'src/utils/token-balance.utils';
 
 import {
-  FarmsListResponse,
   QuipuswapAPIToken,
   RawV3FarmStake,
   SingleFarmResponse,
@@ -24,12 +23,6 @@ export const getSingleV3Farm = async (id: string) => {
   const response = await stakingApi.get<SingleFarmResponse>(`/v3/multi-v2/${id}`);
 
   return response.data;
-};
-
-export const getV3FarmsList = async () => {
-  const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');
-
-  return response.data.list;
 };
 
 export const getStableswapPool = async (id: string | number, version: StableswapPoolVersion) => {

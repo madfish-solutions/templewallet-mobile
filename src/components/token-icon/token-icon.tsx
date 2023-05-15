@@ -38,16 +38,17 @@ type TokenIconImageProps = Props & {
 };
 
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
+  const isFromIpfs = thumbnailUri?.startsWith('ipfs') ?? false;
   const colors = useColors();
   const [forceSvg, setForceSvg] = useState(false);
 
   const { metadata } = useNetworkInfo();
 
   const handleLoadableTokenIconError = useCallback(() => {
-    if (thumbnailUri?.startsWith('ipfs') ?? false) {
+    if (isFromIpfs) {
       setForceSvg(true);
     }
-  }, [thumbnailUri]);
+  }, [isFromIpfs]);
 
   useEffect(() => setForceSvg(false), [thumbnailUri]);
 
@@ -60,7 +61,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   }
 
   if (isImgUriSvg(thumbnailUri) || forceSvg) {
-    const normalizedUri = thumbnailUri.startsWith('ipfs') ? formatImgUri(thumbnailUri) : thumbnailUri;
+    const normalizedUri = isFromIpfs ? formatImgUri(thumbnailUri) : thumbnailUri;
 
     return <SvgCssUri width={size} height={size} uri={normalizedUri} />;
   }

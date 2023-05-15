@@ -20,8 +20,7 @@ export enum QuipuswapAPITokenStandardsEnum {
   Fa12 = 'FA12',
   Fa2 = 'FA2'
 }
-
-export interface QuipuswapAPITokenMetadata {
+interface QuipuswapAPITokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
@@ -60,13 +59,13 @@ interface FarmBase {
   type?: PoolType;
 }
 
-export interface StableswapFarm extends FarmBase {
+interface StableswapFarm extends FarmBase {
   type: PoolType.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-export interface OtherFarm extends FarmBase {
+interface OtherFarm extends FarmBase {
   type?: PoolType.DEX_TWO;
 }
 
@@ -114,7 +113,7 @@ interface StableswapPoolTokenInfo {
   exchangeRate: string;
 }
 
-export interface StableswapPool {
+interface StableswapPool {
   tvlInUsd: string;
   tokensInfo: StableswapPoolTokenInfo[];
   contractAddress: string;
