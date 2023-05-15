@@ -34,9 +34,15 @@ export const requestSignInToCloud = async () => {
   } catch (error) {
     console.error('GoogleSignin.signIn() error:', { error });
 
+    /**
+     * See:
+     * - https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes
+     * - https://developers.google.com/android/reference/com/google/android/gms/auth/api/signin/GoogleSignInStatusCodes
+     */
     const errorCode = (error as NativeModuleError)?.code;
 
-    if ([statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(errorCode)) {
+    if ([statusCodes.SIGN_IN_CANCELLED, '12501'].includes(String(errorCode))) {
+      // Canceled by user
       return false;
     }
 
