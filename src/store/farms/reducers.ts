@@ -38,6 +38,6 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
     ...state,
-    lastStakes2: payload
+    lastStakes: payload
   }));
 });

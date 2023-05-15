@@ -1,5 +1,3 @@
-import { BigNumber } from 'bignumber.js';
-
 export enum NetworkEnum {
   Mainnet = 'mainnet',
   Ghostnet = 'ghostnet'
@@ -16,17 +14,17 @@ export enum PoolType {
   DEX_TWO = 'DEX_TWO'
 }
 
-export enum StableswapPoolVersion {
+enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }
 
-export enum FarmTokenStandardsEnum {
+enum FarmTokenStandardsEnum {
   Fa12 = 'FA12',
   Fa2 = 'FA2'
 }
 
-export interface FarmTokenMetadata {
+interface FarmTokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
@@ -34,7 +32,7 @@ export interface FarmTokenMetadata {
   categories?: string[];
 }
 
-export interface FarmToken {
+interface FarmToken {
   contractAddress: string;
   fa2TokenId?: number;
   type: FarmTokenStandardsEnum;
@@ -65,13 +63,13 @@ interface FarmBase {
   type?: PoolType;
 }
 
-export interface StableswapFarm extends FarmBase {
+interface StableswapFarm extends FarmBase {
   type: PoolType.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-export interface OtherFarm extends FarmBase {
+interface OtherFarm extends FarmBase {
   type?: PoolType.DEX_TWO;
 }
 
@@ -90,16 +88,4 @@ export interface SingleFarmResponse {
 
 export interface FarmsListResponse {
   list: SingleFarmResponse[];
-}
-
-export interface RawV3FarmStake {
-  stake: BigNumber;
-  disc_factor: BigNumber;
-  age_timestamp: string;
-}
-
-export interface V3FarmStake {
-  stake: string;
-  discFactor: string;
-  ageTimestamp: string;
 }

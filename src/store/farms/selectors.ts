@@ -2,11 +2,7 @@ import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 
 import { useSelector } from '../selector';
 
-export const useFarmsSelector = () => useSelector(({ farms }) => farms.farms.data.list.map(({ item }) => item));
-
 export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.farms.isLoading);
-
-export const useFarmsErrorSelector = () => useSelector(({ farms }) => farms.farms.error);
 
 /* export const useLowestFarmBlockLevelSelector = () =>
   useSelector(({ farms }) => {
@@ -26,4 +22,4 @@ export const useFarmSelector = (id: string, version: FarmVersionEnum) =>
   });
 
 export const useAllFarmsSelector = () => useSelector(({ farms }) => farms.allFarms);
-export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes2);
+export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes);
