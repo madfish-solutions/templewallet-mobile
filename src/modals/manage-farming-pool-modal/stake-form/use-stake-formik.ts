@@ -89,7 +89,6 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
   return useFormik<StakeFormValues>({
     initialValues,
     validationSchema,
-    validateOnMount: true,
     onSubmit: handleSubmit
   });
 };

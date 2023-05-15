@@ -15,7 +15,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     farms: createEntity({
       list: state.farms.data.list
-        .filter(farm => farm.item.id !== newItem.item.id || farm.item.version === newItem.item.version)
+        .filter(farm => farm.item.id !== newItem.item.id || farm.item.version !== newItem.item.version)
         .concat(newItem)
     })
   }));

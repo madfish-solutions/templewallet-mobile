@@ -10,6 +10,7 @@ import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { useStakeFormStyles } from './styles';
 import { useFarmTokens } from './use-farm-tokens';
@@ -69,6 +70,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
+          expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
           isSearchable
           maxButton
           assetsList={filteredAssetsList}
