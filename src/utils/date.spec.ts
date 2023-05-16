@@ -1,6 +1,20 @@
 import { advanceTo } from 'jest-date-mock';
 
-import { isTheSameDay, isToday, isYesterday } from './date.utils';
+import { isTheSameDay, isToday, isYesterday, toSecondsTimestamp } from './date.utils';
+
+describe('toSecondsTimestamp', () => {
+  it('should convert timestamp in milliseconds to seconds', () => {
+    expect(toSecondsTimestamp(1684150759884)).toEqual(1684150759);
+  });
+
+  it('should convert ISO date string to seconds', () => {
+    expect(toSecondsTimestamp('2021-07-08T12:32:39.884Z')).toEqual(1625747559);
+  });
+
+  it('should convert Date object to seconds', () => {
+    expect(toSecondsTimestamp(new Date('2021-07-08T12:32:39.884Z'))).toEqual(1625747559);
+  });
+});
 
 describe('isTheSameDay', () => {
   it('should return true if both dates have the same day', () => {

@@ -67,6 +67,3 @@ const numberWithSpaces = (amount: string) => {
 
   return parts.join('.');
 };
-
-export const changeByPercentage = (value: BigNumber, percentageDelta: BigNumber) =>
-  value.times(percentageDelta.plus(100)).dividedBy(100);

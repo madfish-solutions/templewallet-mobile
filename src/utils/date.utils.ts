@@ -1,3 +1,9 @@
+export function toSecondsTimestamp(timestampMs: number): number;
+export function toSecondsTimestamp(date: Date | string): number;
+export function toSecondsTimestamp(date: Date | string | number) {
+  return Math.floor(new Date(date).getTime() / 1000);
+}
+
 export const isTheSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&

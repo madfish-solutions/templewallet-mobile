@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { getStableswapPool } from 'src/apis/quipuswap';
+import { estimateLpTokenOutput } from 'src/apis/quipuswap';
 import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
@@ -10,7 +10,6 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { changeByPercentage } from 'src/utils/number.util';
 import { convertFarmToken } from 'src/utils/staking.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
@@ -28,8 +27,8 @@ export const createStakeOperationParams = async (
     throw new Error('Non-stableswap pools are not supported');
   }
 
-  const { contractAddress: farmAddress, stakedToken } = farm.item;
-  const { contractAddress: poolAddress } = stakedToken;
+  const { contractAddress: farmAddress, stakedToken, stableswapPoolVersion } = farm.item;
+  const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
   const tokenToInvest = shouldUseWtezToken ? WTEZ_TOKEN : asset;
@@ -44,26 +43,21 @@ export const createStakeOperationParams = async (
     ];
   }
 
+  const tokenIndex = farm.item.tokens
+    .map(convertFarmToken)
+    .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug);
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
-  michelsonAmounts.set(
-    farm.item.tokens
-      .map(convertFarmToken)
-      .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug),
-    amount
+  michelsonAmounts.set(tokenIndex, amount);
+
+  const lpAmount = await estimateLpTokenOutput(
+    poolContract,
+    STABLESWAP_REFERRAL,
+    getTransactionTimeoutDate(),
+    tokenIndex,
+    amount,
+    poolId,
+    stableswapPoolVersion
   );
-  const lpAmountWithoutFees = await poolContract.contractViews
-    .calc_token_amount({
-      pool_id: stakedToken.fa2TokenId,
-      amounts: michelsonAmounts,
-      is_deposit: true
-    })
-    .executeView({ viewCaller: accountPkh });
-  const { item: stableswapPool } = await getStableswapPool(farm.item.stableswapPoolId, farm.item.stableswapPoolVersion);
-  const { devFee, stakersFee, interfaceFee, liquidityProvidersFee } = stableswapPool.fees;
-  const lpAmount = changeByPercentage(
-    lpAmountWithoutFees,
-    BigNumber.sum(devFee, stakersFee, interfaceFee, liquidityProvidersFee).negated()
-  ).integerValue(BigNumber.ROUND_DOWN);
 
   const investTransferParams = poolContract.methods
     .invest(stakedToken.fa2TokenId, lpAmount, michelsonAmounts, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)

@@ -1,3 +1,4 @@
+import { BigMapAbstraction } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 export enum FarmVersionEnum {
@@ -100,35 +101,17 @@ export interface V3FarmStake {
   ageTimestamp: string;
 }
 
-interface StableswapFees {
-  liquidityProvidersFee: string;
-  stakersFee: string;
-  interfaceFee: string;
-  devFee: string;
+export interface StableswapPoolsValue {
+  initial_A_f: BigNumber;
+  initial_A_time: string;
+  future_A_f: BigNumber;
+  future_A_time: string;
+  total_supply: BigNumber;
 }
 
-interface StableswapPoolTokenInfo {
-  token: QuipuswapAPIToken;
-  reserves: string;
-  exchangeRate: string;
-}
-
-interface StableswapPool {
-  tvlInUsd: string;
-  tokensInfo: StableswapPoolTokenInfo[];
-  contractAddress: string;
-  poolContractUrl: string;
-  id: string;
-  poolId: string;
-  totalLpSupply: string;
-  isWhitelisted: boolean;
-  lpToken: QuipuswapAPIToken;
-  fees: StableswapFees;
-  poolLabels: string[];
-  version: StableswapPoolVersion;
-}
-
-export interface StableswapPoolResponse {
-  item: StableswapPool;
-  blockInfo: BlockInfo;
+export interface StableswapPoolStorage {
+  storage: {
+    tokens: BigMapAbstraction;
+    pools: BigMapAbstraction;
+  };
 }
