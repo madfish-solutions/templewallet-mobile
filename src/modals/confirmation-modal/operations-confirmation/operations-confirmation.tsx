@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
@@ -22,7 +23,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzToMutez } from 'src/utils/tezos.util';
 
-import { DelegateDisclaimer } from '../../../components/delegate-disclaimer/delegate-disclaimer';
 import { HELP_UKRAINE_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';

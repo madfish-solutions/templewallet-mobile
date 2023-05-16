@@ -9,6 +9,7 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -17,9 +18,8 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
+import { getTruncatedProps } from 'src/utils/style.util';
 
-import { TestIdProps } from '../../../interfaces/test-id.props';
-import { getTruncatedProps } from '../../../utils/style.util';
 import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
