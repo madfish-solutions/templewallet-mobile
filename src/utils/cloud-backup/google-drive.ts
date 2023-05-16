@@ -1,4 +1,8 @@
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+/**
+ * OAuth is configured through Firebase.
+ * See: https://github.com/react-native-google-signin/google-signin/blob/master/docs/android-guide.md
+ */
+import { GoogleSignin, statusCodes, NativeModuleError } from '@react-native-google-signin/google-signin';
 import RNCloudFs from 'react-native-cloud-fs';
 import * as RNFS from 'react-native-fs';
 
@@ -30,15 +34,19 @@ export const requestSignInToCloud = async () => {
   } catch (error) {
     console.error('GoogleSignin.signIn() error:', { error });
 
-    if (
-      [statusCodes.SIGN_IN_CANCELLED, statusCodes.IN_PROGRESS].includes(
-        (error as { code: keyof typeof statusCodes })?.code
-      )
-    ) {
+    /**
+     * See:
+     * - https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes
+     * - https://developers.google.com/android/reference/com/google/android/gms/auth/api/signin/GoogleSignInStatusCodes
+     */
+    const errorCode = (error as NativeModuleError)?.code;
+
+    if ([statusCodes.SIGN_IN_CANCELLED, '12501'].includes(String(errorCode))) {
+      // Canceled by user
       return false;
     }
 
-    throw new Error('Failed to sign-in with Google');
+    throw new Error(`Failed to sign-in to Google with code: ${errorCode}`);
   }
 
   try {
