@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { FC } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -37,6 +37,7 @@ const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXHANGE_RATE = 1;
 const DEFAULT_DECIMALS = 2;
 const REWARDS_DECIMALS = 6;
+const SECONDS_ID_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const styles = useFarmItemStyles();
@@ -45,38 +46,57 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
-  const rewardToken: FarmToken = {
-    symbol: farm.item.rewardToken.metadata.symbol,
-    thumbnailUri: farm.item.rewardToken.metadata.thumbnailUri
-  };
+  const rewardToken: FarmToken = useMemo(
+    () => ({
+      symbol: farm.item.rewardToken.metadata.symbol,
+      thumbnailUri: farm.item.rewardToken.metadata.thumbnailUri
+    }),
+    []
+  );
 
-  const stakeTokens = farm.item.tokens.map(token => {
-    const result: FarmToken = {
-      symbol: token.metadata.symbol,
-      thumbnailUri: token.metadata.thumbnailUri
-    };
+  const stakeTokens = useMemo(
+    () =>
+      farm.item.tokens.map(token => {
+        const result: FarmToken = {
+          symbol: token.metadata.symbol,
+          thumbnailUri: token.metadata.thumbnailUri
+        };
 
-    if (token.metadata.symbol.toLowerCase() === TEZ_TOKEN_SLUG) {
-      result.iconName = IconNameEnum.TezToken;
-    }
+        if (token.metadata.symbol.toLowerCase() === TEZ_TOKEN_SLUG) {
+          result.iconName = IconNameEnum.TezToken;
+        }
 
-    return result;
-  });
+        return result;
+      }),
+    [farm.item.tokens]
+  );
 
-  const apr = isDefined(farm.item.apr) ? new BigNumber(farm.item.apr).toFixed(DEFAULT_DECIMALS) : '---';
-  const depositAmountAtomic = mutezToTz(
-    new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
-    FARM_PRECISION
-  ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE);
-  const claimableRewardsAtomic = mutezToTz(
-    new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
-    farm.item.rewardToken.metadata.decimals
-  ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE);
+  const apr = useMemo(
+    () => (isDefined(farm.item.apr) ? new BigNumber(farm.item.apr).toFixed(DEFAULT_DECIMALS) : '---'),
+    [farm.item.apr]
+  );
+  const depositAmountAtomic = useMemo(
+    () =>
+      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+        farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
+      ),
+    [lastStakeRecord?.depositAmountAtomic]
+  );
+  const claimableRewardsAtomic = useMemo(
+    () =>
+      mutezToTz(
+        new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
+        farm.item.rewardToken.metadata.decimals
+      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.claimableRewards]
+  );
 
-  const navigateToFarm = () =>
-    navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 });
+  const navigateToFarm = useCallback(
+    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
+    []
+  );
 
-  const harvestAssetsApi = async () => {
+  const harvestAssetsApi = useCallback(async () => {
     if (isDefined(lastStakeRecord.lastStakeId)) {
       const farmingContract = await tezos.wallet.at(farm.item.contractAddress);
       const claimParams = farmingContract.methods.claim(lastStakeRecord.lastStakeId).toTransferParams();
@@ -93,13 +113,13 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         })
       );
     }
-  };
+  }, []);
 
   return (
     <View style={styles.root}>
       <View style={styles.bageContainer}>
         {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(DEFAULT_AMOUNT) && <Bage text="Long Term" />}
+        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_ID_DAY) && <Bage text="Long Term" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>

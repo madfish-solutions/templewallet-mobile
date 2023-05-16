@@ -11,7 +11,6 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
-// import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadSingleFarmActions } from 'src/store/farms/actions';
 import { useFarmSelector, useFarmsLoadingSelector } from 'src/store/farms/selectors';
@@ -33,7 +32,6 @@ export const ManageFarmingPoolModal: FC = () => {
   const farmLevel = farm?.blockInfo.level;
 
   useEffect(() => {
-    console.log('x1', prevBlockLevelRef.current, blockLevel, farmLevel);
     if (prevBlockLevelRef.current === blockLevel || (isDefined(farmLevel) && farmLevel === blockLevel)) {
       return;
     }
@@ -61,17 +59,6 @@ export const ManageFarmingPoolModal: FC = () => {
           </Text>
           <Divider size={formatSize(24)} />
           <Text>{farmIsLoading ? 'Loading...' : JSON.stringify(farm, null, 2)}</Text>
-          {/* <FormAssetAmountInput
-          name="amountInput"
-          label="Amount"
-          isSearchable
-          maxButton
-          assetsList={inputTokensList}
-          isLoading={isLoading}
-          setSearchValue={setSearchValueFromTokens}
-          onValueChange={handleAmountInputChange}
-          testID={SwapFormSelectors.amountInput}
-        /> */}
         </View>
       </ScreenContainer>
       <ModalButtonsContainer>

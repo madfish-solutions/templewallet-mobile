@@ -59,32 +59,34 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
 
               if (isDefined(stakesIds)) {
                 const lastStakeId = getLastElement(stakesIds);
-                const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
+                if (isDefined(lastStakeId)) {
+                  const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
 
-                if (isDefined(stakeAmount)) {
-                  const rewardTokenContractInstance = await tezos.contract.at(farm.rewardToken.contractAddress);
-                  const farmBalanceInRewardToken = await getBalance(
-                    rewardTokenContractInstance,
-                    farm.contractAddress,
-                    farm.rewardToken.fa2TokenId
-                  );
-                  const { claimableReward, fullReward } = calculateYouvesFarmingRewards(
-                    {
-                      lastRewards: farmContractStorage.last_rewards.toFixed(),
-                      discFactor: farmContractStorage.disc_factor,
-                      vestingPeriodSeconds: farmContractStorage.max_release_period,
-                      totalStaked: farmContractStorage.total_stake
-                    },
-                    farmBalanceInRewardToken,
-                    stakeAmount
-                  );
+                  if (isDefined(stakeAmount)) {
+                    const rewardTokenContractInstance = await tezos.contract.at(farm.rewardToken.contractAddress);
+                    const farmBalanceInRewardToken = await getBalance(
+                      rewardTokenContractInstance,
+                      farm.contractAddress,
+                      farm.rewardToken.fa2TokenId
+                    );
+                    const { claimableReward, fullReward } = calculateYouvesFarmingRewards(
+                      {
+                        lastRewards: farmContractStorage.last_rewards.toFixed(),
+                        discFactor: farmContractStorage.disc_factor,
+                        vestingPeriodSeconds: farmContractStorage.max_release_period,
+                        totalStaked: farmContractStorage.total_stake
+                      },
+                      farmBalanceInRewardToken,
+                      stakeAmount
+                    );
 
-                  result[farm.contractAddress] = {
-                    lastStakeId: lastStakeId.toFixed(),
-                    depositAmountAtomic: stakeAmount.stake.toFixed(),
-                    claimableRewards: claimableReward.toFixed(),
-                    fullReward: fullReward.toFixed()
-                  };
+                    result[farm.contractAddress] = {
+                      lastStakeId: lastStakeId.toFixed(),
+                      depositAmountAtomic: stakeAmount.stake.toFixed(),
+                      claimableRewards: claimableReward.toFixed(),
+                      fullReward: fullReward.toFixed()
+                    };
+                  }
                 }
               }
             } catch (error) {

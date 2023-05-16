@@ -1,9 +1,9 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { getTzktApi } from 'src/api.service';
+import { ContractType } from 'src/interfaces/contract.type';
 import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
 import { TzktAccountTokenBalance } from 'src/interfaces/tzkt.interface';
 import { getTokenSlug, getTokenType } from 'src/token/utils/token.utils';
@@ -76,7 +76,7 @@ const cachedResults: Record<string, cachedAssetBalance> = {};
 const CACHE_TIME = 1000 * 60; // 1 minute
 
 export const getBalance = async (
-  contract: Awaited<ReturnType<TezosToolkit['contract']['at']>>,
+  contract: ContractType,
   owner: string,
   tokenId?: number | string | undefined
 ): Promise<BigNumber> => {

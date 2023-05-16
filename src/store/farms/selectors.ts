@@ -4,16 +4,6 @@ import { useSelector } from '../selector';
 
 export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.farms.isLoading);
 
-/* export const useLowestFarmBlockLevelSelector = () =>
-  useSelector(({ farms }) => {
-    const { list } = farms.items.data;
-    if (list.length === 0) {
-      return undefined;
-    }
-
-    return Math.min(...list.map(({ blockInfo }) => blockInfo.level));
-  }); */
-
 export const useFarmSelector = (id: string, version: FarmVersionEnum) =>
   useSelector(({ farms }) => {
     const { list } = farms.farms.data;
