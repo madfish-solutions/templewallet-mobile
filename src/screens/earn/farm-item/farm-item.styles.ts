@@ -49,5 +49,8 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
   },
   mb16: {
     marginBottom: formatSize(16)
+  },
+  earnSource: {
+    flexDirection: 'row'
   }
 }));

@@ -10,6 +10,7 @@ import { Bage } from 'src/components/bage/bage';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -29,7 +30,7 @@ import { useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
   farm: SingleFarmResponse;
-  lastStakeRecord: UserStakeValueInterface;
+  lastStakeRecord?: UserStakeValueInterface;
 }
 
 const FARM_PRECISION = 18;
@@ -97,9 +98,9 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   );
 
   const harvestAssetsApi = useCallback(async () => {
-    if (isDefined(lastStakeRecord.lastStakeId)) {
+    if (isDefined(lastStakeRecord?.lastStakeId)) {
       const farmingContract = await tezos.wallet.at(farm.item.contractAddress);
-      const claimParams = farmingContract.methods.claim(lastStakeRecord.lastStakeId).toTransferParams();
+      const claimParams = farmingContract.methods.claim(lastStakeRecord?.lastStakeId).toTransferParams();
       const opParams: Array<ParamsWithKind> = [claimParams].map(transferParams => ({
         ...transferParams,
         kind: OpKind.TRANSACTION
@@ -113,7 +114,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         })
       );
     }
-  }, [lastStakeRecord.lastStakeId, farm.item.contractAddress]);
+  }, [lastStakeRecord?.lastStakeId, farm.item.contractAddress]);
 
   return (
     <View style={styles.root}>
@@ -126,7 +127,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
           <FarmTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
           <View>
             <Text style={styles.apyText}>APY: {apr}%</Text>
-            <Text style={styles.attributeTitle}>Quipuswap</Text>
+            <View style={styles.earnSource}>
+              <Icon name={IconNameEnum.QsEarnSource} />
+              <Text style={styles.attributeTitle}>Quipuswap</Text>
+            </View>
           </View>
         </View>
 
