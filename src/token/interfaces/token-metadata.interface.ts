@@ -6,6 +6,14 @@ export enum TokenStandardsEnum {
 }
 
 export type HolderAddress = { holder_address: string };
+
+export interface Offer {
+  buyer_address: string;
+  collection_offer: string | null;
+  price_xtz: number;
+  bigmap_key: number;
+}
+
 export interface TokenMetadataInterface {
   id: number;
   address: string;
@@ -18,7 +26,7 @@ export interface TokenMetadataInterface {
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
   description?: string;
-  highestOffer?: number | null;
+  highestOffer?: Offer;
   lowestAsk?: number | null;
   metadata?: string;
   editions?: number;

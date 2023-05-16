@@ -61,8 +61,9 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
     map(result => {
-      console.log(result, 'RESULT');
       const collectiblesArray = result.token.map(token => {
+        const highestOffer = token.offers_active.find(offer => offer.price_xtz === token.highest_offer);
+
         return {
           artifactUri: token.artifact_uri,
           balance: '1',
@@ -70,7 +71,7 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
           description: token.description,
           displayUri: token.display_uri,
           address: token.fa_contract,
-          highestOffer: token.highest_offer,
+          highestOffer: highestOffer,
           name: token.name,
           metadata: token.metadata,
           lowestAsk: token.lowest_ask,

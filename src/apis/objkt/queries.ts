@@ -49,6 +49,12 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
     holders {
         holder_address
       }
+    offers_active {
+        buyer_address
+        collection_offer
+        price_xtz
+        bigmap_key
+      }
   }
 }`;
 export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`

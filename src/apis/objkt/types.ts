@@ -1,5 +1,5 @@
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { HolderAddress } from 'src/token/interfaces/token-metadata.interface';
+import { HolderAddress, Offer } from 'src/token/interfaces/token-metadata.interface';
 
 export interface CollectibleResponse {
   artifact_uri: string;
@@ -18,6 +18,7 @@ export interface CollectibleResponse {
   symbol: string;
   token_id: string;
   holders: HolderAddress[];
+  offers_active: Offer[];
 }
 
 export interface QueryResponse {
