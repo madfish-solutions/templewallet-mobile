@@ -123,6 +123,7 @@ export const CollectibleModal = () => {
                   key={holder.address}
                   text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
                   link={getObjktProfileLink(holder.address)}
+                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
                   style={[
                     styles.linkWithIcon,
                     conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
