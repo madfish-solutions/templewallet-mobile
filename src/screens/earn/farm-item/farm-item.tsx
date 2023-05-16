@@ -37,7 +37,7 @@ const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXHANGE_RATE = 1;
 const DEFAULT_DECIMALS = 2;
 const REWARDS_DECIMALS = 6;
-const SECONDS_ID_DAY = 86400;
+const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const styles = useFarmItemStyles();
@@ -51,7 +51,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       symbol: farm.item.rewardToken.metadata.symbol,
       thumbnailUri: farm.item.rewardToken.metadata.thumbnailUri
     }),
-    []
+    [farm.item.rewardToken.metadata]
   );
 
   const stakeTokens = useMemo(
@@ -93,7 +93,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
 
   const navigateToFarm = useCallback(
     () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
-    []
+    [farm.item.id]
   );
 
   const harvestAssetsApi = useCallback(async () => {
@@ -113,13 +113,13 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         })
       );
     }
-  }, []);
+  }, [lastStakeRecord.lastStakeId, farm.item.contractAddress]);
 
   return (
     <View style={styles.root}>
       <View style={styles.bageContainer}>
         {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_ID_DAY) && <Bage text="Long Term" />}
+        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long Term" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
