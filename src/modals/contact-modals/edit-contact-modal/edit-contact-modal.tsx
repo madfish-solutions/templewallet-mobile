@@ -21,9 +21,8 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { editContactAction, loadContactTezosBalance } from '../../../store/contact-book/contact-book-actions';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { showErrorToast } from '../../../toast/error-toast.utils';
-import { isTezosDomainNameValid, tezosDomainsResolver } from '../../../utils/dns.utils';
-import { isValidAddress } from '../../../utils/tezos.util';
+import { tezosDomainsResolver } from '../../../utils/dns.utils';
+import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useEditContactFormValidationSchema } from '../validation-schema';
 import { EditContactModalSelectors } from './edit-contact-modal.selectors';
 
@@ -39,29 +38,12 @@ export const EditContactModal: FC = () => {
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const resolver = tezosDomainsResolver(tezos);
 
-  const formik = useRef<FormikProps<typeof contact>>(null);
+  const formik = useRef<FormikProps<AccountBaseInterface>>(null);
 
-  const onSubmit = async (contact: AccountBaseInterface) => {
-    if (isTezosDomainNameValid(contact.publicKeyHash)) {
-      setIsLoading(true);
-
-      const address = await resolver.resolveNameToAddress(contact.publicKeyHash).catch(() => null);
-      setIsLoading(false);
-      if (address !== null) {
-        contact.publicKeyHash = address;
-        await formik.current?.validateField('publicKeyHash');
-      } else if (!isValidAddress(contact.publicKeyHash)) {
-        showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
-
-        return;
-      }
-    }
-
-    if (formik.current && formik.current.isValid) {
-      dispatch(editContactAction({ contact, index }));
-      dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
-      goBack();
-    }
+  const editContact = (contact: AccountBaseInterface) => {
+    dispatch(editContactAction({ contact, index }));
+    dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
+    goBack();
   };
 
   return (
@@ -71,7 +53,7 @@ export const EditContactModal: FC = () => {
       validateOnChange
       initialValues={contact}
       validationSchema={editContactFormValidationSchema}
-      onSubmit={onSubmit}
+      onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, editContact)}
     >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode>
