@@ -2,12 +2,14 @@
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enGB } from 'date-fns/locale';
 
-export const formatTimespan = (timespanMs: number, roundingMethod?: 'floor' | 'ceil' | 'round') => {
+type FormatOptions = typeof formatDistanceToNowStrict extends (...args: infer T) => unknown ? T[1] : never;
+
+export const formatTimespan = (timespanMs: number, formatOptionsOverrides?: FormatOptions) => {
   const now = Date.now();
 
   return formatDistanceToNowStrict(now + timespanMs, {
-    roundingMethod,
-    locale: enGB
+    locale: enGB,
+    ...formatOptionsOverrides
   });
 };
 

@@ -1,6 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { ANIMATION_DURATION_FAST } from 'src/config/animation';
 import { useAnimationInterpolate } from 'src/hooks/use-animation-interpolate.hook';
 import { useAnimationRef } from 'src/hooks/use-animation-ref.hook';
@@ -8,10 +12,6 @@ import { useUpdateAnimation } from 'src/hooks/use-update-animation.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 
-import { Divider } from '../divider/divider';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { useQuestionAccordionStyles } from './styles';
 
 interface Props extends TestIdProps {
@@ -19,13 +19,13 @@ interface Props extends TestIdProps {
 }
 
 export const QuestionAccordion: FC<Props> = ({ question, children, testID, testIDProperties }) => {
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const styles = useQuestionAccordionStyles();
-  const animation = useAnimationRef(isAccordionOpen);
+  const animation = useAnimationRef(isOpen);
 
-  const toggleAccordion = useCallback(() => setIsAccordionOpen(state => !state), []);
-  useUpdateAnimation(animation, isAccordionOpen, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
-  const rotate = useAnimationInterpolate(animation, { outputRange: ['180deg', '0deg'] }, [isAccordionOpen]);
+  const toggleAccordion = useCallback(() => setIsOpen(state => !state), []);
+  useUpdateAnimation(animation, isOpen, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
+  const rotate = useAnimationInterpolate(animation, { outputRange: ['180deg', '0deg'] }, [isOpen]);
 
   return (
     <View style={styles.container}>
@@ -43,7 +43,7 @@ export const QuestionAccordion: FC<Props> = ({ question, children, testID, testI
           <Icon name={IconNameEnum.ChevronUp} strokeWidth={4} />
         </Animated.View>
       </TouchableWithAnalytics>
-      {isAccordionOpen && <View style={styles.answer}>{children}</View>}
+      {isOpen && <View style={styles.answer}>{children}</View>}
     </View>
   );
 };

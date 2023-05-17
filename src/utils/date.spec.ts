@@ -1,6 +1,16 @@
 import { advanceTo } from 'jest-date-mock';
 
-import { isTheSameDay, isToday, isYesterday, toSecondsTimestamp } from './date.utils';
+import { formatTimespan, isTheSameDay, isToday, isYesterday, toSecondsTimestamp } from './date.utils';
+
+describe('formatTimespan', () => {
+  it('should apply default formatting if no options overrides are provided', () => {
+    expect(formatTimespan(90 * 24 * 3600 * 1000)).toEqual('3 months');
+  });
+
+  it('should apply options overrides', () => {
+    expect(formatTimespan(90 * 24 * 3600 * 1000, { addSuffix: true, unit: 'day' })).toEqual('in 90 days');
+  });
+});
 
 describe('toSecondsTimestamp', () => {
   it('should convert timestamp in milliseconds to seconds', () => {

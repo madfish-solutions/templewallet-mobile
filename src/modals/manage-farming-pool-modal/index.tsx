@@ -55,9 +55,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const stakeIsInitialized = useStakeIsInitializedSelector(params.id, params.version);
   const stakeIsLoading = useStakeLoadingSelector(params.id, params.version);
   const vestingPeriodSeconds = Number(farm?.item.vestingPeriodSeconds ?? 0);
-  const vestingPeriodDays = Math.ceil(vestingPeriodSeconds / SECONDS_IN_DAY);
-  const formattedVestingPeriod =
-    vestingPeriodDays <= 1 ? formatTimespan(vestingPeriodSeconds * 1000, 'ceil') : `${vestingPeriodDays} days`;
+  const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, { roundingMethod: 'ceil', unit: 'day' });
 
   const pageIsLoading =
     (farmIsLoading && !isDefined(farm)) || !stakeIsInitialized || (stakeIsLoading && !isDefined(stake));
