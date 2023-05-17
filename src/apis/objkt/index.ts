@@ -66,7 +66,7 @@ export const fetchCollectiblesByCollection$ = (
     map(result => {
       const collectiblesArray = result.token.map(token => {
         const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
-        const highestOffer = correctOffers.find(offer => offer.price_xtz === token.highest_offer);
+        const highestOffer = correctOffers[correctOffers.length - 1];
         const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
 
         return {

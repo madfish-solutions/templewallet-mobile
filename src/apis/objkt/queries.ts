@@ -48,7 +48,7 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
     holders {
         holder_address
       }
-    offers_active {
+    offers_active(distinct_on: price_xtz) {
         buyer_address
         collection_offer
         price_xtz

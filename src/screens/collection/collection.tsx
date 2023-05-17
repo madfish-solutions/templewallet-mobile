@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback } from 'react';
 import { View, ListRenderItem, ViewToken } from 'react-native';
@@ -22,8 +23,8 @@ export const Collection = () => {
 
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
-  const handleChanged = useCallback((info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
-    if (isDefined(info.viewableItems) && isDefined(info.viewableItems?.[0].index)) {
+  const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
+    if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
       setInnerScreenIndex(info.viewableItems[0].index);
     }
   }, []);

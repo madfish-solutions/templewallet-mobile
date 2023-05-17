@@ -67,5 +67,3 @@ const numberWithSpaces = (amount: string) => {
 
   return parts.join('.');
 };
-
-export const valueToDecimals = (value: number, decimals: number) => value / Math.pow(10, decimals);

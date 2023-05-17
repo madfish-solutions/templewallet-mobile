@@ -18,9 +18,9 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { valueToDecimals } from 'src/utils/number.util';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
+import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useCollectionStyles } from '../collection.styles';
 
@@ -46,14 +46,17 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       .then(setOffer);
   }, []);
 
-  const price = isDefined(item.lowestAsk) ? `${valueToDecimals(item.lowestAsk, item.decimals)} ${item.symbol}` : '---';
+  const price = isDefined(item.lowestAsk)
+    ? `${mutezToTz(BigNumber(item.lowestAsk), item.decimals)} ${item.symbol}`
+    : '---';
+
   const highestOffer = isDefined(item.highestOffer)
-    ? `${valueToDecimals(item.highestOffer.price, item.decimals)} ${item.symbol}`
+    ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
     : 'No offers yet';
+
   const holders = item?.holders?.map(holder => holder.holder_address) ?? [];
   const isHolder = holders.includes(selectedAccount.publicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
-  const isOfferFromUser = item.highestOffer?.buyer_address === selectedAccount.publicKeyHash;
 
   const handlePress = async () => {
     const transferParams = isDefined(offer)
@@ -121,23 +124,19 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={handlePress}
-            disabled={!isOffersExisted || isOfferFromUser}
+            disabled={!isOffersExisted}
             style={[
               styles.sellButton,
-              conditionalStyle(isOffersExisted && !isOfferFromUser, styles.sellButtonActive, styles.sellButtonDisabled)
+              conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
             ]}
           >
             <Text
               style={[
                 styles.sellButtonText,
-                conditionalStyle(
-                  isOffersExisted && !isOfferFromUser,
-                  styles.sellButtonActive,
-                  styles.sellButtonDisabled
-                )
+                conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
               ]}
             >
-              {isHolder ? (isOffersExisted && !isOfferFromUser ? `Sell for ${highestOffer}` : 'No offers yet') : 'buy'}
+              {isHolder ? (isOffersExisted ? `Sell for ${highestOffer}` : 'No offers yet') : 'buy'}
             </Text>
           </TouchableOpacity>
         </View>
