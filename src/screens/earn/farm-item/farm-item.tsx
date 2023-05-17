@@ -110,7 +110,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         navigateAction(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
           opParams,
-          testID: 'CLAIM_REWARDS'
+          testID: 'CLAIM_ONE_FARM_REWARDS'
         })
       );
     }
