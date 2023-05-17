@@ -1,3 +1,18 @@
+/* eslint-disable import/no-duplicates */
+import { formatDistanceToNowStrict } from 'date-fns';
+import { enGB } from 'date-fns/locale';
+
+export const formatTimespan = (timespanMs: number, roundingMethod?: 'floor' | 'ceil' | 'round') => {
+  const now = Date.now();
+
+  return formatDistanceToNowStrict(now + timespanMs, {
+    roundingMethod,
+    locale: enGB
+  });
+};
+
+export const SECONDS_IN_DAY = 24 * 60 * 60;
+
 export function toSecondsTimestamp(timestampMs: number): number;
 export function toSecondsTimestamp(date: Date | string): number;
 export function toSecondsTimestamp(date: Date | string | number) {

@@ -1,6 +1,5 @@
-import { FormikProvider } from 'formik';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 import { SingleFarmResponse } from 'src/apis/quipuswap/types';
 import { Divider } from 'src/components/divider/divider';
@@ -59,26 +58,23 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
   }, [assetsList, asset, setFieldValue]);
 
   return (
-    <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
-        <Divider size={formatSize(16)} />
-        <Text style={styles.depositPrompt}>
-          Deposit {asset.symbol} or other tokens. If you select other token it will be automatically swapped to{' '}
-          {asset.symbol}.
-        </Text>
-        <Divider size={formatSize(24)} />
-        <FormAssetAmountInput
-          name="assetAmount"
-          label="Amount"
-          expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
-          isSearchable
-          maxButton
-          assetsList={filteredAssetsList}
-          onValueChange={handleAssetAmountChange}
-          setSearchValue={setSearchValueFromTokens}
-          testID={ManageFarmingPoolModalSelectors.amountInput}
-        />
-      </View>
-    </FormikProvider>
+    <>
+      <Text style={styles.depositPrompt}>
+        Deposit {asset.symbol} or other tokens. If you select other token it will be automatically swapped to{' '}
+        {asset.symbol}.
+      </Text>
+      <Divider size={formatSize(24)} />
+      <FormAssetAmountInput
+        name="assetAmount"
+        label="Amount"
+        expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
+        isSearchable
+        maxButton
+        assetsList={filteredAssetsList}
+        onValueChange={handleAssetAmountChange}
+        setSearchValue={setSearchValueFromTokens}
+        testID={ManageFarmingPoolModalSelectors.amountInput}
+      />
+    </>
   );
 };
