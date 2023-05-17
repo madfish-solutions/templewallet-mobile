@@ -1,9 +1,10 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SvgUri } from 'react-native-svg';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
@@ -28,6 +29,7 @@ import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
+import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -58,7 +60,9 @@ export const CollectibleModal = () => {
 
   const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries } = collectibleInfo;
 
-  const isAttributesExist = attributes.length > 0;
+  const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
+
+  const isAttributesExist = filteredAttributes.length > 0;
 
   const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
 
@@ -70,6 +74,21 @@ export const CollectibleModal = () => {
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
+
+  const collectionLogo = useMemo(() => {
+    if (fa.logo.endsWith('.svg')) {
+      return (
+        <SvgUri
+          uri={fa.logo}
+          height={COLLECTION_ICON_SIZE}
+          width={COLLECTION_ICON_SIZE}
+          style={styles.collectionLogo}
+        />
+      );
+    }
+
+    return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+  }, [fa.logo]);
 
   return (
     <ScreenContainer
@@ -93,11 +112,7 @@ export const CollectibleModal = () => {
           <Divider size={formatSize(12)} />
 
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? (
-              <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
-            ) : (
-              <View style={[styles.collectionLogo, styles.logoFallBack]} />
-            )}
+            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
             <Text numberOfLines={1} style={styles.collectionName}>
               {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
@@ -157,7 +172,7 @@ export const CollectibleModal = () => {
           )}
 
           {!isLoading && !isPropertiesSelected && isAttributesExist && (
-            <CollectibleAttributes attributes={attributes} style={styles.marginBottom} />
+            <CollectibleAttributes attributes={filteredAttributes} style={styles.marginBottom} />
           )}
         </View>
       </ScrollView>
