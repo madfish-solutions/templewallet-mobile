@@ -16,6 +16,8 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
     borderColor: colors.orange
   },
   recommendedContainer: {
+    height: formatSize(21),
+    justifyContent: 'center',
     alignSelf: 'flex-start',
     position: 'relative',
     top: formatSize(-8),
@@ -28,7 +30,6 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
     ...typography.tagline13Tag,
     textTransform: 'none',
     paddingHorizontal: formatSize(12),
-    paddingVertical: formatSize(2),
     color: colors.white
   },
   upperContainer: {
