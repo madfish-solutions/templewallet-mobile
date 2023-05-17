@@ -53,6 +53,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
     const contract = getContract();
 
     const slug = getTokenSlug(contract ?? {});
+
     const tokenData = getTokenMetadata(slug);
 
     const amount = params.amount;
@@ -118,6 +119,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
                 <AssetValueText
                   amount={token.amount}
                   asset={token.tokenData}
+                  receiver={hash}
                   style={styles.amountToken}
                   showMinusSign
                 />

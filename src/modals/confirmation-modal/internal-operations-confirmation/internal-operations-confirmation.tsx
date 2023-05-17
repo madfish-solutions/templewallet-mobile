@@ -18,6 +18,7 @@ import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-a
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from '../../../utils/env.utils';
+import { isDefined } from '../../../utils/is-defined';
 import { sendTransaction$ } from '../../../utils/wallet.utils';
 import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
@@ -52,7 +53,7 @@ const approveInternalOperationRequest = ({
     })
   );
 
-export const InternalOperationsConfirmation: FC<Props> = ({ opParams, disclaimerMessage, testID }) => {
+export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle, disclaimerMessage, testID }) => {
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
 
@@ -65,7 +66,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, disclaimer
           case OpKind.DELEGATION:
             return <HeaderTitle title="Confirm Delegate" />;
           case OpKind.TRANSACTION:
-            return <HeaderTitle title="Confirm Send" />;
+            return <HeaderTitle title={isDefined(modalTitle) ? modalTitle : 'Confirm Send'} />;
           default:
             return <HeaderTitle title="Confirm Operation" />;
         }

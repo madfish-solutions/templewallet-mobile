@@ -10,6 +10,7 @@ export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;
   opParams: ParamsWithKind[];
   disclaimerMessage?: string;
+  modalTitle?: string;
 }
 
 export interface DAppOperationsConfirmationModalParams {
