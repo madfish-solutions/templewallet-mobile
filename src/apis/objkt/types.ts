@@ -48,3 +48,8 @@ export interface CollectibleInfoQueryResponse {
     };
   }[];
 }
+
+export interface CurrencyInfo {
+  symbol: string;
+  decimals: number;
+}

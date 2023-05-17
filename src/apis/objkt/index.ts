@@ -6,7 +6,7 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { apolloObjktClient } from './constants';
+import { apolloObjktClient, currencyInfoById } from './constants';
 import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetCollectiblesByCollectionQuery,
@@ -56,18 +56,23 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
   );
 };
 
-export const fetchCollectiblesByCollection$ = (contract: string): Observable<TokenInterface[]> => {
+export const fetchCollectiblesByCollection$ = (
+  contract: string,
+  selectedPublicKey: string
+): Observable<TokenInterface[]> => {
   const request = buildGetCollectiblesByCollectionQuery(contract);
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
     map(result => {
       const collectiblesArray = result.token.map(token => {
-        const highestOffer = token.offers_active.find(offer => offer.price_xtz === token.highest_offer);
+        const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
+        const highestOffer = correctOffers.find(offer => offer.price_xtz === token.highest_offer);
+        const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
 
         return {
           artifactUri: token.artifact_uri,
           balance: '1',
-          decimals: token.decimals,
+          decimals: currency.decimals,
           description: token.description,
           displayUri: token.display_uri,
           address: token.fa_contract,
@@ -75,7 +80,7 @@ export const fetchCollectiblesByCollection$ = (contract: string): Observable<Tok
           name: token.name,
           metadata: token.metadata,
           lowestAsk: token.lowest_ask,
-          symbol: token.symbol,
+          symbol: currency.symbol,
           thumbnailUri: token.thumbnail_uri,
           id: Number(token.token_id),
           visibility: VisibilityEnum.Visible,
