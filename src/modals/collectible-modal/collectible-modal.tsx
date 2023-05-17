@@ -131,7 +131,7 @@ export const CollectibleModal = () => {
 
           {isNonEmptyArray(creators) && (
             <View style={styles.creatorsContainer}>
-              <Text style={styles.creatorsText}>Creators:</Text>
+              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
 
               {creators.map(({ holder }, index) => (
                 <LinkWithIcon
