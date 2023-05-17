@@ -40,7 +40,7 @@ export interface QuipuswapAPIToken {
 interface FarmBase {
   id: string;
   contractAddress: string;
-  apr: number | null;
+  apr: string | null;
   depositExchangeRate: string | null;
   depositTokenUrl: string;
   lastRewards: string;
@@ -85,20 +85,6 @@ export interface SingleFarmResponse {
 
 export interface FarmsListResponse {
   list: SingleFarmResponse[];
-}
-
-export interface RawV3FarmStake {
-  stake: BigNumber;
-  disc_factor: BigNumber;
-  age_timestamp: string;
-}
-
-export interface V3FarmStake {
-  contractRewardBalance: string;
-  stakeId?: string;
-  stake: string;
-  discFactor: string;
-  ageTimestamp: string;
 }
 
 export interface StableswapPoolsValue {

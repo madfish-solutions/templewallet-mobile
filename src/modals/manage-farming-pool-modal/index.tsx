@@ -13,13 +13,7 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadSingleFarmActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
-import {
-  useFarmSelector,
-  useFarmsLoadingSelector,
-  useStakeIsInitializedSelector,
-  useStakeLoadingSelector,
-  useStakeSelector
-} from 'src/store/farms/selectors';
+import { useFarmSelector, useFarmsLoadingSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -39,12 +33,9 @@ export const ManageFarmingPoolModal: FC = () => {
   const farm = useFarmSelector(params.id, params.version);
   const farmIsLoading = useFarmsLoadingSelector();
   const farmLevel = farm?.blockInfo.level;
-  const stake = useStakeSelector(params.id, params.version);
-  const stakeIsInitialized = useStakeIsInitializedSelector(params.id, params.version);
-  const stakeIsLoading = useStakeLoadingSelector(params.id, params.version);
+  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
 
-  const pageIsLoading =
-    (farmIsLoading && !isDefined(farm)) || !stakeIsInitialized || (stakeIsLoading && !isDefined(stake));
+  const pageIsLoading = farmIsLoading && !isDefined(farm);
 
   const stakeFormik = useStakeFormik(params.id, params.version);
   const { errors: formErrors, submitForm, isSubmitting } = stakeFormik;
@@ -66,7 +57,7 @@ export const ManageFarmingPoolModal: FC = () => {
 
   usePageAnalytic(ModalsEnum.ManageFarmingPool);
 
-  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.stakeId) ? [] : [1]), [stake]);
+  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake) ? [] : [1]), [stake]);
 
   return (
     <>

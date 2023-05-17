@@ -1,8 +1,15 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { createEntity } from '../create-entity';
 import { setSelectedAccountAction } from '../wallet/wallet-actions';
-import { loadSingleFarmActions, loadSingleFarmStakeActions } from './actions';
+import {
+  loadAllFarmsActions,
+  loadAllStakesActions,
+  loadSingleFarmActions,
+  loadSingleFarmStakeActions
+} from './actions';
 import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
@@ -33,37 +40,36 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     farms: createEntity(state.farms.data, false, error)
   }));
 
-  builder.addCase(loadSingleFarmStakeActions.submit, (state, { payload: { id, version } }) => ({
-    ...state,
-    lastStakes: {
-      ...state.lastStakes,
-      [version]: {
-        ...state.lastStakes[version],
-        [id]: createEntity(state.lastStakes[version][id]?.data, true)
-      }
-    }
-  }));
+  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { [farmAddress]: _, ...otherStakes } = state.lastStakes;
 
-  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farm } }) => ({
-    ...state,
-    lastStakes: {
-      ...state.lastStakes,
-      [farm.version]: {
-        ...state.lastStakes[farm.version],
-        [farm.id]: createEntity(stake)
-      }
-    }
-  }));
+    return {
+      ...state,
+      lastStakes: isDefined(stake)
+        ? {
+            ...otherStakes,
+            [farmAddress]: stake
+          }
+        : otherStakes
+    };
+  });
 
-  builder.addCase(loadSingleFarmStakeActions.fail, (state, { payload: { farm, error } }) => ({
+  builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,
-    lastStakes: {
-      ...state.lastStakes,
-      [farm.version]: {
-        ...state.lastStakes[farm.version],
-        [farm.id]: createEntity(state.lastStakes[farm.version][farm.id]?.data, false, error)
-      }
-    }
+    allFarms: createEntity(state.allFarms.data, true)
+  }));
+  builder.addCase(loadAllFarmsActions.success, (state, { payload }) => ({
+    ...state,
+    allFarms: createEntity(payload, false)
+  }));
+  builder.addCase(loadAllFarmsActions.fail, (state, { payload }) => ({
+    ...state,
+    allFarms: createEntity(state.allFarms.data, false, payload)
+  }));
+  builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
+    ...state,
+    lastStakes: payload
   }));
 
   builder.addCase(setSelectedAccountAction, state => ({

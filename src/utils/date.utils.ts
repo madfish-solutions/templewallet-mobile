@@ -1,9 +1,3 @@
-export function toSecondsTimestamp(timestampMs: number): number;
-export function toSecondsTimestamp(date: Date | string): number;
-export function toSecondsTimestamp(date: Date | string | number) {
-  return Math.floor(new Date(date).getTime() / 1000);
-}
-
 export const isTheSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&
@@ -35,3 +29,25 @@ export const formatDateOutput = (date: number | string) =>
     hour: 'numeric',
     minute: 'numeric'
   });
+
+const MS_IN_SECOND = 1000;
+
+export function toIntegerSeconds(ms: number): number;
+export function toIntegerSeconds(date: Date): number;
+export function toIntegerSeconds(data: number | Date) {
+  const ms = data instanceof Date ? data.getTime() : data;
+
+  return Math.floor(ms / MS_IN_SECOND);
+}
+
+/**
+ * Returns a difference of two dates in seconds
+ * @param from a start date as Date object or seconds count
+ * @param to an end date as Date object or seconds count
+ */
+export function calculateTimeDiffInSeconds(from: number | Date, to: number | Date) {
+  const fromSeconds = from instanceof Date ? toIntegerSeconds(from.getTime()) : from;
+  const toSeconds = to instanceof Date ? toIntegerSeconds(to.getTime()) : to;
+
+  return toSeconds - fromSeconds;
+}

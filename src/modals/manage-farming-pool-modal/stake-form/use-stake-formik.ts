@@ -36,7 +36,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
   const selectedAccount = useSelectedAccountSelector();
   const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const stake = useStakeSelector(farmId, farmVersion);
+  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
@@ -67,7 +67,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
       }
 
       try {
-        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.stakeId);
+        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.lastStakeId);
 
         dispatch(
           navigateAction(ModalsEnum.Confirmation, {
@@ -83,7 +83,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.stakeId, dispatch]
+    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
   );
 
   return useFormik<StakeFormValues>({

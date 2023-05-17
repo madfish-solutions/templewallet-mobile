@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Text, View, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
+import { View, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
@@ -8,6 +8,7 @@ import { useColors } from 'src/styles/use-colors';
 
 import { formatSize } from '../../styles/format-size';
 import { openUrl } from '../../utils/linking.util';
+import { Bage } from '../bage/bage';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
@@ -49,8 +50,8 @@ export const PromotionItem: FC<Props> = memo(
         ) : (
           <View style={styles.rewardContainer}>
             {shouldShowAdBage && (
-              <View style={styles.textContainer}>
-                <Text style={styles.text}>AD</Text>
+              <View style={styles.bageContainer}>
+                <Bage text="AD" />
               </View>
             )}
             {shouldShowCloseButton && (

@@ -1,20 +1,6 @@
 import { advanceTo } from 'jest-date-mock';
 
-import { isTheSameDay, isToday, isYesterday, toSecondsTimestamp } from './date.utils';
-
-describe('toSecondsTimestamp', () => {
-  it('should convert timestamp in milliseconds to seconds', () => {
-    expect(toSecondsTimestamp(1684150759884)).toEqual(1684150759);
-  });
-
-  it('should convert ISO date string to seconds', () => {
-    expect(toSecondsTimestamp('2021-07-08T12:32:39.884Z')).toEqual(1625747559);
-  });
-
-  it('should convert Date object to seconds', () => {
-    expect(toSecondsTimestamp(new Date('2021-07-08T12:32:39.884Z'))).toEqual(1625747559);
-  });
-});
+import { isTheSameDay, isToday, isYesterday, toIntegerSeconds } from './date.utils';
 
 describe('isTheSameDay', () => {
   it('should return true if both dates have the same day', () => {
@@ -79,5 +65,18 @@ describe('isYesterday', () => {
 
   it('should return false if a date is one year and one day before', () => {
     expect(isYesterday(new Date(2020, 7, 7, 23, 59, 59))).toEqual(false);
+  });
+});
+
+describe('toIntegerSeconds', () => {
+  it('should return 1 for 1000', () => {
+    expect(toIntegerSeconds(1000)).toEqual(1);
+  });
+  it('should return 1684220153 for 1684220153000', () => {
+    expect(toIntegerSeconds(1684220153000)).toEqual(1684220153);
+  });
+
+  it('should return 1684220153 for new Date(2023, 4, 16, 6, 55, 53)', () => {
+    expect(toIntegerSeconds(new Date(2023, 4, 16, 6, 55, 53))).toEqual(1684220153);
   });
 });

@@ -1,5 +1,4 @@
 import { FarmVersionEnum } from 'src/apis/quipuswap/types';
-import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';
 
@@ -12,11 +11,7 @@ export const useFarmSelector = (id: string, version: FarmVersionEnum) =>
     return list.find(({ item }) => item.id === id && item.version === version);
   });
 
-export const useStakeSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => farms.lastStakes[version][id]?.data);
+export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
 
-export const useStakeIsInitializedSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => isDefined(farms.lastStakes[version][id]));
-
-export const useStakeLoadingSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => farms.lastStakes[version][id]?.isLoading);
+export const useAllFarmsSelector = () => useSelector(({ farms }) => farms.allFarms);
+export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes);

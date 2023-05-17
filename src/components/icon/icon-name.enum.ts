@@ -132,5 +132,6 @@ export enum IconNameEnum {
   SwapRouteItemBackground = 'SwapRouteItemBackground',
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
-  GoogleDrive = 'GoogleDrive'
+  GoogleDrive = 'GoogleDrive',
+  QsEarnSource = 'QsEarnSource'
 }
