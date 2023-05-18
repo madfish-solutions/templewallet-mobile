@@ -25,6 +25,14 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
+import {
+  DEFAULT_AMOUNT,
+  DEFAULT_DECIMALS,
+  DEFAULT_EXHANGE_RATE,
+  FARM_PRECISION,
+  REWARDS_DECIMALS,
+  SECONDS_IN_DAY
+} from '../constants';
 import { FarmTokens } from '../farm-tokens/farm-tokens';
 import { useFarmItemStyles } from './farm-item.styles';
 
@@ -32,13 +40,6 @@ interface Props {
   farm: SingleFarmResponse;
   lastStakeRecord?: UserStakeValueInterface;
 }
-
-const FARM_PRECISION = 18;
-const DEFAULT_AMOUNT = 0;
-const DEFAULT_EXHANGE_RATE = 1;
-const DEFAULT_DECIMALS = 2;
-const REWARDS_DECIMALS = 6;
-const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const styles = useFarmItemStyles();
