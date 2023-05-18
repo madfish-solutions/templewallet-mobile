@@ -40,7 +40,9 @@ export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Prop
 
   useEffect(() => {
     tezos.contract
-      .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(OBJKT_MARKETPLACE_CONTRACT)
+      .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(
+        marketplace ?? OBJKT_MARKETPLACE_CONTRACT
+      )
       .then(setMarketplaceContract);
   }, [tezos]);
 
@@ -50,8 +52,6 @@ export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Prop
         ? [marketplaceContract.methods.fulfill_ask(bigmapKey).toTransferParams()]
         : [marketplaceContract.methods.listing_accept(1, bigmapKey).toTransferParams()]
       : [];
-
-    console.log('transferParams', transferParams);
 
     const { approve, revoke } = await getTransferPermissions(
       tezos,
