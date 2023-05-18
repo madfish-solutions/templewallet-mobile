@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsActions } from 'src/store/farms/actions';
@@ -24,6 +25,7 @@ export const Earn: FC = () => {
     <ScreenContainer>
       <FlatList
         data={farms.data}
+        ListEmptyComponent={<DataPlaceholder text="No records found." />}
         renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
       />
     </ScreenContainer>

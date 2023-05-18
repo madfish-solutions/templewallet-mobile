@@ -8,6 +8,7 @@ import { FarmVersionEnum, NetworkEnum } from 'src/apis/quipuswap-staking/types';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { getLastElement } from 'src/utils/array.utils';
+import { MS_IN_SECOND } from 'src/utils/date.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
@@ -80,11 +81,16 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
                       stakeAmount
                     );
 
+                    const rewardsDueDate =
+                      new Date(stakeAmount.age_timestamp).getTime() +
+                      farmContractStorage.max_release_period.multipliedBy(MS_IN_SECOND).toNumber();
+
                     result[farm.contractAddress] = {
                       lastStakeId: lastStakeId.toFixed(),
                       depositAmountAtomic: stakeAmount.stake.toFixed(),
                       claimableRewards: claimableReward.toFixed(),
-                      fullReward: fullReward.toFixed()
+                      fullReward: fullReward.toFixed(),
+                      rewardsDueDate
                     };
                   }
                 }
