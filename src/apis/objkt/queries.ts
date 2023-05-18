@@ -37,6 +37,12 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
           name
         }
       }
+      lowest_ask
+      listings_active {
+        bigmap_key
+        currency_id
+        price
+      }
     }
   }
 `;

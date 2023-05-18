@@ -11,3 +11,10 @@ export interface GalleryAttributeCountQueryResponse {
 export interface CollectibleInfoQueryResponse {
   token: CollectibleInfo[];
 }
+
+export interface CurrencyInfo {
+  symbol: string;
+  decimals: number;
+  contract: string | null;
+  id: string | null;
+}

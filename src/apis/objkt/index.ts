@@ -4,15 +4,15 @@ import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
 import { apolloObjktClient } from './constants';
 import {
-  CollectibleInfoQueryResponse,
-  FA2AttributeCountQueryResponse,
-  GalleryAttributeCountQueryResponse
-} from './interfaces';
-import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetFA2AttributeCountQuery,
   buildGetGalleryAttributeCountQuery
 } from './queries';
+import {
+  CollectibleInfoQueryResponse,
+  FA2AttributeCountQueryResponse,
+  GalleryAttributeCountQueryResponse
+} from './types';
 import { getUniqueAndMaxValueAttribute } from './utils';
 
 export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observable<CollectibleInfo> => {
@@ -20,8 +20,19 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply, galleries } =
-        result.token[0];
+      const {
+        description,
+        creators,
+        fa,
+        timestamp,
+        artifact_uri,
+        attributes,
+        metadata,
+        royalties,
+        supply,
+        galleries,
+        listings_active
+      } = result.token[0];
 
       return {
         description,
@@ -37,7 +48,8 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
         timestamp,
         royalties,
         supply,
-        galleries
+        galleries,
+        listings_active
       };
     })
   );
