@@ -15,11 +15,12 @@ import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useSearchStyles } from './search.styles';
 
 interface Props extends TestIdProps {
+  placeholder?: string;
   dividerSize?: number;
   onChange: EventFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children }) => {
+export const Search: FC<Props> = ({ dividerSize = 24, placeholder = 'Search token', testID, onChange, children }) => {
   const colors = useColors();
   const styles = useSearchStyles();
   const { trackEvent } = useAnalytics();
@@ -48,7 +49,7 @@ export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children
           <TextInput
             autoFocus={true}
             style={styles.searchInput}
-            placeholder="Search token"
+            placeholder={placeholder}
             placeholderTextColor={colors.gray1}
             onChangeText={debouncedOnChange}
           />

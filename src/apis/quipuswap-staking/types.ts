@@ -32,7 +32,7 @@ interface FarmTokenMetadata {
   categories?: string[];
 }
 
-interface FarmToken {
+interface QsFarmToken {
   contractAddress: string;
   fa2TokenId?: number;
   type: FarmTokenStandardsEnum;
@@ -53,9 +53,9 @@ interface FarmBase {
   earnExchangeRate: string | null;
   vestingPeriodSeconds: string;
   stakeUrl: string;
-  stakedToken: FarmToken;
-  tokens: FarmToken[];
-  rewardToken: FarmToken;
+  stakedToken: QsFarmToken;
+  tokens: QsFarmToken[];
+  rewardToken: QsFarmToken;
   staked: string;
   tvlInUsd: string | null;
   tvlInStakedToken: string;
