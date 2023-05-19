@@ -61,7 +61,7 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
                 stakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
               )
             ),
-            mergeMap(stakes => merge(of(loadAllFarmsActions.success([])), of(loadAllStakesActions.success(stakes))))
+            mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))
           );
         })
       )
