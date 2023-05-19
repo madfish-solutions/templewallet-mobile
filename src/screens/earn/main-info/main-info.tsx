@@ -1,8 +1,8 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
-import { View, Text } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { View, Text, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -68,6 +68,18 @@ export const MainInfo: FC = () => {
 
   const areAnyRewards = totalClaimableRewardsInUsd.isGreaterThan(DEFAULT_AMOUNT);
 
+  const navigateHarvestFarm = useCallback(
+    (opParams: Array<ParamsWithKind>) =>
+      dispatch(
+        navigateAction(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams,
+          testID: 'CLAIM_REWARDS'
+        })
+      ),
+    []
+  );
+
   const claimAllRewards = async () => {
     const claimAllRewardParams = await Promise.all(
       Object.keys(farms.lastStakes).map(address =>
@@ -84,13 +96,25 @@ export const MainInfo: FC = () => {
       kind: OpKind.TRANSACTION
     }));
 
-    dispatch(
-      navigateAction(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams,
-        testID: 'CLAIM_ALL_REWARDS'
-      })
-    );
+    if (Object.values(farms.lastStakes).find(stake => (stake.rewardsDueDate ?? 0) > Date.now())) {
+      Alert.alert(
+        'Are you sure?',
+        'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Claim rewards',
+            style: 'destructive',
+            onPress: () => navigateHarvestFarm(opParams)
+          }
+        ]
+      );
+    } else {
+      navigateHarvestFarm(opParams);
+    }
   };
 
   return (

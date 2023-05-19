@@ -17,5 +17,8 @@ export const useEarnStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption11Regular,
     color: colors.gray1,
     marginLeft: formatSize(5)
+  },
+  loader: {
+    marginTop: formatSize(100)
   }
 }));

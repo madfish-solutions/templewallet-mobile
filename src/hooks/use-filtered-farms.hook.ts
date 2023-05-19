@@ -10,7 +10,7 @@ import { isString } from '../utils/is-string';
 
 export const useFilteredFarms = () => {
   const stakes = useLastStakesSelector();
-  const { data: farms } = useAllFarmsSelector();
+  const { data: farms, isLoading } = useAllFarmsSelector();
 
   const [searchValue, setSearchValue] = useState<string>();
   const [sortField, setSortField] = useState<FarmsSortFieldEnum>(FarmsSortFieldEnum.Default);
@@ -44,6 +44,9 @@ export const useFilteredFarms = () => {
       case FarmsSortFieldEnum.APY:
         result.sort((farmA, farmB) => new BigNumber(farmB?.item?.apr ?? 0).minus(farmA?.item?.apr ?? 0).toNumber());
         break;
+      case FarmsSortFieldEnum.Newest:
+        result.reverse();
+        break;
     }
 
     return result;
@@ -56,6 +59,7 @@ export const useFilteredFarms = () => {
     sortField,
     depositedOnly,
     filteredFarmsList,
+    isFarmsLoading: isLoading,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly

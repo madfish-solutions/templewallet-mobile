@@ -1,9 +1,10 @@
 import React, { FC, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from 'src/components/checkbox/checkbox';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { Search } from 'src/components/search/search';
 import { Sorter } from 'src/components/sorter/sorter';
@@ -22,7 +23,7 @@ import { MainInfo } from './main-info/main-info';
 const earnSortFieldsLabels: Record<FarmsSortFieldEnum, string> = {
   [FarmsSortFieldEnum.Default]: 'Default',
   [FarmsSortFieldEnum.APY]: 'APY',
-  [FarmsSortFieldEnum.Oldest]: 'Olders',
+  [FarmsSortFieldEnum.Oldest]: 'Oldest',
   [FarmsSortFieldEnum.Newest]: 'Newest'
 };
 
@@ -36,11 +37,18 @@ const earnSortFieldsOptions: Array<FarmsSortFieldEnum> = [
 export const Earn: FC = () => {
   const dispatch = useDispatch();
   usePageAnalytic(ScreensEnum.Earn);
-  const styles = useEarnStyles();
   const stakes = useLastStakesSelector();
+  const styles = useEarnStyles();
 
-  const { filteredFarmsList, sortField, depositedOnly, handleToggleDepositOnly, setSearchValue, handleSetSortField } =
-    useFilteredFarms();
+  const {
+    filteredFarmsList,
+    sortField,
+    depositedOnly,
+    isFarmsLoading,
+    handleToggleDepositOnly,
+    setSearchValue,
+    handleSetSortField
+  } = useFilteredFarms();
 
   useEffect(() => {
     dispatch(loadAllFarmsActions.submit());
@@ -68,10 +76,15 @@ export const Earn: FC = () => {
         </Search>
       </View>
       <ScreenContainer>
-        <FlatList
-          data={filteredFarmsList}
-          renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
-        />
+        {isFarmsLoading ? (
+          <ActivityIndicator style={styles.loader} size="large" />
+        ) : (
+          <FlatList
+            data={filteredFarmsList}
+            ListEmptyComponent={<DataPlaceholder text="No records found." />}
+            renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
+          />
+        )}
       </ScreenContainer>
     </>
   );
