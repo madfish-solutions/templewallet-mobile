@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
@@ -97,6 +97,17 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
     [farm.item.id]
   );
+  const navigateHarvestFarm = useCallback(
+    (opParams: Array<ParamsWithKind>) =>
+      dispatch(
+        navigateAction(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams,
+          testID: 'CLAIM_REWARDS'
+        })
+      ),
+    []
+  );
 
   const harvestAssetsApi = useCallback(async () => {
     if (isDefined(lastStakeRecord?.lastStakeId)) {
@@ -107,13 +118,25 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         kind: OpKind.TRANSACTION
       }));
 
-      dispatch(
-        navigateAction(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams,
-          testID: 'CLAIM_ONE_FARM_REWARDS'
-        })
-      );
+      if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
+        Alert.alert(
+          'Are you sure?',
+          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel'
+            },
+            {
+              text: 'Claim rewards',
+              style: 'destructive',
+              onPress: () => navigateHarvestFarm(opParams)
+            }
+          ]
+        );
+      } else {
+        navigateHarvestFarm(opParams);
+      }
     }
   }, [lastStakeRecord?.lastStakeId, farm.item.contractAddress]);
 
