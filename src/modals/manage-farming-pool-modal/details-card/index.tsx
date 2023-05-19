@@ -1,0 +1,188 @@
+import { BigNumber } from 'bignumber.js';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+
+import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
+import { Farm } from 'src/apis/quipuswap-staking/types';
+import { Button } from 'src/components/button/button';
+import { Divider } from 'src/components/divider/divider';
+import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
+import { FormattedAmount } from 'src/components/formatted-amount';
+import { HorizontalBorder } from 'src/components/horizontal-border';
+import { useFarmTokens } from 'src/hooks/use-farm-tokens';
+import { useInterval } from 'src/hooks/use-interval.hook';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { UserStakeValueInterface } from 'src/store/farms/state';
+import { navigateAction } from 'src/store/root-state.actions';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import {
+  APPROXIMATE_DAYS_IN_YEAR,
+  SECONDS_IN_DAY,
+  SECONDS_IN_HOUR,
+  SECONDS_IN_MINUTE,
+  toIntegerSeconds
+} from 'src/utils/date.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { mutezToTz } from 'src/utils/tezos.util';
+
+import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { StatsItem } from './stats-item';
+import { useDetailsCardStyles } from './styles';
+import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
+
+interface DetailsCardProps {
+  farm: Farm;
+  stake?: UserStakeValueInterface;
+}
+
+const EMPTY_STAKE: UserStakeValueInterface = {};
+const COUNTDOWN_TOKENS_BASE = [
+  { unit: 'D', seconds: SECONDS_IN_DAY },
+  { unit: 'H', seconds: SECONDS_IN_HOUR },
+  { unit: 'M', seconds: SECONDS_IN_MINUTE }
+];
+
+export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE }) => {
+  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', ageTimestamp, lastStakeId } = stake;
+  const {
+    stakedToken,
+    depositExchangeRate,
+    earnExchangeRate,
+    vestingPeriodSeconds,
+    rewardToken,
+    apr,
+    contractAddress
+  } = farm;
+  const stakedTokenDecimals = stakedToken.metadata.decimals;
+  const apy = ((1 + Number(apr) / 100 / APPROXIMATE_DAYS_IN_YEAR) ** APPROXIMATE_DAYS_IN_YEAR - 1) * 100;
+  const [claimPending, setClaimPending] = useState(false);
+  const styles = useDetailsCardStyles();
+  const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
+  const dispatch = useDispatch();
+  const tezos = useReadOnlyTezosToolkit();
+  const farmTokens = useFarmTokens(farm);
+  const rewardTokenDecimals = rewardToken.metadata.decimals;
+  const rewardTokenSymbol = rewardToken.metadata.symbol;
+
+  const claimRewards = useCallback(async () => {
+    if (!isDefined(lastStakeId)) {
+      return;
+    }
+
+    try {
+      setClaimPending(true);
+      dispatch(
+        navigateAction(ModalsEnum.Confirmation, {
+          type: ConfirmationTypeEnum.InternalOperations,
+          opParams: await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId),
+          testID: 'CLAIM_REWARDS'
+        })
+      );
+    } catch (e) {
+      showErrorToastByError(e);
+    } finally {
+      setClaimPending(false);
+    }
+  }, [lastStakeId, dispatch, contractAddress, tezos]);
+
+  const getMsToVestingEnd = useCallback(
+    () =>
+      isDefined(ageTimestamp)
+        ? Math.max(0, new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000 - Date.now())
+        : 0,
+    [ageTimestamp, vestingPeriodSeconds]
+  );
+  const [msToVestingEnd, setMsToVestingEnd] = useState(getMsToVestingEnd());
+  useInterval(
+    () => {
+      setMsToVestingEnd(getMsToVestingEnd());
+    },
+    1000,
+    [getMsToVestingEnd]
+  );
+  const secondsToVestingEnd = toIntegerSeconds(msToVestingEnd);
+  const countdownTokens = useMemo(
+    () =>
+      COUNTDOWN_TOKENS_BASE.map(({ unit, seconds }, index) => ({
+        unit,
+        value: (
+          Math.floor(secondsToVestingEnd / seconds) %
+          ((COUNTDOWN_TOKENS_BASE[index - 1]?.seconds ?? Infinity) / seconds)
+        )
+          .toString()
+          .padStart(2, '0')
+      })),
+    [secondsToVestingEnd]
+  );
+
+  const depositAmount = useMemo(
+    () => mutezToTz(new BigNumber(depositAmountAtomic), stakedTokenDecimals),
+    [depositAmountAtomic, stakedTokenDecimals]
+  );
+  const claimableRewardAmount = useMemo(
+    () => mutezToTz(new BigNumber(claimableRewards), rewardTokenDecimals),
+    [claimableRewards, rewardTokenDecimals]
+  );
+  const fullRewardAmount = useMemo(
+    () => mutezToTz(new BigNumber(fullReward), rewardTokenDecimals),
+    [fullReward, rewardTokenDecimals]
+  );
+
+  return (
+    <View style={styles.root}>
+      <View style={styles.title}>
+        <FarmTokens {...farmTokens} />
+        <Text style={styles.apyLabel}>APY: {apy.toFixed(2)}%</Text>
+      </View>
+      <HorizontalBorder style={styles.titleBorder} />
+      <View style={styles.statsRow}>
+        <StatsItem
+          title="Your deposit:"
+          value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+          usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
+        />
+        <StatsItem
+          title="Claimable rewards:"
+          value={
+            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+          }
+          usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+        />
+      </View>
+      <Divider size={formatSize(12)} />
+      <View style={styles.statsRow}>
+        <StatsItem
+          title="Long-term rewards:"
+          value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
+          usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
+        />
+        <StatsItem
+          title="Fully claimable:"
+          value={
+            <Text style={styles.statsValue}>
+              {countdownTokens.map(({ unit, value }) => (
+                <React.Fragment key={unit}>
+                  {value}
+                  <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                </React.Fragment>
+              ))}
+            </Text>
+          }
+        />
+      </View>
+      <Divider size={formatSize(16)} />
+      <Button
+        styleConfig={claimRewardsButtonConfig}
+        isFullWidth
+        disabled={claimableRewardAmount.isZero() || claimPending}
+        title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
+        testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
+        onPress={claimRewards}
+      />
+    </View>
+  );
+};

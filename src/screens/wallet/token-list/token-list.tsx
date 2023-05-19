@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
@@ -121,7 +122,7 @@ export const TokensList: FC = () => {
                 onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>
-            <View style={isAndroid ? styles.promotionItemBorderAndroid : styles.promotionItemBorderIOS} />
+            <HorizontalBorder style={styles.promotionItemBorder} />
           </View>
         );
       }

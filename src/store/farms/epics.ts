@@ -5,16 +5,21 @@ import { ofType } from 'ts-action-operators';
 
 import { getSingleV3Farm, getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { FarmVersionEnum, NetworkEnum } from 'src/apis/quipuswap-staking/types';
-import { showErrorToast } from 'src/toast/error-toast.utils';
+import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { RootState } from '../create-store';
-import { loadAllFarmsActions, loadAllStakesActions, loadSingleFarmActions } from './actions';
+import {
+  loadAllFarmsActions,
+  loadAllStakesActions,
+  loadSingleFarmActions,
+  loadSingleFarmStakeActions
+} from './actions';
 import { UserStakeValueInterface } from './state';
-import { getFarmStake } from './utils';
+import { getFarmStake, GetFarmStakeError } from './utils';
 
 const loadSingleFarm = (action$: Observable<Action>) =>
   action$.pipe(
@@ -32,6 +37,29 @@ const loadSingleFarm = (action$: Observable<Action>) =>
       showErrorToast({ description: getAxiosQueryErrorMessage(err) });
 
       return of(loadSingleFarmActions.fail());
+    })
+  );
+
+const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadSingleFarmStakeActions.submit),
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[{ payload: farm }, selectedAccount], rpcUrl]) => {
+      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+
+      return from(getFarmStake(farm, tezos, selectedAccount.publicKeyHash)).pipe(
+        map(stake => loadSingleFarmStakeActions.success({ stake, farmAddress: farm.contractAddress })),
+        catchError(err => {
+          throw new GetFarmStakeError(farm.contractAddress, (err as Error).message);
+        })
+      );
+    }),
+    catchError(err => {
+      const { farmAddress } = err as GetFarmStakeError;
+      showErrorToastByError(err);
+
+      return of(loadSingleFarmStakeActions.fail({ farmAddress, error: (err as Error).message }));
     })
   );
 
@@ -73,4 +101,4 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     })
   );
 
-export const farmsEpics = combineEpics(loadSingleFarm, loadAllFarmsAndLastStake);
+export const farmsEpics = combineEpics(loadSingleFarm, loadSingleFarmLastStake, loadAllFarmsAndLastStake);

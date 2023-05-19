@@ -1,7 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { createEntity } from '../create-entity';
-import { loadAllFarmsActions, loadAllStakesActions, loadSingleFarmActions } from './actions';
+import {
+  loadAllFarmsActions,
+  loadAllStakesActions,
+  loadSingleFarmActions,
+  loadSingleFarmStakeActions
+} from './actions';
 import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
@@ -23,6 +30,21 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     farms: createEntity(state.farms.data, false, error)
   }));
+
+  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { [farmAddress]: _, ...otherStakes } = state.lastStakes;
+
+    return {
+      ...state,
+      lastStakes: isDefined(stake)
+        ? {
+            ...otherStakes,
+            [farmAddress]: stake
+          }
+        : otherStakes
+    };
+  });
 
   builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,

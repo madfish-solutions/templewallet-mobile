@@ -8,6 +8,7 @@ export interface UserStakeValueInterface {
   depositAmountAtomic?: string;
   claimableRewards?: string;
   fullReward?: string;
+  ageTimestamp?: string;
 }
 
 export type LastUserStakeInterface = Record<string, UserStakeValueInterface>;
