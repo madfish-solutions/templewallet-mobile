@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -18,7 +18,7 @@ import {
   loadSingleFarmActions,
   loadSingleFarmStakeActions
 } from './actions';
-import { LastUserStakeInterface } from './state';
+import { UserStakeValueInterface } from './state';
 import { getFarmStake, GetFarmStakeError } from './utils';
 
 const loadSingleFarm: Epic = (action$: Observable<Action>) =>
@@ -68,26 +68,29 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     ofType(loadAllFarmsActions.submit),
     switchMap(() =>
       from(getV3FarmsList()).pipe(
-        map(response => loadAllFarmsActions.success(response)),
         withSelectedAccount(state$),
         withSelectedRpcUrl(state$),
-        switchMap(async ([[farms, selectedAccount], rpcUrl]) => {
+        switchMap(([[farms, selectedAccount], rpcUrl]) => {
           const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
 
-          const result: LastUserStakeInterface = {};
+          return forkJoin(
+            farms.map(async ({ item: farm }) =>
+              getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
+                .then((stake): [string, UserStakeValueInterface | undefined] => [farm.contractAddress, stake])
+                .catch((): [string, undefined] => {
+                  console.error('Error while loading farm stakes: ', farm.contractAddress);
 
-          for (const { item: farm } of farms.payload) {
-            try {
-              const newStake = await getFarmStake(farm, tezos, selectedAccount.publicKeyHash);
-              if (isDefined(newStake)) {
-                result[farm.contractAddress] = newStake;
-              }
-            } catch (error) {
-              console.error('Error while loading farm stakes: ', farm.contractAddress);
-            }
-          }
-
-          return loadAllStakesActions.success(result);
+                  return [farm.contractAddress, undefined];
+                })
+            )
+          ).pipe(
+            map(stakesEntries =>
+              Object.fromEntries(
+                stakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
+              )
+            ),
+            mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))
+          );
         })
       )
     ),
