@@ -30,7 +30,7 @@ export const formatDateOutput = (date: number | string) =>
     minute: 'numeric'
   });
 
-export const MS_IN_SECOND = 1000;
+const MS_IN_SECOND = 1000;
 
 export function toIntegerSeconds(ms: number): number;
 export function toIntegerSeconds(date: Date): number;
