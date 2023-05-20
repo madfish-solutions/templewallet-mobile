@@ -26,6 +26,7 @@ import { withMetadataSlugs } from 'src/utils/token-metadata.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
+import { BURN_ADDRESS } from '../../hooks/use-burn-collectible.hook';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
@@ -148,9 +149,15 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
     switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) =>
       getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
-        map(opParams =>
-          navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
-        )
+        map(opParams => {
+          const modalTitle = receiverPublicKeyHash === BURN_ADDRESS ? 'Confirm Burn' : 'Confirm Send';
+
+          return navigateAction(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams,
+            modalTitle
+          });
+        })
       )
     )
   );

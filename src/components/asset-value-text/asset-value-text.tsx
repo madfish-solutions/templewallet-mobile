@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
+import { BURN_ADDRESS } from '../../hooks/use-burn-collectible.hook';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getDollarValue } from '../../utils/balance.utils';
@@ -13,6 +14,7 @@ interface Props {
   style?: StyleProp<TextStyle>;
   showMinusSign?: boolean;
   showSymbol?: boolean;
+  receiver?: string;
   convertToDollar?: boolean;
 }
 
@@ -22,6 +24,7 @@ export const AssetValueText: FC<Props> = ({
   style,
   showMinusSign = false,
   showSymbol = true,
+  receiver,
   convertToDollar = false
 }) => {
   const { isDcpNode } = useNetworkInfo();
@@ -29,7 +32,8 @@ export const AssetValueText: FC<Props> = ({
   const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || isDcpNode);
 
   const visibleAmount = getDollarValue(amount, asset, convertToDollar ? asset.exchangeRate : 1);
-  const visibleSymbol = showSymbol ? asset.symbol : undefined;
+  const isBurnReceiverAddress = receiver === BURN_ADDRESS;
+  const visibleSymbol = showSymbol ? (isBurnReceiverAddress ? asset.name : asset.symbol) : undefined;
 
   return (
     <>
