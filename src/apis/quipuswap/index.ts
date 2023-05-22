@@ -7,7 +7,7 @@ import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { calculateStableswapLpTokenOutput } from './calculate-stableswap-lp-token-output';
-import { FarmsListResponse, SingleFarmResponse, StableswapPoolStorage, StableswapPoolsValue } from './types';
+import { FarmsListResponse, StableswapPoolStorage, StableswapPoolsValue } from './types';
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
 
