@@ -16,7 +16,7 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { loadSingleFarmActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
+import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
 import { useFarmSelector, useFarmsLoadingSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -46,9 +46,9 @@ export const ManageFarmingPoolModal: FC = () => {
       return;
     }
 
-    dispatch(loadSingleFarmActions.submit(params));
+    dispatch(loadAllFarmsActions.submit());
     prevBlockLevelRef.current = blockLevel;
-  }, [blockLevel, farmLevel, dispatch, params]);
+  }, [blockLevel, farmLevel, dispatch]);
 
   useEffect(() => {
     if (isDefined(farm)) {

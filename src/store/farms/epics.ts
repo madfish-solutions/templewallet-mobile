@@ -3,8 +3,8 @@ import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switc
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getSingleV3Farm, getV3FarmsList } from 'src/apis/quipuswap-staking';
-import { FarmVersionEnum, NetworkEnum } from 'src/apis/quipuswap-staking/types';
+import { getV3FarmsList } from 'src/apis/quipuswap-staking';
+import { NetworkEnum } from 'src/apis/quipuswap-staking/types';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,31 +14,12 @@ import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils'
 import { RootState } from '../create-store';
 import {
   loadAllFarmsActions,
+  loadAllFarmsAndStakesAction,
   loadAllStakesActions,
-  loadSingleFarmActions,
   loadSingleFarmStakeActions
 } from './actions';
 import { UserStakeValueInterface } from './state';
 import { getFarmStake, GetFarmStakeError, RawStakeValue, toUserStakeValueInterface } from './utils';
-
-const loadSingleFarm = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadSingleFarmActions.submit),
-    switchMap(({ payload: { id, version } }) => {
-      if (version === FarmVersionEnum.V3) {
-        return from(getSingleV3Farm(NetworkEnum.Mainnet, id)).pipe(
-          map(response => loadSingleFarmActions.success(response))
-        );
-      }
-
-      throw new Error(`Farm version ${version} is not supported yet`);
-    }),
-    catchError(err => {
-      showErrorToast({ description: getAxiosQueryErrorMessage(err) });
-
-      return of(loadSingleFarmActions.fail());
-    })
-  );
 
 const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -68,9 +49,24 @@ const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Obse
     })
   );
 
-const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarms: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadAllFarmsActions.submit),
+    switchMap(() =>
+      from(getV3FarmsList(NetworkEnum.Mainnet)).pipe(
+        map(farms => loadAllFarmsActions.success(farms)),
+        catchError(err => {
+          showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+
+          return of(loadAllFarmsActions.fail());
+        })
+      )
+    )
+  );
+
+const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadAllFarmsAndStakesAction),
     switchMap(() =>
       from(getV3FarmsList(NetworkEnum.Mainnet)).pipe(
         withSelectedAccount(state$),
@@ -111,4 +107,4 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     })
   );
 
-export const farmsEpics = combineEpics(loadSingleFarm, loadSingleFarmLastStake, loadAllFarmsAndLastStake);
+export const farmsEpics = combineEpics(loadSingleFarmLastStake, loadAllFarms, loadAllFarmsAndLastStake);

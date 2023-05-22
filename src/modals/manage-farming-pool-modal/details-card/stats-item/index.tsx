@@ -11,7 +11,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { useStatsItemStyles } from './styles';
 
-export interface StatsItemProps {
+interface StatsItemProps {
   title: string;
   value: ReactChild | ReactChild[];
   usdEquivalent?: BigNumber;

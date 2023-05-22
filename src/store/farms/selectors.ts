@@ -4,10 +4,10 @@ import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
 
 import { useSelector } from '../selector';
 
-export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.farms.isLoading);
+export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.allFarms.isLoading);
 
 export const useFarmSelector = (id: string, version: FarmVersionEnum) => {
-  const list = useSelector(({ farms }) => farms.farms.data.list);
+  const list = useSelector(({ farms }) => farms.allFarms.data);
 
   return useMemo(() => list.find(({ item }) => item.id === id && item.version === version), [list, id, version]);
 };
