@@ -27,7 +27,7 @@ export const createStakeOperationParams = async (
     throw new Error('Non-stableswap pools are not supported');
   }
 
-  const { contractAddress: farmAddress, stakedToken, stableswapPoolVersion } = farm.item;
+  const { contractAddress: farmAddress, stakedToken } = farm.item;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
@@ -49,15 +49,7 @@ export const createStakeOperationParams = async (
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
   michelsonAmounts.set(tokenIndex, amount);
 
-  const lpAmount = await estimateLpTokenOutput(
-    poolContract,
-    STABLESWAP_REFERRAL,
-    getTransactionTimeoutDate(),
-    tokenIndex,
-    amount,
-    poolId,
-    stableswapPoolVersion
-  );
+  const lpAmount = await estimateLpTokenOutput(tezos, poolContract, tokenIndex, amount, poolId);
 
   const investTransferParams = poolContract.methods
     .invest(stakedToken.fa2TokenId, lpAmount, michelsonAmounts, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)

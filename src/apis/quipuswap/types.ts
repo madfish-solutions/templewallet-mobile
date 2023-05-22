@@ -1,4 +1,4 @@
-import { BigMapAbstraction } from '@taquito/taquito';
+import { BigMapAbstraction, MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 export enum FarmVersionEnum {
@@ -12,7 +12,7 @@ export enum PoolType {
   DEX_TWO = 'DEX_TWO'
 }
 
-enum StableswapPoolVersion {
+export enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }
@@ -87,17 +87,39 @@ export interface FarmsListResponse {
   list: SingleFarmResponse[];
 }
 
+interface StableswapTokensInfoValue {
+  rate_f: BigNumber;
+  precision_multiplier_f: BigNumber;
+  reserves: BigNumber;
+}
+
+interface StableswapFee {
+  lp_f: BigNumber;
+  stakers_f: BigNumber;
+  ref_f: BigNumber;
+}
+
+interface StableswapStakerAccumulator {
+  accumulator_f: MichelsonMap<BigNumber, BigNumber>;
+  total_fees: MichelsonMap<BigNumber, BigNumber>;
+  total_staked: BigNumber;
+}
+
 export interface StableswapPoolsValue {
   initial_A_f: BigNumber;
   initial_A_time: string;
   future_A_f: BigNumber;
   future_A_time: string;
   total_supply: BigNumber;
+  tokens_info: MichelsonMap<BigNumber, StableswapTokensInfoValue>;
+  fee: StableswapFee;
+  staker_accumulator: StableswapStakerAccumulator;
 }
 
 export interface StableswapPoolStorage {
   storage: {
     tokens: BigMapAbstraction;
     pools: BigMapAbstraction;
+    factory_address: string;
   };
 }

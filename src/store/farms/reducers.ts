@@ -19,12 +19,6 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
 
   builder.addCase(loadSingleFarmActions.success, (state, { payload: newItem }) => {
-    console.log(
-      'x2',
-      { id: newItem.item.id, version: newItem.item.version },
-      state.farms.data.list.map(({ item: { id, version } }) => ({ id, version }))
-    );
-
     return {
       ...state,
       farms: createEntity({
