@@ -18,6 +18,7 @@ export interface Route3SwapParamsRequest {
   fromSymbol: string;
   toSymbol: string;
   amount: string;
+  chainsLimit?: number;
 }
 
 interface Route3Hop {

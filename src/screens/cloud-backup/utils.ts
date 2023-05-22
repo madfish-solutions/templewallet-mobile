@@ -18,7 +18,7 @@ export const alertOnExistingBackup = (
 
   const buttons: AlertButton[] = [
     {
-      text: 'Create a new backup',
+      text: 'Replace backup',
       onPress: onReplaceBackupPress
     },
     {

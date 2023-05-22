@@ -1,6 +1,6 @@
 name: Fastlane build
 
-run-name: Fastlane build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
+run-name: Fastlane build (v${{ github.event.inputs.github-release-version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
