@@ -11,12 +11,6 @@ import { FarmsListResponse, SingleFarmResponse, StableswapPoolStorage, Stableswa
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
 
-export const getSingleV3Farm = async (id: string) => {
-  const response = await stakingApi.get<SingleFarmResponse>(`/v3/multi-v2/${id}`);
-
-  return response.data;
-};
-
 export const getV3FarmsList = async () => {
   const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');
 
