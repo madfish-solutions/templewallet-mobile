@@ -8,7 +8,9 @@ export const OBJKT_CONTRACT = 'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC';
 
 export const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
 
-export const currencyInfoById: Record<number, CurrencyInfo> = {
+type CurrencyIdFromApi = number;
+
+export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
   23: {
     symbol: 'uUSD',
     decimals: 12,

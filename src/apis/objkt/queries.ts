@@ -42,6 +42,7 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
         bigmap_key
         currency_id
         price
+        marketplace_contract
       }
     }
   }

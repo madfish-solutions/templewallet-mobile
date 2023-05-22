@@ -17,21 +17,15 @@ import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from '../utils/swap-permissions.util';
 
-const OBJKT_MARKETPLACE_CONTRACT = 'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC';
 const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 
-interface Props {
-  bigmapKey: number;
-  marketplace: string;
-  tokenToSpend: Route3Token;
-}
-
-export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Props) => {
+export const useBuyCollectible = (marketplace: string) => {
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
 
   const selectedAccount = useSelectedAccountSelector();
+
   const dispatch = useDispatch();
 
   const [marketplaceContract, setMarketplaceContract] = useState<
@@ -40,13 +34,11 @@ export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Prop
 
   useEffect(() => {
     tezos.contract
-      .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(
-        marketplace ?? OBJKT_MARKETPLACE_CONTRACT
-      )
+      .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(marketplace)
       .then(setMarketplaceContract);
-  }, [tezos]);
+  }, []);
 
-  const handleBuyCollectible = async () => {
+  const handleBuyCollectible = async (bigmapKey: number, tokenToSpend: Route3Token, price: number) => {
     const transferParams = isDefined(marketplaceContract)
       ? OBJKT_BUY_METHOD in marketplaceContract?.methods
         ? [marketplaceContract.methods.fulfill_ask(bigmapKey).toTransferParams()]
@@ -55,10 +47,10 @@ export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Prop
 
     const { approve, revoke } = await getTransferPermissions(
       tezos,
-      marketplace ?? '',
+      marketplace,
       selectedAccount.publicKeyHash,
       tokenToSpend,
-      new BigNumber('0')
+      new BigNumber(price)
     );
 
     transferParams.unshift(...approve);
@@ -76,5 +68,5 @@ export const useBuyCollectible = ({ bigmapKey, marketplace, tokenToSpend }: Prop
     );
   };
 
-  return handleBuyCollectible;
+  return { handleBuyCollectible };
 };

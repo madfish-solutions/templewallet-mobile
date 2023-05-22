@@ -39,6 +39,7 @@ import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
+import { OBJKT_MARKETPLACE_CONTRACT } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -94,20 +95,28 @@ export const CollectibleModal = () => {
     const currentCurrency = currencyInfoById[currency_id];
 
     return { price, ...currentCurrency };
-  }, [listings_active]);
+  }, [collectibleInfo]);
 
-  const handleBuyCollectible = useBuyCollectible({
-    bigmapKey: isNonEmptyArray(listings_active) ? listings_active[0].bigmap_key : 0,
-    marketplace: isNonEmptyArray(listings_active) ? listings_active[0].marketplace_contract : '',
-    tokenToSpend: {
-      id: 0,
-      contract: purchaseCurrency.contract,
-      tokenId: purchaseCurrency.id,
-      decimals: collectible.decimals,
-      standard: Route3TokenStandardEnum.fa2,
-      symbol: purchaseCurrency.symbol
-    }
-  });
+  const contractParamsData = useMemo(
+    () => ({
+      bigmapKey: isNonEmptyArray(listings_active) ? listings_active[0].bigmap_key : 0,
+      marketplace: isNonEmptyArray(listings_active)
+        ? listings_active[0].marketplace_contract
+        : OBJKT_MARKETPLACE_CONTRACT,
+      price: purchaseCurrency.price,
+      tokenToSpend: {
+        id: 0,
+        contract: purchaseCurrency.contract,
+        tokenId: purchaseCurrency.id,
+        decimals: collectible.decimals,
+        standard: Route3TokenStandardEnum.fa2,
+        symbol: purchaseCurrency.symbol
+      }
+    }),
+    [collectibleInfo, purchaseCurrency, collectible]
+  );
+
+  const { handleBuyCollectible } = useBuyCollectible(contractParamsData.marketplace);
 
   const isAttributesExist = attributes.length > 0;
 
@@ -140,13 +149,13 @@ export const CollectibleModal = () => {
     return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
   }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
 
-  const handleSubmitButton = useCallback(() => {
+  const handleSubmitButton = useCallback(async () => {
     if (isUserOwnerCurrentCollectible) {
       return navigate(ModalsEnum.Send, { token: collectible });
     }
 
-    return handleBuyCollectible;
-  }, []);
+    handleBuyCollectible(contractParamsData.bigmapKey, contractParamsData.tokenToSpend, contractParamsData.price);
+  }, [isUserOwnerCurrentCollectible, collectible, contractParamsData]);
 
   return (
     <ScreenContainer
