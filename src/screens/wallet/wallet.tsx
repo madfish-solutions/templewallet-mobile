@@ -29,7 +29,8 @@ import {
   useVisibleAccountsListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
@@ -41,6 +42,7 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const { trackEvent } = useAnalytics();
 
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -68,7 +70,10 @@ export const Wallet = () => {
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
-            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+            onValueChange={value => {
+              trackEvent(WalletSelectors.accountDropdown, AnalyticsEventCategory.ButtonPress);
+              dispatch(setSelectedAccountAction(value?.publicKeyHash));
+            }}
           />
 
           <Divider />
