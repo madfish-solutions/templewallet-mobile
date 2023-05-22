@@ -1,74 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { HttpBackend, HttpRequestOptions, HttpRequestFailed, HttpResponseError } from '@taquito/http-utils';
+import { HttpBackend } from '@taquito/http-utils';
 import { RpcClient } from '@taquito/rpc';
-import axios from 'axios';
 import memoize from 'mem';
 
 import { isDefined } from '../is-defined';
+import { NoVespaiachHttpBackend } from './no-vespaiach-http-backend';
 
 interface RPCOptions {
   block: string;
-}
-
-enum ResponseType {
-  TEXT = 'text',
-  JSON = 'json'
-}
-
-const DEFAULT_QUERY_TIMEOUT = 30000;
-class NoVespaiachHttpBackend extends HttpBackend {
-  async createRequest<T>(
-    { url, method, timeout = DEFAULT_QUERY_TIMEOUT, query, headers = {}, json = true }: HttpRequestOptions,
-    data?: object | string
-  ) {
-    let resType: ResponseType;
-    let transformResponse = axios.defaults.transformResponse;
-
-    if (!headers['Content-Type']) {
-      headers['Content-Type'] = 'application/json';
-    }
-
-    if (!json) {
-      resType = ResponseType.TEXT;
-      transformResponse = [<Type>(v: Type) => v];
-    } else {
-      resType = ResponseType.JSON;
-    }
-
-    try {
-      const response = await axios.request<T>({
-        url: url + this.serialize(query),
-        method: method ?? 'GET',
-        headers,
-        responseType: resType,
-        transformResponse,
-        timeout: timeout,
-        data
-      });
-
-      return response.data;
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        let errorData;
-
-        if (typeof err.response.data === 'object') {
-          errorData = JSON.stringify(err.response.data);
-        } else {
-          errorData = err.response.data;
-        }
-
-        throw new HttpResponseError(
-          `Http error response: (${err.response.status}) ${errorData}`,
-          err.response.status,
-          err.response.statusText,
-          errorData as string,
-          url + this.serialize(query)
-        );
-      } else {
-        throw new HttpRequestFailed(`${method} ${url + this.serialize(query)} ${String(err)}`);
-      }
-    }
-  }
 }
 
 class FastRpcClient extends RpcClient {
