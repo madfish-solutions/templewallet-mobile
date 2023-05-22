@@ -12,7 +12,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { loadSingleFarmActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
+import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
 import { useFarmSelector, useFarmsLoadingSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -45,9 +45,9 @@ export const ManageFarmingPoolModal: FC = () => {
       return;
     }
 
-    dispatch(loadSingleFarmActions.submit({ id: params.id, version: params.version }));
+    dispatch(loadAllFarmsActions.submit());
     prevBlockLevelRef.current = blockLevel;
-  }, [blockLevel, farmLevel, dispatch, params.id, params.version]);
+  }, [blockLevel, farmLevel, dispatch]);
 
   useEffect(() => {
     if (isDefined(farm)) {

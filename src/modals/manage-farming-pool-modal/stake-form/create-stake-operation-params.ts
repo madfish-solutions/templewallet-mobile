@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { estimateLpTokenOutput } from 'src/apis/quipuswap';
+import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap';
 import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
@@ -49,7 +49,7 @@ export const createStakeOperationParams = async (
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
   michelsonAmounts.set(tokenIndex, amount);
 
-  const lpAmount = await estimateLpTokenOutput(tezos, poolContract, tokenIndex, amount, poolId);
+  const lpAmount = await estimateStableswapLpTokenOutput(tezos, poolContract, tokenIndex, amount, poolId);
 
   const investTransferParams = poolContract.methods
     .invest(stakedToken.fa2TokenId, lpAmount, michelsonAmounts, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)

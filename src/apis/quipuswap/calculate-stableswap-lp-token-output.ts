@@ -44,18 +44,18 @@ interface BalancingAccum {
   tokensInfoWithoutLp: TokenInfo[];
 }
 
-function xpMem(tokensInfo: TokenInfo[]): BigNumber[] {
+const xpMem = (tokensInfo: TokenInfo[]) => {
   return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(precision));
-}
+};
 
-function getA(
+const getA = (
   /** timestamp in seconds */
   t0: BigNumber,
   a0: BigNumber,
   /** timestamp in seconds */
   t1: BigNumber,
   a1: BigNumber
-) {
+) => {
   const nowTimestamp = new BigNumber(toIntegerSeconds(new Date()));
 
   if (nowTimestamp.lt(t1)) {
@@ -68,9 +68,9 @@ function getA(
   }
 
   return a1;
-}
+};
 
-function getD(xp: BigNumber[], ampF: BigNumber) {
+const getD = (xp: BigNumber[], ampF: BigNumber) => {
   const sumC = xp.reduce((accum, i) => accum.plus(i), new BigNumber(0));
   const tokensCount = new BigNumber(xp.length);
   const aNnF = ampF.times(tokensCount);
@@ -96,29 +96,24 @@ function getD(xp: BigNumber[], ampF: BigNumber) {
   }
 
   return d;
-}
+};
 
-function getDMem(tokensInfo: TokenInfo[], ampF: BigNumber) {
+const getDMem = (tokensInfo: TokenInfo[], ampF: BigNumber) => {
   return getD(xpMem(tokensInfo), ampF);
-}
+};
 
-function divideFeeForBalance(fee: BigNumber, tokensCount: BigNumber) {
+const divideFeeForBalance = (fee: BigNumber, tokensCount: BigNumber) => {
   return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(4));
-}
+};
 
-function nipFeesOffReserves(
-  stakersFee: BigNumber,
-  refFee: BigNumber,
-  devFee: BigNumber,
-  tokenInfo: TokenInfo
-): TokenInfo {
+const nipFeesOffReserves = (stakersFee: BigNumber, refFee: BigNumber, devFee: BigNumber, tokenInfo: TokenInfo) => {
   return {
     ...tokenInfo,
     reserves: tokenInfo.reserves.minus(stakersFee).minus(refFee).minus(devFee)
   };
-}
+};
 
-function balanceInputs(
+const balanceInputs = (
   initTokensInfo: TokenInfo[],
   d0: BigNumber,
   newTokensInfo: TokenInfo[],
@@ -127,8 +122,8 @@ function balanceInputs(
   fees: FeesStorage,
   devFeeF: BigNumber,
   accumulator: BalancingAccum
-) {
-  return newTokensInfo.reduce((accum, tokenInfo, i) => {
+) =>
+  newTokensInfo.reduce((accum, tokenInfo, i) => {
     const oldInfo = initTokensInfo[i];
     const idealBalance = d1.times(oldInfo.reserves).dividedToIntegerBy(d0);
     const diff = idealBalance.minus(tokenInfo.reserves).abs();
@@ -137,15 +132,15 @@ function balanceInputs(
     let toLp = diff.times(divideFeeForBalance(fees.lpF, tokensCount)).dividedToIntegerBy(feeDenominator);
     let toStakers = new BigNumber(0);
 
-    if (!accum.stakerAccumulator.totalStaked.eq(0)) {
+    if (accum.stakerAccumulator.totalStaked.isZero()) {
+      toLp = toLp.plus(diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(feeDenominator));
+    } else {
       toStakers = diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(feeDenominator);
       accum.stakerAccumulator.totalFees[i] = toStakers.plus(accum.stakerAccumulator.totalFees[i] ?? new BigNumber(0));
       accum.stakerAccumulator.accumulatorF[i] = toStakers
         .times(accumPrecision)
         .dividedToIntegerBy(accum.stakerAccumulator.totalStaked)
         .plus(accum.stakerAccumulator.accumulatorF[i] ?? new BigNumber(0));
-    } else {
-      toLp = toLp.plus(diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(feeDenominator));
     }
 
     const newTokenInfo = nipFeesOffReserves(toStakers, toRef, toDev, tokenInfo);
@@ -158,9 +153,13 @@ function balanceInputs(
 
     return accum;
   }, accumulator);
-}
 
-export function calculateLpTokenOutput(inputs: BigNumber[], pool: Pool, tokensCount: number, devFeeF: BigNumber) {
+export const calculateStableswapLpTokenOutput = (
+  inputs: BigNumber[],
+  pool: Pool,
+  tokensCount: number,
+  devFeeF: BigNumber
+) => {
   const ampF = getA(pool.initialATime, pool.initialAF, pool.futureATime, pool.futureAF);
   const initTokensInfo = pool.tokensInfo;
   const d0 = getDMem(initTokensInfo, ampF);
@@ -196,4 +195,4 @@ export function calculateLpTokenOutput(inputs: BigNumber[], pool: Pool, tokensCo
   }
 
   return d1;
-}
+};

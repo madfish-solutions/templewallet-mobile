@@ -12,7 +12,7 @@ export enum PoolType {
   DEX_TWO = 'DEX_TWO'
 }
 
-export enum StableswapPoolVersion {
+enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }

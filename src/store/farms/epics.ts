@@ -3,8 +3,7 @@ import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switc
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getSingleV3Farm, getV3FarmsList } from 'src/apis/quipuswap';
-import { FarmVersionEnum } from 'src/apis/quipuswap/types';
+import { getV3FarmsList } from 'src/apis/quipuswap';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,33 +13,14 @@ import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils'
 import { RootState } from '../create-store';
 import {
   loadAllFarmsActions,
+  loadAllFarmsAndStakesAction,
   loadAllStakesActions,
-  loadSingleFarmActions,
   loadSingleFarmStakeActions
 } from './actions';
 import { UserStakeValueInterface } from './state';
 import { getFarmStake, GetFarmStakeError } from './utils';
 
-const loadSingleFarm: Epic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadSingleFarmActions.submit),
-    switchMap(({ payload }) => {
-      const { id, version } = payload;
-
-      if (version === FarmVersionEnum.V3) {
-        return from(getSingleV3Farm(id)).pipe(map(response => loadSingleFarmActions.success(response)));
-      }
-
-      throw new Error(`Farm version ${version} is not supported yet`);
-    }),
-    catchError(err => {
-      showErrorToast({ description: getAxiosQueryErrorMessage(err) });
-
-      return of(loadSingleFarmActions.fail());
-    })
-  );
-
-const loadSingleFarmBalances: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
     withSelectedAccount(state$),
@@ -63,9 +43,24 @@ const loadSingleFarmBalances: Epic = (action$: Observable<Action>, state$: Obser
     })
   );
 
-const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarms: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadAllFarmsActions.submit),
+    switchMap(() =>
+      from(getV3FarmsList()).pipe(
+        map(farms => loadAllFarmsActions.success(farms)),
+        catchError(err => {
+          showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+
+          return of(loadAllFarmsActions.fail());
+        })
+      )
+    )
+  );
+
+const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadAllFarmsAndStakesAction),
     switchMap(() =>
       from(getV3FarmsList()).pipe(
         withSelectedAccount(state$),
@@ -101,4 +96,4 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     })
   );
 
-export const farmsEpics = combineEpics(loadSingleFarm, loadSingleFarmBalances, loadAllFarmsAndLastStake);
+export const farmsEpics = combineEpics(loadSingleFarmLastStake, loadAllFarms, loadAllFarmsAndLastStake);

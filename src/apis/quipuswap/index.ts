@@ -6,7 +6,7 @@ import { toIntegerSeconds } from 'src/utils/date.utils';
 import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { calculateLpTokenOutput } from './calculate-lp-token-output';
+import { calculateStableswapLpTokenOutput } from './calculate-stableswap-lp-token-output';
 import { FarmsListResponse, SingleFarmResponse, StableswapPoolStorage, StableswapPoolsValue } from './types';
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
@@ -29,7 +29,7 @@ const toArray = <T>(map: MichelsonMap<BigNumber, T>) =>
     .sort(([a], [b]) => a - b)
     .map(([, value]) => value);
 
-export const estimateLpTokenOutput = async (
+export const estimateStableswapLpTokenOutput = async (
   tezos: TezosToolkit,
   stableswapContract: ContractAbstraction<ContractProvider>,
   investedTokenIndex: number,
@@ -48,7 +48,7 @@ export const estimateLpTokenOutput = async (
     throw new Error(`Pool with id ${poolId} not found`);
   }
 
-  return calculateLpTokenOutput(
+  return calculateStableswapLpTokenOutput(
     Array(poolFromRpc.tokens_info.size)
       .fill(new BigNumber(0))
       .map((_, index) => (index === investedTokenIndex ? amount : new BigNumber(0))),
