@@ -8,8 +8,12 @@ const domainUriPrefix = 'https://madfish.page.link';
 export const getNftDynamicUrl = async (collectible: TokenInterface) =>
   await dynamicLinks().buildShortLink(
     {
-      link: `${domainUriPrefix}/nft?jsonData=${JSON.stringify(collectible)}`,
+      link: `${domainUriPrefix}/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
       domainUriPrefix,
+      ios: {
+        appStoreId: '1610108763',
+        bundleId: 'com.madfish.temple-wallet'
+      },
       android: {
         packageName: 'com.templewallet'
       },

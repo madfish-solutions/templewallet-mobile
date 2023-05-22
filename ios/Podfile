@@ -2,6 +2,9 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 $FirebaseSDKVersion = '8.15.0'
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
 
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
