@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React from 'react';
-import { Dimensions, View } from 'react-native';
+import React, { useCallback } from 'react';
+import { Dimensions, Share, View } from 'react-native';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
@@ -20,6 +20,7 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
+import { getNftDynamicUrl } from './utils/get-nft-dynamic-url';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -30,6 +31,12 @@ export const CollectibleModal = () => {
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={collectible.name} /> }, [collectible]);
+
+  const handleShare = useCallback(async () => {
+    await Share.share({
+      message: await getNftDynamicUrl(collectible)
+    });
+  }, []);
 
   return (
     <ScreenContainer isFullScreenMode={true}>
@@ -46,6 +53,8 @@ export const CollectibleModal = () => {
       </View>
       <View>
         <ButtonsContainer>
+          <ButtonMedium title="Share" iconName={IconNameEnum.Share} onPress={handleShare} />
+          <Divider />
           <ButtonMedium
             title="Send"
             iconName={IconNameEnum.ArrowUp}
