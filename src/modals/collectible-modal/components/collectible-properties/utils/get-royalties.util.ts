@@ -1,6 +1,8 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 
+import { mutezToTz } from '../../../../../utils/tezos.util';
+
 export const getRoyalties = (royalties: { amount: number; decimals: number }[]) => {
   if (!isNonEmptyArray(royalties)) {
     return null;
@@ -10,7 +12,7 @@ export const getRoyalties = (royalties: { amount: number; decimals: number }[]) 
 
   const amountBN = new BigNumber(amount ?? 0);
 
-  const result = `${Number(amountBN.dividedBy(10 ** decimals))}%`;
+  const result = `${mutezToTz(amountBN, decimals).multipliedBy(100).toFixed()}%`;
 
   return result;
 };

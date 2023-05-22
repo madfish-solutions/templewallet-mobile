@@ -5,6 +5,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SvgUri } from 'react-native-svg';
 
 import { currencyInfoById } from '../../apis/objkt/constants';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -39,7 +40,7 @@ import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
-import { OBJKT_MARKETPLACE_CONTRACT } from './constants';
+import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE, OBJKT_MARKETPLACE_CONTRACT } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -118,7 +119,9 @@ export const CollectibleModal = () => {
 
   const { handleBuyCollectible } = useBuyCollectible(contractParamsData.marketplace);
 
-  const isAttributesExist = attributes.length > 0;
+  const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
+
+  const isAttributesExist = filteredAttributes.length > 0;
 
   const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
 
@@ -157,6 +160,21 @@ export const CollectibleModal = () => {
     handleBuyCollectible(contractParamsData.bigmapKey, contractParamsData.tokenToSpend, contractParamsData.price);
   }, [isUserOwnerCurrentCollectible, collectible, contractParamsData]);
 
+  const collectionLogo = useMemo(() => {
+    if (fa.logo.endsWith('.svg')) {
+      return (
+        <SvgUri
+          uri={fa.logo}
+          height={COLLECTION_ICON_SIZE}
+          width={COLLECTION_ICON_SIZE}
+          style={styles.collectionLogo}
+        />
+      );
+    }
+
+    return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+  }, [fa.logo]);
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
@@ -180,11 +198,7 @@ export const CollectibleModal = () => {
           <Divider size={formatSize(12)} />
 
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? (
-              <FastImage style={styles.collectionLogo} source={{ uri: formatImgUri(fa.logo) }} />
-            ) : (
-              <View style={[styles.collectionLogo, styles.logoFallBack]} />
-            )}
+            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
             <Text numberOfLines={1} style={styles.collectionName}>
               {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
@@ -203,13 +217,14 @@ export const CollectibleModal = () => {
 
           {isNonEmptyArray(creators) && (
             <View style={styles.creatorsContainer}>
-              <Text style={styles.creatorsText}>Creators:</Text>
+              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
 
               {creators.map(({ holder }, index) => (
                 <LinkWithIcon
                   key={holder.address}
                   text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
                   link={getObjktProfileLink(holder.address)}
+                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
                   style={[
                     styles.linkWithIcon,
                     conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
@@ -242,7 +257,7 @@ export const CollectibleModal = () => {
           )}
 
           {!isLoading && !isPropertiesSelected && isAttributesExist && (
-            <CollectibleAttributes attributes={attributes} />
+            <CollectibleAttributes attributes={filteredAttributes} />
           )}
 
           <View style={styles.burnContainer}>

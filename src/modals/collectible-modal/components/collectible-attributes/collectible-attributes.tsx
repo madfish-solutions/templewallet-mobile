@@ -19,13 +19,12 @@ interface Props {
 export const CollectibleAttributes: FC<Props> = ({ attributes, style }) => {
   return (
     <View style={[styles.root, style]}>
-      {attributes.map(({ attribute }, index) => (
+      {attributes.map(({ attribute }) => (
         <CollectibleAttribute
           key={attribute.name}
           name={attribute.name}
           value={attribute.value}
           rarity={attribute.rarity ?? 0}
-          style={[index % 2 === 0 && styles.even]}
         />
       ))}
     </View>

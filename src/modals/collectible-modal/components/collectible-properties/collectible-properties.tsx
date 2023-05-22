@@ -64,7 +64,7 @@ export const CollectibleProperties: FC<Props> = ({
         },
         {
           name: 'Contract',
-          value: <LinkWithIcon text={contract} link={getTzktContractLink(contract)} />
+          value: <LinkWithIcon text={contract} link={getTzktContractLink(contract)} valueToClipboard={contract} />
         },
         {
           name: 'Metadata',
@@ -80,8 +80,8 @@ export const CollectibleProperties: FC<Props> = ({
 
   return (
     <View style={[styles.root, style]}>
-      {properties.map(({ name, value }, index) => (
-        <CollectibleProperty key={name} name={name} value={value} style={[index % 2 === 0 && styles.even]} />
+      {properties.map(({ name, value }) => (
+        <CollectibleProperty key={name} name={name} value={value} />
       ))}
     </View>
   );

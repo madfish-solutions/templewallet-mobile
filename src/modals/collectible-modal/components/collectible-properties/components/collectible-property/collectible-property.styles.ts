@@ -1,10 +1,10 @@
 import { createUseStyles } from '../../../../../../styles/create-use-styles';
 import { formatSize } from '../../../../../../styles/format-size';
-import { itemWidth } from '../../../../constants';
+import { COLLECTIBLE_WIDTH } from '../../../../constants';
 
 export const useCollectiblePropertyStyles = createUseStyles(({ colors, typography }) => ({
   root: {
-    width: itemWidth,
+    width: COLLECTIBLE_WIDTH,
     marginBottom: formatSize(8),
     paddingHorizontal: formatSize(12),
     paddingVertical: formatSize(8),
