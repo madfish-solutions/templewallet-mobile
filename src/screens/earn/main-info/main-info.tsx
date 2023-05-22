@@ -1,8 +1,9 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { isEmptyArray } from 'formik';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -66,7 +67,12 @@ export const MainInfo: FC = () => {
     return result;
   }, [farms]);
 
-  const areAnyRewards = totalClaimableRewardsInUsd.isGreaterThan(DEFAULT_AMOUNT);
+  const areAllRewardsClaimable = useMemo(() => {
+    const stakes = Object.values(farms.lastStakes);
+    const now = Date.now();
+
+    return !isEmptyArray(stakes) && stakes.every(stake => (stake.rewardsDueDate ?? DEFAULT_AMOUNT) > now);
+  }, [farms.lastStakes]);
 
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
@@ -96,23 +102,7 @@ export const MainInfo: FC = () => {
       kind: OpKind.TRANSACTION
     }));
 
-    if (Object.values(farms.lastStakes).find(stake => (stake.rewardsDueDate ?? 0) > Date.now())) {
-      Alert.alert(
-        'Are you sure?',
-        'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel'
-          },
-          {
-            text: 'Claim rewards',
-            style: 'destructive',
-            onPress: () => navigateHarvestFarm(opParams)
-          }
-        ]
-      );
-    } else {
+    if (areAllRewardsClaimable) {
       navigateHarvestFarm(opParams);
     }
   };
@@ -132,11 +122,11 @@ export const MainInfo: FC = () => {
       </View>
       <ButtonLargePrimary
         title={
-          areAnyRewards
+          areAllRewardsClaimable
             ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
             : 'EARN TO CLAIM REWARDS'
         }
-        disabled={!areAnyRewards}
+        disabled={!areAllRewardsClaimable}
         onPress={claimAllRewards}
       />
     </View>

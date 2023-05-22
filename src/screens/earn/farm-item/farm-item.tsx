@@ -82,7 +82,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
         farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
       ),
-    [lastStakeRecord?.depositAmountAtomic]
+    [lastStakeRecord?.depositAmountAtomic, farm.item.depositExchangeRate]
   );
   const claimableRewardsAtomic = useMemo(
     () =>
@@ -90,7 +90,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
         farm.item.rewardToken.metadata.decimals
       ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards]
+    [lastStakeRecord?.claimableRewards, farm]
   );
 
   const navigateToFarm = useCallback(
@@ -138,7 +138,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         navigateHarvestFarm(opParams);
       }
     }
-  }, [lastStakeRecord?.lastStakeId, farm.item.contractAddress]);
+  }, [lastStakeRecord, farm.item.contractAddress]);
 
   return (
     <View style={styles.root}>
