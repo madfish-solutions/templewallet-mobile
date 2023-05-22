@@ -55,41 +55,6 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
   );
 };
 
-interface CollectibleInfoQueryResponse {
-  token: {
-    description: string;
-    creators: {
-      holder: {
-        address: string;
-        tzdomain: string;
-      };
-    }[];
-    fa: {
-      name: string;
-      logo: string;
-    };
-  }[];
-}
-
-export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
-  const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
-
-  return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
-    map(result => {
-      const { description, creators, fa } = result.token[0];
-
-      return {
-        description,
-        creators,
-        collection: {
-          name: fa.name,
-          logo: fa.logo
-        }
-      };
-    })
-  );
-};
-
 const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
     fa(where: { creator_address: { _eq: "${address}" } }) {
@@ -114,24 +79,6 @@ const buildGetHoldersInfoQuery = (address: string) => gql`
       twitter
       tzdomain
       website
-    }
-  }
-`;
-
-const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
-  query MyQuery {
-    token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${tokenId}" } }) {
-      description
-      creators {
-        holder {
-          address
-          tzdomain
-        }
-      }
-      fa {
-        name
-        logo
-      }
     }
   }
 `;
