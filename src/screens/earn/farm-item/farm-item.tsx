@@ -1,6 +1,7 @@
+import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
@@ -68,19 +69,44 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
     [farm.item.id]
   );
-
-  const harvestAssetsApi = useCallback(async () => {
-    const lastStakeId = lastStakeRecord?.lastStakeId;
-    if (isDefined(lastStakeId)) {
+  const navigateHarvestFarm = useCallback(
+    (opParams: Array<ParamsWithKind>) =>
       dispatch(
         navigateAction(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
-          opParams: await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId),
+          opParams,
           testID: 'CLAIM_REWARDS'
         })
-      );
+      ),
+    []
+  );
+
+  const lastStakeId = lastStakeRecord?.lastStakeId;
+  const harvestAssetsApi = useCallback(async () => {
+    if (isDefined(lastStakeId)) {
+      const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
+
+      if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
+        Alert.alert(
+          'Are you sure?',
+          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel'
+            },
+            {
+              text: 'Claim rewards',
+              style: 'destructive',
+              onPress: () => navigateHarvestFarm(opParams)
+            }
+          ]
+        );
+      } else {
+        navigateHarvestFarm(opParams);
+      }
     }
-  }, [lastStakeRecord?.lastStakeId, farm.item.contractAddress, tezos]);
+  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item.contractAddress, tezos]);
 
   return (
     <View style={styles.root}>

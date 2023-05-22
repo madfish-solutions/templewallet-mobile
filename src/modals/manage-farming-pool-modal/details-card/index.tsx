@@ -47,7 +47,7 @@ const COUNTDOWN_TOKENS_BASE = [
 ];
 
 export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE }) => {
-  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', ageTimestamp, lastStakeId } = stake;
+  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const {
     stakedToken,
     depositExchangeRate,
@@ -90,11 +90,8 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
   }, [lastStakeId, dispatch, contractAddress, tezos]);
 
   const getMsToVestingEnd = useCallback(
-    () =>
-      isDefined(ageTimestamp)
-        ? Math.max(0, new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000 - Date.now())
-        : 0,
-    [ageTimestamp, vestingPeriodSeconds]
+    () => (isDefined(rewardsDueDate) ? Math.max(0, rewardsDueDate - Date.now()) : 0),
+    [rewardsDueDate, vestingPeriodSeconds]
   );
   const [msToVestingEnd, setMsToVestingEnd] = useState(getMsToVestingEnd());
   useInterval(
