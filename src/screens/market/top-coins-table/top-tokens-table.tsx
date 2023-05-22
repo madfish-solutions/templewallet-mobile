@@ -57,6 +57,7 @@ export const TopTokensTable = () => {
           style={styles.promotion}
           testID={MarketSelectors.promotion}
           onImageError={() => setPromotionErrorOccurred(true)}
+          onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
         />
       )}
       <Filters
