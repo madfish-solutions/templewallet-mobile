@@ -26,6 +26,7 @@ import {
   SECONDS_IN_MINUTE,
   toIntegerSeconds
 } from 'src/utils/date.utils';
+import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -68,27 +69,6 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
-  const claimRewards = useCallback(async () => {
-    if (!isDefined(lastStakeId)) {
-      return;
-    }
-
-    try {
-      setClaimPending(true);
-      dispatch(
-        navigateAction(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams: await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId),
-          testID: 'CLAIM_REWARDS'
-        })
-      );
-    } catch (e) {
-      showErrorToastByError(e);
-    } finally {
-      setClaimPending(false);
-    }
-  }, [lastStakeId, dispatch, contractAddress, tezos]);
-
   const getMsToVestingEnd = useCallback(
     () => (isDefined(rewardsDueDate) ? Math.max(0, rewardsDueDate - Date.now()) : 0),
     [rewardsDueDate, vestingPeriodSeconds]
@@ -115,6 +95,39 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
       })),
     [secondsToVestingEnd]
   );
+
+  const claimRewardsIfConfirmed = useCallback(() => {
+    if (!isDefined(lastStakeId)) {
+      return;
+    }
+
+    const claimRewards = async () => {
+      try {
+        setClaimPending(true);
+        dispatch(
+          navigateAction(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams: await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId),
+            testID: 'CLAIM_REWARDS'
+          })
+        );
+      } catch (e) {
+        showErrorToastByError(e);
+      } finally {
+        setClaimPending(false);
+      }
+    };
+
+    if (msToVestingEnd > 0) {
+      doAfterConfirmation(
+        'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
+        'Claim rewards',
+        claimRewards
+      );
+    } else {
+      void claimRewards();
+    }
+  }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd]);
 
   const depositAmount = useMemo(
     () => mutezToTz(new BigNumber(depositAmountAtomic), stakedTokenDecimals),
@@ -178,7 +191,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
         disabled={claimableRewardAmount.isZero() || claimPending}
         title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
         testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
-        onPress={claimRewards}
+        onPress={claimRewardsIfConfirmed}
       />
     </View>
   );
