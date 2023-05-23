@@ -42,7 +42,6 @@ export const ManageFarmingPoolModal: FC = () => {
 
   useEffect(() => {
     if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {
-      console.log('load all farms');
       dispatch(loadAllFarmsActions.submit());
     }
 
