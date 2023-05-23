@@ -43,8 +43,15 @@
               <action android:name="android.intent.action.VIEW"/>
               <category android:name="android.intent.category.DEFAULT"/>
               <category android:name="android.intent.category.BROWSABLE"/>
-              <data android:scheme="https" android:host="madfish.page.link"/>
-              <data android:scheme="http"  android:host="madfish.page.link"/>
+              <data android:scheme="https" android:host="templenft.page.link"/>
+              <data android:scheme="http"  android:host="templenft.page.link"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+              <action android:name="android.intent.action.VIEW"/>
+              <category android:name="android.intent.category.DEFAULT"/>
+              <category android:name="android.intent.category.BROWSABLE"/>
+              <data android:scheme="https" android:host="link.templewallet.com"/>
+              <data android:scheme="http"  android:host="link.templewallet.com"/>
             </intent-filter>
         </activity>
     </application>

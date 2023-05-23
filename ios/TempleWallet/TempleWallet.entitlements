@@ -4,7 +4,8 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:madfish.page.link</string>
+		<string>applinks:templenft.page.link</string>
+		<string>applinks:link.templewallet.com</string>
 	</array>
 	<key>com.apple.developer.devicecheck.appattest-environment</key>
 	<string>production</string>
