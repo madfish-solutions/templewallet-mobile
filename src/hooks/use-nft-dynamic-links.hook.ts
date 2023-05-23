@@ -31,14 +31,16 @@ export const useNFTDynamicLinks = () => {
   const { navigate } = useNavigation();
 
   const handleDynamicLinks = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
-    if (isAuthorised && link) {
-      const collectible = decodeNFTJsonData(link.url);
+    if (link) {
+      if (isAuthorised) {
+        const collectible = decodeNFTJsonData(link.url);
 
-      if (collectible) {
-        navigate(ModalsEnum.CollectibleModal, { collectible });
+        if (collectible) {
+          navigate(ModalsEnum.CollectibleModal, { collectible });
+        }
+      } else {
+        showErrorToast({ description: NOT_AUTHORISED_ERROR_MESSAGE });
       }
-    } else {
-      showErrorToast({ description: NOT_AUTHORISED_ERROR_MESSAGE });
     }
   };
 
