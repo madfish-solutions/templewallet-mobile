@@ -31,24 +31,23 @@ export const ManageFarmingPoolModal: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool>>().params;
   const styles = useManageFarmingPoolModalStyles();
   const blockLevel = useBlockLevel();
-  const prevBlockLevelRef = useRef<number | undefined>(-1);
+  const prevBlockLevelRef = useRef(blockLevel);
   const dispatch = useDispatch();
   const farm = useFarmSelector(params.id, params.version);
   const farmIsLoading = useFarmsLoadingSelector();
-  const farmLevel = farm?.blockInfo.level;
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
   const pageIsLoading = farmIsLoading && !isDefined(farm);
   const theme = useThemeSelector();
 
   useEffect(() => {
-    if (prevBlockLevelRef.current === blockLevel || (isDefined(farmLevel) && farmLevel === blockLevel)) {
-      return;
+    if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {
+      console.log('load all farms');
+      dispatch(loadAllFarmsActions.submit());
     }
 
-    dispatch(loadAllFarmsActions.submit());
     prevBlockLevelRef.current = blockLevel;
-  }, [blockLevel, farmLevel, dispatch]);
+  }, [blockLevel, farm, dispatch]);
 
   useEffect(() => {
     if (isDefined(farm)) {

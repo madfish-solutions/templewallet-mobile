@@ -1,6 +1,8 @@
 import { Alert } from 'react-native';
 
-export const doAfterConfirmation = (description: string, actionName: string, onConfirm: () => void) =>
+import { EmptyFn } from 'src/config/general';
+
+export const doAfterConfirmation = (description: string, actionName: string, onConfirm: EmptyFn) =>
   Alert.alert('Are you sure?', description, [
     {
       text: actionName,

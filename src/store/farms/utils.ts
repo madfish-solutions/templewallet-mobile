@@ -7,6 +7,8 @@ import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getBalance } from 'src/utils/token-balance.utils';
 
+import { UserStakeValueInterface } from './state';
+
 export interface RawStakeValue {
   lastStakeId: string;
   depositAmountAtomic: string;
@@ -21,7 +23,10 @@ export class GetFarmStakeError extends Error {
   }
 }
 
-export const toUserStakeValueInterface = (stake: RawStakeValue, vestingPeriodSeconds: string) => {
+export const toUserStakeValueInterface = (
+  stake: RawStakeValue,
+  vestingPeriodSeconds: string
+): UserStakeValueInterface => {
   const { ageTimestamp, ...rest } = stake;
 
   return {

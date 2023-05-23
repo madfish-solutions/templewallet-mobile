@@ -19,13 +19,8 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
-import {
-  APPROXIMATE_DAYS_IN_YEAR,
-  SECONDS_IN_DAY,
-  SECONDS_IN_HOUR,
-  SECONDS_IN_MINUTE,
-  toIntegerSeconds
-} from 'src/utils/date.utils';
+import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
+import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -59,7 +54,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
     contractAddress
   } = farm;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
-  const apy = ((1 + Number(apr) / 100 / APPROXIMATE_DAYS_IN_YEAR) ** APPROXIMATE_DAYS_IN_YEAR - 1) * 100;
+  const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
   const [claimPending, setClaimPending] = useState(false);
   const styles = useDetailsCardStyles();
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
@@ -146,7 +141,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
     <View style={styles.root}>
       <View style={styles.title}>
         <FarmTokens {...farmTokens} />
-        <Text style={styles.apyLabel}>APY: {apy.toFixed(2)}%</Text>
+        <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>
@@ -177,7 +172,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
               {countdownTokens.map(({ unit, value }) => (
                 <React.Fragment key={unit}>
                   {value}
-                  <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                  <Text style={styles.timespanUnit}>{unit}</Text>
                 </React.Fragment>
               ))}
             </Text>
