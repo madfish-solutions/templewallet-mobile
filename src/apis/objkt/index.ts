@@ -7,6 +7,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { apolloObjktClient, currencyInfoById } from './constants';
+import { MarketPlaceEventEnum } from './enums';
 import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetCollectiblesByCollectionQuery,
@@ -64,30 +65,40 @@ export const fetchCollectiblesByCollection$ = (
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
     map(result => {
-      const collectiblesArray = result.token.map(token => {
-        const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
-        const highestOffer = correctOffers[correctOffers.length - 1];
-        const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
+      const collectiblesArray = result.token
+        .map(token => {
+          const buyEvents = token.events.filter(
+            ({ marketplace_event_type }) =>
+              marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
+              marketplace_event_type === MarketPlaceEventEnum.listBuy ||
+              marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
+              marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept
+          );
+          const lastPrice = buyEvents?.[buyEvents.length - 1]?.price_xtz;
+          const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
+          const highestOffer = correctOffers[correctOffers.length - 1];
+          const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
 
-        return {
-          artifactUri: token.artifact_uri,
-          balance: '1',
-          decimals: currency.decimals,
-          description: token.description,
-          displayUri: token.display_uri,
-          address: token.fa_contract,
-          highestOffer: highestOffer,
-          name: token.name,
-          metadata: token.metadata,
-          lowestAsk: token.lowest_ask,
-          symbol: currency.symbol,
-          thumbnailUri: token.thumbnail_uri,
-          id: Number(token.token_id),
-          visibility: VisibilityEnum.Visible,
-          editions: token.supply,
-          holders: token.holders
-        };
-      });
+          return {
+            artifactUri: token.artifact_uri,
+            balance: '1',
+            decimals: currency.decimals,
+            description: token.description,
+            displayUri: token.display_uri,
+            address: token.fa_contract,
+            highestOffer: highestOffer,
+            name: token.name,
+            metadata: token.metadata,
+            lowestAsk: token.lowest_ask,
+            symbol: currency.symbol,
+            thumbnailUri: token.thumbnail_uri,
+            id: Number(token.token_id),
+            visibility: VisibilityEnum.Visible,
+            editions: token.supply,
+            lastPrice
+          };
+        })
+        .filter(collectible => collectible.editions !== 0);
 
       return collectiblesArray;
     })

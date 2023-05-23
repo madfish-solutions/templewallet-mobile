@@ -35,6 +35,7 @@ export interface TokenMetadataInterface {
   metadata?: string;
   editions?: number;
   holders?: HolderAddress[];
+  lastPrice?: number | null;
 
   // Stored as separate Record
   exchangeRate?: number;

@@ -1,7 +1,9 @@
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { HolderAddress, Offer } from 'src/token/interfaces/token-metadata.interface';
 
-export interface CollectibleResponse {
+import { MarketPlaceEventEnum } from './enums';
+
+interface CollectibleResponse {
   artifact_uri: string;
   description: string;
   decimals: number;
@@ -19,6 +21,10 @@ export interface CollectibleResponse {
   token_id: string;
   holders: HolderAddress[];
   offers_active: Offer[];
+  events: {
+    marketplace_event_type: MarketPlaceEventEnum;
+    price_xtz: number | null;
+  }[];
 }
 
 export interface QueryResponse {

@@ -97,8 +97,17 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
     );
   };
 
+  if (item.address === '') {
+    return <View style={styles.emptyBlock} />;
+  }
+
   return (
     <View style={styles.collectibleContainer}>
+      {isDefined(item.lowestAsk) && (
+        <View style={styles.listed}>
+          <Text style={styles.listedText}>LISTED</Text>
+        </View>
+      )}
       <View style={styles.collectible}>
         <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
         <Text style={styles.collectibleName} numberOfLines={1}>
@@ -110,7 +119,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
         <View style={styles.infoContainer}>
           <View style={styles.containerRight}>
             <View style={styles.smallContainer}>
-              <Text style={styles.text}>Floor Price</Text>
+              <Text style={styles.text}>Last Price</Text>
               <Text style={styles.value}>{price}</Text>
             </View>
           </View>

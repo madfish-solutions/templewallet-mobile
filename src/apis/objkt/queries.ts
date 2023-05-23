@@ -34,6 +34,7 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
     description
     display_uri
     decimals
+    fa_contract
     highest_offer
     is_boolean_amount
     last_listed
@@ -58,6 +59,12 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
         fa_contract
         currency_id
       }
+    events {
+      event_type
+      marketplace_event_type
+      price_xtz
+      timestamp
+    }
   }
 }`;
 export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
