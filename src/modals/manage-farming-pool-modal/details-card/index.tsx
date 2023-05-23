@@ -172,7 +172,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
               {countdownTokens.map(({ unit, value }) => (
                 <React.Fragment key={unit}>
                   {value}
-                  <Text style={styles.timespanUnit}>{unit}</Text>
+                  <Text style={styles.timespanUnit}>{unit}</Text>{' '}
                 </React.Fragment>
               ))}
             </Text>
