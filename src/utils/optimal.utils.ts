@@ -5,7 +5,8 @@ export enum OptimalPromotionAdType {
   TwToken = 'tw-token'
 }
 
-export interface OptimalPromotionInterface {
+type EmptyPromotion = Record<string, undefined>;
+type NormalPromotion = {
   body: string;
   campaign_type: string;
   copy: {
@@ -23,15 +24,35 @@ export interface OptimalPromotionInterface {
   text: string;
   view_time_url: string;
   view_url: string;
+};
+
+export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
+
+export function isEmptyPromotion(promotion: OptimalPromotionType): promotion is EmptyPromotion {
+  return !('link' in promotion && 'image' in promotion && 'copy' in promotion);
+}
+
+function assertIsObject(likelyAnObject: unknown): void {
+  const isLikelyAnObject =
+    typeof likelyAnObject === 'object' && likelyAnObject !== null && !Array.isArray(likelyAnObject);
+
+  if (!isLikelyAnObject) {
+    throw new Error('Received value is not an object');
+  }
 }
 
 export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
   optimalApi
-    .get<OptimalPromotionInterface>('api/v1/decision', {
+    .get<OptimalPromotionType>('api/v1/decision', {
       params: {
         publisher: 'templewallet', // your-publisher-slug
         ad_types: adType,
         div_ids: 'ad'
       }
     })
-    .then(response => response.data);
+    .then(response => {
+      const { data } = response;
+      assertIsObject(data);
+
+      return data;
+    });

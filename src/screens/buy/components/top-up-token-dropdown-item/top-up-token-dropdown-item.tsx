@@ -60,7 +60,8 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
 
       return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
     }, [token]);
-    const tokenCodeToDisplay = token?.code === 'XTZ' ? 'TEZ' : token?.code;
+    const codeFromToken = token?.codeToDisplay ?? token?.code;
+    const tokenCodeToDisplay = codeFromToken === 'XTZ' ? 'TEZ' : codeFromToken;
 
     return (
       <View style={[styles.row, styles.height40]}>
