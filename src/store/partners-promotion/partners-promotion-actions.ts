@@ -1,10 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { OptimalPromotionAdType, OptimalPromotionInterface } from 'src/utils/optimal.utils';
+import { OptimalPromotionAdType, OptimalPromotionType } from 'src/utils/optimal.utils';
 
 import { createActions } from '../create-actions';
 
-export const loadPartnersPromoActions = createActions<OptimalPromotionAdType, OptimalPromotionInterface, string>(
+export const loadPartnersPromoActions = createActions<OptimalPromotionAdType, OptimalPromotionType, string>(
   'partnersPromo/LOAD_PARTNERS_PROMOTION'
 );
 

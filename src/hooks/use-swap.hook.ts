@@ -23,27 +23,28 @@ export const useSwap = () => {
 
   return useCallback(
     async (
-      fromToken: Route3Token,
-      toToken: Route3Token,
+      fromRoute3Token: Route3Token,
+      toRoute3Token: Route3Token,
       inputAmountAtomic: BigNumber,
-      minimumReceivedAmountAtomic: BigNumber,
+      minimumReceivedAtomic: BigNumber,
       chains: Array<Route3Chain>
     ) => {
-      if (!swapContract) {
+      if (swapContract === undefined) {
         return;
       }
+
       const resultParams: Array<TransferParams> = [];
 
       const swapOpParams = swapContract.methods.execute(
-        fromToken.id,
-        toToken.id,
-        minimumReceivedAmountAtomic,
+        fromRoute3Token.id,
+        toRoute3Token.id,
+        minimumReceivedAtomic,
         selectedAccount.publicKeyHash,
-        mapToRoute3ExecuteHops(chains, fromToken.decimals),
+        mapToRoute3ExecuteHops(chains, fromRoute3Token.decimals),
         APP_ID
       );
 
-      if (fromToken.symbol === 'XTZ') {
+      if (fromRoute3Token.symbol.toLowerCase() === 'xtz') {
         resultParams.push(
           swapOpParams.toTransferParams({
             amount: inputAmountAtomic.toNumber(),
@@ -58,7 +59,7 @@ export const useSwap = () => {
         tezos,
         ROUTE3_CONTRACT,
         selectedAccount.publicKeyHash,
-        fromToken,
+        fromRoute3Token,
         inputAmountAtomic
       );
 

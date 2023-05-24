@@ -119,6 +119,7 @@ export const TokensList: FC = () => {
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={TokenListSelectors.promotion}
+                onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
                 onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>

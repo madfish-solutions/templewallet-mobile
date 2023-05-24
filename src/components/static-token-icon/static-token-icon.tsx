@@ -3,7 +3,7 @@ import { StyleProp, View } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
-import { MOONPAY_ASSETS_BASIC_URL } from 'src/apis/moonpay/consts';
+import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import { isIOS } from 'src/config/system';
 import { formatSizeScaled } from 'src/styles/format-size';
 
@@ -33,7 +33,7 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
     () => ({ display: isFailed || isLoading ? 'none' : 'flex' }),
     [isFailed, isLoading]
   );
-  const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASIC_URL);
+  const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASE_URL);
   const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
 
   const handleLoad = useCallback(() => {
