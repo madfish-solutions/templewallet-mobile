@@ -44,7 +44,7 @@ export const useNFTDynamicLinks = () => {
     }
   };
 
-  const getAppLaunchLink = async () => {
+  const handleAppLaunchLink = async () => {
     const { isAvailable } = utils().playServicesAvailability;
 
     if (isAvailable) {
@@ -55,7 +55,7 @@ export const useNFTDynamicLinks = () => {
 
   useEffect(() => {
     (async () => {
-      await getAppLaunchLink();
+      await handleAppLaunchLink();
     })();
   }, []);
 
