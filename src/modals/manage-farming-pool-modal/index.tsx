@@ -42,10 +42,9 @@ export const ManageFarmingPoolModal: FC = () => {
 
   useEffect(() => {
     if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {
+      prevBlockLevelRef.current = blockLevel;
       dispatch(loadAllFarmsActions.submit());
     }
-
-    prevBlockLevelRef.current = blockLevel;
   }, [blockLevel, farm, dispatch]);
 
   useEffect(() => {
