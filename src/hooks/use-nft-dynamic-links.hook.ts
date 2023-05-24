@@ -30,7 +30,7 @@ export const useNFTDynamicLinks = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { navigate } = useNavigation();
 
-  const handleDynamicLinks = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
+  const handleDynamicLinks = (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
     if (link) {
       if (isAuthorised) {
         const collectible = decodeNFTJsonData(link.url);
@@ -54,9 +54,7 @@ export const useNFTDynamicLinks = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      await handleAppLaunchLink();
-    })();
+    handleAppLaunchLink();
   }, []);
 
   useEffect(() => {
