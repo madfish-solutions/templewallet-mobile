@@ -4,7 +4,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsActions } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
@@ -25,7 +24,7 @@ export const Earn: FC = () => {
   }, []);
 
   return (
-    <ScreenContainer>
+    <>
       {farms.isLoading ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
@@ -35,6 +34,6 @@ export const Earn: FC = () => {
           renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
         />
       )}
-    </ScreenContainer>
+    </>
   );
 };

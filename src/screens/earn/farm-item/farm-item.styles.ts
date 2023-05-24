@@ -1,15 +1,14 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { black } from 'src/config/styles';
+import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
+    ...generateShadow(2, black),
     borderRadius: formatSize(10),
-    backgroundColor: colors.white,
-    shadowColor: 'rgba(0, 0, 0, 0.4)',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: formatSize(4),
-    marginBottom: formatSize(8)
+    backgroundColor: colors.cardBG,
+    marginHorizontal: formatSize(16)
   },
   mainContent: {
     paddingHorizontal: formatSize(12),
@@ -33,7 +32,7 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.black
   },
   apyText: {
-    ...typography.body15Semibold,
+    ...typography.caption13Semibold,
     color: colors.black
   },
   tokensContainer: {
@@ -51,6 +50,64 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
     marginBottom: formatSize(16)
   },
   earnSource: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
+  flex: {
+    flex: 1
+  },
+  earnSourceIcon: {
+    marginRight: formatSize(2)
+  }
+}));
+
+export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
+  containerStyle: {
+    flex: 1,
+    height: formatSize(38),
+    borderRadius: formatSize(10),
+    borderWidth: formatSize(2)
+  },
+  titleStyle: {
+    ...typography.tagline13Tag
+  },
+  iconStyle: {
+    size: formatSize(24),
+    marginRight: formatSize(8)
+  },
+  activeColorConfig: {
+    titleColor: colors.white,
+    backgroundColor: colors.orange
+  },
+  disabledColorConfig: {
+    titleColor: colors.white,
+    backgroundColor: colors.disabled
+  }
+}));
+
+export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
+  containerStyle: {
+    flex: 1,
+    width: formatSize(156),
+    height: formatSize(38),
+    borderRadius: formatSize(10),
+    borderWidth: formatSize(2)
+  },
+  titleStyle: {
+    ...typography.tagline13Tag
+  },
+  iconStyle: {
+    size: formatSize(24),
+    marginRight: formatSize(8)
+  },
+  activeColorConfig: {
+    titleColor: colors.orange,
+    backgroundColor: colors.white,
+    borderColor: colors.orange
+  },
+  disabledColorConfig: {
+    titleColor: colors.white,
+    backgroundColor: colors.disabled
   }
 }));

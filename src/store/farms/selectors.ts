@@ -17,7 +17,9 @@ export const useAllFarmsSelector = () => {
   const farms = useSelector(({ farms }) => farms.allFarms);
 
   return useMemo(() => {
-    const data = farms.data.filter(farm => farm.item.type === PoolType.STABLESWAP);
+    const data = farms.data.filter(
+      farm => farm.item.type === PoolType.STABLESWAP && farm.item.dailyDistribution !== '0'
+    );
 
     return {
       data,

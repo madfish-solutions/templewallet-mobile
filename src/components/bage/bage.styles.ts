@@ -9,7 +9,7 @@ export const useBageStyles = createUseStyles(({ colors, typography }) => ({
     borderBottomRightRadius: formatSize(10)
   },
   text: {
-    ...typography.caption13Semibold,
+    ...typography.caption11Semibold,
     color: 'white',
     lineHeight: formatSize(18),
     letterSpacing: formatSize(-0.08),
