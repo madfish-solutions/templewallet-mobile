@@ -1,3 +1,18 @@
+/* eslint-disable import/no-duplicates */
+import { formatDistanceToNowStrict } from 'date-fns';
+import { enGB } from 'date-fns/locale';
+
+type FormatOptions = typeof formatDistanceToNowStrict extends (...args: infer T) => unknown ? T[1] : never;
+
+export const formatTimespan = (timespanMs: number, formatOptionsOverrides?: FormatOptions) => {
+  const now = Date.now();
+
+  return formatDistanceToNowStrict(now + timespanMs, {
+    locale: enGB,
+    ...formatOptionsOverrides
+  });
+};
+
 export const isTheSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&

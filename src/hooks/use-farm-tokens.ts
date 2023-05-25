@@ -1,35 +1,49 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { Farm } from 'src/apis/quipuswap-staking/types';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { FarmToken } from 'src/interfaces/earn.interface';
+import { Farm, FarmToken } from 'src/apis/quipuswap-staking/types';
+import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import {
+  useAssetsListSelector,
+  useSelectedAccountSelector,
+  useTezosTokenSelector
+} from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { convertFarmToken } from 'src/utils/staking.utils';
 
-export const useFarmTokens = (farm: Farm) => {
-  const rewardToken: FarmToken = useMemo(
-    () => ({
-      symbol: farm.rewardToken.metadata.symbol,
-      thumbnailUri: farm.rewardToken.metadata.thumbnailUri
-    }),
-    [farm]
-  );
+export const useFarmTokens = (farm?: Farm) => {
+  const getExchangeRate = useTokenExchangeRateGetter();
+  const accountAssetsList = useAssetsListSelector();
+  const { publicKeyHash: accountPkh } = useSelectedAccountSelector();
+  const tezToken = useTezosTokenSelector(accountPkh);
 
-  const stakeTokens = useMemo(
-    () =>
-      farm.tokens.map(token => {
-        const result: FarmToken = {
-          symbol: token.metadata.symbol,
-          thumbnailUri: token.metadata.thumbnailUri
-        };
+  const convertToken = useCallback(
+    (token: FarmToken) => {
+      const tokenAddress = token.contractAddress === 'tez' ? undefined : token.contractAddress;
+      const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
+      const accountAsset =
+        tokenSlug === TEZ_TOKEN_SLUG
+          ? tezToken
+          : accountAssetsList.find(({ address, id }) => toTokenSlug(address, id) === tokenSlug);
 
-        if (token.metadata.symbol.toLowerCase() === TEZ_TOKEN_SLUG) {
-          result.iconName = IconNameEnum.TezToken;
+      return (
+        accountAsset ?? {
+          ...convertFarmToken(token),
+          exchangeRate: getExchangeRate(tokenSlug),
+          balance: '0'
         }
-
-        return result;
-      }),
-    [farm]
+      );
+    },
+    [getExchangeRate, accountAssetsList, tezToken]
   );
 
-  return { rewardToken, stakeTokens };
+  return useMemo(
+    () => ({
+      stakeTokens: farm?.tokens.map(convertToken) ?? [],
+      rewardToken: isDefined(farm) ? convertToken(farm.rewardToken) : emptyTezosLikeToken
+    }),
+    [farm, convertToken]
+  );
 };

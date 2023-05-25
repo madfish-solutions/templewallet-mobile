@@ -25,6 +25,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   isSearchable?: boolean;
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
+  valueContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
   setSearchValue?: EventFn<string>;
   equalityFn: DropdownEqualityFn<T>;
@@ -70,6 +71,7 @@ const DropdownComponent = <T extends unknown>({
   description,
   itemHeight = formatSize(64),
   itemContainerStyle,
+  valueContainerStyle,
   disabled = false,
   isLoading = false,
   isSearchable = false,
@@ -124,7 +126,7 @@ const DropdownComponent = <T extends unknown>({
   return (
     <>
       <TouchableOpacity
-        style={styles.valueContainer}
+        style={[styles.valueContainer, valueContainerStyle]}
         disabled={disabled}
         onPress={() => {
           scroll();

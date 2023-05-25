@@ -33,6 +33,7 @@ import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 interface DetailsCardProps {
   farm: Farm;
   stake?: UserStakeValueInterface;
+  shouldShowClaimRewardsButton: boolean;
 }
 
 const EMPTY_STAKE: UserStakeValueInterface = {};
@@ -42,7 +43,7 @@ const COUNTDOWN_TOKENS_BASE = [
   { unit: 'M', seconds: SECONDS_IN_MINUTE }
 ];
 
-export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE }) => {
+export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE, shouldShowClaimRewardsButton }) => {
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const {
     stakedToken,
@@ -179,15 +180,19 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE })
           }
         />
       </View>
-      <Divider size={formatSize(16)} />
-      <Button
-        styleConfig={claimRewardsButtonConfig}
-        isFullWidth
-        disabled={claimableRewardAmount.isZero() || claimPending}
-        title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
-        testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
-        onPress={claimRewardsIfConfirmed}
-      />
+      {shouldShowClaimRewardsButton && (
+        <>
+          <Divider size={formatSize(16)} />
+          <Button
+            styleConfig={claimRewardsButtonConfig}
+            isFullWidth
+            disabled={claimableRewardAmount.isZero() || claimPending}
+            title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
+            testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
+            onPress={claimRewardsIfConfirmed}
+          />
+        </>
+      )}
     </View>
   );
 };

@@ -24,6 +24,15 @@ export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typogr
   notSupportedText: {
     color: colors.black
   },
+  disclaimerDescriptionText: {
+    ...typography.caption13Regular,
+    letterSpacing: formatSize(-0.08),
+    lineHeight: formatSize(18),
+    color: colors.black
+  },
+  emphasized: {
+    ...typography.caption13Semibold
+  },
   detailsTitle: {
     flexDirection: 'row',
     alignItems: 'center',
