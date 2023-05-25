@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useMemo, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SvgUri } from 'react-native-svg';
@@ -29,11 +29,13 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
+import { getTruncatedProps } from '../../utils/style.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
 import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE } from './constants';
+import { getNftDynamicUrl } from './utils/get-nft-dynamic-url';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -81,6 +83,12 @@ export const CollectibleModal = () => {
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
+  const handleShare = async () => {
+    await Share.share({
+      message: await getNftDynamicUrl(collectible, collectibleInfo.description)
+    });
+  };
+
   const collectionLogo = useMemo(() => {
     if (fa.logo.endsWith('.svg')) {
       return (
@@ -117,13 +125,20 @@ export const CollectibleModal = () => {
 
           <Divider size={formatSize(12)} />
 
-          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+          <View style={styles.collectionContainer}>
+            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+              {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
-            <Text numberOfLines={1} style={styles.collectionName}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
-            </Text>
-          </TouchableOpacity>
+              <Text {...getTruncatedProps(styles.collectionName)} numberOfLines={1}>
+                {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
+              <Icon name={IconNameEnum.Share} size={formatSize(16)} />
+              <Text style={styles.shareButtonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{collectible.name}</Text>

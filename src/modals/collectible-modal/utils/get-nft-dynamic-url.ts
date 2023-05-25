@@ -4,7 +4,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { DYNAMIC_LINKS_DOMAIN_URI_PREFIX } from 'src/utils/env.utils';
 import { formatImgUri } from 'src/utils/image.utils';
 
-export const getNftDynamicUrl = async (collectible: TokenInterface) =>
+export const getNftDynamicUrl = async (collectible: TokenInterface, collectibleDescription: string) =>
   await dynamicLinks().buildShortLink(
     {
       link: `${DYNAMIC_LINKS_DOMAIN_URI_PREFIX}/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
@@ -18,7 +18,7 @@ export const getNftDynamicUrl = async (collectible: TokenInterface) =>
       },
       social: {
         title: collectible.name,
-        descriptionText: 'Check this NFT with Temple',
+        descriptionText: collectibleDescription,
         imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
       }
     },
