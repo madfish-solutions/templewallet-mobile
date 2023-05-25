@@ -80,7 +80,7 @@ export const TokenScreen = () => {
             handleUpdate={handleUpdate}
             activityGroups={activities}
             shouldShowPromotion={partnersPromotionEnabled && !promotionErrorOccurred}
-            onOptimalPromotionImageError={() => setPromotionErrorOccurred(true)}
+            onOptimalPromotionError={() => setPromotionErrorOccurred(true)}
           />
         }
         infoComponent={<TokenInfo token={token} />}
