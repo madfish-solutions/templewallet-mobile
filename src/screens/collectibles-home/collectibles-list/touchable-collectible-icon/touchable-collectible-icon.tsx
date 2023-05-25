@@ -12,7 +12,12 @@ export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({ collectible
 
   return isDefined(collectible) ? (
     <TouchableOpacity onPress={() => navigate(ModalsEnum.CollectibleModal, { collectible })}>
-      <CollectibleIcon iconSize={CollectibleIconSize.SMALL} collectible={collectible} size={size} />
+      <CollectibleIcon
+        iconSize={CollectibleIconSize.SMALL}
+        collectible={collectible}
+        size={size}
+        isTouchableOverlay={false}
+      />
     </TouchableOpacity>
   ) : null;
 };
