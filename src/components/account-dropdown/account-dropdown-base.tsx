@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useShelter } from 'src/shelter/use-shelter.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { isDefined } from 'src/utils/is-defined';
 
-import { AccountBaseInterface } from '../../interfaces/account.interface';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useShelter } from '../../shelter/use-shelter.hook';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { isDefined } from '../../utils/is-defined';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
 import { accountEqualityFn } from './account-equality-fn';
