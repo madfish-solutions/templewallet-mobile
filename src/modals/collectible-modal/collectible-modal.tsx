@@ -64,7 +64,10 @@ export const CollectibleModal = () => {
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
-  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries } = collectibleInfo;
+  const { fa, creators, description, metadata, timestamp, royalties, supply, mime, attributes, galleries } =
+    collectibleInfo;
+
+  console.log(mime, 'mime');
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 

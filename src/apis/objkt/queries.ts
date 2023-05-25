@@ -31,6 +31,7 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
         amount
       }
       supply
+      mime
       galleries {
         gallery {
           items
