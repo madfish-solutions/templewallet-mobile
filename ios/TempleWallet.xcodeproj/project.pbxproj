@@ -561,7 +561,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = TempleWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Temple Wallet Ad Hoc Profile";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.madfish.temple-wallet";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -595,7 +595,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = TempleWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Temple Wallet Ad Hoc Profile";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.madfish.temple-wallet";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
