@@ -1,3 +1,5 @@
+export const APPROXIMATE_DAYS_IN_YEAR = 365;
+
 export const isTheSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&
