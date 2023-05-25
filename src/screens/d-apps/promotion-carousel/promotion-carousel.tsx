@@ -41,6 +41,7 @@ export const PromotionCarousel = () => {
           shouldShowCloseButton={false}
           style={styles.promotionItem}
           onImageError={() => setPromotionErrorOccurred(true)}
+          onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
         />
       );
     }
