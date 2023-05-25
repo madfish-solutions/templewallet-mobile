@@ -1,3 +1,5 @@
+import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
+import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
 import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
@@ -62,7 +64,8 @@ export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
   }
 }));
 
-export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
+export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }) => ({
+  ...useButtonLargePrimaryStyleConfig(),
   containerStyle: {
     flex: 1,
     height: formatSize(38),
@@ -71,22 +74,11 @@ export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ colors, typo
   },
   titleStyle: {
     ...typography.tagline13Tag
-  },
-  iconStyle: {
-    size: formatSize(24),
-    marginRight: formatSize(8)
-  },
-  activeColorConfig: {
-    titleColor: colors.white,
-    backgroundColor: colors.orange
-  },
-  disabledColorConfig: {
-    titleColor: colors.white,
-    backgroundColor: colors.disabled
   }
 }));
 
-export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ colors, typography }) => ({
+export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography }) => ({
+  ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
     flex: 1,
     width: formatSize(156),
@@ -96,18 +88,5 @@ export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ colors, ty
   },
   titleStyle: {
     ...typography.tagline13Tag
-  },
-  iconStyle: {
-    size: formatSize(24),
-    marginRight: formatSize(8)
-  },
-  activeColorConfig: {
-    titleColor: colors.orange,
-    backgroundColor: colors.white,
-    borderColor: colors.orange
-  },
-  disabledColorConfig: {
-    titleColor: colors.white,
-    backgroundColor: colors.disabled
   }
 }));

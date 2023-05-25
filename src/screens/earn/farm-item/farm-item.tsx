@@ -9,6 +9,7 @@ import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswa
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
+import { FormattedAmount } from 'src/components/formatted-amount';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -78,25 +79,21 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     [farm.item.apr]
   );
 
-  const depositAmountAtomic = useMemo(() => {
-    if (isDefined(lastStakeRecord) && isDefined(lastStakeRecord.depositAmountAtomic)) {
-      return mutezToTz(new BigNumber(lastStakeRecord.depositAmountAtomic), FARM_PRECISION)
-        .multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
-        .toFixed(DEFAULT_DECIMALS);
-    }
+  const depositAmountAtomic = useMemo(
+    () =>
+      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+        farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
+      ),
+    [lastStakeRecord?.depositAmountAtomic]
+  );
 
-    return DEFAULT_AMOUNT;
-  }, [lastStakeRecord?.depositAmountAtomic]);
-
-  const claimableRewardsAtomic = useMemo(() => {
-    if (isDefined(lastStakeRecord) && isDefined(lastStakeRecord.claimableRewards)) {
-      return mutezToTz(new BigNumber(lastStakeRecord.claimableRewards), FARM_PRECISION)
-        .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE)
-        .toFixed(DEFAULT_DECIMALS);
-    }
-
-    return DEFAULT_AMOUNT;
-  }, [lastStakeRecord?.claimableRewards]);
+  const claimableRewardsAtomic = useMemo(
+    () =>
+      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+        farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE
+      ),
+    [lastStakeRecord?.claimableRewards]
+  );
 
   const navigateToFarm = useCallback(
     () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
@@ -166,11 +163,11 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={[styles.row, styles.mb16]}>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Your deposit:</Text>
-            <Text style={styles.attributeValue}>≈ {depositAmountAtomic}$</Text>
+            <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <Text style={styles.attributeValue}>≈ {claimableRewardsAtomic}$</Text>
+            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
           </View>
         </View>
 
