@@ -26,7 +26,7 @@ wallet. If you turned off ADS, you can always activate it in the settings.',
           text: 'Disable',
           style: 'destructive',
           onPress: () => {
-            trackEvent(TextPromotionItemSelectors.closeButton, AnalyticsEventCategory.ButtonPress);
+            trackEvent(TextPromotionItemSelectors.disablelButton, AnalyticsEventCategory.ButtonPress);
             dispatch(setIsPromotionEnabledAction(false));
           }
         }

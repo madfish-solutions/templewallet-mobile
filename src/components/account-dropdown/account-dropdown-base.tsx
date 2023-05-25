@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -38,17 +40,21 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface>> = ({
+export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface> & TestIdProps> = ({
   value,
   list,
   onValueChange,
   renderValue,
-  renderAccountListItem
+  renderAccountListItem,
+  testID,
+  testIDProperties
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
   return (
     <Dropdown
+      testID={testID}
+      testIDProperties={testIDProperties}
       description="Accounts"
       value={value}
       list={list}
