@@ -7,7 +7,7 @@ import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { useBlurStylesStyles } from './iimage-blur-overlay.styles';
+import { useBlurStyles } from './iimage-blur-overlay.styles';
 
 export enum ImageBlurOverlayThemesEnum {
   fullView = 'fullView',
@@ -28,7 +28,7 @@ export const ImageBlurOverlay: FC<Props> = ({
   isTouchableOverlay = true,
   children
 }) => {
-  const styles = useBlurStylesStyles();
+  const styles = useBlurStyles();
   const deviceTheme = useThemeSelector();
 
   const [blurValue, setBlurValue] = useState(BLUR_AMOUNT);

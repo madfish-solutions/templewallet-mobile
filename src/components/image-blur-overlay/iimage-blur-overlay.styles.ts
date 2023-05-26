@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
-export const useBlurStylesStyles = createUseStyles(({ colors, typography }) => ({
+export const useBlurStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     position: 'relative',
     overflow: 'hidden',
