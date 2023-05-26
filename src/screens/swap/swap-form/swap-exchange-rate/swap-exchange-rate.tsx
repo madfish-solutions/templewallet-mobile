@@ -2,14 +2,14 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Alert, Text, View } from 'react-native';
 
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
+import { formatAssetAmount } from 'src/utils/number.util';
 
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../../components/icon/touchable-icon/touchable-icon';
-import { formatSize } from '../../../../styles/format-size';
-import { formatAssetAmount } from '../../../../utils/number.util';
-import { ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
+import { CASHBACK_PERCENT, ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from '../../config';
 import { SwapExchangeRateSelectors } from './selectors';
 import { useSwapExchangeRateStyles } from './swap-exchange-rate.styles';
 
@@ -49,7 +49,19 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
   const routingFeeAlert = () =>
     Alert.alert(
       'Routing Fee',
-      'For choosing the most profitable exchange route among Tezos DEXes. DEXes commissions are not included.',
+      'For choosing the most profitable exchange route among Tezos DEXes. DEXes commissions are not included',
+      [
+        {
+          text: 'Ok',
+          style: 'default'
+        }
+      ]
+    );
+
+  const cashbackAlert = () =>
+    Alert.alert(
+      'Cashback',
+      'Swap more than 10$ and receive 0.175% from the swapped amount in the TKEY token as a cashback',
       [
         {
           text: 'Ok',
@@ -79,6 +91,13 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Minimum received</Text>
         <Text style={styles.infoValue}>{minimumReceivedAmount}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoText}>Cashback</Text>
+          <TouchableIcon onPress={cashbackAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
+        </View>
+        <Text style={styles.infoValue}>{CASHBACK_PERCENT}%</Text>
       </View>
     </>
   );

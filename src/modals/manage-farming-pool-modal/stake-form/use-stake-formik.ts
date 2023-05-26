@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum } from 'src/apis/quipuswap/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -37,7 +37,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
   const selectedAccount = useSelectedAccountSelector();
   const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const stake = useStakeSelector(farmId, farmVersion);
+  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
@@ -70,7 +70,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
       }
 
       try {
-        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.stakeId);
+        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.lastStakeId);
 
         dispatch(
           navigateAction(ModalsEnum.Confirmation, {
@@ -86,7 +86,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.stakeId, dispatch]
+    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
   );
 
   return useFormik<StakeFormValues>({

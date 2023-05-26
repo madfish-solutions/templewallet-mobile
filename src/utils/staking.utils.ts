@@ -1,4 +1,4 @@
-import { QuipuswapAPIToken, QuipuswapAPITokenStandardsEnum } from 'src/apis/quipuswap/types';
+import { QuipuswapAPIToken, QuipuswapAPITokenStandardsEnum } from 'src/apis/quipuswap-staking/types';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';

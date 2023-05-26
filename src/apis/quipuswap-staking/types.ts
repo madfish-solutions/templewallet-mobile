@@ -1,5 +1,7 @@
-import { BigMapAbstraction } from '@taquito/taquito';
+import { MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+
+import { BigMap } from 'src/interfaces/big-map.interface';
 
 export enum FarmVersionEnum {
   V1 = 'v1',
@@ -12,7 +14,7 @@ export enum PoolType {
   DEX_TWO = 'DEX_TWO'
 }
 
-export enum StableswapPoolVersion {
+enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }
@@ -40,7 +42,7 @@ export interface QuipuswapAPIToken {
 interface FarmBase {
   id: string;
   contractAddress: string;
-  apr: number | null;
+  apr: string | null;
   depositExchangeRate: string | null;
   depositTokenUrl: string;
   lastRewards: string;
@@ -87,31 +89,75 @@ export interface FarmsListResponse {
   list: SingleFarmResponse[];
 }
 
-export interface RawV3FarmStake {
-  stake: BigNumber;
-  disc_factor: BigNumber;
-  age_timestamp: string;
+export interface StableswapTokenInfo {
+  rateF: BigNumber;
+  precisionMultiplierF: BigNumber;
+  reserves: BigNumber;
 }
 
-export interface V3FarmStake {
-  contractRewardBalance: string;
-  stakeId?: string;
-  stake: string;
-  discFactor: string;
-  ageTimestamp: string;
+export interface StableswapFeesStorage {
+  lpF: BigNumber;
+  stakersF: BigNumber;
+  refF: BigNumber;
 }
 
-export interface StableswapPoolsValue {
+interface StableswapStakerAccum {
+  accumulatorF: BigNumber[];
+  totalFees: BigNumber[];
+  totalStaked: BigNumber;
+}
+
+export interface StableswapPool {
+  initialAF: BigNumber;
+  /** timestamp in seconds */
+  initialATime: BigNumber;
+  futureAF: BigNumber;
+  /** timestamp in seconds */
+  futureATime: BigNumber;
+  tokensInfo: StableswapTokenInfo[];
+  fee: StableswapFeesStorage;
+  stakerAccumulator: StableswapStakerAccum;
+  totalSupply: BigNumber;
+}
+
+export interface BalancingAccum {
+  stakerAccumulator: StableswapStakerAccum;
+  tokensInfo: StableswapTokenInfo[];
+  tokensInfoWithoutLp: StableswapTokenInfo[];
+}
+
+interface StableswapTokensInfoValue {
+  rate_f: BigNumber;
+  precision_multiplier_f: BigNumber;
+  reserves: BigNumber;
+}
+
+interface StableswapFee {
+  lp_f: BigNumber;
+  stakers_f: BigNumber;
+  ref_f: BigNumber;
+}
+
+interface StableswapStakerAccumulator {
+  accumulator_f: MichelsonMap<BigNumber, BigNumber>;
+  total_fees: MichelsonMap<BigNumber, BigNumber>;
+  total_staked: BigNumber;
+}
+
+interface StableswapPoolsValue {
   initial_A_f: BigNumber;
   initial_A_time: string;
   future_A_f: BigNumber;
   future_A_time: string;
   total_supply: BigNumber;
+  tokens_info: MichelsonMap<BigNumber, StableswapTokensInfoValue>;
+  fee: StableswapFee;
+  staker_accumulator: StableswapStakerAccumulator;
 }
 
 export interface StableswapPoolStorage {
   storage: {
-    tokens: BigMapAbstraction;
-    pools: BigMapAbstraction;
+    pools: BigMap<BigNumber, StableswapPoolsValue>;
+    factory_address: string;
   };
 }

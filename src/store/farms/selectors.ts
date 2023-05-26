@@ -1,22 +1,32 @@
-import { FarmVersionEnum } from 'src/apis/quipuswap/types';
-import { isDefined } from 'src/utils/is-defined';
+import { useMemo } from 'react';
+
+import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
 
 import { useSelector } from '../selector';
 
-export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.farms.isLoading);
+export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.allFarms.isLoading);
 
-export const useFarmSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => {
-    const { list } = farms.farms.data;
+export const useFarmSelector = (id: string, version: FarmVersionEnum) => {
+  const list = useSelector(({ farms }) => farms.allFarms.data);
 
-    return list.find(({ item }) => item.id === id && item.version === version);
-  });
+  return useMemo(() => list.find(({ item }) => item.id === id && item.version === version), [list, id, version]);
+};
 
-export const useStakeSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => farms.lastStakes[version][id]?.data);
+export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
 
-export const useStakeIsInitializedSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => isDefined(farms.lastStakes[version][id]));
+export const useAllFarmsSelector = () => {
+  const farms = useSelector(({ farms }) => farms.allFarms);
 
-export const useStakeLoadingSelector = (id: string, version: FarmVersionEnum) =>
-  useSelector(({ farms }) => farms.lastStakes[version][id]?.isLoading);
+  return useMemo(() => {
+    const data = farms.data.filter(
+      farm => farm.item.type === PoolType.STABLESWAP && farm.item.dailyDistribution !== '0'
+    );
+
+    return {
+      data,
+      isLoading: farms.isLoading,
+      error: farms.error
+    };
+  }, [farms]);
+};
+export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes);

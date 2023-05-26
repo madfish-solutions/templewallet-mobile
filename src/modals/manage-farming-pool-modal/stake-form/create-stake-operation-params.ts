@@ -2,14 +2,15 @@ import { OpKind } from '@taquito/rpc';
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { estimateLpTokenOutput } from 'src/apis/quipuswap';
-import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap-staking';
+import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { convertFarmToken } from 'src/utils/staking.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
@@ -27,17 +28,18 @@ export const createStakeOperationParams = async (
     throw new Error('Non-stableswap pools are not supported');
   }
 
-  const { contractAddress: farmAddress, stakedToken, stableswapPoolVersion } = farm.item;
+  const { contractAddress: farmAddress, stakedToken } = farm.item;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
   const tokenToInvest = shouldUseWtezToken ? WTEZ_TOKEN : asset;
-  const farmContract = await tezos.contract.at(farmAddress);
-  const poolContract = await tezos.contract.at(poolAddress);
+  const [farmContract, poolContract] = await Promise.all(
+    [farmAddress, poolAddress].map(async address => getReadOnlyContract(address, tezos))
+  );
 
   let convertToWTezParams: TransferParams[] = [];
   if (shouldUseWtezToken) {
-    const wTezContract = await tezos.contract.at(WTEZ_TOKEN.address);
+    const wTezContract = await getReadOnlyContract(WTEZ_TOKEN.address, tezos);
     convertToWTezParams = [
       wTezContract.methods.mint(accountPkh).toTransferParams({ amount: amount.toNumber(), mutez: true })
     ];
@@ -49,15 +51,7 @@ export const createStakeOperationParams = async (
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
   michelsonAmounts.set(tokenIndex, amount);
 
-  const lpAmount = await estimateLpTokenOutput(
-    poolContract,
-    STABLESWAP_REFERRAL,
-    getTransactionTimeoutDate(),
-    tokenIndex,
-    amount,
-    poolId,
-    stableswapPoolVersion
-  );
+  const lpAmount = await estimateStableswapLpTokenOutput(tezos, poolContract, tokenIndex, amount, poolId);
 
   const investTransferParams = poolContract.methods
     .invest(stakedToken.fa2TokenId, lpAmount, michelsonAmounts, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)

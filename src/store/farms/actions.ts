@@ -1,13 +1,20 @@
-import { Farm, SingleFarmResponse, V3FarmStake } from 'src/apis/quipuswap/types';
+import { createAction } from '@reduxjs/toolkit';
+
+import { Farm, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 
 import { createActions } from '../create-actions';
-
-export const loadSingleFarmActions = createActions<Pick<Farm, 'id' | 'version'>, SingleFarmResponse, void>(
-  'farms/LOAD_SINGLE_FARM'
-);
+import { LastUserStakeInterface, UserStakeValueInterface } from './state';
 
 export const loadSingleFarmStakeActions = createActions<
-  Pick<Farm, 'id' | 'version' | 'contractAddress' | 'rewardToken'>,
-  { stake: V3FarmStake; farm: Pick<Farm, 'id' | 'version'> },
-  { farm: Pick<Farm, 'id' | 'version'>; error: string }
+  Farm,
+  { stake: UserStakeValueInterface | undefined; farmAddress: string },
+  { farmAddress: string; error: string }
 >('farms/LOAD_SINGLE_FARM_STAKE');
+
+export const loadAllFarmsAndStakesAction = createAction<void>('farms/LOAD_ALL_FARMS_AND_STAKES');
+
+export const loadAllFarmsActions = createActions<void, Array<SingleFarmResponse>, void>('farms/LOAD_ALL_FARMS');
+
+export const loadAllStakesActions = createActions<Array<SingleFarmResponse>, LastUserStakeInterface, void>(
+  'farms/LOAD_ALL_STAKES'
+);

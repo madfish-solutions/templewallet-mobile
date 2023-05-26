@@ -3,6 +3,7 @@ import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { getTzktApi } from 'src/api.service';
+import { ContractType } from 'src/interfaces/contract.type';
 import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
 import { TzktAccountTokenBalance } from 'src/interfaces/tzkt.interface';
 import { getTokenSlug, getTokenType } from 'src/token/utils/token.utils';
@@ -74,6 +75,18 @@ const cachedResults: Record<string, cachedAssetBalance> = {};
 
 const CACHE_TIME = 1000 * 60; // 1 minute
 
+export const getBalance = async (
+  contract: ContractType,
+  owner: string,
+  tokenId?: number | string | undefined
+): Promise<BigNumber> => {
+  if (getTokenType(contract) === TokenTypeEnum.FA_2) {
+    return (await contract.views.balance_of([{ owner, token_id: tokenId }]).read())[0].balance;
+  } else {
+    return await contract.views.getBalance(owner).read();
+  }
+};
+
 export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSlug: string) => {
   const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
@@ -85,15 +98,7 @@ export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSl
   }
 
   return from(tezos.contract.at(assetAddress)).pipe(
-    switchMap(contract => {
-      if (getTokenType(contract) === TokenTypeEnum.FA_2) {
-        return from(contract.views.balance_of([{ owner: publicKeyHash, token_id: assetId }]).read()).pipe(
-          map(response => response[0].balance)
-        );
-      } else {
-        return contract.views.getBalance(publicKeyHash).read();
-      }
-    }),
+    switchMap(contract => getBalance(contract, publicKeyHash, assetId)),
     map((balance: BigNumber) => {
       const returnValue = balance.isNaN() ? undefined : balance.toFixed();
       cachedResults[`${publicKeyHash}_${assetSlug}`] = {

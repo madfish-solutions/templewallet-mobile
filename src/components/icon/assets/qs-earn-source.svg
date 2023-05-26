@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" fill="none" viewBox="0 0 12 13">
+<g clip-path="url(#a)">
+<path fill="#14202C" d="M6 13.5c-3.88 0-7-3.12-7-7s3.12-7 7-7 7 3.12 7 7-3.12 7-7 7Z"/>
+<g clip-path="url(#b)">
+<path fill="#fff" d="M5.995 9.23a2.74 2.74 0 0 1-2.737-2.735 2.74 2.74 0 0 1 2.737-2.736 2.74 2.74 0 0 1 2.691 3.236l.92.92c.175-.44.27-.92.27-1.42 0-2.138-1.74-3.88-3.881-3.88a3.885 3.885 0 0 0-3.882 3.88 3.885 3.885 0 0 0 5.28 3.618l-.925-.923c-.154.028-.312.04-.473.04Z"/>
+<path fill="url(#c)" fill-rule="evenodd" d="M8.912 9.209 7.508 7.803a.573.573 0 0 1 0-.807.57.57 0 0 1 .807 0l1.404 1.406a.57.57 0 1 1-.807.807ZM7.274 7.975 8.71 9.41a.57.57 0 1 1-.807.807L6.498 8.812a.57.57 0 0 1 .776-.837Z" clip-rule="evenodd"/>
+</g>
+</g>
+<rect width="11.5" height="11.5" x=".25" y=".75" stroke="#E4E4E4" stroke-width=".5" rx="3.75"/>
+<defs>
+<clipPath id="a"><rect width="12" height="12" y=".5" fill="#fff" rx="4"/></clipPath><clipPath id="b"><path fill="#fff" d="M2 2.5h8v8H2z"/></clipPath><linearGradient id="c" x1="6.331" x2="10.308" y1="6.829" y2="7.388" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B00"/>
+<stop offset="1" stop-color="#F9A605"/></linearGradient></defs></svg>

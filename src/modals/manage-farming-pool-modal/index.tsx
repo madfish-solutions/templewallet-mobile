@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { PoolType } from 'src/apis/quipuswap/types';
+import { PoolType } from 'src/apis/quipuswap-staking/types';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
@@ -17,14 +17,8 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { loadSingleFarmActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
-import {
-  useFarmSelector,
-  useFarmsLoadingSelector,
-  useStakeIsInitializedSelector,
-  useStakeLoadingSelector,
-  useStakeSelector
-} from 'src/store/farms/selectors';
+import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
+import { useFarmSelector, useFarmsLoadingSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
@@ -51,14 +45,11 @@ export const ManageFarmingPoolModal: FC = () => {
   const farm = useFarmSelector(params.id, params.version);
   const farmIsLoading = useFarmsLoadingSelector();
   const farmLevel = farm?.blockInfo.level;
-  const stake = useStakeSelector(params.id, params.version);
-  const stakeIsInitialized = useStakeIsInitializedSelector(params.id, params.version);
-  const stakeIsLoading = useStakeLoadingSelector(params.id, params.version);
+  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
   const vestingPeriodSeconds = Number(farm?.item.vestingPeriodSeconds ?? 0);
   const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, { roundingMethod: 'ceil', unit: 'day' });
 
-  const pageIsLoading =
-    (farmIsLoading && !isDefined(farm)) || !stakeIsInitialized || (stakeIsLoading && !isDefined(stake));
+  const pageIsLoading = farmIsLoading && !isDefined(farm);
 
   const stakeFormik = useStakeFormik(params.id, params.version);
   const { errors: formErrors, submitForm, isSubmitting } = stakeFormik;
@@ -68,9 +59,9 @@ export const ManageFarmingPoolModal: FC = () => {
       return;
     }
 
-    dispatch(loadSingleFarmActions.submit(params));
+    dispatch(loadAllFarmsActions.submit());
     prevBlockLevelRef.current = blockLevel;
-  }, [blockLevel, farmLevel, dispatch, params]);
+  }, [blockLevel, farmLevel, dispatch]);
 
   useEffect(() => {
     if (isDefined(farm)) {
@@ -80,7 +71,7 @@ export const ManageFarmingPoolModal: FC = () => {
 
   usePageAnalytic(ModalsEnum.ManageFarmingPool);
 
-  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.stakeId) ? [] : [1]), [stake]);
+  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake) ? [] : [1]), [stake]);
 
   return (
     <>

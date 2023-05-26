@@ -1,66 +1,99 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
+import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getSingleV3Farm, getV3FarmStake } from 'src/apis/quipuswap';
-import { FarmVersionEnum } from 'src/apis/quipuswap/types';
+import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
-import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { RootState } from '../create-store';
-import { loadSingleFarmActions, loadSingleFarmStakeActions } from './actions';
-import { GetFarmStakeError } from './utils';
+import {
+  loadAllFarmsActions,
+  loadAllFarmsAndStakesAction,
+  loadAllStakesActions,
+  loadSingleFarmStakeActions
+} from './actions';
+import { UserStakeValueInterface } from './state';
+import { getFarmStake, GetFarmStakeError } from './utils';
 
-const loadSingleFarm: Epic = (action$: Observable<Action>) =>
+const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
-    ofType(loadSingleFarmActions.submit),
-    switchMap(({ payload }) => {
-      const { id, version } = payload;
+    ofType(loadSingleFarmStakeActions.submit),
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[{ payload: farm }, selectedAccount], rpcUrl]) => {
+      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
 
-      if (version === FarmVersionEnum.V3) {
-        return from(getSingleV3Farm(id)).pipe(map(response => loadSingleFarmActions.success(response)));
-      }
-
-      throw new Error(`Farm version ${version} is not supported yet`);
+      return from(getFarmStake(farm, tezos, selectedAccount.publicKeyHash)).pipe(
+        map(stake => loadSingleFarmStakeActions.success({ stake, farmAddress: farm.contractAddress })),
+        catchError(err => {
+          throw new GetFarmStakeError(farm.contractAddress, (err as Error).message);
+        })
+      );
     }),
+    catchError(err => {
+      const { farmAddress } = err as GetFarmStakeError;
+      showErrorToastByError(err);
+
+      return of(loadSingleFarmStakeActions.fail({ farmAddress, error: (err as Error).message }));
+    })
+  );
+
+const loadAllFarms: Epic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadAllFarmsActions.submit),
+    switchMap(() =>
+      from(getV3FarmsList()).pipe(
+        map(farms => loadAllFarmsActions.success(farms)),
+        catchError(err => {
+          showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+
+          return of(loadAllFarmsActions.fail());
+        })
+      )
+    )
+  );
+
+const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+  action$.pipe(
+    ofType(loadAllFarmsAndStakesAction),
+    switchMap(() =>
+      from(getV3FarmsList()).pipe(
+        withSelectedAccount(state$),
+        withSelectedRpcUrl(state$),
+        switchMap(([[farms, selectedAccount], rpcUrl]) => {
+          const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+
+          return forkJoin(
+            farms.map(async ({ item: farm }) =>
+              getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
+                .then((stake): [string, UserStakeValueInterface | undefined] => [farm.contractAddress, stake])
+                .catch((): [string, undefined] => {
+                  console.error('Error while loading farm stakes: ', farm.contractAddress);
+
+                  return [farm.contractAddress, undefined];
+                })
+            )
+          ).pipe(
+            map(stakesEntries =>
+              Object.fromEntries(
+                stakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
+              )
+            ),
+            mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))
+          );
+        })
+      )
+    ),
     catchError(err => {
       showErrorToast({ description: getAxiosQueryErrorMessage(err) });
 
-      return of(loadSingleFarmActions.fail());
+      return of(loadAllFarmsActions.fail());
     })
   );
 
-const loadSingleFarmBalances: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
-  action$.pipe(
-    ofType(loadSingleFarmStakeActions.submit),
-    withLatestFrom(state$),
-    switchMap(([{ payload }, state]) => {
-      const { id, version, contractAddress, rewardToken } = payload;
-      const { selectedRpcUrl } = state.settings;
-
-      if (version === FarmVersionEnum.V3) {
-        return from(
-          getV3FarmStake(selectedRpcUrl, contractAddress, getSelectedAccount(state.wallet), rewardToken)
-        ).pipe(
-          map(stake => loadSingleFarmStakeActions.success({ stake, farm: { id, version } })),
-          catchError(err => {
-            throw new GetFarmStakeError(id, version, (err as Error).message);
-          })
-        );
-      }
-
-      throw new GetFarmStakeError(id, version, `Farm version ${version} is not supported yet`);
-    }),
-    catchError(err => {
-      const { farmId, farmVersion } = err as GetFarmStakeError;
-      showErrorToastByError(err);
-
-      return of(
-        loadSingleFarmStakeActions.fail({ farm: { id: farmId, version: farmVersion }, error: (err as Error).message })
-      );
-    })
-  );
-
-export const farmsEpics = combineEpics(loadSingleFarm, loadSingleFarmBalances);
+export const farmsEpics = combineEpics(loadSingleFarmLastStake, loadAllFarms, loadAllFarmsAndLastStake);
