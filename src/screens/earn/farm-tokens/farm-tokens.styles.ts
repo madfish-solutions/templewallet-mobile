@@ -15,7 +15,7 @@ export const useFarmTokensStyles = createUseStyles(({ colors, typography }) => (
   stakeTokenSymbols: {
     ...typography.caption13Semibold,
     color: colors.black,
-    maxWidth: formatSize(120)
+    maxWidth: formatSize(128)
   },
   rewardTokenSymbol: {
     ...typography.caption11Regular,

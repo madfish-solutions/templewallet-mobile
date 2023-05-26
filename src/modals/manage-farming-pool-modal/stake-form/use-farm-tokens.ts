@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import {
   useAssetsListSelector,

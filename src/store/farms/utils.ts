@@ -1,6 +1,6 @@
 import { TezosToolkit } from '@taquito/taquito';
 
-import { Farm } from 'src/apis/quipuswap/types';
+import { Farm } from 'src/apis/quipuswap-staking/types';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';

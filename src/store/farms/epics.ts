@@ -3,7 +3,7 @@ import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switc
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getV3FarmsList } from 'src/apis/quipuswap';
+import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';

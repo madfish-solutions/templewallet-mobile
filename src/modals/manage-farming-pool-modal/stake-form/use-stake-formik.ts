@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { object as objectSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum } from 'src/apis/quipuswap/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';

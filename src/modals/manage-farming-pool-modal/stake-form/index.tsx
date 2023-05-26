@@ -2,7 +2,7 @@ import { FormikProvider } from 'formik';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Divider } from 'src/components/divider/divider';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';

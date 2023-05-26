@@ -4,7 +4,7 @@ import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { PoolType } from 'src/apis/quipuswap/types';
+import { PoolType } from 'src/apis/quipuswap-staking/types';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';

@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { Farm, SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { Farm, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 
 import { createActions } from '../create-actions';
 import { LastUserStakeInterface, UserStakeValueInterface } from './state';

@@ -1,4 +1,4 @@
-import { SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';

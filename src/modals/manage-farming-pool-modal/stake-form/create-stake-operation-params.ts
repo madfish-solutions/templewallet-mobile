@@ -2,8 +2,8 @@ import { OpKind } from '@taquito/rpc';
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap';
-import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap/types';
+import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap-staking';
+import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
