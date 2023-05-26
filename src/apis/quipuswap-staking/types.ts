@@ -101,7 +101,7 @@ export interface StableswapFeesStorage {
   refF: BigNumber;
 }
 
-export interface StableswapStakerAccum {
+interface StableswapStakerAccum {
   accumulatorF: BigNumber[];
   totalFees: BigNumber[];
   totalStaked: BigNumber;
@@ -126,11 +126,6 @@ export interface BalancingAccum {
   tokensInfoWithoutLp: StableswapTokenInfo[];
 }
 
-export interface PrepareParamsAccum {
-  s_: BigNumber;
-  c: [BigNumber, BigNumber];
-}
-
 interface StableswapTokensInfoValue {
   rate_f: BigNumber;
   precision_multiplier_f: BigNumber;
@@ -149,7 +144,7 @@ interface StableswapStakerAccumulator {
   total_staked: BigNumber;
 }
 
-export interface StableswapPoolsValue {
+interface StableswapPoolsValue {
   initial_A_f: BigNumber;
   initial_A_time: string;
   future_A_f: BigNumber;
