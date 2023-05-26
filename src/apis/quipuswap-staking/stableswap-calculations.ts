@@ -263,15 +263,24 @@ export const calculateStableswapWithdrawTokenOutput = (
   }
 
   let i = 0;
-  let x0 = yAnalytical.gt(shares) ? new BigNumber(0) : xAnalytical;
-  let y0 = yAnalytical.gt(shares) ? shares.negated() : yAnalytical;
-  let x1 = yAnalytical.gt(shares) ? xAnalytical : new BigNumber(Infinity);
-  let y1 = yAnalytical.gt(shares) ? yAnalytical : new BigNumber(Infinity);
+  let x0: BigNumber, y0: BigNumber, x1: BigNumber, y1: BigNumber;
+
+  if (yAnalytical.gt(shares)) {
+    x0 = new BigNumber(0);
+    y0 = shares.negated();
+    x1 = xAnalytical;
+    y1 = yAnalytical;
+  } else {
+    x0 = xAnalytical;
+    y0 = yAnalytical;
+    x1 = new BigNumber(Infinity);
+    y1 = new BigNumber(Infinity);
+  }
 
   while (x1.minus(x0).gt(1) && i < 100) {
     i++;
     const x2 = bigIntClamp(
-      x1.isFinite()
+      x1.isFinite() && y1.isFinite()
         ? x1.minus(y1.multipliedBy(x1.minus(x0)).dividedToIntegerBy(y1.minus(y0)))
         : x0.times(shares).dividedToIntegerBy(y0.plus(shares)),
       x0.plus(1),
@@ -290,10 +299,13 @@ export const calculateStableswapWithdrawTokenOutput = (
       return x2;
     }
 
-    x0 = y2.gt(0) ? x0 : x2;
-    y0 = y2.gt(0) ? y0 : y2;
-    x1 = y2.gt(0) ? x2 : x1;
-    y1 = y2.gt(0) ? y2 : y1;
+    if (y2.gt(0)) {
+      x1 = x2;
+      y1 = y2;
+    } else {
+      x0 = x2;
+      y0 = y2;
+    }
   }
 
   return x0;
