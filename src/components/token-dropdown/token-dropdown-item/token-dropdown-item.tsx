@@ -19,6 +19,7 @@ interface Props {
   token?: TokenInterface;
   actionIconName?: IconNameEnum;
   isShowBalance?: boolean;
+  isShowBalanceLoading?: boolean;
   isShowName?: boolean;
   iconSize?: number;
 }
@@ -27,6 +28,7 @@ export const TokenDropdownItem: FC<Props> = ({
   token = emptyToken,
   actionIconName,
   isShowBalance = true,
+  isShowBalanceLoading = false,
   isShowName = true,
   iconSize = formatSize(40)
 }) => {
@@ -66,7 +68,11 @@ export const TokenDropdownItem: FC<Props> = ({
             <Divider size={formatSize(4)} />
             {isShowBalance && (
               <HideBalance style={styles.balance}>
-                <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
+                {isShowBalanceLoading ? (
+                  '---'
+                ) : (
+                  <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
+                )}
               </HideBalance>
             )}
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
@@ -85,7 +91,11 @@ export const TokenDropdownItem: FC<Props> = ({
                   conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                 ]}
               >
-                <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                {isShowBalanceLoading ? (
+                  '---'
+                ) : (
+                  <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                )}
               </HideBalance>
             )}
           </View>

@@ -104,7 +104,7 @@ export const ManageFarmingPoolModal: FC = () => {
             </View>
             <Divider size={formatSize(16)} />
             <DetailsCard farm={farm.item} stake={stake} shouldShowClaimRewardsButton={tabIndex === 0} />
-            {tabIndex === 1 && (
+            {tabIndex === 1 && vestingPeriodSeconds > 1 && (
               <>
                 <Divider size={formatSize(16)} />
                 <Disclaimer title="Long-term rewards vesting">

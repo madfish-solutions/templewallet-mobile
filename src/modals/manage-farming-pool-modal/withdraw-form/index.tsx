@@ -8,6 +8,7 @@ import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInput } from 'src/components/asset-amount-input/asset-amount-input';
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent, DropdownValueComponent } from 'src/components/dropdown/dropdown';
+import { DropdownItemContainer } from 'src/components/dropdown/dropdown-item-container/dropdown-item-container';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
@@ -44,11 +45,18 @@ const getTokenDropdownItemToken = (value?: WithdrawTokenOption) =>
   };
 
 const renderTokenOptionValue: DropdownValueComponent<WithdrawTokenOption> = ({ value }) => (
-  <TokenDropdownItem token={getTokenDropdownItemToken(value)} actionIconName={IconNameEnum.TriangleDown} />
+  <DropdownItemContainer>
+    <TokenDropdownItem
+      isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
+      token={getTokenDropdownItemToken(value)}
+      actionIconName={IconNameEnum.TriangleDown}
+    />
+  </DropdownItemContainer>
 );
 
 const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> = ({ item, isSelected }) => (
   <TokenDropdownItem
+    isShowBalanceLoading={!isDefined(item.amount)}
     token={getTokenDropdownItemToken(item)}
     {...(isSelected && { actionIconName: IconNameEnum.Check })}
   />
@@ -65,7 +73,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
         .dividedToIntegerBy(100),
     [stake?.depositAmountAtomic, amountOptionIndex]
   );
-  const { options: tokensOptions } = useTokensOptions(farm.item, lpAmountAtomic);
+  const tokensOptions = useTokensOptions(farm.item, lpAmountAtomic);
   const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
   const [tokenSearchValue, setTokenSearchValue] = useState('');
   const filteredTokensOptions = useMemo(
@@ -159,7 +167,6 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           isSearchable={true}
           setSearchValue={setTokenSearchValue}
           list={filteredTokensOptions}
-          valueContainerStyle={styles.tokenSelector}
           onValueChange={handleTokenOptionChange}
           testID={ManageFarmingPoolModalSelectors.tokenSelector}
         />

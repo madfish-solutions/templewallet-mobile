@@ -17,8 +17,6 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
   const { stakeTokens } = useFarmTokens(farm);
   const tezos = useReadOnlyTezosToolkit();
   const [atomicAmounts, setAtomicAmounts] = useState<(BigNumber | null | undefined)[]>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     if (!isDefined(lpAmount) || lpAmount.isZero()) {
@@ -27,7 +25,6 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
       return;
     }
 
-    setIsLoading(true);
     const subscription = from(getReadOnlyContract(farm.stakedToken.contractAddress, tezos))
       .pipe(
         switchMap(stableswapContract =>
@@ -46,16 +43,9 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
           )
         )
       )
-      .subscribe(value => {
-        setIsLoading(false);
-        setIsError(false);
-        setAtomicAmounts(value);
-      });
+      .subscribe(value => setAtomicAmounts(value));
 
-    return () => {
-      setIsLoading(false);
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [farm, lpAmount, lpAmount, tezos]);
 
   const options = useMemo(() => {
@@ -71,9 +61,5 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
     }, []);
   }, [stakeTokens, atomicAmounts]);
 
-  return {
-    options,
-    isLoading,
-    isError
-  };
+  return options;
 };

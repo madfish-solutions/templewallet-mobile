@@ -12,12 +12,5 @@ export const useWithdrawFormStyles = createUseStyles(({ colors, typography }) =>
     lineHeight: formatSize(20),
     letterSpacing: formatSize(-0.24),
     color: colors.black
-  },
-  tokenSelector: {
-    borderWidth: formatSize(0.5),
-    borderColor: colors.lines,
-    padding: formatSize(8),
-    background: colors.cardBG,
-    borderRadius: formatSize(10)
   }
 }));
