@@ -1,5 +1,5 @@
-import { omit } from '@dicebear/avatars/dist/utils/helper';
 import { createReducer } from '@reduxjs/toolkit';
+import { omit } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
 
