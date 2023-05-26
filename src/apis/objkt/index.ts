@@ -1,6 +1,7 @@
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
+import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -8,20 +9,24 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
-  buildGetCollectibleByAddressAndIdQuery,
-  buildGetCollectiblesByCollectionQuery,
-  buildGetCollectiblesInfoQuery,
-  buildGetHoldersInfoQuery,
-  getCollectiblesByGalleryQuery
-} from './queries';
-import {
   CollectibleInfoQueryResponse,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
+  FA2AttributeCountQueryResponse,
+  GalleryAttributeCountQueryResponse,
   QueryResponse,
   TzProfilesQueryResponse
-} from './types';
-import { transformCollectiblesArray } from './utils';
+} from './interfaces';
+import {
+  buildGetCollectibleByAddressAndIdQuery,
+  buildGetCollectiblesByCollectionQuery,
+  buildGetCollectiblesInfoQuery,
+  buildGetFA2AttributeCountQuery,
+  buildGetGalleryAttributeCountQuery,
+  buildGetHoldersInfoQuery,
+  getCollectiblesByGalleryQuery
+} from './queries';
+import { getUniqueAndMaxValueAttribute, transformCollectiblesArray } from './utils';
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
@@ -103,16 +108,41 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa } = result.token[0];
+      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply, galleries } =
+        result.token[0];
 
       return {
         description,
         creators,
-        collection: {
+        fa: {
           name: fa.name,
-          logo: fa.logo
-        }
+          logo: fa.logo,
+          items: fa.items
+        },
+        metadata,
+        artifact_uri,
+        attributes,
+        timestamp,
+        royalties,
+        supply,
+        galleries
       };
     })
   );
+};
+
+export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+  const request = buildGetFA2AttributeCountQuery(ids);
+
+  return apolloObjktClient
+    .query<FA2AttributeCountQueryResponse>(request)
+    .pipe(map(result => getUniqueAndMaxValueAttribute(result.fa2_attribute_count)));
+};
+
+export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+  const request = buildGetGalleryAttributeCountQuery(ids);
+
+  return apolloObjktClient
+    .query<GalleryAttributeCountQueryResponse>(request)
+    .pipe(map(result => getUniqueAndMaxValueAttribute(result.gallery_attribute_count)));
 };

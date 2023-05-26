@@ -1,6 +1,9 @@
+import { groupBy, map, maxBy } from 'lodash-es';
+
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { isDefined } from 'src/utils/is-defined';
 
+import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './types';
@@ -49,4 +52,10 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
     .filter(collectible => collectible.editions !== 0);
 
   return collectiblesArray;
+};
+
+export const getUniqueAndMaxValueAttribute = (array: AttributeInfo[]) => {
+  const grouped = groupBy(array, 'attribute_id');
+
+  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfo);
 };

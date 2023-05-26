@@ -29,7 +29,7 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
     color: colors.black
   },
   descriptionContainer: {
-    marginBottom: formatSize(8)
+    marginBottom: formatSize(12)
   },
   description: {
     ...typography.caption13Regular,
@@ -48,5 +48,28 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
   },
   linkWithIcon: {
     marginVertical: formatSize(4)
+  },
+  marginRight: {
+    marginRight: formatSize(6)
+  },
+  segmentControl: {
+    marginBottom: formatSize(18)
+  },
+  burnContainer: {
+    alignItems: 'center',
+    marginTop: formatSize(8)
+  },
+  burnButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: formatSize(108),
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(8.5)
+  },
+  burnButtonText: {
+    marginRight: formatSize(2),
+    ...typography.tagline13Tag,
+    color: colors.destructive
   }
 }));
