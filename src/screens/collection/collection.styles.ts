@@ -30,7 +30,9 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     ...typography.tagline13Tag
   },
   collectible: {
-    margin: formatSize(16)
+    margin: formatSize(16),
+    justifyContent: 'space-between',
+    flex: 1
   },
   image: {
     borderRadius: formatSize(8),
@@ -81,9 +83,12 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     ...typography.numbersMedium17
   },
   buttonContainer: {
-    marginTop: formatSize(16)
+    marginTop: formatSize(16),
+    flex: 1,
+    justifyContent: 'flex-end'
   },
   sellButton: {
+    marginTop: formatSize(8),
     borderWidth: formatSize(2),
     borderRadius: formatSize(10),
     alignItems: 'center'
@@ -102,5 +107,8 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
   },
   emptyBlock: {
     width: formatSize(20)
+  },
+  topContainer: {
+    flex: 1
   }
 }));

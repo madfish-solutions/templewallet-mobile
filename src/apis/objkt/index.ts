@@ -1,37 +1,52 @@
 import { catchError, map, Observable, of } from 'rxjs';
 
-import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { apolloObjktClient, currencyInfoById } from './constants';
-import { MarketPlaceEventEnum } from './enums';
+import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectiblesInfoQuery,
-  buildGetHoldersInfoQuery
+  buildGetHoldersInfoQuery,
+  getCollectiblesByGalleryQuery
 } from './queries';
 import {
   CollectibleInfoQueryResponse,
   CollectiblesByCollectionResponse,
+  CollectiblesByGalleriesResponse,
   QueryResponse,
   TzProfilesQueryResponse
 } from './types';
+import { transformCollectiblesArray } from './utils';
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
 
   return apolloObjktClient.query<QueryResponse>(request).pipe(
-    map(result =>
-      result.fa.map(item => {
-        const logo = item.logo !== null ? item.logo : item.tokens[0].display_uri;
+    map(result => {
+      const fa = result.fa
+        .filter(item => !HIDDEN_CONTRACTS.includes(item.contract))
+        .map(item => {
+          const logo = item.logo !== null ? item.logo : item.tokens[0].display_uri;
 
-        return { name: item.name, logo, contract: item.contract, creator: item.creator_address };
-      })
-    ),
+          return { name: item.name, logo, contract: item.contract, creator: address, type: item.__typename };
+        });
+      const gallery = result.gallery.map(item => {
+        return {
+          name: item.name,
+          logo: item.logo,
+          contract: item.tokens[0].fa_contract,
+          creator: address,
+          type: item.__typename
+        };
+      });
+
+      return [...fa, ...gallery];
+    }),
     catchError(() => of([]))
   );
 };
@@ -59,48 +74,26 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
 
 export const fetchCollectiblesByCollection$ = (
   contract: string,
-  selectedPublicKey: string
+  selectedPublicKey: string,
+  type: ObjktTypeEnum
 ): Observable<TokenInterface[]> => {
-  const request = buildGetCollectiblesByCollectionQuery(contract);
+  const request =
+    type === ObjktTypeEnum.faContract
+      ? buildGetCollectiblesByCollectionQuery(contract)
+      : getCollectiblesByGalleryQuery(selectedPublicKey);
 
-  return apolloObjktClient.query<CollectiblesByCollectionResponse>(request).pipe(
+  return apolloObjktClient.query<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
     map(result => {
-      const collectiblesArray = result.token
-        .map(token => {
-          const buyEvents = token.events.filter(
-            ({ marketplace_event_type }) =>
-              marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
-              marketplace_event_type === MarketPlaceEventEnum.listBuy ||
-              marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
-              marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept
-          );
-          const lastPrice = buyEvents?.[buyEvents.length - 1]?.price_xtz;
-          const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
-          const highestOffer = correctOffers[correctOffers.length - 1];
-          const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
+      if ('token' in result) {
+        const collectibles = transformCollectiblesArray(result.token, selectedPublicKey);
 
-          return {
-            artifactUri: token.artifact_uri,
-            balance: '1',
-            decimals: currency.decimals,
-            description: token.description,
-            displayUri: token.display_uri,
-            address: token.fa_contract,
-            highestOffer: highestOffer,
-            name: token.name,
-            metadata: token.metadata,
-            lowestAsk: token.lowest_ask,
-            symbol: currency.symbol,
-            thumbnailUri: token.thumbnail_uri,
-            id: Number(token.token_id),
-            visibility: VisibilityEnum.Visible,
-            editions: token.supply,
-            lastPrice
-          };
-        })
-        .filter(collectible => collectible.editions !== 0);
+        return collectibles;
+      } else {
+        const tokens = result.gallery[0].tokens.map(token => token.token).flat();
+        const collectibles = transformCollectiblesArray(tokens, selectedPublicKey);
 
-      return collectiblesArray;
+        return collectibles;
+      }
     })
   );
 };

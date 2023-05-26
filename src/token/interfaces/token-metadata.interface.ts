@@ -1,3 +1,5 @@
+import { CurrencyInfo } from 'src/apis/objkt/types';
+
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
 export enum TokenStandardsEnum {
@@ -35,7 +37,7 @@ export interface TokenMetadataInterface {
   metadata?: string;
   editions?: number;
   holders?: HolderAddress[];
-  lastPrice?: number | null;
+  lastPrice?: { price: number | null } & CurrencyInfo;
 
   // Stored as separate Record
   exchangeRate?: number;

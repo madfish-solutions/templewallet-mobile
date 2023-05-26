@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 import { catchError, EMPTY, map } from 'rxjs';
 
 import { fetchCollectiblesByCollection$ } from 'src/apis/objkt';
+import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-export const useCollectibleByCollectionInfo = (contract: string, selectedPublicKey: string) => {
+export const useCollectibleByCollectionInfo = (contract: string, selectedPublicKey: string, type: ObjktTypeEnum) => {
   const [collectibles, setCollectibles] = useState<TokenInterface[]>([]);
 
   useEffect(() => {
-    const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey)
+    const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type)
       .pipe(
         map(result => result),
         catchError(err => {

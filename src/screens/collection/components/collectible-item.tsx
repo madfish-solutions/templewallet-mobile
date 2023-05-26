@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import { OBJKT_CONTRACT } from 'src/apis/objkt/constants';
 import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
+import { emptyFn } from 'src/config/general';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
@@ -18,6 +19,8 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking.util';
+import { formatAssetAmount } from 'src/utils/number.util';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -46,9 +49,12 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       .then(setOffer);
   }, []);
 
-  const price = isDefined(item.lowestAsk)
-    ? `${mutezToTz(BigNumber(item.lowestAsk), item.decimals)} ${item.symbol}`
-    : '---';
+  const lastPrice =
+    isDefined(item.lastPrice) && isDefined(item.lastPrice.price)
+      ? `${formatAssetAmount(mutezToTz(BigNumber(item.lastPrice?.price), item.lastPrice?.decimals))} ${
+          item.lastPrice.symbol
+        }`
+      : '---';
 
   const highestOffer = isDefined(item.highestOffer)
     ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
@@ -58,7 +64,13 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
   const isHolder = holders.includes(selectedAccount.publicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
 
+  const navigateToObjktForBuy = `https://objkt.com/asset/${collectionContract}/${item.id}`;
+
   const handlePress = async () => {
+    if (!isHolder && isOffersExisted) {
+      return openUrl(navigateToObjktForBuy);
+    }
+
     const transferParams = isDefined(offer)
       ? 'fulfill_offer' in offer?.methods
         ? [offer.methods.fulfill_offer(item.highestOffer?.bigmap_key ?? 1, item.id).toTransferParams()]
@@ -97,6 +109,18 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
     );
   };
 
+  const buttonText = () => {
+    if (isOffersExisted) {
+      if (isHolder) {
+        return `Sell for ${highestOffer}`;
+      } else {
+        return 'buy';
+      }
+    } else {
+      return 'No offers yet';
+    }
+  };
+
   if (item.address === '') {
     return <View style={styles.emptyBlock} />;
   }
@@ -109,24 +133,26 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
         </View>
       )}
       <View style={styles.collectible}>
-        <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
-        <Text style={styles.collectibleName} numberOfLines={1}>
-          {item.name}
-        </Text>
-        <Text style={styles.collectibleDescription} numberOfLines={3}>
-          {item.description}
-        </Text>
-        <View style={styles.infoContainer}>
-          <View style={styles.containerRight}>
-            <View style={styles.smallContainer}>
-              <Text style={styles.text}>Last Price</Text>
-              <Text style={styles.value}>{price}</Text>
+        <View style={styles.topContainer}>
+          <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
+          <Text style={styles.collectibleName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.collectibleDescription} numberOfLines={3}>
+            {item.description}
+          </Text>
+          <View style={styles.infoContainer}>
+            <View style={styles.containerRight}>
+              <View style={styles.smallContainer}>
+                <Text style={styles.text}>Last Price</Text>
+                <Text style={styles.value}>{lastPrice}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.containerLeft}>
-            <View style={styles.smallContainer}>
-              <Text style={styles.text}>Editions</Text>
-              <Text style={styles.value}>{item.editions}</Text>
+            <View style={styles.containerLeft}>
+              <View style={styles.smallContainer}>
+                <Text style={styles.text}>Editions</Text>
+                <Text style={styles.value}>{item.editions}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -145,8 +171,11 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
                 conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
               ]}
             >
-              {isHolder ? (isOffersExisted ? `Sell for ${highestOffer}` : 'No offers yet') : 'buy'}
+              {buttonText()}
             </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={emptyFn} style={[styles.sellButton, styles.sellButtonDisabled]}>
+            <Text style={[styles.sellButtonText, styles.sellButtonDisabled]}>list</Text>
           </TouchableOpacity>
         </View>
       </View>

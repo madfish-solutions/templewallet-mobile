@@ -16,20 +16,28 @@ import { isDefined } from 'src/utils/is-defined';
 import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
-const COLLECTIBLE_SIZE = 321;
+const COLLECTIBLE_SIZE = 327;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
   const selectedAccount = useSelectedAccountSelector();
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
 
-  const collectibles = useCollectibleByCollectionInfo(params.collectionContract, selectedAccount.publicKeyHash);
+  const collectibles = useCollectibleByCollectionInfo(
+    params.collectionContract,
+    selectedAccount.publicKeyHash,
+    params.type
+  );
 
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
-      setInnerScreenIndex(info.viewableItems[0].index);
+      if (info.viewableItems[0].index === 0) {
+        setInnerScreenIndex(0);
+      } else {
+        setInnerScreenIndex(info.viewableItems[0].index - 1);
+      }
     }
   }, []);
 
@@ -41,21 +49,24 @@ export const Collection = () => {
 
   return (
     <View style={styles.root}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={handleChanged}
-        snapToInterval={formatSize(COLLECTIBLE_SIZE)}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50
-        }}
-        decelerationRate={0}
-        scrollEventThrottle={16}
-        keyExtractor={item => `${item.address}_${item.id}`}
-        ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
-      />
+      {data.length > 1 ? (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onViewableItemsChanged={handleChanged}
+          snapToInterval={formatSize(COLLECTIBLE_SIZE)}
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 50
+          }}
+          decelerationRate={0}
+          scrollEventThrottle={16}
+          keyExtractor={item => `${item.address}_${item.id}`}
+        />
+      ) : (
+        <DataPlaceholder text="Not found any NFT" />
+      )}
     </View>
   );
 };

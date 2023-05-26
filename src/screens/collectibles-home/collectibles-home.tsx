@@ -28,6 +28,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -84,7 +85,7 @@ export const CollectiblesHome = () => {
 
   const socialLinks: SocialLinksInterface[] = [
     { url: twitter, icon: IconNameEnum.Twitter },
-    { url: isDefined(discord) ? `https://discord.com/invite/${discord}` : discord, icon: IconNameEnum.Discord },
+    { url: discord, icon: IconNameEnum.Discord },
     { url: website, icon: IconNameEnum.Website },
     { url: github, icon: IconNameEnum.Github }
   ].sort((a, b) => {
@@ -119,12 +120,17 @@ export const CollectiblesHome = () => {
       style={[styles.socialsIcon, conditionalStyle(!isDefined(item.url), styles.socialIconsBgColor)]}
       color={isDefined(item.url) ? colors.orange : colors.disabled}
       size={SMALL_SOCIAL_ICON_SIZE}
+      onPress={item.url === discord ? () => copyStringToClipboard(item.url) : undefined}
     />
   );
 
   const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
     const handleCollectionPress = () =>
-      navigate(ScreensEnum.Collection, { collectionContract: item.contract, collectionName: item.name });
+      navigate(ScreensEnum.Collection, {
+        collectionContract: item.contract,
+        collectionName: item.name,
+        type: item.type
+      });
 
     return (
       <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>

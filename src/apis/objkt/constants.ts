@@ -20,5 +20,21 @@ export const currencyInfoById: Record<number, CurrencyInfo> = {
   1: {
     symbol: 'TEZ',
     decimals: 6
+  },
+  4: {
+    symbol: 'wXTZ',
+    decimals: 6
+  },
+  1924: {
+    symbol: 'USDTz',
+    decimals: 6
   }
 };
+
+export const HIDDEN_CONTRACTS = [
+  'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+  'KT1EfsNuqwLAWDd3o4pvfUx1CAh5GMdTrRvr',
+  'KT1GtbuswcNMGhHF2TSuH1Yfaqn16do8Qtva',
+  'KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u',
+  'KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi'
+];
