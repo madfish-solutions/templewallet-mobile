@@ -249,12 +249,24 @@ export const calculateStableswapWithdrawTokenOutput = (
   pool: StableswapPool,
   devFeeF: BigNumber
 ) => {
-  const functionToZero = (x: BigNumber) =>
-    calculateLpTokensToBurn(
-      pool.tokensInfo.map((_, index) => (index === tokenIndex ? x : new BigNumber(0))),
-      pool,
-      devFeeF
-    ).minus(shares);
+  const functionToZero = (x: BigNumber) => {
+    let tokensToBurn: BigNumber;
+    try {
+      tokensToBurn = calculateLpTokensToBurn(
+        pool.tokensInfo.map((_, index) => (index === tokenIndex ? x : new BigNumber(0))),
+        pool,
+        devFeeF
+      );
+    } catch (e) {
+      if (e instanceof TooLowPoolReservesError) {
+        tokensToBurn = pool.totalSupply;
+      } else {
+        throw e;
+      }
+    }
+
+    return tokensToBurn.minus(shares);
+  };
   const xAnalytical = estimateStableswapWithdrawTokenOutput(shares, tokenIndex, pool, devFeeF);
   const yAnalytical = functionToZero(xAnalytical);
 
@@ -265,7 +277,7 @@ export const calculateStableswapWithdrawTokenOutput = (
   let i = 0;
   let x0: BigNumber, y0: BigNumber, x1: BigNumber, y1: BigNumber;
 
-  if (yAnalytical.gt(shares)) {
+  if (yAnalytical.gt(0)) {
     x0 = new BigNumber(0);
     y0 = shares.negated();
     x1 = xAnalytical;
@@ -273,39 +285,49 @@ export const calculateStableswapWithdrawTokenOutput = (
   } else {
     x0 = xAnalytical;
     y0 = yAnalytical;
-    x1 = new BigNumber(Infinity);
-    y1 = new BigNumber(Infinity);
+    x1 = pool.tokensInfo[tokenIndex].reserves;
+    y1 = pool.totalSupply.minus(shares);
   }
 
   while (x1.minus(x0).gt(1) && i < 100) {
     i++;
+    // Candidate for X value from chord method
     const x2 = bigIntClamp(
-      x1.isFinite() && y1.isFinite()
-        ? x1.minus(y1.multipliedBy(x1.minus(x0)).dividedToIntegerBy(y1.minus(y0)))
-        : x0.times(shares).dividedToIntegerBy(y0.plus(shares)),
+      x1.minus(y1.multipliedBy(x1.minus(x0)).dividedToIntegerBy(y1.minus(y0))),
       x0.plus(1),
       x1.minus(1)
     );
-    let y2: BigNumber;
-    try {
-      y2 = functionToZero(x2);
-    } catch {
-      x1 = x2;
-      y1 = new BigNumber(Infinity);
-      continue;
-    }
+    const y2 = functionToZero(x2);
 
     if (y2.isZero()) {
       return x2;
     }
 
-    if (y2.gt(0)) {
-      x1 = x2;
-      y1 = y2;
-    } else {
-      x0 = x2;
-      y0 = y2;
+    // Candidate for X value based on linear extrapolation of the function from (x0, y0) and (x2, y2)
+    // or (x1, y1) and (x2, y2) points
+    const x3 = bigIntClamp(
+      y2.eq(y0)
+        ? x1.minus(x2.minus(x1).times(y1).dividedToIntegerBy(y2.minus(y1)))
+        : x0.minus(x2.minus(x0).times(y0).dividedToIntegerBy(y2.minus(y0))),
+      x0.plus(1),
+      x1.minus(1)
+    );
+    const y3 = functionToZero(x3);
+
+    if (y3.isZero()) {
+      return x3;
     }
+
+    const knownPoints = [
+      [x0, y0],
+      [x1, y1],
+      [x2, y2],
+      [x3, y3]
+    ];
+    const lowerLimits = knownPoints.filter(([, y]) => y.lt(0));
+    const upperLimits = knownPoints.filter(([, y]) => y.gt(0));
+    [x0, y0] = lowerLimits.reduce(([bestX, bestY], [x, y]) => (y.gt(bestY) ? [x, y] : [bestX, bestY]));
+    [x1, y1] = upperLimits.reduce(([bestX, bestY], [x, y]) => (y.lt(bestY) ? [x, y] : [bestX, bestY]));
   }
 
   return x0;
