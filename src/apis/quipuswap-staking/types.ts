@@ -105,7 +105,7 @@ export interface StableswapFeesStorage {
   refF: BigNumber;
 }
 
-export interface StableswapStakerAccum {
+interface StableswapStakerAccum {
   accumulatorF: BigNumber[];
   totalFees: BigNumber[];
   totalStaked: BigNumber;

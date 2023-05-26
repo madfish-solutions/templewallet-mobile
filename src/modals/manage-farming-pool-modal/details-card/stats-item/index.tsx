@@ -31,7 +31,13 @@ export const StatsItem: FC<StatsItemProps> = ({ title, value, usdEquivalent }) =
       <Text style={styles.title}>{title}</Text>
       {value}
       {isDefined(fiatEquity) && (
-        <FormattedAmount style={styles.fiatEquity} isDollarValue symbol={fiatSymbol} amount={fiatEquity} />
+        <FormattedAmount
+          style={styles.fiatEquity}
+          isDollarValue
+          showAllDecimalPlaces
+          symbol={fiatSymbol}
+          amount={fiatEquity}
+        />
       )}
     </View>
   );

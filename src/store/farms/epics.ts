@@ -89,10 +89,11 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
               Object.fromEntries(
                 stakesEntries
                   .filter((entry): entry is [string, RawStakeValue] => isDefined(entry[1]))
-                  .map(([farmAddress, stake], index): [string, UserStakeValueInterface] => [
-                    farmAddress,
-                    toUserStakeValueInterface(stake, farms[index].item.vestingPeriodSeconds)
-                  ])
+                  .map(([farmAddress, stake]): [string, UserStakeValueInterface] => {
+                    const farm = farms.find(({ item }) => item.contractAddress === farmAddress);
+
+                    return [farmAddress, toUserStakeValueInterface(stake, farm?.item.vestingPeriodSeconds ?? '0')];
+                  })
               )
             ),
             mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))
