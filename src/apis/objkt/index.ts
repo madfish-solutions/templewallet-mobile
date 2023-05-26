@@ -2,6 +2,7 @@ import { catchError, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
+import { CollectibleInfo } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -103,7 +104,7 @@ export const fetchCollectiblesByCollection$ = (
   );
 };
 
-export const fetchCollectibleInfo$ = (address: string, tokenId: string) => {
+export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observable<CollectibleInfo> => {
   const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(

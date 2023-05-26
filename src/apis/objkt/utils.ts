@@ -6,7 +6,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
-import { CollectibleResponse } from './types';
+import { CollectibleResponse } from './interfaces';
 
 export const transformCollectiblesArray = (array: CollectibleResponse[], selectedPublicKey: string) => {
   const collectiblesArray = array

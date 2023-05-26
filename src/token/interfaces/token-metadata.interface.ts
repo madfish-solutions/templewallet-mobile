@@ -1,4 +1,4 @@
-import { CurrencyInfo } from 'src/apis/objkt/types';
+import { CurrencyInfo } from 'src/apis/objkt/interfaces';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 

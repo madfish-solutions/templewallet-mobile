@@ -1,6 +1,6 @@
 import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
 
-import { CurrencyInfo } from './types';
+import { CurrencyInfo } from './interfaces';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 
