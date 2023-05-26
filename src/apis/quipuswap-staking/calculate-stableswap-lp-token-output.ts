@@ -2,49 +2,14 @@ import { BigNumber } from 'bignumber.js';
 
 import { toIntegerSeconds } from 'src/utils/date.utils';
 
+import { BalancingAccum, StableswapFeesStorage, StableswapPool, StableswapTokenInfo } from './types';
+
 const precision = new BigNumber(10).pow(18);
 const aPrecision = new BigNumber(100);
 const accumPrecision = new BigNumber(1e10);
 const feeDenominator = new BigNumber(1e10);
 
-interface TokenInfo {
-  rateF: BigNumber;
-  precisionMultiplierF: BigNumber;
-  reserves: BigNumber;
-}
-
-interface FeesStorage {
-  lpF: BigNumber;
-  stakersF: BigNumber;
-  refF: BigNumber;
-}
-
-interface StakerAccum {
-  accumulatorF: BigNumber[];
-  totalFees: BigNumber[];
-  totalStaked: BigNumber;
-}
-
-interface Pool {
-  initialAF: BigNumber;
-  /** timestamp in seconds */
-  initialATime: BigNumber;
-  futureAF: BigNumber;
-  /** timestamp in seconds */
-  futureATime: BigNumber;
-  tokensInfo: TokenInfo[];
-  fee: FeesStorage;
-  stakerAccumulator: StakerAccum;
-  totalSupply: BigNumber;
-}
-
-interface BalancingAccum {
-  stakerAccumulator: StakerAccum;
-  tokensInfo: TokenInfo[];
-  tokensInfoWithoutLp: TokenInfo[];
-}
-
-const xpMem = (tokensInfo: TokenInfo[]) => {
+const xpMem = (tokensInfo: StableswapTokenInfo[]) => {
   return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(precision));
 };
 
@@ -98,7 +63,7 @@ const getD = (xp: BigNumber[], ampF: BigNumber) => {
   return d;
 };
 
-const getDMem = (tokensInfo: TokenInfo[], ampF: BigNumber) => {
+const getDMem = (tokensInfo: StableswapTokenInfo[], ampF: BigNumber) => {
   return getD(xpMem(tokensInfo), ampF);
 };
 
@@ -106,7 +71,12 @@ const divideFeeForBalance = (fee: BigNumber, tokensCount: BigNumber) => {
   return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(4));
 };
 
-const nipFeesOffReserves = (stakersFee: BigNumber, refFee: BigNumber, devFee: BigNumber, tokenInfo: TokenInfo) => {
+const nipFeesOffReserves = (
+  stakersFee: BigNumber,
+  refFee: BigNumber,
+  devFee: BigNumber,
+  tokenInfo: StableswapTokenInfo
+) => {
   return {
     ...tokenInfo,
     reserves: tokenInfo.reserves.minus(stakersFee).minus(refFee).minus(devFee)
@@ -114,12 +84,12 @@ const nipFeesOffReserves = (stakersFee: BigNumber, refFee: BigNumber, devFee: Bi
 };
 
 const balanceInputs = (
-  initTokensInfo: TokenInfo[],
+  initTokensInfo: StableswapTokenInfo[],
   d0: BigNumber,
-  newTokensInfo: TokenInfo[],
+  newTokensInfo: StableswapTokenInfo[],
   d1: BigNumber,
   tokensCount: BigNumber,
-  fees: FeesStorage,
+  fees: StableswapFeesStorage,
   devFeeF: BigNumber,
   accumulator: BalancingAccum
 ) =>
@@ -156,7 +126,7 @@ const balanceInputs = (
 
 export const calculateStableswapLpTokenOutput = (
   inputs: BigNumber[],
-  pool: Pool,
+  pool: StableswapPool,
   tokensCount: number,
   devFeeF: BigNumber
 ) => {

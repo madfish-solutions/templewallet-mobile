@@ -1,3 +1,4 @@
+import { omit } from '@dicebear/avatars/dist/utils/helper';
 import { createReducer } from '@reduxjs/toolkit';
 
 import { isDefined } from 'src/utils/is-defined';
@@ -14,8 +15,7 @@ import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [farmAddress]: _, ...otherStakes } = state.lastStakes;
+    const otherStakes = omit(state.lastStakes, farmAddress);
 
     return {
       ...state,

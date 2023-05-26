@@ -14,10 +14,11 @@ import { FarmItem } from './farm-item/farm-item';
 
 export const Earn: FC = () => {
   const dispatch = useDispatch();
-  usePageAnalytic(ScreensEnum.Earn);
   const farms = useAllFarmsSelector();
   const stakes = useLastStakesSelector();
   const styles = useEarnStyles();
+
+  usePageAnalytic(ScreensEnum.Earn);
 
   useEffect(() => {
     dispatch(loadAllFarmsAndStakesAction());

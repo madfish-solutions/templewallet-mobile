@@ -5,9 +5,10 @@ import { BigNumber } from 'bignumber.js';
 import { toIntegerSeconds } from 'src/utils/date.utils';
 import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { calculateStableswapLpTokenOutput } from './calculate-stableswap-lp-token-output';
-import { FarmsListResponse, StableswapPoolStorage, StableswapPoolsValue } from './types';
+import { FarmsListResponse, StableswapPoolStorage } from './types';
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
 
@@ -32,8 +33,8 @@ export const estimateStableswapLpTokenOutput = async (
 ) => {
   const { storage: internalPoolStorage } = await stableswapContract.storage<StableswapPoolStorage>();
   const { pools: poolsFromRpc, factory_address } = internalPoolStorage;
-  const poolFromRpc = await poolsFromRpc.get<StableswapPoolsValue>(new BigNumber(poolId));
-  const factoryContract = await tezos.contract.at(factory_address);
+  const poolFromRpc = await poolsFromRpc.get(new BigNumber(poolId));
+  const factoryContract = await getReadOnlyContract(factory_address, tezos);
   const devFeeF = await factoryContract.contractViews
     .dev_fee()
     .executeView({ viewCaller: READ_ONLY_SIGNER_PUBLIC_KEY_HASH });
