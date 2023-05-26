@@ -71,11 +71,19 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       return openUrl(navigateToObjktForBuy);
     }
 
-    const transferParams = isDefined(offer)
-      ? 'fulfill_offer' in offer?.methods
-        ? [offer.methods.fulfill_offer(item.highestOffer?.bigmap_key ?? 1, item.id).toTransferParams()]
-        : [offer.methods.offer_accept(item.highestOffer?.bigmap_key ?? 1).toTransferParams()]
-      : [];
+    const getTransferParams = () => {
+      if (isDefined(offer)) {
+        if ('fulfill_offer' in offer?.methods) {
+          return [offer.methods.fulfill_offer(item.highestOffer?.bigmap_key ?? 1, item.id).toTransferParams()];
+        } else {
+          return [offer.methods.offer_accept(item.highestOffer?.bigmap_key ?? 1).toTransferParams()];
+        }
+      }
+
+      return [];
+    };
+
+    const transferParams = getTransferParams();
 
     const token = {
       id: item.id,
