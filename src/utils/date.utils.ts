@@ -1,3 +1,7 @@
+const MS_IN_SECOND = 1000;
+export const SECONDS_IN_MINUTE = 60;
+export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
+export const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
 export const APPROXIMATE_DAYS_IN_YEAR = 365;
 
 export const isTheSameDay = (first: Date, second: Date) =>
@@ -31,12 +35,6 @@ export const formatDateOutput = (date: number | string) =>
     hour: 'numeric',
     minute: 'numeric'
   });
-
-const MS_IN_SECOND = 1000;
-export const SECONDS_IN_MINUTE = 60;
-export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
-export const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
-export const APPROXIMATE_DAYS_IN_YEAR = 365;
 
 export function toIntegerSeconds(ms: number): number;
 export function toIntegerSeconds(date: Date): number;

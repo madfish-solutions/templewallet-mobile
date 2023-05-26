@@ -9,6 +9,7 @@ import { formatAssetAmount } from '../utils/number.util';
 interface Props {
   amount: BigNumber;
   isDollarValue?: boolean;
+  showAllDecimalPlaces?: boolean;
   showMinusSign?: boolean;
   showPlusSign?: boolean;
   symbol?: string;
@@ -23,6 +24,7 @@ export const FormattedAmount: FC<Props> = ({
   isDollarValue = false,
   showMinusSign = false,
   showPlusSign = false,
+  showAllDecimalPlaces = false,
   symbol,
   style
 }) => {
@@ -33,7 +35,9 @@ export const FormattedAmount: FC<Props> = ({
     ? bigIntClamp(amount, MIN_POSITIVE_AMOUNT_VALUE, new BigNumber(Infinity))
     : bigIntClamp(amount, new BigNumber(-Infinity), MAX_NEGATIVE_AMOUNT_VALUE).abs();
 
-  const formattedAmount = isDollarValue ? formatAssetAmount(dollarAmount, 2) : formatAssetAmount(amount);
+  const formattedAmount = isDollarValue
+    ? formatAssetAmount(dollarAmount, 2, showAllDecimalPlaces)
+    : formatAssetAmount(amount, undefined, showAllDecimalPlaces);
 
   const isLessThan = formattedAmount.includes('<');
   const formattedSymbol = symbol !== undefined ? ` ${symbol}` : '';
