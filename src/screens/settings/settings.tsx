@@ -34,12 +34,12 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
 
-const SHARE_CONTENT =
-  'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile';
+const SHARE_CONTENT = 'Hey friend! You should download Temple and discover the Tezos world with me ';
 
 export const Settings = () => {
   const styles = useSettingsStyles();
@@ -61,9 +61,9 @@ export const Settings = () => {
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
-  const handleShare = useCallback(() => {
+  const handleShare = useCallback(async () => {
     Share.share({
-      message: SHARE_CONTENT
+      message: SHARE_CONTENT + (await getTempleDynamicLink())
     })
       .then(() => {
         trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);

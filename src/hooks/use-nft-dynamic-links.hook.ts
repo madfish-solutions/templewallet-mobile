@@ -31,7 +31,7 @@ export const useNFTDynamicLinks = () => {
   const { navigate } = useNavigation();
 
   const handleDynamicLinks = (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
-    if (link) {
+    if (link && link.url.indexOf('/nft') !== -1) {
       if (isAuthorised) {
         const collectible = decodeNFTJsonData(link.url);
 

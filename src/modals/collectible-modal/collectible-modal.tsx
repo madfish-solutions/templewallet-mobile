@@ -18,9 +18,12 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
+import { formatImgUri } from '../../utils/image.utils';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
-import { getNftDynamicUrl } from './utils/get-nft-dynamic-url';
+
+const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -34,7 +37,13 @@ export const CollectibleModal = () => {
 
   const handleShare = useCallback(async () => {
     await Share.share({
-      message: await getNftDynamicUrl(collectible)
+      message:
+        SHARE_NFT_CONTENT +
+        (await getTempleDynamicLink(`/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`, {
+          title: collectible.name,
+          descriptionText: 'NFT description',
+          imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
+        }))
     });
   }, []);
 
