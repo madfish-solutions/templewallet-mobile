@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import { emptyFn } from 'src/config/general';
@@ -40,7 +40,7 @@ const getHTML = (svgContent: string) =>
 
 interface AnimatedSvgProps {
   dataUri: string;
-  style?: StyleProp<ViewStyle>;
+  style?: ViewStyle;
   onError?: () => void;
 }
 
