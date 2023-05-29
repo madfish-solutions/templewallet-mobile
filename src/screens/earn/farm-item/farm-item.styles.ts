@@ -69,8 +69,7 @@ export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }
   containerStyle: {
     flex: 1,
     height: formatSize(38),
-    borderRadius: formatSize(10),
-    borderWidth: formatSize(2)
+    borderRadius: formatSize(10)
   },
   titleStyle: {
     ...typography.tagline13Tag

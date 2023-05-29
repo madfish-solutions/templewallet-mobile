@@ -32,6 +32,7 @@ import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 
 interface DetailsCardProps {
   farm: Farm;
+  shouldShowLoading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
 }
@@ -43,7 +44,12 @@ const COUNTDOWN_TOKENS_BASE = [
   { unit: 'M', seconds: SECONDS_IN_MINUTE }
 ];
 
-export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE, shouldShowClaimRewardsButton }) => {
+export const DetailsCard: FC<DetailsCardProps> = ({
+  farm,
+  shouldShowLoading,
+  stake = EMPTY_STAKE,
+  shouldShowClaimRewardsButton
+}) => {
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
@@ -139,11 +145,13 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE, s
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>
         <StatsItem
+          shouldShowLoading={shouldShowLoading}
           title="Your deposit:"
           value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
           usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
         />
         <StatsItem
+          shouldShowLoading={shouldShowLoading}
           title="Claimable rewards:"
           value={
             <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
@@ -154,11 +162,13 @@ export const DetailsCard: FC<DetailsCardProps> = ({ farm, stake = EMPTY_STAKE, s
       <Divider size={formatSize(12)} />
       <View style={styles.statsRow}>
         <StatsItem
+          shouldShowLoading={shouldShowLoading}
           title="Long-term rewards:"
           value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
           usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
         />
         <StatsItem
+          shouldShowLoading={shouldShowLoading}
           title="Fully claimable:"
           value={
             <Text style={styles.statsValue}>

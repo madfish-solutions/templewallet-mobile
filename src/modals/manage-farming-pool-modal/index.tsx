@@ -18,7 +18,12 @@ import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
-import { useFarmSelector, useFarmsLoadingSelector, useLastStakesSelector } from 'src/store/farms/selectors';
+import {
+  useFarmSelector,
+  useFarmsLoadingSelector,
+  useLastStakesSelector,
+  useStakesLoadingSelector
+} from 'src/store/farms/selectors';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -43,6 +48,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
   const vestingPeriodSeconds = Number(farm?.item.vestingPeriodSeconds ?? 0);
   const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, { roundingMethod: 'ceil', unit: 'day' });
+  const stakesLoading = useStakesLoadingSelector();
   const pageIsLoading = farmIsLoading && !isDefined(farm);
   const theme = useThemeSelector();
   const [tabIndex, setTabIndex] = useState(0);
@@ -103,7 +109,12 @@ export const ManageFarmingPoolModal: FC = () => {
               <Text style={styles.detailsTitleText}>Quipuswap Farming Details</Text>
             </View>
             <Divider size={formatSize(16)} />
-            <DetailsCard farm={farm.item} stake={stake} shouldShowClaimRewardsButton={tabIndex === 0} />
+            <DetailsCard
+              farm={farm.item}
+              stake={stake}
+              shouldShowClaimRewardsButton={tabIndex === 0}
+              shouldShowLoading={stakesLoading && !isDefined(stake)}
+            />
             {tabIndex === 1 && vestingPeriodSeconds >= SECONDS_IN_DAY && (
               <>
                 <Divider size={formatSize(16)} />

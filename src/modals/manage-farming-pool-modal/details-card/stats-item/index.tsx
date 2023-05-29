@@ -13,11 +13,12 @@ import { useStatsItemStyles } from './styles';
 
 interface StatsItemProps {
   title: string;
+  shouldShowLoading: boolean;
   value: ReactChild | ReactChild[];
   usdEquivalent?: BigNumber;
 }
 
-export const StatsItem: FC<StatsItemProps> = ({ title, value, usdEquivalent }) => {
+export const StatsItem: FC<StatsItemProps> = ({ shouldShowLoading, title, value, usdEquivalent }) => {
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
   const fiatToUsdRate = useFiatToUsdRateSelector();
   const styles = useStatsItemStyles();
@@ -29,7 +30,7 @@ export const StatsItem: FC<StatsItemProps> = ({ title, value, usdEquivalent }) =
   return (
     <View style={styles.root}>
       <Text style={styles.title}>{title}</Text>
-      {value}
+      {shouldShowLoading ? <Text style={styles.loader}>---</Text> : value}
       {isDefined(fiatEquity) && (
         <FormattedAmount
           style={styles.fiatEquity}

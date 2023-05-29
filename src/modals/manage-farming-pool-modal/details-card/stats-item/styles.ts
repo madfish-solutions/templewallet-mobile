@@ -16,5 +16,10 @@ export const useStatsItemStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.numbersRegular11,
     letterSpacing: formatSize(0.07),
     color: colors.gray1
+  },
+  loader: {
+    ...typography.numbersRegular17,
+    letterSpacing: formatSize(-0.41),
+    color: colors.black
   }
 }));
