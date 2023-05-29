@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
@@ -18,6 +18,7 @@ import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
@@ -57,28 +58,43 @@ export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) 
   );
 
   const handleSubmit = useCallback(
-    async (values: WithdrawFormValues) => {
+    (values: WithdrawFormValues, helpers: FormikHelpers<WithdrawFormValues>) => {
       if (!isDefined(farm)) {
         return;
       }
 
-      const { tokenOption } = values;
-      const { token } = tokenOption;
-      const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
+      const doWithdraw = async () => {
+        helpers.setSubmitting(true);
+        const { tokenOption } = values;
+        const { token } = tokenOption;
+        const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
 
-      try {
-        const opParams = await createWithdrawOperationParams(farm, tokenIndex, tezos, publicKeyHash, stake);
-        dispatch(
-          navigateAction(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.InternalOperations,
-            opParams,
-            testID: 'STAKE_TRANSACTION_SENT'
-          })
+        try {
+          const opParams = await createWithdrawOperationParams(farm, tokenIndex, tezos, publicKeyHash, stake);
+          dispatch(
+            navigateAction(ModalsEnum.Confirmation, {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams,
+              testID: 'STAKE_TRANSACTION_SENT'
+            })
+          );
+          trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
+        } catch (error) {
+          showErrorToastByError(error, undefined, true);
+          trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+        } finally {
+          helpers.setSubmitting(false);
+        }
+      };
+
+      if ((stake.rewardsDueDate ?? 0) < Date.now()) {
+        void doWithdraw();
+      } else {
+        doAfterConfirmation(
+          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.',
+          'Withdraw & Claim rewards',
+          () => void doWithdraw()
         );
-        trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
-      } catch (error) {
-        showErrorToastByError(error, undefined, true);
-        trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
     [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch]

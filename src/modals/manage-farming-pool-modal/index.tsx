@@ -22,7 +22,7 @@ import { useFarmSelector, useFarmsLoadingSelector, useLastStakesSelector } from 
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { formatTimespan } from 'src/utils/date.utils';
+import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { DetailsCard } from './details-card';
@@ -104,7 +104,7 @@ export const ManageFarmingPoolModal: FC = () => {
             </View>
             <Divider size={formatSize(16)} />
             <DetailsCard farm={farm.item} stake={stake} shouldShowClaimRewardsButton={tabIndex === 0} />
-            {tabIndex === 1 && vestingPeriodSeconds > 1 && (
+            {tabIndex === 1 && vestingPeriodSeconds >= SECONDS_IN_DAY && (
               <>
                 <Divider size={formatSize(16)} />
                 <Disclaimer title="Long-term rewards vesting">
