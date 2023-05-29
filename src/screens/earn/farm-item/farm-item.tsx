@@ -92,7 +92,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
         Alert.alert(
           'Are you sure?',
-          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
+          'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
           [
             {
               text: 'Cancel',
