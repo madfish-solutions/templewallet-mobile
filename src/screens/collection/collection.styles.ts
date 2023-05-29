@@ -97,9 +97,21 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     borderColor: colors.peach,
     color: colors.peach
   },
+  listButtonActive: {
+    borderColor: colors.peach,
+    color: colors.white,
+    backgroundColor: colors.peach
+  },
   sellButtonDisabled: {
     borderColor: colors.disabled,
     color: colors.disabled
+  },
+  listButtonDisabled: {
+    color: colors.white
+  },
+  listButtonNotListed: {
+    backgroundColor: colors.disabled,
+    borderColor: colors.disabled
   },
   sellButtonText: {
     paddingVertical: formatSize(13),

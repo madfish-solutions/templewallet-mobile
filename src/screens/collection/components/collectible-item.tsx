@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 
 import { OBJKT_CONTRACT } from 'src/apis/objkt/constants';
 import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
-import { emptyFn } from 'src/config/general';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
@@ -63,11 +62,12 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
   const holders = item?.holders?.map(holder => holder.holder_address) ?? [];
   const isHolder = holders.includes(selectedAccount.publicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
+  const isListed = item.lowestAsk !== null;
 
   const navigateToObjktForBuy = `https://objkt.com/asset/${collectionContract}/${item.id}`;
 
   const handlePress = async () => {
-    if (!isHolder && isOffersExisted) {
+    if (!isHolder && isListed) {
       return openUrl(navigateToObjktForBuy);
     }
 
@@ -116,6 +116,8 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       })
     );
   };
+
+  const handleList = () => openUrl(navigateToObjktForBuy);
 
   const buttonText = () => {
     if (isOffersExisted) {
@@ -182,8 +184,19 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
               {buttonText()}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={emptyFn} style={[styles.sellButton, styles.sellButtonDisabled]}>
-            <Text style={[styles.sellButtonText, styles.sellButtonDisabled]}>list</Text>
+          <TouchableOpacity
+            onPress={handleList}
+            style={[styles.sellButton, conditionalStyle(isListed, styles.listButtonNotListed, styles.listButtonActive)]}
+            disabled={isListed}
+          >
+            <Text
+              style={[
+                styles.sellButtonText,
+                conditionalStyle(isListed, styles.listButtonDisabled, styles.listButtonActive)
+              ]}
+            >
+              {isListed ? 'Listed' : 'List'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
