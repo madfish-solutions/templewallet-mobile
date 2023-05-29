@@ -52,7 +52,7 @@ export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
-  const itemWidth = width - 32;
+  const iconSize = width - 32;
 
   const { navigate } = useNavigation();
 
@@ -66,8 +66,6 @@ export const CollectibleModal = () => {
 
   const { fa, creators, description, metadata, timestamp, royalties, supply, mime, attributes, galleries } =
     collectibleInfo;
-
-  console.log(mime, 'mime');
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 
@@ -116,7 +114,13 @@ export const CollectibleModal = () => {
         <ModalStatusBar />
 
         <View>
-          <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
+          <CollectibleIcon
+            collectible={collectible}
+            mime={mime}
+            objktArtifact={collectibleInfo.artifact_uri}
+            size={iconSize}
+            iconSize={CollectibleIconSize.BIG}
+          />
 
           <Divider size={formatSize(12)} />
 
