@@ -5,12 +5,12 @@ import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
 import { PoolType, SingleFarmResponse, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { UserStakeValueInterface } from 'src/store/farms/state';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { convertFarmToken } from 'src/utils/staking.utils';
 
-import { STABLESWAP_REFERRAL, WTEZ_TOKEN } from '../constants';
+import { STABLESWAP_REFERRAL } from '../constants';
 
 export const createWithdrawOperationParams = async (
   farm: SingleFarmResponse,
@@ -46,7 +46,7 @@ export const createWithdrawOperationParams = async (
 
   let burnWTezParams: TransferParams[] = [];
   if (shouldBurnWtezToken) {
-    const wTezContract = await getReadOnlyContract(WTEZ_TOKEN.address, tezos);
+    const wTezContract = await getReadOnlyContract(WTEZ_TOKEN_METADATA.address, tezos);
     burnWTezParams = [wTezContract.methods.burn(accountPkh, accountPkh, tokenOutput).toTransferParams()];
   }
 

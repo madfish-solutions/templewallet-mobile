@@ -291,7 +291,7 @@ export const calculateStableswapWithdrawTokenOutput = (
 
   while (x1.minus(x0).gt(1) && i < 100) {
     i++;
-    // Candidate for X value from chord method
+    /** Candidate for X value from chord method */
     const x2 = bigIntClamp(
       x1.minus(y1.multipliedBy(x1.minus(x0)).dividedToIntegerBy(y1.minus(y0))),
       x0.plus(1),
@@ -303,8 +303,9 @@ export const calculateStableswapWithdrawTokenOutput = (
       return x2;
     }
 
-    // Candidate for X value based on linear extrapolation of the function from (x0, y0) and (x2, y2)
-    // or (x1, y1) and (x2, y2) points
+    /** Candidate for X value based on linear extrapolation of the function from (x0, y0) and (x2, y2)
+     * or (x1, y1) and (x2, y2) points
+     */
     const x3 = bigIntClamp(
       y2.eq(y0)
         ? x1.minus(x2.minus(x1).times(y1).dividedToIntegerBy(y2.minus(y1)))
