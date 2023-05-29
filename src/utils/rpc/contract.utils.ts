@@ -1,5 +1,5 @@
 import { TezosToolkit } from '@taquito/taquito';
-import memoize from 'p-memoize';
+import memoize from 'mem';
 
 export const getReadOnlyContract = memoize(
   async (contractAddress: string, tezos: TezosToolkit) => tezos.contract.at(contractAddress),
