@@ -25,6 +25,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   mime,
   objktArtifact
 }) => {
+  console.log(mime, 'mime');
   const styles = useCollectibleIconStyles();
   const assetSlug = `${collectible.address}_${collectible.id}`;
 
@@ -72,6 +73,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
             source={{ uri: formatCollectibleObjktArtifactUri(objktArtifact) }}
             // @ts-ignore
             style={[{ width: size, height: size }, styles.image]}
+            resizeMode="cover"
             onError={handleAnimatedIconError}
           />
         );
