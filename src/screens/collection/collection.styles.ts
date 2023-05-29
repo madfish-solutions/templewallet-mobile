@@ -49,7 +49,8 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     color: colors.black,
     marginTop: formatSize(8),
     maxWidth: formatSize(285),
-    ...typography.caption13Regular
+    ...typography.caption13Regular,
+    height: formatSize(54)
   },
   infoContainer: {
     flexDirection: 'row',

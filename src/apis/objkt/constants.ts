@@ -36,5 +36,6 @@ export const HIDDEN_CONTRACTS = [
   'KT1EfsNuqwLAWDd3o4pvfUx1CAh5GMdTrRvr',
   'KT1GtbuswcNMGhHF2TSuH1Yfaqn16do8Qtva',
   'KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u',
-  'KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi'
+  'KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi',
+  'KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS'
 ];

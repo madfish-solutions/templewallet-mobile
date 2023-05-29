@@ -106,8 +106,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         padding: formatSize(2)
       }}
     >
-      {isDefined(collectible.thumbnailUri) &&
-        isDefined(collectible.artifactUri) &&
+      {(isDefined(collectible.thumbnailUri) || isDefined(collectible.artifactUri)) &&
         (isImgUriDataUri(imageSrc) ? (
           <DataUriImage style={styles.image} dataUri={imageSrc} />
         ) : (
