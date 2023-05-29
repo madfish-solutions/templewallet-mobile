@@ -17,7 +17,8 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
               marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
               marketplace_event_type === MarketPlaceEventEnum.listBuy ||
               marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
-              marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept
+              marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept ||
+              marketplace_event_type === MarketPlaceEventEnum.englishAuctionSettle
           )
         : [];
       const lastPrice = buyEvents.filter(event => event.price_xtz !== null)[0];

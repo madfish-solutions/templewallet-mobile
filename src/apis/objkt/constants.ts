@@ -22,7 +22,7 @@ export const currencyInfoById: Record<number, CurrencyInfo> = {
     decimals: 6
   },
   4: {
-    symbol: 'wXTZ',
+    symbol: 'oXTZ',
     decimals: 6
   },
   1924: {
