@@ -3,5 +3,6 @@ import { FarmsState } from './state';
 
 export const mockFarmsState: FarmsState = {
   allFarms: createEntity([]),
-  lastStakes: {}
+  lastStakes: {},
+  stakesLoading: false
 };

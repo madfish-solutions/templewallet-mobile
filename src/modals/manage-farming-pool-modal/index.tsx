@@ -17,7 +17,12 @@ import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
-import { useFarmSelector, useFarmsLoadingSelector, useLastStakesSelector } from 'src/store/farms/selectors';
+import {
+  useFarmSelector,
+  useFarmsLoadingSelector,
+  useLastStakesSelector,
+  useStakesLoadingSelector
+} from 'src/store/farms/selectors';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -37,6 +42,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const farmIsLoading = useFarmsLoadingSelector();
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
+  const stakesLoading = useStakesLoadingSelector();
   const pageIsLoading = farmIsLoading && !isDefined(farm);
   const theme = useThemeSelector();
 
@@ -87,7 +93,7 @@ export const ManageFarmingPoolModal: FC = () => {
               <Text style={styles.detailsTitleText}>Quipuswap Farming Details</Text>
             </View>
             <Divider size={formatSize(16)} />
-            <DetailsCard farm={farm.item} stake={stake} />
+            <DetailsCard farm={farm.item} stake={stake} shouldShowLoading={stakesLoading && !isDefined(stake)} />
           </View>
         )}
         {!pageIsLoading && isDefined(farm) && farm.item.type !== PoolType.STABLESWAP && (
