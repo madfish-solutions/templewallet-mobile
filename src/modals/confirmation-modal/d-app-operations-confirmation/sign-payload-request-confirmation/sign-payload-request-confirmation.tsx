@@ -1,4 +1,5 @@
-import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, SigningType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { char2Bytes } from '@taquito/utils';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';
@@ -33,7 +34,9 @@ interface Props {
 
 const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
   Shelter.getSigner$(message.sourceAddress).pipe(
-    switchMap(signer => signer.sign(message.payload)),
+    switchMap(signer =>
+      signer.sign(message.signingType === SigningType.RAW ? char2Bytes(message.payload) : message.payload)
+    ),
     switchMap(({ prefixSig }) =>
       BeaconHandler.respond({
         type: BeaconMessageType.SignPayloadResponse,
