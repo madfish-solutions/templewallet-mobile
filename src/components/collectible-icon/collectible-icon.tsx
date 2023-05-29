@@ -55,7 +55,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const handleLoadEnd = () => setIsLoading(false);
 
   const icon = useMemo(() => {
-    if (!isAnimatedIconError && isDefined(objktArtifact)) {
+    if (!isAnimatedIconError && isDefined(objktArtifact) && iconSize === CollectibleIconSize.BIG) {
       if (isImgUriDataUri(objktArtifact)) {
         return (
           <AnimatedSvg
