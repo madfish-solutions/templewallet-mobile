@@ -42,9 +42,10 @@ interface AnimatedSvgProps {
   dataUri: string;
   style?: ViewStyle;
   onError?: () => void;
+  onLoadEnd?: () => void;
 }
 
-export const AnimatedSvg: FC<AnimatedSvgProps> = ({ dataUri, style, onError = emptyFn }) => {
+export const AnimatedSvg: FC<AnimatedSvgProps> = ({ dataUri, style, onError = emptyFn, onLoadEnd = emptyFn }) => {
   const source = useMemo(() => ({ html: getHTML(fixSvgXml(getXmlFromSvgDataUriInUtf8Encoding(dataUri))) }), [dataUri]);
 
   return (
@@ -58,6 +59,7 @@ export const AnimatedSvg: FC<AnimatedSvgProps> = ({ dataUri, style, onError = em
       source={source}
       style={style}
       onError={onError}
+      onLoadEnd={onLoadEnd}
     />
   );
 };

@@ -16,12 +16,7 @@ const getHTML = (uri: string) =>
     <style>
       * { margin:0; padding:0; }
       html, body { height: 100%; width: 100%; }
-      model-viewer {
-        --progress-bar-color: orange;
-        --progress-bar-height: 10px;
-        width: 100%;
-        height: 100%;
-      }
+      model-viewer { width: 100%; height: 100%;}
     </style>
   </head>
   <body>
@@ -34,10 +29,11 @@ interface SimpleModelViewProps {
   uri: string;
   style?: ViewStyle;
   onError?: () => void;
+  onLoadEnd?: () => void;
 }
 
-export const SimpleModelView: FC<SimpleModelViewProps> = ({ uri, style, onError = emptyFn }) => {
+export const SimpleModelView: FC<SimpleModelViewProps> = ({ uri, style, onError = emptyFn, onLoadEnd = emptyFn }) => {
   const source = useMemo(() => ({ html: getHTML(uri) }), [uri]);
 
-  return <WebView originWhitelist={['*']} source={source} style={style} onError={onError} />;
+  return <WebView originWhitelist={['*']} source={source} style={style} onError={onError} onLoadEnd={onLoadEnd} />;
 };

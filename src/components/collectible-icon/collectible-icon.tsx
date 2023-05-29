@@ -1,9 +1,9 @@
 import React, { FC, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import Video from 'react-native-video';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
+import { Loader } from 'src/components/loader/loader';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -15,6 +15,7 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { SimpleVideo } from '../simple-video/simple-video';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -25,7 +26,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   mime,
   objktArtifact
 }) => {
-  console.log(mime, 'mime');
+  const [isLoading, setIsLoading] = useState(true);
+
   const styles = useCollectibleIconStyles();
   const assetSlug = `${collectible.address}_${collectible.id}`;
 
@@ -50,10 +52,19 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     setIsAnimatedIconError(true);
   };
 
+  const handleLoadEnd = () => setIsLoading(false);
+
   const icon = useMemo(() => {
     if (!isAnimatedIconError && isDefined(objktArtifact)) {
       if (isImgUriDataUri(objktArtifact)) {
-        return <AnimatedSvg style={styles.image} dataUri={objktArtifact} onError={handleAnimatedIconError} />;
+        return (
+          <AnimatedSvg
+            style={styles.image}
+            dataUri={objktArtifact}
+            onError={handleAnimatedIconError}
+            onLoadEnd={handleLoadEnd}
+          />
+        );
       }
 
       if (mime === NonStaticMimeTypes.MODEL) {
@@ -62,25 +73,32 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
             style={styles.image}
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
             onError={handleAnimatedIconError}
+            onLoadEnd={handleLoadEnd}
           />
         );
       }
 
       if (mime === NonStaticMimeTypes.VIDEO || mime === NonStaticMimeTypes.AUDIO) {
         return (
-          <Video
-            repeat
-            source={{ uri: formatCollectibleObjktArtifactUri(objktArtifact) }}
-            // @ts-ignore
-            style={[{ width: size, height: size }, styles.image]}
-            resizeMode="cover"
+          <SimpleVideo
+            uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+            size={size}
+            style={styles.image}
             onError={handleAnimatedIconError}
+            onLoad={handleLoadEnd}
           />
         );
       }
     }
 
-    return <FastImage style={styles.image} source={{ uri: currentFallback }} onError={handleError} />;
+    return (
+      <FastImage
+        style={styles.image}
+        source={{ uri: currentFallback }}
+        onError={handleError}
+        onLoadEnd={handleLoadEnd}
+      />
+    );
   }, [objktArtifact, currentFallback]);
 
   return (
@@ -92,6 +110,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
       }}
     >
       {icon}
+      {isLoading && <Loader />}
     </View>
   );
 };
