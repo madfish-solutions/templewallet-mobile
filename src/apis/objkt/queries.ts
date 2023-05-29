@@ -104,6 +104,7 @@ query MyQuery {
         artifact_uri
         display_uri
         decimals
+        description
         fa_contract
         highest_offer
         is_boolean_amount

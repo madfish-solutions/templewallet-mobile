@@ -47,7 +47,8 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
           logo: item.logo,
           contract: item.tokens[0].fa_contract,
           creator: address,
-          type: item.__typename
+          type: item.__typename,
+          galleryId: item.gallery_id
         };
       });
 
@@ -81,7 +82,8 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
 export const fetchCollectiblesByCollection$ = (
   contract: string,
   selectedPublicKey: string,
-  type: ObjktTypeEnum
+  type: ObjktTypeEnum,
+  galleryId?: string
 ): Observable<TokenInterface[]> => {
   const request =
     type === ObjktTypeEnum.faContract
@@ -95,7 +97,8 @@ export const fetchCollectiblesByCollection$ = (
 
         return collectibles;
       } else {
-        const tokens = result.gallery[0].tokens.map(token => token.token).flat();
+        const currentGallery = result.gallery.find(gallery => gallery.gallery_id === galleryId);
+        const tokens = currentGallery?.tokens.map(token => token.token).flat() ?? [];
         const collectibles = transformCollectiblesArray(tokens, selectedPublicKey);
 
         return collectibles;

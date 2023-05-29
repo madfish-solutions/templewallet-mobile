@@ -6,6 +6,7 @@ export interface Collection {
   creator: string;
   contract: string;
   type: ObjktTypeEnum;
+  galleryId?: string;
 }
 
 export interface CollectionsRootState {

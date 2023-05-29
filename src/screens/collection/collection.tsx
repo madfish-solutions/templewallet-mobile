@@ -26,7 +26,8 @@ export const Collection = () => {
   const collectibles = useCollectibleByCollectionInfo(
     params.collectionContract,
     selectedAccount.publicKeyHash,
-    params.type
+    params.type,
+    params.galleryId
   );
 
   const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);

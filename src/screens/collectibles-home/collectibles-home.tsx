@@ -129,7 +129,8 @@ export const CollectiblesHome = () => {
       navigate(ScreensEnum.Collection, {
         collectionContract: item.contract,
         collectionName: item.name,
-        type: item.type
+        type: item.type,
+        galleryId: item.galleryId
       });
 
     return (

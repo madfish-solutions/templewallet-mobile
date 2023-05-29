@@ -52,7 +52,13 @@ export interface QueryResponse {
     tokens: { display_uri: string }[];
     __typename: ObjktTypeEnum;
   }[];
-  gallery: { name: string; logo: string; tokens: { fa_contract: string }[]; __typename: ObjktTypeEnum }[];
+  gallery: {
+    name: string;
+    logo: string;
+    gallery_id: string;
+    tokens: { fa_contract: string }[];
+    __typename: ObjktTypeEnum;
+  }[];
 }
 
 export interface TzProfilesQueryResponse {
@@ -64,7 +70,7 @@ export interface CollectiblesByCollectionResponse {
 }
 
 export interface CollectiblesByGalleriesResponse {
-  gallery: { tokens: CollectiblesByCollectionResponse[] }[];
+  gallery: { tokens: CollectiblesByCollectionResponse[]; gallery_id: string }[];
 }
 
 export interface CurrencyInfo {

@@ -77,7 +77,12 @@ export type ScreensParamList = {
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
-  [ScreensEnum.Collection]: { collectionContract: string; collectionName: string; type: ObjktTypeEnum };
+  [ScreensEnum.Collection]: {
+    collectionContract: string;
+    collectionName: string;
+    type: ObjktTypeEnum;
+    galleryId: string | undefined;
+  };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
