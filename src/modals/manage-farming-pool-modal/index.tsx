@@ -93,7 +93,7 @@ export const ManageFarmingPoolModal: FC = () => {
               <Text style={styles.detailsTitleText}>Quipuswap Farming Details</Text>
             </View>
             <Divider size={formatSize(16)} />
-            <DetailsCard farm={farm.item} stake={stake} shouldShowLoading={stakesLoading && !isDefined(stake)} />
+            <DetailsCard farm={farm.item} stake={stake} loading={stakesLoading && !isDefined(stake)} />
           </View>
         )}
         {!pageIsLoading && isDefined(farm) && farm.item.type !== PoolType.STABLESWAP && (
