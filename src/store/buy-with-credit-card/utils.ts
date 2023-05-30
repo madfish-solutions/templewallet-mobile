@@ -112,12 +112,12 @@ export const mapBinanceConnectProviderCurrencies = (
   data: GetBinanceConnectCurrenciesResponse
 ): TopUpProviderCurrencies => {
   const fiat = filterByStringProperty(data.pairs, 'fiatCurrency').map(item => {
-    const symbol = item.fiatCurrency;
+    const code = item.fiatCurrency;
 
     return {
-      name: symbol,
-      code: symbol,
-      icon: `${UTORG_FIAT_ICONS_BASE_URL}${symbol.slice(0, -1)}.svg`,
+      name: code, // TODO: apply some package for it
+      code,
+      icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
       /** Assumed */
       precision: 2,
       minAmount: item.minLimit,

@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
+import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';

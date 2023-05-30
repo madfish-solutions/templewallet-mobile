@@ -9,7 +9,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Label } from 'src/components/label/label';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -25,27 +25,27 @@ import { useTopUpAssetAmountInputStyles } from './styles';
 import { TopUpAssetValueText } from './top-up-asset-value-text';
 import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './types';
 
-const renderTokenValue: DropdownValueComponent<TopUpInputInterface> = ({ value }) => (
+const renderTokenValue: DropdownValueComponent<TopUpInterfaceBase> = ({ value }) => (
   <TopUpTokenDropdownItem
     token={value}
     actionIconName={IconNameEnum.TriangleDown}
     iconSize={formatSize(32)}
-    isDropdownClosed
+    isFacadeItem
   />
 );
 
 const defaultNewValueFn: TopUpAssetAmountInputProps['newValueFn'] = (
   newValue: TopUpAssetAmountInterface,
-  newAsset: TopUpInputInterface,
+  newAsset: TopUpInterfaceBase,
   amount: BigNumber | undefined
 ) => ({
   ...newValue,
   asset: newAsset,
   amount
 });
-const topUpInputEqualityFn = (a: TopUpInputInterface, b?: TopUpInputInterface) =>
+const topUpInputEqualityFn = (a: TopUpInterfaceBase, b?: TopUpInterfaceBase) =>
   a.code === b?.code && a.network === b.network;
-const topUpInputKeyExtractor = (token: TopUpInputInterface, index: number) => `${index}_${token.code}_${token.network}`;
+const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) => `${index}_${token.code}_${token.network}`;
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
@@ -111,7 +111,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     );
 
     const handleTokenChange = useCallback(
-      (newAsset?: TopUpInputInterface) => {
+      (newAsset?: TopUpInterfaceBase) => {
         if (isDefined(newAsset)) {
           onValueChange(newValueFn(value, newAsset, inputValueRef.current));
         }
@@ -148,7 +148,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
 
           <View style={styles.dropdownContainer}>
             {singleAsset ? (
-              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
+              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isFacadeItem />
             ) : (
               <Dropdown
                 description={description}

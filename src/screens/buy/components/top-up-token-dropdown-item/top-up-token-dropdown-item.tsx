@@ -7,14 +7,14 @@ import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { StaticTokenIcon } from 'src/components/static-token-icon/static-token-icon';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
+import { getProperNetworkFullName } from 'src/utils/topup';
 
-import { getProperNetworkFullName } from '../../crypto/exolix/steps/initial-step/initial-step.utils';
 import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
 
 const preloadedTokensIcons: Record<string, ImageRequireSource> = {
@@ -30,17 +30,15 @@ const preloadedTokensIcons: Record<string, ImageRequireSource> = {
 };
 
 interface Props {
-  token?: TopUpInputInterface;
+  token?: TopUpInterfaceBase;
   actionIconName?: IconNameEnum;
   iconSize?: number;
-  isDropdownClosed?: boolean;
+  isFacadeItem?: boolean;
 }
 
 export const TopUpTokenDropdownItem: FC<Props> = memo(
-  ({ token, actionIconName, iconSize = formatSize(40), isDropdownClosed = false }) => {
+  ({ token, actionIconName, iconSize = formatSize(40), isFacadeItem = false }) => {
     const styles = useTopUpTokenDropdownItemStyles();
-
-    const isFacadeItem = isDropdownClosed;
 
     const tokenIcon = useMemo(() => {
       if (token?.code === 'UAH') {
@@ -99,11 +97,11 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
   jsonEqualityFn
 );
 
-export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInputInterface> = ({ item, isSelected }) => (
+export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInterfaceBase> = ({ item, isSelected }) => (
   <TopUpTokenDropdownItem token={item} actionIconName={isSelected ? IconNameEnum.Check : undefined} />
 );
 
-const getItemTitles = (item: TopUpInputInterface | undefined, isFacadeItem: boolean) => {
+const getItemTitles = (item: TopUpInterfaceBase | undefined, isFacadeItem: boolean) => {
   if (!item) {
     return {};
   }

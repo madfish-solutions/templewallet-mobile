@@ -16,6 +16,7 @@ import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { getProperNetworkFullName } from 'src/utils/topup';
 
 import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/types';
 import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input';
@@ -25,7 +26,7 @@ import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../ex
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
 import { initialData } from './initial-step.data';
 import { useInitialStepStyles } from './initial-step.styles';
-import { getProperNetworkFullName, loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
+import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
 interface InitialStepProps {
   isError: boolean;
@@ -83,6 +84,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const requestData = {
       coinFrom: inputCurrency.asset.code,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       coinFromNetwork: inputCurrency.asset.network!.code,
       coinTo: outputCurrency.code,
       coinToNetwork: outputCurrency.network.code,
@@ -97,6 +99,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       coinFrom: inputCurrency.code,
       coinFromNetwork: inputCurrency.network.code,
       coinTo: outputCurrency.asset.code,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       coinToNetwork: outputCurrency.asset.network!.code,
       amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
     };

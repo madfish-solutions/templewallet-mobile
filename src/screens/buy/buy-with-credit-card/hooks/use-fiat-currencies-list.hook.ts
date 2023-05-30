@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { useFiatCurrenciesSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
-import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { isDefined } from 'src/utils/is-defined';
-import { mergeAssetsLimits } from 'src/utils/merge-assets-limits.utils';
+import { intersectAssetsLimits, mergeAssetsLimits } from 'src/utils/pair-limits';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';
 

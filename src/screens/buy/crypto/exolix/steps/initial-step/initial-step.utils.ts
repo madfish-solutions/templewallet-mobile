@@ -1,7 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
 import { ExchangePayload } from 'src/interfaces/exolix.interface';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { loadExolixRate } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -53,13 +52,6 @@ export const loadMinMaxFields = (
     }
   );
 };
-
-export const getProperNetworkFullName = (item: TopUpInputInterface) =>
-  isDefined(item.network)
-    ? item.name === item.network.fullName
-      ? item.network.fullName + ' Mainnet'
-      : item.network.fullName
-    : null;
 
 export const updateOutputInputValue = (
   requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,

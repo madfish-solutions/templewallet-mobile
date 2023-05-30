@@ -3,7 +3,7 @@ import { TextInputProps } from 'react-native';
 
 import { EmptyFn, EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 
 export interface TopUpAssetAmountInterface {
   asset: TopUpInputInterface;

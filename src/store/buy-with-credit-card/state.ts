@@ -1,25 +1,20 @@
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { TopUpInterfaceBase, TopUpProviderPairLimits } from 'src/interfaces/topup.interface';
+import { PairLimits } from 'src/utils/pair-limits';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
-
-export type BuyWithCreditCardTopUpInputInterface = TopUpInterfaceBase;
-
-export interface BuyWithCreditCardTopUpOutputInterface extends TopUpInterfaceBase {
-  slug: string;
-}
+import { TopUpInputInterface, TopUpOutputInterface } from './types';
 
 export interface TopUpProviderCurrencies {
-  fiat: BuyWithCreditCardTopUpInputInterface[];
-  crypto: BuyWithCreditCardTopUpOutputInterface[];
+  fiat: TopUpInputInterface[];
+  crypto: TopUpOutputInterface[];
 }
 
-export type PairLimits = Record<TopUpProviderEnum, LoadableEntityState<TopUpProviderPairLimits | undefined>>;
+export type PairLimitsRecord = Record<TopUpProviderEnum, LoadableEntityState<PairLimits | undefined>>;
 
 export interface BuyWithCreditCardState {
   currencies: Record<TopUpProviderEnum, LoadableEntityState<TopUpProviderCurrencies>>;
-  pairLimits: Record<string, Record<string, PairLimits>>;
+  pairLimits: Record<string, Record<string, PairLimitsRecord>>;
 }
 
 export const buyWithCreditCardInitialState: BuyWithCreditCardState = {

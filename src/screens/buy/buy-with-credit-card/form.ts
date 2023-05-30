@@ -3,7 +3,8 @@ import { number, object, SchemaOf, string } from 'yup';
 
 import { bigNumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
-import { TopUpInputInterface, PaymentProviderInterface } from 'src/interfaces/topup.interface';
+import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 
 import { withMinMaxTestsBignumberSchema } from '../utils/with-min-max-tests-bignumber-schema.util';
 

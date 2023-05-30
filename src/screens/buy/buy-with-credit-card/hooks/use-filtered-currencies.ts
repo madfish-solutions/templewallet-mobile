@@ -1,7 +1,7 @@
 import { debounce } from 'lodash-es';
 import { useMemo, useState } from 'react';
 
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 
 export const useFilteredCurrencies = <T extends TopUpInputInterface>(allCurrencies: T[]) => {
   const [searchValue, setSearchValue] = useState('');

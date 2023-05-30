@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useFiatCurrenciesSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
-import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { intersectAssetsLimits } from 'src/utils/pair-limits';
 
 export const useInputLimits = (
   topUpProvider: TopUpProviderEnum,

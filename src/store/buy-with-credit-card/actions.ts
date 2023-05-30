@@ -1,10 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { TopUpProviderPairLimits } from 'src/interfaces/topup.interface';
+import { PairLimits } from 'src/utils/pair-limits';
 
 import { createActions } from '../create-actions';
-import { BuyWithCreditCardState, PairLimits } from './state';
+import { BuyWithCreditCardState, PairLimitsRecord } from './state';
 
 export const loadAllCurrenciesActions = createActions<void, BuyWithCreditCardState['currencies'], string>(
   'buy-with-credit-card/LOAD_ALL_CURRENCIES'
@@ -14,7 +14,7 @@ export const updatePairLimitsActions = createActions<
   {
     fiatSymbol: string;
     cryptoSymbol: string;
-    limits: PairLimits;
+    limits: PairLimitsRecord;
   },
   { fiatSymbol: string; cryptoSymbol: string; error: string }
 >('buy-with-credit-card/UPDATE_PAIR_LIMITS');
@@ -22,5 +22,5 @@ export const updateTopUpProviderPairLimitsAction = createAction<{
   fiatSymbol: string;
   cryptoSymbol: string;
   topUpProvider: TopUpProviderEnum;
-  value: TopUpProviderPairLimits;
+  value: PairLimits;
 }>('buy-with-credit-card/UPDATE_TOP_UP_PROVIDER_PAIR_LIMITS');

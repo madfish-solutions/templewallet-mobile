@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
 import { useAllPairsLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
-import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { mergeAssetsLimits } from 'src/utils/merge-assets-limits.utils';
+import { intersectAssetsLimits, mergeAssetsLimits } from 'src/utils/pair-limits';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { TopUpAssetAmountInterface } from '../../components/top-up-asset-amount-input/types';
