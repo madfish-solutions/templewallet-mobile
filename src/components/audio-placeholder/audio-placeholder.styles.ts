@@ -5,6 +5,7 @@ import { formatSize } from '../../styles/format-size';
 
 export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
   card: {
+    ...StyleSheet.absoluteFillObject,
     width: '100%',
     height: '100%',
     borderRadius: formatSize(4),
@@ -14,8 +15,5 @@ export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
   },
   container: {
     position: 'relative'
-  },
-  absoluteFillObject: {
-    ...StyleSheet.absoluteFillObject
   }
 }));

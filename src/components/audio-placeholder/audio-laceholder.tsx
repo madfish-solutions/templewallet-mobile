@@ -7,19 +7,14 @@ import { formatSize } from 'src/styles/format-size';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useAudioPlaceholderStyles } from './audio-placeholder.styles';
 
-interface AudioPlaceholderProps {
-  size?: 'small' | 'large';
-}
+const width = formatSize(80);
+const height = formatSize(100);
 
-export const AudioPlaceholder: FC<AudioPlaceholderProps> = memo(({ size = 'small' }) => {
+export const AudioPlaceholder: FC = memo(() => {
   const styles = useAudioPlaceholderStyles();
 
-  const isSmall = size === 'small';
-  const width = formatSize(isSmall ? 32 : 80);
-  const height = formatSize(isSmall ? 40 : 100);
-
   return (
-    <View style={[isSmall ? null : styles.absoluteFillObject, styles.card]}>
+    <View style={styles.card}>
       <View style={styles.container}>
         <Icon name={IconNameEnum.Audio} width={width} height={height} />
       </View>

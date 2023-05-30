@@ -41,63 +41,56 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     return formatCollectibleObjktMediumUri(assetSlug);
   }, []);
 
-  const [isAnimatedIconError, setIsAnimatedIconError] = useState(false);
+  const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
   const [currentFallback, setCurrentFallback] = useState(initialFallback);
 
-  const handleError = () => {
-    if (isDefined(mime) && mime.includes('image')) {
-      setCurrentFallback(
-        formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
-      );
-    } else {
-      setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
-    }
-  };
-
-  const handleAnimatedIconError = () => {
-    setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
-    setIsAnimatedIconError(true);
-  };
+  const handleError = () =>
+    void setCurrentFallback(
+      formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
+    );
 
   const handleLoadEnd = () => setIsLoading(false);
 
   const icon = useMemo(() => {
-    if (!isAnimatedIconError && isDefined(objktArtifact) && isBigIcon) {
+    if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
       if (isImgUriDataUri(objktArtifact)) {
+        setIsAnimatedRenderedOnce(true);
+
         return (
-          <AnimatedSvg
-            style={styles.image}
-            dataUri={objktArtifact}
-            onError={handleAnimatedIconError}
-            onLoadEnd={handleLoadEnd}
-          />
+          <AnimatedSvg style={styles.image} dataUri={objktArtifact} onError={handleError} onLoadEnd={handleLoadEnd} />
         );
       }
 
       if (mime === NonStaticMimeTypes.MODEL) {
+        setIsAnimatedRenderedOnce(true);
+
         return (
           <SimpleModelView
             style={styles.image}
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-            onError={handleAnimatedIconError}
+            onError={handleError}
             onLoadEnd={handleLoadEnd}
           />
         );
       }
 
       if (mime === NonStaticMimeTypes.VIDEO) {
+        setIsAnimatedRenderedOnce(true);
+
         return (
           <SimplePlayer
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
             size={size}
             style={styles.image}
-            onError={handleAnimatedIconError}
+            onError={handleError}
             onLoad={handleLoadEnd}
           />
         );
       }
 
       if (mime === NonStaticMimeTypes.AUDIO) {
+        setIsAnimatedRenderedOnce(true);
+
         return (
           <>
             <SimplePlayer
@@ -110,10 +103,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
           </>
         );
       }
-    }
-
-    if (mime === NonStaticMimeTypes.AUDIO && !isBigIcon) {
-      return <AudioPlaceholder />;
     }
 
     return (
