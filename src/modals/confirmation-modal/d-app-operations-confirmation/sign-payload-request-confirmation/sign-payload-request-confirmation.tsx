@@ -32,10 +32,16 @@ interface Props {
   message: SignPayloadRequestOutput;
 }
 
+const payloadToHex = (payload: string) => {
+  const alreadyHexMatch = payload.match(/^(0x)?([0-9a-fA-F]+)$/);
+
+  return alreadyHexMatch?.[2] ?? char2Bytes(payload);
+};
+
 const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
   Shelter.getSigner$(message.sourceAddress).pipe(
     switchMap(signer =>
-      signer.sign(message.signingType === SigningType.RAW ? char2Bytes(message.payload) : message.payload)
+      signer.sign(message.signingType === SigningType.RAW ? payloadToHex(message.payload) : message.payload)
     ),
     switchMap(({ prefixSig }) =>
       BeaconHandler.respond({
