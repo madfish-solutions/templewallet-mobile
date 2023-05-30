@@ -1,9 +1,8 @@
 import React, { FC, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
-import { Loader } from 'src/components/loader/loader';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -110,7 +109,19 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
       }}
     >
       {icon}
-      {isLoading && <Loader />}
+      {isLoading && (
+        <View style={[loaderStyles.container]}>
+          <ActivityIndicator size="small" />
+        </View>
+      )}
     </View>
   );
 };
+
+const loaderStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
