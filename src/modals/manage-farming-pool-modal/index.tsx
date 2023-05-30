@@ -95,7 +95,7 @@ export const ManageFarmingPoolModal: FC = () => {
             <View style={styles.content}>
               <StakeForm farm={farm} formik={stakeFormik} />
               <Divider size={formatSize(16)} />
-              {vestingPeriodSeconds > SECONDS_IN_DAY && (
+              {vestingPeriodSeconds >= SECONDS_IN_DAY && (
                 <>
                   <Disclaimer title="Long-term rewards vesting">
                     <Text style={styles.disclaimerDescriptionText}>
