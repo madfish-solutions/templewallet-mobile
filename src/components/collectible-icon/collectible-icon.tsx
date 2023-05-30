@@ -99,7 +99,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
               onError={() => showErrorToast({ description: 'Invalid audio' })}
               onLoad={handleLoadEnd}
             />
-            <AudioPlaceholder size="large" />
+            <AudioPlaceholder />
           </>
         );
       }
