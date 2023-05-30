@@ -70,6 +70,7 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
     symbol
     holders {
         holder_address
+        quantity
       }
     offers_active(distinct_on: price_xtz) {
         buyer_address
@@ -88,6 +89,9 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
       price
       currency_id
       timestamp
+    }
+    listings_active {
+      amount
     }
   }
 }`;
@@ -119,6 +123,7 @@ query MyQuery {
         symbol
         holders {
           holder_address
+          quantity
         }
         offers_active(distinct_on: price_xtz) {
           buyer_address
@@ -137,6 +142,9 @@ query MyQuery {
           price
           currency_id
           timestamp
+        }
+        listings_active {
+          amount
         }
       }
     }

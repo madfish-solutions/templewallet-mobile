@@ -7,7 +7,7 @@ export enum TokenStandardsEnum {
   Fa12 = 'fa12'
 }
 
-export type HolderAddress = { holder_address: string };
+export type HolderInfo = { holder_address: string; quantity: number };
 
 export interface Offer {
   buyer_address: string;
@@ -20,7 +20,12 @@ export interface Offer {
   currency_id: number;
 }
 
-export interface TokenMetadataInterface {
+export interface Listing {
+  amount: number;
+  seller_address: string;
+}
+
+export type TokenMetadataInterface = CollectibleMetadataInterface & {
   id: number;
   address: string;
   name: string;
@@ -31,16 +36,20 @@ export interface TokenMetadataInterface {
   displayUri?: string;
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
+
+  // Stored as separate Record
+  exchangeRate?: number;
+};
+
+interface CollectibleMetadataInterface {
   description?: string;
   highestOffer?: Offer;
   lowestAsk?: number | null;
   metadata?: string;
   editions?: number;
-  holders?: HolderAddress[];
+  holders?: HolderInfo[];
+  listed?: number;
   lastPrice?: { price: number | null } & CurrencyInfo;
-
-  // Stored as separate Record
-  exchangeRate?: number;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

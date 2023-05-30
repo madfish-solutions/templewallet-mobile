@@ -84,8 +84,7 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     ...typography.numbersMedium17
   },
   buttonContainer: {
-    marginTop: formatSize(16),
-    flex: 1,
+    marginTop: formatSize(8),
     justifyContent: 'flex-end'
   },
   sellButton: {

@@ -1,6 +1,6 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { HolderAddress, Offer } from 'src/token/interfaces/token-metadata.interface';
+import { HolderInfo, Offer, Listing } from 'src/token/interfaces/token-metadata.interface';
 
 import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
@@ -33,7 +33,7 @@ export interface CollectibleResponse {
   supply: number;
   symbol: string;
   token_id: string;
-  holders: HolderAddress[];
+  holders: HolderInfo[];
   offers_active: Offer[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
@@ -41,6 +41,7 @@ export interface CollectibleResponse {
     price: number | null;
     currency_id: number;
   }[];
+  listings_active: Listing[];
 }
 
 export interface QueryResponse {

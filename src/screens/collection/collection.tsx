@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback } from 'react';
-import { View, ListRenderItem, ViewToken } from 'react-native';
+import { ListRenderItem, ViewToken, ScrollView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -49,7 +49,7 @@ export const Collection = () => {
   const data = [emptyToken, ...collectibles];
 
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       {data.length > 1 ? (
         <FlatList
           data={data}
@@ -68,6 +68,6 @@ export const Collection = () => {
       ) : (
         <DataPlaceholder text="Not found any NFT" />
       )}
-    </View>
+    </ScrollView>
   );
 };

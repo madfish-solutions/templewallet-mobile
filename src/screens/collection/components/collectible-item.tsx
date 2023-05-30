@@ -59,10 +59,15 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
     ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
     : 'No offers yet';
 
-  const holders = item?.holders?.map(holder => holder.holder_address) ?? [];
+  const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holder_address) ?? [];
   const isHolder = holders.includes(selectedAccount.publicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
   const isListed = item.lowestAsk !== null;
+  const listedByUser = item.listed ?? 0;
+  const quantityByUser =
+    item?.holders?.find(holder => holder.holder_address === selectedAccount.publicKeyHash)?.quantity ?? 0;
+
+  const isAbleToList = quantityByUser > listedByUser;
 
   const navigateToObjktForBuy = `https://objkt.com/asset/${collectionContract}/${item.id}`;
 
@@ -166,39 +171,44 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
             </View>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={handlePress}
-            disabled={!isOffersExisted}
-            style={[
-              styles.sellButton,
-              conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
-            ]}
-          >
-            <Text
+        {isHolder && (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={handlePress}
+              disabled={!isOffersExisted}
               style={[
-                styles.sellButtonText,
+                styles.sellButton,
                 conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
               ]}
             >
-              {buttonText()}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleList}
-            style={[styles.sellButton, conditionalStyle(isListed, styles.listButtonNotListed, styles.listButtonActive)]}
-            disabled={isListed}
-          >
-            <Text
+              <Text
+                style={[
+                  styles.sellButtonText,
+                  conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
+                ]}
+              >
+                {buttonText()}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleList}
               style={[
-                styles.sellButtonText,
-                conditionalStyle(isListed, styles.listButtonDisabled, styles.listButtonActive)
+                styles.sellButton,
+                conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
               ]}
+              disabled={!isAbleToList}
             >
-              {isListed ? 'Listed' : 'List'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={[
+                  styles.sellButtonText,
+                  conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
+                ]}
+              >
+                {!isAbleToList ? 'Listed' : 'List'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
