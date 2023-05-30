@@ -6,6 +6,7 @@ export interface CollectibleIconProps {
   mime?: string;
   objktArtifact?: string;
   iconSize?: CollectibleIconSize;
+  setScrollEnabled?: (value: boolean) => void;
 }
 
 export enum CollectibleIconSize {

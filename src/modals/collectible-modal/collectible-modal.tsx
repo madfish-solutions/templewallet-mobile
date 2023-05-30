@@ -3,7 +3,6 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { ScrollView } from 'react-native-gesture-handler';
 import { SvgUri } from 'react-native-svg';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -49,6 +48,8 @@ const SEGMENT_VALUES = [
 ];
 
 export const CollectibleModal = () => {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
@@ -109,97 +110,97 @@ export const CollectibleModal = () => {
         )
       }}
       isFullScreenMode={true}
+      scrollEnabled={scrollEnabled}
     >
-      <ScrollView>
-        <ModalStatusBar />
+      <ModalStatusBar />
 
-        <View>
-          <CollectibleIcon
-            collectible={collectible}
-            mime={mime}
-            objktArtifact={collectibleInfo.artifact_uri}
-            size={iconSize}
-            iconSize={CollectibleIconSize.BIG}
-          />
+      <View>
+        <CollectibleIcon
+          collectible={collectible}
+          mime={mime}
+          objktArtifact={collectibleInfo.artifact_uri}
+          size={iconSize}
+          iconSize={CollectibleIconSize.BIG}
+          setScrollEnabled={setScrollEnabled}
+        />
 
-          <Divider size={formatSize(12)} />
+        <Divider size={formatSize(12)} />
 
-          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+        <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+          {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
-            <Text numberOfLines={1} style={styles.collectionName}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
-            </Text>
-          </TouchableOpacity>
+          <Text numberOfLines={1} style={styles.collectionName}>
+            {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+          </Text>
+        </TouchableOpacity>
 
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{collectible.name}</Text>
-          </View>
-
-          {isString(description) && (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{description}</Text>
-            </View>
-          )}
-
-          {isNonEmptyArray(creators) && (
-            <View style={styles.creatorsContainer}>
-              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
-
-              {creators.map(({ holder }, index) => (
-                <LinkWithIcon
-                  key={holder.address}
-                  text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  link={getObjktProfileLink(holder.address)}
-                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  style={[
-                    styles.linkWithIcon,
-                    conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
-                  ]}
-                />
-              ))}
-            </View>
-          )}
-
-          {!isLoading && (
-            <TextSegmentControl
-              selectedIndex={segmentControlIndex}
-              values={segmentValues}
-              onChange={setSegmentControlIndex}
-              disabledIndexes={[disabledOffers]}
-              style={styles.segmentControl}
-            />
-          )}
-
-          {!isLoading && isPropertiesSelected && (
-            <CollectibleProperties
-              contract={collectible.address}
-              tokenId={collectible.id}
-              editions={supply}
-              metadata={metadata}
-              minted={timestamp}
-              owned={collectible.balance}
-              royalties={royalties}
-            />
-          )}
-
-          {!isLoading && !isPropertiesSelected && isAttributesExist && (
-            <CollectibleAttributes attributes={filteredAttributes} />
-          )}
-
-          <View style={styles.burnContainer}>
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              onPress={burnCollectible}
-              style={styles.burnButton}
-              testID={CollectibleModalSelectors.burnButton}
-            >
-              <Text style={styles.burnButtonText}>Burn Nft</Text>
-              <Icon name={IconNameEnum.Burn} />
-            </TouchableWithAnalytics>
-          </View>
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{collectible.name}</Text>
         </View>
-      </ScrollView>
+
+        {isString(description) && (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{description}</Text>
+          </View>
+        )}
+
+        {isNonEmptyArray(creators) && (
+          <View style={styles.creatorsContainer}>
+            <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
+
+            {creators.map(({ holder }, index) => (
+              <LinkWithIcon
+                key={holder.address}
+                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                link={getObjktProfileLink(holder.address)}
+                valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                style={[
+                  styles.linkWithIcon,
+                  conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
+                ]}
+              />
+            ))}
+          </View>
+        )}
+
+        {!isLoading && (
+          <TextSegmentControl
+            selectedIndex={segmentControlIndex}
+            values={segmentValues}
+            onChange={setSegmentControlIndex}
+            disabledIndexes={[disabledOffers]}
+            style={styles.segmentControl}
+          />
+        )}
+
+        {!isLoading && isPropertiesSelected && (
+          <CollectibleProperties
+            contract={collectible.address}
+            tokenId={collectible.id}
+            editions={supply}
+            metadata={metadata}
+            minted={timestamp}
+            owned={collectible.balance}
+            royalties={royalties}
+          />
+        )}
+
+        {!isLoading && !isPropertiesSelected && isAttributesExist && (
+          <CollectibleAttributes attributes={filteredAttributes} />
+        )}
+
+        <View style={styles.burnContainer}>
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            onPress={burnCollectible}
+            style={styles.burnButton}
+            testID={CollectibleModalSelectors.burnButton}
+          >
+            <Text style={styles.burnButtonText}>Burn Nft</Text>
+            <Icon name={IconNameEnum.Burn} />
+          </TouchableWithAnalytics>
+        </View>
+      </View>
     </ScreenContainer>
   );
 };

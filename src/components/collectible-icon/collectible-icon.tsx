@@ -8,6 +8,7 @@ import { SimpleModelView } from 'src/components/simple-model-view/simple-model-v
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
@@ -16,7 +17,6 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { showErrorToast } from '../../toast/toast.utils';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -25,7 +25,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   size,
   iconSize = CollectibleIconSize.SMALL,
   mime,
-  objktArtifact
+  objktArtifact,
+  setScrollEnabled
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,6 +71,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
             onError={handleError}
             onLoadEnd={handleLoadEnd}
+            setScrollEnabled={setScrollEnabled}
           />
         );
       }

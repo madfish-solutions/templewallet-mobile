@@ -48,18 +48,5 @@ interface AnimatedSvgProps {
 export const AnimatedSvg: FC<AnimatedSvgProps> = ({ dataUri, style, onError = emptyFn, onLoadEnd = emptyFn }) => {
   const source = useMemo(() => ({ html: getHTML(fixSvgXml(getXmlFromSvgDataUriInUtf8Encoding(dataUri))) }), [dataUri]);
 
-  return (
-    <WebView
-      originWhitelist={['*']}
-      pointerEvents="none"
-      scalesPageToFit
-      scrollEnabled={false}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      source={source}
-      style={style}
-      onError={onError}
-      onLoadEnd={onLoadEnd}
-    />
-  );
+  return <WebView source={source} style={style} onError={onError} onLoadEnd={onLoadEnd} />;
 };
