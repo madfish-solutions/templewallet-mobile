@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { binanceCryptoIcons } from 'binance-icons';
+import CurrenciesCodes from 'currency-codes';
 
 import { PairInfoResponse as AliceBobPairInfoResponse } from 'src/apis/alice-bob/types';
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
@@ -115,7 +116,7 @@ export const mapBinanceConnectProviderCurrencies = (
     const code = item.fiatCurrency;
 
     return {
-      name: code, // TODO: apply some package for it
+      name: CurrenciesCodes.code(code)?.currency ?? code,
       code,
       icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
       /** Assumed */
