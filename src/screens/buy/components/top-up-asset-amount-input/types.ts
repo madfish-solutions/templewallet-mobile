@@ -3,10 +3,10 @@ import { TextInputProps } from 'react-native';
 
 import { EmptyFn, EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
-  asset: TopUpInputInterface;
+  asset: TopUpInterfaceBase;
   amount?: BigNumber;
   min?: number;
   max?: number;
@@ -17,7 +17,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   label: string;
   description?: string;
   emptyListText?: string;
-  assetsList?: TopUpInputInterface[];
+  assetsList?: TopUpInterfaceBase[];
   singleAsset?: boolean;
   isError?: boolean;
   editable?: boolean;
@@ -26,7 +26,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   precision?: number;
   newValueFn?: (
     prevValue: TopUpAssetAmountInterface,
-    newAsset: TopUpInputInterface,
+    newAsset: TopUpInterfaceBase,
     newAmount: BigNumber | undefined
   ) => TopUpAssetAmountInterface;
   setSearchValue?: EventFn<string>;

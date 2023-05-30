@@ -6,17 +6,19 @@ export const EXOLIX_CONTACT_LINK =
 export const EXOLIX_TERMS_LINK = 'https://exolix.com/terms';
 export const EXOLIX_PRIVICY_LINK = 'https://exolix.com/privacy';
 
-export const outputTokensList: ExolixTopUpOutputInterface[] = [
-  {
+export const exolixTezosAsset: ExolixTopUpOutputInterface = {
+  code: 'XTZ',
+  name: 'Tezos',
+  icon: 'https://exolix.com/icons/coins/XTZ.png',
+  network: {
     code: 'XTZ',
-    name: 'Tezos',
-    icon: 'https://exolix.com/icons/coins/XTZ.png',
-    network: {
-      code: 'XTZ',
-      fullName: 'Tezos'
-    },
-    slug: 'tez'
+    fullName: 'Tezos'
   },
+  slug: 'tez'
+};
+
+export const outputTokensList: ExolixTopUpOutputInterface[] = [
+  exolixTezosAsset,
   {
     code: 'USDT',
     icon: 'https://exolix.com/icons/coins/USDT.png',

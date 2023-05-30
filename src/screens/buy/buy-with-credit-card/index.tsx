@@ -115,6 +115,9 @@ export const BuyWithCreditCard: FC = () => {
 
   useInterval(refreshForm, 10000, [refreshForm], false);
 
+  const someErrorOccured = Object.keys(errors).length > 0;
+  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
+
   return (
     <>
       <ScreenContainer isFullScreenMode>
@@ -204,7 +207,7 @@ export const BuyWithCreditCard: FC = () => {
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
           title={isLoading ? 'Loading...' : 'Top Up'}
-          disabled={(submitCount !== 0 && !isValid) || isLoading}
+          disabled={submitDisabled}
           testID={BuyWithCreditCardSelectors.submitButton}
           onPress={submitForm}
         />

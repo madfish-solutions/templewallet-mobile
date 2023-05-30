@@ -24,7 +24,7 @@ import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
-import { initialData } from './initial-step.data';
+import { initialCoinFrom, initialCoinTo, initialData } from './initial-step.data';
 import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
@@ -82,10 +82,11 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   }, [inputCurrency, outputCurrency, outputTokenPrice]);
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
+    const coinFromNetwork = inputCurrency.asset.network?.code ?? initialCoinFrom.network.code;
+
     const requestData = {
       coinFrom: inputCurrency.asset.code,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      coinFromNetwork: inputCurrency.asset.network!.code,
+      coinFromNetwork,
       coinTo: outputCurrency.code,
       coinToNetwork: outputCurrency.network.code,
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
@@ -95,12 +96,13 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   };
 
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
+    const coinToNetwork = outputCurrency.asset.network?.code ?? initialCoinTo.network.code;
+
     const requestData = {
       coinFrom: inputCurrency.code,
       coinFromNetwork: inputCurrency.network.code,
       coinTo: outputCurrency.asset.code,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      coinToNetwork: outputCurrency.asset.network!.code,
+      coinToNetwork,
       amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
     };
 
