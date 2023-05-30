@@ -23,6 +23,7 @@ export interface SettingsState {
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
   applicationOpenCounter: number;
+  isEnableAdsBanner: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -41,7 +42,8 @@ export const settingsInitialState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
-  applicationOpenCounter: 0
+  applicationOpenCounter: 0,
+  isEnableAdsBanner: true
 };
 
 export interface SettingsRootState {

@@ -22,7 +22,8 @@ import {
   setZeroBalancesShown,
   toggleDomainAddressShown,
   madeManualBackupAction,
-  madeCloudBackupAction
+  madeCloudBackupAction,
+  setIsEnableAdsBannerAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -103,6 +104,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(walletOpenedAction, state => ({
     ...state,
     applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
+  }));
+
+  builder.addCase(setIsEnableAdsBannerAction, state => ({
+    ...state,
+    isEnableAdsBanner: false
   }));
 
   // MIGRATIONS

@@ -39,6 +39,8 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
+export const useIsEnabledAdsBannerSelector = () => useSelector(({ settings }) => settings.isEnableAdsBanner);
+
 export const useIsBackupMadeSelector = () => {
   const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
   const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);

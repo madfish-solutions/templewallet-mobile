@@ -1,8 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
-import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 
 import { Divider } from '../../components/divider/divider';
@@ -24,13 +23,14 @@ export const NotificationsSettings = () => {
 
   const isNewsEnabled = useIsNewsEnabledSelector();
   const isAdsEnabled = useIsPartnersPromoEnabledSelector();
-  const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
+
+  const { enablePromotion, disablePromotion } = usePromotionAfterConfirmation();
 
   const handleAdsToggle = (value: boolean) => {
     if (value) {
-      dispatch(setIsPromotionEnabledAction(value));
+      enablePromotion();
     } else {
-      disablePromotionAfterConfirmation();
+      disablePromotion();
     }
   };
 
@@ -63,7 +63,7 @@ export const NotificationsSettings = () => {
           <WhiteContainerText text="Ads" />
           <Switch
             value={isAdsEnabled}
-            onChange={handleAdsToggle}
+            onChange={() => handleAdsToggle(!isAdsEnabled)}
             testID={NotificationsSettingsSelectors.adsToggle}
             testIDProperties={{ newValue: !isAdsEnabled }}
           />
