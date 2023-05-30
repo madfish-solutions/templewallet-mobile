@@ -4,6 +4,7 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
 
 import { isDefined } from './is-defined';
+import { isTruthy } from './is-truthy';
 
 const isInRange = (min = 0, max = Infinity, inputAmount?: BigNumber | number) => {
   const inputAmountBN = isDefined(inputAmount) ? new BigNumber(inputAmount) : undefined;
@@ -42,12 +43,12 @@ export const getPaymentProvidersToDisplay = (
     .filter(({ id, minInputAmount, maxInputAmount, outputAmount }) => {
       const isError = Boolean(providersErrors[id]);
       const limitsAreDefined = isDefined(minInputAmount) && isDefined(maxInputAmount);
-      const outputAmountIsDefined = isDefined(outputAmount);
+      const outputAmountIsLegit = isTruthy(outputAmount) && outputAmount > 0;
 
       return (
         !isError &&
         (!shouldFilterByLimits || limitsAreDefined) &&
-        (!shouldFilterByOutputAmount || outputAmountIsDefined || Boolean(providersLoading[id])) &&
+        (!shouldFilterByOutputAmount || outputAmountIsLegit || Boolean(providersLoading[id])) &&
         isInRange(minInputAmount, maxInputAmount, inputAmount)
       );
     })

@@ -37,7 +37,15 @@ export const BuyWithCreditCardValidationSchema = object().shape({
   }),
   getOutput: object().shape({
     asset: assetSchema.clone(),
-    amount: bigNumberValidation.clone()
+    amount: bigNumberValidation.clone().test({
+      name: 'is-positive',
+      exclusive: false,
+      params: {},
+      message: 'Value of getOutput.amount must be positive',
+      test: function (value: unknown) {
+        return value instanceof BigNumber && value.isGreaterThan(0);
+      }
+    })
   }),
   paymentProvider: object()
     .shape({

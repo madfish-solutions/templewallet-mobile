@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
@@ -35,13 +35,9 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
 
-  if (!partnersPromotionEnabled) {
-    return null;
-  }
+  useEffect(() => void onEmptyPromotionReceived?.(), []);
 
-  if (isEmptyPromotion(partnersPromotion)) {
-    onEmptyPromotionReceived?.();
-
+  if (!partnersPromotionEnabled || isEmptyPromotion(partnersPromotion)) {
     return null;
   }
 

@@ -65,6 +65,7 @@ export enum IconNameEnum {
   Exolix = 'Exolix',
   AliceBob = 'AliceBob',
   Utorg = 'Utorg',
+  Binance = 'Binance',
   Uah = 'Uah',
   Ramp = 'Ramp',
   Check = 'Check',

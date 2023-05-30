@@ -13,27 +13,37 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   const moonpayFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MoonPay);
   const utorgFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.Utorg);
   const aliceBobFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.AliceBob);
+  const binanceConnectFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.BinanceConnect);
+
   const moonPayPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.MoonPay);
   const utorgPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.Utorg);
   const aliceBobPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.AliceBob);
+  const binanceConnectPairLimits = usePairLimitsSelector(
+    inputCurrencySymbol,
+    outputTokenSymbol,
+    TopUpProviderEnum.BinanceConnect
+  );
 
   const pairLimits = useMemo(
     () =>
       mergeAssetsLimits(
-        [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits]
+        [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits, binanceConnectPairLimits]
           .filter(isDefined)
           .map(({ data }) => data)
           .filter(isDefined)
       ),
-    [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits]
+    [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits, binanceConnectPairLimits]
   );
 
   const noPairLimitsCurrencies = useMemo(
     () =>
       Object.values(
-        [...moonpayFiatCurrencies, ...utorgFiatCurrencies, ...aliceBobFiatCurrencies].reduce<
-          Record<string, TopUpInputInterface>
-        >((acc, currency) => {
+        [
+          ...moonpayFiatCurrencies,
+          ...utorgFiatCurrencies,
+          ...aliceBobFiatCurrencies,
+          ...binanceConnectFiatCurrencies
+        ].reduce<Record<string, TopUpInputInterface>>((acc, currency) => {
           if (isDefined(acc[currency.code])) {
             const newTopUpCurrency = { ...acc[currency.code] };
             if (isDefined(currency.minAmount)) {
@@ -50,7 +60,7 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
           return acc;
         }, {})
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayFiatCurrencies, utorgFiatCurrencies, aliceBobFiatCurrencies]
+    [moonpayFiatCurrencies, utorgFiatCurrencies, aliceBobFiatCurrencies, binanceConnectFiatCurrencies]
   );
 
   const currenciesWithPairLimits = useMemo(() => {

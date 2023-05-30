@@ -21,7 +21,7 @@ export const formatImgUri = (origin = '') => {
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
-const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+export const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
 
 export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 

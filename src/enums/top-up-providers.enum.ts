@@ -1,5 +1,6 @@
 export enum TopUpProviderEnum {
   MoonPay = 'MoonPay',
   Utorg = 'Utorg',
-  AliceBob = 'AliceBob'
+  AliceBob = 'AliceBob',
+  BinanceConnect = 'BinanceConnect'
 }

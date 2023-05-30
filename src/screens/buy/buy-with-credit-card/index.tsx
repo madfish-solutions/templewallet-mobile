@@ -119,6 +119,7 @@ export const BuyWithCreditCard: FC = () => {
       <ScreenContainer isFullScreenMode>
         <View>
           <Divider size={formatSize(16)} />
+
           <FormikProvider value={formik}>
             <TopUpFormAssetAmountInput
               name="sendInput"
@@ -134,11 +135,15 @@ export const BuyWithCreditCard: FC = () => {
               onBlur={handleSendInputBlur}
               setSearchValue={setInputSearchValue}
             />
+
             <Divider size={formatSize(8)} />
+
             <View style={styles.arrowContainer}>
               <Icon size={formatSize(24)} name={IconNameEnum.ArrowDown} color={colors.peach} />
             </View>
+
             <Divider size={formatSize(12)} />
+
             <TopUpFormAssetAmountInput
               name="getOutput"
               label="Get"
@@ -153,7 +158,9 @@ export const BuyWithCreditCard: FC = () => {
               setSearchValue={setOutputSearchValue}
             />
           </FormikProvider>
+
           <Divider size={formatSize(16)} />
+
           <View style={styles.paymentProviderDropdownContainer}>
             <Dropdown
               value={values.paymentProvider}
@@ -170,8 +177,11 @@ export const BuyWithCreditCard: FC = () => {
               onValueChange={handlePaymentProviderChange}
             />
           </View>
+
           {isPaymentProviderError && <Text style={styles.errorText}>Please select payment provider</Text>}
+
           <Divider size={formatSize(16)} />
+
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
@@ -180,13 +190,16 @@ export const BuyWithCreditCard: FC = () => {
                 : '---'}
             </Text>
           </View>
+
           <Divider size={formatSize(18)} />
+
           <Disclaimer
             title="Disclaimer"
             texts={['Temple integrated third-party solutions to buy TEZ or USDT with crypto or a Debit/Credit card.']}
           />
         </View>
       </ScreenContainer>
+
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
           title={isLoading ? 'Loading...' : 'Top Up'}
