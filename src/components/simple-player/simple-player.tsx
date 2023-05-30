@@ -12,7 +12,7 @@ interface SimpleVideoProps {
   onLoad?: () => void;
 }
 
-export const SimpleVideo: FC<SimpleVideoProps> = ({ uri, size, style, onError = emptyFn, onLoad = emptyFn }) => {
+export const SimplePlayer: FC<SimpleVideoProps> = ({ uri, size, style, onError = emptyFn, onLoad = emptyFn }) => {
   return (
     <Video
       repeat

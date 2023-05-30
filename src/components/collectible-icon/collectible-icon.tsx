@@ -3,7 +3,9 @@ import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
+import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-laceholder';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
+import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
 import {
@@ -14,7 +16,7 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { SimpleVideo } from '../simple-video/simple-video';
+import { showErrorToast } from '../../toast/toast.utils';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -27,11 +29,12 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
+  const isBigIcon = iconSize === CollectibleIconSize.BIG;
   const styles = useCollectibleIconStyles();
   const assetSlug = `${collectible.address}_${collectible.id}`;
 
   const initialFallback = useMemo(() => {
-    if (isDefined(collectible.artifactUri) && iconSize === CollectibleIconSize.BIG) {
+    if (isDefined(collectible.artifactUri) && isBigIcon) {
       return formatCollectibleObjktArtifactUri(collectible.artifactUri);
     }
 
@@ -59,7 +62,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const handleLoadEnd = () => setIsLoading(false);
 
   const icon = useMemo(() => {
-    if (!isAnimatedIconError && isDefined(objktArtifact) && iconSize === CollectibleIconSize.BIG) {
+    if (!isAnimatedIconError && isDefined(objktArtifact) && isBigIcon) {
       if (isImgUriDataUri(objktArtifact)) {
         return (
           <AnimatedSvg
@@ -82,9 +85,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         );
       }
 
-      if (mime === NonStaticMimeTypes.VIDEO || mime === NonStaticMimeTypes.AUDIO) {
+      if (mime === NonStaticMimeTypes.VIDEO) {
         return (
-          <SimpleVideo
+          <SimplePlayer
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
             size={size}
             style={styles.image}
@@ -93,6 +96,24 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
           />
         );
       }
+
+      if (mime === NonStaticMimeTypes.AUDIO) {
+        return (
+          <>
+            <SimplePlayer
+              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+              size={size}
+              onError={() => showErrorToast({ description: 'Invalid audio' })}
+              onLoad={handleLoadEnd}
+            />
+            <AudioPlaceholder size="large" />
+          </>
+        );
+      }
+    }
+
+    if (mime === NonStaticMimeTypes.AUDIO && !isBigIcon) {
+      return <AudioPlaceholder />;
     }
 
     return (
@@ -103,7 +124,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         onLoadEnd={handleLoadEnd}
       />
     );
-  }, [objktArtifact, currentFallback]);
+  }, [mime, objktArtifact, currentFallback]);
 
   return (
     <View
