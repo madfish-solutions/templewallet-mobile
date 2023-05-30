@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
@@ -41,10 +41,15 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const [isAnimatedIconError, setIsAnimatedIconError] = useState(false);
   const [currentFallback, setCurrentFallback] = useState(initialFallback);
 
-  const handleError = () =>
-    void setCurrentFallback(
-      formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
-    );
+  const handleError = () => {
+    if (isDefined(mime) && mime.includes('image')) {
+      setCurrentFallback(
+        formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
+      );
+    } else {
+      setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
+    }
+  };
 
   const handleAnimatedIconError = () => {
     setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
@@ -110,18 +115,10 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     >
       {icon}
       {isLoading && (
-        <View style={[loaderStyles.container]}>
-          <ActivityIndicator size="small" />
+        <View style={[styles.loader]}>
+          <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
         </View>
       )}
     </View>
   );
 };
-
-const loaderStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});
