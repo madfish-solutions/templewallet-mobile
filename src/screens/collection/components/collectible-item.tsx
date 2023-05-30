@@ -124,7 +124,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       if (isHolder) {
         return `Sell for ${highestOffer}`;
       } else {
-        return 'buy';
+        return 'Make offer';
       }
     } else {
       return 'No offers yet';
