@@ -1,21 +1,28 @@
 import { BigNumber } from 'bignumber.js';
 import { number, object, SchemaOf, string } from 'yup';
 
-import { bigNumberValidation } from '../../../../form/validation/big-number';
-import { makeRequiredErrorMessage } from '../../../../form/validation/messages';
-import { TopUpInputInterface, TopUpOutputInterface } from '../../../../interfaces/topup.interface';
+import { bigNumberValidation } from 'src/form/validation/big-number';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
+
 import { withMinMaxTestsBignumberSchema } from '../../utils/with-min-max-tests-bignumber-schema.util';
+
+export type ExolixTopUpInputInterface = TopUpWithNetworkInterface;
+
+export interface ExolixTopUpOutputInterface extends TopUpWithNetworkInterface {
+  slug: string;
+}
 
 export interface ExolixTopupFormValues {
   coinFrom: {
-    asset: TopUpInputInterface;
+    asset: ExolixTopUpInputInterface;
     amount?: BigNumber;
     min?: number;
     max?: number;
   };
   rate: number;
   coinTo: {
-    asset: TopUpOutputInterface;
+    asset: ExolixTopUpOutputInterface;
     amount?: BigNumber;
   };
 }

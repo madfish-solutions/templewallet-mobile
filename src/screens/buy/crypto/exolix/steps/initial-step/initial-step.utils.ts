@@ -54,12 +54,12 @@ export const loadMinMaxFields = (
   );
 };
 
-export const getProperNetworkFullName = (currency?: TopUpInputInterface) =>
-  isDefined(currency)
-    ? currency.name === currency.networkFullName
-      ? currency.networkFullName + ' Mainnet'
-      : currency.networkFullName
-    : '';
+export const getProperNetworkFullName = (item: TopUpInputInterface) =>
+  isDefined(item.network)
+    ? item.name === item.network.fullName
+      ? item.network.fullName + ' Mainnet'
+      : item.network.fullName
+    : null;
 
 export const updateOutputInputValue = (
   requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,

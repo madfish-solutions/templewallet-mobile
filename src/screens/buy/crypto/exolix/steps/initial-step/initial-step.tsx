@@ -47,9 +47,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     dispatch(
       loadExolixExchangeDataActions.submit({
         coinFrom: inputCurrency.code,
-        networkFrom: inputCurrency.network,
+        networkFrom: inputCurrency.network.code,
         coinTo: outputCurrency.code,
-        networkTo: outputCurrency.network,
+        networkTo: outputCurrency.network.code,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
@@ -73,9 +73,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     loadMinMaxFields(
       setFieldValue,
       inputCurrency.code,
-      inputCurrency.network,
+      inputCurrency.network?.code,
       outputCurrency.code,
-      outputCurrency.network,
+      outputCurrency.network?.code,
       outputTokenPrice
     );
   }, [inputCurrency, outputCurrency, outputTokenPrice]);
@@ -83,9 +83,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const requestData = {
       coinFrom: inputCurrency.asset.code,
-      coinFromNetwork: inputCurrency.asset.network,
+      coinFromNetwork: inputCurrency.asset.network!.code,
       coinTo: outputCurrency.code,
-      coinToNetwork: outputCurrency.network,
+      coinToNetwork: outputCurrency.network.code,
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
     };
 
@@ -95,9 +95,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
     const requestData = {
       coinFrom: inputCurrency.code,
-      coinFromNetwork: inputCurrency.network,
+      coinFromNetwork: inputCurrency.network.code,
       coinTo: outputCurrency.asset.code,
-      coinToNetwork: outputCurrency.asset.network,
+      coinToNetwork: outputCurrency.asset.network!.code,
       amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
     };
 

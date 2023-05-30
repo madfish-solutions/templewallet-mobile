@@ -7,10 +7,10 @@ import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { StaticTokenIcon } from 'src/components/static-token-icon/static-token-icon';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
 
@@ -40,8 +40,10 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
   ({ token, actionIconName, iconSize = formatSize(40), isDropdownClosed = false }) => {
     const styles = useTopUpTokenDropdownItemStyles();
 
+    const isFacadeItem = isDropdownClosed;
+
     const tokenIcon = useMemo(() => {
-      if (token?.code === 'UAH' && token?.type === TopUpInputTypeEnum.Fiat) {
+      if (token?.code === 'UAH') {
         return <Icon name={IconNameEnum.Uah} size={iconSize} />;
       }
 
@@ -60,8 +62,11 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
 
       return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
     }, [token]);
+
     const codeFromToken = token?.codeToDisplay ?? token?.code;
     const tokenCodeToDisplay = codeFromToken === 'XTZ' ? 'TEZ' : codeFromToken;
+
+    const { bottomTitle, sideTitle } = getItemTitles(token, isFacadeItem);
 
     return (
       <View style={[styles.row, styles.height40]}>
@@ -74,28 +79,19 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
             <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
               {tokenCodeToDisplay}
             </Text>
+
             <Divider size={formatSize(8)} />
-            {!isDropdownClosed && token?.type !== TopUpInputTypeEnum.Fiat && (
-              <Text {...getTruncatedProps([styles.textRegular11, isDropdownClosed && styles.colorGray1])}>
-                {token?.name}
-              </Text>
-            )}
+
+            {isTruthy(sideTitle) ? <Text {...getTruncatedProps(styles.textRegular11)}>{sideTitle}</Text> : null}
+
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>
 
-          {token?.name !== '' && (
-            <View style={styles.row}>
-              <Text {...getTruncatedProps(styles.textRegular13)}>
-                {isDropdownClosed &&
-                  token?.type === TopUpInputTypeEnum.Crypto &&
-                  (token?.networkShortName ?? token?.networkFullName)}
-                {!isDropdownClosed && token?.type === TopUpInputTypeEnum.Crypto && getProperNetworkFullName(token)}
-                {token?.type === TopUpInputTypeEnum.Fiat && token?.name}
-              </Text>
+          <View style={styles.row}>
+            <Text {...getTruncatedProps(styles.textRegular13)}>{bottomTitle}</Text>
 
-              <Divider size={formatSize(4)} />
-            </View>
-          )}
+            <Divider size={formatSize(4)} />
+          </View>
         </View>
       </View>
     );
@@ -106,3 +102,21 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
 export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInputInterface> = ({ item, isSelected }) => (
   <TopUpTokenDropdownItem token={item} actionIconName={isSelected ? IconNameEnum.Check : undefined} />
 );
+
+const getItemTitles = (item: TopUpInputInterface | undefined, isFacadeItem: boolean) => {
+  if (!item) {
+    return {};
+  }
+
+  const { network } = item;
+
+  if (!network) {
+    return { bottomTitle: item.name };
+  }
+
+  if (isFacadeItem) {
+    return { bottomTitle: network.shortName ?? network.fullName };
+  }
+
+  return { bottomTitle: getProperNetworkFullName(item), sideTitle: item.name };
+};

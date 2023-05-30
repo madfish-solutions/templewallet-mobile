@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
 import { convertFiatAmountToCrypto as utorgConvertFiatAmountToCrypto } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { TopUpInputInterface, TopUpOutputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { PairLimits } from 'src/store/buy-with-credit-card/state';
 import { createEntity } from 'src/store/create-entity';
 import { showErrorToast } from 'src/toast/error-toast.utils';
@@ -29,8 +29,8 @@ const getInputAmountFunctions: Partial<
 };
 
 export const getUpdatedFiatLimits = async (
-  fiatCurrency: TopUpInputInterface,
-  cryptoCurrency: TopUpOutputInterface,
+  fiatCurrency: TopUpInterfaceBase,
+  cryptoCurrency: TopUpInterfaceBase,
   providerId: TopUpProviderEnum
 ): Promise<PairLimits[TopUpProviderEnum]> => {
   const { minAmount: minCryptoAmount, maxAmount: maxCryptoAmount } = cryptoCurrency;

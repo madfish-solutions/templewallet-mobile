@@ -12,7 +12,6 @@ import {
 import { GetBinanceConnectCurrenciesResponse } from 'src/apis/temple-static';
 import { UTORG_CRYPTO_ICONS_BASE_URL, UTORG_FIAT_ICONS_BASE_URL } from 'src/apis/utorg/consts';
 import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/apis/utorg/types';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { LOCAL_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { filterByStringProperty } from 'src/utils/array.utils';
@@ -31,22 +30,16 @@ const knownUtorgFiatCurrenciesNames: Record<string, string> = {
 const aliceBobHryvnia = {
   name: 'Ukrainian Hryvnia',
   code: 'UAH',
-  network: '',
-  networkFullName: '',
   icon: '',
-  precision: 2,
-  type: TopUpInputTypeEnum.Fiat
+  precision: 2
 };
 
 const aliceBobTezos = {
   name: 'Tezos',
   code: 'XTZ',
-  network: 'tezos',
-  networkFullName: 'Tezos',
   icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/xtz.svg`,
   precision: 6,
-  slug: 'tez',
-  type: TopUpInputTypeEnum.Crypto
+  slug: 'tez'
 };
 
 export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
@@ -56,13 +49,10 @@ export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      network: '',
-      networkFullName: '',
       icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
       minAmount: minBuyAmount,
       maxAmount: maxBuyAmount,
-      precision: Math.min(precision, 2), // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
-      type: TopUpInputTypeEnum.Fiat
+      precision: Math.min(precision, 2) // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
     })),
   crypto: currencies
     .filter(
@@ -73,13 +63,10 @@ export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      network: 'tezos',
-      networkFullName: 'Tezos',
       icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
       minAmount: minBuyAmount ?? undefined,
       maxAmount: maxBuyAmount ?? undefined,
       precision,
-      type: TopUpInputTypeEnum.Crypto,
       slug: isDefined(metadata.contractAddress)
         ? toTokenSlug(metadata.contractAddress, metadata.coinType ?? undefined)
         : ''
@@ -93,11 +80,8 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
       name: knownUtorgFiatCurrenciesNames[symbol] ?? '',
       code: symbol,
       codeToDisplay: display,
-      network: '',
-      networkFullName: '',
       icon: `${UTORG_FIAT_ICONS_BASE_URL}${symbol.slice(0, -1)}.svg`,
       precision,
-      type: TopUpInputTypeEnum.Fiat,
       minAmount: depositMin,
       maxAmount: depositMax
     })),
@@ -107,11 +91,8 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
       name: display,
       code: currency,
       codeToDisplay: display,
-      network: 'tezos',
-      networkFullName: 'Tezos',
       icon: `${UTORG_CRYPTO_ICONS_BASE_URL}/${currency}.svg`,
       precision,
-      type: TopUpInputTypeEnum.Crypto,
       slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Utorg
     }))
 });
@@ -134,10 +115,6 @@ export const mapBinanceConnectProviderCurrencies = (
     const symbol = item.fiatCurrency;
 
     return {
-      type: TopUpInputTypeEnum.Fiat,
-      network: '',
-      networkFullName: '',
-      //
       name: symbol,
       code: symbol,
       icon: `${UTORG_FIAT_ICONS_BASE_URL}${symbol.slice(0, -1)}.svg`,
@@ -161,10 +138,6 @@ export const mapBinanceConnectProviderCurrencies = (
     const icon = isString(iconSvgString) ? `${SVG_DATA_URI_UTF8_PREFIX}${encodeURIComponent(iconSvgString)}` : '';
 
     return {
-      type: TopUpInputTypeEnum.Crypto,
-      network: '',
-      networkFullName: '',
-      //
       /** No token id available */
       slug: isString(contractAddress) ? toTokenSlug(contractAddress) : '',
       name: getBinanceConnectCryptoCurrencyName(code, contractAddress),
