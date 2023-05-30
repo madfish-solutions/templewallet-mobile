@@ -50,7 +50,7 @@ export const ScreenContainer: FC<Props> = ({
   const headerHeight = useHeaderHeight();
   const statusBarHeight = isAndroid ? StatusBar.currentHeight : 0;
   const keyboardVerticalOffset = headerHeight + (statusBarHeight ?? 0);
-  console.log(scrollEnabled);
+
   const isCancelButtonExist = isDefined(fixedFooterContainer?.cancelButton);
   const isSubmitButtonExist = isDefined(fixedFooterContainer?.submitButton);
 
