@@ -4,6 +4,8 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { BeaconHandler } from '../../../../beacon/beacon-handler';
 import { AccountDropdownItem } from '../../../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
@@ -34,8 +36,9 @@ interface Props {
 
 const payloadToHex = (payload: string) => {
   const alreadyHexMatch = payload.match(/^(0x)?([0-9a-fA-F]+)$/);
+  const hexString = alreadyHexMatch?.[2];
 
-  return alreadyHexMatch?.[2] ?? char2Bytes(payload);
+  return isDefined(hexString) && hexString.length % 2 === 0 ? hexString : char2Bytes(payload);
 };
 
 const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
