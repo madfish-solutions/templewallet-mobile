@@ -1,9 +1,9 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
+import { AttributeInfo } from 'src/interfaces/attribute.interface';
+import { CollectibleInfo } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { HolderInfo, Offer, Listing } from 'src/token/interfaces/token-metadata.interface';
 
-import { AttributeInfo } from '../../interfaces/attribute.interface';
-import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
 import { MarketPlaceEventEnum } from './enums';
 
 export interface FA2AttributeCountQueryResponse {
