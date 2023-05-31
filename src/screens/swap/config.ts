@@ -6,7 +6,7 @@ import { Route3Token } from 'src/interfaces/route3.interface';
 export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
 export const BURN_ADDREESS = 'tz1burnburnburnburnburnburnburjAYjjX';
 
-export const ROUTE3_CONTRACT = 'KT1Tuta6vbpHhZ15ixsYD3qJdhnpEAuogLQ9';
+export const ROUTE3_CONTRACT = 'KT1R7WEtNNim3YgkxPt8wPMczjH3eyhbJMtz';
 
 export const ROUTING_FEE_PERCENT = 0.35;
 export const CASHBACK_PERCENT = 0.175;
