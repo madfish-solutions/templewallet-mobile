@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { ADULT_ATTRIBUTE_NAME, ADULT_CONTENT_TAGS } from './constants';
+import { ADULT_CONTENT_TAGS } from './adult-tags';
+import { ADULT_ATTRIBUTE_NAME } from './constants';
 
 export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
   query MyQuery {
