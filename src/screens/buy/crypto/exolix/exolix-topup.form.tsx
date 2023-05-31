@@ -1,11 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 import { number, object, SchemaOf, string } from 'yup';
 
-import { bigNumberValidation } from 'src/form/validation/big-number';
+import { bigNumberValidation, withMinMaxBignumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
-
-import { withMinMaxTestsBignumberSchema } from '../../utils/with-min-max-tests-bignumber-schema.util';
 
 export type ExolixTopUpInputInterface = TopUpWithNetworkInterface;
 
@@ -36,7 +34,7 @@ export const exolixTopupFormValidationSchema: SchemaOf<ExolixTopupFormValues> = 
         code: string().required()
       })
       .required(),
-    amount: withMinMaxTestsBignumberSchema.clone().required(makeRequiredErrorMessage('Amount')),
+    amount: withMinMaxBignumberValidation.clone().required(makeRequiredErrorMessage('Amount')),
     min: number(),
     max: number()
   }),

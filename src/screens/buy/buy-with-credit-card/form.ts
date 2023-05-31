@@ -1,12 +1,10 @@
 import { BigNumber } from 'bignumber.js';
 import { number, object, SchemaOf, string } from 'yup';
 
-import { bigNumberValidation } from 'src/form/validation/big-number';
+import { bigNumberValidation, withMinMaxBignumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
-
-import { withMinMaxTestsBignumberSchema } from '../utils/with-min-max-tests-bignumber-schema.util';
 
 export interface BuyWithCreditCardFormValues {
   sendInput: {
@@ -32,7 +30,7 @@ const assetSchema = object()
 export const BuyWithCreditCardValidationSchema = object().shape({
   sendInput: object().shape({
     asset: assetSchema.clone(),
-    amount: withMinMaxTestsBignumberSchema.clone().required(makeRequiredErrorMessage('Amount')),
+    amount: withMinMaxBignumberValidation.clone().required(makeRequiredErrorMessage('Amount')),
     min: number(),
     max: number()
   }),

@@ -102,13 +102,13 @@ export const renderTopUpTokenListItem: DropdownListItemComponent<TopUpInterfaceB
 );
 
 const getItemTitles = (item: TopUpInterfaceBase | undefined, isFacadeItem: boolean) => {
-  if (!item) {
+  if (!isTruthy(item)) {
     return {};
   }
 
   const { network } = item;
 
-  if (!network) {
+  if (!isTruthy(network)) {
     return { bottomTitle: item.name };
   }
 

@@ -35,7 +35,11 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
 
-  useEffect(() => void onEmptyPromotionReceived?.(), []);
+  useEffect(() => {
+    if (onEmptyPromotionReceived && isEmptyPromotion(partnersPromotion)) {
+      onEmptyPromotionReceived();
+    }
+  }, [partnersPromotion, onEmptyPromotionReceived]);
 
   if (!partnersPromotionEnabled || isEmptyPromotion(partnersPromotion)) {
     return null;
