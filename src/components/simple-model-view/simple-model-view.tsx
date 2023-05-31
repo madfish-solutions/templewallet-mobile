@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { emptyFn } from 'src/config/general';
+import { emptyFn, EventFn } from 'src/config/general';
 
 import { useSimpleModelViewStyles } from './simple-model-view.styles';
 
@@ -33,7 +33,7 @@ interface SimpleModelViewProps {
   style?: ViewStyle;
   onError?: () => void;
   onLoadEnd?: () => void;
-  setScrollEnabled?: (value: boolean) => void;
+  setScrollEnabled?: EventFn<boolean>;
 }
 
 export const SimpleModelView: FC<SimpleModelViewProps> = ({

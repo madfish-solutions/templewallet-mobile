@@ -53,7 +53,7 @@ export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
-  const iconSize = width - 32;
+  const iconSize = width - formatSize(32);
 
   const { navigate } = useNavigation();
 

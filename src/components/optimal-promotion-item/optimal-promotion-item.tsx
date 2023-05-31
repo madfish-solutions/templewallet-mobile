@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
+import { PromotionItem } from 'src/components/promotion-item/promotion-item';
+import { EmptyFn } from 'src/config/general';
 import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import {
@@ -10,7 +12,6 @@ import {
 } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isEmptyPromotion } from 'src/utils/optimal.utils';
 
-import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
@@ -19,7 +20,7 @@ interface Props extends TestIdProps {
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
   onImageError?: () => void;
-  onEmptyPromotionReceived?: () => void;
+  onEmptyPromotionReceived?: EmptyFn;
 }
 
 export const OptimalPromotionItem: FC<Props> = ({

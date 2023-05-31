@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
-import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-laceholder';
+import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeholder';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
@@ -50,7 +50,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
       formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
     );
 
-  const handleLoadEnd = () => setIsLoading(false);
+  const handleLoadEnd = () => void setIsLoading(false);
 
   const icon = useMemo(() => {
     if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
@@ -127,7 +127,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     >
       {icon}
       {isLoading && (
-        <View style={[styles.loader]}>
+        <View style={styles.loader}>
           <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
         </View>
       )}

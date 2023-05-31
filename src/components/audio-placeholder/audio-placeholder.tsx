@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
@@ -10,7 +10,7 @@ import { useAudioPlaceholderStyles } from './audio-placeholder.styles';
 const width = formatSize(80);
 const height = formatSize(100);
 
-export const AudioPlaceholder: FC = memo(() => {
+export const AudioPlaceholder: FC = () => {
   const styles = useAudioPlaceholderStyles();
 
   return (
@@ -20,4 +20,4 @@ export const AudioPlaceholder: FC = memo(() => {
       </View>
     </View>
   );
-});
+};

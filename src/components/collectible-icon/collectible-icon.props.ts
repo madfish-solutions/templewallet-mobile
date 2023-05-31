@@ -1,4 +1,5 @@
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { EventFn } from 'src/config/general';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export interface CollectibleIconProps {
   collectible: TokenInterface;
@@ -6,7 +7,7 @@ export interface CollectibleIconProps {
   mime?: string;
   objktArtifact?: string;
   iconSize?: CollectibleIconSize;
-  setScrollEnabled?: (value: boolean) => void;
+  setScrollEnabled?: EventFn<boolean>;
 }
 
 export enum CollectibleIconSize {
