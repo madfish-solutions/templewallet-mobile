@@ -262,6 +262,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         >
           <Dropdown
             description="Assets"
+            disabled={isSingleAsset}
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}

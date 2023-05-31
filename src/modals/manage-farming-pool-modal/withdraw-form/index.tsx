@@ -19,6 +19,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { ManageFarmingPoolModalSelectors } from '../selectors';
@@ -122,13 +123,15 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
     [stake?.depositAmountAtomic, stakedToken, depositExchangeRate]
   );
 
-  const lpInputValue = useMemo(
-    () => ({
-      asset: amountInputAssetsList[0],
-      amount: lpAmountAtomic
-    }),
-    [amountInputAssetsList, lpAmountAtomic]
-  );
+  const lpInputValue = useMemo(() => {
+    const lpToken = amountInputAssetsList[0];
+    const amount = mutezToTz(lpAmountAtomic, lpToken.decimals);
+
+    return {
+      asset: lpToken,
+      amount: tzToMutez(amount.decimalPlaces(amount.lt(1000) ? 6 : 2, BigNumber.ROUND_FLOOR), lpToken.decimals)
+    };
+  }, [amountInputAssetsList, lpAmountAtomic]);
 
   return (
     <FormikProvider value={formik}>

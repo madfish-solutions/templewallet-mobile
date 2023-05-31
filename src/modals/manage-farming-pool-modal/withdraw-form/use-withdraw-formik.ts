@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { secondsInHour } from 'date-fns';
 import { FormikHelpers, useFormik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -18,6 +19,7 @@ import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -90,12 +92,19 @@ export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) 
       if ((stake.rewardsDueDate ?? 0) < Date.now()) {
         void doWithdraw();
       } else {
+        const vestingPeriodSeconds = Number(farm.item.vestingPeriodSeconds);
         doAfterConfirmation(
-          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.',
+          vestingPeriodSeconds > SECONDS_IN_DAY
+            ? 'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.'
+            : `It is a farm with a locked period of ${formatTimespan(vestingPeriodSeconds * 1000, {
+                unit: vestingPeriodSeconds < secondsInHour ? 'minute' : 'hour',
+                roundingMethod: 'ceil'
+              })}. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.`,
           'Withdraw & Claim rewards',
           () => void doWithdraw()
         );
       }
+      helpers.setSubmitting(false);
     },
     [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch]
   );
