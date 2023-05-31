@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsActions } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
@@ -28,7 +27,7 @@ export const Earn: FC = () => {
   }, []);
 
   return (
-    <ScreenContainer>
+    <>
       <MainInfo />
       <Divider size={formatSize(8)} />
       {farms.isLoading ? (
@@ -40,6 +39,6 @@ export const Earn: FC = () => {
           renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
         />
       )}
-    </ScreenContainer>
+    </>
   );
 };

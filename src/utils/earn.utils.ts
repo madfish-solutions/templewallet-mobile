@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
 
-import { calculateTimeDiffInSeconds } from './date.utils';
+import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
 
 interface YouvesFarmRewardsStats {
   lastRewards: string; // From farm store
@@ -45,3 +45,6 @@ export const calculateYouvesFarmingRewards = (
 
   return { claimableReward, fullReward };
 };
+
+export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
+  ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;

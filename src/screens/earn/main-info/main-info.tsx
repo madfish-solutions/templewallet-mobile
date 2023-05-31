@@ -108,7 +108,7 @@ export const MainInfo: FC = () => {
   };
 
   return (
-    <View>
+    <View style={styles.root}>
       <View style={styles.container}>
         <View style={[styles.card, styles.deposit]}>
           <Text style={styles.titleText}>CURRENT DEPOSIT AMOUNT</Text>

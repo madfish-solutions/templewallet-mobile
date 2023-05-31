@@ -2,6 +2,9 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useMainInfoStyles = createUseStyles(({ colors, typography }) => ({
+  root: {
+    padding: formatSize(16)
+  },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',

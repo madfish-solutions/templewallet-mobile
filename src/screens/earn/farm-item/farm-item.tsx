@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 
 import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
+import { FormattedAmount } from 'src/components/formatted-amount';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -22,19 +22,13 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { aprToApy } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import {
-  DEFAULT_AMOUNT,
-  DEFAULT_DECIMALS,
-  DEFAULT_EXHANGE_RATE,
-  FARM_PRECISION,
-  REWARDS_DECIMALS,
-  SECONDS_IN_DAY
-} from '../constants';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, DEFAULT_EXHANGE_RATE, FARM_PRECISION, SECONDS_IN_DAY } from '../constants';
 import { FarmTokens } from '../farm-tokens/farm-tokens';
-import { useFarmItemStyles } from './farm-item.styles';
+import { useButtonPrimaryStyleConfig, useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
   farm: SingleFarmResponse;
@@ -43,6 +37,8 @@ interface Props {
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const styles = useFarmItemStyles();
+  const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
+  const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const selectedAccount = useSelectedAccountSelector();
@@ -74,9 +70,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   );
 
   const apr = useMemo(
-    () => (isDefined(farm.item.apr) ? new BigNumber(farm.item.apr).toFixed(DEFAULT_DECIMALS) : '---'),
+    () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
     [farm.item.apr]
   );
+
   const depositAmountAtomic = useMemo(
     () =>
       mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
@@ -84,13 +81,13 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       ),
     [lastStakeRecord?.depositAmountAtomic, farm.item.depositExchangeRate]
   );
+
   const claimableRewardsAtomic = useMemo(
     () =>
-      mutezToTz(
-        new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
-        farm.item.rewardToken.metadata.decimals
-      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards, farm]
+      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+        farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE
+      ),
+    [lastStakeRecord?.claimableRewards]
   );
 
   const navigateToFarm = useCallback(
@@ -141,10 +138,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   }, [lastStakeRecord, farm.item.contractAddress]);
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
         {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long Term" />}
+        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
@@ -152,32 +149,42 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
           <View>
             <Text style={styles.apyText}>APY: {apr}%</Text>
             <View style={styles.earnSource}>
-              <Icon name={IconNameEnum.QsEarnSource} />
+              <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} />
               <Text style={styles.attributeTitle}>Quipuswap</Text>
             </View>
           </View>
         </View>
 
         <View style={[styles.row, styles.mb16]}>
-          <View>
+          <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Your deposit:</Text>
-            <Text style={styles.attributeValue}>≈ {depositAmountAtomic.toFixed(DEFAULT_DECIMALS)}$</Text>
+            <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
-          <View>
+          <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <Text style={styles.attributeValue}>≈ {claimableRewardsAtomic.toFixed(REWARDS_DECIMALS)}$</Text>
+            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
           </View>
         </View>
 
         <View style={styles.row}>
-          {depositAmountAtomic.isGreaterThan(0) ? (
+          {new BigNumber(depositAmountAtomic).isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
-              <ButtonLargeSecondary title="MANAGE" onPress={navigateToFarm} />
+              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
-              <ButtonLargePrimary title="CLAIM REWARDS" onPress={harvestAssetsApi} />
+              <Button
+                isFullWidth
+                title="CLAIM REWARDS"
+                onPress={harvestAssetsApi}
+                styleConfig={buttonPrimaryStylesConfig}
+              />
             </>
           ) : (
-            <ButtonLargePrimary title="START EARNING" onPress={navigateToFarm} />
+            <Button
+              isFullWidth
+              title="START FARMING"
+              onPress={navigateToFarm}
+              styleConfig={buttonPrimaryStylesConfig}
+            />
           )}
         </View>
       </View>
