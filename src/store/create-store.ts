@@ -58,11 +58,14 @@ if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
   middlewares.push(createDebugger());
 }
 
+const persistConfigBlacklist: (keyof RootState)[] = ['buyWithCreditCard', 'exolix'];
+
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
-  stateReconciler: autoMergeLevel2
+  stateReconciler: autoMergeLevel2,
+  blacklist: persistConfigBlacklist
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

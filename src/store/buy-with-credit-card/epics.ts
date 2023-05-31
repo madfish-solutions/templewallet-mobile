@@ -15,8 +15,9 @@ import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
+import { RootState } from '../create-store';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
-import { BuyWithCreditCardRootState, TopUpProviderCurrencies } from './state';
+import { TopUpProviderCurrencies } from './state';
 import {
   mapAliceBobProviderCurrencies,
   mapBinanceConnectProviderCurrencies,
@@ -71,7 +72,7 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
     )
   );
 
-const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<BuyWithCreditCardRootState>) =>
+const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(updatePairLimitsActions.submit),
     withLatestFrom(state$),
@@ -107,7 +108,7 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Bu
     })
   );
 
-export const buyWithCreditCardEpics = combineEpics<Action, Action, BuyWithCreditCardRootState>(
+export const buyWithCreditCardEpics = combineEpics<Action, Action, RootState>(
   loadAllCurrenciesEpic,
   updatePairLimitsEpic
 );
