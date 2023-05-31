@@ -113,7 +113,7 @@ export const ManageFarmingPoolModal: FC = () => {
               farm={farm.item}
               stake={stake}
               shouldShowClaimRewardsButton={tabIndex === 0}
-              shouldShowLoading={stakesLoading && !isDefined(stake)}
+              loading={stakesLoading && !isDefined(stake)}
             />
             {tabIndex === 1 && vestingPeriodSeconds >= SECONDS_IN_DAY && (
               <>

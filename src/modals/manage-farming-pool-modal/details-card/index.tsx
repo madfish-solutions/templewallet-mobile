@@ -32,7 +32,7 @@ import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 
 interface DetailsCardProps {
   farm: Farm;
-  shouldShowLoading: boolean;
+  loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
 }
@@ -46,7 +46,7 @@ const COUNTDOWN_TOKENS_BASE = [
 
 export const DetailsCard: FC<DetailsCardProps> = ({
   farm,
-  shouldShowLoading,
+  loading,
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
@@ -145,13 +145,13 @@ export const DetailsCard: FC<DetailsCardProps> = ({
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>
         <StatsItem
-          shouldShowLoading={shouldShowLoading}
+          loading={loading}
           title="Your deposit:"
           value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
           usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
         />
         <StatsItem
-          shouldShowLoading={shouldShowLoading}
+          loading={loading}
           title="Claimable rewards:"
           value={
             <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
@@ -162,13 +162,13 @@ export const DetailsCard: FC<DetailsCardProps> = ({
       <Divider size={formatSize(12)} />
       <View style={styles.statsRow}>
         <StatsItem
-          shouldShowLoading={shouldShowLoading}
+          loading={loading}
           title="Long-term rewards:"
           value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
           usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
         />
         <StatsItem
-          shouldShowLoading={shouldShowLoading}
+          loading={loading}
           title="Fully claimable:"
           value={
             <Text style={styles.statsValue}>
