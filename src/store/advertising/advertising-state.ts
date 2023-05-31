@@ -9,7 +9,3 @@ export interface AdvertisingState {
 export const advertisingInitialState: AdvertisingState = {
   activePromotion: createEntity(undefined)
 };
-
-export interface AdvertisingRootState {
-  advertising: AdvertisingState;
-}

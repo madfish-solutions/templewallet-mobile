@@ -56,7 +56,7 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
         getCurrencies$(getMoonPayCurrencies, mapMoonPayProviderCurrencies),
         getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies),
         // TODO: return showing error toast as soon as Alice&Bob API starts working
-        getCurrencies$(() => getTezUahPairInfo(), mapAliceBobProviderCurrencies, false),
+        getCurrencies$(getTezUahPairInfo, mapAliceBobProviderCurrencies, false),
         getCurrencies$(getBinanceConnectCurrencies, mapBinanceConnectProviderCurrencies)
       ]).pipe(
         map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo, binanceConnectCurrencies]) =>

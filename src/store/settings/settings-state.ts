@@ -43,7 +43,3 @@ export const settingsInitialState: SettingsState = {
   isCloudBackupMade: true,
   applicationOpenCounter: 0
 };
-
-export interface SettingsRootState {
-  settings: SettingsState;
-}

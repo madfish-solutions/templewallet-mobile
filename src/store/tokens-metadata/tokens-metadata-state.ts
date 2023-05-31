@@ -19,7 +19,3 @@ export const tokensMetadataInitialState: TokensMetadataState = {
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata)
 };
-
-export interface TokensMetadataRootState {
-  tokensMetadata: TokensMetadataState;
-}

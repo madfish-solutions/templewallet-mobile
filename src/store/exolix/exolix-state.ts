@@ -12,7 +12,3 @@ export interface ExolixState {
   exchangeData: ExchangeDataInterface | null;
   currencies: TopUpWithNetworkInterface[];
 }
-
-export interface ExolixRootState {
-  exolix: ExolixState;
-}

@@ -13,7 +13,3 @@ export const partnersPromotionInitialState: PartnersPromotionState = {
   promotion: createEntity(mockPartnersPromotion),
   isEnabled: true
 };
-
-export interface PartnersPromotionRootState {
-  partnersPromotion: PartnersPromotionState;
-}

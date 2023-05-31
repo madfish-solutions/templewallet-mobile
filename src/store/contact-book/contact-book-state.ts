@@ -16,7 +16,3 @@ export const contactBookInitialState: ContactBookState = {
   ignoredAddresses: [],
   contactCandidateAddress: ''
 };
-
-export interface ContactsBookRootState {
-  contactBook: ContactBookState;
-}

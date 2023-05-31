@@ -15,7 +15,3 @@ export const bakingInitialState: BakingState = {
   bakersList: createEntity([]),
   bakerRewardsList: createEntity([])
 };
-
-export interface BakingRootState {
-  baking: BakingState;
-}

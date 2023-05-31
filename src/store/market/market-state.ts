@@ -16,7 +16,3 @@ export const marketInitialState: MarketState = {
   tokens: createEntity([]),
   tokensIdsToSlugs: createEntity({})
 };
-
-export interface MarketRootState {
-  market: MarketState;
-}

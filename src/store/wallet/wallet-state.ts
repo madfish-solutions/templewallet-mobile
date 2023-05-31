@@ -23,7 +23,3 @@ export const walletInitialState: WalletState = {
   accountsStateRecord: {},
   selectedAccountPublicKeyHash: ''
 };
-
-export interface WalletRootState {
-  wallet: WalletState;
-}
