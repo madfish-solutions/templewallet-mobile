@@ -1,9 +1,10 @@
 import { TextInputProps } from 'react-native';
 
-import { EmptyFn, EventFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { AssetAmountInterface } from './asset-amount-input';
+import { EmptyFn, EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+
+import type { AssetAmountInterface } from './asset-amount-input';
 
 export interface AssetAmountInputProps extends TestIdProps {
   maxButton?: boolean;

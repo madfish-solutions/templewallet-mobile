@@ -20,7 +20,7 @@ import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 import { getTruncatedProps } from 'src/utils/style.util';
 
-import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
+import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from '../constants';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props extends TestIdProps {

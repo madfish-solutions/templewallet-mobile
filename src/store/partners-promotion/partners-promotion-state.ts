@@ -1,6 +1,6 @@
+import { createEntity } from 'src/store/create-entity';
 import { OptimalPromotionType } from 'src/utils/optimal.utils';
 
-import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 import { mockPartnersPromotion } from './partners-promotion-state.mock';
 
