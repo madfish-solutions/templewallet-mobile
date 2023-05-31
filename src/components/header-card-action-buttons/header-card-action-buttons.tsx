@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -37,13 +37,21 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
 
+  const actionButtonStylesOverrides = useMemo(
+    () => ({
+      titleStyle: styles.actionButtonTitle
+    }),
+    [styles.actionButtonTitle]
+  );
+
   return (
     <ButtonsContainer>
       <View style={styles.buttonContainer}>
         <ButtonMedium
-          title="RECEIVE"
+          title="Receive"
           iconName={IconNameEnum.ArrowDown}
           onPress={() => navigate(ModalsEnum.Receive, { token })}
+          styleConfigOverrides={actionButtonStylesOverrides}
         />
       </View>
       <Divider size={formatSize(8)} />
@@ -52,6 +60,17 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           title="Buy"
           iconName={IconNameEnum.ShoppingCard}
           onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
+          styleConfigOverrides={actionButtonStylesOverrides}
+        />
+      </View>
+      <Divider size={formatSize(8)} />
+      <View style={styles.buttonContainer}>
+        <ButtonMedium
+          disabled={!isTezosNode}
+          title="Earn"
+          iconName={IconNameEnum.Earn}
+          onPress={() => navigate(ScreensEnum.Earn)}
+          styleConfigOverrides={actionButtonStylesOverrides}
         />
       </View>
       <Divider size={formatSize(8)} />
@@ -60,10 +79,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}
       >
         <ButtonMedium
-          title="SEND"
+          title="Send"
           disabled={disableSendAsset}
           iconName={IconNameEnum.ArrowUp}
           onPress={() => navigate(ModalsEnum.Send, { token })}
+          styleConfigOverrides={actionButtonStylesOverrides}
         />
       </View>
     </ButtonsContainer>
