@@ -1,8 +1,7 @@
 import { NotificationStatus } from 'src/enums/notification-status.enum';
 import { NotificationType } from 'src/enums/notification-type.enum';
-
-import type { RootState } from '../create-store';
-import { useSelector } from '../selector';
+import { useSelector } from 'src/store/selector';
+import type { RootState } from 'src/store/types';
 
 const getFilteredNotifications = (state: RootState) => {
   const notifications = state.notifications.list.data;

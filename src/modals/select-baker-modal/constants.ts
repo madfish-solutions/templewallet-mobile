@@ -1,7 +1,3 @@
-export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
-
-export const HELP_UKRAINE_BAKER_ADDRESS = 'tz1bMFzs2aECPn4aCRmKQWHSLHF8ZnZbYcah';
-
 export const DISCLAIMER_MESSAGE =
   'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
 

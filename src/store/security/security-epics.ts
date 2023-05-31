@@ -17,7 +17,7 @@ import {
   withSelectedIsAuthorized,
   withSelectedUserId
 } from '../../utils/security.utils';
-import { RootState } from '../create-store';
+import type { RootState } from '../types';
 import { checkApp } from './security-actions';
 
 interface appCheckPayload extends VersionsInterface {

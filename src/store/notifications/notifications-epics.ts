@@ -5,7 +5,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { loadNotifications$ } from '../../utils/notifications.util';
-import { RootState } from '../create-store';
+import type { RootState } from '../types';
 import { loadNotificationsAction } from './notifications-actions';
 
 const loadNotificationsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>

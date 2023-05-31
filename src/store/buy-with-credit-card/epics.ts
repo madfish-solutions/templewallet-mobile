@@ -15,7 +15,7 @@ import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { RootState } from '../create-store';
+import type { RootState } from '../types';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
 import {

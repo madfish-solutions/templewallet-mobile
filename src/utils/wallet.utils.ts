@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import type { RootState } from 'src/store/create-store';
+import type { RootState } from 'src/store/types';
 
 import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from '../interfaces/account.interface';

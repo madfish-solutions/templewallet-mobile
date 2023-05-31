@@ -9,8 +9,8 @@ import { Shelter } from 'src/shelter/shelter';
 import { resetBeacon$ } from 'src/utils/beacon.utils';
 import { resetKeychain$ } from 'src/utils/keychain.utils';
 
-import { RootState } from './create-store';
 import { resetApplicationAction, resetKeychainOnInstallAction, untypedNavigateAction } from './root-state.actions';
+import type { RootState } from './types';
 
 const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(

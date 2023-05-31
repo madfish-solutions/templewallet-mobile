@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { withLatestFrom } from 'rxjs/operators';
 
-import type { RootState } from 'src/store/create-store';
+import type { RootState } from 'src/store/types';
 
 export const withSelectedIsAnalyticsEnabled =
   <T>(state$: Observable<RootState>) =>

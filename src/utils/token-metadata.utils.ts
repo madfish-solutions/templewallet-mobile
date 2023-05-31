@@ -5,7 +5,7 @@ import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
-import type { RootState } from 'src/store/create-store';
+import type { RootState } from 'src/store/types';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import {
   emptyTokenMetadata,

@@ -4,12 +4,13 @@ import { map, withLatestFrom } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { KNOWN_TOKENS_SLUGS } from '../../token/data/token-slugs';
-import { DCP_TOKENS_METADATA } from '../../token/data/tokens-metadata';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isDefined } from '../../utils/is-defined';
-import { RootState } from '../create-store';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
+import { DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { emptyAction } from '../root-state.actions';
+import type { RootState } from '../types';
 import {
   addDcpTokensMetadata,
   deleteOldIsShownDomainName,

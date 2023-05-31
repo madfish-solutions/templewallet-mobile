@@ -26,18 +26,11 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
+import { RECOMMENDED_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
-import {
-  RECOMMENDED_BAKER_ADDRESS,
-  HELP_UKRAINE_BAKER_ADDRESS,
-  DISCLAIMER_MESSAGE,
-  TEZ_LABEL,
-  DCP_LABEL,
-  TEZ_DESCRIPTION,
-  DCP_DESCRIPTION
-} from './constants';
+import { DISCLAIMER_MESSAGE, TEZ_LABEL, DCP_LABEL, TEZ_DESCRIPTION, DCP_DESCRIPTION } from './constants';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 

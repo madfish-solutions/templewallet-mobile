@@ -4,12 +4,13 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { showErrorToast } from '../../toast/toast.utils';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { jitsu } from '../../utils/analytics/analytics.util';
-import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from '../../utils/exolix.util';
-import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from '../../utils/security.utils';
-import { RootState } from '../create-store';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { jitsu } from 'src/utils/analytics/analytics.util';
+import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from 'src/utils/exolix.util';
+import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from 'src/utils/security.utils';
+
+import type { RootState } from '../types';
 import {
   loadExolixCurrenciesAction,
   loadExolixExchangeDataActions,
