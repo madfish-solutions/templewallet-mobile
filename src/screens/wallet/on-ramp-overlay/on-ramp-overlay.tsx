@@ -5,25 +5,24 @@ import { useDispatch } from 'react-redux';
 
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { setIsOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { openUrl } from 'src/utils/linking.util';
 
-import { Divider } from '../../../components/divider/divider';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { setIsOnRampPossibilityAction } from '../../../store/settings/settings-actions';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { showSuccessToast } from '../../../toast/toast.utils';
-import { copyStringToClipboard } from '../../../utils/clipboard.utils';
-import { openUrl } from '../../../utils/linking.util';
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
 import { useOnRampOverlayStyles } from './on-ramp-overlay.styles';
 import { OnRampSmileButton } from './on-ramp-smile-button/on-ramp-smile-button';
 import { OnRampTextButton } from './on-ramp-text-button/on-ramp-text-button';
-import { getSimpleSwapLink } from './utils/get-simple-swap-link';
+import { getWertLink } from './utils/get-wert-link.util';
 
 export const OnRampOverlay = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
 
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   return isOnRampPossibility ? <OverlayComponent /> : null;
 };
 
@@ -38,15 +37,8 @@ const OverlayComponent = () => {
   useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const handleOnRampButtonPress = (amount = 0) => {
-    copyStringToClipboard(publicKeyHash);
-    showSuccessToast({
-      description: 'Your wallet address was copied to the clipboard. Please paste it on the next screen!'
-    });
-
-    timerRef.current = setTimeout(() => {
-      openUrl(getSimpleSwapLink(amount));
-      dispatch(setIsOnRampPossibilityAction(false));
-    }, 4000);
+    dispatch(setIsOnRampPossibilityAction(false));
+    openUrl(getWertLink(publicKeyHash, amount));
   };
 
   return (
