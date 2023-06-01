@@ -107,31 +107,29 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
     [farm.item.type]
   );
 
-  const amountInputAssetsList = useMemo<TokenInterface[]>(
-    () => [
-      {
-        balance: stake?.depositAmountAtomic ?? '0',
-        visibility: VisibilityEnum.Visible,
-        id: stakedToken.fa2TokenId ?? 0,
-        decimals: stakedToken.metadata.decimals,
-        symbol: 'Shares',
-        name: '',
-        address: stakedToken.contractAddress,
-        exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
-      }
-    ],
+  const lpToken = useMemo<TokenInterface>(
+    () => ({
+      balance: stake?.depositAmountAtomic ?? '0',
+      visibility: VisibilityEnum.Visible,
+      id: stakedToken.fa2TokenId ?? 0,
+      decimals: stakedToken.metadata.decimals,
+      symbol: 'Shares',
+      name: '',
+      address: stakedToken.contractAddress,
+      exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
+    }),
     [stake?.depositAmountAtomic, stakedToken, depositExchangeRate]
   );
 
+  const amountInputAssetsList = useMemo<TokenInterface[]>(() => [lpToken], [lpToken]);
   const lpInputValue = useMemo(() => {
-    const lpToken = amountInputAssetsList[0];
     const amount = mutezToTz(lpAmountAtomic, lpToken.decimals);
 
     return {
       asset: lpToken,
       amount: tzToMutez(amount.decimalPlaces(amount.lt(1000) ? 6 : 2, BigNumber.ROUND_FLOOR), lpToken.decimals)
     };
-  }, [amountInputAssetsList, lpAmountAtomic]);
+  }, [lpToken, lpAmountAtomic]);
 
   return (
     <FormikProvider value={formik}>
