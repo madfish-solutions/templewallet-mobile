@@ -13,4 +13,5 @@ export const useSortFieldSelector = () => useSelector(state => state.market.sort
 
 export const useFavouriteTokensIdsSelector = () => useSelector(state => state.market.favouriteTokensIds);
 
+// @ts-prune-ignore-next
 export const useMarketTokenSlugSelector = (id: string) => useSelector(state => state.market.tokensIdsToSlugs.data[id]);

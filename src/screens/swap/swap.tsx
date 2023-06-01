@@ -9,6 +9,7 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
 import { SwapForm } from './swap-form/swap-form';
 
+// @ts-prune-ignore-next
 export const SwapScreen: FC = () => {
   const dispatch = useDispatch();
 

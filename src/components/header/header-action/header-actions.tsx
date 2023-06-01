@@ -8,6 +8,7 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';
 import { useHeaderTitleStyles } from './header-actions.styles';
 
+// @ts-prune-ignore-next
 export const HeaderAction: FC = () => {
   const styles = useHeaderTitleStyles();
   const { navigate } = useNavigation();

@@ -5,11 +5,14 @@ import { useDispatch } from 'react-redux';
 import { Divider } from '../../../../components/divider/divider';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { EmptyFn } from '../../../../config/general';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+// import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
+// import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from '../../../../store/market/market-actions';
-import { useFavouriteTokensIdsSelector, useMarketTokenSlugSelector } from '../../../../store/market/market-selectors';
-import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
+import {
+  useFavouriteTokensIdsSelector
+  //useMarketTokenSlugSelector
+} from '../../../../store/market/market-selectors';
+// import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { HiddenButton } from '../hidden-button/hidden-button';
@@ -25,15 +28,15 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const styles = useRightSwipeViewStyles();
   const favouriteTokensIds = useFavouriteTokensIdsSelector();
 
-  const marketCoinSlug = useMarketTokenSlugSelector(id);
-  const outputToken = useTokenSelector(marketCoinSlug);
+  // const marketCoinSlug = useMarketTokenSlugSelector(id);
+  // const outputToken = useTokenSelector(marketCoinSlug);
 
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  // const { navigate } = useNavigation();
 
   const isFavourite = useMemo<boolean>(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
   const favouriteIconColor = isFavourite ? colors.peach : colors.peach10;
-  const buyIconColor = outputToken ? colors.peach : colors.gray1;
+  // const buyIconColor = outputToken ? colors.peach : colors.gray1;
 
   const handleAddToFavourites = () => {
     dispatch(addFavouriteToken(id));
@@ -47,13 +50,13 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
 
   const handleFavoritePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
 
-  const handleBuyPress = () => {
-    navigate(ScreensEnum.SwapScreen, { outputToken });
-  };
+  // const handleBuyPress = () => {
+  //   navigate(ScreensEnum.SwapScreen, { outputToken });
+  // };
 
   return (
     <View style={styles.rootContainer}>
-      <HiddenButton
+      {/* <HiddenButton
         iconName={IconNameEnum.Buy}
         text="Buy"
         disabled={!outputToken}
@@ -63,7 +66,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
         testIDProperties={{
           id
         }}
-      />
+      /> */}
 
       <Divider size={formatSize(1)} />
 

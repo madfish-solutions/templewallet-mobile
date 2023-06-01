@@ -32,6 +32,7 @@ const mapSlippageToIndex = (slippage: number): number => {
   }
 };
 
+// @ts-prune-ignore-next
 export const SwapSettingsScreen: FC = () => {
   const styles = useSwapSettingsStyles();
   const dispatch = useDispatch();

@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
-import { HeaderAction } from 'src/components/header/header-action/header-actions';
+// import { HeaderAction } from 'src/components/header/header-action/header-actions';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
@@ -53,8 +53,8 @@ import { Notifications } from 'src/screens/notifications/notifications';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
-import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
-import { SwapScreen } from 'src/screens/swap/swap';
+// import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
+// import { SwapScreen } from 'src/screens/swap/swap';
 import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { SyncInstructions } from 'src/screens/sync-account/sync-instructions/sync-instructions';
 import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
@@ -224,20 +224,20 @@ export const MainStackScreen = () => {
               />
 
               {/** Swap stack **/}
-              <MainStack.Screen
+              {/* <MainStack.Screen
                 name={ScreensEnum.SwapScreen}
                 component={SwapScreen}
                 options={{
                   ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
                   animationEnabled: false
                 }}
-              />
+              /> */}
 
-              <MainStack.Screen
+              {/* <MainStack.Screen
                 name={ScreensEnum.SwapSettingsScreen}
                 component={SwapSettingsScreen}
                 options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
+              /> */}
 
               {/** Market stack **/}
               <MainStack.Screen

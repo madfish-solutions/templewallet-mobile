@@ -122,5 +122,6 @@ export const walletStackScreens = [
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
+// @ts-prune-ignore-next
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

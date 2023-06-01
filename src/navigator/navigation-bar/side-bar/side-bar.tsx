@@ -15,7 +15,7 @@ import {
   marketStackScreens,
   nftStackScreens,
   ScreensEnum,
-  swapStackScreens,
+  // swapStackScreens,
   walletStackScreens
 } from '../../enums/screens.enum';
 import { SideBarButton } from './side-bar-button/side-bar-button';
@@ -56,14 +56,14 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(nftStackScreens)}
             disabledOnPress={disabledOnPress}
           />
-          <SideBarButton
+          {/* <SideBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
-          />
+          /> */}
           <SideBarButton
             label="DApps"
             iconName={IconNameEnum.DApps}
