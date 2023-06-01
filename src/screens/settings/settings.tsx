@@ -62,15 +62,16 @@ export const Settings = () => {
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
   const handleShare = useCallback(async () => {
-    Share.share({
-      message: SHARE_CONTENT + (await getTempleDynamicLink())
-    })
-      .then(() => {
-        trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
-      })
-      .catch(() => {
-        trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress);
+    try {
+      const dynamicLink = await getTempleDynamicLink();
+      await Share.share({
+        message: SHARE_CONTENT + dynamicLink
       });
+
+      await trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
+    } catch (errorMessage) {
+      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage });
+    }
   }, [trackEvent]);
 
   const showBackupButton = !isAnyBackupMade || account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;

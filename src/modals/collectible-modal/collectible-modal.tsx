@@ -17,7 +17,8 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { formatImgUri } from '../../utils/image.utils';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
@@ -32,19 +33,28 @@ export const CollectibleModal = () => {
   const { navigate } = useNavigation();
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
+  const { trackEvent } = useAnalytics();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={collectible.name} /> }, [collectible]);
 
   const handleShare = useCallback(async () => {
-    await Share.share({
-      message:
-        SHARE_NFT_CONTENT +
-        (await getTempleDynamicLink(`/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`, {
+    try {
+      const dynamicLink = await getTempleDynamicLink(
+        `/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
+        {
           title: collectible.name,
           descriptionText: 'NFT description',
           imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
-        }))
-    });
+        }
+      );
+      await Share.share({
+        message: SHARE_NFT_CONTENT + dynamicLink
+      });
+
+      await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
+    } catch (errorMessage) {
+      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, { errorMessage });
+    }
   }, []);
 
   return (
