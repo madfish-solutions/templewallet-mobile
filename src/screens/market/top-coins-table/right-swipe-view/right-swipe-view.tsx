@@ -2,6 +2,8 @@ import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { isIOS } from 'src/config/system';
+
 import { Divider } from '../../../../components/divider/divider';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { EmptyFn } from '../../../../config/general';
@@ -53,17 +55,19 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
 
   return (
     <View style={styles.rootContainer}>
-      <HiddenButton
-        iconName={IconNameEnum.Buy}
-        text="Buy"
-        disabled={!outputToken}
-        onPress={handleBuyPress}
-        color={buyIconColor}
-        testID={RightSwipeViewSelectors.buyTokenButton}
-        testIDProperties={{
-          id
-        }}
-      />
+      {!isIOS && (
+        <HiddenButton
+          iconName={IconNameEnum.Buy}
+          text="Buy"
+          disabled={!outputToken}
+          onPress={handleBuyPress}
+          color={buyIconColor}
+          testID={RightSwipeViewSelectors.buyTokenButton}
+          testIDProperties={{
+            id
+          }}
+        />
+      )}
 
       <Divider size={formatSize(1)} />
 

@@ -5,6 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
+import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -56,14 +57,18 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(nftStackScreens)}
             disabledOnPress={disabledOnPress}
           />
-          <SideBarButton
-            label="Swap"
-            iconName={IconNameEnum.Swap}
-            routeName={ScreensEnum.SwapScreen}
-            focused={isStackFocused(swapStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
-          />
+
+          {!isIOS && (
+            <SideBarButton
+              label="Swap"
+              iconName={IconNameEnum.Swap}
+              routeName={ScreensEnum.SwapScreen}
+              focused={isStackFocused(swapStackScreens)}
+              disabled={isDcpNode}
+              disabledOnPress={disabledOnPress}
+            />
+          )}
+
           <SideBarButton
             label="DApps"
             iconName={IconNameEnum.DApps}

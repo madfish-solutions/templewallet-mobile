@@ -19,6 +19,15 @@ export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.FilmToken
 };
 
+export const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
+  address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
+  id: 0,
+  name: 'Deprecated Temple Key',
+  symbol: 'TKEY_OLD',
+  decimals: 18,
+  standard: TokenStandardsEnum.Fa2
+};
+
 export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
