@@ -17,8 +17,10 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
+import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { formatImgUri } from '../../utils/image.utils';
 import { CollectibleInfoItem } from './collectible-info-item/collectible-info-item';
@@ -52,8 +54,15 @@ export const CollectibleModal = () => {
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (errorMessage) {
-      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, { errorMessage });
+    } catch (e: any) {
+      showErrorToast({
+        description: e.message,
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(e.message)
+      });
+      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
+        errorMessage: e.message
+      });
     }
   }, []);
 

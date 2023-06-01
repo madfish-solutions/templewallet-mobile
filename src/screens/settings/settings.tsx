@@ -34,6 +34,8 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+import { showErrorToast } from '../../toast/toast.utils';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
@@ -69,8 +71,13 @@ export const Settings = () => {
       });
 
       await trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (errorMessage) {
-      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage });
+    } catch (e: any) {
+      showErrorToast({
+        description: e.message,
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(e.message)
+      });
+      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage: e.message });
     }
   }, [trackEvent]);
 
