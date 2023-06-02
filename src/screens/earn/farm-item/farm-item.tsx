@@ -26,9 +26,10 @@ import { aprToApy } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
+import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
 import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, DEFAULT_EXHANGE_RATE, FARM_PRECISION, SECONDS_IN_DAY } from '../constants';
 import { FarmTokens } from '../farm-tokens/farm-tokens';
-import { useButtonPrimaryStyleConfig, useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
+import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
   farm: SingleFarmResponse;

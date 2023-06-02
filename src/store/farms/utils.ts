@@ -7,6 +7,8 @@ import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getBalance } from 'src/utils/token-balance.utils';
 
+const MS_IN_SECOND = 1000;
+
 export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: string) => {
   const farmContractInstance = await tezos.contract.at(farm.contractAddress);
   const farmContractStorage = await farmContractInstance.storage<FarmContractStorageInterface>();
@@ -39,7 +41,10 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
           lastStakeId: lastStakeId.toFixed(),
           depositAmountAtomic: stakeAmount.stake.toFixed(),
           claimableRewards: claimableReward.toFixed(),
-          fullReward: fullReward.toFixed()
+          fullReward: fullReward.toFixed(),
+          rewardsDueDate:
+            new Date(stakeAmount.age_timestamp).getTime() +
+            farmContractStorage.max_release_period.multipliedBy(MS_IN_SECOND).toNumber()
         };
       }
     }
