@@ -63,13 +63,14 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
       <View style={styles.formContainer}>
         <Divider size={formatSize(16)} />
         <Text style={styles.depositPrompt}>
-          Deposit {asset.symbol} or other tokens. If you select other token it will be automatically swapped to{' '}
-          {asset.symbol}.
+          You can choose any asset from the provided list for your deposit. The selected asset will be automatically
+          converted by Temple Wallet.
         </Text>
         <Divider size={formatSize(24)} />
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
+          balanceValueStyles={styles.balanceText}
           expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
           isSearchable
           maxButton

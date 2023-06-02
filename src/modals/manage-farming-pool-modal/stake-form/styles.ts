@@ -9,5 +9,8 @@ export const useStakeFormStyles = createUseStyles(({ colors, typography }) => ({
   },
   formContainer: {
     flex: 1
+  },
+  balanceText: {
+    color: colors.black
   }
 }));

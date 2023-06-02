@@ -77,6 +77,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   selectionOptions = undefined,
   maxButton = false,
   expectedGasExpense = 0.3,
+  balanceValueStyles,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -289,7 +290,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceText}
+                  style={[styles.balanceText, balanceValueStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -303,7 +304,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceText}
+                style={[styles.balanceText, balanceValueStyles]}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>
