@@ -64,7 +64,7 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
     const codeFromToken = token?.codeToDisplay ?? token?.code;
     const tokenCodeToDisplay = codeFromToken === 'XTZ' ? 'TEZ' : codeFromToken;
 
-    const { bottomTitle, sideTitle } = getItemTitles(token, isFacadeItem);
+    const { bottomTitle, sideTitle } = useMemo(() => getItemTitles(token, isFacadeItem), [token, isFacadeItem]);
 
     return (
       <View style={[styles.row, styles.height40]}>

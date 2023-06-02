@@ -15,7 +15,6 @@ import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
-import { initialData } from '../../crypto/exolix/steps/initial-step/initial-step.data';
 import {
   renderTopUpTokenListItem,
   TopUpTokenDropdownItem
@@ -49,7 +48,7 @@ const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) => `${
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
-    value = initialData.coinFrom,
+    value,
     label,
     description = 'Assets',
     emptyListText,
