@@ -7,6 +7,7 @@ import { LoadableEntityState } from '../types';
 export interface TokensMetadataState {
   metadataRecord: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
+  knownIpfsSvgs: Record<string, boolean>;
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
@@ -17,7 +18,8 @@ export const tokensMetadataInitialState: TokensMetadataState = {
     }),
     {}
   ),
-  addTokenSuggestion: createEntity(emptyTokenMetadata)
+  addTokenSuggestion: createEntity(emptyTokenMetadata),
+  knownIpfsSvgs: {}
 };
 
 export interface TokensMetadataRootState {

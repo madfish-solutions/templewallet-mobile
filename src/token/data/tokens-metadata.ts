@@ -82,6 +82,24 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     decimals: 12,
     thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc',
     standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1Rk86CX85DjBKmuyBhrCyNsHyudHVtASec',
+    name: 'Yupana XTZ',
+    symbol: 'y-XTZ',
+    decimals: 6,
+    thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT19JYndHaesXpvUfiwgg8BtE41HKkjjGMRC',
+    name: 'Rocket',
+    symbol: 'RCKT',
+    decimals: 6,
+    thumbnailUri: 'ipfs://QmNwMXAL5tVaPxauq7W4mXMhFGNVsstBfQ87AwUUo94thL',
+    standard: TokenStandardsEnum.Fa2
   }
 ];
 

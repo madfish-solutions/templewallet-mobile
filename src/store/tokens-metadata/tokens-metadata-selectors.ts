@@ -10,3 +10,6 @@ export const useTokensMetadataSelector = () =>
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector(({ tokensMetadata }) => tokensMetadata.addTokenSuggestion);
+
+export const useIsKnownIpfsSvgSelector = (url: string) =>
+  useSelector(({ tokensMetadata }) => Boolean(tokensMetadata.knownIpfsSvgs[url]));
