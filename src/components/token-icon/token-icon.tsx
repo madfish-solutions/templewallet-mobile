@@ -45,7 +45,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   const isFromIpfs = thumbnailUri?.startsWith('ipfs') ?? false;
   const colors = useColors();
   const dispatch = useDispatch();
-  const forceSvg = useIsKnownIpfsSvgSelector(thumbnailUri ?? '');
+  const isKnownIpfsSvg = useIsKnownIpfsSvgSelector(thumbnailUri ?? '');
   const [triedSvg, setTriedSvg] = useState(false);
 
   const { metadata } = useNetworkInfo();
@@ -73,7 +73,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
     return <Icon name={IconNameEnum.NoNameToken} size={size} />;
   }
 
-  if (isImgUriSvg(thumbnailUri) || forceSvg) {
+  if (isImgUriSvg(thumbnailUri) || isKnownIpfsSvg) {
     const normalizedUri = isFromIpfs ? formatImgUri(thumbnailUri) : thumbnailUri;
 
     return <SvgCssUri width={size} height={size} uri={normalizedUri} onError={handleSvgError} />;
