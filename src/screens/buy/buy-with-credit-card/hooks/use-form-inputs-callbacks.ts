@@ -3,6 +3,7 @@ import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
+import type { TopUpAssetAmountInterface } from 'src/components/top-up-field';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
@@ -13,7 +14,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { intersectAssetsLimits, mergeAssetsLimits } from 'src/utils/pair-limits';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
-import { TopUpAssetAmountInterface } from '../../components/top-up-asset-amount-input/types';
 import { useBuyWithCreditCardFormik } from './use-buy-with-credit-card-formik.hook';
 import { useFiatCurrenciesList } from './use-fiat-currencies-list.hook';
 import { usePaymentProviders } from './use-payment-providers.hook';

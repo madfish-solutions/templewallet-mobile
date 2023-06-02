@@ -15,13 +15,10 @@ import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
-import {
-  renderTopUpTokenListItem,
-  TopUpTokenDropdownItem
-} from '../top-up-token-dropdown-item/top-up-token-dropdown-item';
+import { renderTopUpTokenListItem, TopUpTokenDropdownItem } from '../dropdown-item';
+import { TopUpAssetValueText } from './asset-value-text';
 import { TopUpAssetAmountInputSelectors } from './selectors';
 import { useTopUpAssetAmountInputStyles } from './styles';
-import { TopUpAssetValueText } from './top-up-asset-value-text';
 import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './types';
 
 const renderTokenValue: DropdownValueComponent<TopUpInterfaceBase> = ({ value }) => (

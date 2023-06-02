@@ -1,9 +1,9 @@
-import { BigNumber } from 'bignumber.js';
-import { TextInputProps } from 'react-native';
+import type { BigNumber } from 'bignumber.js';
+import type { TextInputProps } from 'react-native';
 
-import { EmptyFn, EventFn } from 'src/config/general';
-import { TestIdProps } from 'src/interfaces/test-id.props';
-import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
+import type { EmptyFn, EventFn } from 'src/config/general';
+import type { TestIdProps } from 'src/interfaces/test-id.props';
+import type { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
   asset: TopUpInterfaceBase;

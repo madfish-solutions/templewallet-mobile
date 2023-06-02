@@ -15,18 +15,18 @@ import { jsonEqualityFn } from 'src/utils/store.utils';
 import { getTruncatedProps } from 'src/utils/style.util';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
-import { useTopUpTokenDropdownItemStyles } from './top-up-token-dropdown-item.styles';
+import { useTopUpTokenDropdownItemStyles } from './styles';
 
 const preloadedTokensIcons: Record<string, ImageRequireSource> = {
-  CNY: require('../../assets/cny.png'),
-  EGP: require('../../assets/egp.png'),
-  INR: require('../../assets/inr.png'),
-  JOD: require('../../assets/jod.png'),
-  KES: require('../../assets/kes.png'),
-  KRW: require('../../assets/krw.png'),
-  KWD: require('../../assets/kwd.png'),
-  PHP: require('../../assets/php.png'),
-  ZAR: require('../../assets/zar.png')
+  CNY: require('../fiat-icons/cny.png'),
+  EGP: require('../fiat-icons/egp.png'),
+  INR: require('../fiat-icons/inr.png'),
+  JOD: require('../fiat-icons/jod.png'),
+  KES: require('../fiat-icons/kes.png'),
+  KRW: require('../fiat-icons/krw.png'),
+  KWD: require('../fiat-icons/kwd.png'),
+  PHP: require('../fiat-icons/php.png'),
+  ZAR: require('../fiat-icons/zar.png')
 };
 
 interface Props {

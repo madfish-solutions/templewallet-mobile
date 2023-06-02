@@ -11,6 +11,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { BlackTextLink } from 'src/components/text-link/black-text-link';
+import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
@@ -19,8 +20,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
-import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/types';
-import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input';
 import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';

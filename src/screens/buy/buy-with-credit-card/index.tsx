@@ -12,6 +12,7 @@ import { Dropdown } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -26,8 +27,6 @@ import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
-import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/types';
-import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
