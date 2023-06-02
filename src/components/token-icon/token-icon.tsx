@@ -52,14 +52,14 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
 
   const handleLoadableTokenIconError = useCallback(() => {
     if (isFromIpfs && !triedSvg) {
-      dispatch(addKnownIpfsSvg(thumbnailUri!));
+      dispatch(addKnownIpfsSvg(thumbnailUri ?? ''));
     }
   }, [isFromIpfs, thumbnailUri, triedSvg, dispatch]);
 
   const handleSvgError = useCallback(() => {
     if (isFromIpfs) {
       setTriedSvg(true);
-      dispatch(removeKnownIpfsSvg(thumbnailUri!));
+      dispatch(removeKnownIpfsSvg(thumbnailUri ?? ''));
     }
   }, [thumbnailUri, isFromIpfs, dispatch]);
 
