@@ -4,6 +4,7 @@ import { SegmentedControl, SegmentedControlProps } from '../segmented-control';
 import { TextSegmentControlValue } from './text-segment-control-value/text-segment-control-value';
 
 export const TextSegmentControl: FC<SegmentedControlProps<string>> = ({
+  disabledValuesIndices,
   selectedIndex,
   values,
   width,
@@ -12,6 +13,7 @@ export const TextSegmentControl: FC<SegmentedControlProps<string>> = ({
   testIDProperties
 }) => (
   <SegmentedControl
+    disabledValuesIndices={disabledValuesIndices}
     selectedIndex={selectedIndex}
     values={values}
     renderValue={TextSegmentControlValue}

@@ -26,6 +26,8 @@ import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { DAppsRootState } from './d-apps/d-apps-state';
 import { exolixReducers } from './exolix/exolix-reducers';
 import { ExolixRootState } from './exolix/exolix-state';
+import { farmsReducer } from './farms/reducers';
+import { FarmsRootState } from './farms/state';
 import { marketReducers } from './market/market-reducers';
 import { MarketRootState } from './market/market-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
@@ -59,7 +61,8 @@ export type RootState = WalletRootState &
   BuyWithCreditCardRootState &
   PartnersPromotionRootState &
   Route3RootState &
-  ABTestingRootState;
+  ABTestingRootState &
+  FarmsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -92,7 +95,8 @@ const rootReducer = rootStateReducer<RootState>({
   contactBook: contactBookReducers,
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
-  abTesting: abTestingReducer
+  abTesting: abTestingReducer,
+  farms: farmsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -88,6 +88,7 @@ import PlusIcon from './assets/plus-icon.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
@@ -274,5 +275,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
-  [IconNameEnum.NFT]: NFT
+  [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.QsEarnSource]: QsEarnSource
 };

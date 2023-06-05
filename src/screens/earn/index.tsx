@@ -1,11 +1,39 @@
-import React, { FC } from 'react';
-import { Text } from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
+import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-export const Earn: FC = () => {
-  usePageAnalytic(ScreensEnum.Earn);
+import { useEarnStyles } from './earn.styles';
+import { FarmItem } from './farm-item/farm-item';
 
-  return <Text>TODO: add options to this page</Text>;
+export const Earn: FC = () => {
+  const dispatch = useDispatch();
+  usePageAnalytic(ScreensEnum.Earn);
+  const farms = useAllFarmsSelector();
+  const stakes = useLastStakesSelector();
+  const styles = useEarnStyles();
+
+  useEffect(() => {
+    dispatch(loadAllFarmsAndStakesAction());
+  }, []);
+
+  return (
+    <>
+      {Boolean(farms.isLoading) ? (
+        <ActivityIndicator style={styles.loader} size="large" />
+      ) : (
+        <FlatList
+          data={farms.data}
+          ListEmptyComponent={<DataPlaceholder text="No records found." />}
+          renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
+        />
+      )}
+    </>
+  );
 };
