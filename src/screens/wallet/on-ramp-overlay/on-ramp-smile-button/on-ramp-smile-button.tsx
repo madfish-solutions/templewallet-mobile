@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle, TouchableWithoutFeedbackProps } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { conditionalStyle } from 'src/utils/conditional-style';
 import { setTestID } from 'src/utils/test-id.utils';
 
-import { conditionalStyle } from '../../../../utils/conditional-style';
 import { useOnRampSmileButtonStyles } from './on-ramp-smile-button.styles';
 
 interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {

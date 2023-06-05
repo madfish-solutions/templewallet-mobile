@@ -1,5 +1,5 @@
 import { Portal } from '@gorhom/portal';
-import React, { useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -19,7 +19,7 @@ import { OnRampSmileButton } from './on-ramp-smile-button/on-ramp-smile-button';
 import { OnRampTextButton } from './on-ramp-text-button/on-ramp-text-button';
 import { getWertLink } from './utils/get-wert-link.util';
 
-export const OnRampOverlay = () => {
+export const OnRampOverlay: FC = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
 
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
