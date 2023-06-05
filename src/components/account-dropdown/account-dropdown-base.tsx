@@ -1,5 +1,9 @@
 import React, { FC } from 'react';
 
+import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
@@ -12,11 +16,13 @@ import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
+  const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
   const handleCreateNewAccountButtonPress = () => {
     createHdAccount();
     onPress();
+    trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
   };
 
   const handleManageAccountsButtonPress = () => {
@@ -43,7 +49,9 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface
   list,
   onValueChange,
   renderValue,
-  renderAccountListItem
+  renderAccountListItem,
+  testID,
+  testIDProperties
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 
@@ -58,6 +66,8 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface
       renderActionButtons={ActionButtons}
       onValueChange={onValueChange}
       onLongPress={onLongPressHandler}
+      testID={testID}
+      testIDProperties={testIDProperties}
     />
   );
 };

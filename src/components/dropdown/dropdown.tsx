@@ -7,9 +7,11 @@ import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 
+import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -34,7 +36,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
   itemHeight?: number;
   list: T[];
@@ -45,7 +47,7 @@ export interface DropdownValueProps<T> {
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderValue: DropdownValueComponent<T>;
   renderAccountListItem: DropdownListItemComponent<T>;
-};
+} & TestIdProps;
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
@@ -79,10 +81,12 @@ const DropdownComponent = <T extends unknown>({
   renderListItem,
   renderActionButtons = emptyComponent,
   keyExtractor,
-  testID,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -128,6 +132,8 @@ const DropdownComponent = <T extends unknown>({
         disabled={disabled}
         onPress={() => {
           scroll();
+
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}
