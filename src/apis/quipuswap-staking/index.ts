@@ -14,8 +14,7 @@ import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
-import { calculateStableswapLpTokenOutput } from './calculate-stableswap-lp-token-output';
-import { calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
+import { calculateStableswapLpTokenOutput, calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
 import { FarmsListResponse, StableswapPoolStorage, TooLowPoolReservesError } from './types';
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
