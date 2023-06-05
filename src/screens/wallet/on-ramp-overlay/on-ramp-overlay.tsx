@@ -22,7 +22,6 @@ import { getWertLink } from './utils/get-wert-link.util';
 export const OnRampOverlay: FC = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
 
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   return isOnRampPossibility ? <OverlayComponent /> : null;
 };
 
