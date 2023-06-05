@@ -6,9 +6,10 @@ import {
   useContactsAddressesSelector,
   useContactsNamesSelector
 } from '../../store/contact-book/contact-book-selectors';
+import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
+import { isTezosDomainNameValid } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isValidAddress } from '../../utils/tezos.util';
-import { useAccountsListSelector } from './../../store/wallet/wallet-selectors';
 
 const baseValidationSchema = ({
   contactsNames,
@@ -30,7 +31,9 @@ const baseValidationSchema = ({
     publicKeyHash: string()
       .required(makeRequiredErrorMessage('Address'))
       .notOneOf(contactsAddresses, 'Contact with the same address already exists')
-      .test('is-valid-address', 'Invalid address', value => (isDefined(value) ? isValidAddress(value) : false))
+      .test('is-valid-address', 'Invalid address', value =>
+        isDefined(value) ? isValidAddress(value) || isTezosDomainNameValid(value) : false
+      )
       .test(
         'is-own-account',
         'Your account cannot be added to contacts',

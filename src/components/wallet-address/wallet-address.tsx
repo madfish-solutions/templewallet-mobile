@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -20,19 +20,35 @@ import { useWalletAddressStyles } from './wallet-address.styles';
 
 interface Props {
   publicKeyHash: string;
+  isLocalDomainNameShowing?: boolean;
   disabled?: boolean;
   isPublicKeyHashTextDisabled?: boolean;
 }
 
-export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled, isPublicKeyHashTextDisabled }) => {
+export const WalletAddress: FC<Props> = ({
+  publicKeyHash,
+  isLocalDomainNameShowing = false,
+  disabled,
+  isPublicKeyHashTextDisabled
+}) => {
+  const [isDomainNameShownLocal, setIsDomainNameShownLocal] = useState(true);
   const styles = useWalletAddressStyles();
   const dispatch = useDispatch();
-  const isShownDomainName = useIsShownDomainNameSelector();
+  const isDomainNameShownGlobal = useIsShownDomainNameSelector();
+  const isShownDomainName = isLocalDomainNameShowing ? isDomainNameShownLocal : isDomainNameShownGlobal;
   const domainName = useDomainName(publicKeyHash);
 
   if (publicKeyHash === EMPTY_PUBLIC_KEY_HASH) {
     return null;
   }
+
+  const handleDomainAddressToggle = () => {
+    if (isLocalDomainNameShowing) {
+      setIsDomainNameShownLocal(prev => !prev);
+    } else {
+      dispatch(toggleDomainAddressShown());
+    }
+  };
 
   return (
     <View style={styles.pkhWrapper}>
@@ -65,7 +81,7 @@ export const WalletAddress: FC<Props> = ({ publicKeyHash, disabled, isPublicKeyH
           style={styles.iconContainer}
           name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
           testID={WalletAddressSelectors.domainSwitcher}
-          onPress={() => dispatch(toggleDomainAddressShown())}
+          onPress={handleDomainAddressToggle}
         />
       ) : null}
     </View>
