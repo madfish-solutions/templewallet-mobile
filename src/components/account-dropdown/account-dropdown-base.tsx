@@ -4,7 +4,10 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -14,11 +17,13 @@ import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { navigate } = useNavigation();
+  const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
   const handleCreateNewAccountButtonPress = () => {
     createHdAccount();
     onPress();
+    trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
   };
 
   const handleManageAccountsButtonPress = () => {

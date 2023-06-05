@@ -36,7 +36,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
   itemHeight?: number;
   list: T[];
@@ -47,7 +47,7 @@ export interface DropdownValueProps<T> {
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderValue: DropdownValueComponent<T>;
   renderAccountListItem: DropdownListItemComponent<T>;
-};
+} & TestIdProps;
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
@@ -83,12 +83,12 @@ const DropdownComponent = <T extends unknown>({
   testID,
   testIDProperties
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
   const contentHeight = useDropdownHeight();
-  const { trackEvent } = useAnalytics();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -130,6 +130,8 @@ const DropdownComponent = <T extends unknown>({
         onPress={() => {
           trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
           scroll();
+
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}
