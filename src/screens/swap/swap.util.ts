@@ -1,38 +1,35 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { Route3Token } from 'src/interfaces/route3.interface';
 
-import { ROUTING_FEE_ADDRESS } from './config';
-
 export const getRoutingFeeTransferParams = async (
-  outputAsset: Route3Token,
+  token: Route3Token,
   feeAmountAtomic: BigNumber,
   senderPublicKeyHash: string,
+  routingFeeAddress: string,
   tezos: TezosToolkit
 ) => {
-  if (outputAsset.contract === null) {
+  if (token.contract === null) {
     return [
       {
         amount: feeAmountAtomic.toNumber(),
-        to: ROUTING_FEE_ADDRESS,
+        to: routingFeeAddress,
         mutez: true
       }
     ];
   }
 
-  const assetContract = await tezos.wallet.at(outputAsset.contract);
+  const assetContract = await tezos.wallet.at(token.contract);
 
-  if (outputAsset.standard === Route3TokenStandardEnum.fa12) {
+  if (token.standard === 'fa12') {
     return [
       assetContract.methods
-        .transfer(senderPublicKeyHash, ROUTING_FEE_ADDRESS, feeAmountAtomic)
+        .transfer(senderPublicKeyHash, routingFeeAddress, feeAmountAtomic.toNumber())
         .toTransferParams({ mutez: true })
     ];
   }
-
-  if (outputAsset.standard === Route3TokenStandardEnum.fa2) {
+  if (token.standard === 'fa2') {
     return [
       assetContract.methods
         .transfer([
@@ -40,9 +37,9 @@ export const getRoutingFeeTransferParams = async (
             from_: senderPublicKeyHash,
             txs: [
               {
-                to_: ROUTING_FEE_ADDRESS,
-                token_id: outputAsset.tokenId,
-                amount: feeAmountAtomic
+                to_: routingFeeAddress,
+                token_id: token.tokenId,
+                amount: feeAmountAtomic.toNumber()
               }
             ]
           }
