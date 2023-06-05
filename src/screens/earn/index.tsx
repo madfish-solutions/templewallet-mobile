@@ -25,7 +25,7 @@ export const Earn: FC = () => {
 
   return (
     <>
-      {farms.isLoading ? (
+      {Boolean(farms.isLoading) ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
         <FlatList

@@ -66,11 +66,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <Divider size={formatSize(8)} />
       <View style={styles.buttonContainer}>
         <ButtonMedium
+          disabled={!isTezosNode}
           title="Earn"
           iconName={IconNameEnum.Earn}
           onPress={() => navigate(ScreensEnum.Earn)}
           styleConfigOverrides={actionButtonStylesOverrides}
-          disabled={!isTezosNode}
         />
       </View>
       <Divider size={formatSize(8)} />
