@@ -35,7 +35,7 @@ export const ImageBlurOverlay: FC<Props> = ({
 
   const isFullViewTheme = theme === ImageBlurOverlayThemesEnum.fullView;
   const isLightTheme = deviceTheme === ThemesEnum.light;
-  const blurType = isLightTheme ? 'ultraThinMaterialLight' : 'ultraThinMaterialDark';
+  const blurType = isLightTheme ? 'xlight' : 'materialDark';
   const iconSize = isFullViewTheme ? ICON_SIZE_BIG : ICON_SIZE_SMALL;
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
 

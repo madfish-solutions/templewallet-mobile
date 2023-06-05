@@ -24,6 +24,7 @@ import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
+import { isCollectible } from './tezos.util';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -211,13 +212,17 @@ export const checkTokensMetadata$ = (tokensMetadata: TokenMetadataInterface[], a
     map(adultCollectibles => {
       if (isNonEmptyArray(adultCollectibles)) {
         const newTokensMetadata = tokensMetadata.map(token => {
+          if (!isCollectible(token) || token.isAdultContent === true) {
+            return token;
+          }
+
           const tokenSlug = getTokenSlug(token);
 
           const isAdultCollectible = adultCollectibles.find(
             ({ fa_contract, token_id }) => tokenSlug === getTokenSlug({ address: fa_contract, id: token_id })
           );
 
-          if (isAdultCollectible) {
+          if (isDefined(isAdultCollectible)) {
             return {
               ...token,
               isAdultContent: true

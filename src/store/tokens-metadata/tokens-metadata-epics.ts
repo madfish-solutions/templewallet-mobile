@@ -24,10 +24,8 @@ const loadWhitelistEpic: Epic = (action$: Observable<Action>, state$: Observable
   action$.pipe(
     ofType(loadWhitelistAction.submit),
     withSelectedRpcUrl(state$),
-    withSelectedAccount(state$),
-    switchMap(([[, selectedRpcUrl], account]) =>
+    switchMap(([, selectedRpcUrl]) =>
       loadWhitelist$(selectedRpcUrl).pipe(
-        switchMap(tokensMetadata => checkTokensMetadata$(tokensMetadata, account)),
         concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
         catchError(err => of(loadWhitelistAction.fail(err.message)))
       )

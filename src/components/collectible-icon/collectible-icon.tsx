@@ -116,7 +116,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     }
 
     return <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />;
-  }, [collectible, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
+  }, [collectible.isAdultContent, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
 
   return (
     <View
