@@ -1,7 +1,7 @@
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
@@ -22,6 +22,7 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { aprToApy } from 'src/utils/earn.utils';
+import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -90,20 +91,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
 
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
-        Alert.alert(
-          'Are you sure?',
+        doAfterConfirmation(
           'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel'
-            },
-            {
-              text: 'Claim rewards',
-              style: 'destructive',
-              onPress: () => navigateHarvestFarm(opParams)
-            }
-          ]
+          'Claim rewards',
+          () => navigateHarvestFarm(opParams)
         );
       } else {
         navigateHarvestFarm(opParams);

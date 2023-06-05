@@ -10,12 +10,15 @@ export interface AssetAmountInputProps extends TestIdProps {
   value: AssetAmountInterface;
   label: string;
   assetsList: TokenInterface[];
+  balanceLabel?: string;
   frozenBalance?: string;
   isError?: boolean;
   editable?: boolean;
   toUsdToggle?: boolean;
   isLoading?: boolean;
   isSearchable?: boolean;
+  isShowNameForValue?: boolean;
+  isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];
   setSearchValue?: EventFn<string>;
   onBlur?: EmptyFn;

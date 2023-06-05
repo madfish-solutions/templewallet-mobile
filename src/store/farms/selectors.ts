@@ -12,6 +12,8 @@ export const useFarmSelector = (id: string, version: FarmVersionEnum) => {
   return useMemo(() => list.find(({ item }) => item.id === id && item.version === version), [list, id, version]);
 };
 
+export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
+
 export const useAllFarmsSelector = () => {
   const farms = useSelector(({ farms }) => farms.allFarms);
 
