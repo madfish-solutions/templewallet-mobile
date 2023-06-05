@@ -1,5 +1,5 @@
 import { Portal } from '@gorhom/portal';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -31,10 +31,6 @@ const OverlayComponent = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
-
-  const timerRef = useRef<NodeJS.Timeout>();
-
-  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const handleOnRampButtonPress = (amount = 0) => {
     dispatch(setIsOnRampPossibilityAction(false));
