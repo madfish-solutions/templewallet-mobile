@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadAllFarmsActions } from 'src/store/farms/actions';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -20,7 +20,7 @@ export const Earn: FC = () => {
   const styles = useEarnStyles();
 
   useEffect(() => {
-    dispatch(loadAllFarmsActions.submit());
+    dispatch(loadAllFarmsAndStakesAction());
   }, []);
 
   return (
