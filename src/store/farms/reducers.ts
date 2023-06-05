@@ -14,6 +14,10 @@ import {
 import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
+  builder.addCase(loadSingleFarmStakeActions.submit, state => ({
+    ...state,
+    stakesLoading: true
+  }));
   builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
     const otherStakes = omit(state.lastStakes, farmAddress);
 
@@ -24,13 +28,15 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
             ...otherStakes,
             [farmAddress]: stake
           }
-        : otherStakes
+        : otherStakes,
+      stakesLoading: false
     };
   });
 
   builder.addCase(loadAllFarmsAndStakesAction, state => ({
     ...state,
-    allFarms: createEntity(state.allFarms.data, true)
+    allFarms: createEntity(state.allFarms.data, true),
+    stakesLoading: true
   }));
   builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,
@@ -46,7 +52,8 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
     ...state,
-    lastStakes: payload
+    lastStakes: payload,
+    stakesLoading: false
   }));
 
   builder.addCase(setSelectedAccountAction, state => ({

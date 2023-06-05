@@ -15,11 +15,13 @@ export type LastUserStakeInterface = Record<string, UserStakeValueInterface>;
 export interface FarmsState {
   allFarms: LoadableEntityState<Array<SingleFarmResponse>>;
   lastStakes: LastUserStakeInterface;
+  stakesLoading: boolean;
 }
 
 export const farmsInitialState: FarmsState = {
   lastStakes: {},
-  allFarms: createEntity([])
+  allFarms: createEntity([]),
+  stakesLoading: false
 };
 
 export interface FarmsRootState {

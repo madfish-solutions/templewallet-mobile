@@ -1,6 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import { FormikProps } from 'formik/dist/types';
+import React, { FC, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -13,21 +14,31 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { FormAddressInput } from '../../../form/form-address-input';
 import { FormTextInput } from '../../../form/form-text-input';
+import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
 import { AccountBaseInterface } from '../../../interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { addContactAction, loadContactTezosBalance } from '../../../store/contact-book/contact-book-actions';
+import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+import { tezosDomainsResolver } from '../../../utils/dns.utils';
+import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useAddContactFormValidationSchema } from '../validation-schema';
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
 
 export const AddContactModal: FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddContact>>();
   const validationSchema = useAddContactFormValidationSchema();
+  const selectedAccount = useSelectedAccountSelector();
+  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const resolver = tezosDomainsResolver(tezos);
 
-  const onSubmit = (contact: AccountBaseInterface) => {
+  const formik = useRef<FormikProps<AccountBaseInterface>>(null);
+
+  const addContact = (contact: AccountBaseInterface) => {
     dispatch(addContactAction(contact));
     dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
     goBack();
@@ -40,11 +51,12 @@ export const AddContactModal: FC = () => {
 
   return (
     <Formik
+      innerRef={formik}
       validateOnBlur
       validateOnChange
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, addContact)}
     >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode>
@@ -56,11 +68,16 @@ export const AddContactModal: FC = () => {
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddContactModalSelectors.closeButton} />
+              <ButtonLargeSecondary
+                title="Close"
+                disabled={isLoading}
+                onPress={goBack}
+                testID={AddContactModalSelectors.closeButton}
+              />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary
                 title="Save"
-                disabled={!isValid}
+                disabled={!isValid || isLoading}
                 onPress={submitForm}
                 testID={AddContactModalSelectors.saveButton}
               />

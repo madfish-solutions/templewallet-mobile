@@ -1,4 +1,11 @@
-import { ContractAbstraction, ContractProvider, MichelsonMap, TezosToolkit } from '@taquito/taquito';
+import {
+  ContractAbstraction,
+  ContractProvider,
+  MichelsonMap,
+  OpKind,
+  ParamsWithKind,
+  TezosToolkit
+} from '@taquito/taquito';
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
 
@@ -8,7 +15,8 @@ import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { calculateStableswapLpTokenOutput } from './calculate-stableswap-lp-token-output';
-import { FarmsListResponse, StableswapPoolStorage } from './types';
+import { calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
+import { FarmsListResponse, StableswapPoolStorage, TooLowPoolReservesError } from './types';
 
 const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
 
@@ -18,17 +26,29 @@ export const getV3FarmsList = async () => {
   return response.data.list;
 };
 
+export const getHarvestAssetsTransferParams = async (
+  tezos: TezosToolkit,
+  farmAddress: string,
+  stakeId: BigNumber.Value
+): Promise<ParamsWithKind[]> => {
+  const farmingContract = await getReadOnlyContract(farmAddress, tezos);
+  const claimParams = farmingContract.methods.claim(stakeId).toTransferParams();
+
+  return [claimParams].map(transferParams => ({
+    ...transferParams,
+    kind: OpKind.TRANSACTION
+  }));
+};
+
 const toArray = <T>(map: MichelsonMap<BigNumber, T>) =>
   Array.from(map.entries())
     .map(([key, value]): [number, T] => [key.toNumber(), value])
     .sort(([a], [b]) => a - b)
     .map(([, value]) => value);
 
-export const estimateStableswapLpTokenOutput = async (
+const getStableswapPool = async (
   tezos: TezosToolkit,
   stableswapContract: ContractAbstraction<ContractProvider>,
-  investedTokenIndex: number,
-  amount: BigNumber,
   poolId: number
 ) => {
   const { storage: internalPoolStorage } = await stableswapContract.storage<StableswapPoolStorage>();
@@ -43,11 +63,9 @@ export const estimateStableswapLpTokenOutput = async (
     throw new Error(`Pool with id ${poolId} not found`);
   }
 
-  return calculateStableswapLpTokenOutput(
-    Array(poolFromRpc.tokens_info.size)
-      .fill(new BigNumber(0))
-      .map((_, index) => (index === investedTokenIndex ? amount : new BigNumber(0))),
-    {
+  return {
+    devFeeF,
+    pool: {
       initialAF: poolFromRpc.initial_A_f,
       initialATime: new BigNumber(toIntegerSeconds(new Date(poolFromRpc.initial_A_time))),
       futureAF: poolFromRpc.future_A_f,
@@ -68,8 +86,43 @@ export const estimateStableswapLpTokenOutput = async (
         totalStaked: poolFromRpc.staker_accumulator.total_staked
       },
       totalSupply: poolFromRpc.total_supply
-    },
-    poolFromRpc.tokens_info.size,
+    }
+  };
+};
+
+export const estimateWithdrawTokenOutput = async (
+  tezos: TezosToolkit,
+  stableswapContract: ContractAbstraction<ContractProvider>,
+  tokenIndexes: number[],
+  shares: BigNumber,
+  poolId: number
+) => {
+  const { devFeeF, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
+
+  return tokenIndexes.map(tokenIndex => {
+    try {
+      return calculateStableswapWithdrawTokenOutput(shares, tokenIndex, pool, devFeeF);
+    } catch (error) {
+      return error instanceof TooLowPoolReservesError ? null : undefined;
+    }
+  });
+};
+
+export const estimateStableswapLpTokenOutput = async (
+  tezos: TezosToolkit,
+  stableswapContract: ContractAbstraction<ContractProvider>,
+  investedTokenIndex: number,
+  amount: BigNumber,
+  poolId: number
+) => {
+  const { devFeeF, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
+
+  return calculateStableswapLpTokenOutput(
+    Array(pool.tokensInfo.length)
+      .fill(new BigNumber(0))
+      .map((_, index) => (index === investedTokenIndex ? amount : new BigNumber(0))),
+    pool,
+    pool.tokensInfo.length,
     devFeeF
   );
 };

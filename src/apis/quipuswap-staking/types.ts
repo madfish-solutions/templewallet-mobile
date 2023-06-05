@@ -19,11 +19,12 @@ enum StableswapPoolVersion {
   V2 = 'v2'
 }
 
-export enum QuipuswapAPITokenStandardsEnum {
+export enum FarmTokenStandardsEnum {
   Fa12 = 'FA12',
   Fa2 = 'FA2'
 }
-interface QuipuswapAPITokenMetadata {
+
+interface FarmTokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
@@ -31,12 +32,12 @@ interface QuipuswapAPITokenMetadata {
   categories?: string[];
 }
 
-export interface QuipuswapAPIToken {
+export interface FarmToken {
   contractAddress: string;
   fa2TokenId?: number;
-  type: QuipuswapAPITokenStandardsEnum;
+  type: FarmTokenStandardsEnum;
   isWhitelisted: boolean | null;
-  metadata: QuipuswapAPITokenMetadata;
+  metadata: FarmTokenMetadata;
 }
 
 interface FarmBase {
@@ -52,9 +53,9 @@ interface FarmBase {
   earnExchangeRate: string | null;
   vestingPeriodSeconds: string;
   stakeUrl: string;
-  stakedToken: QuipuswapAPIToken;
-  tokens: QuipuswapAPIToken[];
-  rewardToken: QuipuswapAPIToken;
+  stakedToken: FarmToken;
+  tokens: FarmToken[];
+  rewardToken: FarmToken;
   staked: string;
   tvlInUsd: string | null;
   tvlInStakedToken: string;
@@ -126,19 +127,32 @@ export interface BalancingAccum {
   tokensInfoWithoutLp: StableswapTokenInfo[];
 }
 
-interface StableswapTokensInfoValue {
+export interface PrepareParamsAccum {
+  s_: BigNumber;
+  c: [BigNumber, BigNumber];
+}
+
+export class TooLowPoolReservesError extends Error {
+  constructor(
+    message = 'Pool reserves are too low. Please try again later, try another token or try unstaking and divesting liquidity in balanced proportion from Quipuswap dApp.'
+  ) {
+    super(message);
+  }
+}
+
+interface RawStableswapTokensInfoValue {
   rate_f: BigNumber;
   precision_multiplier_f: BigNumber;
   reserves: BigNumber;
 }
 
-interface StableswapFee {
+interface RawStableswapFee {
   lp_f: BigNumber;
   stakers_f: BigNumber;
   ref_f: BigNumber;
 }
 
-interface StableswapStakerAccumulator {
+interface RawStableswapStakerAccumulator {
   accumulator_f: MichelsonMap<BigNumber, BigNumber>;
   total_fees: MichelsonMap<BigNumber, BigNumber>;
   total_staked: BigNumber;
@@ -150,9 +164,9 @@ interface StableswapPoolsValue {
   future_A_f: BigNumber;
   future_A_time: string;
   total_supply: BigNumber;
-  tokens_info: MichelsonMap<BigNumber, StableswapTokensInfoValue>;
-  fee: StableswapFee;
-  staker_accumulator: StableswapStakerAccumulator;
+  tokens_info: MichelsonMap<BigNumber, RawStableswapTokensInfoValue>;
+  fee: RawStableswapFee;
+  staker_accumulator: RawStableswapStakerAccumulator;
 }
 
 export interface StableswapPoolStorage {

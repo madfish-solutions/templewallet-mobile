@@ -13,7 +13,7 @@ interface DepositTokenInterface {
 export interface StakesValueInterface {
   stake: BigNumber;
   disc_factor: BigNumber;
-  age_timestamp: number;
+  age_timestamp: string;
 }
 
 export interface FarmContractStorageInterface {
