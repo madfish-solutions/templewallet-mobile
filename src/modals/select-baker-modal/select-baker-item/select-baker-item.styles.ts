@@ -15,23 +15,21 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   containerSelected: {
     borderColor: colors.orange
   },
-  containerPaddingWithRecommended: {
-    paddingHorizontal: formatSize(6),
-    paddingBottom: formatSize(6),
-    paddingTop: formatSize(26)
-  },
   recommendedContainer: {
-    position: 'absolute',
-    left: -2,
-    top: -2,
+    height: formatSize(21),
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    position: 'relative',
+    top: formatSize(-8),
+    left: formatSize(-8),
     backgroundColor: colors.blue,
     borderTopStartRadius: formatSize(10),
     borderBottomEndRadius: formatSize(10)
   },
   recommendedText: {
     ...typography.tagline13Tag,
+    textTransform: 'none',
     paddingHorizontal: formatSize(12),
-    paddingVertical: formatSize(2),
     color: colors.white
   },
   upperContainer: {
@@ -50,7 +48,8 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
   nameText: {
     ...typography.caption13Semibold,
     color: colors.black,
-    marginBottom: formatSize(2)
+    marginBottom: formatSize(2),
+    width: formatSize(130)
   },
   actionsContainer: {
     flexDirection: 'row',
