@@ -10,7 +10,7 @@ import { Shelter } from 'src/shelter/shelter';
 import {
   hideLoaderAction,
   madeCloudBackupAction,
-  setIsOnRampPossibilityAction,
+  setOnRampPossibilityAction,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
@@ -54,7 +54,7 @@ export const useHandleSubmit = () => {
         dispatch(madeCloudBackupAction());
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
-        dispatch(setIsOnRampPossibilityAction(true));
+        dispatch(setOnRampPossibilityAction(true));
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);

@@ -7,7 +7,7 @@ import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-shee
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { setIsOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,7 +32,7 @@ const OverlayComponent = () => {
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 
   const handleOnRampButtonPress = (amount = 0) => {
-    dispatch(setIsOnRampPossibilityAction(false));
+    dispatch(setOnRampPossibilityAction(false));
     openUrl(getWertLink(publicKeyHash, amount));
   };
 
@@ -91,7 +91,7 @@ const OverlayComponent = () => {
             title="Not now"
             style={styles.notNowButton}
             titleStyle={styles.notNowButtonTitle}
-            onPress={() => dispatch(setIsOnRampPossibilityAction(false))}
+            onPress={() => dispatch(setOnRampPossibilityAction(false))}
             testID={OnRampOverlaySelectors.notNowButton}
           />
         </View>

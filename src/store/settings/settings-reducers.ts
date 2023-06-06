@@ -23,7 +23,7 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setIsOnRampPossibilityAction
+  setOnRampPossibilityAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -101,7 +101,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isCloudBackupMade: true
   }));
 
-  builder.addCase(setIsOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
+  builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
     if (state.selectedRpcUrl !== DCP_RPC.url) {
       return { ...state, isOnRampPossibility };
     }

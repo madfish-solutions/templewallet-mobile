@@ -13,7 +13,7 @@ import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
-import { setIsOnRampPossibilityAction } from '../../store/settings/settings-actions';
+import { setOnRampPossibilityAction } from '../../store/settings/settings-actions';
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Divider } from '../divider/divider';
@@ -43,7 +43,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const handleTouchStart = () => {
     if (disableSendAsset) {
       showErrorToast({ description: errorMessage });
-      dispatch(setIsOnRampPossibilityAction(true));
+      dispatch(setOnRampPossibilityAction(true));
     }
   };
 

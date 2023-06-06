@@ -14,7 +14,7 @@ import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 
-import { setIsOnRampPossibilityAction } from '../../../../store/settings/settings-actions';
+import { setOnRampPossibilityAction } from '../../../../store/settings/settings-actions';
 
 /** From @taquito/taquito */
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
@@ -48,7 +48,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           });
 
           if (errorStr.indexOf('empty_implicit_contract') > -1 || errorStr.indexOf('tez.subtraction_underflow') > -1) {
-            dispatch(setIsOnRampPossibilityAction(true));
+            dispatch(setOnRampPossibilityAction(true));
           }
 
           return of([]);
