@@ -15,7 +15,7 @@ export const marketCapAlert = () =>
     ]
   );
 export const volumeAlert = () =>
-  Alert.alert('Valume (24H)', 'A measure of how much of a cryptocurrency was traded in the last 24 hours.', [
+  Alert.alert('Volume (24H)', 'A measure of how much of a cryptocurrency was traded in the last 24 hours.', [
     {
       text: 'Ok',
       style: 'default'

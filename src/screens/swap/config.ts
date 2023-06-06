@@ -1,6 +1,26 @@
-export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
+import { BigNumber } from 'bignumber.js';
 
-export const ROUTE3_CONTRACT = 'KT1Tuta6vbpHhZ15ixsYD3qJdhnpEAuogLQ9';
+import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
+import { Route3Token } from 'src/interfaces/route3.interface';
+
+export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
+export const BURN_ADDREESS = 'tz1burnburnburnburnburnburnburjAYjjX';
+
+export const ROUTE3_CONTRACT = 'KT1R7WEtNNim3YgkxPt8wPMczjH3eyhbJMtz';
 
 export const ROUTING_FEE_PERCENT = 0.35;
+export const CASHBACK_PERCENT = 0.175;
 export const ROUTING_FEE_RATIO = (100 - ROUTING_FEE_PERCENT) / 100;
+export const ROUTING_FEE_SLIPPAGE_RATIO = 0.99;
+export const ZERO = new BigNumber(0);
+export const MAX_ROUTING_FEE_CHAINS = 1;
+export const SWAP_THRESHOLD_TO_GET_CASHBACK = 10;
+
+export const TEMPLE_TOKEN: Route3Token = {
+  id: 128,
+  symbol: 'TKEY',
+  standard: Route3TokenStandardEnum.fa2,
+  contract: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
+  tokenId: '0',
+  decimals: 18
+};
