@@ -9,12 +9,11 @@ import { catchError, map } from 'rxjs/operators';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-
-import { setOnRampPossibilityAction } from '../../../../store/settings/settings-actions';
 
 /** From @taquito/taquito */
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
