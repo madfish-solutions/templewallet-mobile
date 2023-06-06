@@ -24,6 +24,7 @@ import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
+import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
@@ -139,6 +140,7 @@ Otherwise, you may lose your assets permanently.`
                   isSearchable
                   assetsList={filteredCurrenciesList}
                   onValueChange={handleInputValueChange}
+                  tokenTestID={InitialStepSelectors.sendTokenChange}
                   setSearchValue={setSearchValue}
                 />
                 <Divider size={formatSize(8)} />
@@ -152,6 +154,7 @@ Otherwise, you may lose your assets permanently.`
                   editable={false}
                   assetsList={outputTokensList}
                   onValueChange={handleOutputValueChange}
+                  tokenTestID={InitialStepSelectors.getTokenChange}
                 />
               </FormikProvider>
               <Divider size={formatSize(16)} />

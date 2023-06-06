@@ -20,7 +20,7 @@ export const ConfirmationModal: FC = () => (
 const ConfirmationModalContent: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirmation>>().params;
 
-  usePageAnalytic(ModalsEnum.AddAsset);
+  usePageAnalytic(ModalsEnum.Confirmation);
 
   switch (params.type) {
     case ConfirmationTypeEnum.InternalOperations:

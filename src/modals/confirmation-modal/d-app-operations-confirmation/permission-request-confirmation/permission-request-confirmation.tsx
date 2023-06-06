@@ -29,6 +29,7 @@ import {
   PermissionRequestConfirmationFormValues,
   permissionRequestConfirmationModalValidationSchema
 } from './permission-request-confirmation.form';
+import { PermissionRequestConfirmationSelectors } from './permission-request-confirmation.selectors';
 
 interface Props {
   message: PermissionRequestOutput;
@@ -91,9 +92,19 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AccountFormDropdown name="approver" list={accounts} />
           </ScreenContainer>
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
+            <ButtonLargeSecondary
+              title="Cancel"
+              disabled={isLoading}
+              onPress={goBack}
+              testID={PermissionRequestConfirmationSelectors.cancelButton}
+            />
             <Divider size={formatSize(16)} />
-            <ButtonLargePrimary title="Confirm" disabled={isLoading} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Confirm"
+              disabled={isLoading}
+              onPress={submitForm}
+              testID={PermissionRequestConfirmationSelectors.confirmButton}
+            />
           </ModalButtonsContainer>
         </>
       )}
