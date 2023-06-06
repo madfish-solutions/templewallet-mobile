@@ -9,9 +9,9 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { createGetItemLayout } from '../../utils/flat-list.utils';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
@@ -51,10 +51,7 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<{
-  value?: T;
-  disabled?: boolean;
-}>;
+export type DropdownValueComponent<T> = FC<{ value?: T; disabled?: boolean } & TestIdProps>;
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
@@ -131,6 +128,7 @@ const DropdownComponent = <T extends unknown>({
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
           scroll();
 
           trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);

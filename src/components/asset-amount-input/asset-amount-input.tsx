@@ -11,6 +11,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
@@ -80,7 +81,10 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   onBlur,
   onFocus,
   onValueChange,
-  testID
+  testID,
+  tokenTestID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -165,6 +169,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
+    trackEvent(switcherTestID, AnalyticsEventCategory.General, { tokenTypeIndex });
 
     onValueChange({
       ...value,
@@ -183,6 +188,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
 
+      trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, { token: asset.symbol });
+
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),
         asset
@@ -198,6 +205,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
+      trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
       onValueChange({
         amount,
@@ -247,7 +255,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
-          testID={testID}
         />
 
         <View
@@ -263,9 +270,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            testID={AssetAmountInputSelectors.assetsDropdown}
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
+            testID={testID}
           />
         </View>
       </View>
