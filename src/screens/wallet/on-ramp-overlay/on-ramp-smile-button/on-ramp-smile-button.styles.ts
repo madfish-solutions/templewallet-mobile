@@ -7,15 +7,12 @@ import { generateShadow } from '../../../../styles/generate-shadow';
 export const useOnRampSmileButtonStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     ...generateShadow(1, black),
-    paddingVertical: formatSize(16),
-    paddingHorizontal: formatSize(32),
     borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG,
+    backgroundColor: colors.white,
     justifyContent: 'center',
-    alignItems: 'center'
-  },
-  smile: {
-    fontSize: formatSize(28)
+    alignItems: 'center',
+    width: formatSize(104),
+    height: formatSize(90)
   },
   title: {
     ...typography.numbersMedium17,

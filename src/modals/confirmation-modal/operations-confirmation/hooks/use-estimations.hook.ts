@@ -2,14 +2,12 @@ import * as Sentry from '@sentry/react-native';
 import { OpKind, ParamsWithKind, Estimate } from '@taquito/taquito';
 import { pick } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { from, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
-import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -19,7 +17,6 @@ import { isTruthy } from 'src/utils/is-truthy';
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
-  const dispatch = useDispatch();
   const [data, setData] = useState<EstimationInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const tezos = useReadOnlyTezosToolkit(sender);
@@ -37,18 +34,12 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
         ),
         catchError(error => {
           Sentry.captureException(error);
-          const errorStr = error.toString();
-
           showErrorToast({
             title: 'Warning!',
             description: 'The transaction is likely to fail!',
             isCopyButtonVisible: true,
-            onPress: () => copyStringToClipboard(errorStr)
+            onPress: () => copyStringToClipboard(error.toString())
           });
-
-          if (errorStr.indexOf('empty_implicit_contract') > -1 || errorStr.indexOf('tez.subtraction_underflow') > -1) {
-            dispatch(setOnRampPossibilityAction(true));
-          }
 
           return of([]);
         })

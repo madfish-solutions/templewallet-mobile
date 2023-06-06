@@ -97,6 +97,9 @@ import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
+import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
+import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
+import SmileIcon from './assets/smile.svg';
 import DiscordIcon from './assets/socials/discord.svg';
 import RedditIcon from './assets/socials/reddit.svg';
 import TelegramIcon from './assets/socials/telegram.svg';
@@ -274,5 +277,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
-  [IconNameEnum.NFT]: NFT
+  [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.Smile]: SmileIcon,
+  [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
 };

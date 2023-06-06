@@ -6,15 +6,27 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { setTestID } from 'src/utils/test-id.utils';
 
+import { Divider } from '../../../../components/divider/divider';
+import { Icon } from '../../../../components/icon/icon';
+import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
+import { formatSize } from '../../../../styles/format-size';
 import { useOnRampSmileButtonStyles } from './on-ramp-smile-button.styles';
 
 interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
-  smile: string;
+  smileIconName: IconNameEnum;
   title: string;
   titleStyle?: StyleProp<TextStyle>;
 }
 
-export const OnRampSmileButton: FC<Props> = ({ smile, title, disabled, style, titleStyle, onPress, testID }) => {
+export const OnRampSmileButton: FC<Props> = ({
+  smileIconName,
+  title,
+  disabled,
+  style,
+  titleStyle,
+  onPress,
+  testID
+}) => {
   const styles = useOnRampSmileButtonStyles();
 
   return (
@@ -24,7 +36,8 @@ export const OnRampSmileButton: FC<Props> = ({ smile, title, disabled, style, ti
       onPress={onPress}
       {...setTestID(testID)}
     >
-      <Text style={styles.smile}>{smile}</Text>
+      <Icon name={smileIconName} size={formatSize(28)} />
+      <Divider size={formatSize(6)} />
       <Text style={[styles.title, conditionalStyle(Boolean(disabled), styles.disabledTitle), titleStyle]}>{title}</Text>
     </TouchableOpacity>
   );

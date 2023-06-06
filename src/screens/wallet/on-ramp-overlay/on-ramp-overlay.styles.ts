@@ -11,7 +11,8 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
   },
   root: {
     height: 'auto',
-    paddingBottom: formatSize(2)
+    paddingBottom: formatSize(2),
+    backgroundColor: colors.cardBG
   },
   title: {
     ...typography.body20Bold,
@@ -40,12 +41,17 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
   notNowButton: {
     height: 'auto',
     borderBottomWidth: 0,
-    paddingVertical: formatSize(16)
+    borderTopWidth: formatSize(1),
+    borderColor: colors.lines,
+    paddingVertical: formatSize(16),
+    backgroundColor: colors.cardBG
   },
   disclaimer: {
-    ...typography.caption11Regular
+    ...typography.caption11Regular,
+    color: colors.gray1
   },
   notNowButtonTitle: {
-    ...typography.body17Semibold
+    ...typography.body17Semibold,
+    color: colors.peach
   }
 }));

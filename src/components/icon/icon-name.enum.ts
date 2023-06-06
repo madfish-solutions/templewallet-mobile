@@ -132,5 +132,8 @@ export enum IconNameEnum {
   SwapRouteItemBackground = 'SwapRouteItemBackground',
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
-  GoogleDrive = 'GoogleDrive'
+  GoogleDrive = 'GoogleDrive',
+  Smile = 'Smile',
+  SmileWithGlasses = 'SmileWithGlasses',
+  SmileWithDollar = 'Smile'
 }

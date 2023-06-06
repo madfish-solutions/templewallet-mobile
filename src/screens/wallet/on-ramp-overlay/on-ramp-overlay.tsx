@@ -50,14 +50,14 @@ const OverlayComponent = () => {
 
             <View style={styles.buttonsContainer}>
               <OnRampSmileButton
-                smile="🙂"
+                smileIconName={IconNameEnum.Smile}
                 title="50$"
                 onPress={() => handleOnRampButtonPress(50)}
                 testID={OnRampOverlaySelectors.fiftyDollarButton}
               />
               <Divider size={formatSize(8)} />
               <OnRampSmileButton
-                smile="🤩"
+                smileIconName={IconNameEnum.SmileWithGlasses}
                 title="100$"
                 style={styles.backgroundPeach}
                 titleStyle={styles.textWhite}
@@ -66,7 +66,7 @@ const OverlayComponent = () => {
               />
               <Divider size={formatSize(8)} />
               <OnRampSmileButton
-                smile="🤑"
+                smileIconName={IconNameEnum.SmileWithDollar}
                 title="200$"
                 onPress={() => handleOnRampButtonPress(200)}
                 testID={OnRampOverlaySelectors.twoHundredDollarButton}
