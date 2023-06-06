@@ -1,34 +1,32 @@
-import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
 import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
+import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { FarmToken } from 'src/interfaces/earn.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { aprToApy } from 'src/utils/earn.utils';
+import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, DEFAULT_EXHANGE_RATE, FARM_PRECISION, SECONDS_IN_DAY } from '../constants';
-import { FarmTokens } from '../farm-tokens/farm-tokens';
 import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
@@ -36,39 +34,20 @@ interface Props {
   lastStakeRecord?: UserStakeValueInterface;
 }
 
+const FARM_PRECISION = 18;
+const DEFAULT_AMOUNT = 0;
+const DEFAULT_EXHANGE_RATE = 1;
+const DEFAULT_DECIMALS = 2;
+const SECONDS_IN_DAY = 86400;
+
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const styles = useFarmItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
-
-  const rewardToken: FarmToken = useMemo(
-    () => ({
-      symbol: farm.item.rewardToken.metadata.symbol,
-      thumbnailUri: farm.item.rewardToken.metadata.thumbnailUri
-    }),
-    [farm.item.rewardToken.metadata]
-  );
-
-  const stakeTokens = useMemo(
-    () =>
-      farm.item.tokens.map(token => {
-        const result: FarmToken = {
-          symbol: token.metadata.symbol,
-          thumbnailUri: token.metadata.thumbnailUri
-        };
-
-        if (token.metadata.symbol.toLowerCase() === TEZ_TOKEN_SLUG) {
-          result.iconName = IconNameEnum.TezToken;
-        }
-
-        return result;
-      }),
-    [farm.item.tokens]
-  );
+  const tezos = useReadOnlyTezosToolkit();
+  const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
 
   const apr = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
@@ -80,7 +59,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
         farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
       ),
-    [lastStakeRecord?.depositAmountAtomic, farm.item.depositExchangeRate]
+    [lastStakeRecord?.depositAmountAtomic]
   );
 
   const claimableRewardsAtomic = useMemo(
@@ -107,36 +86,22 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     []
   );
 
+  const lastStakeId = lastStakeRecord?.lastStakeId;
   const harvestAssetsApi = useCallback(async () => {
-    if (isDefined(lastStakeRecord?.lastStakeId)) {
-      const farmingContract = await tezos.wallet.at(farm.item.contractAddress);
-      const claimParams = farmingContract.methods.claim(lastStakeRecord?.lastStakeId).toTransferParams();
-      const opParams: Array<ParamsWithKind> = [claimParams].map(transferParams => ({
-        ...transferParams,
-        kind: OpKind.TRANSACTION
-      }));
+    if (isDefined(lastStakeId)) {
+      const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
 
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
-        Alert.alert(
-          'Are you sure?',
-          'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel'
-            },
-            {
-              text: 'Claim rewards',
-              style: 'destructive',
-              onPress: () => navigateHarvestFarm(opParams)
-            }
-          ]
+        doAfterConfirmation(
+          'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
+          'Claim rewards',
+          () => navigateHarvestFarm(opParams)
         );
       } else {
         navigateHarvestFarm(opParams);
       }
     }
-  }, [lastStakeRecord, farm.item.contractAddress]);
+  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item.contractAddress, tezos]);
 
   return (
     <View style={[styles.root, styles.mb16]}>

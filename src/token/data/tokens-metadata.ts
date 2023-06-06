@@ -19,6 +19,16 @@ export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.FilmToken
 };
 
+export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
+  id: 0,
+  address: 'KT1UpeXdK6AJbX58GJ92pLZVCucn2DR8Nu4b',
+  name: 'Wrapped Tezos FA2 token',
+  symbol: 'wTEZ',
+  decimals: 6,
+  thumbnailUri: 'ipfs://QmUWhCYXtC8r8aXgjrwsLrZmopiGMHdLWoQzEueAktJbHB',
+  standard: TokenStandardsEnum.Fa2
+};
+
 export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
@@ -82,7 +92,8 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     decimals: 12,
     thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc',
     standard: TokenStandardsEnum.Fa2
-  }
+  },
+  WTEZ_TOKEN_METADATA
 ];
 
 export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [

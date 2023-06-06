@@ -12,6 +12,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> extends TestIdProps {
+  disabledValuesIndices?: number[];
   selectedIndex: number;
   values: T[];
   width?: number;
@@ -24,10 +25,12 @@ interface Props<T> extends SegmentedControlProps<T> {
 
 export type SegmentedControlValueComponent<T> = FC<{
   item: T;
+  isDisabled: boolean;
   isSelected: boolean;
 }>;
 
 export const SegmentedControl = <T extends unknown>({
+  disabledValuesIndices,
   selectedIndex,
   values,
   renderValue,
@@ -61,6 +64,7 @@ export const SegmentedControl = <T extends unknown>({
       <View style={styles.contentContainer}>
         {values.map((item, index) => (
           <TouchableOpacity
+            disabled={disabledValuesIndices?.includes(index) ?? false}
             key={index}
             style={[styles.itemContainer, { width: tileWidth }]}
             hitSlop={{
@@ -74,7 +78,11 @@ export const SegmentedControl = <T extends unknown>({
               onChange(index);
             }}
           >
-            {renderValue({ item, isSelected: index === selectedIndex })}
+            {renderValue({
+              item,
+              isDisabled: disabledValuesIndices?.includes(index) ?? false,
+              isSelected: index === selectedIndex
+            })}
           </TouchableOpacity>
         ))}
       </View>

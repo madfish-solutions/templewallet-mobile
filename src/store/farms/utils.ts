@@ -7,7 +7,33 @@ import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getBalance } from 'src/utils/token-balance.utils';
 
-const MS_IN_SECOND = 1000;
+import { UserStakeValueInterface } from './state';
+
+export interface RawStakeValue {
+  lastStakeId: string;
+  depositAmountAtomic: string;
+  claimableRewards: string;
+  fullReward: string;
+  ageTimestamp: string;
+}
+
+export class GetFarmStakeError extends Error {
+  constructor(public readonly farmAddress: string, message: string) {
+    super(message);
+  }
+}
+
+export const toUserStakeValueInterface = (
+  stake: RawStakeValue,
+  vestingPeriodSeconds: string
+): UserStakeValueInterface => {
+  const { ageTimestamp, ...rest } = stake;
+
+  return {
+    ...rest,
+    rewardsDueDate: new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000
+  };
+};
 
 export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: string) => {
   const farmContractInstance = await tezos.contract.at(farm.contractAddress);
@@ -42,9 +68,7 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
           depositAmountAtomic: stakeAmount.stake.toFixed(),
           claimableRewards: claimableReward.toFixed(),
           fullReward: fullReward.toFixed(),
-          rewardsDueDate:
-            new Date(stakeAmount.age_timestamp).getTime() +
-            farmContractStorage.max_release_period.multipliedBy(MS_IN_SECOND).toNumber()
+          ageTimestamp: stakeAmount.age_timestamp
         };
       }
     }
