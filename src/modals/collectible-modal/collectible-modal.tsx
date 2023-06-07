@@ -64,7 +64,6 @@ export const CollectibleModal = () => {
   const styles = useCollectibleModalStyles();
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
-
   const { fa, creators, description, metadata, timestamp, royalties, supply, mime, attributes, galleries } =
     collectibleInfo;
 
@@ -84,18 +83,22 @@ export const CollectibleModal = () => {
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   const collectionLogo = useMemo(() => {
-    if (fa.logo.endsWith('.svg')) {
-      return (
-        <SvgUri
-          uri={fa.logo}
-          height={COLLECTION_ICON_SIZE}
-          width={COLLECTION_ICON_SIZE}
-          style={styles.collectionLogo}
-        />
-      );
+    if (fa.logo) {
+      if (fa.logo.endsWith('.svg')) {
+        return (
+          <SvgUri
+            uri={fa.logo}
+            height={COLLECTION_ICON_SIZE}
+            width={COLLECTION_ICON_SIZE}
+            style={styles.collectionLogo}
+          />
+        );
+      }
+
+      return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
     }
 
-    return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+    return null;
   }, [fa.logo]);
 
   return (
