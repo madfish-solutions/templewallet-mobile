@@ -5,6 +5,7 @@ import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getBalance } from 'src/utils/token-balance.utils';
 
 import { UserStakeValueInterface } from './state';
@@ -46,7 +47,7 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
       const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
 
       if (isDefined(stakeAmount)) {
-        const rewardTokenContractInstance = await tezos.contract.at(farm.rewardToken.contractAddress);
+        const rewardTokenContractInstance = await getReadOnlyContract(farm.rewardToken.contractAddress, tezos);
         const farmBalanceInRewardToken = await getBalance(
           rewardTokenContractInstance,
           farm.contractAddress,

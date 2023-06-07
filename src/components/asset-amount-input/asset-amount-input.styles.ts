@@ -54,8 +54,7 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     width: formatSize(134),
     paddingLeft: formatSize(8),
     paddingRight: formatSize(12),
-    paddingVertical: formatSize(12),
-    backgroundColor: colors.input
+    paddingVertical: formatSize(12)
   },
   quoteContainer: {
     width: formatSize(126),

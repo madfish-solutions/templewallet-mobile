@@ -1,5 +1,4 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { noop } from 'lodash-es';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -32,6 +31,8 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { DetailsCard } from './details-card';
 import { ManageFarmingPoolModalSelectors } from './selectors';
+import { StakeForm } from './stake-form';
+import { useStakeFormik } from './stake-form/use-stake-formik';
 import { useManageFarmingPoolModalStyles } from './styles';
 import { WithdrawForm } from './withdraw-form';
 import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
@@ -53,8 +54,14 @@ export const ManageFarmingPoolModal: FC = () => {
   const theme = useThemeSelector();
   const [tabIndex, setTabIndex] = useState(0);
 
+  const stakeFormik = useStakeFormik(params.id, params.version);
+  const { errors: stakeFormErrors, submitForm: submitStakeForm, isSubmitting: stakeFormSubmitting } = stakeFormik;
   const withdrawFormik = useWithdrawFormik(params.id, params.version);
-  const { errors: formErrors, submitForm, isSubmitting } = withdrawFormik;
+  const {
+    errors: withdrawFormErrors,
+    submitForm: submitWithdrawForm,
+    isSubmitting: withdrawFormSubmitting
+  } = withdrawFormik;
 
   useEffect(() => {
     if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {
@@ -92,12 +99,14 @@ export const ManageFarmingPoolModal: FC = () => {
         {!pageIsLoading && <Divider size={formatSize(16)} />}
         {!pageIsLoading && farm?.item.type === PoolType.STABLESWAP && (
           <View style={styles.content}>
-            {tabIndex === 1 && (
-              <>
-                <WithdrawForm farm={farm} formik={withdrawFormik} stake={stake} />
-                <Divider size={formatSize(16)} />
-              </>
+            {tabIndex === 0 ? (
+              <StakeForm farm={farm} formik={stakeFormik} />
+            ) : (
+              <WithdrawForm farm={farm} formik={withdrawFormik} stake={stake} />
             )}
+
+            <Divider size={formatSize(16)} />
+
             <View style={styles.detailsTitle}>
               <View style={styles.farmTypeIconWrapper}>
                 <Icon
@@ -108,7 +117,9 @@ export const ManageFarmingPoolModal: FC = () => {
               <Divider size={formatSize(8)} />
               <Text style={styles.detailsTitleText}>Quipuswap Farming Details</Text>
             </View>
+
             <Divider size={formatSize(16)} />
+
             <DetailsCard
               farm={farm.item}
               stake={stake}
@@ -139,8 +150,13 @@ export const ManageFarmingPoolModal: FC = () => {
         {tabIndex === 0 ? (
           <ButtonLargePrimary
             title="Deposit"
-            disabled={true}
-            onPress={noop}
+            disabled={
+              pageIsLoading ||
+              farm?.item.type !== PoolType.STABLESWAP ||
+              Object.keys(stakeFormErrors).length > 0 ||
+              stakeFormSubmitting
+            }
+            onPress={submitStakeForm}
             testID={ManageFarmingPoolModalSelectors.depositButton}
           />
         ) : (
@@ -149,10 +165,10 @@ export const ManageFarmingPoolModal: FC = () => {
             disabled={
               pageIsLoading ||
               farm?.item.type !== PoolType.STABLESWAP ||
-              Object.keys(formErrors).length > 0 ||
-              isSubmitting
+              Object.keys(withdrawFormErrors).length > 0 ||
+              withdrawFormSubmitting
             }
-            onPress={submitForm}
+            onPress={submitWithdrawForm}
             testID={ManageFarmingPoolModalSelectors.withdrawButton}
           />
         )}

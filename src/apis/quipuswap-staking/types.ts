@@ -1,10 +1,7 @@
-import { BigMapAbstraction, MichelsonMap } from '@taquito/taquito';
+import { MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-export enum NetworkEnum {
-  Mainnet = 'mainnet',
-  Ghostnet = 'ghostnet'
-}
+import { BigMap } from 'src/interfaces/big-map.interface';
 
 export enum FarmVersionEnum {
   V1 = 'v1',
@@ -161,7 +158,7 @@ interface RawStableswapStakerAccumulator {
   total_staked: BigNumber;
 }
 
-export interface StableswapPoolsValue {
+interface StableswapPoolsValue {
   initial_A_f: BigNumber;
   initial_A_time: string;
   future_A_f: BigNumber;
@@ -174,8 +171,7 @@ export interface StableswapPoolsValue {
 
 export interface StableswapPoolStorage {
   storage: {
-    tokens: BigMapAbstraction;
-    pools: BigMapAbstraction;
+    pools: BigMap<BigNumber, StableswapPoolsValue>;
     factory_address: string;
   };
 }

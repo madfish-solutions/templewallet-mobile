@@ -8,7 +8,7 @@ export const getTransferPermissions = async (
   tezos: TezosToolkit,
   spender: string,
   owner: string,
-  tokenToSpend: Route3Token,
+  tokenToSpend: Pick<Route3Token, 'contract' | 'standard' | 'tokenId'>,
   amountToSpendAtomic: BigNumber
 ) => {
   const permissions: { approve: Array<TransferParams>; revoke: Array<TransferParams> } = {
