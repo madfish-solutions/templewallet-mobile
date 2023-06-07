@@ -66,11 +66,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, disclaimer
 
   const totalTransactionCost = useMemo(() => {
     if (opParams[0]?.kind === OpKind.TRANSACTION) {
-      return opParams.reduce(
-        //@ts-ignore
-        (accumulator, currentOpParam) => accumulator.plus(currentOpParam.amount),
-        new BigNumber(0)
-      );
+      // @ts-ignore
+      return BigNumber.sum(...opParams.map(({ amount }) => amount));
     }
 
     return new BigNumber(0);

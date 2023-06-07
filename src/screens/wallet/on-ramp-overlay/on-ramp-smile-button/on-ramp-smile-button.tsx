@@ -2,14 +2,14 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle, TouchableWithoutFeedbackProps } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { setTestID } from 'src/utils/test-id.utils';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../../styles/format-size';
 import { useOnRampSmileButtonStyles } from './on-ramp-smile-button.styles';
 
 interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
