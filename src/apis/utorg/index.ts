@@ -14,11 +14,11 @@ const utorgApi = axios.create({
   }
 });
 
-export const createOrder = (amount: number, paymentCurrency: string, address: string) =>
+export const createOrder = (amount: number, paymentCurrency: string, address: string, cryptoCurrency: string) =>
   utorgApi
     .post<{ data: { url: string } }>('/order/init', {
       type: 'FIAT_TO_CRYPTO',
-      currency: 'XTZ',
+      currency: cryptoCurrency,
       amount,
       paymentCurrency,
       address,
@@ -26,14 +26,32 @@ export const createOrder = (amount: number, paymentCurrency: string, address: st
     })
     .then(r => r.data.data.url);
 
-export const convertFiatAmountToCrypto = (paymentAmount: number, fromCurrency: string, toCurrency: string) =>
-  utorgApi
-    .post<{ data: number }>('/tools/convert', {
-      fromCurrency,
-      paymentAmount,
-      toCurrency
-    })
-    .then(r => r.data.data);
+export async function convertFiatAmountToCrypto(
+  fromCurrency: string,
+  toCurrency: string,
+  fiatAmount: number
+): Promise<number>;
+export async function convertFiatAmountToCrypto(
+  fromCurrency: string,
+  toCurrency: string,
+  fiatAmount: undefined,
+  cryptoAmount: number
+): Promise<number>;
+export async function convertFiatAmountToCrypto(
+  fromCurrency: string,
+  toCurrency: string,
+  fiatAmount: number | undefined,
+  cryptoAmount?: number
+): Promise<number> {
+  const response = await utorgApi.post<{ data: number }>('/tools/convert', {
+    fromCurrency,
+    paymentAmount: fiatAmount,
+    amount: cryptoAmount,
+    toCurrency
+  });
+
+  return response.data.data;
+}
 
 export const getCurrenciesInfo = () =>
   utorgApi.post<{ data: UtorgCurrencyInfo[] }>('/settings/currency').then(r => r.data.data);

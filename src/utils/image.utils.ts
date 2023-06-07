@@ -7,13 +7,13 @@ const OBJKT_RESIZE_3 = 'assets-003';
 const MEDIA_HOST = 'https://static.tcinfra.net';
 const MEDIA_SIZE = 'small';
 
-export const formatImgUri = (origin = '') => {
+export const formatImgUri = (origin = '', resolution = MEDIA_SIZE) => {
   if (origin.startsWith('ipfs://')) {
-    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/ipfs/${origin.substring(7)}`;
+    return `${MEDIA_HOST}/media/${resolution}/ipfs/${origin.substring(7)}`;
   }
 
   if (origin.startsWith('http')) {
-    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/web/${origin.replace(/^https?:\/\//, '')}`;
+    return `${MEDIA_HOST}/media/${resolution}/web/${origin.replace(/^https?:\/\//, '')}`;
   }
 
   return origin;

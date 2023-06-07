@@ -4,15 +4,15 @@ import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
 import { apolloObjktClient } from './constants';
 import {
+  CollectibleInfoQueryResponse,
+  FA2AttributeCountQueryResponse,
+  GalleryAttributeCountQueryResponse
+} from './interfaces';
+import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetFA2AttributeCountQuery,
   buildGetGalleryAttributeCountQuery
 } from './queries';
-import {
-  CollectibleInfoQueryResponse,
-  FA2AttributeCountQueryResponse,
-  GalleryAttributeCountQueryResponse
-} from './types';
 import { getUniqueAndMaxValueAttribute } from './utils';
 
 export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observable<CollectibleInfo> => {

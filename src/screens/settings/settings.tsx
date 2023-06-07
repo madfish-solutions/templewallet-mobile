@@ -34,12 +34,14 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+import { showErrorToast } from '../../toast/toast.utils';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
+import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
 
-const SHARE_CONTENT =
-  'Hey friend! You should download Temple and discover the Tezos world with me https://templewallet.com/mobile';
+const SHARE_CONTENT = 'Hey friend! You should download Temple and discover the Tezos world with me ';
 
 export const Settings = () => {
   const styles = useSettingsStyles();
@@ -61,16 +63,22 @@ export const Settings = () => {
   const handleThemeSegmentControlChange = (newThemeIndex: number) =>
     dispatch(changeTheme(newThemeIndex === 0 ? ThemesEnum.light : ThemesEnum.dark));
 
-  const handleShare = useCallback(() => {
-    Share.share({
-      message: SHARE_CONTENT
-    })
-      .then(() => {
-        trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
-      })
-      .catch(() => {
-        trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress);
+  const handleShare = useCallback(async () => {
+    try {
+      const dynamicLink = await getTempleDynamicLink();
+      await Share.share({
+        message: SHARE_CONTENT + dynamicLink
       });
+
+      await trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
+    } catch (e: any) {
+      showErrorToast({
+        description: e.message,
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(e.message)
+      });
+      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage: e.message });
+    }
   }, [trackEvent]);
 
   const showBackupButton = !isAnyBackupMade || account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
