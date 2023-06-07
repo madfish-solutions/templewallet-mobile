@@ -30,6 +30,7 @@ const getHTML = (uri: string) =>
 
 interface SimpleModelViewProps {
   uri: string;
+  isBinary: boolean;
   style?: ViewStyle;
   onError?: () => void;
   onLoadEnd?: () => void;
@@ -38,13 +39,24 @@ interface SimpleModelViewProps {
 
 export const SimpleModelView: FC<SimpleModelViewProps> = ({
   uri,
+  isBinary,
   style,
   onError = emptyFn,
   onLoadEnd = emptyFn,
   setScrollEnabled = emptyFn
 }) => {
   const styles = useSimpleModelViewStyles();
-  const source = useMemo(() => ({ html: getHTML(uri) }), [uri]);
+  const source = useMemo(() => {
+    if (isBinary) {
+      return { html: getHTML(uri) };
+    }
+
+    if (uri.includes('fxhash')) {
+      return { uri };
+    }
+
+    return { uri: uri + '/index.html' };
+  }, [uri]);
 
   const handleTouchStart = () => setScrollEnabled(false);
   const handleTouchEnd = () => setScrollEnabled(true);

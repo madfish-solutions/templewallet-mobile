@@ -57,7 +57,15 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${address}/${id}/thumb288`;
 };
 
-export const formatCollectibleObjktArtifactUri = (artifactUri: string) =>
-  `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${
-    artifactUri.includes('ipfs://') ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri
-  }/artifact`;
+const checkIpfs = (artifactUri: string) =>
+  artifactUri.includes('ipfs://') ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+
+export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
+  if (artifactUri.includes('fxhash')) {
+    const [artifactUriWithoutFxHash, fxhash] = artifactUri.split('?');
+
+    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${checkIpfs(artifactUriWithoutFxHash)}/artifact/index.html?${fxhash}`;
+  }
+
+  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${checkIpfs(artifactUri)}/artifact`;
+};

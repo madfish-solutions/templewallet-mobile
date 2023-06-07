@@ -44,32 +44,42 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
 
   const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
   const [currentFallback, setCurrentFallback] = useState(initialFallback);
+  const handleError = () => {
+    if (currentFallback.endsWith('/thumb288')) {
+      setCurrentFallback(
+        formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
+      );
+    } else {
+      setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
+    }
+  };
 
-  const handleError = () =>
-    void setCurrentFallback(
-      formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
-    );
-
+  const handleAnimatedError = () => {
+    setIsAnimatedRenderedOnce(true);
+    handleError();
+  };
   const handleLoadEnd = () => void setIsLoading(false);
 
   const icon = useMemo(() => {
     if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
       if (isImgUriDataUri(objktArtifact)) {
-        setIsAnimatedRenderedOnce(true);
-
         return (
-          <AnimatedSvg style={styles.image} dataUri={objktArtifact} onError={handleError} onLoadEnd={handleLoadEnd} />
+          <AnimatedSvg
+            style={styles.image}
+            dataUri={objktArtifact}
+            onError={handleAnimatedError}
+            onLoadEnd={handleLoadEnd}
+          />
         );
       }
 
-      if (mime === NonStaticMimeTypes.MODEL) {
-        setIsAnimatedRenderedOnce(true);
-
+      if (mime === NonStaticMimeTypes.MODEL || mime === NonStaticMimeTypes.INTERACTIVE) {
         return (
           <SimpleModelView
-            style={styles.image}
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-            onError={handleError}
+            isBinary={mime === NonStaticMimeTypes.MODEL}
+            style={styles.image}
+            onError={handleAnimatedError}
             onLoadEnd={handleLoadEnd}
             setScrollEnabled={setScrollEnabled}
           />
@@ -77,22 +87,18 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
       }
 
       if (mime === NonStaticMimeTypes.VIDEO) {
-        setIsAnimatedRenderedOnce(true);
-
         return (
           <SimplePlayer
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
             size={size}
             style={styles.image}
-            onError={handleError}
+            onError={handleAnimatedError}
             onLoad={handleLoadEnd}
           />
         );
       }
 
       if (mime === NonStaticMimeTypes.AUDIO) {
-        setIsAnimatedRenderedOnce(true);
-
         return (
           <>
             <SimplePlayer
