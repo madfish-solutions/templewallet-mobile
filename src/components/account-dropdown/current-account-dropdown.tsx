@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+
 import { isAndroid } from '../../config/system';
 import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
@@ -19,11 +21,13 @@ const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ valu
   />
 );
 
-export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>> = ({
+export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface> & TestIdProps> = ({
   value,
   list,
+  onValueChange,
+  testID,
+  testIDProperties
   isCollectibleScreen,
-  onValueChange
 }) => (
   <View style={CurrentAccountDropdownStyles.root}>
     <AccountDropdownBase
@@ -32,6 +36,8 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>
       renderValue={renderAccountValue}
       renderAccountListItem={renderAccountListItem}
       onValueChange={onValueChange}
+      testID={testID}
+      testIDProperties={testIDProperties}
       isCollectibleScreen={isCollectibleScreen}
     />
   </View>

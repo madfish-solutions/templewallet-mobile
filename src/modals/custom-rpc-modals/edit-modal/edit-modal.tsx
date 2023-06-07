@@ -22,7 +22,8 @@ import { editCustomRpc, removeCustomRpc } from 'src/store/settings/settings-acti
 import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
 import { EditModalSelectors } from './edit-modal.selectors';
@@ -32,6 +33,7 @@ export const EditCustomRpcModal: FC = () => {
 
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
+  const { trackEvent } = useAnalytics();
   const rpcList = useRpcListSelector();
 
   const initialValues = useMemo(() => {
@@ -74,6 +76,7 @@ export const EditCustomRpcModal: FC = () => {
         onPress: () => {
           dispatch(removeCustomRpc(url));
           goBack();
+          trackEvent(EditModalSelectors.deleteRpcButton, AnalyticsEventCategory.ButtonPress);
         }
       }
     ]);
