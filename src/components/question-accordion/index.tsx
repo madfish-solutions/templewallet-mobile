@@ -1,3 +1,4 @@
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 
@@ -30,6 +31,7 @@ export const QuestionAccordion: FC<Props> = ({ question, children, testID, testI
   return (
     <View style={styles.container}>
       <TouchableWithAnalytics
+        Component={TouchableOpacity}
         testID={testID}
         testIDProperties={testIDProperties}
         style={styles.switcher}
