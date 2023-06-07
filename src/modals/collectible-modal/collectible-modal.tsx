@@ -34,6 +34,7 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
+import { getTruncatedProps } from '../../utils/style.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
@@ -110,7 +111,7 @@ export const CollectibleModal = () => {
         `/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
         {
           title: collectible.name,
-          descriptionText: 'NFT description',
+          descriptionText: description,
           imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
         }
       );
@@ -129,7 +130,7 @@ export const CollectibleModal = () => {
         errorMessage: e.message
       });
     }
-  }, []);
+  }, [description]);
 
   return (
     <ScreenContainer
@@ -152,17 +153,23 @@ export const CollectibleModal = () => {
 
           <Divider size={formatSize(12)} />
 
-          <TouchableOpacity onPress={handleShare}>
-            <Text>Share</Text>
-          </TouchableOpacity>
+          <View style={styles.collectionContainer}>
+            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+              {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
-          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+              <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
+                {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+              </Text>
+            </TouchableOpacity>
 
-            <Text numberOfLines={1} style={styles.collectionName}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
-            </Text>
-          </TouchableOpacity>
+            {isString(description) && (
+              <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+                <Icon name={IconNameEnum.Share} />
+                <Divider size={formatSize(4)} />
+                <Text style={styles.shareButtonText}>Share</Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{collectible.name}</Text>
