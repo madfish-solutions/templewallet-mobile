@@ -63,7 +63,7 @@ interface FarmBase {
   type?: PoolType;
 }
 
-interface StableswapFarm extends FarmBase {
+export interface StableswapFarm extends FarmBase {
   type: PoolType.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;

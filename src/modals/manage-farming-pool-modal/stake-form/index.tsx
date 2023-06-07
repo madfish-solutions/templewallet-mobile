@@ -9,19 +9,24 @@ import { QuestionAccordion } from 'src/components/question-accordion';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useStakesLoadingSelector } from 'src/store/farms/selectors';
+import { UserStakeValueInterface } from 'src/store/farms/state';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { useVestingPeriod } from '../use-vesting-period';
 import { useStakeFormStyles } from './styles';
 import { useFarmTokens } from './use-farm-tokens';
 import { useStakeFormik } from './use-stake-formik';
 
 interface StakeFormProps {
   farm: SingleFarmResponse;
+  stake?: UserStakeValueInterface;
   formik: ReturnType<typeof useStakeFormik>;
 }
 
@@ -31,7 +36,7 @@ const risksPoints = [
   'Liquidity providers consider the risk of impermanent loss, however, due to the nature of the youves flat-curves (CFMM) and the highly-correlated asset pairs, such risks are much lower than on constant product market maker (CPMM) DEXs with uncorrelated pairs.'
 ];
 
-export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
+export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake }) => {
   const { setFieldTouched, setFieldValue, values } = formik;
   const { asset } = values.assetAmount;
 
@@ -44,8 +49,8 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
     true
   );
 
-  const vestingPeriodSeconds = Number(farm.item.vestingPeriodSeconds);
-  const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, { roundingMethod: 'ceil', unit: 'day' });
+  const { vestingPeriodSeconds, formattedVestingPeriod } = useVestingPeriod(farm.item);
+  const stakesLoading = useStakesLoadingSelector();
 
   const handleAssetAmountChange = useCallback(() => {
     setFieldTouched('assetAmount', true);
@@ -74,7 +79,6 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
   return (
     <FormikProvider value={formik}>
       <View style={styles.formContainer}>
-        <Divider size={formatSize(16)} />
         <Text style={styles.depositPrompt}>
           You can choose any asset from the provided list for your deposit. The selected asset will be automatically
           converted by Temple Wallet.
@@ -91,6 +95,13 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
           onValueChange={handleAssetAmountChange}
           setSearchValue={setSearchValueFromTokens}
           testID={ManageFarmingPoolModalSelectors.amountInput}
+        />
+        <Divider size={formatSize(16)} />
+        <DetailsSection
+          farm={farm.item}
+          stake={stake}
+          shouldShowClaimRewardsButton
+          loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />
         {vestingPeriodSeconds >= SECONDS_IN_DAY && (

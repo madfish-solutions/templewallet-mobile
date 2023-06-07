@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInput } from 'src/components/asset-amount-input/asset-amount-input';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent, DropdownValueComponent } from 'src/components/dropdown/dropdown';
 import { DropdownItemContainer } from 'src/components/dropdown/dropdown-item-container/dropdown-item-container';
@@ -14,15 +15,20 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
+import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
+import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { useManageFarmingPoolModalStyles } from '../styles';
+import { useVestingPeriod } from '../use-vesting-period';
 import { useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
 import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
@@ -82,6 +88,9 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
     [tokensOptions, tokenSearchValue]
   );
   const styles = useWithdrawFormStyles();
+  const modalStyles = useManageFarmingPoolModalStyles();
+  const { vestingPeriodSeconds, formattedVestingPeriod } = useVestingPeriod(farm.item);
+  const stakesLoading = useStakesLoadingSelector();
 
   const handleTokenOptionChange = useCallback(() => void setFieldTouched('tokenOption', true), [setFieldTouched]);
 
@@ -172,6 +181,25 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           testID={ManageFarmingPoolModalSelectors.tokenSelector}
         />
       </View>
+      <Divider size={formatSize(16)} />
+      <DetailsSection
+        farm={farm.item}
+        stake={stake}
+        shouldShowClaimRewardsButton={false}
+        loading={stakesLoading && !isDefined(stake)}
+      />
+      {vestingPeriodSeconds >= SECONDS_IN_DAY && (
+        <>
+          <Divider size={formatSize(16)} />
+          <Disclaimer title="Long-term rewards vesting">
+            <Text style={modalStyles.disclaimerDescriptionText}>
+              You can pick up your assets at any time, but the reward will be distributed within{' '}
+              <Text style={modalStyles.emphasized}>{formattedVestingPeriod}</Text> of staking. Which means that if you
+              pick up sooner you won't get the entire reward.
+            </Text>
+          </Disclaimer>
+        </>
+      )}
     </FormikProvider>
   );
 };
