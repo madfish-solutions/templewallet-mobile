@@ -5,11 +5,11 @@ import { getTokenSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
 import {
-  addKnownIpfsSvg,
+  addKnownSvg,
   addTokensMetadataAction,
   loadTokenSuggestionActions,
   loadWhitelistAction,
-  removeKnownIpfsSvg
+  removeKnownSvg
 } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
@@ -57,17 +57,17 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
     addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
   }));
 
-  builder.addCase(addKnownIpfsSvg, (state, { payload: url }) => ({
+  builder.addCase(addKnownSvg, (state, { payload: url }) => ({
     ...state,
-    knownIpfsSvgs: {
-      ...state.knownIpfsSvgs,
+    knownSvgs: {
+      ...state.knownSvgs,
       [url]: true
     }
   }));
-  builder.addCase(removeKnownIpfsSvg, (state, { payload: url }) => ({
+  builder.addCase(removeKnownSvg, (state, { payload: url }) => ({
     ...state,
-    knownIpfsSvgs: {
-      ...state.knownIpfsSvgs,
+    knownSvgs: {
+      ...state.knownSvgs,
       [url]: false
     }
   }));

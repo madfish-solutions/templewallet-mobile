@@ -82,7 +82,10 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     decimals: 12,
     thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc',
     standard: TokenStandardsEnum.Fa2
-  },
+  }
+];
+
+export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
     address: 'KT1Rk86CX85DjBKmuyBhrCyNsHyudHVtASec',
@@ -90,6 +93,60 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'y-XTZ',
     decimals: 6,
     thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
+    name: 'Temple Key Old',
+    symbol: 'TKEY_OLD',
+    decimals: 18,
+    thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK',
+    name: 'Weed',
+    symbol: 'WEED',
+    decimals: 8,
+    thumbnailUri: 'https://i.ibb.co/CnPdk2Y/Weed-Token.jpg',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT19oivKN2qzeWgCs886BbttSVYtkcJHRtuQ',
+    name: 'Shitz',
+    symbol: 'SHTz',
+    decimals: 2,
+    thumbnailUri: 'https://i.ibb.co/9ZV2T54/shitz-small.png',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1M81KrJr6TxYLkZkVqcpSTNKGoya8XytWT',
+    name: 'ECOIN NETWORK',
+    symbol: 'ECN',
+    decimals: 8,
+    thumbnailUri: 'https://cdn.tzstats.com/KT1M81KrJr6TxYLkZkVqcpSTNKGoya8XytWT.png',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1Vn88tz943W4uKvJ2anSS3JJfeiVdQrqLe',
+    name: 'TROLL',
+    symbol: 'TROLL',
+    decimals: 0,
+    thumbnailUri: 'ipfs://QmNjXSkR1AgarJdgYQzruQxbh5QZim4Dq1i2vg1LQe8JZk',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT19JYndHaesXpvUfiwgg8BtE41HKkjjGMRC',
+    name: 'Rocket',
+    symbol: 'RCKT',
+    decimals: 6,
+    thumbnailUri: 'ipfs://QmNwMXAL5tVaPxauq7W4mXMhFGNVsstBfQ87AwUUo94thL',
     standard: TokenStandardsEnum.Fa2
   }
 ];

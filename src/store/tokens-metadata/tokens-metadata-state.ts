@@ -1,4 +1,8 @@
-import { DCP_TOKENS_METADATA, LOCAL_MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
+import {
+  DCP_TOKENS_METADATA,
+  LOCAL_MAINNET_TOKENS_METADATA,
+  OVERRIDEN_MAINNET_TOKENS_METADATA
+} from '../../token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { createEntity } from '../create-entity';
@@ -7,11 +11,15 @@ import { LoadableEntityState } from '../types';
 export interface TokensMetadataState {
   metadataRecord: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
-  knownIpfsSvgs: Record<string, boolean>;
+  knownSvgs: Record<string, boolean>;
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
-  metadataRecord: [...LOCAL_MAINNET_TOKENS_METADATA, ...DCP_TOKENS_METADATA].reduce(
+  metadataRecord: [
+    ...LOCAL_MAINNET_TOKENS_METADATA,
+    ...OVERRIDEN_MAINNET_TOKENS_METADATA,
+    ...DCP_TOKENS_METADATA
+  ].reduce(
     (obj, tokenMetadata) => ({
       ...obj,
       [getTokenSlug(tokenMetadata)]: tokenMetadata
@@ -19,7 +27,7 @@ export const tokensMetadataInitialState: TokensMetadataState = {
     {}
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata),
-  knownIpfsSvgs: {}
+  knownSvgs: {}
 };
 
 export interface TokensMetadataRootState {

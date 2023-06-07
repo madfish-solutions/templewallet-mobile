@@ -3,9 +3,9 @@ import { createAction } from '@reduxjs/toolkit';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
-export const addKnownIpfsSvg = createAction<string>('assets/ADD_KNOWN_IPFS_SVG');
+export const addKnownSvg = createAction<string>('assets/ADD_KNOWN_SVG');
 
-export const removeKnownIpfsSvg = createAction<string>('assets/REMOVE_KNOWN_IPFS_SVG');
+export const removeKnownSvg = createAction<string>('assets/REMOVE_KNOWN_SVG');
 
 export const addTokensMetadataAction = createAction<TokenMetadataInterface[]>('assets/ADD_TOKENS_METADATA');
 
